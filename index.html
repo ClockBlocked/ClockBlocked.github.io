@@ -1,0 +1,1650 @@
+<html lang="en" class="dark"><head>
+
+
+  
+<!-- Google tag (gtag.js) -->
+<script type="text/javascript" id="www-widgetapi-script" src="https://www.youtube.com/s/player/761c1f12/www-widgetapi.vflset/www-widgetapi.js" async=""></script><script src="https://www.youtube.com/iframe_api"></script><script async="" src="https://www.googletagmanager.com/gtag/js?id=G-P0KCT8TSPW">
+</script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-P0KCT8TSPW');
+</script>    
+<!------------------------------------------------------------>    
+    
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player</title>
+    <link rel="manifest" href="./system/manifest.json">
+    <meta name="theme-color" content="#323a44">
+    <meta name="description" content="A sleek and modern web-based music player.">
+    <meta name="keywords" content="music, player, web, audio, streaming, playlist, songs, albums, artists">
+    <meta name="author" content="ClockBlocked">
+    <meta property="og:title" content="Music Player">
+    <meta property="og:description" content="A sleek and modern web-based music player.">
+    <meta property="og:image" content="thumbnail.jpg">
+    <meta property="og:url" content="https://koders.cloud">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Music Player">
+    <meta name="twitter:description" content="A sleek and modern web-based music player.">
+    <meta name="twitter:image" content="thumbnail.jpg">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://koders.cloud/myStyles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/preline@2.0.3/dist/preline.min.css" rel="stylesheet">
+    <link href="https://dev.wuaze.com/styleSheets/fonts.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+
+
+
+  <body>
+    <!-- Hidden YouTube player -->
+<div id="youtube-audio-wrapper" style="position: absolute; left: -9999px;">
+  <div id="youtube-player"></div>
+</div>
+    <div id="pageWrapper">
+      <nav id="navbar" class="glass-effect">
+        <div class="navbar-content">
+          <div class="navbar-left">
+            <button class="menu-trigger" id="menu-trigger" title="Menu">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+              </svg>
+            </button>
+          </div>
+
+          <div class="navbar-center" id="now-playing-area" title="Click to open Now Playing">
+            <div class="now-playing-display">
+              <div id="navbar-logo" class="flex items-center justify-center">
+                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.369 4.369 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z"></path>
+                </svg>
+              </div>
+
+              <img id="navbar-album-cover" src="" alt="Album Cover" class="hidden object-cover">
+
+              <div class="now-playing-info">
+                <div id="navbar-song-title" class="truncate">No song playing</div>
+                <div id="navbar-artist" class="truncate">Select a song to get started</div>
+              </div>
+
+              <div class="play-indicator" id="play-indicator"></div>
+            </div>
+          </div>
+
+          <div class="navbar-right">
+            <div class="nav-controls">
+              <button class="nav-control-btn" id="prev-btn-navbar" title="Previous Track">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M8.445 14.832A1 1 0 0010 14v-2.798l5.445 3.63A1 1 0 0017 14V6a1 1 0 00-1.555-.832L10 8.798V6a1 1 0 00-1.555-.832l-6 4a1 1 0 000 1.664l6 4z"></path>
+                </svg>
+              </button>
+
+              <button class="nav-control-btn play-pause" id="play-pause-navbar" title="Play/Pause">
+                <svg id="play-icon-navbar" class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>
+                </svg>
+                <svg id="pause-icon-navbar" class="w-4 h-4 hidden" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                </svg>
+              </button>
+
+              <button class="nav-control-btn" id="next-btn-navbar" title="Next Track">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798L4.555 5.168z"></path>
+                </svg>
+              </button>
+            </div>
+            <button id="theme-toggle" title="Toggle Theme" class="ml-2">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M17.293 13.293A8 8 0 116.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </nav>
+
+<!-- Main Menu -->
+      <div class="dropdown-menu" id="dropdown-menu">
+        <div class="dropdown-header">
+          <h3 class="dropdown-title">Music Library</h3>
+          <button class="dropdown-close" id="dropdown-close">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+            </svg>
+          </button>
+        </div>
+
+        <div class="dropdown-section">
+          <h4 class="section-title">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"></path>
+            </svg>
+            Favorites
+          </h4>
+
+          <div class="dropdown-item" id="favorite-songs">
+            <div class="dropdown-item-icon">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <div class="dropdown-item-content">
+              <div class="dropdown-item-title">Favorite Songs</div>
+              <div class="dropdown-item-subtitle">Your liked tracks</div>
+            </div>
+            <div class="dropdown-item-badge" id="favorite-songs-count">0</div>
+          </div>
+
+          <div class="dropdown-item" id="favorite-artists">
+            <div class="dropdown-item-icon">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9 12a3 3 0 00-3-3H2a1 1 0 100 2h4a1 1 0 011 1v.5a1 1 0 102 0V12zm3-8a3 3 0 100 6 3 3 0 000-6zm-1 4a1 1 0 11-2 0 1 1 0 012 0z"></path>
+              </svg>
+            </div>
+            <div class="dropdown-item-content">
+              <div class="dropdown-item-title">Favorite Artists</div>
+              <div class="dropdown-item-subtitle">Artists you follow</div>
+            </div>
+            <div class="dropdown-item-badge" id="favorite-artists-count">0</div>
+          </div>
+        </div><div class="dropdown-section">
+        <h3 class="section-title">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+            </svg>
+            Navigation
+        </h3>
+        <div class="dropdown-item willHideMenu" data-nav="home">
+            <div class="dropdown-item-icon">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+                </svg>
+            </div>
+            <div class="dropdown-item-content">
+                <p class="dropdown-item-title">Home</p>
+                <p class="dropdown-item-subtitle">Featured music and new releases</p>
+            </div>
+        </div>
+        <div class="dropdown-item willHideMenu" data-nav="allArtists">
+            <div class="dropdown-item-icon">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 13a3.005 3.005 0 013.75 2.094A5.972 5.972 0 0022 18v3h-6z"></path>
+                </svg>
+            </div>
+            <div class="dropdown-item-content">
+                <p class="dropdown-item-title">All Artists</p>
+                <p class="dropdown-item-subtitle">Browse all artists in the library</p>
+            </div>
+        </div>
+        <div class="dropdown-item willHideMenu" id="global-search-trigger">
+            <div class="dropdown-item-icon">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
+                </svg>
+            </div>
+            <div class="dropdown-item-content">
+                <p class="dropdown-item-title">Search</p>
+                <p class="dropdown-item-subtitle">Find artists, albums, and songs</p>
+            </div>
+        </div>
+    </div>
+
+        <div class="dropdown-section">
+          <h4 class="section-title">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
+            </svg>
+            Library
+          </h4>
+
+          <div class="dropdown-item" id="recently-played">
+            <div class="dropdown-item-icon">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
+              </svg>
+            </div>
+            <div class="dropdown-item-content">
+              <div class="dropdown-item-title">Recent Plays</div>
+              <div class="dropdown-item-subtitle">Recently played songs</div>
+            </div>
+            <div class="dropdown-item-badge" id="recent-count">0</div>
+          </div>
+
+          <div class="dropdown-item" id="queue-view">
+            <div class="dropdown-item-icon">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"></path>
+              </svg>
+            </div>
+            <div class="dropdown-item-content">
+              <div class="dropdown-item-title">Up Next</div>
+              <div class="dropdown-item-subtitle">Songs in queue</div>
+            </div>
+            <div class="dropdown-item-badge" id="queue-count">0</div>
+          </div>
+        </div>
+
+        <div class="dropdown-section">
+          <h4 class="section-title">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
+            </svg>
+            Playlists
+          </h4>
+
+          <div class="dropdown-item" id="create-playlist">
+            <div class="dropdown-item-icon">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"></path>
+              </svg>
+            </div>
+            <div class="dropdown-item-content">
+              <div class="dropdown-item-title">Create Playlist</div>
+              <div class="dropdown-item-subtitle">Make a new playlist</div>
+            </div>
+          </div>
+
+          <div id="playlists-list">
+            <div class="empty-state" id="playlists-empty">
+              <div class="empty-state-icon">
+                <svg class="w-full h-full" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
+                </svg>
+              </div>
+              <div class="empty-state-text">
+                No playlists yet.<br>
+                Create your first playlist!
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dropdown-section">
+          <h4 class="section-title">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"></path>
+            </svg>
+            Actions
+          </h4>
+
+          <div class="dropdown-item" id="shuffle-all">
+            <div class="dropdown-item-icon">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"></path>
+              </svg>
+            </div>
+            <div class="dropdown-item-content">
+              <div class="dropdown-item-title">Shuffle All</div>
+              <div class="dropdown-item-subtitle">Play all songs randomly</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dropdown-section">
+          <h4 class="section-title">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path>
+            </svg>
+            Settings
+          </h4>
+
+          <div class="dropdown-item" id="app-settings">
+            <div class="dropdown-item-icon">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+              </svg>
+            </div>
+            <div class="dropdown-item-content">
+              <div class="dropdown-item-title">Preferences</div>
+              <div class="dropdown-item-subtitle">App settings &amp; options</div>
+            </div>
+          </div>
+
+          <div class="dropdown-item" id="about-app">
+            <div class="dropdown-item-icon">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+              </svg>
+            </div>
+            <div class="dropdown-item-content">
+              <div class="dropdown-item-title">About</div>
+              <div class="dropdown-item-subtitle">Version &amp; information</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+<!-- Music Player -->
+      <div class="musicPlayer" id="musicPlayer">
+      <div id="offcanvas-handle" class="offcanvas-handle flex items-center justify-center py-1">
+          <div class="w-10 h-1 bg-gray-500 rounded-full"></div>
+        </div>
+
+        
+        
+        
+        
+        
+        
+        <div class="header">
+          <button class="close" id="closePlayer">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+            </svg>
+          </button>
+        </div>
+
+
+        <div class="body">
+          <div class="popup-tab-content" data-tab="now-playing">
+            <img id="popup-album-cover" src="" alt="Album Cover" class="popup-album-cover">
+
+            <div class="popup-song-info">
+              <h4 id="popup-song-title" class="popup-song-title"></h4>
+              <p id="popup-artist-name" class="popup-artist-name"></p>
+              <p id="popup-album-name" class="popup-album-name"></p>
+            </div>
+
+            <div class="popup-progress">
+              <div class="progress-time">
+                <span id="popup-current-time">0:00</span>
+                <span id="popup-total-time">0:00</span>
+              </div>
+              <div class="popup-progress-bar" id="popup-progress-bar">
+                <div class="popup-progress-fill" id="popup-progress-fill" style="width: 0%;">
+                  <div class="popup-progress-thumb" id="popup-progress-thumb"></div>
+                </div>
+              </div>
+            </div>
+
+
+
+
+<div class="playerControls">
+  
+  
+  <!-- Skip to Previous Song -->
+  <button class="button" id="popup-prev-btn">
+    <svg class="icon" id="iconPrev" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+      <path d="M267.5 440.6c9.5 7.9 22.8 9.7 34.1 4.4s18.4-16.6 18.4-29V96c0-12.4-7.2-23.7-18.4-29s-24.5-3.6-34.1 4.4L75.5 231l0 49 192 160z"></path>
+    </svg>
+  </button>
+
+  <!-- Rewind 10s -->
+  <button class="button" id="reWind">
+    <svg class="icon" id="iconRewind" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+      <path d="M459.5 440.6c9.5 7.9 22.8 9.7 34.1 4.4s18.4-16.6 18.4-29V96c0-12.4-7.2-23.7-18.4-29s-24.5-3.6-34.1 4.4L288 214.3V296l171.5 144.6zM256 352V96c0-12.4-7.2-23.7-18.4-29s-24.5-3.6-34.1 4.4L11.5 231C4.2 237.5 0 246.5 0 256s4.2 18.5 11.5 24.6l192 160c9.5 7.9 22.8 9.7 34.1 4.4s18.4-16.6 18.4-29V352z"></path>
+    </svg>
+  </button>
+
+  <!-- Play / Pause (toggle dynamically) -->
+  <button class="button" id="playPause">
+    <svg class="icon" id="iconPlay" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+      <path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"></path>
+    </svg>
+    <!-- You can dynamically switch to this icon on pause -->
+    <!-- <svg class="icon" id="iconPause" ... >...</svg> -->
+  </button>
+
+  <!-- Fast Forward 10s -->
+  <button class="button" id="fastFoward">
+    <svg class="icon" id="iconForward" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+      <path d="M52.5 440.6c-9.5 7.9-22.8 9.7-34.1 4.4S0 428.4 0 416V96c0-12.4 7.2-23.7 18.4-29s24.5-3.6 34.1 4.4L224 214.3V296L52.5 440.6zM256 352V96c0-12.4 7.2-23.7 18.4-29s24.5-3.6 34.1 4.4l192 160c7.3 6.1 11.5 15.1 11.5 24.6s-4.2 18.5-11.5 24.6L308.5 440.6c-9.5 7.9-22.8 9.7-34.1 4.4S256 428.4 256 416V352z"></path>
+    </svg>
+  </button>
+
+  <!-- Skip to Next Song -->
+  <button class="button" id="popup-next-btn">
+    <svg class="icon" id="iconNext" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+      <path d="M52.5 440.6c-9.5 7.9-22.8 9.7-34.1 4.4S0 428.4 0 416V96c0-12.4 7.2-23.7 18.4-29s24.5-3.6 34.1 4.4l192 160V96c0-17.7 14.3-32 32-32s32 14.3 32 32v320c0 17.7-14.3 32-32 32s-32-14.3-32-32V271.4L52.5 440.6z"></path>
+    </svg>
+  </button>
+
+
+</div>
+      
+              
+              
+              
+              
+              
+              
+ <!--             
+              <button class="button" id="popup-shuffle-btn" title="Shuffle">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                </svg>
+              </button>
+
+              <button class="button" id="popup-prev-btn" title="Previous">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M8.445 14.832A1 1 0 0010 14v-2.798l5.445 3.63A1 1 0 0017 14V6a1 1 0 00-1.555-.832L10 8.798V6a1 1 0 00-1.555-.832l-6 4a1 1 0 000 1.664l6 4z" />
+                </svg>
+              </button>
+
+              <button class="button" id="playPause">
+                <svg id="popup-play-icon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                </svg>
+                <svg id="popup-pause-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                </svg>
+              </button>
+
+              <button class="button" id="popup-next-btn" title="Next">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798L4.555 5.168z" />
+                </svg>
+              </button>
+
+              <button class="button" id="popup-repeat-btn" title="Repeat">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                </svg>
+              </button>
+ -->             
+              
+              
+
+            <div class="popup-actions">
+              <button class="popup-action-btn" id="popup-favorite-btn" title="Add to Favorites">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"></path>
+                </svg>
+              </button>
+
+              <button class="popup-action-btn" id="popup-queue-btn" title="View Queue">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
+                </svg>
+              </button>
+
+              <button class="popup-action-btn" id="popup-share-btn" title="Share">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path>
+                </svg>
+              </button>
+
+              <button class="popup-action-btn" id="popup-more-btn" title="More Options">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+
+<!-- Up Next -->
+          <div class="popup-tab-content" data-tab="queue">
+            <ul id="queue-list" class="popup-song-list">
+              <li class="empty-state">Queue is empty</li>
+            </ul>
+          </div>
+
+
+<!-- Recently Played -->
+          <div class="popup-tab-content" data-tab="recent">
+            <ul id="recent-list" class="popup-song-list">
+              <li class="empty-state">No recently played songs</li>
+            </ul>
+          </div>
+          
+          
+
+          
+        </div>
+        <div id="popUpTabsWrapper">
+        
+               <div class="popup-tabs">
+          <button class="popup-tab active" data-tab="now-playing">Now Playing</button>
+          <button class="popup-tab" data-tab="recent">Recent Plays</button>
+          <button class="popup-tab" data-tab="queue">Up Next</button>
+        </div> 
+        </div>
+        
+      <div id="seek-tooltip" style="position: absolute; background-color: rgba(0, 0, 0, 0.8); color: white; font-size: 12px; padding: 4px 8px; border-radius: 4px; pointer-events: none; opacity: 0; transform: translateX(-50%); transition: opacity 0.2s; z-index: 100;"></div></div>
+
+      <div id="mainArea">
+        <main id="main-container" class="content-container max-w-6xl mx-auto pb-24">
+          <div id="contentWrapper" class="relative">
+            <nav id="breadcrumb-nav" class="breadcrumb-navigation flex items-center text-fg-muted">
+              <ol class="breadcrumb-list flex items-center flex-wrap"><li class="breadcrumb-item">
+            <a href="/" class="breadcrumb" data-nav="home">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 
+                        0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                </svg>
+                <h4 class="hidden md:inline">Home</h4>
+            </a>
+        </li><li class="breadcrumb-separator">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </li><li class="breadcrumb-item">
+                    <a href="/artists" class="breadcrumb" data-nav="artists">
+                        <h4>Discography</h4>
+                    </a>
+                </li><li class="breadcrumb-separator">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </li><li class="breadcrumb-item"><h4 aria-current="page">Kesha</h4></li></ol>
+              
+              
+              
+              
+            </nav>
+
+            <div id="dynamic-content" class="">
+                <div class="artistTop">
+                    <div class="artist-header" id="artist-header">
+                        <div class="content-wrapper">
+                            <div class="artist-avatar">
+                                <img src="https://koders.cloud/global/content/images/artistPortraits/kesha.png" alt="Kesha" class="image-loaded">
+                            </div>
+                            <div class="artist-info">
+                                
+                                <div class="metadata-tags">
+                                    <span>Pop</span>
+                                    <span>4 Albums</span>
+                                    <span>55 Songs</span>
+                                </div>
+                                <div class="action-buttons">
+                                    <button class="play">▶️ Play All</button>
+                                    <button class="follow">⭐ Follow</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-offset">
+                    <div class="similar-artists-section">
+                        
+                        <div id="similar-artists-container">
+        <div class="similar-artists-carousel">
+            <button class="carousel-arrow left disabled" aria-label="Scroll left">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                </svg>
+            </button>
+            <div class="similar-artists-container" id="similar-artists-scroll-container"><div class="similar-artist-card" data-artist-name="Rihanna">
+  <div class="similar-artist-image">
+    <img src="https://koders.cloud/global/content/images/artistPortraits/rihanna.png" alt="Rihanna" class="w-full h-full object-cover artist-avatar">
+    <div class="artist-image-overlay"></div>
+  </div>
+  
+  <div class="similar-artist-name">
+    Rihanna
+  </div>
+  
+  <div class="artist-popover">
+    <div class="popover-header">
+      <div class="popover-artist-name">Rihanna</div>
+    </div>
+    
+    <div class="popover-stats">
+      <div class="stat-item">
+        <span class="stat-value">8</span>
+        <span class="stat-label">Albums</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">95</span>
+        <span class="stat-label">Songs</span>
+      </div>
+    </div>
+    
+    <div class="popover-footer">
+      <button class="popover-button" data-artist-id="5923287009">
+        View Artist
+      </button>
+    </div>
+  </div>
+</div><div class="similar-artist-card" data-artist-name="Katy Perry">
+  <div class="similar-artist-image">
+    <img src="https://koders.cloud/global/content/images/artistPortraits/katyperry.png" alt="Katy Perry" class="w-full h-full object-cover artist-avatar">
+    <div class="artist-image-overlay"></div>
+  </div>
+  
+  <div class="similar-artist-name">
+    Katy Perry
+  </div>
+  
+  <div class="artist-popover">
+    <div class="popover-header">
+      <div class="popover-artist-name">Katy Perry</div>
+    </div>
+    
+    <div class="popover-stats">
+      <div class="stat-item">
+        <span class="stat-value">3</span>
+        <span class="stat-label">Albums</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">37</span>
+        <span class="stat-label">Songs</span>
+      </div>
+    </div>
+    
+    <div class="popover-footer">
+      <button class="popover-button" data-artist-id="5923287010">
+        View Artist
+      </button>
+    </div>
+  </div>
+</div><div class="similar-artist-card" data-artist-name="Lady Gaga">
+  <div class="similar-artist-image">
+    <img src="https://koders.cloud/global/content/images/artistPortraits/ladygaga.png" alt="Lady Gaga" class="w-full h-full object-cover artist-avatar">
+    <div class="artist-image-overlay"></div>
+  </div>
+  
+  <div class="similar-artist-name">
+    Lady Gaga
+  </div>
+  
+  <div class="artist-popover">
+    <div class="popover-header">
+      <div class="popover-artist-name">Lady Gaga</div>
+    </div>
+    
+    <div class="popover-stats">
+      <div class="stat-item">
+        <span class="stat-value">0</span>
+        <span class="stat-label">Albums</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">0</span>
+        <span class="stat-label">Songs</span>
+      </div>
+    </div>
+    
+    <div class="popover-footer">
+      <button class="popover-button" data-artist-id="similar-2">
+        View Artist
+      </button>
+    </div>
+  </div>
+</div><div class="similar-artist-card" data-artist-name="Britney Spears">
+  <div class="similar-artist-image">
+    <img src="https://koders.cloud/global/content/images/artistPortraits/britneyspears.png" alt="Britney Spears" class="w-full h-full object-cover artist-avatar">
+    <div class="artist-image-overlay"></div>
+  </div>
+  
+  <div class="similar-artist-name">
+    Britney Spears
+  </div>
+  
+  <div class="artist-popover">
+    <div class="popover-header">
+      <div class="popover-artist-name">Britney Spears</div>
+    </div>
+    
+    <div class="popover-stats">
+      <div class="stat-item">
+        <span class="stat-value">7</span>
+        <span class="stat-label">Albums</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">83</span>
+        <span class="stat-label">Songs</span>
+      </div>
+    </div>
+    
+    <div class="popover-footer">
+      <button class="popover-button" data-artist-id="5923287001">
+        View Artist
+      </button>
+    </div>
+  </div>
+</div><div class="similar-artist-card" data-artist-name="Demi Lovato">
+  <div class="similar-artist-image">
+    <img src="https://koders.cloud/global/content/images/artistPortraits/demilovato.png" alt="Demi Lovato" class="w-full h-full object-cover artist-avatar">
+    <div class="artist-image-overlay"></div>
+  </div>
+  
+  <div class="similar-artist-name">
+    Demi Lovato
+  </div>
+  
+  <div class="artist-popover">
+    <div class="popover-header">
+      <div class="popover-artist-name">Demi Lovato</div>
+    </div>
+    
+    <div class="popover-stats">
+      <div class="stat-item">
+        <span class="stat-value">6</span>
+        <span class="stat-label">Albums</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">76</span>
+        <span class="stat-label">Songs</span>
+      </div>
+    </div>
+    
+    <div class="popover-footer">
+      <button class="popover-button" data-artist-id="5923287018">
+        View Artist
+      </button>
+    </div>
+  </div>
+</div><div class="similar-artist-card" data-artist-name="Miley Cyrus">
+  <div class="similar-artist-image">
+    <img src="https://koders.cloud/global/content/images/artistPortraits/mileycyrus.png" alt="Miley Cyrus" class="w-full h-full object-cover artist-avatar">
+    <div class="artist-image-overlay"></div>
+  </div>
+  
+  <div class="similar-artist-name">
+    Miley Cyrus
+  </div>
+  
+  <div class="artist-popover">
+    <div class="popover-header">
+      <div class="popover-artist-name">Miley Cyrus</div>
+    </div>
+    
+    <div class="popover-stats">
+      <div class="stat-item">
+        <span class="stat-value">0</span>
+        <span class="stat-label">Albums</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">0</span>
+        <span class="stat-label">Songs</span>
+      </div>
+    </div>
+    
+    <div class="popover-footer">
+      <button class="popover-button" data-artist-id="similar-5">
+        View Artist
+      </button>
+    </div>
+  </div>
+</div><div class="similar-artist-card" data-artist-name="Avril Lavigne">
+  <div class="similar-artist-image">
+    <img src="https://koders.cloud/global/content/images/artistPortraits/avrillavigne.png" alt="Avril Lavigne" class="w-full h-full object-cover artist-avatar">
+    <div class="artist-image-overlay"></div>
+  </div>
+  
+  <div class="similar-artist-name">
+    Avril Lavigne
+  </div>
+  
+  <div class="artist-popover">
+    <div class="popover-header">
+      <div class="popover-artist-name">Avril Lavigne</div>
+    </div>
+    
+    <div class="popover-stats">
+      <div class="stat-item">
+        <span class="stat-value">7</span>
+        <span class="stat-label">Albums</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">87</span>
+        <span class="stat-label">Songs</span>
+      </div>
+    </div>
+    
+    <div class="popover-footer">
+      <button class="popover-button" data-artist-id="5923287028">
+        View Artist
+      </button>
+    </div>
+  </div>
+</div><div class="similar-artist-card" data-artist-name="Christina Aguilera">
+  <div class="similar-artist-image">
+    <img src="https://koders.cloud/global/content/images/artistPortraits/christinaaguilera.png" alt="Christina Aguilera" class="w-full h-full object-cover artist-avatar">
+    <div class="artist-image-overlay"></div>
+  </div>
+  
+  <div class="similar-artist-name">
+    Christina Aguilera
+  </div>
+  
+  <div class="artist-popover">
+    <div class="popover-header">
+      <div class="popover-artist-name">Christina Aguilera</div>
+    </div>
+    
+    <div class="popover-stats">
+      <div class="stat-item">
+        <span class="stat-value">0</span>
+        <span class="stat-label">Albums</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">0</span>
+        <span class="stat-label">Songs</span>
+      </div>
+    </div>
+    
+    <div class="popover-footer">
+      <button class="popover-button" data-artist-id="similar-7">
+        View Artist
+      </button>
+    </div>
+  </div>
+</div><div class="similar-artist-card" data-artist-name="Taylor Swift">
+  <div class="similar-artist-image">
+    <img src="https://koders.cloud/global/content/images/artistPortraits/taylorswift.png" alt="Taylor Swift" class="w-full h-full object-cover artist-avatar">
+    <div class="artist-image-overlay"></div>
+  </div>
+  
+  <div class="similar-artist-name">
+    Taylor Swift
+  </div>
+  
+  <div class="artist-popover">
+    <div class="popover-header">
+      <div class="popover-artist-name">Taylor Swift</div>
+    </div>
+    
+    <div class="popover-stats">
+      <div class="stat-item">
+        <span class="stat-value">7</span>
+        <span class="stat-label">Albums</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">106</span>
+        <span class="stat-label">Songs</span>
+      </div>
+    </div>
+    
+    <div class="popover-footer">
+      <button class="popover-button" data-artist-id="5923287002">
+        View Artist
+      </button>
+    </div>
+  </div>
+</div><div class="similar-artist-card" data-artist-name="Selena Gomez">
+  <div class="similar-artist-image">
+    <img src="https://koders.cloud/global/content/images/artistPortraits/selenagomez.png" alt="Selena Gomez" class="w-full h-full object-cover artist-avatar">
+    <div class="artist-image-overlay"></div>
+  </div>
+  
+  <div class="similar-artist-name">
+    Selena Gomez
+  </div>
+  
+  <div class="artist-popover">
+    <div class="popover-header">
+      <div class="popover-artist-name">Selena Gomez</div>
+    </div>
+    
+    <div class="popover-stats">
+      <div class="stat-item">
+        <span class="stat-value">3</span>
+        <span class="stat-label">Albums</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">37</span>
+        <span class="stat-label">Songs</span>
+      </div>
+    </div>
+    
+    <div class="popover-footer">
+      <button class="popover-button" data-artist-id="5923287004">
+        View Artist
+      </button>
+    </div>
+  </div>
+</div><div class="similar-artist-card" data-artist-name="Madonna">
+  <div class="similar-artist-image">
+    <img src="https://koders.cloud/global/content/images/artistPortraits/madonna.png" alt="Madonna" class="w-full h-full object-cover artist-avatar">
+    <div class="artist-image-overlay"></div>
+  </div>
+  
+  <div class="similar-artist-name">
+    Madonna
+  </div>
+  
+  <div class="artist-popover">
+    <div class="popover-header">
+      <div class="popover-artist-name">Madonna</div>
+    </div>
+    
+    <div class="popover-stats">
+      <div class="stat-item">
+        <span class="stat-value">0</span>
+        <span class="stat-label">Albums</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">0</span>
+        <span class="stat-label">Songs</span>
+      </div>
+    </div>
+    
+    <div class="popover-footer">
+      <button class="popover-button" data-artist-id="similar-10">
+        View Artist
+      </button>
+    </div>
+  </div>
+</div><div class="similar-artist-card" data-artist-name="Nicki Minaj">
+  <div class="similar-artist-image">
+    <img src="https://koders.cloud/global/content/images/artistPortraits/nickiminaj.png" alt="Nicki Minaj" class="w-full h-full object-cover artist-avatar">
+    <div class="artist-image-overlay"></div>
+  </div>
+  
+  <div class="similar-artist-name">
+    Nicki Minaj
+  </div>
+  
+  <div class="artist-popover">
+    <div class="popover-header">
+      <div class="popover-artist-name">Nicki Minaj</div>
+    </div>
+    
+    <div class="popover-stats">
+      <div class="stat-item">
+        <span class="stat-value">0</span>
+        <span class="stat-label">Albums</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">0</span>
+        <span class="stat-label">Songs</span>
+      </div>
+    </div>
+    
+    <div class="popover-footer">
+      <button class="popover-button" data-artist-id="similar-11">
+        View Artist
+      </button>
+    </div>
+  </div>
+</div><div class="similar-artist-card" data-artist-name="Pink">
+  <div class="similar-artist-image">
+    <img src="https://koders.cloud/global/content/images/artistPortraits/pink.png" alt="Pink" class="w-full h-full object-cover artist-avatar">
+    <div class="artist-image-overlay"></div>
+  </div>
+  
+  <div class="similar-artist-name">
+    Pink
+  </div>
+  
+  <div class="artist-popover">
+    <div class="popover-header">
+      <div class="popover-artist-name">Pink</div>
+    </div>
+    
+    <div class="popover-stats">
+      <div class="stat-item">
+        <span class="stat-value">6</span>
+        <span class="stat-label">Albums</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">79</span>
+        <span class="stat-label">Songs</span>
+      </div>
+    </div>
+    
+    <div class="popover-footer">
+      <button class="popover-button" data-artist-id="5923287014">
+        View Artist
+      </button>
+    </div>
+  </div>
+</div><div class="similar-artist-card" data-artist-name="Jessie J">
+  <div class="similar-artist-image">
+    <img src="https://koders.cloud/global/content/images/artistPortraits/jessiej.png" alt="Jessie J" class="w-full h-full object-cover artist-avatar">
+    <div class="artist-image-overlay"></div>
+  </div>
+  
+  <div class="similar-artist-name">
+    Jessie J
+  </div>
+  
+  <div class="artist-popover">
+    <div class="popover-header">
+      <div class="popover-artist-name">Jessie J</div>
+    </div>
+    
+    <div class="popover-stats">
+      <div class="stat-item">
+        <span class="stat-value">0</span>
+        <span class="stat-label">Albums</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">0</span>
+        <span class="stat-label">Songs</span>
+      </div>
+    </div>
+    
+    <div class="popover-footer">
+      <button class="popover-button" data-artist-id="similar-13">
+        View Artist
+      </button>
+    </div>
+  </div>
+</div><div class="similar-artist-card" data-artist-name="Ariana Grande">
+  <div class="similar-artist-image">
+    <img src="https://koders.cloud/global/content/images/artistPortraits/arianagrande.png" alt="Ariana Grande" class="w-full h-full object-cover artist-avatar">
+    <div class="artist-image-overlay"></div>
+  </div>
+  
+  <div class="similar-artist-name">
+    Ariana Grande
+  </div>
+  
+  <div class="artist-popover">
+    <div class="popover-header">
+      <div class="popover-artist-name">Ariana Grande</div>
+    </div>
+    
+    <div class="popover-stats">
+      <div class="stat-item">
+        <span class="stat-value">7</span>
+        <span class="stat-label">Albums</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">82</span>
+        <span class="stat-label">Songs</span>
+      </div>
+    </div>
+    
+    <div class="popover-footer">
+      <button class="popover-button" data-artist-id="5923287012">
+        View Artist
+      </button>
+    </div>
+  </div>
+</div></div>
+            <button class="carousel-arrow right" aria-label="Scroll right">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+                    </div>
+                    <div class="albums-section">
+                    
+                        <div id="albums-container" class="albums-grid">
+        <div class="album-selector-tabs" id="album-tabs"><button class="album-tab " data-album-index="0">
+                Animal
+                
+            </button><button class="album-tab " data-album-index="1">
+                Warrior
+                
+            </button><button class="album-tab active" data-album-index="2">
+                Rainbow
+                
+            </button><button class="album-tab" data-album-index="3">
+                High Road
+                
+            </button></div>      
+        <div class="album-selector-container">
+            <div class="single-album-display">
+                <div class="album-content" id="album-content">
+                <div class="albumSongsArea p-0 rounded-2xl bg-white bg-opacity-5 backdrop-blur-sm border border-white border-opacity-5">
+                    <div class="albumFade" data-album-id="rainbow" style="--album-cover: url('https://koders.cloud/global/content/images/albumCovers/rainbow.png');">
+                        <div class="gap-6 items-center md:items-start">
+                            <div class="album-image relative flex-shrink-0">
+                                <button class="play-album absolute bottom-4 right-4 bg-blue-600 hover:bg-blue-700 w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition transform hover:scale-105">
+                                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="flex-1 artistBottom">
+                                <h3 class="text-2xl font-bold mb-2">Rainbow</h3>
+                                <p class="text-sm opacity-70 mb-4">Unknown year • 14 Tracks</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="songs-container" id="songs-container-rainbow">
+                <div class="song-item group flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-5 transition cursor-pointer" data-song="{&quot;id&quot;:&quot;730460&quot;,&quot;title&quot;:&quot;Bastards&quot;,&quot;downloadPath&quot;:&quot;https://mybeats.cloud/mediaFiles/songs/Bastards.mp3&quot;,&quot;duration&quot;:&quot;3:51&quot;,&quot;artist&quot;:&quot;Kesha&quot;,&quot;album&quot;:&quot;Rainbow&quot;,&quot;cover&quot;:&quot;https://koders.cloud/global/content/images/albumCovers/rainbow.png&quot;}">
+                    <div class="flex items-center flex-1 min-w-0 gap-4">
+                        <span class="text-sm opacity-50 w-4 text-center">1</span>
+                        <div class="truncate">
+                            <p class="text-sm font-medium truncate">Bastards</p>
+                            <p class="text-xs opacity-60">3:51</p>
+                        </div>
+                    </div>
+                    <div class="song-toolbar flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="favorite" title="Add to favorites">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="play-next" title="Play next">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="add-queue" title="Add to queue">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="share" title="Share">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            
+                <div class="song-item group flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-5 transition cursor-pointer" data-song="{&quot;id&quot;:&quot;730461&quot;,&quot;title&quot;:&quot;Let " em="" talk&quot;,&quot;downloadpath&quot;:&quot;https:="" mybeats.cloud="" mediafiles="" songs="" letemtalk.mp3&quot;,&quot;duration&quot;:&quot;3:05&quot;,&quot;artist&quot;:&quot;kesha&quot;,&quot;album&quot;:&quot;rainbow&quot;,&quot;cover&quot;:&quot;https:="" koders.cloud="" global="" content="" images="" albumcovers="" rainbow.png&quot;}'="">
+                    <div class="flex items-center flex-1 min-w-0 gap-4">
+                        <span class="text-sm opacity-50 w-4 text-center">2</span>
+                        <div class="truncate">
+                            <p class="text-sm font-medium truncate">Let 'Em Talk</p>
+                            <p class="text-xs opacity-60">3:05</p>
+                        </div>
+                    </div>
+                    <div class="song-toolbar flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="favorite" title="Add to favorites">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="play-next" title="Play next">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="add-queue" title="Add to queue">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="share" title="Share">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            
+                <div class="song-item group flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-5 transition cursor-pointer" data-song="{&quot;id&quot;:&quot;730462&quot;,&quot;title&quot;:&quot;Woman&quot;,&quot;downloadPath&quot;:&quot;https://mybeats.cloud/mediaFiles/songs/Woman.mp3&quot;,&quot;duration&quot;:&quot;3:16&quot;,&quot;artist&quot;:&quot;Kesha&quot;,&quot;album&quot;:&quot;Rainbow&quot;,&quot;cover&quot;:&quot;https://koders.cloud/global/content/images/albumCovers/rainbow.png&quot;}">
+                    <div class="flex items-center flex-1 min-w-0 gap-4">
+                        <span class="text-sm opacity-50 w-4 text-center">3</span>
+                        <div class="truncate">
+                            <p class="text-sm font-medium truncate">Woman</p>
+                            <p class="text-xs opacity-60">3:16</p>
+                        </div>
+                    </div>
+                    <div class="song-toolbar flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="favorite" title="Add to favorites">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="play-next" title="Play next">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="add-queue" title="Add to queue">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="share" title="Share">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            
+                <div class="song-item group flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-5 transition cursor-pointer" data-song="{&quot;id&quot;:&quot;730463&quot;,&quot;title&quot;:&quot;Hymn&quot;,&quot;downloadPath&quot;:&quot;https://mybeats.cloud/mediaFiles/songs/Hymn.mp3&quot;,&quot;duration&quot;:&quot;3:26&quot;,&quot;artist&quot;:&quot;Kesha&quot;,&quot;album&quot;:&quot;Rainbow&quot;,&quot;cover&quot;:&quot;https://koders.cloud/global/content/images/albumCovers/rainbow.png&quot;}">
+                    <div class="flex items-center flex-1 min-w-0 gap-4">
+                        <span class="text-sm opacity-50 w-4 text-center">4</span>
+                        <div class="truncate">
+                            <p class="text-sm font-medium truncate">Hymn</p>
+                            <p class="text-xs opacity-60">3:26</p>
+                        </div>
+                    </div>
+                    <div class="song-toolbar flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="favorite" title="Add to favorites">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="play-next" title="Play next">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="add-queue" title="Add to queue">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="share" title="Share">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            
+                <div class="song-item group flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-5 transition cursor-pointer" data-song="{&quot;id&quot;:&quot;730464&quot;,&quot;title&quot;:&quot;Praying&quot;,&quot;downloadPath&quot;:&quot;https://mybeats.cloud/mediaFiles/songs/Praying.mp3&quot;,&quot;duration&quot;:&quot;3:50&quot;,&quot;artist&quot;:&quot;Kesha&quot;,&quot;album&quot;:&quot;Rainbow&quot;,&quot;cover&quot;:&quot;https://koders.cloud/global/content/images/albumCovers/rainbow.png&quot;}">
+                    <div class="flex items-center flex-1 min-w-0 gap-4">
+                        <span class="text-sm opacity-50 w-4 text-center">5</span>
+                        <div class="truncate">
+                            <p class="text-sm font-medium truncate">Praying</p>
+                            <p class="text-xs opacity-60">3:50</p>
+                        </div>
+                    </div>
+                    <div class="song-toolbar flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="favorite" title="Add to favorites">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="play-next" title="Play next">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="add-queue" title="Add to queue">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="share" title="Share">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            
+                <div class="song-item group flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-5 transition cursor-pointer" data-song="{&quot;id&quot;:&quot;730465&quot;,&quot;title&quot;:&quot;Learn to Let Go&quot;,&quot;downloadPath&quot;:&quot;https://mybeats.cloud/mediaFiles/songs/LearnToLetGo.mp3&quot;,&quot;duration&quot;:&quot;3:38&quot;,&quot;artist&quot;:&quot;Kesha&quot;,&quot;album&quot;:&quot;Rainbow&quot;,&quot;cover&quot;:&quot;https://koders.cloud/global/content/images/albumCovers/rainbow.png&quot;}">
+                    <div class="flex items-center flex-1 min-w-0 gap-4">
+                        <span class="text-sm opacity-50 w-4 text-center">6</span>
+                        <div class="truncate">
+                            <p class="text-sm font-medium truncate">Learn to Let Go</p>
+                            <p class="text-xs opacity-60">3:38</p>
+                        </div>
+                    </div>
+                    <div class="song-toolbar flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="favorite" title="Add to favorites">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="play-next" title="Play next">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="add-queue" title="Add to queue">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="share" title="Share">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            
+                <div class="song-item group flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-5 transition cursor-pointer" data-song="{&quot;id&quot;:&quot;730466&quot;,&quot;title&quot;:&quot;Finding You&quot;,&quot;downloadPath&quot;:&quot;https://mybeats.cloud/mediaFiles/songs/FindingYou.mp3&quot;,&quot;duration&quot;:&quot;2:52&quot;,&quot;artist&quot;:&quot;Kesha&quot;,&quot;album&quot;:&quot;Rainbow&quot;,&quot;cover&quot;:&quot;https://koders.cloud/global/content/images/albumCovers/rainbow.png&quot;}">
+                    <div class="flex items-center flex-1 min-w-0 gap-4">
+                        <span class="text-sm opacity-50 w-4 text-center">7</span>
+                        <div class="truncate">
+                            <p class="text-sm font-medium truncate">Finding You</p>
+                            <p class="text-xs opacity-60">2:52</p>
+                        </div>
+                    </div>
+                    <div class="song-toolbar flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="favorite" title="Add to favorites">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="play-next" title="Play next">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="add-queue" title="Add to queue">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="share" title="Share">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            
+                <div class="song-item group flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-5 transition cursor-pointer" data-song="{&quot;id&quot;:&quot;730467&quot;,&quot;title&quot;:&quot;Rainbow&quot;,&quot;downloadPath&quot;:&quot;https://mybeats.cloud/mediaFiles/songs/Rainbow.mp3&quot;,&quot;duration&quot;:&quot;3:39&quot;,&quot;artist&quot;:&quot;Kesha&quot;,&quot;album&quot;:&quot;Rainbow&quot;,&quot;cover&quot;:&quot;https://koders.cloud/global/content/images/albumCovers/rainbow.png&quot;}">
+                    <div class="flex items-center flex-1 min-w-0 gap-4">
+                        <span class="text-sm opacity-50 w-4 text-center">8</span>
+                        <div class="truncate">
+                            <p class="text-sm font-medium truncate">Rainbow</p>
+                            <p class="text-xs opacity-60">3:39</p>
+                        </div>
+                    </div>
+                    <div class="song-toolbar flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="favorite" title="Add to favorites">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="play-next" title="Play next">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="add-queue" title="Add to queue">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="share" title="Share">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            
+                <div class="song-item group flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-5 transition cursor-pointer" data-song="{&quot;id&quot;:&quot;730468&quot;,&quot;title&quot;:&quot;Hunt You Down&quot;,&quot;downloadPath&quot;:&quot;https://mybeats.cloud/mediaFiles/songs/HuntYouDown.mp3&quot;,&quot;duration&quot;:&quot;3:17&quot;,&quot;artist&quot;:&quot;Kesha&quot;,&quot;album&quot;:&quot;Rainbow&quot;,&quot;cover&quot;:&quot;https://koders.cloud/global/content/images/albumCovers/rainbow.png&quot;}">
+                    <div class="flex items-center flex-1 min-w-0 gap-4">
+                        <span class="text-sm opacity-50 w-4 text-center">9</span>
+                        <div class="truncate">
+                            <p class="text-sm font-medium truncate">Hunt You Down</p>
+                            <p class="text-xs opacity-60">3:17</p>
+                        </div>
+                    </div>
+                    <div class="song-toolbar flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="favorite" title="Add to favorites">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="play-next" title="Play next">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="add-queue" title="Add to queue">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="share" title="Share">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            
+                <div class="song-item group flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-5 transition cursor-pointer" data-song="{&quot;id&quot;:&quot;730469&quot;,&quot;title&quot;:&quot;Boogie Feet&quot;,&quot;downloadPath&quot;:&quot;https://mybeats.cloud/mediaFiles/songs/BoogieFeet.mp3&quot;,&quot;duration&quot;:&quot;2:53&quot;,&quot;artist&quot;:&quot;Kesha&quot;,&quot;album&quot;:&quot;Rainbow&quot;,&quot;cover&quot;:&quot;https://koders.cloud/global/content/images/albumCovers/rainbow.png&quot;}">
+                    <div class="flex items-center flex-1 min-w-0 gap-4">
+                        <span class="text-sm opacity-50 w-4 text-center">10</span>
+                        <div class="truncate">
+                            <p class="text-sm font-medium truncate">Boogie Feet</p>
+                            <p class="text-xs opacity-60">2:53</p>
+                        </div>
+                    </div>
+                    <div class="song-toolbar flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="favorite" title="Add to favorites">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="play-next" title="Play next">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="add-queue" title="Add to queue">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="share" title="Share">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            
+                <div class="song-item group flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-5 transition cursor-pointer" data-song="{&quot;id&quot;:&quot;730470&quot;,&quot;title&quot;:&quot;Boots&quot;,&quot;downloadPath&quot;:&quot;https://mybeats.cloud/mediaFiles/songs/Boots.mp3&quot;,&quot;duration&quot;:&quot;3:03&quot;,&quot;artist&quot;:&quot;Kesha&quot;,&quot;album&quot;:&quot;Rainbow&quot;,&quot;cover&quot;:&quot;https://koders.cloud/global/content/images/albumCovers/rainbow.png&quot;}">
+                    <div class="flex items-center flex-1 min-w-0 gap-4">
+                        <span class="text-sm opacity-50 w-4 text-center">11</span>
+                        <div class="truncate">
+                            <p class="text-sm font-medium truncate">Boots</p>
+                            <p class="text-xs opacity-60">3:03</p>
+                        </div>
+                    </div>
+                    <div class="song-toolbar flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="favorite" title="Add to favorites">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="play-next" title="Play next">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="add-queue" title="Add to queue">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="share" title="Share">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            
+                <div class="song-item group flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-5 transition cursor-pointer" data-song="{&quot;id&quot;:&quot;730471&quot;,&quot;title&quot;:&quot;Old Flames (Can" t="" hold="" a="" candle="" to="" you)&quot;,&quot;downloadpath&quot;:&quot;https:="" mybeats.cloud="" mediafiles="" songs="" oldflames.mp3&quot;,&quot;duration&quot;:&quot;4:26&quot;,&quot;artist&quot;:&quot;kesha&quot;,&quot;album&quot;:&quot;rainbow&quot;,&quot;cover&quot;:&quot;https:="" koders.cloud="" global="" content="" images="" albumcovers="" rainbow.png&quot;}'="">
+                    <div class="flex items-center flex-1 min-w-0 gap-4">
+                        <span class="text-sm opacity-50 w-4 text-center">12</span>
+                        <div class="truncate">
+                            <p class="text-sm font-medium truncate">Old Flames (Can't Hold a Candle to You)</p>
+                            <p class="text-xs opacity-60">4:26</p>
+                        </div>
+                    </div>
+                    <div class="song-toolbar flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="favorite" title="Add to favorites">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="play-next" title="Play next">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="add-queue" title="Add to queue">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="share" title="Share">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            
+                <div class="song-item group flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-5 transition cursor-pointer" data-song="{&quot;id&quot;:&quot;730472&quot;,&quot;title&quot;:&quot;Godzilla&quot;,&quot;downloadPath&quot;:&quot;https://mybeats.cloud/mediaFiles/songs/Godzilla.mp3&quot;,&quot;duration&quot;:&quot;2:08&quot;,&quot;artist&quot;:&quot;Kesha&quot;,&quot;album&quot;:&quot;Rainbow&quot;,&quot;cover&quot;:&quot;https://koders.cloud/global/content/images/albumCovers/rainbow.png&quot;}">
+                    <div class="flex items-center flex-1 min-w-0 gap-4">
+                        <span class="text-sm opacity-50 w-4 text-center">13</span>
+                        <div class="truncate">
+                            <p class="text-sm font-medium truncate">Godzilla</p>
+                            <p class="text-xs opacity-60">2:08</p>
+                        </div>
+                    </div>
+                    <div class="song-toolbar flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="favorite" title="Add to favorites">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="play-next" title="Play next">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="add-queue" title="Add to queue">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="share" title="Share">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            
+                <div class="song-item group flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-5 transition cursor-pointer" data-song="{&quot;id&quot;:&quot;730473&quot;,&quot;title&quot;:&quot;Spaceship&quot;,&quot;downloadPath&quot;:&quot;https://mybeats.cloud/mediaFiles/songs/Spaceship.mp3&quot;,&quot;duration&quot;:&quot;5:14&quot;,&quot;artist&quot;:&quot;Kesha&quot;,&quot;album&quot;:&quot;Rainbow&quot;,&quot;cover&quot;:&quot;https://koders.cloud/global/content/images/albumCovers/rainbow.png&quot;}">
+                    <div class="flex items-center flex-1 min-w-0 gap-4">
+                        <span class="text-sm opacity-50 w-4 text-center">14</span>
+                        <div class="truncate">
+                            <p class="text-sm font-medium truncate">Spaceship</p>
+                            <p class="text-xs opacity-60">5:14</p>
+                        </div>
+                    </div>
+                    <div class="song-toolbar flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="favorite" title="Add to favorites">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="play-next" title="Play next">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="add-queue" title="Add to queue">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"></path></svg>
+                        </button>
+                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="share" title="Share">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="content-loading" class="absolute inset-0 bg-bg-default bg-opacity-80 backdrop-blur-sm flex items-center justify-center hidden">
+              <div class="loading-animation">
+                <div class="spinner-container">
+                  <div class="spinner"></div>
+                </div>
+                <p class="mt-4 text-fg-muted">Loading content...</p>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+
+      <button class="floating-add-button" id="floating-add-button" title="Create Playlist">
+        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"></path>
+        </svg>
+      </button>
+
+      <div id="popover-portal" class="popover-portal"></div>
+
+      <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/preline@2.0.3/dist/preline.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy.umd.min.js"></script>
+
+      <script type="module" src="https://koders.cloud/pageModules/global.js"></script>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          let nav = document.querySelector('.breadcrumb-navigation');
+          let artistTop = document.querySelector('.artistTop');
+          
+          if (nav && artistTop) {
+              let observer = new IntersectionObserver(function(entries) {
+                  entries.forEach(function(entry) {
+                      nav.classList.toggle('stuck', !entry.isIntersecting);
+                      artistTop.classList.toggle('stuck', !entry.isIntersecting);
+                  });
+              }, { 
+                  threshold: 0, 
+                  rootMargin: '-1px 0px 0px 0px'
+              });
+
+              observer.observe(artistTop);
+          }
+      });
+    </script>
+
+    <style>
+      #install-prompt-modal,
+      #open-app-banner {
+        transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+      }
+      #install-prompt-modal {
+        transform: translateY(20px) scale(0.95);
+      }
+      #open-app-banner {
+        transform: translateY(-100%);
+      }
+      body.show-install-modal #install-prompt-modal,
+      body.show-open-banner #open-app-banner {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+      body.show-open-banner #open-app-banner {
+        transform: translateY(0);
+      }
+    </style>
+    
+    <div id="open-app-banner" class="fixed top-0 left-0 right-0 bg-gray-800 p-4 text-center shadow-lg opacity-0 z-50">
+      <p class="text-white">Already have the app? <a href="/" id="open-app-link" class="font-bold text-blue-400 hover:underline">Open it here!</a></p>
+    </div>
+
+    <div id="install-prompt-modal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 opacity-0 pointer-events-none z-50">
+      <div class="bg-gray-800 rounded-2xl shadow-2xl w-full max-w-sm p-8 text-center">
+        <div class="flex justify-center mb-6">
+          <div class="bg-gray-700 p-4 rounded-full">
+            <svg class="w-12 h-12 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+            </svg>
+          </div>
+        </div>
+        <h2 class="text-2xl font-bold mb-2 text-white">Install Our App</h2>
+        <p class="text-gray-400 mb-6">Get the full experience on your device. It's fast and free!</p>
+        <div class="flex flex-col space-y-3">
+          <button id="install-button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-transform transform hover:scale-105 w-full">
+            Install App
+          </button>
+          <button id="dismiss-button" class="bg-gray-700 hover:bg-gray-600 text-gray-300 font-bold py-3 px-4 rounded-lg transition w-full">
+            Not Now
+          </button>
+        </div>
+      </div>
+    </div>
+    <script src="./dev/scripts.js"></script>
+    <script>
+      let deferredPrompt;
+      let installModal = document.getElementById("install-prompt-modal");
+      let installButton = document.getElementById("install-button");
+      let dismissButton = document.getElementById("dismiss-button");
+
+      window.addEventListener("beforeinstallprompt", function(e) {
+        e.preventDefault();
+        deferredPrompt = e;
+        console.log("`beforeinstallprompt` event was fired.");
+        showInstallPrompt();
+      });
+
+      function showInstallPrompt() {
+        if (installModal) {
+          document.body.classList.add("show-install-modal");
+          installModal.style.pointerEvents = "auto";
+        }
+      }
+
+      function hideInstallPrompt() {
+        if (installModal) {
+          document.body.classList.remove("show-install-modal");
+          installModal.style.pointerEvents = "none";
+        }
+      }
+
+      if (installButton) {
+        installButton.addEventListener("click", async function() {
+          hideInstallPrompt();
+          if (deferredPrompt) {
+            deferredPrompt.prompt();
+            let { outcome } = await deferredPrompt.userChoice;
+            console.log(`User response to the install prompt: ${outcome}`);
+            deferredPrompt = null;
+          }
+        });
+      }
+
+      if (dismissButton) {
+        dismissButton.addEventListener("click", function() {
+          hideInstallPrompt();
+        });
+      }
+
+      let openAppBanner = document.getElementById("open-app-banner");
+
+      window.addEventListener("DOMContentLoaded", function() {
+        if (window.matchMedia("(display-mode: standalone)").matches) {
+          console.log("App is running in standalone mode.");
+        } else {
+          if ("getInstalledRelatedApps" in navigator) {
+            navigator.getInstalledRelatedApps().then(function(relatedApps) {
+              if (relatedApps.length > 0) {
+                console.log("PWA is installed.");
+                document.body.classList.add("show-open-banner");
+              } else {
+                console.log("PWA is not installed.");
+              }
+            });
+          }
+        }
+      });
+
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", function() {
+          navigator.serviceWorker
+            .register("./system//serviceWorker.js")
+            .then(function(registration) {
+              console.log("Service Worker registered with scope:", registration.scope);
+            })
+            .catch(function(err) {
+              console.error("Service Worker registration failed:", err);
+            });
+        });
+      }
+    </script>
+    
+    
+<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+<script>
+  eruda.init();
+
+  // Create a custom Eruda tool for live CSS editing
+  eruda.add({
+    name: 'Live CSS',
+    init($el) {
+      $el.html(`
+        <textarea id="liveCssArea" style="width:100%;height:200px;"></textarea>
+        <button id="applyCssBtn">Apply CSS</button>
+      `);
+
+      let styleTag = document.createElement('style');
+      document.head.appendChild(styleTag);
+
+      $el.on('click', '#applyCssBtn', () => {
+        styleTag.innerHTML = document.getElementById('liveCssArea').value;
+      });
+    },
+    show() {},
+    hide() {}
+  });
+</script>
+  </html>
