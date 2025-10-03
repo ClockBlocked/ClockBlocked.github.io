@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Features Demo - Music Player</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            color: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .feature-description {
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        .primary-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .primary-btn:hover {
+            background: linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%);
+        }
+
+        select {
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        select option {
+            background: #667eea;
+            color: white;
+        }
+
+        input[type="number"] {
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-weight: 600;
+            width: 100px;
+            font-size: 0.9rem;
+        }
+
+        #visualizer-container {
+            margin-top: 1rem;
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.3);
+            min-height: 120px;
+        }
+
+        #lyrics-container {
+            margin-top: 1rem;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            display: none;
+        }
+
+        #recommendations-container {
+            margin-top: 1rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .status-display {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .info-box {
+            background: rgba(16, 185, 129, 0.2);
+            border-left: 4px solid #10b981;
+            padding: 1rem;
+            margin: 2rem 0;
+            border-radius: 8px;
+        }
+
+        .warning-box {
+            background: rgba(245, 158, 11, 0.2);
+            border-left: 4px solid #f59e0b;
+            padding: 1rem;
+            margin: 2rem 0;
+            border-radius: 8px;
+        }
+
+        .code {
+            font-family: 'Courier New', monospace;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 Advanced Music Player Features</h1>
+
+        <div class="info-box">
+            <strong>ℹ️ Note:</strong> This demo page showcases the 7 new advanced features added to the music player.
+            All features are accessible via JavaScript console or through the main application.
+        </div>
+
+        <div class="features-grid">
+            <!-- Feature 1: Audio Visualizer -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <span class="feature-icon">🎨</span>
+                    <h2 class="feature-title">Audio Visualizer</h2>
+                </div>
+                <p class="feature-description">
+                    Real-time audio frequency visualization with multiple modes.
+                </p>
+                <div class="button-group">
+                    <button class="primary-btn" onclick="toggleVisualizer()">Toggle Visualizer</button>
+                    <select onchange="setVisualizerMode(this.value)">
+                        <option value="">Select Mode</option>
+                        <option value="bars">Bars</option>
+                        <option value="wave">Wave</option>
+                        <option value="circular">Circular</option>
+                    </select>
+                </div>
+                <div id="visualizer-container"></div>
+            </div>
+
+            <!-- Feature 2: Crossfade -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <span class="feature-icon">🎵</span>
+                    <h2 class="feature-title">Crossfade</h2>
+                </div>
+                <p class="feature-description">
+                    Smooth transitions between songs with configurable fade duration.
+                </p>
+                <div class="button-group">
+                    <button class="primary-btn" onclick="toggleCrossfade()">Toggle Crossfade</button>
+                    <input type="number" id="crossfade-duration" value="3" min="1" max="10">
+                    <button onclick="setCrossfadeDuration(document.getElementById('crossfade-duration').value)">
+                        Set Duration
+                    </button>
+                </div>
+                <div class="status-display">
+                    Crossfade: <span id="crossfade-status">Disabled</span>
+                </div>
+            </div>
+
+            <!-- Feature 3: Lyrics Display -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <span class="feature-icon">📝</span>
+                    <h2 class="feature-title">Lyrics Display</h2>
+                </div>
+                <p class="feature-description">
+                    Synchronized lyrics that highlight with song playback.
+                </p>
+                <div class="button-group">
+                    <button class="primary-btn" onclick="toggleLyrics()">Toggle Lyrics</button>
+                    <button onclick="demoAddLyrics()">Add Demo Lyrics</button>
+                </div>
+                <div id="lyrics-container"></div>
+            </div>
+
+            <!-- Feature 4: Smart Recommendations -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <span class="feature-icon">🤖</span>
+                    <h2 class="feature-title">Smart Recommendations</h2>
+                </div>
+                <p class="feature-description">
+                    AI-powered song suggestions based on your listening history.
+                </p>
+                <div class="button-group">
+                    <button class="primary-btn" onclick="showRecommendations()">Get Recommendations</button>
+                    <button onclick="clearListeningHistory()">Clear History</button>
+                </div>
+                <div id="recommendations-container"></div>
+            </div>
+
+            <!-- Feature 5: Voice Commands -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <span class="feature-icon">🎤</span>
+                    <h2 class="feature-title">Voice Commands</h2>
+                </div>
+                <p class="feature-description">
+                    Control playback using voice commands like "play", "pause", "next".
+                </p>
+                <div class="button-group">
+                    <button class="primary-btn" onclick="toggleVoiceControl()">Toggle Voice Control</button>
+                </div>
+                <div class="status-display">
+                    <div>Supported commands:</div>
+                    <div style="font-size: 0.9rem; margin-top: 0.5rem; opacity: 0.8;">
+                        play, pause, next, previous, shuffle, repeat, stop
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 6: Sleep Timer -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <span class="feature-icon">⏰</span>
+                    <h2 class="feature-title">Sleep Timer</h2>
+                </div>
+                <p class="feature-description">
+                    Automatically stop playback after a specified duration.
+                </p>
+                <div class="button-group">
+                    <input type="number" id="sleep-duration" value="30" min="1" max="240" placeholder="Minutes">
+                    <button class="primary-btn" onclick="startSleepTimer(document.getElementById('sleep-duration').value)">
+                        Start Timer
+                    </button>
+                    <button onclick="stopSleepTimer()">Stop Timer</button>
+                </div>
+                <div class="status-display" id="sleep-timer-display">
+                    No timer active
+                </div>
+            </div>
+
+            <!-- Feature 7: Audio Effects -->
+            <div class="feature-card">
+                <div class="feature-header">
+                    <span class="feature-icon">🎛️</span>
+                    <h2 class="feature-title">Equalizer</h2>
+                </div>
+                <p class="feature-description">
+                    10-band equalizer with presets for different music styles.
+                </p>
+                <div class="button-group">
+                    <select onchange="setEqualizerPreset(this.value)">
+                        <option value="">Select Preset</option>
+                        <option value="flat">Flat</option>
+                        <option value="bassBoost">Bass Boost</option>
+                        <option value="trebleBoost">Treble Boost</option>
+                        <option value="vocal">Vocal</option>
+                        <option value="rock">Rock</option>
+                        <option value="pop">Pop</option>
+                        <option value="jazz">Jazz</option>
+                        <option value="classical">Classical</option>
+                        <option value="electronic">Electronic</option>
+                        <option value="acoustic">Acoustic</option>
+                    </select>
+                    <button onclick="resetEqualizer()">Reset</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="warning-box">
+            <strong>⚠️ Developer Info:</strong><br>
+            Open browser console and type <span class="code">advancedFeatures.showFeaturesInfo()</span> for detailed API documentation.
+        </div>
+
+        <div class="info-box">
+            <strong>📖 Full Documentation:</strong><br>
+            See <span class="code">FEATURES.md</span> for complete usage guide and technical details.
+        </div>
+    </div>
+
+    <script>
+        // Demo helper functions
+        function demoAddLyrics() {
+            if (typeof addSongLyrics === 'function') {
+                addSongLyrics('demo-song', [
+                    { time: 0, text: "🎵 This is the first line" },
+                    { time: 3, text: "Second line appears after 3 seconds" },
+                    { time: 6, text: "Third line at 6 seconds" },
+                    { time: 9, text: "Keep the rhythm going!" },
+                    { time: 12, text: "Music makes everything better 🎶" }
+                ]);
+                toggleLyrics();
+            } else {
+                alert('Please load the main application first');
+            }
+        }
+
+        // Update crossfade status display
+        window.addEventListener('load', () => {
+            const statusEl = document.getElementById('crossfade-status');
+            if (statusEl && typeof crossfade !== 'undefined') {
+                setInterval(() => {
+                    statusEl.textContent = crossfade.isEnabled ? 'Enabled' : 'Disabled';
+                }, 1000);
+            }
+        });
+
+        // Display feature info on load
+        console.log('%c🎉 Advanced Features Demo Loaded!', 'color: #3b82f6; font-size: 20px; font-weight: bold;');
+        console.log('%cType advancedFeatures.showFeaturesInfo() for API documentation', 'color: #10b981; font-size: 14px;');
+    </script>
+</body>
+</html>
