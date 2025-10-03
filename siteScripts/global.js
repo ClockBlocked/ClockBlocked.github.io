@@ -5,6 +5,7 @@ import { encodeURIComponent } from './utilities/parsers.js';
 import { homePage, views } from './pages/statics.js';
 import { pageLoader, pageManager } from './pages/rendering.js';
 import { ui, pageUpdates } from './pages/updates.js';
+import { features, audioVisualizer, crossfade, lyricsDisplay, smartRecommendations, voiceCommands, sleepTimer, audioEffects } from './features.js';
 
 const ACTION_GRID_ITEMS = [
   { id: 'play-next', icon: 'M9 5l7 7-7 7M15 5v14', label: 'Play Next' },
@@ -1875,6 +1876,25 @@ const musicPlayer = {
             
             musicPlayer.ui.bindSeekBar();
             notificationPlayer.setup();
+            
+            // Initialize advanced features
+            features.initializeAll(appState.audio, music);
+            
+            // Setup voice commands integration
+            voiceCommands.setupDefaultCommands({
+                play: () => appState.audio && appState.audio.play(),
+                pause: () => appState.audio && appState.audio.pause(),
+                next: () => musicPlayer.playback.next(),
+                previous: () => musicPlayer.playback.previous(),
+                toggleShuffle: () => musicPlayer.playback.shuffle.toggle(),
+                toggleRepeat: () => musicPlayer.playback.repeat.toggle(),
+                stop: () => {
+                    if (appState.audio) {
+                        appState.audio.pause();
+                        appState.audio.currentTime = 0;
+                    }
+                }
+            });
         },
 
         playSong: async (songData) => {
@@ -1890,6 +1910,12 @@ const musicPlayer = {
             appState.currentArtist = songData.artist;
             appState.currentAlbum = songData.album;
             
+            // Track play for smart recommendations
+            smartRecommendations.trackPlay(songData);
+            
+            // Load lyrics for the song
+            lyricsDisplay.loadLyrics(songData.id);
+            
             ui.updateNowPlaying();
             ui.updateNavbar();
             ui.updateMusicPlayer();
@@ -1899,6 +1925,10 @@ const musicPlayer = {
             if (success) {
                 notificationPlayer.metadata.update(songData);
                 notificationPlayer.events.bind();
+                
+                // Start lyrics sync
+                lyricsDisplay.startSync(appState.audio);
+                
                 setTimeout(() => { 
                     eventHandlers.bindControlEvents?.(); 
                     musicPlayer.ui.bindSeekBar(); 
@@ -2733,6 +2763,202 @@ const playlists = {
     },
 };
 
+// ========================================
+// Advanced Features UI Manager
+// ========================================
+const advancedFeatures = {
+    // Initialize all UI controls for advanced features
+    initialize: () => {
+        advancedFeatures.setupVisualizer();
+        advancedFeatures.setupCrossfade();
+        advancedFeatures.setupVoiceCommands();
+        advancedFeatures.setupSleepTimer();
+        advancedFeatures.setupEqualizer();
+        advancedFeatures.setupLyrics();
+        advancedFeatures.setupRecommendations();
+    },
+
+    setupVisualizer: () => {
+        // Visualizer will be created in DOM container when enabled
+        window.toggleVisualizer = (mode = null) => {
+            if (!audioVisualizer.isEnabled) {
+                audioVisualizer.start(IDS.visualizerContainer);
+                if (mode) audioVisualizer.setMode(mode);
+                notifications.show('Audio Visualizer enabled', NOTIFICATION_TYPES.SUCCESS);
+            } else {
+                audioVisualizer.stop();
+                notifications.show('Audio Visualizer disabled', NOTIFICATION_TYPES.INFO);
+            }
+        };
+
+        window.setVisualizerMode = (mode) => {
+            audioVisualizer.setMode(mode);
+            notifications.show(`Visualizer mode: ${mode}`, NOTIFICATION_TYPES.INFO);
+        };
+    },
+
+    setupCrossfade: () => {
+        window.toggleCrossfade = () => {
+            if (!crossfade.isEnabled) {
+                crossfade.enable();
+                notifications.show('Crossfade enabled (3s)', NOTIFICATION_TYPES.SUCCESS);
+            } else {
+                crossfade.disable();
+                notifications.show('Crossfade disabled', NOTIFICATION_TYPES.INFO);
+            }
+        };
+
+        window.setCrossfadeDuration = (seconds) => {
+            crossfade.setDuration(seconds);
+            notifications.show(`Crossfade duration: ${seconds}s`, NOTIFICATION_TYPES.INFO);
+        };
+    },
+
+    setupVoiceCommands: () => {
+        if (!voiceCommands.isSupported) {
+            console.warn('Voice commands not supported in this browser');
+            return;
+        }
+
+        window.toggleVoiceControl = () => {
+            if (!voiceCommands.isListening) {
+                voiceCommands.startListening();
+                notifications.show('🎤 Listening for voice commands...', NOTIFICATION_TYPES.INFO);
+            } else {
+                voiceCommands.stopListening();
+                notifications.show('Voice control stopped', NOTIFICATION_TYPES.INFO);
+            }
+        };
+    },
+
+    setupSleepTimer: () => {
+        window.startSleepTimer = (minutes) => {
+            sleepTimer.start(
+                minutes,
+                () => {
+                    // Stop playback when timer ends
+                    if (appState.audio) {
+                        appState.audio.pause();
+                        appState.audio.currentTime = 0;
+                    }
+                    notifications.show('Sleep timer ended - Music stopped', NOTIFICATION_TYPES.INFO);
+                },
+                (timeStr) => {
+                    // Update display
+                    const display = $byId(IDS.sleepTimerDisplay);
+                    if (display) {
+                        display.textContent = timeStr;
+                    }
+                }
+            );
+            notifications.show(`Sleep timer set for ${minutes} minutes`, NOTIFICATION_TYPES.SUCCESS);
+        };
+
+        window.stopSleepTimer = () => {
+            sleepTimer.stop();
+            const display = $byId(IDS.sleepTimerDisplay);
+            if (display) {
+                display.textContent = '';
+            }
+            notifications.show('Sleep timer cancelled', NOTIFICATION_TYPES.INFO);
+        };
+
+        window.addSleepTime = (minutes) => {
+            sleepTimer.addTime(minutes);
+            notifications.show(`Added ${minutes} minutes to sleep timer`, NOTIFICATION_TYPES.SUCCESS);
+        };
+    },
+
+    setupEqualizer: () => {
+        window.setEqualizerPreset = (presetName) => {
+            audioEffects.applyPreset(presetName);
+            notifications.show(`Equalizer: ${presetName}`, NOTIFICATION_TYPES.SUCCESS);
+        };
+
+        window.getEqualizerPresets = () => {
+            return audioEffects.getPresets();
+        };
+
+        window.resetEqualizer = () => {
+            audioEffects.reset();
+            notifications.show('Equalizer reset to flat', NOTIFICATION_TYPES.INFO);
+        };
+    },
+
+    setupLyrics: () => {
+        lyricsDisplay.initialize(IDS.lyricsContainer);
+        
+        window.toggleLyrics = () => {
+            const container = $byId(IDS.lyricsContainer);
+            if (container) {
+                container.style.display = container.style.display === 'none' ? 'block' : 'none';
+                notifications.show(
+                    container.style.display === 'none' ? 'Lyrics hidden' : 'Lyrics shown',
+                    NOTIFICATION_TYPES.INFO
+                );
+            }
+        };
+
+        window.addSongLyrics = (songId, lines) => {
+            lyricsDisplay.addLyrics(songId, lines);
+            notifications.show('Lyrics added successfully', NOTIFICATION_TYPES.SUCCESS);
+        };
+    },
+
+    setupRecommendations: () => {
+        window.getRecommendations = (count = 10) => {
+            const recommendations = smartRecommendations.getRecommendations(music, count);
+            console.log('Smart Recommendations:', recommendations);
+            return recommendations;
+        };
+
+        window.showRecommendations = () => {
+            const recommendations = smartRecommendations.getRecommendations(music, 10);
+            const container = $byId(IDS.recommendationsContainer);
+            
+            if (container) {
+                container.innerHTML = `
+                    <h3 style="margin-bottom: 1rem; font-weight: bold;">Recommended for You</h3>
+                    <div style="display: grid; gap: 0.5rem;">
+                        ${recommendations.map(song => `
+                            <div class="recommendation-item" style="padding: 0.75rem; background: rgba(0,0,0,0.2); border-radius: 8px; cursor: pointer;"
+                                 onclick="musicPlayer.ui.playSong(${JSON.stringify(song).replace(/"/g, '&quot;')})">
+                                <div style="font-weight: 600;">${song.title}</div>
+                                <div style="font-size: 0.875rem; opacity: 0.7;">${song.artist}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                notifications.show(`${recommendations.length} recommendations loaded`, NOTIFICATION_TYPES.SUCCESS);
+            }
+        };
+
+        window.clearListeningHistory = () => {
+            smartRecommendations.clearHistory();
+            notifications.show('Listening history cleared', NOTIFICATION_TYPES.INFO);
+        };
+    },
+
+    // Quick access helper
+    showFeaturesInfo: () => {
+        const info = `
+🎵 Advanced Features Available:
+
+1. Audio Visualizer - toggleVisualizer(), setVisualizerMode('bars'|'wave'|'circular')
+2. Crossfade - toggleCrossfade(), setCrossfadeDuration(seconds)
+3. Lyrics Display - toggleLyrics(), addSongLyrics(songId, lines)
+4. Smart Recommendations - getRecommendations(count), showRecommendations()
+5. Voice Commands - toggleVoiceControl() (say: play, pause, next, previous, etc.)
+6. Sleep Timer - startSleepTimer(minutes), stopSleepTimer(), addSleepTime(minutes)
+7. Audio Effects - setEqualizerPreset(name), getEqualizerPresets(), resetEqualizer()
+
+Available EQ Presets: ${audioEffects.getPresets().join(', ')}
+        `;
+        console.log(info);
+        return info;
+    }
+};
+
 const bindClick = (el, handler) => {
   if (!el || typeof handler !== "function") return;
   const fn = (e) => { e.stopPropagation(); handler(); };
@@ -2752,6 +2978,9 @@ const eventHandlers = {
     eventHandlers.bindProgress();
     eventHandlers.bindKeyboard();
     eventHandlers.bindDocument();
+    
+    // Initialize advanced features UI
+    advancedFeatures.initialize();
   },
 
   bindControls: () => {
@@ -2984,6 +3213,20 @@ document.addEventListener('DOMContentLoaded', () => {
           notificationPlayer.setup();
       }
   }, 100);
+  
+  // Make advanced features globally accessible
+  window.advancedFeatures = advancedFeatures;
+  window.audioVisualizer = audioVisualizer;
+  window.crossfade = crossfade;
+  window.lyricsDisplay = lyricsDisplay;
+  window.smartRecommendations = smartRecommendations;
+  window.voiceCommands = voiceCommands;
+  window.sleepTimer = sleepTimer;
+  window.audioEffects = audioEffects;
+  
+  // Log available features
+  console.log('%c🎉 Advanced Music Features Loaded! 🎵', 'color: #3b82f6; font-size: 16px; font-weight: bold;');
+  console.log('%cType advancedFeatures.showFeaturesInfo() for usage guide', 'color: #10b981; font-size: 12px;');
 });
 
 export {
@@ -3000,7 +3243,17 @@ export {
     app,
     loadingBar,
     loadArtistInfo,
-    ACTION_GRID_ITEMS
+    ACTION_GRID_ITEMS,
+    // New advanced features
+    features,
+    audioVisualizer,
+    crossfade,
+    lyricsDisplay,
+    smartRecommendations,
+    voiceCommands,
+    sleepTimer,
+    audioEffects,
+    advancedFeatures
 };
 /**
  * 
