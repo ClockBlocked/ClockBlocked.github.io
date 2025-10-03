@@ -1,0 +1,155 @@
+
+
+.breadcrumb-wrapper {
+  background: var(--background-550);
+  border: 0;
+  box-shadow: none;
+  color: inherit;
+  margin: 0 1rem 1rem;
+  padding: 0.25rem 0 0 1.25rem;
+  
+  position: sticky; 
+  top: 0; 
+  left: 0; 
+  z-index: 999;
+  transition: all 0.3s ease;
+}
+
+.breadcrumb-wrapper.scrolled {
+  border-bottom: 1px solid var(--border-400, #ddd);
+/**  box-shadow: 0 2px 4px rgba(0,0,0,0.1);**/
+  background: color-mix(in srgb, var(--background-550) 75%, transparent);
+  backdrop-filter: blur(10px) saturate(180%);
+  -webkit-backdrop-filter: blur(10px) saturate(180%);
+}
+
+/* Row: horizontal, scrollable, edge-fade */
+.breadcrumb-list {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  position: relative;
+  padding: 0.25rem 0;
+  mask-image: linear-gradient(90deg, transparent 0, black 24px, black calc(100% - 24px), transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, black 24px, black calc(100% - 24px), transparent 100%);
+}
+.breadcrumb-list::-webkit-scrollbar { display: none; }
+
+/* Items and chevrons */
+.breadcrumb-item {
+  display: inline-flex;
+  align-items: center;
+  color: inherit;
+  opacity: 0.9;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+  content: "›";
+  display: inline-block;
+  opacity: 0.55;
+  margin: 0 0.25rem;
+  transform: translateY(1px);
+}
+
+/* Links: pill hover, truncated label */
+.breadcrumb-link {
+  font-size: 1.5rem;
+  
+  display: inline-flex;
+  align-items: center;
+  max-width: 22ch;
+  padding: 2.25rem 0.85rem;
+  line-height: 1;
+  text-decoration: none;
+  color: var(--text-200);
+  transition: color 0.45s ease, opacity 0.45s ease;
+}
+.breadcrumb-link:hover {
+  color: var(--text-100);
+  }
+.breadcrumb-link.active {
+  color: var(--text-on-accent);
+  transition: color 0.45s ease;
+}
+.breadcrumb-link,
+.breadcrumb-link * {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Current page */
+.breadcrumb-item[aria-current="page"] .breadcrumb-link,
+.breadcrumb-link[aria-current="page"] {
+  font-weight: 700;
+  opacity: 1;
+  background: none;
+  pointer-events: none;
+}
+
+/* Optional icon inside link */
+.breadcrumb-link .SVGimg {
+  width: 1rem;
+  height: 1rem;
+  margin-right: .375rem;
+  flex: 0 0 auto;
+  opacity: .8;
+}
+
+/* Accessibility focus */
+.breadcrumb-link:focus-visible {
+  outline: 2px solid color-mix(in oklab, currentColor 65%, white 0%);
+  outline-offset: 2px;
+}
+
+/* Subtle de-emphasis for non-current links */
+.breadcrumb-item:not([aria-current="page"]) .breadcrumb-link { opacity: .85; }
+.breadcrumb-item:not([aria-current="page"]) .breadcrumb-link:hover { opacity: 1; }
+
+/* Compact on small screens */
+@media (max-width: 640px) {
+  .breadcrumb-list { gap: 0.125rem; }
+  .breadcrumb-link { max-width: 16ch; padding: 0.25rem 0.45rem; }
+}
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  .breadcrumb-link { transition: none; }
+}
+
+
+
+/* Ensure injected SVG icons size/margin apply whether or not .icon class exists */
+.breadcrumb-link .SVGimg,
+.breadcrumb-link > svg {
+  width: 1.75rem;
+  height: 1.75rem;
+  margin-right: .375rem;
+  flex: 0 0 auto;
+  opacity: .85;
+  color: currentColor;
+  fill: currentColor;
+}
+
+/* Since JS no longer inserts chevron <li>s, keep the pseudo separator */
+.breadcrumb-item + .breadcrumb-item::before {
+  content: "›";
+  opacity: .55;
+  margin: 0 .45rem;
+  transform: translateY(1px);
+}
+
+.breadcrumb-link {
+  padding: .25rem .5rem;
+  font-size: 1.5rem;
+  color: var(--text-200);
+}
+
+.breadcrumb-link[aria-current="page"] {
+  font-weight: 700;
+  color: var(--text-100);
+}
