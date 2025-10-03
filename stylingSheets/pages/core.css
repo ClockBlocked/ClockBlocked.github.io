@@ -1,0 +1,69 @@
+/* YouTube-style Loading Bar */
+.loading-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10000;
+  height: 3px;
+  background: linear-gradient(90deg, #ff0000, #ff4500, #ff0000);
+  transform-origin: left;
+  transform: scaleX(0);
+  opacity: 0;
+  transition: transform 0.2s ease, opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.loading-bar.active {
+  opacity: 1;
+}
+
+.loading-bar.complete {
+  transition: transform 0.3s ease, opacity 0.4s ease;
+}
+
+/* GitHub-style Center Spinner */
+.center-loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.center-loading-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.center-loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-left: 4px solid #ffffff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Content blur container */
+.content-blur-container {
+  transition: filter 0.5s ease;
+  filter: blur(0px);
+}
+
+.content-blur-container.blur-active {
+  filter: blur(20px);
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

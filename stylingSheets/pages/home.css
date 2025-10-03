@@ -1,0 +1,170 @@
+.home-page-header {
+  text-align: center;
+  padding: 2rem 1rem 3rem;
+}
+@media (min-width: 768px) {
+  .home-page-header { padding: 3rem 1rem 4rem; }
+}
+.h-title {
+  font-weight: 800;
+  font-size: clamp(2rem, 2.5vw + 1rem, 3rem);
+  margin: 0 0 1rem;
+  background: linear-gradient(90deg, #fff, #93c5fd 40%, #c4b5fd 80%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.h-subtitle {
+  max-width: 44rem;
+  margin: 0 auto;
+  font-size: clamp(1rem, 0.3vw + 1rem, 1.25rem);
+  color: rgba(255,255,255,0.75);
+}
+
+/* Bento grid */
+.bento-grid {
+  display: grid;
+  gap: 1.5rem;
+  padding: 0 1rem 2rem;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 768px) {
+  .bento-grid { grid-template-columns: repeat(2, minmax(0,1fr)); padding: 0 1.5rem 2.5rem; }
+}
+@media (min-width: 1024px) {
+  .bento-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
+}
+.bento-span-2 {
+  grid-column: span 1;
+}
+@media (min-width: 768px) {
+  .bento-span-2 { grid-column: span 2; }
+}
+
+/* Bento cards */
+.bento-card {
+  background: var(--background-400);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow:
+    0 4px 6px -1px rgba(0,0,0,0.18),
+    0 2px 4px -1px rgba(0,0,0,0.12);
+  transition: transform .22s ease, box-shadow .22s ease;
+}
+.bento-card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 12px 18px -6px rgba(0,0,0,0.22),
+    0 6px 10px -4px rgba(0,0,0,0.12);
+}
+
+/* Card header */
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 0 1rem;
+  padding: 0 0 .5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+.card-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+.card-link {
+  font-size: .875rem;
+  color: #60a5fa;
+  text-decoration: none;
+}
+.card-link:hover { color: #93c5fd; }
+.card-content { min-height: 200px; }
+
+/* Skeleton */
+.skeleton-loader {
+  height: 200px;
+  border-radius: .5rem;
+  background: linear-gradient(90deg, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0.06) 75%);
+  background-size: 200% 100%;
+  animation: loading 1.4s infinite;
+}
+@keyframes loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Lists & rows */
+.list-vert {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
+/* Album grid */
+.album-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+}
+.album-grid > .album-card {
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  transition: transform .18s ease;
+  
+  border-radius: 15px !important;
+}
+.album-cover-wrap { position: relative; }
+.album-cover {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: .5rem;
+  object-fit: cover;
+  margin: 0 0 .5rem;
+}
+.album-overlay {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,0.55);
+  border-radius: .5rem;
+  opacity: 0;
+  transition: opacity .2s ease;
+}
+.album-card:hover .album-overlay { opacity: 1; }
+.album-play-btn {
+  width: 3rem; height: 3rem;
+  display: flex; align-items: center; justify-content: center;
+  border: none; border-radius: 999px;
+  color: #fff; background: rgba(59,130,246,.95);
+  transition: transform .18s ease, background .18s ease;
+}
+.album-play-btn:hover { transform: scale(1.08); background: rgb(59,130,246); }
+.album-info { font-size: .875rem; }
+.album-title {
+  font-weight: 600; margin-bottom: .125rem;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.album-artist {
+  background: none; border: 0; padding: 0; cursor: pointer;
+  font: inherit; color: rgba(255,255,255,.75);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.album-artist:hover { color: rgba(255,255,255,.95); text-decoration: underline; }
+
+/* Artist grid */
+.artist-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px,1fr));
+  gap: 1rem;
+}
+.artist-card { text-align: center; cursor: pointer; transition: transform .18s ease; }
+.artist-card:hover { transform: translateY(-2px); }
+.artist-image { position: relative; display: inline-block; }
+.artist-avatar {
+  width: 72px; height: 72px; border-radius: 999px; object-fit: cover;
+}
+.artist-name {
+  margin-top: .5rem; font-size: .9rem; font-weight: 600;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
