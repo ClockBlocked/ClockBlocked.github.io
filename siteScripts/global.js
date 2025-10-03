@@ -2472,7 +2472,7 @@ const playlists = {
                     <div class="playlist-info flex-1">
                       <p class="text-sm text-gray-400 mb-2">PLAYLIST</p>
                       <h1 class="text-4xl font-bold mb-4">${playlist.name}</h1>
-                      <p class="text-gray-400 mb-6">${playlist.songs.length} song${playlist.songs.length !== 1 ? "s" : ""} • Created ${new Date(playlist.created).toLocaleDateString()}</p>
+                      <p class="text-gray-400 mb-6">${playlist.songs.length} song${playlist.songs.length !== 1 ? "s" : ""} â€¢ Created ${new Date(playlist.created).toLocaleDateString()}</p>
                       <div class="flex gap-4">
                         <button class="play-playlist-btn bg-accent-primary text-white px-8 py-3 rounded-full hover:bg-accent-secondary transition-colors flex items-center gap-2" data-playlist-id="${playlist.id}" ${
             playlist.songs.length === 0 ? "disabled" : ""
@@ -2732,7 +2732,27 @@ const playlists = {
         });
     },
 };
-
+const loadArtistInfo = (artistName, albumName = null) => {
+  if (!window.music) return;
+  
+  const artistData = window.music.find(a => a.artist === artistName);
+  if (!artistData) return;
+  
+  // If albumName is provided, find and activate that album tab
+  if (albumName && artistData.albums) {
+    const albumIndex = artistData.albums.findIndex(album => album.album === albumName);
+    if (albumIndex !== -1) {
+      // Wait for the artist page to render, then activate the album tab
+      setTimeout(() => {
+        const albumTabs = document.querySelectorAll('.album-tab');
+        if (albumTabs.length > albumIndex) {
+          albumTabs[albumIndex].click();
+        }
+      }, 1000);
+    }
+  }
+console.log('Used loadArtistInfo Object from global script.');
+};
 const bindClick = (el, handler) => {
   if (!el || typeof handler !== "function") return;
   const fn = (e) => { e.stopPropagation(); handler(); };
