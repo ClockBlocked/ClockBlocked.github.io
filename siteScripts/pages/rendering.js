@@ -6,6 +6,7 @@ import {
   musicPlayer,
   loadingBar,
   utils,
+  loadArtistInfo,
   ACTION_GRID_ITEMS
 } from '../global.js';
 
