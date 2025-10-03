@@ -75,7 +75,15 @@ export const IDS = Object.freeze({
   queueList: "queueList",
   recentList: "recentList", 
  
- 
+  // New Feature IDs
+  visualizerContainer: "visualizer-container",
+  lyricsContainer: "lyrics-container",
+  sleepTimerBtn: "sleep-timer-btn",
+  sleepTimerDisplay: "sleep-timer-display",
+  voiceCommandBtn: "voice-command-btn",
+  equalizerBtn: "equalizer-btn",
+  crossfadeToggle: "crossfade-toggle",
+  recommendationsContainer: "recommendations-container",
  
  
 /** 
