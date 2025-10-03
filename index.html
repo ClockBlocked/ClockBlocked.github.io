@@ -1,132 +1,743 @@
-<html lang="en" class="dark"><head>
+<!DOCTYPE html>
+<html
+  lang="en"
+  data-theme="dim">
+
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title id="dynamicTitle">
+MyBeats:  Stream & share your favorite music for free.
+</title>
+
+<meta name="description" content="Stream & share your favourite music for free." />
+<meta name="keywords" content="music, player, web, audio, streaming, playlist, songs, albums, artists, videos, sharing, media, radio, pop, hiphop, country, dance, party, dubstep, alternative, rock, free, forever" />
+<meta name="author" content="ClockBlocked" />
+<meta name="theme-color" id="theme-color" content="#4A535D" />
+
+<meta property="og:title" content="MyBeats™ - Stream & Share Music" />
+<meta property="og:description" content="A sleek and modern web-based music player." />
+<meta property="og:image" content="thumbnail.jpg" />
+<meta property="og:url" content="https://koders.cloud" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="MyBeats™ - Stream & Share Music" />
+<meta name="twitter:description" content="A sleek and modern web-based music player." />
+<meta name="twitter:image" content="thumbnail.jpg" />
+
+<link rel="manifest" href="./system/manifest.json" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+
+<link rel="icon" href="favicon.ico" type="image/x-icon" />
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+
+<link rel="stylesheet" href="./overlays.css" />
+<link rel="stylesheet" href="./extra.css" />
+
+<link rel="stylesheet" href="./dynamicOverlays.css" />
+
+<link rel="stylesheet" href="./stylingSheets/main.css" />
+<link rel="stylesheet" href="./stylingSheets/pages/core.css" />
+<link rel="stylesheet" href="./stylingSheets/components/breadCrumbs.css" />
+<link rel="stylesheet" href="./stylingSheets/components/navbarPlayer.css" />
+<link rel="stylesheet" href="./stylingSheets/components/lists.css" />
+<link rel="stylesheet" href="./stylingSheets/pages/home.css" />
+<link rel="stylesheet" href="./stylingSheets/pages/artist.css" />
+<link rel="stylesheet" href="./stylingSheets/global/animatedly.css" />
+<link rel="stylesheet" href="./stylingSheets/global/fonts.css" />
+<link rel="stylesheet" href="./stylingSheets/global/svg.css" />
 
 
+
+<!-- L I B R A R I E S ------------->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/preline@2.0.3/dist/preline.min.css" />
   
-<!-- Google tag (gtag.js) -->
-<script type="text/javascript" id="www-widgetapi-script" src="https://www.youtube.com/s/player/761c1f12/www-widgetapi.vflset/www-widgetapi.js" async=""></script><script src="https://www.youtube.com/iframe_api"></script><script async="" src="https://www.googletagmanager.com/gtag/js?id=G-P0KCT8TSPW">
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" />
+
+
+
+<!-- A N A L Y T I C S ------------->
+<script
+  async src="https://www.googletagmanager.com/gtag/js?id=G-P0KCT8TSPW">
 </script>
+
 <script>
   window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-P0KCT8TSPW');
-</script>    
-<!------------------------------------------------------------>    
-    
-    
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Music Player</title>
-    <link rel="manifest" href="./system/manifest.json">
-    <meta name="theme-color" content="#323a44">
-    <meta name="description" content="A sleek and modern web-based music player.">
-    <meta name="keywords" content="music, player, web, audio, streaming, playlist, songs, albums, artists">
-    <meta name="author" content="ClockBlocked">
-    <meta property="og:title" content="Music Player">
-    <meta property="og:description" content="A sleek and modern web-based music player.">
-    <meta property="og:image" content="thumbnail.jpg">
-    <meta property="og:url" content="https://koders.cloud">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Music Player">
-    <meta name="twitter:description" content="A sleek and modern web-based music player.">
-    <meta name="twitter:image" content="thumbnail.jpg">
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="https://koders.cloud/myStyles.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/preline@2.0.3/dist/preline.min.css" rel="stylesheet">
-    <link href="https://dev.wuaze.com/styleSheets/fonts.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  function gtag() {
+    dataLayer.push(arguments);
+  }
+  gtag("js", new Date());
+  gtag("config", "G-P0KCT8TSPW");
+</script>
 
 
 
 
-  <body>
-    <!-- Hidden YouTube player -->
-<div id="youtube-audio-wrapper" style="position: absolute; left: -9999px;">
-  <div id="youtube-player"></div>
+
+<style>
+
+
+@media (max-width: 768px) {
+  .playerControls {
+    gap: 0.75rem;
+  }
+
+  .playerControls > .button {
+    width: 3.25rem;
+    height: 3.25rem;
+  }
+
+  .playerControls > .button .play-pause {
+    width: 5rem;
+    height: 5rem;
+  }
+}
+
+
+.playerControls .btn svg {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0; /* Ensures no extra spacing interferes with the alignment */
+}
+
+/* =============================================
+   Button System — sizes for playback, actions, close, navbar
+   Notes:
+   • Only these custom properties are used: --btn-bg, --btn-bdr, --btn-icon, --btn-shadow
+   • Everything else is hard-coded so this can drop into any codebase.
+   • Set the four props on any .btn (inline, via theme, or via utility classes below).
+   ============================================= */
+
+/* ---------- Base button ---------- */
+.btn {
+  -webkit-tap-highlight-color: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--btn-bdr, transparent);
+  background: var(--btn-bg, transparent);
+  border-radius: 12px;
+  line-height: 1;
+  text-decoration: none;
+  user-select: none;
+  cursor: pointer;
+  position: relative;
+  outline: none;
+  box-shadow: var(--btn-shadow, none);
+  transition: transform 180ms cubic-bezier(0.2, 0.6, 0.2, 1),
+              box-shadow 180ms cubic-bezier(0.2, 0.6, 0.2, 1),
+              background-color 180ms cubic-bezier(0.2, 0.6, 0.2, 1),
+              border-color 180ms cubic-bezier(0.2, 0.6, 0.2, 1);
+}
+
+/* Icon sizing inside buttons */
+.btn svg, .btn .icon { width: 20px; height: 20px; }
+.btn svg { fill: var(--btn-icon, currentColor); }
+.btn .icon-stroke { stroke: var(--btn-icon, currentColor); fill: none; }
+
+/* Hover/active feedback using the allowed props */
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+
+/* Focus ring that does not rely on theme vars */
+.btn:focus-visible {
+  box-shadow: 0 0 0 3px rgba(56, 139, 253, 0.35), var(--btn-shadow, none);
+}
+
+/* Disabled */
+.btn[disabled], .btn.is-disabled {
+  opacity: 0.6; cursor: not-allowed; pointer-events: none;
+}
+
+/* ---------- Size variants ---------- */
+/* Playback: round, prominent, icon-only by default */
+.btn--playback { width: 48px; height: 48px; padding: 0; border-radius: 9999px; }
+.btn--playback svg { width: 22px; height: 22px; }
+
+/* Action: Confirm/Cancel — slightly longer pill */
+.btn--action { height: 44px; min-width: 132px; padding: 0 18px; border-radius: 14px; font-weight: 600; }
+.btn--action .label { white-space: nowrap; }
+
+/* Close: compact circular */
+.btn--close { width: 32px; height: 32px; padding: 0; border-radius: 9999px; }
+.btn--close svg { width: 14px; height: 14px; }
+
+/* Navbar: small square or pill */
+.btn--nav { height: 34px; min-width: 34px; padding: 0 10px; border-radius: 10px; }
+.btn--nav svg { width: 18px; height: 18px; }
+
+/* Ghost & subtle styles that still honor border/bg/icon props */
+.btn--ghost { background: transparent; }
+.btn--subtle { background: var(--btn-bg, transparent); border-color: var(--btn-bdr, transparent); }
+
+/* ---------- Interaction polish without extra vars ---------- */
+.btn::after {
+  content: "";
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  opacity: 0; transition: opacity 180ms ease;
+  background: radial-gradient(120% 120% at 50% 0%, rgba(255,255,255,0.06), rgba(0,0,0,0) 60%);
+}
+.btn:hover::after { opacity: 1; }
+
+/* Pressed state darken using multiply overlay independent of theme vars */
+.btn:active::after { background: rgba(0,0,0,0.06); opacity: 1; }
+
+/* ---------- Recommended per-theme hookups (utility helpers) ---------- */
+/* Map component props to your site variables WITHOUT introducing new ones. */
+/* Dark/Dim/Light can set these on a wrapper like .btn, a container, or per-button inline. */
+
+/* Generic/default mapping */
+.btn.use-site-colors {
+  --btn-bg: var(--button-background);
+  --btn-bdr: var(--border-400);
+  --btn-icon: var(--text-200);
+  --btn-shadow: var(--shadow-sm);
+}
+.btn.use-site-colors:hover { --btn-bg: var(--button-hover); }
+.btn.use-site-colors:active { --btn-bg: var(--button-active); }
+
+/* Confirm/Success */
+.btn.is-confirm { --btn-bg: var(--accent-success); --btn-bdr: var(--accent-success); --btn-icon: var(--text-on-accent); --btn-shadow: var(--shadow-md); }
+.btn.is-confirm:hover { --btn-bg: var(--accent-success-hover); }
+
+/* Cancel/Danger */
+.btn.is-cancel { --btn-bg: var(--accent-danger); --btn-bdr: var(--accent-danger); --btn-icon: var(--text-on-accent); --btn-shadow: var(--shadow-md); }
+.btn.is-cancel:hover { --btn-bg: var(--accent-danger-hover); }
+
+/* Primary */
+.btn.is-primary { --btn-bg: var(--accent-primary); --btn-bdr: var(--accent-primary); --btn-icon: var(--text-on-accent); --btn-shadow: var(--shadow-md); }
+.btn.is-primary:hover { --btn-bg: var(--accent-primary-hover); }
+.btn.is-primary:active { --btn-bg: var(--accent-primary-active); }
+
+/* Secondary/info */
+.btn.is-secondary { --btn-bg: var(--accent-info); --btn-bdr: var(--accent-info); --btn-icon: var(--text-on-accent); --btn-shadow: var(--shadow-sm); }
+
+/* Minimal icon-only playback variants that still adopt the allowed props */
+.btn--icon-only { padding: 0; width: 40px; height: 40px; border-radius: 12px; }
+.btn--icon-only svg { width: 20px; height: 20px; }
+
+/* ---------- Layout helpers for icon + label spacing (no variables used) ---------- */
+.btn .label { font-size: 14px; letter-spacing: 0.2px; }
+.btn .kbd { font-size: 11px; padding: 2px 6px; border-radius: 6px; border: 1px solid currentColor; opacity: 0.65; }
+
+/* ---------- Example: elevate on hover when a shadow is provided ---------- */
+.btn.elevate:hover { box-shadow: var(--btn-shadow, none), 0 2px 10px rgba(0,0,0,0.12); }
+
+/* ---------- Example group spacing (toolbars) ---------- */
+.btn-group { display: inline-flex; gap: 8px; }
+
+/* ---------- Example toolbar for playback controls ---------- */
+.playback-bar { display: inline-flex; gap: 10px; align-items: center; }
+.playback-bar .btn--playback.primary { width: 56px; height: 56px; }
+.playback-bar .btn--playback.primary svg { width: 26px; height: 26px; }
+
+
+
+
+
+.icon {
+  padding: 0 !important;
+  box-shadow: none !important;
+  border: none !important;
+    display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent !important;
+}
+
+
+
+
+/*///////////////////////////////////////////////////////
+//////////////////////////////////  M O D A L S  //////*/
+.modal {
+  position: fixed;
+  bottom: 15% !important; left: auto; right: auto;
+  margin: auto;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Ensure proper scrolling hierarchy */
+html, body {
+  height: 100%;
+  overflow: hidden; /* Critical - prevents body scrolling */
+  margin: 0;
+  padding: 0;
+}
+
+#pageWrapper {
+  height: 100vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
+/* Remove any other overflow declarations that might conflict */
+#mainArea,
+.content-container,
+#contentWrapper,
+#dynamic-content {
+  overflow: visible !important; /* Force these to not scroll */
+}
+
+
+
+
+#content-loading {
+  transition: all 1.5s forwards;
+  pointer-events: none;
+  overscroll-behavior-y: contain;
+}
+
+.entrance {
+  -webkit-animation: entrance 0.7s cubic-bezier(0.470, 0.000, 0.745, 0.715) both;
+  animation: entrance 0.7s cubic-bezier(0.470, 0.000, 0.745, 0.715) both;
+}
+
+@keyframes entrance {
+  0% {
+    transform: scale(2);
+    filter: blur(4px);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    filter: blur(0px);
+    opacity: 1;
+  }
+}
+
+.exit {
+  -webkit-animation: exit 1s cubic-bezier(0.165, 0.840, 0.440, 1.000) both;
+  animation: exit 1s cubic-bezier(0.165, 0.840, 0.440, 1.000) both;
+}
+
+@keyframes exit {
+  0% {
+    transform: scale(1);
+    filter: blur(0px);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2);
+    filter: blur(4px);
+    opacity: 0;
+  }
+}
+
+.card-loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(var(--bg-default-rgb, 0, 0, 0), 0.85);
+  backdrop-filter: blur(4px);
+  border-radius: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.card-loading-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.card-loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-top-color: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.card-loading-overlay.fade-out {
+  animation: overlayFadeOut 0.4s ease forwards;
+}
+
+@keyframes overlayFadeOut {
+  to {
+    opacity: 0;
+  }
+}
+
+[data-loader="true"] {
+  position: relative;
+}
+</style>
+
+<link rel="stylesheet" href="./stylingSheets/pages/artist.css">
+
+
+
+
+</head>
+<body>
+<style>
+/* Search Modal Animations */
+.search-modal-overlay.show {
+  opacity: 1 !important;
+}
+
+.search-modal-overlay.show .search-content {
+  opacity: 1 !important;
+  transform: scale(1) !important;
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  transition: background 0.3s;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Filter Chips */
+.filter-chip {
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
+  border: 1px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.filter-chip:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+}
+
+.filter-chip.active {
+  background: var(--accent-primary, #3b82f6);
+  color: white;
+  border-color: var(--accent-primary, #3b82f6);
+}
+
+/* Search Results Hover Effects */
+.search-result-item {
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.search-result-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.search-result-item.selected {
+  background: rgba(59, 130, 246, 0.1);
+  border-left: 3px solid var(--accent-primary, #3b82f6);
+}
+
+/* Recent Search Item */
+.recent-search-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.recent-search-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateX(4px);
+}
+
+.recent-search-item .remove-btn {
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.recent-search-item:hover .remove-btn {
+  opacity: 1;
+}
+
+/* Backdrop Blur Animation */
+@supports (backdrop-filter: blur(20px)) or (-webkit-backdrop-filter: blur(20px)) {
+  .search-backdrop {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+}
+
+/* Album Card in Search */
+.album-card-search {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 1rem;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.album-card-search:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Fade In Animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+/* Shimmer Loading Effect */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+}
+</style>
+
+<!-- Main Page Wrapper ---------------------------------------->
+<div id="pageWrapper" data-label="Outermost container for the whole page">
+
+
+
+<!-- Toast container (optional; JS will create if not present) -->
+<div id="toast-portal"></div>
+
+
+
+
+
+
+<!-- Theme Toggle Component -->
+<div class="theme-toggle-container">
+        <div class="theme-trigger">
+          <svg width="24" height="24" viewBox="0 0 24 24">
+            <path fill="currentColor" d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121z"/>
+          </svg>
+        </div>
+        <div class="theme-options">
+          <button data-theme="light" aria-label="Light theme">
+            <svg width="20" height="20" viewBox="0 0 24 24">
+              <path fill="currentColor" d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121z"/>
+            </svg>
+          </button>
+          <button data-theme="dim" aria-label="Dim theme">
+            <svg width="20" height="20" viewBox="0 0 24 24">
+              <path fill="currentColor" d="M9.822 2.238a9 9 0 0 0 11.94 11.94C20.768 18.654 16.775 22 12 22 6.477 22 2 17.523 2 12c0-4.775 3.346-8.768 7.822-9.762zm8.342.053L19 2.5v1l-.836.209a2 2 0 0 0-1.455 1.455L16.5 6h-1l-.209-.836a2 2 0 0 0-1.455-1.455L13 3.5v-1l.836-.209A2 2 0 0 0 15.291.836L15.5 0h1l.209.836a2 2 0 0 0 1.455 1.455zm5 5L24 7.5v1l-.836.209a2 2 0 0 0-1.455 1.455L21.5 11h-1l-.209-.836a2 2 0 0 0-1.455-1.455L18 8.5v-1l.836-.209a2 2 0 0 0 1.455-1.455L20.5 5h1l.209.836a2 2 0 0 0 1.455 1.455z"/>
+            </svg>
+          </button>
+          <button data-theme="dark" aria-label="Dark theme">
+            <svg width="20" height="20" viewBox="0 0 24 24">
+              <path fill="currentColor" d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1-8.313-12.454z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+
+
+<!-- Navigation Bar -->
+  <nav
+      id="navbar"
+      class="glass-effect">
+
+  <div class="navbar-content" data-label="All elements within navbar container">
+
+<!--- L E F T --->
+   <div class="navbar-left" data-label="Left container">
+
+
+
+
+
+
+<button class="menu-trigger" id="menu-trigger" title="Menu" data-label="DropUp Menu's Open & Close Button">
+    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+    <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
+    </svg>
+</button>
 </div>
-    <div id="pageWrapper">
-      <nav id="navbar" class="glass-effect">
-        <div class="navbar-content">
-          <div class="navbar-left">
-            <button class="menu-trigger" id="menu-trigger" title="Menu">
-              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
-              </svg>
-            </button>
-          </div>
 
-          <div class="navbar-center" id="now-playing-area" title="Click to open Now Playing">
-            <div class="now-playing-display">
-              <div id="navbar-logo" class="flex items-center justify-center">
-                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.369 4.369 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z"></path>
-                </svg>
-              </div>
 
-              <img id="navbar-album-cover" src="" alt="Album Cover" class="hidden object-cover">
+<!--- C E N T E R --->
+   <div class="navbar-center" id="now-playing-area" data-tooltip="Open Now Playing" data-tooltip-placement="top">
+  <div class="nowPlaying" data-label="Opens the Music Player Drawer when clicked">
 
-              <div class="now-playing-info">
-                <div id="navbar-song-title" class="truncate">No song playing</div>
-                <div id="navbar-artist" class="truncate">Select a song to get started</div>
-              </div>
+    <div class="albumArtwork flex items-center justify-center relative">
+      <svg class="w-6 h-6 text-white transition-opacity duration-500 ease-in-out" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.369 4.369 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z" />
+      </svg>
+      
+      <img src="" alt="Album Cover" class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 ease-in-out" />
+    </div>
 
-              <div class="play-indicator" id="play-indicator"></div>
-            </div>
-          </div>
+    <div class="songInfo">
+      <div class="songName truncate">No song playing</div>
+      <div class="artistName truncate">Select a song to get started</div>
+    </div>
+
+    <div class="play-indicator" id="play-indicator"></div>
+  </div>
+</div>
 
           <div class="navbar-right">
             <div class="nav-controls">
-              <button class="nav-control-btn" id="prev-btn-navbar" title="Previous Track">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M8.445 14.832A1 1 0 0010 14v-2.798l5.445 3.63A1 1 0 0017 14V6a1 1 0 00-1.555-.832L10 8.798V6a1 1 0 00-1.555-.832l-6 4a1 1 0 000 1.664l6 4z"></path>
+              <button class="previous nav-control-btn" title="Previous Track">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M8.445 14.832A1 1 0 0010 14v-2.798l5.445 3.63A1 1 0 0017 14V6a1 1 0 00-1.555-.832L10 8.798V6a1 1 0 00-1.555-.832l-6 4a1 1 0 000 1.664l6 4z" />
                 </svg>
               </button>
 
-              <button class="nav-control-btn play-pause" id="play-pause-navbar" title="Play/Pause">
-                <svg id="play-icon-navbar" class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>
+              <button class="playPause nav-control-btn play-pause" title="Play/Pause">
+                <svg id="play-icon-navbar" class="play w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
                 </svg>
-                <svg id="pause-icon-navbar" class="w-4 h-4 hidden" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                <svg id="pause-icon-navbar" class="pause w-6 h-6 hidden" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
                 </svg>
               </button>
 
-              <button class="nav-control-btn" id="next-btn-navbar" title="Next Track">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798L4.555 5.168z"></path>
+              <button class="next nav-control-btn" title="Next Track">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798L4.555 5.168z" />
                 </svg>
               </button>
             </div>
-            <button id="theme-toggle" title="Toggle Theme" class="ml-2">
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M17.293 13.293A8 8 0 116.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
-              </svg>
-            </button>
+
           </div>
         </div>
       </nav>
 
-<!-- Main Menu -->
-      <div class="dropdown-menu" id="dropdown-menu">
+
+
+
+
+
+<!-- Dropdown Menu ----------------------------------------->
+    <div class="dropdown-menu" id="dropdown-menu">
         <div class="dropdown-header">
           <h3 class="dropdown-title">Music Library</h3>
           <button class="dropdown-close" id="dropdown-close">
             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
             </svg>
           </button>
-        </div>
+    </div>
+
+
 
         <div class="dropdown-section">
           <h4 class="section-title">
             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"></path>
+              <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
+            </svg>
+            Search
+          </h4>
+
+          <div class="dropdown-item" id="favorite-songs">
+            <div class="dropdown-item-icon">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div class="dropdown-item-content">
+              <div class="dropdown-item-title">
+                Find Songs, Albums, Artists</div>
+              <div class="dropdown-item-subtitle">Your liked tracks</div>
+            </div>
+<div class="dropdown-item-badge" id="favorite-songs-count">New!</div>
+          </div>
+
+<!-- Search Trigger Button (Add to your existing navbar/header) -->
+<button id="searchTrigger" class="search-trigger-btn flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-300 backdrop-blur-sm">
+  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+  </svg>
+  <span class="text-sm">Search</span>
+  <kbd class="hidden md:inline-block px-2 py-1 text-xs rounded bg-white/10">⌘K</kbd>
+</button>
+        </div>
+
+
+
+        <div class="dropdown-section">
+          <h4 class="section-title">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
             </svg>
             Favorites
           </h4>
@@ -134,7 +745,7 @@
           <div class="dropdown-item" id="favorite-songs">
             <div class="dropdown-item-icon">
               <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
             <div class="dropdown-item-content">
@@ -147,7 +758,7 @@
           <div class="dropdown-item" id="favorite-artists">
             <div class="dropdown-item-icon">
               <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9 12a3 3 0 00-3-3H2a1 1 0 100 2h4a1 1 0 011 1v.5a1 1 0 102 0V12zm3-8a3 3 0 100 6 3 3 0 000-6zm-1 4a1 1 0 11-2 0 1 1 0 012 0z"></path>
+                <path d="M9 12a3 3 0 00-3-3H2a1 1 0 100 2h4a1 1 0 011 1v.5a1 1 0 102 0V12zm3-8a3 3 0 100 6 3 3 0 000-6zm-1 4a1 1 0 11-2 0 1 1 0 012 0z" />
               </svg>
             </div>
             <div class="dropdown-item-content">
@@ -156,52 +767,14 @@
             </div>
             <div class="dropdown-item-badge" id="favorite-artists-count">0</div>
           </div>
-        </div><div class="dropdown-section">
-        <h3 class="section-title">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
-            </svg>
-            Navigation
-        </h3>
-        <div class="dropdown-item willHideMenu" data-nav="home">
-            <div class="dropdown-item-icon">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
-                </svg>
-            </div>
-            <div class="dropdown-item-content">
-                <p class="dropdown-item-title">Home</p>
-                <p class="dropdown-item-subtitle">Featured music and new releases</p>
-            </div>
         </div>
-        <div class="dropdown-item willHideMenu" data-nav="allArtists">
-            <div class="dropdown-item-icon">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 13a3.005 3.005 0 013.75 2.094A5.972 5.972 0 0022 18v3h-6z"></path>
-                </svg>
-            </div>
-            <div class="dropdown-item-content">
-                <p class="dropdown-item-title">All Artists</p>
-                <p class="dropdown-item-subtitle">Browse all artists in the library</p>
-            </div>
-        </div>
-        <div class="dropdown-item willHideMenu" id="global-search-trigger">
-            <div class="dropdown-item-icon">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
-                </svg>
-            </div>
-            <div class="dropdown-item-content">
-                <p class="dropdown-item-title">Search</p>
-                <p class="dropdown-item-subtitle">Find artists, albums, and songs</p>
-            </div>
-        </div>
-    </div>
+
+
 
         <div class="dropdown-section">
           <h4 class="section-title">
             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
+              <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
             </svg>
             Library
           </h4>
@@ -209,7 +782,7 @@
           <div class="dropdown-item" id="recently-played">
             <div class="dropdown-item-icon">
               <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
               </svg>
             </div>
             <div class="dropdown-item-content">
@@ -222,7 +795,7 @@
           <div class="dropdown-item" id="queue-view">
             <div class="dropdown-item-icon">
               <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"></path>
+                <path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" />
               </svg>
             </div>
             <div class="dropdown-item-content">
@@ -236,7 +809,7 @@
         <div class="dropdown-section">
           <h4 class="section-title">
             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
+              <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
             </svg>
             Playlists
           </h4>
@@ -244,7 +817,7 @@
           <div class="dropdown-item" id="create-playlist">
             <div class="dropdown-item-icon">
               <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"></path>
+                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
               </svg>
             </div>
             <div class="dropdown-item-content">
@@ -257,11 +830,11 @@
             <div class="empty-state" id="playlists-empty">
               <div class="empty-state-icon">
                 <svg class="w-full h-full" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
+                  <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
                 </svg>
               </div>
               <div class="empty-state-text">
-                No playlists yet.<br>
+                No playlists yet.<br />
                 Create your first playlist!
               </div>
             </div>
@@ -271,7 +844,7 @@
         <div class="dropdown-section">
           <h4 class="section-title">
             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"></path>
+              <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
             </svg>
             Actions
           </h4>
@@ -279,7 +852,7 @@
           <div class="dropdown-item" id="shuffle-all">
             <div class="dropdown-item-icon">
               <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"></path>
+                <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
               </svg>
             </div>
             <div class="dropdown-item-content">
@@ -292,7 +865,7 @@
         <div class="dropdown-section">
           <h4 class="section-title">
             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path>
+              <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
             </svg>
             Settings
           </h4>
@@ -300,1351 +873,1151 @@
           <div class="dropdown-item" id="app-settings">
             <div class="dropdown-item-icon">
               <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
               </svg>
             </div>
             <div class="dropdown-item-content">
               <div class="dropdown-item-title">Preferences</div>
-              <div class="dropdown-item-subtitle">App settings &amp; options</div>
+              <div class="dropdown-item-subtitle">App settings & options</div>
             </div>
           </div>
 
           <div class="dropdown-item" id="about-app">
             <div class="dropdown-item-icon">
               <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
               </svg>
             </div>
             <div class="dropdown-item-content">
               <div class="dropdown-item-title">About</div>
-              <div class="dropdown-item-subtitle">Version &amp; information</div>
+              <div class="dropdown-item-subtitle">Version & information</div>
             </div>
           </div>
+        </div>
+
+
+    </div>
+
+
+
+
+
+
+<style>
+.progress {
+  --bg: var(--background-700, #2b2f36);
+  --bg2: var(--background-600, #353a42);
+  --fill: var(--accent-primary, #3b82f6);
+  --fill2: var(--accent-primary-hover, #2563eb);
+  --buf: color-mix(in oklab, var(--fill) 25%, transparent);
+  --thumb-bg: var(--text-on-accent, #fff);
+  --ring: color-mix(in oklab, var(--fill) 40%, transparent);
+  width: 100%;
+  user-select: none;
+}
+.progress .time {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-400, #9aa4b2);
+}
+.progressBar {
+  position: relative;
+  height: 5px;
+  border-radius: 999px;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0)) border-box, linear-gradient(180deg, var(--bg), var(--bg2));
+  overflow: visible;
+  cursor: pointer;
+  touch-action: none;
+  outline: 0;
+}
+.progressBuffer {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0%;
+  border-radius: inherit;
+  background: var(--buf);
+  pointer-events: none;
+}
+.progressFill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--fill), var(--fill2));
+  pointer-events: none;
+  transition: width 0.08s linear;
+}
+.progressThumb {
+  position: absolute;
+  top: 50%;
+  left: 0%;
+  width: 15px;
+  height: 15px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 30%, rgba(0, 0, 0, 0.08), transparent 55%), var(--thumb-bg);
+  transform: translate(-50%, -50%);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25), 0 0 0 3px var(--ring);
+  pointer-events: none;
+  z-index: 2;
+  will-change: left, transform;
+}
+.progressBar:focus-visible {
+  box-shadow: 0 0 0 4px var(--ring);
+}
+.progressBar:active .progressThumb {
+  transform: translate(-50%, -50%) scale(1.06);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35), 0 0 0 6px var(--ring);
+}
+.progressShadow {
+  position: absolute;
+  inset: -10px 0 -10px 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+
+
+
+
+
+
+
+
+.nav-controls button {
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+}
+.nav-controls button:hover {
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+}
+.fragments .similar {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+.album-buttons {
+  margin-top: 1rem;
+}
+
+
+
+
+
+
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        /* Modal content */
+        .modal-content {
+            background-color: #1f2937;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 85vh;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Header */
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid #374151;
+            background-color: #111827;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            margin: 0;
+        }
+        
+        .artist-count {
+            color: #9ca3af;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            font-size: 28px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .close-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        /* Artists list */
+        .artists-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+        }
+        
+        .artist-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            transition: background-color 0.2s;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .artist-item:hover {
+            background-color: #374151;
+        }
+        
+        /* Artist image with hover effect */
+        .artist-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-right: 16px;
+            position: relative;
+            flex-shrink: 0;
+        }
+        
+        .artist-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .artist-image::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            opacity: 0;
+            transition: opacity 0.3s;
+            border-radius: 8px;
+        }
+        
+        .artist-item:hover .artist-image::after {
+            opacity: 1;
+        }
+        
+        .play-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background-color: #3b82f6;
+            border: none;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 2;
+        }
+        
+        .artist-item:hover .play-btn {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        
+        .play-btn:hover {
+            background-color: #2563eb;
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+        
+        /* Artist info */
+        .artist-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .artist-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .song-count {
+            font-size: 14px;
+            color: #9ca3af;
+        }
+        
+        /* Empty state */
+        .empty-state {
+            padding: 60px 20px;
+            text-align: center;
+        }
+        
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            color: #6b7280;
+        }
+        
+        .empty-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: white;
+        }
+        
+        .empty-text {
+            color: #9ca3af;
+            margin-bottom: 4px;
+        }
+        
+        .empty-subtext {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        /* Scrollbar styling */
+        .artists-list::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .artists-list::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+        
+        .artists-list::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 4px;
+        }
+        
+        .artists-list::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .slide-in {
+            animation: slideIn 0.4s ease-out;
+        }
+        
+        /* Demo button */
+        .demo-button {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .demo-button:hover {
+            background-color: #2563eb;
+        }
+</style>
+<!-- Music Player Drawer (refactored to align with new .btn system) -->
+<aside class="drawer" popover="auto" id="drawer">
+  <div class="drawerScroller">
+    <div class="drawerSlide">
+      <div class="drawerAnchors">
+        <div class="drawerAnchor"></div>
+        <div class="drawerAnchor"></div>
+      </div>
+
+      <button popovertargetaction="hide" popovertarget="drawer" class="drawerCurtain" tabindex="-1"></button>
+
+      <div class="tabsContainer">
+        <div class="tabs">
+          <button class="tab active" data-tab="playing">Now Playing</button>
+          <button class="tab" data-tab="recent">Recent Plays</button>
+          <button class="tab" data-tab="queue">Up Next</button>
         </div>
       </div>
 
-
-
-<!-- Music Player -->
-      <div class="musicPlayer" id="musicPlayer">
-      <div id="offcanvas-handle" class="offcanvas-handle flex items-center justify-center py-1">
-          <div class="w-10 h-1 bg-gray-500 rounded-full"></div>
+      <div class="drawerContent">
+        <div class="mpNav">
+          <button autofocus class="drawerDrag" popovertargetaction="hide" popovertarget="drawer"><span></span></button>
         </div>
 
-        
-        
-        
-        
-        
-        
-        <div class="header">
-          <button class="close" id="closePlayer">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-            </svg>
-          </button>
-        </div>
-
-
-        <div class="body">
-          <div class="popup-tab-content" data-tab="now-playing">
-            <img id="popup-album-cover" src="" alt="Album Cover" class="popup-album-cover">
-
-            <div class="popup-song-info">
-              <h4 id="popup-song-title" class="popup-song-title"></h4>
-              <p id="popup-artist-name" class="popup-artist-name"></p>
-              <p id="popup-album-name" class="popup-album-name"></p>
+        <div class="content">
+          <div class="musicPlayer" id="musicPlayer">
+            <div class="header">
+              <!-- Close button → maps to .btn--close; ID preserved -->
+              <button class="btn btn--close use-site-colors" id="closeBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 432 540" aria-hidden="true">
+                  <path fill="currentColor" d="M97.5 118.5c-14.1-14.1-36.9-14.1-50.9 0s-14.1 36.9 0 50.9L152.4 275.3c6.9 6.9 6.9 18.5 0 25.5L46.5 406.5c-14.1 14.1-14.1 36.9 0 50.9s36.9 14.1 50.9 0L203.3 351.6c7-7 18.4-7 25.5 0L334.5 457.5c14.1 14.1 36.9 14.1 50.9 0s14.1-36.9 0-50.9L279.6 300.7c-7-7-7-18.4 0-25.5L385.5 169.5c14.1-14.1 14.1-36.9 0-50.9s-36.9-14.1-50.9 0L228.7 224.4c-7 7-18.4 7-25.5 0L97.5 118.5zM21.1 93.1C49.2 65 94.8 65 122.9 93.1l93.1 93.1 93.1-93.1c28.1-28.1 73.7-28.1 101.8 0s28.1 73.7 0 101.8l-93.1 93.1 93.1 93.1c28.1 28.1 28.1 73.7 0 101.8s-73.7 28.1-101.8 0l-93.1-93.1-93.1 93.1C94.8 511 49.2 511 21.1 482.9s-28.1-73.7 0-101.8l93.1-93.1-93.1-93.1C-7 166.8-7 121.2 21.1 93.1z" />
+                </svg>
+              </button>
             </div>
 
-            <div class="popup-progress">
-              <div class="progress-time">
-                <span id="popup-current-time">0:00</span>
-                <span id="popup-total-time">0:00</span>
-              </div>
-              <div class="popup-progress-bar" id="popup-progress-bar">
-                <div class="popup-progress-fill" id="popup-progress-fill" style="width: 0%;">
-                  <div class="popup-progress-thumb" id="popup-progress-thumb"></div>
+            <div class="body">
+              <!-- Now Playing -->
+              <div class="content active" data-tab="playing">
+                <img id="cover" src="" alt="Album Cover" class="albumArtwork cover" />
+
+                <div class="info">
+                  <h4 id="title" class="songName title"></h4>
+                  <p id="artist" class="artistName artist"></p>
+                  <p id="album" class="albumName album"></p>
+                </div>
+
+                <!-- Progress slider (untouched aside from formatting) -->
+                <div class="progress" id="musicProgress">
+                  <div class="time">
+                    <span id="currentTime">0:00</span>
+                    <span id="totalTime">0:00</span>
+                  </div>
+
+                  <div class="progressBar" id="progressBar" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Seek">
+                    <div class="progressBuffer" id="progressBuffer" style="width: 0%;"></div>
+
+                    <div class="progressFill" id="progressFill" style="width: 0%;">
+                      <div class="progressThumb" id="progressThumb" style="left: 0%;"></div>
+                    </div>
+
+                    <div class="progressShadow" aria-hidden="true"></div>
+                  </div>
+                </div>
+
+                <!-- Playback controls → map to .btn--playback; IDs preserved -->
+                <div class="controls playerControls playback-bar">
+                  <button class="btn btn--icon-only use-site-colors" id="prevBtn" title="Previous">
+                    <span data-icon="prev" class="icon"></span>
+                  </button>
+
+                  <button class="btn btn--icon-only use-site-colors" id="rewindBtn" title="Rewind 10s">
+                    <span data-icon="rewind" class="icon"></span>
+                  </button>
+
+                  <button class="btn btn--icon-only is-primary" id="playBtn" title="Play/Pause">
+                    <span data-icon="play" class="icon play"></span>
+                    <span data-icon="pause" class="icon pause"></span>
+                  </button>
+
+                  <button class="btn btn--icon-only use-site-colors" id="forwardBtn" title="Forward 10s">
+                    <span data-icon="forward" class="icon"></span>
+                  </button>
+
+                  <button class="btn btn--icon-only use-site-colors" id="nextBtn" title="Next">
+                    <span data-icon="next" class="icon"></span>
+                  </button>
+                </div>
+
+                <!-- Secondary player actions → compact icon buttons -->
+                <div class="actions">
+                  <button class="btn btn--icon-only use-site-colors" id="favoriteBtn" title="Add to Favorites">
+                    <span data-icon="heart" class="icon"></span>
+                  </button>
+
+                  <button class="btn btn--icon-only use-site-colors" id="queueBtn" title="View Queue">
+                    <span data-icon="queue" class="icon"></span>
+                  </button>
+
+                  <button class="btn btn--icon-only use-site-colors" id="shareBtn" title="Share">
+                    <span data-icon="share" class="icon"></span>
+                  </button>
+
+                  <button class="btn btn--icon-only use-site-colors" id="moreBtn" title="More Options">
+                    <span data-icon="more" class="icon"></span>
+                  </button>
                 </div>
               </div>
+
+              <!-- Queue -->
+              <div class="content" data-tab="queue">
+                <ul id="queueList" class="list">
+                  <div class="empty">
+                    <div class="emptyIcon">
+                      <svg class="icon" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                        <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+                      </svg>
+                    </div>
+                    <div class="emptyText">Queue is empty.</div>
+                  </div>
+                </ul>
+              </div>
+
+              <!-- Recent -->
+              <div class="content" data-tab="recent">
+                <ul id="recentList" class="list">
+                  <div class="empty">
+                    <div class="emptyIcon">
+                      <svg class="icon" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                        <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+                      </svg>
+                    </div>
+                    <div class="emptyText">No recently played songs.</div>
+                  </div>
+                </ul>
+              </div>
             </div>
+          </div><!-- Music Player -->
+        </div><!-- Content -->
+      </div><!-- drawerContent -->
+    </div><!-- drawerSlide -->
+  </div><!-- drawerScroller -->
+  <canvas id="reactionCanvas"></canvas>
+</aside><!-- drawer -->
+
+<!-- Inline CSS block for the progress slider retained from your original (include separately in your CSS file if preferred). --
+<style>
+  .progress { display: grid; grid-template-rows: auto 1fr; gap: 10px; width: 100%; max-width: 720px; user-select: none; -webkit-tap-highlight-color: transparent; touch-action: none; margin: 0; }
+  .progress .time { display: flex; justify-content: space-between; align-items: center; font-variant-numeric: tabular-nums; font-size: 12px; line-height: 1; color: #6c6c6c; }
+  .progress__track { position: relative; height: 8px; background-color: #e5e9eb; border-radius: 999px; overflow: hidden; cursor: pointer; transition: height 120ms ease; outline: none; }
+  .progress__track::before { content: ""; position: absolute; inset: -10px 0; }
+  .progress__track:hover, .progress__track.is-hovering, .progress__track.is-dragging { height: 10px; }
+  .progress__buffer { position: absolute; inset: 0 auto 0 0; width: 0%; background: rgba(0, 0, 0, 0.08); pointer-events: none; }
+  .progress__bar { position: relative; height: 100%; width: 0%; background-image: linear-gradient(to right, #4cd964, #5ac8fa, #007aff, #34aadc, #5856d6, #ff2d55); background-size: 100% 100%; border-radius: inherit; transition: width 140ms linear; }
+  .progress__shadow { background-image: linear-gradient(to bottom, #eaecee, transparent); height: 3em; width: 100%; position: absolute; top: 100%; transform: skew(45deg); transform-origin: 0 0; pointer-events: none; }
+  .progress__thumb { position: absolute; top: 50%; transform: translate(-50%, -50%) scale(0.001); width: 14px; height: 14px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.35), 0 0 0 2px rgba(255,255,255,0.95); transition: transform 120ms ease, opacity 120ms ease; opacity: 0; }
+  .progress__thumb::before { content: ""; position: absolute; inset: -12px; border-radius: 50%; }
+  .progress__track:hover .progress__thumb, .progress__track.is-hovering .progress__thumb, .progress__track.is-dragging .progress__thumb, .progress__thumb:focus-visible { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  .progress__track.is-dragging .progress__thumb { transform: translate(-50%, -50%) scale(0.95); }
+  .progress__track:focus-visible { box-shadow: 0 0 0 3px rgba(0,0,0,0.08), 0 0 0 6px rgba(88,86,214,0.35); border-radius: 999px; }
+  @media (prefers-color-scheme: dark) {
+    .progress .time { color: rgba(255,255,255,0.8); }
+    .progress__track { background: rgba(255,255,255,0.14); }
+    .progress__buffer { background: rgba(255,255,255,0.22); }
+  }
+</style>
+
+<script id="progressSlider">
+  (function () {
+    const bar = document.getElementById("progressBar");
+    const fill = document.getElementById("progressFill");
+    const thumb = document.getElementById("progressThumb");
+    const curEl = document.getElementById("currentTime");
+    const totEl = document.getElementById("totalTime");
+    if (!bar || !fill || !thumb) return;
+    let isScrubbing = false; let wasPlaying = false;
+    const getDuration = () => window.appState?.duration || window.appState?.audio?.duration || 0;
+    const formatTime = (t) => (window.utils?.formatTime ? window.utils.formatTime(t) : new Date(t * 1000).toISOString().substring(14, 19));
+    const clamp01 = (v) => Math.min(1, Math.max(0, v));
+    function percentFromClientX(clientX){ const rect = bar.getBoundingClientRect(); const raw = (clientX - rect.left) / rect.width; return clamp01(raw) * 100; }
+    function setUI(percent, currentTime){ fill.style.width = percent + "%"; thumb.style.left = percent + "%"; if (Number.isFinite(currentTime) && curEl) curEl.textContent = formatTime(currentTime); bar.setAttribute("aria-valuenow", Math.round(percent)); }
+    function seekToPercent(percent, finalize){ const dur = getDuration(); const t = dur * (percent / 100); setUI(percent, t); if (finalize && window.appState?.audio && Number.isFinite(t)) { window.appState.audio.currentTime = t; } }
+    function onPointerDown(e){ e.preventDefault(); bar.setPointerCapture?.(e.pointerId ?? 1); isScrubbing = true; bar.classList.add("is-dragging"); wasPlaying = !!window.appState?.isPlaying; if (wasPlaying) window.appState.audio.pause(); const pct = percentFromClientX(e.clientX ?? (e.touches?.[0]?.clientX || 0)); seekToPercent(pct, false); bar.addEventListener("pointermove", onPointerMove, { passive: false }); window.addEventListener("pointerup", onPointerUp, { once: true }); window.addEventListener("pointercancel", onPointerUp, { once: true }); }
+    function onPointerMove(e){ if (!isScrubbing) return; e.preventDefault(); const pct = percentFromClientX(e.clientX ?? (e.touches?.[0]?.clientX || 0)); seekToPercent(pct, false); }
+    function onPointerUp(e){ const pct = percentFromClientX(e.clientX ?? (e.changedTouches?.[0]?.clientX || 0)); seekToPercent(pct, true); isScrubbing = false; bar.classList.remove("is-dragging", "is-hovering"); bar.releasePointerCapture?.(e.pointerId ?? 1); bar.removeEventListener("pointermove", onPointerMove); if (wasPlaying) window.appState?.audio?.play(); }
+    const onEnter = () => bar.classList.add("is-hovering");
+    const onLeave = () => { if (!isScrubbing) bar.classList.remove("is-hovering"); };
+    bar.addEventListener("pointerdown", onPointerDown, { passive: false });
+    bar.addEventListener("pointerenter", onEnter);
+    bar.addEventListener("pointerleave", onLeave);
+    bar.addEventListener("keydown", (e) => {
+      const step = 100 / 100; const big = 100 / 10; const now = parseFloat(bar.getAttribute("aria-valuenow") || "0"); let next = now;
+      switch (e.key) {
+        case "ArrowLeft": case "ArrowDown": next = now - step; break;
+        case "ArrowRight": case "ArrowUp": next = now + step; break;
+        case "PageDown": next = now - big; break;
+        case "PageUp": next = now + big; break;
+        case "Home": next = 0; break;
+        case "End": next = 100; break;
+        default: return;
+      }
+      e.preventDefault(); next = Math.max(0, Math.min(100, next)); seekToPercent(next, true);
+    });
+    const origUpdate = window.player && window.player.updateProgress ? window.player.updateProgress : null;
+    function syncedUpdate(){ if (isScrubbing) return; const audio = window.appState?.audio; if (!audio) return; const dur = getDuration(); const cur = audio.currentTime || 0; const pct = dur > 0 ? (cur / dur) * 100 : 0; setUI(pct, cur); }
+    if (origUpdate) {
+      window.player.updateProgress = function (){ if (isScrubbing) return; const audio = window.appState?.audio; if (!audio) return; const dur = getDuration(); const cur = audio.currentTime || 0; const pct = dur > 0 ? (cur / dur) * 100 : 0; setUI(pct, cur); window.mediaSession?.updatePlaybackState?.(window.appState?.isPlaying); };
+    } else { window.appState?.audio?.addEventListener("timeupdate", syncedUpdate); }
+    window.appState?.audio?.addEventListener("loadedmetadata", () => { const dur = getDuration(); if (totEl && Number.isFinite(dur)) totEl.textContent = formatTime(dur); });
+  })();
+</script>
+
+---->
 
 
 
 
-<div class="playerControls">
-  
-  
-  <!-- Skip to Previous Song -->
-  <button class="button" id="popup-prev-btn">
-    <svg class="icon" id="iconPrev" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-      <path d="M267.5 440.6c9.5 7.9 22.8 9.7 34.1 4.4s18.4-16.6 18.4-29V96c0-12.4-7.2-23.7-18.4-29s-24.5-3.6-34.1 4.4L75.5 231l0 49 192 160z"></path>
-    </svg>
-  </button>
-
-  <!-- Rewind 10s -->
-  <button class="button" id="reWind">
-    <svg class="icon" id="iconRewind" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-      <path d="M459.5 440.6c9.5 7.9 22.8 9.7 34.1 4.4s18.4-16.6 18.4-29V96c0-12.4-7.2-23.7-18.4-29s-24.5-3.6-34.1 4.4L288 214.3V296l171.5 144.6zM256 352V96c0-12.4-7.2-23.7-18.4-29s-24.5-3.6-34.1 4.4L11.5 231C4.2 237.5 0 246.5 0 256s4.2 18.5 11.5 24.6l192 160c9.5 7.9 22.8 9.7 34.1 4.4s18.4-16.6 18.4-29V352z"></path>
-    </svg>
-  </button>
-
-  <!-- Play / Pause (toggle dynamically) -->
-  <button class="button" id="playPause">
-    <svg class="icon" id="iconPlay" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
-      <path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"></path>
-    </svg>
-    <!-- You can dynamically switch to this icon on pause -->
-    <!-- <svg class="icon" id="iconPause" ... >...</svg> -->
-  </button>
-
-  <!-- Fast Forward 10s -->
-  <button class="button" id="fastFoward">
-    <svg class="icon" id="iconForward" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-      <path d="M52.5 440.6c-9.5 7.9-22.8 9.7-34.1 4.4S0 428.4 0 416V96c0-12.4 7.2-23.7 18.4-29s24.5-3.6 34.1 4.4L224 214.3V296L52.5 440.6zM256 352V96c0-12.4 7.2-23.7 18.4-29s24.5-3.6 34.1 4.4l192 160c7.3 6.1 11.5 15.1 11.5 24.6s-4.2 18.5-11.5 24.6L308.5 440.6c-9.5 7.9-22.8 9.7-34.1 4.4S256 428.4 256 416V352z"></path>
-    </svg>
-  </button>
-
-  <!-- Skip to Next Song -->
-  <button class="button" id="popup-next-btn">
-    <svg class="icon" id="iconNext" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-      <path d="M52.5 440.6c-9.5 7.9-22.8 9.7-34.1 4.4S0 428.4 0 416V96c0-12.4 7.2-23.7 18.4-29s24.5-3.6 34.1 4.4l192 160V96c0-17.7 14.3-32 32-32s32 14.3 32 32v320c0 17.7-14.3 32-32 32s-32-14.3-32-32V271.4L52.5 440.6z"></path>
-    </svg>
-  </button>
 
 
-</div>
-      
-              
-              
-              
-              
-              
-              
- <!--             
-              <button class="button" id="popup-shuffle-btn" title="Shuffle">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
-                </svg>
-              </button>
-
-              <button class="button" id="popup-prev-btn" title="Previous">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M8.445 14.832A1 1 0 0010 14v-2.798l5.445 3.63A1 1 0 0017 14V6a1 1 0 00-1.555-.832L10 8.798V6a1 1 0 00-1.555-.832l-6 4a1 1 0 000 1.664l6 4z" />
-                </svg>
-              </button>
-
-              <button class="button" id="playPause">
-                <svg id="popup-play-icon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                </svg>
-                <svg id="popup-pause-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
-                </svg>
-              </button>
-
-              <button class="button" id="popup-next-btn" title="Next">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798L4.555 5.168z" />
-                </svg>
-              </button>
-
-              <button class="button" id="popup-repeat-btn" title="Repeat">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
-                </svg>
-              </button>
- -->             
-              
-              
-
-            <div class="popup-actions">
-              <button class="popup-action-btn" id="popup-favorite-btn" title="Add to Favorites">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"></path>
-                </svg>
-              </button>
-
-              <button class="popup-action-btn" id="popup-queue-btn" title="View Queue">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
-                </svg>
-              </button>
-
-              <button class="popup-action-btn" id="popup-share-btn" title="Share">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path>
-                </svg>
-              </button>
-
-              <button class="popup-action-btn" id="popup-more-btn" title="More Options">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
-                </svg>
-              </button>
-            </div>
-          </div>
-
-
-<!-- Up Next -->
-          <div class="popup-tab-content" data-tab="queue">
-            <ul id="queue-list" class="popup-song-list">
-              <li class="empty-state">Queue is empty</li>
-            </ul>
-          </div>
-
-
-<!-- Recently Played -->
-          <div class="popup-tab-content" data-tab="recent">
-            <ul id="recent-list" class="popup-song-list">
-              <li class="empty-state">No recently played songs</li>
-            </ul>
-          </div>
-          
-          
-
-          
-        </div>
-        <div id="popUpTabsWrapper">
+<!-- Main Content Area -->
+<div id="mainArea">
         
-               <div class="popup-tabs">
-          <button class="popup-tab active" data-tab="now-playing">Now Playing</button>
-          <button class="popup-tab" data-tab="recent">Recent Plays</button>
-          <button class="popup-tab" data-tab="queue">Up Next</button>
-        </div> 
-        </div>
-        
-      <div id="seek-tooltip" style="position: absolute; background-color: rgba(0, 0, 0, 0.8); color: white; font-size: 12px; padding: 4px 8px; border-radius: 4px; pointer-events: none; opacity: 0; transform: translateX(-50%); transition: opacity 0.2s; z-index: 100;"></div></div>
-
-      <div id="mainArea">
         <main id="main-container" class="content-container max-w-6xl mx-auto pb-24">
           <div id="contentWrapper" class="relative">
-            <nav id="breadcrumb-nav" class="breadcrumb-navigation flex items-center text-fg-muted">
-              <ol class="breadcrumb-list flex items-center flex-wrap"><li class="breadcrumb-item">
-            <a href="/" class="breadcrumb" data-nav="home">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 
-                        0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                </svg>
-                <h4 class="hidden md:inline">Home</h4>
-            </a>
-        </li><li class="breadcrumb-separator">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                </svg>
-            </li><li class="breadcrumb-item">
-                    <a href="/artists" class="breadcrumb" data-nav="artists">
-                        <h4>Discography</h4>
-                    </a>
-                </li><li class="breadcrumb-separator">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                </svg>
-            </li><li class="breadcrumb-item"><h4 aria-current="page">Kesha</h4></li></ol>
-              
-              
-              
-              
-            </nav>
 
-            <div id="dynamic-content" class="">
-                <div class="artistTop">
-                    <div class="artist-header" id="artist-header">
-                        <div class="content-wrapper">
-                            <div class="artist-avatar">
-                                <img src="https://koders.cloud/global/content/images/artistPortraits/kesha.png" alt="Kesha" class="image-loaded">
-                            </div>
-                            <div class="artist-info">
-                                
-                                <div class="metadata-tags">
-                                    <span>Pop</span>
-                                    <span>4 Albums</span>
-                                    <span>55 Songs</span>
-                                </div>
-                                <div class="action-buttons">
-                                    <button class="play">▶️ Play All</button>
-                                    <button class="follow">⭐ Follow</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="content-offset">
-                    <div class="similar-artists-section">
-                        
-                        <div id="similar-artists-container">
-        <div class="similar-artists-carousel">
-            <button class="carousel-arrow left disabled" aria-label="Scroll left">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                </svg>
-            </button>
-            <div class="similar-artists-container" id="similar-artists-scroll-container"><div class="similar-artist-card" data-artist-name="Rihanna">
-  <div class="similar-artist-image">
-    <img src="https://koders.cloud/global/content/images/artistPortraits/rihanna.png" alt="Rihanna" class="w-full h-full object-cover artist-avatar">
-    <div class="artist-image-overlay"></div>
-  </div>
-  
-  <div class="similar-artist-name">
-    Rihanna
-  </div>
-  
-  <div class="artist-popover">
-    <div class="popover-header">
-      <div class="popover-artist-name">Rihanna</div>
-    </div>
-    
-    <div class="popover-stats">
-      <div class="stat-item">
-        <span class="stat-value">8</span>
-        <span class="stat-label">Albums</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-value">95</span>
-        <span class="stat-label">Songs</span>
-      </div>
-    </div>
-    
-    <div class="popover-footer">
-      <button class="popover-button" data-artist-id="5923287009">
-        View Artist
-      </button>
-    </div>
-  </div>
-</div><div class="similar-artist-card" data-artist-name="Katy Perry">
-  <div class="similar-artist-image">
-    <img src="https://koders.cloud/global/content/images/artistPortraits/katyperry.png" alt="Katy Perry" class="w-full h-full object-cover artist-avatar">
-    <div class="artist-image-overlay"></div>
-  </div>
-  
-  <div class="similar-artist-name">
-    Katy Perry
-  </div>
-  
-  <div class="artist-popover">
-    <div class="popover-header">
-      <div class="popover-artist-name">Katy Perry</div>
-    </div>
-    
-    <div class="popover-stats">
-      <div class="stat-item">
-        <span class="stat-value">3</span>
-        <span class="stat-label">Albums</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-value">37</span>
-        <span class="stat-label">Songs</span>
-      </div>
-    </div>
-    
-    <div class="popover-footer">
-      <button class="popover-button" data-artist-id="5923287010">
-        View Artist
-      </button>
-    </div>
-  </div>
-</div><div class="similar-artist-card" data-artist-name="Lady Gaga">
-  <div class="similar-artist-image">
-    <img src="https://koders.cloud/global/content/images/artistPortraits/ladygaga.png" alt="Lady Gaga" class="w-full h-full object-cover artist-avatar">
-    <div class="artist-image-overlay"></div>
-  </div>
-  
-  <div class="similar-artist-name">
-    Lady Gaga
-  </div>
-  
-  <div class="artist-popover">
-    <div class="popover-header">
-      <div class="popover-artist-name">Lady Gaga</div>
-    </div>
-    
-    <div class="popover-stats">
-      <div class="stat-item">
-        <span class="stat-value">0</span>
-        <span class="stat-label">Albums</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-value">0</span>
-        <span class="stat-label">Songs</span>
-      </div>
-    </div>
-    
-    <div class="popover-footer">
-      <button class="popover-button" data-artist-id="similar-2">
-        View Artist
-      </button>
-    </div>
-  </div>
-</div><div class="similar-artist-card" data-artist-name="Britney Spears">
-  <div class="similar-artist-image">
-    <img src="https://koders.cloud/global/content/images/artistPortraits/britneyspears.png" alt="Britney Spears" class="w-full h-full object-cover artist-avatar">
-    <div class="artist-image-overlay"></div>
-  </div>
-  
-  <div class="similar-artist-name">
-    Britney Spears
-  </div>
-  
-  <div class="artist-popover">
-    <div class="popover-header">
-      <div class="popover-artist-name">Britney Spears</div>
-    </div>
-    
-    <div class="popover-stats">
-      <div class="stat-item">
-        <span class="stat-value">7</span>
-        <span class="stat-label">Albums</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-value">83</span>
-        <span class="stat-label">Songs</span>
-      </div>
-    </div>
-    
-    <div class="popover-footer">
-      <button class="popover-button" data-artist-id="5923287001">
-        View Artist
-      </button>
-    </div>
-  </div>
-</div><div class="similar-artist-card" data-artist-name="Demi Lovato">
-  <div class="similar-artist-image">
-    <img src="https://koders.cloud/global/content/images/artistPortraits/demilovato.png" alt="Demi Lovato" class="w-full h-full object-cover artist-avatar">
-    <div class="artist-image-overlay"></div>
-  </div>
-  
-  <div class="similar-artist-name">
-    Demi Lovato
-  </div>
-  
-  <div class="artist-popover">
-    <div class="popover-header">
-      <div class="popover-artist-name">Demi Lovato</div>
-    </div>
-    
-    <div class="popover-stats">
-      <div class="stat-item">
-        <span class="stat-value">6</span>
-        <span class="stat-label">Albums</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-value">76</span>
-        <span class="stat-label">Songs</span>
-      </div>
-    </div>
-    
-    <div class="popover-footer">
-      <button class="popover-button" data-artist-id="5923287018">
-        View Artist
-      </button>
-    </div>
-  </div>
-</div><div class="similar-artist-card" data-artist-name="Miley Cyrus">
-  <div class="similar-artist-image">
-    <img src="https://koders.cloud/global/content/images/artistPortraits/mileycyrus.png" alt="Miley Cyrus" class="w-full h-full object-cover artist-avatar">
-    <div class="artist-image-overlay"></div>
-  </div>
-  
-  <div class="similar-artist-name">
-    Miley Cyrus
-  </div>
-  
-  <div class="artist-popover">
-    <div class="popover-header">
-      <div class="popover-artist-name">Miley Cyrus</div>
-    </div>
-    
-    <div class="popover-stats">
-      <div class="stat-item">
-        <span class="stat-value">0</span>
-        <span class="stat-label">Albums</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-value">0</span>
-        <span class="stat-label">Songs</span>
-      </div>
-    </div>
-    
-    <div class="popover-footer">
-      <button class="popover-button" data-artist-id="similar-5">
-        View Artist
-      </button>
-    </div>
-  </div>
-</div><div class="similar-artist-card" data-artist-name="Avril Lavigne">
-  <div class="similar-artist-image">
-    <img src="https://koders.cloud/global/content/images/artistPortraits/avrillavigne.png" alt="Avril Lavigne" class="w-full h-full object-cover artist-avatar">
-    <div class="artist-image-overlay"></div>
-  </div>
-  
-  <div class="similar-artist-name">
-    Avril Lavigne
-  </div>
-  
-  <div class="artist-popover">
-    <div class="popover-header">
-      <div class="popover-artist-name">Avril Lavigne</div>
-    </div>
-    
-    <div class="popover-stats">
-      <div class="stat-item">
-        <span class="stat-value">7</span>
-        <span class="stat-label">Albums</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-value">87</span>
-        <span class="stat-label">Songs</span>
-      </div>
-    </div>
-    
-    <div class="popover-footer">
-      <button class="popover-button" data-artist-id="5923287028">
-        View Artist
-      </button>
-    </div>
-  </div>
-</div><div class="similar-artist-card" data-artist-name="Christina Aguilera">
-  <div class="similar-artist-image">
-    <img src="https://koders.cloud/global/content/images/artistPortraits/christinaaguilera.png" alt="Christina Aguilera" class="w-full h-full object-cover artist-avatar">
-    <div class="artist-image-overlay"></div>
-  </div>
-  
-  <div class="similar-artist-name">
-    Christina Aguilera
-  </div>
-  
-  <div class="artist-popover">
-    <div class="popover-header">
-      <div class="popover-artist-name">Christina Aguilera</div>
-    </div>
-    
-    <div class="popover-stats">
-      <div class="stat-item">
-        <span class="stat-value">0</span>
-        <span class="stat-label">Albums</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-value">0</span>
-        <span class="stat-label">Songs</span>
-      </div>
-    </div>
-    
-    <div class="popover-footer">
-      <button class="popover-button" data-artist-id="similar-7">
-        View Artist
-      </button>
-    </div>
-  </div>
-</div><div class="similar-artist-card" data-artist-name="Taylor Swift">
-  <div class="similar-artist-image">
-    <img src="https://koders.cloud/global/content/images/artistPortraits/taylorswift.png" alt="Taylor Swift" class="w-full h-full object-cover artist-avatar">
-    <div class="artist-image-overlay"></div>
-  </div>
-  
-  <div class="similar-artist-name">
-    Taylor Swift
-  </div>
-  
-  <div class="artist-popover">
-    <div class="popover-header">
-      <div class="popover-artist-name">Taylor Swift</div>
-    </div>
-    
-    <div class="popover-stats">
-      <div class="stat-item">
-        <span class="stat-value">7</span>
-        <span class="stat-label">Albums</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-value">106</span>
-        <span class="stat-label">Songs</span>
-      </div>
-    </div>
-    
-    <div class="popover-footer">
-      <button class="popover-button" data-artist-id="5923287002">
-        View Artist
-      </button>
-    </div>
-  </div>
-</div><div class="similar-artist-card" data-artist-name="Selena Gomez">
-  <div class="similar-artist-image">
-    <img src="https://koders.cloud/global/content/images/artistPortraits/selenagomez.png" alt="Selena Gomez" class="w-full h-full object-cover artist-avatar">
-    <div class="artist-image-overlay"></div>
-  </div>
-  
-  <div class="similar-artist-name">
-    Selena Gomez
-  </div>
-  
-  <div class="artist-popover">
-    <div class="popover-header">
-      <div class="popover-artist-name">Selena Gomez</div>
-    </div>
-    
-    <div class="popover-stats">
-      <div class="stat-item">
-        <span class="stat-value">3</span>
-        <span class="stat-label">Albums</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-value">37</span>
-        <span class="stat-label">Songs</span>
-      </div>
-    </div>
-    
-    <div class="popover-footer">
-      <button class="popover-button" data-artist-id="5923287004">
-        View Artist
-      </button>
-    </div>
-  </div>
-</div><div class="similar-artist-card" data-artist-name="Madonna">
-  <div class="similar-artist-image">
-    <img src="https://koders.cloud/global/content/images/artistPortraits/madonna.png" alt="Madonna" class="w-full h-full object-cover artist-avatar">
-    <div class="artist-image-overlay"></div>
-  </div>
-  
-  <div class="similar-artist-name">
-    Madonna
-  </div>
-  
-  <div class="artist-popover">
-    <div class="popover-header">
-      <div class="popover-artist-name">Madonna</div>
-    </div>
-    
-    <div class="popover-stats">
-      <div class="stat-item">
-        <span class="stat-value">0</span>
-        <span class="stat-label">Albums</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-value">0</span>
-        <span class="stat-label">Songs</span>
-      </div>
-    </div>
-    
-    <div class="popover-footer">
-      <button class="popover-button" data-artist-id="similar-10">
-        View Artist
-      </button>
-    </div>
-  </div>
-</div><div class="similar-artist-card" data-artist-name="Nicki Minaj">
-  <div class="similar-artist-image">
-    <img src="https://koders.cloud/global/content/images/artistPortraits/nickiminaj.png" alt="Nicki Minaj" class="w-full h-full object-cover artist-avatar">
-    <div class="artist-image-overlay"></div>
-  </div>
-  
-  <div class="similar-artist-name">
-    Nicki Minaj
-  </div>
-  
-  <div class="artist-popover">
-    <div class="popover-header">
-      <div class="popover-artist-name">Nicki Minaj</div>
-    </div>
-    
-    <div class="popover-stats">
-      <div class="stat-item">
-        <span class="stat-value">0</span>
-        <span class="stat-label">Albums</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-value">0</span>
-        <span class="stat-label">Songs</span>
-      </div>
-    </div>
-    
-    <div class="popover-footer">
-      <button class="popover-button" data-artist-id="similar-11">
-        View Artist
-      </button>
-    </div>
-  </div>
-</div><div class="similar-artist-card" data-artist-name="Pink">
-  <div class="similar-artist-image">
-    <img src="https://koders.cloud/global/content/images/artistPortraits/pink.png" alt="Pink" class="w-full h-full object-cover artist-avatar">
-    <div class="artist-image-overlay"></div>
-  </div>
-  
-  <div class="similar-artist-name">
-    Pink
-  </div>
-  
-  <div class="artist-popover">
-    <div class="popover-header">
-      <div class="popover-artist-name">Pink</div>
-    </div>
-    
-    <div class="popover-stats">
-      <div class="stat-item">
-        <span class="stat-value">6</span>
-        <span class="stat-label">Albums</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-value">79</span>
-        <span class="stat-label">Songs</span>
-      </div>
-    </div>
-    
-    <div class="popover-footer">
-      <button class="popover-button" data-artist-id="5923287014">
-        View Artist
-      </button>
-    </div>
-  </div>
-</div><div class="similar-artist-card" data-artist-name="Jessie J">
-  <div class="similar-artist-image">
-    <img src="https://koders.cloud/global/content/images/artistPortraits/jessiej.png" alt="Jessie J" class="w-full h-full object-cover artist-avatar">
-    <div class="artist-image-overlay"></div>
-  </div>
-  
-  <div class="similar-artist-name">
-    Jessie J
-  </div>
-  
-  <div class="artist-popover">
-    <div class="popover-header">
-      <div class="popover-artist-name">Jessie J</div>
-    </div>
-    
-    <div class="popover-stats">
-      <div class="stat-item">
-        <span class="stat-value">0</span>
-        <span class="stat-label">Albums</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-value">0</span>
-        <span class="stat-label">Songs</span>
-      </div>
-    </div>
-    
-    <div class="popover-footer">
-      <button class="popover-button" data-artist-id="similar-13">
-        View Artist
-      </button>
-    </div>
-  </div>
-</div><div class="similar-artist-card" data-artist-name="Ariana Grande">
-  <div class="similar-artist-image">
-    <img src="https://koders.cloud/global/content/images/artistPortraits/arianagrande.png" alt="Ariana Grande" class="w-full h-full object-cover artist-avatar">
-    <div class="artist-image-overlay"></div>
-  </div>
-  
-  <div class="similar-artist-name">
-    Ariana Grande
-  </div>
-  
-  <div class="artist-popover">
-    <div class="popover-header">
-      <div class="popover-artist-name">Ariana Grande</div>
-    </div>
-    
-    <div class="popover-stats">
-      <div class="stat-item">
-        <span class="stat-value">7</span>
-        <span class="stat-label">Albums</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-value">82</span>
-        <span class="stat-label">Songs</span>
-      </div>
-    </div>
-    
-    <div class="popover-footer">
-      <button class="popover-button" data-artist-id="5923287012">
-        View Artist
-      </button>
-    </div>
-  </div>
-</div></div>
-            <button class="carousel-arrow right" aria-label="Scroll right">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-                </svg>
-            </button>
-        </div>
-    </div>
-                    </div>
-                    <div class="albums-section">
-                    
-                        <div id="albums-container" class="albums-grid">
-        <div class="album-selector-tabs" id="album-tabs"><button class="album-tab " data-album-index="0">
-                Animal
-                
-            </button><button class="album-tab " data-album-index="1">
-                Warrior
-                
-            </button><button class="album-tab active" data-album-index="2">
-                Rainbow
-                
-            </button><button class="album-tab" data-album-index="3">
-                High Road
-                
-            </button></div>      
-        <div class="album-selector-container">
-            <div class="single-album-display">
-                <div class="album-content" id="album-content">
-                <div class="albumSongsArea p-0 rounded-2xl bg-white bg-opacity-5 backdrop-blur-sm border border-white border-opacity-5">
-                    <div class="albumFade" data-album-id="rainbow" style="--album-cover: url('https://koders.cloud/global/content/images/albumCovers/rainbow.png');">
-                        <div class="gap-6 items-center md:items-start">
-                            <div class="album-image relative flex-shrink-0">
-                                <button class="play-album absolute bottom-4 right-4 bg-blue-600 hover:bg-blue-700 w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition transform hover:scale-105">
-                                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>
-                                    </svg>
-                                </button>
-                            </div>
-                            <div class="flex-1 artistBottom">
-                                <h3 class="text-2xl font-bold mb-2">Rainbow</h3>
-                                <p class="text-sm opacity-70 mb-4">Unknown year • 14 Tracks</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="songs-container" id="songs-container-rainbow">
-                <div class="song-item group flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-5 transition cursor-pointer" data-song="{&quot;id&quot;:&quot;730460&quot;,&quot;title&quot;:&quot;Bastards&quot;,&quot;downloadPath&quot;:&quot;https://mybeats.cloud/mediaFiles/songs/Bastards.mp3&quot;,&quot;duration&quot;:&quot;3:51&quot;,&quot;artist&quot;:&quot;Kesha&quot;,&quot;album&quot;:&quot;Rainbow&quot;,&quot;cover&quot;:&quot;https://koders.cloud/global/content/images/albumCovers/rainbow.png&quot;}">
-                    <div class="flex items-center flex-1 min-w-0 gap-4">
-                        <span class="text-sm opacity-50 w-4 text-center">1</span>
-                        <div class="truncate">
-                            <p class="text-sm font-medium truncate">Bastards</p>
-                            <p class="text-xs opacity-60">3:51</p>
-                        </div>
-                    </div>
-                    <div class="song-toolbar flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="favorite" title="Add to favorites">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="play-next" title="Play next">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="add-queue" title="Add to queue">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="share" title="Share">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path></svg>
-                        </button>
-                    </div>
-                </div>
-            
-                <div class="song-item group flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-5 transition cursor-pointer" data-song="{&quot;id&quot;:&quot;730461&quot;,&quot;title&quot;:&quot;Let " em="" talk&quot;,&quot;downloadpath&quot;:&quot;https:="" mybeats.cloud="" mediafiles="" songs="" letemtalk.mp3&quot;,&quot;duration&quot;:&quot;3:05&quot;,&quot;artist&quot;:&quot;kesha&quot;,&quot;album&quot;:&quot;rainbow&quot;,&quot;cover&quot;:&quot;https:="" koders.cloud="" global="" content="" images="" albumcovers="" rainbow.png&quot;}'="">
-                    <div class="flex items-center flex-1 min-w-0 gap-4">
-                        <span class="text-sm opacity-50 w-4 text-center">2</span>
-                        <div class="truncate">
-                            <p class="text-sm font-medium truncate">Let 'Em Talk</p>
-                            <p class="text-xs opacity-60">3:05</p>
-                        </div>
-                    </div>
-                    <div class="song-toolbar flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="favorite" title="Add to favorites">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="play-next" title="Play next">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="add-queue" title="Add to queue">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="share" title="Share">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path></svg>
-                        </button>
-                    </div>
-                </div>
-            
-                <div class="song-item group flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-5 transition cursor-pointer" data-song="{&quot;id&quot;:&quot;730462&quot;,&quot;title&quot;:&quot;Woman&quot;,&quot;downloadPath&quot;:&quot;https://mybeats.cloud/mediaFiles/songs/Woman.mp3&quot;,&quot;duration&quot;:&quot;3:16&quot;,&quot;artist&quot;:&quot;Kesha&quot;,&quot;album&quot;:&quot;Rainbow&quot;,&quot;cover&quot;:&quot;https://koders.cloud/global/content/images/albumCovers/rainbow.png&quot;}">
-                    <div class="flex items-center flex-1 min-w-0 gap-4">
-                        <span class="text-sm opacity-50 w-4 text-center">3</span>
-                        <div class="truncate">
-                            <p class="text-sm font-medium truncate">Woman</p>
-                            <p class="text-xs opacity-60">3:16</p>
-                        </div>
-                    </div>
-                    <div class="song-toolbar flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="favorite" title="Add to favorites">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="play-next" title="Play next">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="add-queue" title="Add to queue">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="share" title="Share">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path></svg>
-                        </button>
-                    </div>
-                </div>
-            
-                <div class="song-item group flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-5 transition cursor-pointer" data-song="{&quot;id&quot;:&quot;730463&quot;,&quot;title&quot;:&quot;Hymn&quot;,&quot;downloadPath&quot;:&quot;https://mybeats.cloud/mediaFiles/songs/Hymn.mp3&quot;,&quot;duration&quot;:&quot;3:26&quot;,&quot;artist&quot;:&quot;Kesha&quot;,&quot;album&quot;:&quot;Rainbow&quot;,&quot;cover&quot;:&quot;https://koders.cloud/global/content/images/albumCovers/rainbow.png&quot;}">
-                    <div class="flex items-center flex-1 min-w-0 gap-4">
-                        <span class="text-sm opacity-50 w-4 text-center">4</span>
-                        <div class="truncate">
-                            <p class="text-sm font-medium truncate">Hymn</p>
-                            <p class="text-xs opacity-60">3:26</p>
-                        </div>
-                    </div>
-                    <div class="song-toolbar flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="favorite" title="Add to favorites">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="play-next" title="Play next">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="add-queue" title="Add to queue">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="share" title="Share">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path></svg>
-                        </button>
-                    </div>
-                </div>
-            
-                <div class="song-item group flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-5 transition cursor-pointer" data-song="{&quot;id&quot;:&quot;730464&quot;,&quot;title&quot;:&quot;Praying&quot;,&quot;downloadPath&quot;:&quot;https://mybeats.cloud/mediaFiles/songs/Praying.mp3&quot;,&quot;duration&quot;:&quot;3:50&quot;,&quot;artist&quot;:&quot;Kesha&quot;,&quot;album&quot;:&quot;Rainbow&quot;,&quot;cover&quot;:&quot;https://koders.cloud/global/content/images/albumCovers/rainbow.png&quot;}">
-                    <div class="flex items-center flex-1 min-w-0 gap-4">
-                        <span class="text-sm opacity-50 w-4 text-center">5</span>
-                        <div class="truncate">
-                            <p class="text-sm font-medium truncate">Praying</p>
-                            <p class="text-xs opacity-60">3:50</p>
-                        </div>
-                    </div>
-                    <div class="song-toolbar flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="favorite" title="Add to favorites">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="play-next" title="Play next">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="add-queue" title="Add to queue">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="share" title="Share">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path></svg>
-                        </button>
-                    </div>
-                </div>
-            
-                <div class="song-item group flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-5 transition cursor-pointer" data-song="{&quot;id&quot;:&quot;730465&quot;,&quot;title&quot;:&quot;Learn to Let Go&quot;,&quot;downloadPath&quot;:&quot;https://mybeats.cloud/mediaFiles/songs/LearnToLetGo.mp3&quot;,&quot;duration&quot;:&quot;3:38&quot;,&quot;artist&quot;:&quot;Kesha&quot;,&quot;album&quot;:&quot;Rainbow&quot;,&quot;cover&quot;:&quot;https://koders.cloud/global/content/images/albumCovers/rainbow.png&quot;}">
-                    <div class="flex items-center flex-1 min-w-0 gap-4">
-                        <span class="text-sm opacity-50 w-4 text-center">6</span>
-                        <div class="truncate">
-                            <p class="text-sm font-medium truncate">Learn to Let Go</p>
-                            <p class="text-xs opacity-60">3:38</p>
-                        </div>
-                    </div>
-                    <div class="song-toolbar flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="favorite" title="Add to favorites">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="play-next" title="Play next">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="add-queue" title="Add to queue">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="share" title="Share">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path></svg>
-                        </button>
-                    </div>
-                </div>
-            
-                <div class="song-item group flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-5 transition cursor-pointer" data-song="{&quot;id&quot;:&quot;730466&quot;,&quot;title&quot;:&quot;Finding You&quot;,&quot;downloadPath&quot;:&quot;https://mybeats.cloud/mediaFiles/songs/FindingYou.mp3&quot;,&quot;duration&quot;:&quot;2:52&quot;,&quot;artist&quot;:&quot;Kesha&quot;,&quot;album&quot;:&quot;Rainbow&quot;,&quot;cover&quot;:&quot;https://koders.cloud/global/content/images/albumCovers/rainbow.png&quot;}">
-                    <div class="flex items-center flex-1 min-w-0 gap-4">
-                        <span class="text-sm opacity-50 w-4 text-center">7</span>
-                        <div class="truncate">
-                            <p class="text-sm font-medium truncate">Finding You</p>
-                            <p class="text-xs opacity-60">2:52</p>
-                        </div>
-                    </div>
-                    <div class="song-toolbar flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="favorite" title="Add to favorites">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="play-next" title="Play next">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="add-queue" title="Add to queue">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="share" title="Share">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path></svg>
-                        </button>
-                    </div>
-                </div>
-            
-                <div class="song-item group flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-5 transition cursor-pointer" data-song="{&quot;id&quot;:&quot;730467&quot;,&quot;title&quot;:&quot;Rainbow&quot;,&quot;downloadPath&quot;:&quot;https://mybeats.cloud/mediaFiles/songs/Rainbow.mp3&quot;,&quot;duration&quot;:&quot;3:39&quot;,&quot;artist&quot;:&quot;Kesha&quot;,&quot;album&quot;:&quot;Rainbow&quot;,&quot;cover&quot;:&quot;https://koders.cloud/global/content/images/albumCovers/rainbow.png&quot;}">
-                    <div class="flex items-center flex-1 min-w-0 gap-4">
-                        <span class="text-sm opacity-50 w-4 text-center">8</span>
-                        <div class="truncate">
-                            <p class="text-sm font-medium truncate">Rainbow</p>
-                            <p class="text-xs opacity-60">3:39</p>
-                        </div>
-                    </div>
-                    <div class="song-toolbar flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="favorite" title="Add to favorites">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="play-next" title="Play next">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="add-queue" title="Add to queue">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="share" title="Share">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path></svg>
-                        </button>
-                    </div>
-                </div>
-            
-                <div class="song-item group flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-5 transition cursor-pointer" data-song="{&quot;id&quot;:&quot;730468&quot;,&quot;title&quot;:&quot;Hunt You Down&quot;,&quot;downloadPath&quot;:&quot;https://mybeats.cloud/mediaFiles/songs/HuntYouDown.mp3&quot;,&quot;duration&quot;:&quot;3:17&quot;,&quot;artist&quot;:&quot;Kesha&quot;,&quot;album&quot;:&quot;Rainbow&quot;,&quot;cover&quot;:&quot;https://koders.cloud/global/content/images/albumCovers/rainbow.png&quot;}">
-                    <div class="flex items-center flex-1 min-w-0 gap-4">
-                        <span class="text-sm opacity-50 w-4 text-center">9</span>
-                        <div class="truncate">
-                            <p class="text-sm font-medium truncate">Hunt You Down</p>
-                            <p class="text-xs opacity-60">3:17</p>
-                        </div>
-                    </div>
-                    <div class="song-toolbar flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="favorite" title="Add to favorites">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="play-next" title="Play next">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="add-queue" title="Add to queue">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="share" title="Share">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path></svg>
-                        </button>
-                    </div>
-                </div>
-            
-                <div class="song-item group flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-5 transition cursor-pointer" data-song="{&quot;id&quot;:&quot;730469&quot;,&quot;title&quot;:&quot;Boogie Feet&quot;,&quot;downloadPath&quot;:&quot;https://mybeats.cloud/mediaFiles/songs/BoogieFeet.mp3&quot;,&quot;duration&quot;:&quot;2:53&quot;,&quot;artist&quot;:&quot;Kesha&quot;,&quot;album&quot;:&quot;Rainbow&quot;,&quot;cover&quot;:&quot;https://koders.cloud/global/content/images/albumCovers/rainbow.png&quot;}">
-                    <div class="flex items-center flex-1 min-w-0 gap-4">
-                        <span class="text-sm opacity-50 w-4 text-center">10</span>
-                        <div class="truncate">
-                            <p class="text-sm font-medium truncate">Boogie Feet</p>
-                            <p class="text-xs opacity-60">2:53</p>
-                        </div>
-                    </div>
-                    <div class="song-toolbar flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="favorite" title="Add to favorites">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="play-next" title="Play next">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="add-queue" title="Add to queue">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="share" title="Share">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path></svg>
-                        </button>
-                    </div>
-                </div>
-            
-                <div class="song-item group flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-5 transition cursor-pointer" data-song="{&quot;id&quot;:&quot;730470&quot;,&quot;title&quot;:&quot;Boots&quot;,&quot;downloadPath&quot;:&quot;https://mybeats.cloud/mediaFiles/songs/Boots.mp3&quot;,&quot;duration&quot;:&quot;3:03&quot;,&quot;artist&quot;:&quot;Kesha&quot;,&quot;album&quot;:&quot;Rainbow&quot;,&quot;cover&quot;:&quot;https://koders.cloud/global/content/images/albumCovers/rainbow.png&quot;}">
-                    <div class="flex items-center flex-1 min-w-0 gap-4">
-                        <span class="text-sm opacity-50 w-4 text-center">11</span>
-                        <div class="truncate">
-                            <p class="text-sm font-medium truncate">Boots</p>
-                            <p class="text-xs opacity-60">3:03</p>
-                        </div>
-                    </div>
-                    <div class="song-toolbar flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="favorite" title="Add to favorites">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="play-next" title="Play next">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="add-queue" title="Add to queue">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="share" title="Share">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path></svg>
-                        </button>
-                    </div>
-                </div>
-            
-                <div class="song-item group flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-5 transition cursor-pointer" data-song="{&quot;id&quot;:&quot;730471&quot;,&quot;title&quot;:&quot;Old Flames (Can" t="" hold="" a="" candle="" to="" you)&quot;,&quot;downloadpath&quot;:&quot;https:="" mybeats.cloud="" mediafiles="" songs="" oldflames.mp3&quot;,&quot;duration&quot;:&quot;4:26&quot;,&quot;artist&quot;:&quot;kesha&quot;,&quot;album&quot;:&quot;rainbow&quot;,&quot;cover&quot;:&quot;https:="" koders.cloud="" global="" content="" images="" albumcovers="" rainbow.png&quot;}'="">
-                    <div class="flex items-center flex-1 min-w-0 gap-4">
-                        <span class="text-sm opacity-50 w-4 text-center">12</span>
-                        <div class="truncate">
-                            <p class="text-sm font-medium truncate">Old Flames (Can't Hold a Candle to You)</p>
-                            <p class="text-xs opacity-60">4:26</p>
-                        </div>
-                    </div>
-                    <div class="song-toolbar flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="favorite" title="Add to favorites">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="play-next" title="Play next">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="add-queue" title="Add to queue">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="share" title="Share">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path></svg>
-                        </button>
-                    </div>
-                </div>
-            
-                <div class="song-item group flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-5 transition cursor-pointer" data-song="{&quot;id&quot;:&quot;730472&quot;,&quot;title&quot;:&quot;Godzilla&quot;,&quot;downloadPath&quot;:&quot;https://mybeats.cloud/mediaFiles/songs/Godzilla.mp3&quot;,&quot;duration&quot;:&quot;2:08&quot;,&quot;artist&quot;:&quot;Kesha&quot;,&quot;album&quot;:&quot;Rainbow&quot;,&quot;cover&quot;:&quot;https://koders.cloud/global/content/images/albumCovers/rainbow.png&quot;}">
-                    <div class="flex items-center flex-1 min-w-0 gap-4">
-                        <span class="text-sm opacity-50 w-4 text-center">13</span>
-                        <div class="truncate">
-                            <p class="text-sm font-medium truncate">Godzilla</p>
-                            <p class="text-xs opacity-60">2:08</p>
-                        </div>
-                    </div>
-                    <div class="song-toolbar flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="favorite" title="Add to favorites">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="play-next" title="Play next">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="add-queue" title="Add to queue">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="share" title="Share">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path></svg>
-                        </button>
-                    </div>
-                </div>
-            
-                <div class="song-item group flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-5 transition cursor-pointer" data-song="{&quot;id&quot;:&quot;730473&quot;,&quot;title&quot;:&quot;Spaceship&quot;,&quot;downloadPath&quot;:&quot;https://mybeats.cloud/mediaFiles/songs/Spaceship.mp3&quot;,&quot;duration&quot;:&quot;5:14&quot;,&quot;artist&quot;:&quot;Kesha&quot;,&quot;album&quot;:&quot;Rainbow&quot;,&quot;cover&quot;:&quot;https://koders.cloud/global/content/images/albumCovers/rainbow.png&quot;}">
-                    <div class="flex items-center flex-1 min-w-0 gap-4">
-                        <span class="text-sm opacity-50 w-4 text-center">14</span>
-                        <div class="truncate">
-                            <p class="text-sm font-medium truncate">Spaceship</p>
-                            <p class="text-xs opacity-60">5:14</p>
-                        </div>
-                    </div>
-                    <div class="song-toolbar flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="favorite" title="Add to favorites">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="play-next" title="Play next">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="add-queue" title="Add to queue">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"></path></svg>
-                        </button>
-                        <button class="p-1.5 rounded-full hover:bg-white hover:bg-opacity-10" data-action="share" title="Share">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path></svg>
-                        </button>
-                    </div>
-                </div>
-            </div>
-                </div>
-            </div>
-            </div>
-        </div>
-    </div>
-                    </div>
-                </div>
+
+
+
+ 
+<nav aria-label="Breadcrumb" class="breadcrumb-wrapper breadcrumb-fade-in">
+  <ol class="breadcrumb-list">
+    <li class="breadcrumb-item">
+      <a href="#" class="breadcrumb-link">
+        <svg class="breadcrumb-home-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+        </svg>
+        <span>Dashboard</span>
+      </a>
+    </li>
+
+    <li class="breadcrumb-chevron">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
+      </svg>
+    </li>
+
+    <li class="breadcrumb-item">
+      <a href="#" class="breadcrumb-link">
+        <span>Projects</span>
+      </a>
+    </li>
+
+    <li class="breadcrumb-chevron">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
+      </svg>
+    </li>
+
+    <li class="breadcrumb-item">
+      <a href="#" class="breadcrumb-link">
+        <span>Web Development</span>
+      </a>
+    </li>
+
+    <li class="breadcrumb-chevron">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
+      </svg>
+    </li>
+
+    <li class="breadcrumb-item active" aria-current="page">
+      <span class="breadcrumb-link">
+        <span>E-Commerce Platform</span>
+      </span>
+    </li>
+  </ol>
+</nav>
+
+
+
+
+
+            <div id="dynamic-content">
+<!--
+              <div class="text-center py-8 md:py-12">
+                <h1 class="text-4xl md:text-5xl font-bold mb-6 gradient-text">Discover Amazing Music</h1>
+                <p class="text-lg md:text-xl text-gray-400 mb-8 md:mb-12 max-w-2xl mx-auto">Explore artists, albums, and songs from your personal library with an immersive listening experience</p>
+              </div>
+              
+              <h4 class="text-2xl md:text-3xl font-bold mb-6 md:mb-8 px-4 font-semibold text-indigo-600">Featured Artists</h4>
+-->            
+              <div id="featured-artists" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 px-4"></div>
             </div>
 
-            <div id="content-loading" class="absolute inset-0 bg-bg-default bg-opacity-80 backdrop-blur-sm flex items-center justify-center hidden">
+
+
+<!--
+            <div id="content-loading" class="absolute inset-0 bg-bg-default bg-opacity-90 backdrop-blur-sm flex items-center justify-center hidden">
               <div class="loading-animation">
                 <div class="spinner-container">
                   <div class="spinner"></div>
                 </div>
-                <p class="mt-4 text-fg-muted">Loading content...</p>
+                <p class="mt-4 text-fg-muted">Loading Music...</p>
               </div>
-            </div>
+            </div
+-->
+
+
+
+
+
+            
+            
           </div>
         </main>
+        
       </div>
 
-      <button class="floating-add-button" id="floating-add-button" title="Create Playlist">
-        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"></path>
-        </svg>
-      </button>
 
-      <div id="popover-portal" class="popover-portal"></div>
 
-      <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-      <script src="https://cdn.jsdelivr.net/npm/preline@2.0.3/dist/preline.min.js"></script>
-      <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
-      <script src="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy.umd.min.js"></script>
 
-      <script type="module" src="https://koders.cloud/pageModules/global.js"></script>
-    </div>
 
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-          let nav = document.querySelector('.breadcrumb-navigation');
-          let artistTop = document.querySelector('.artistTop');
-          
-          if (nav && artistTop) {
-              let observer = new IntersectionObserver(function(entries) {
-                  entries.forEach(function(entry) {
-                      nav.classList.toggle('stuck', !entry.isIntersecting);
-                      artistTop.classList.toggle('stuck', !entry.isIntersecting);
-                  });
-              }, { 
-                  threshold: 0, 
-                  rootMargin: '-1px 0px 0px 0px'
-              });
 
-              observer.observe(artistTop);
-          }
-      });
-    </script>
 
-    <style>
-      #install-prompt-modal,
-      #open-app-banner {
-        transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-      }
-      #install-prompt-modal {
-        transform: translateY(20px) scale(0.95);
-      }
-      #open-app-banner {
-        transform: translateY(-100%);
-      }
-      body.show-install-modal #install-prompt-modal,
-      body.show-open-banner #open-app-banner {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-      body.show-open-banner #open-app-banner {
-        transform: translateY(0);
-      }
-    </style>
-    
-    <div id="open-app-banner" class="fixed top-0 left-0 right-0 bg-gray-800 p-4 text-center shadow-lg opacity-0 z-50">
-      <p class="text-white">Already have the app? <a href="/" id="open-app-link" class="font-bold text-blue-400 hover:underline">Open it here!</a></p>
-    </div>
 
-    <div id="install-prompt-modal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 opacity-0 pointer-events-none z-50">
-      <div class="bg-gray-800 rounded-2xl shadow-2xl w-full max-w-sm p-8 text-center">
-        <div class="flex justify-center mb-6">
-          <div class="bg-gray-700 p-4 rounded-full">
-            <svg class="w-12 h-12 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-            </svg>
+
+
+
+
+<!--------   O V E R LA Y S   -------------------->
+<!-- Popover Portal -->
+<div id="popover-portal" class="popover-portal">
+<!-- 
+PopOvers Injected Here 
+-->
+</div>
+
+
+<!-- PWA Install Banner -->
+<div id="pwa-install-banner" class="fixed bottom-0 end-0 z-60 sm:max-w-sm w-full mx-auto p-6 opacity-0 pointer-events-none transition-all duration-300">
+        <div class="p-4 bg-white border border-gray-200 rounded-xl shadow-2xs dark:bg-neutral-900 dark:border-neutral-800 flex gap-x-4">
+          <svg class="shrink-0 w-8 h-auto" width="72" height="63" viewBox="0 0 72 63" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15.5174 56.1528C16.2903 57.6825 16.929 61.4559 14.8118 60.9459C13.5013 60.5381 11.4445 57.6213 12.493 56.1528C12.661 55.8468 13.2189 55.2757 14.106 55.4389" stroke="currentColor" class="dark:stroke-neutral-200" stroke-width="2" stroke-linecap="round"/>
+            <path d="M15.5173 49.6263L14.0262 48.5579C13.5346 48.2056 12.8477 48.3707 12.658 48.945C12.3456 49.8907 12.1258 51.1463 12.462 52.2324C12.5336 52.4636 12.7127 52.6466 12.9449 52.7146C13.8342 52.9751 15.2568 52.9048 15.8197 51.054" stroke="currentColor" class="dark:stroke-neutral-200" stroke-width="2" stroke-linecap="round"/>
+            <ellipse cx="51.2061" cy="22.3973" rx="3.02446" ry="3.05945" fill="currentColor" class="text-gray-800 dark:fill-neutral-200"/>
+          </svg>
+          <div class="grow">
+            <p class="text-sm text-gray-800 dark:text-neutral-200">
+              Open in the app, or 
+              <a id="pwa-download-link" class="inline-flex items-center gap-x-1.5 text-blue-600 decoration-2 hover:underline font-medium dark:text-blue-500" href="#">
+                Install App
+              </a>
+            </p>
+          </div>
+          <div>
+            <button id="pwa-dismiss" type="button" class="p-2 inline-flex items-center gap-x-2 text-sm font-semibold rounded-full border border-transparent text-gray-500 hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700">
+              <span class="sr-only">Dismiss</span>
+              <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+            </button>
           </div>
         </div>
-        <h2 class="text-2xl font-bold mb-2 text-white">Install Our App</h2>
-        <p class="text-gray-400 mb-6">Get the full experience on your device. It's fast and free!</p>
-        <div class="flex flex-col space-y-3">
-          <button id="install-button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-transform transform hover:scale-105 w-full">
-            Install App
+</div>
+<!------------------------------------------------->
+
+
+<!-- Search Modal -->
+<div id="searchModal" class="search-modal-overlay hidden fixed inset-0 z-[9999] opacity-0 transition-opacity duration-300">
+  <!-- Backdrop with blur -->
+  <div class="search-backdrop absolute inset-0 bg-black/60 backdrop-blur-xl"></div>
+  
+  <!-- Search Container -->
+  <div class="search-container relative flex items-start justify-center min-h-screen p-4 pt-[15vh]">
+    <div class="search-content w-full max-w-3xl transform scale-95 opacity-0 transition-all duration-300">
+      
+      <!-- Search Input Area -->
+      <div class="search-input-wrapper relative bg-gradient-to-br from-gray-900/95 to-gray-800/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/10 overflow-hidden">
+        
+        <!-- Search Bar -->
+        <div class="flex items-center gap-4 px-6 py-5 border-b border-white/10">
+          <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          
+          <input 
+            type="text" 
+            id="searchInput" 
+            placeholder="Search songs, artists, albums..." 
+            class="flex-1 bg-transparent text-white text-lg placeholder-gray-400 outline-none"
+            autocomplete="off"
+            spellcheck="false"
+          />
+          
+          <!-- Clear Button -->
+          <button id="clearSearch" class="clear-btn hidden text-gray-400 hover:text-white transition-colors p-2 rounded-full hover:bg-white/10">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+            </svg>
           </button>
-          <button id="dismiss-button" class="bg-gray-700 hover:bg-gray-600 text-gray-300 font-bold py-3 px-4 rounded-lg transition w-full">
-            Not Now
+          
+          <!-- Close Button -->
+          <button id="closeSearch" class="text-gray-400 hover:text-white transition-colors">
+            <span class="text-sm font-medium">ESC</span>
           </button>
         </div>
+        
+        <!-- Search Results / Content Area -->
+        <div id="searchResults" class="search-results max-h-[60vh] overflow-y-auto custom-scrollbar">
+          
+          <!-- Recent Searches (Default View) -->
+          <div id="recentSearches" class="recent-searches p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Recent Searches</h3>
+              <button id="clearRecentBtn" class="text-xs text-gray-500 hover:text-white transition-colors">Clear All</button>
+            </div>
+            
+            <div id="recentSearchList" class="space-y-2">
+              <!-- Recent search items will be inserted here -->
+            </div>
+            
+            <div id="recentSearchesEmpty" class="hidden text-center py-12 text-gray-500">
+              <svg class="w-16 h-16 mx-auto mb-4 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              </svg>
+              <p>No recent searches</p>
+              <p class="text-sm mt-2">Start searching to see your history</p>
+            </div>
+          </div>
+          
+          <!-- Search Results Content -->
+          <div id="searchResultsContent" class="hidden">
+            <!-- Categories -->
+            <div id="songsResults" class="search-category hidden">
+              <div class="px-6 py-4 border-b border-white/5">
+                <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Songs</h3>
+              </div>
+              <div id="songsList" class="divide-y divide-white/5"></div>
+            </div>
+            
+            <div id="artistsResults" class="search-category hidden">
+              <div class="px-6 py-4 border-b border-white/5">
+                <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Artists</h3>
+              </div>
+              <div id="artistsList" class="divide-y divide-white/5"></div>
+            </div>
+            
+            <div id="albumsResults" class="search-category hidden">
+              <div class="px-6 py-4 border-b border-white/5">
+                <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Albums</h3>
+              </div>
+              <div id="albumsList" class="grid grid-cols-2 gap-4 p-6"></div>
+            </div>
+            
+            <!-- No Results -->
+            <div id="noResults" class="hidden text-center py-16 px-6">
+              <svg class="w-20 h-20 mx-auto mb-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <h3 class="text-xl font-semibold text-gray-300 mb-2">No results found</h3>
+              <p class="text-gray-500">Try adjusting your search terms</p>
+            </div>
+          </div>
+          
+          <!-- Loading State -->
+          <div id="searchLoading" class="hidden py-16 text-center">
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-700 border-t-accent-primary"></div>
+          </div>
+          
+        </div>
+        
+        <!-- Quick Filters (Optional) -->
+        <div class="px-6 py-3 border-t border-white/10 bg-black/20 flex gap-2 overflow-x-auto custom-scrollbar">
+          <button class="filter-chip active" data-filter="all">All</button>
+          <button class="filter-chip" data-filter="songs">Songs</button>
+          <button class="filter-chip" data-filter="artists">Artists</button>
+          <button class="filter-chip" data-filter="albums">Albums</button>
+        </div>
+        
       </div>
+      
+      <!-- Search Tips -->
+      <div class="mt-4 px-4 text-center text-xs text-gray-500">
+        <span class="inline-flex items-center gap-4">
+          <span>↑↓ to navigate</span>
+          <span>↵ to select</span>
+          <span>ESC to close</span>
+        </span>
+      </div>
+      
     </div>
-    <script src="./dev/scripts.js"></script>
-    <script>
-      let deferredPrompt;
-      let installModal = document.getElementById("install-prompt-modal");
-      let installButton = document.getElementById("install-button");
-      let dismissButton = document.getElementById("dismiss-button");
+  </div>
+</div>
 
-      window.addEventListener("beforeinstallprompt", function(e) {
-        e.preventDefault();
-        deferredPrompt = e;
-        console.log("`beforeinstallprompt` event was fired.");
-        showInstallPrompt();
-      });
+</div><!-- W R A P P E R -->
 
-      function showInstallPrompt() {
-        if (installModal) {
-          document.body.classList.add("show-install-modal");
-          installModal.style.pointerEvents = "auto";
-        }
-      }
 
-      function hideInstallPrompt() {
-        if (installModal) {
-          document.body.classList.remove("show-install-modal");
-          installModal.style.pointerEvents = "none";
-        }
-      }
+<!-- Development Helpers -->
+<script id="noCache">
+////  Cache Buster for Resources //////////////////////////
+///////////////////////////////////////////////////////////
+(function () {
+  const cacheBuster = "?_=" + Date.now();
 
-      if (installButton) {
-        installButton.addEventListener("click", async function() {
-          hideInstallPrompt();
-          if (deferredPrompt) {
-            deferredPrompt.prompt();
-            let { outcome } = await deferredPrompt.userChoice;
-            console.log(`User response to the install prompt: ${outcome}`);
-            deferredPrompt = null;
-          }
-        });
-      }
-
-      if (dismissButton) {
-        dismissButton.addEventListener("click", function() {
-          hideInstallPrompt();
-        });
-      }
-
-      let openAppBanner = document.getElementById("open-app-banner");
-
-      window.addEventListener("DOMContentLoaded", function() {
-        if (window.matchMedia("(display-mode: standalone)").matches) {
-          console.log("App is running in standalone mode.");
-        } else {
-          if ("getInstalledRelatedApps" in navigator) {
-            navigator.getInstalledRelatedApps().then(function(relatedApps) {
-              if (relatedApps.length > 0) {
-                console.log("PWA is installed.");
-                document.body.classList.add("show-open-banner");
-              } else {
-                console.log("PWA is not installed.");
-              }
-            });
-          }
-        }
-      });
-
-      if ("serviceWorker" in navigator) {
-        window.addEventListener("load", function() {
-          navigator.serviceWorker
-            .register("./system//serviceWorker.js")
-            .then(function(registration) {
-              console.log("Service Worker registered with scope:", registration.scope);
-            })
-            .catch(function(err) {
-              console.error("Service Worker registration failed:", err);
-            });
-        });
-      }
-    </script>
-    
-    
-<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-<script>
-  eruda.init();
-
-  // Create a custom Eruda tool for live CSS editing
-  eruda.add({
-    name: 'Live CSS',
-    init($el) {
-      $el.html(`
-        <textarea id="liveCssArea" style="width:100%;height:200px;"></textarea>
-        <button id="applyCssBtn">Apply CSS</button>
-      `);
-
-      let styleTag = document.createElement('style');
-      document.head.appendChild(styleTag);
-
-      $el.on('click', '#applyCssBtn', () => {
-        styleTag.innerHTML = document.getElementById('liveCssArea').value;
-      });
-    },
-    show() {},
-    hide() {}
+// StyleSheets
+  document.querySelectorAll('link[rel="stylesheet"]').forEach((link) => {
+    if (!link.href.includes("?")) {
+      link.href += cacheBuster;
+    } else {
+      link.href += "&" + cacheBuster.substring(2);
+    }
   });
+
+// Scripts
+  document.querySelectorAll("script[src]").forEach((script) => {
+    if (!script.src.includes(window.location.host) || script.src.includes("cache")) return;
+
+    if (!script.src.includes("?")) {
+      script.src += cacheBuster;
+    } else {
+      script.src += "&" + cacheBuster.substring(2);
+    }
+  });
+})();
 </script>
-  </html>
+<script id="DEVTools">
+eruda.init();
+eruda.add({
+  name: "Live CSS",
+  init($el) {
+    $el.html(`
+            <textarea id="liveCssArea" style="width:100%;height:200px;"></textarea>
+            <button id="applyCssBtn">Apply CSS</button>
+          `);
+
+    let styleTag = document.createElement("style");
+    document.head.appendChild(styleTag);
+
+    $el.on("click", "#applyCssBtn", () => {
+      styleTag.innerHTML = document.getElementById("liveCssArea").value;
+    });
+  },
+  show() {},
+  hide() {},
+});
+</script>
+
+
+<!-- L I B R A R I E S -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/preline@2.0.3/dist/preline.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+
+
+<!-- ToolTips - PopOvers -->
+<script type="module" src="./siteScripts/utilities/overlays.js"></script>
+
+
+<!-- Miscellaneous -->
+<script>
+/////////////  S I T E  T H E M E S  //////////
+///////////////////////////////////////////////
+document.addEventListener("DOMContentLoaded", () => {
+  const container = document.querySelector(".theme-toggle-container");
+  const trigger = document.querySelector(".theme-trigger");
+  const themeButtons = document.querySelectorAll(".theme-options button");
+  const html = document.documentElement;
+
+  const themeColors = {
+    dark: "#3d454e",
+    dim: "#4a535d",
+    light: "#c9d1df",
+  };
+
+  const setTheme = (theme) => {
+    html.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+
+    const metaTag = document.querySelector('meta[name="theme-color"]');
+    if (metaTag && themeColors[theme]) {
+      metaTag.setAttribute("content", themeColors[theme]);
+    }
+  };
+
+  const savedTheme = localStorage.getItem("theme") || "dim";
+  setTheme(savedTheme);
+
+  themeButtons.forEach((btn) => {
+    btn.classList.toggle("active", btn.dataset.theme === savedTheme);
+
+    btn.addEventListener("click", () => {
+      const theme = btn.dataset.theme;
+      setTheme(theme);
+
+      themeButtons.forEach((b) => b.classList.toggle("active", b === btn));
+      container.classList.remove("active");
+    });
+  });
+
+  trigger.addEventListener("click", (e) => {
+    e.stopPropagation();
+    container.classList.toggle("active");
+  });
+
+  document.addEventListener("click", () => {
+    container.classList.remove("active");
+  });
+});
+/////////////////////////////////////////////////////////////////
+
+
+
+////////////////////  PWA Banner ////////////////
+/////////////////////////////////////////////////
+let deferredPrompt;
+const banner = document.getElementById("pwa-install-banner");
+const installLink = document.getElementById("pwa-download-link");
+const dismissBtn = document.getElementById("pwa-dismiss");
+
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  showPWABanner();
+});
+
+function showPWABanner() {
+  banner.style.opacity = "1";
+  banner.style.pointerEvents = "auto";
+  banner.classList.remove("translate-y-5");
+}
+function hidePWABanner() {
+  banner.style.opacity = "0";
+  banner.style.pointerEvents = "none";
+}
+
+installLink.addEventListener("click", async (e) => {
+  e.preventDefault();
+  hidePWABanner();
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    console.log(`User response to the install prompt: ${outcome}`);
+    deferredPrompt = null;
+  }
+});
+dismissBtn.addEventListener("click", hidePWABanner);
+window.addEventListener("DOMContentLoaded", () => {
+  if (window.matchMedia("(display-mode: standalone)").matches) {
+    console.log("App running in standalone mode.");
+  } else if ("getInstalledRelatedApps" in navigator) {
+    navigator.getInstalledRelatedApps().then((relatedApps) => {
+      if (relatedApps.length > 0) {
+        console.log("PWA installed.");
+        showPWABanner();
+      } else {
+        console.log("PWA not installed.");
+      }
+    });
+  }
+});
+//////////////////////////////////////////////////////////////////
+
+
+
+/////////////////////  Service Worker  //////////
+/////////////////////////////////////////////////
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("./system/serviceWorker.js")
+      .then((registration) => {
+        console.log("Service Worker registered:", registration.scope);
+      })
+      .catch((err) => {
+        console.error("Service Worker registration failed:", err);
+      });
+  });
+}
+////////////////////////////////////////////////////////////////
+</script>
+
+<script
+  id="breadCrumbsBanner">
+function handleBreadcrumbBorder() {
+  const breadcrumb = document.querySelector('.breadcrumb-wrapper');
+  const pageWrapper = document.getElementById('pageWrapper');
+  
+  if (!breadcrumb || !pageWrapper) return;
+
+  function updateBreadcrumb() {
+    const scrollTop = pageWrapper.scrollTop || document.documentElement.scrollTop;
+    
+    if (scrollTop > 10) {
+      breadcrumb.classList.add('scrolled');
+    } else {
+      breadcrumb.classList.remove('scrolled');
+    }
+  }
+  
+  pageWrapper.addEventListener('scroll', updateBreadcrumb, { passive: true });
+  updateBreadcrumb();
+}
+
+document.addEventListener('DOMContentLoaded', handleBreadcrumbBorder);
+
+if (typeof MutationObserver !== 'undefined') {
+  const observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+      if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+        setTimeout(handleBreadcrumbBorder, 50);
+      }
+    });
+  });
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+}
+</script>
+
+
+
+
+
+<!-- Music Library -->
+<script type="module" src="./modules/library.js"></script>
+<script type="module" src="./siteScripts/utilities/search.js"></script>
+
+<!-- Global Initialize -->
+<script type="module">
+    import { music } from './modules/library.js';
+    import { app } from './siteScripts/global.js';
+    
+    window.music = music;
+    
+    document.addEventListener('DOMContentLoaded', async () => {
+        console.log('📄 DOMContentLoaded - Starting app...');
+        await app.initialize();
+    });
+</script>
+
+
+
+</body>
+</html>
