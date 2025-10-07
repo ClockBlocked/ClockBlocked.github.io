@@ -1,0 +1,66 @@
+# Add CORS headers
+AddType audio/mpeg mp3
+AddType audio/ogg ogg
+AddType audio/mp4 m4a
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(mp3|ogg|m4a)$">
+    Header set Access-Control-Allow-Origin "*"
+    Header set Content-Type "audio/mpeg"
+  </FilesMatch>
+</IfModule>
+
+# Cache controls
+<IfModule mod_expires.c>
+  ExpiresActive On
+
+  # Images
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+
+  # CSS, JavaScript
+  ExpiresByType text/css "access plus 1 month"
+  ExpiresByType application/javascript "access plus 1 month"
+
+  # Audio files
+  ExpiresByType audio/mpeg "access plus 1 month"
+  ExpiresByType audio/ogg "access plus 1 month"
+  ExpiresByType audio/mp4 "access plus 1 month"
+</IfModule>
+
+# DISABLE CACHING FOR DEVELOPMENT
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html|htm|css|js|json)$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+  </FilesMatch>
+
+  <FilesMatch "^(overlays|extra|dynamicOverlays)\.css$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+  </FilesMatch>
+
+  <FilesMatch "stylingSheets/.*\.css$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+  </FilesMatch>
+
+  <FilesMatch "(modules|siteScripts)/.*\.js$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+  </FilesMatch>
+</IfModule>
+
+FileETag None
+
+# Site Routing
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+
+  RewriteCond %{REQUEST_URI} !^/global/content/
+  RewriteCond %{REQUEST_URI} !\.(js|css|png|jpg|jpeg|gif|svg|mp3|m4a|ogg|wav)$
+
+  RewriteRule ^.*$ /index.html [L]
+</IfModule>
