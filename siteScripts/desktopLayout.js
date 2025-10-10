@@ -153,12 +153,27 @@ export function initDesktopLayout() {
       setTimeout(() => {
         const desktopMenuItems = document.querySelectorAll('.desktop-menu-item');
         desktopMenuItems.forEach(item => {
-          const originalId = item.id;
-          if (originalId) {
-            const mobileElement = document.getElementById(originalId);
-            if (mobileElement && mobileElement._clickHandler) {
-              item.addEventListener('click', mobileElement._clickHandler);
-            }
+          // Get the original ID from the dropdown menu
+          const itemId = item.id.replace('desktop-menu-', 'dropdown-');
+          const originalElement = document.getElementById(itemId);
+          
+          if (originalElement && originalElement._clickHandler) {
+            item.addEventListener('click', (e) => {
+              e.stopPropagation();
+              originalElement._clickHandler(e);
+              // Close the menu after clicking
+              menuSidebar.classList.remove('open');
+              overlay.classList.remove('open');
+            });
+          } else if (originalElement) {
+            // If no _clickHandler, try to click the original element
+            item.addEventListener('click', (e) => {
+              e.stopPropagation();
+              originalElement.click();
+              // Close the menu after clicking
+              menuSidebar.classList.remove('open');
+              overlay.classList.remove('open');
+            });
           }
         });
       }, 500);

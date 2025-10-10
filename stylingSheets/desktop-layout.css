@@ -23,10 +23,12 @@
     overflow-y: auto;
     overflow-x: hidden;
     padding: 2rem;
-    padding-right: 420px; /* Space for fixed sidebar */
+    padding-right: 420px !important; /* Space for fixed sidebar */
+    padding-left: 0 !important; /* Remove left padding */
+    margin-left: 0 !important; /* Remove left margin */
   }
   
-  /* Fix for dynamic content - remove left margin */
+  /* Fix for dynamic content - remove left margin/padding */
   #dynamic-content {
     margin-left: 0 !important;
     margin-right: 0 !important;
@@ -38,6 +40,18 @@
     margin-left: 0 !important;
     padding-left: 1rem !important;
     padding-right: 1rem !important;
+  }
+  
+  /* Fix for content wrapper */
+  #contentWrapper {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+  }
+  
+  /* Fix for main container */
+  #main-container {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
   }
 
   /* Right side - Fixed music player sidebar */
@@ -372,5 +386,31 @@
   .songs-container {
     max-height: 400px;
     overflow-y: auto;
+  }
+  
+  /* Fix for albumSongListArea to prevent horizontal stretching */
+  .albumSongListArea {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .album-selector {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  /* Ensure song tables don't stretch */
+  .song-table,
+  .songs-container table {
+    width: 100%;
+    table-layout: fixed;
+  }
+}
+
+/* Additional tablet fixes */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .artistPage .fragments.albums {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   }
 }
