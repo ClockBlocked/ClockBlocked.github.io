@@ -3,7 +3,7 @@
 
 
 import { getAlbumImageUrl } from './parsers.js';
-
+import { escapeForAttribute } from '../pages/rendering.js';
 
 
 
@@ -190,6 +190,29 @@ case "enhancedArtist":
             <div class="songs-container" id="songs-container-${data.albumId}"></div>
           </div>
         `;
+
+      case "section":
+        return `
+          <div class="albumSongListArea">
+            <div class="album-buttons">
+              <div class="album-selector">
+                ${data.albums.map((album, index) => `
+                  <button class="album-tab px-4 py-2 rounded-lg transition-all duration-300 ${index === 0 ? "active bg-accent-primary text-white" : "bg-gray-700 text-gray-300 hover:bg-gray-600"}" 
+                          data-album-index="${index}" 
+                          data-album-name="${album.album}">
+                    <div class="flex items-center gap-2">
+                      <span class="album-tab-title">${album.album}</span>
+                      <span class="album-tab-year text-xs opacity-75">${album.year || ""}</span>
+                    </div>
+                  </button>
+                `).join("")}
+              </div>
+            </div>
+            <div class="current-album-container">
+              <div id="current-album-display" class="transition-all duration-500 ease-in-out"></div>
+            </div>
+          </div>
+        `;
         
       default:
         return "";
@@ -212,7 +235,7 @@ case "enhancedArtist":
     
     return `
   <div class="song-item"
-       data-song='${JSON.stringify(songData).replace(/"/g, "&quot;")}'
+       data-song="${escapeForAttribute(JSON.stringify(songData))}"
        data-context="${context}"
        role="button"
        tabindex="0"
@@ -366,11 +389,261 @@ case "enhancedArtist":
           </div>
           <div id="artists-grid" class="artists-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 px-4 sm:px-6"></div>
         `;
+      case "home_bento":
+        return `
+        <div class="bento-grid px-4 md:px-6 gap-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            <div class="bento-card col-span-full md:col-span-1" data-loader="true">
+              <div class="card-header">
+                <h2 class="text-xl font-bold">Recently Played</h2>
+                <a href="#" class="text-blue-400 hover:text-blue-300 text-sm" data-view="recent">View All</a>
+              </div>
+              <div id="${data.IDS.recentlyPlayedSection}" class="card-content">
+                <div class="skeleton-loader"></div>
+              </div>
+            </div>
+            
+            <div class="bento-card col-span-full md:col-span-2" data-loader="true">
+              <div class="card-header">
+                <h2 class="text-xl font-bold">Discover Albums</h2>
+                <a href="#" class="text-blue-400 hover:text-blue-300 text-sm" data-view="albums">Explore More</a>
+              </div>
+              <div id="${data.IDS.randomAlbumsSection}" class="card-content">
+                <div class="skeleton-loader"></div>
+              </div>
+            </div>
+            
+            <div class="bento-card col-span-full md:col-span-1" data-loader="true">
+              <div class="card-header">
+                <h2 class="text-xl font-bold">Favorite Artists</h2>
+                <a href="#" class="text-blue-400 hover:text-blue-300 text-sm" data-view="favorite-artists">View All</a>
+              </div>
+              <div id="${data.IDS.favoriteArtistsSection}" class="card-content">
+                <div class="skeleton-loader"></div>
+              </div>
+            </div>
+            
+            <div class="bento-card col-span-full md:col-span-1" data-loader="true">
+              <div class="card-header">
+                <h2 class="text-xl font-bold">Your Playlists</h2>
+                <a href="#" class="text-blue-400 hover:text-blue-300 text-sm" data-view="playlists">View All</a>
+              </div>
+              <div id="${data.IDS.playlistsSection}" class="card-content">
+                <div class="skeleton-loader"></div>
+              </div>
+            </div>
+            
+            <div class="bento-card col-span-full md:col-span-1" data-loader="true">
+              <div class="card-header">
+                <h2 class="text-xl font-bold">Favorite Songs</h2>
+                <a href="#" class="text-blue-400 hover:text-blue-300 text-sm" data-view="favorite-songs">View All</a>
+              </div>
+              <div id="${data.IDS.favoriteSongsSection}" class="card-content">
+                <div class="skeleton-loader"></div>
+              </div>
+            </div>
+          </div>
+        `;
         
       default:
         return "";
     }
-  }
+  },
+
+  homeSection: {
+    recentlyPlayed: (tracks, utils) => {
+      let html = `<div class="recent-tracks animate-fade-in">`;
+      tracks.forEach((track, index) => {
+        html += `
+          <div class="recent-track" data-song='${JSON.stringify(track).replace(/"/g, "&quot;")}' style="animation-delay: ${index * 100}ms;">
+            <img src="${utils.getAlbumImageUrl(track.album)}" alt="${track.title}" class="track-art">
+            <div class="track-info">
+              <div class="track-title">${track.title}</div>
+              <div class="track-artist" data-artist="${track.artist}">${track.artist}</div>
+            </div>
+            <div class="play-button-overlay">
+              ${window.ICONS.play}
+            </div>
+          </div>
+        `;
+      });
+      html += `</div>`;
+      return html;
+    },
+
+    playlists: (playlists) => {
+      let html = `<div class="playlists-list animate-fade-in">`;
+      playlists.forEach((playlist, index) => {
+        html += `
+          <div class="playlist-card" data-playlist-id="${playlist.id}" style="animation-delay: ${index * 100}ms;">
+            <div class="playlist-icon" style="width: 40px; height: 40px; background: linear-gradient(45deg, #6366f1, #8b5cf6); border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="20" height="20">
+                <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v2H3v-2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
+              </svg>
+            </div>
+            <div class="playlist-info">
+              <div class="playlist-name">${playlist.name}</div>
+              <div class="playlist-tracks">${playlist.songs?.length || 0} track${playlist.songs?.length !== 1 ? "s" : ""}</div>
+            </div>
+            <div class="play-button-overlay">
+              ${window.ICONS.play}
+            </div>
+          </div>
+        `;
+      });
+      html += `</div>`;
+      return html;
+    },
+
+    favoriteArtists: (artists, utils) => {
+      let html = `<div class="artist-grid animate-fade-in">`;
+      artists.forEach((artistName, index) => {
+        html += `
+          <div class="artist-card" data-artist="${artistName}" style="animation-delay: ${index * 100}ms;">
+            <div style="position: relative;">
+              <img src="${utils.getArtistImageUrl(artistName)}" alt="${artistName}" class="artist-avatar">
+              <div class="play-button-overlay">
+                ${window.ICONS.play}
+              </div>
+            </div>
+            <div class="artist-name">${artistName}</div>
+          </div>
+        `;
+      });
+      html += `</div>`;
+      return html;
+    },
+
+    randomAlbums: (albums, utils) => {
+      let html = `<div class="album-grid animate-fade-in">`;
+      albums.forEach((album, index) => {
+        html += `
+          <div class="album-card" style="animation-delay: ${index * 100}ms;" data-artist="${album.artist}" data-album="${album.album}">
+            <div style="position: relative;">
+              <img src="${utils.getAlbumImageUrl(album.album)}" alt="${album.album}" class="album-cover">
+              <div class="album-overlay">
+                <button class="album-play-btn" data-artist="${album.artist}" data-album="${album.album}">
+                  ${window.ICONS.play}
+                </button>
+              </div>
+            </div>
+            <div class="album-info">
+              <div class="album-title">${album.album}</div>
+              <div class="album-artist" data-artist="${album.artist}">${album.artist}</div>
+            </div>
+          </div>
+        `;
+      });
+      html += `</div>`;
+      return html;
+    },
+
+    favoriteSongs: (songs, utils) => {
+      let html = `<div class="recent-tracks animate-fade-in">`;
+      songs.forEach((song, index) => {
+        html += `
+          <div class="recent-track" data-song='${JSON.stringify(song).replace(/"/g, "&quot;")}' style="animation-delay: ${index * 100}ms;">
+            <img src="${utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="track-art">
+            <div class="track-info">
+              <div class="track-title">${song.title}</div>
+              <div class="track-artist" data-artist="${song.artist}">${song.artist}</div>
+            </div>
+            <div class="play-button-overlay">
+              ${window.ICONS.play}
+            </div>
+            <button class="favorite-heart" data-song-id="${song.id}" style="position: absolute; top: 0.5rem; right: 0.5rem; color: #ef4444; opacity: 0.8; background: none; border: none; cursor: pointer;">
+              <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+              </svg>
+            </button>
+          </div>
+        `;
+      });
+      html += `</div>`;
+      return html;
+    }
+  },
+
+  overlay: function(templateName, data) {
+    switch(templateName) {
+      case 'default':
+        return `
+          <div class="close" data-close>&times;</div>
+          <div class="content">${data.content}</div>
+        `;
+      case 'dialog': // Handles both confirm and alert
+        return `
+          <div class="header">${data.message}</div>
+          <div class="actions">
+            ${data.cancelText ? `<button class="btn muted" data-cancel>${data.cancelText}</button>` : ''}
+            <button class="btn ${data.danger ? "danger" : "primary"}" data-ok>${data.okText}</button>
+          </div>
+        `;
+      case 'prompt':
+        return `
+          <div class="header">${data.message}</div>
+          <div class="body">
+            <input class="input" type="text" placeholder="${data.placeholder}" value="${data.value}">
+          </div>
+          <div class="actions">
+            <button class="btn muted" data-cancel>${data.cancelText}</button>
+            <button class="btn primary" data-ok>${data.okText}</button>
+          </div>
+        `;
+      default:
+        return '';
+    }
+  },
+
+  notification: function(data) {
+    const { type, iconHtml, title, message } = data;
+    return `
+      <div role="status" aria-live="polite" class="toast-item toast-${type}">
+        <div class="toast-progress"></div>
+        <div class="toast-icon">${iconHtml}</div>
+        <div class="toast-content">
+          ${title ? `<strong>${title}</strong>` : ''}
+          ${message}
+        </div>
+        <div class="toast-actions"></div>
+      </div>
+    `;
+  },
+
+  playerListItem: function(data) {
+    const { song, index, type, utils } = data; // type can be 'queue' or 'recent'
+    const isQueue = type === 'queue';
+
+    return `
+      <li class="songItem" data-index="${index}" data-song='${JSON.stringify(song).replace(/"/g, "&quot;")}'>
+        <div class="songContent">
+          <img src="${utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="songCover">
+          <div class="songInfo">
+            <div class="songTitle">${song.title}</div>
+            <div class="artistName">${song.artist}</div>
+          </div>
+          <div class="songActions">
+            <button class="playButton" data-action="play" title="Play now">
+              <svg class="SVGimg" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+              </svg>
+            </button>
+            ${isQueue 
+              ? `<button class="removeButton" data-action="remove" title="Remove from queue">
+                   <svg class="SVGimg" fill="currentColor" viewBox="0 0 20 20">
+                     <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                   </svg>
+                 </button>`
+              : `<button class="queueButton" data-action="queue" title="Add to queue">
+                   <svg class="SVGimg" fill="currentColor" viewBox="0 0 20 20">
+                     <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+                   </svg>
+                 </button>`
+            }
+          </div>
+        </div>
+      </li>
+    `;
+  },
 };
 
 
