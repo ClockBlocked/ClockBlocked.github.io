@@ -1,1 +1,31 @@
-/* tablet styles */
+/* Tablet styles - 768px to 1023px */
+
+/* ============================================
+   NAVBAR - HIDE ON TABLET
+   ============================================ */
+@media (min-width: 768px) and (max-width: 1023px) {
+  #navbar {
+    display: none !important;
+  }
+}
+
+/* ============================================
+   DROPDOWN MENU - TABLET CENTERED LAYOUT
+   Similar to mobile but slightly wider
+   ============================================ */
+@media (min-width: 768px) and (max-width: 1023px) {
+  #dropdown-menu {
+    max-width: 600px;
+    width: 85vw;
+  }
+}
+
+/* ============================================
+   MUSIC PLAYER DRAWER - TABLET LAYOUT
+   Maintain mobile behavior
+   ============================================ */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .drawerScroller {
+    width: 85%;
+  }
+}
