@@ -65,6 +65,12 @@ MyBeats:  Stream & share your favorite music for free.
         media="screen and (min-width: 768px) and (max-width: 1024px)" 
         href="./stylingSheets/responsive/tablet.css"
     >
+    
+    <link 
+        rel="stylesheet" 
+        media="screen and (min-width: 1024px)" 
+        href="./stylingSheets/responsive/desktop.css"
+    >
 
 <!-- L I B R A R I E S ------------->
 <!-- Tailwind removed - converted to standard CSS in tailwind-conversion.css -->
@@ -149,6 +155,14 @@ MyBeats:  Stream & share your favorite music for free.
       </div>
 
 
+
+
+<!-- Desktop Menu Trigger (visible only on desktop) -->
+<button class="desktop-menu-trigger" id="desktop-menu-trigger" title="Menu" data-label="Desktop Menu Trigger" style="display: none;">
+    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+    <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
+    </svg>
+</button>
 
 <!-- Navigation Bar -->
   <nav
@@ -870,6 +884,46 @@ PopOvers Injected Here
 
 <!-- Initialization modules -->
 <script type="module" src="./siteScripts/init.js"></script>
+
+<!-- Desktop Menu Trigger Handler -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const desktopMenuTrigger = document.getElementById('desktop-menu-trigger');
+    const mobileMenuTrigger = document.getElementById('menu-trigger');
+    const dropdownMenu = document.getElementById('dropdown-menu');
+    const dropdownClose = document.getElementById('dropdown-close');
+    
+    // Desktop menu trigger
+    if (desktopMenuTrigger && dropdownMenu) {
+        desktopMenuTrigger.addEventListener('click', () => {
+            dropdownMenu.classList.toggle('show');
+        });
+    }
+    
+    // Mobile menu trigger (existing)
+    if (mobileMenuTrigger && dropdownMenu) {
+        mobileMenuTrigger.addEventListener('click', () => {
+            dropdownMenu.classList.toggle('show');
+        });
+    }
+    
+    // Close button
+    if (dropdownClose && dropdownMenu) {
+        dropdownClose.addEventListener('click', () => {
+            dropdownMenu.classList.remove('show');
+        });
+    }
+    
+    // Close on clicking outside (for desktop overlay)
+    if (dropdownMenu) {
+        dropdownMenu.addEventListener('click', (e) => {
+            if (e.target === dropdownMenu && window.matchMedia('(min-width: 1024px)').matches) {
+                dropdownMenu.classList.remove('show');
+            }
+        });
+    }
+});
+</script>
 
 <!-- Global Initialize -->
 <script type="module">
