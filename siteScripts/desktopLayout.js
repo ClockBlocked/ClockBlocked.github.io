@@ -148,13 +148,21 @@ export function initDesktopLayout() {
         });
       }
       
-      // Add event listeners to desktop menu items
-      // These menu items need to be clickable
-      setTimeout(() => {
+      // Add event listeners to desktop menu items using MutationObserver for robustness
+      const bindDesktopMenuItems = () => {
         const desktopMenuItems = document.querySelectorAll('.desktop-menu-item');
+        let boundCount = 0;
+        
         desktopMenuItems.forEach(item => {
           // Get the original ID from the dropdown menu
           const itemId = item.id.replace('desktop-menu-', 'dropdown-');
+          
+          // Validate the replacement worked
+          if (itemId === item.id || !itemId.startsWith('dropdown-')) {
+            console.warn('Desktop menu item ID replacement failed:', item.id);
+            return;
+          }
+          
           const originalElement = document.getElementById(itemId);
           
           if (originalElement && originalElement._clickHandler) {
@@ -165,6 +173,7 @@ export function initDesktopLayout() {
               menuSidebar.classList.remove('open');
               overlay.classList.remove('open');
             });
+            boundCount++;
           } else if (originalElement) {
             // If no _clickHandler, try to click the original element
             item.addEventListener('click', (e) => {
@@ -174,9 +183,29 @@ export function initDesktopLayout() {
               menuSidebar.classList.remove('open');
               overlay.classList.remove('open');
             });
+            boundCount++;
           }
         });
-      }, 500);
+        
+        console.log(`Bound ${boundCount} desktop menu items`);
+      };
+      
+      // Try binding immediately, then observe for changes
+      setTimeout(bindDesktopMenuItems, 100);
+      
+      // Also observe for when menu items become available (in case of delayed rendering)
+      const menuObserver = new MutationObserver((mutations) => {
+        const hasMenuItems = document.querySelectorAll('.desktop-menu-item').length > 0;
+        if (hasMenuItems) {
+          bindDesktopMenuItems();
+          menuObserver.disconnect();
+        }
+      });
+      
+      menuObserver.observe(menuSidebar, { childList: true, subtree: true });
+      
+      // Disconnect observer after 2 seconds to avoid memory leaks
+      setTimeout(() => menuObserver.disconnect(), 2000);
     }
     // --- SCENARIO 2: We're on a mobile screen AND the desktop elements EXIST ---
     else if (!isDesktop && desktopElementsInitialized) {

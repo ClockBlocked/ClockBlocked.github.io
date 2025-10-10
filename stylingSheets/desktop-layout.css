@@ -2,6 +2,12 @@
    DESKTOP SPLIT LAYOUT SYSTEM
    ============================================ */
 
+:root {
+  --desktop-sidebar-width: 400px;
+  --desktop-sidebar-spacing: 420px; /* Sidebar width + padding */
+  --desktop-menu-width: 320px;
+}
+
 @media (min-width: 1024px) {
   /* Hide original navbar completely on desktop */
   #navbar {
@@ -23,7 +29,7 @@
     overflow-y: auto;
     overflow-x: hidden;
     padding: 2rem;
-    padding-right: 420px !important; /* Space for fixed sidebar */
+    padding-right: var(--desktop-sidebar-spacing) !important; /* Space for fixed sidebar */
     padding-left: 0 !important; /* Remove left padding */
     margin-left: 0 !important; /* Remove left margin */
   }
@@ -59,7 +65,7 @@
     position: fixed;
     right: 0;
     top: 0;
-    width: 400px;
+    width: var(--desktop-sidebar-width);
     height: 100vh;
     background: linear-gradient(135deg, rgba(17, 24, 39, 0.98) 0%, rgba(31, 41, 55, 0.98) 100%);
     backdrop-filter: blur(20px);
@@ -104,9 +110,9 @@
   /* Desktop Sidebar Menu */
   .desktop-menu-sidebar {
     position: fixed;
-    left: -320px;
+    left: calc(-1 * var(--desktop-menu-width));
     top: 0;
-    width: 320px;
+    width: var(--desktop-menu-width);
     height: 100vh;
     background: linear-gradient(135deg, rgba(17, 24, 39, 0.98) 0%, rgba(31, 41, 55, 0.98) 100%);
     backdrop-filter: blur(20px);
@@ -408,9 +414,10 @@
   }
 }
 
-/* Additional tablet fixes */
+/* Additional tablet fixes - narrower columns for smaller screens */
 @media (min-width: 768px) and (max-width: 1023px) {
   .artistPage .fragments.albums {
+    /* Use narrower minimum column width on tablets to fit more content */
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   }
 }
