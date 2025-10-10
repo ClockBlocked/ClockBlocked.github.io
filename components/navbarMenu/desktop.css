@@ -1,0 +1,76 @@
+/* ========================================
+   DROPDOWN MENU - DESKTOP/TABLET STYLES
+   ======================================== */
+
+@media (min-width: 768px) {
+  .dropdown-menu {
+    position: fixed;
+    top: 80px;
+    right: 24px;
+    bottom: auto;
+    left: auto;
+    width: 380px;
+    max-height: calc(100vh - 100px);
+    border-radius: 16px;
+    transform: translateY(-10px);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .dropdown-menu.show {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .dropdown-header {
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    padding: 18px 20px;
+  }
+
+  .dropdown-item:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .dropdown-item:active {
+    background-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .kbd-shortcut {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7);
+    font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  .dropdown-close:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: rotate(90deg);
+  }
+
+  .dropdown-item-icon {
+    transition: transform 0.2s ease;
+  }
+
+  .dropdown-item:hover .dropdown-item-icon {
+    transform: scale(1.05);
+  }
+}
+
+@media (min-width: 1024px) {
+  .dropdown-menu {
+    width: 420px;
+  }
+}
