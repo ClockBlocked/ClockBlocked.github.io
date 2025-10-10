@@ -701,15 +701,15 @@ export const views = {
 
         const content = `
             <div class="favorites-page animate__animated animate__fadeIn">
-              <div class="page-header mb-8">
-                <h1 class="text-3xl font-bold mb-2">Favorite Songs</h1>
-                <p class="text-gray-400">${favoriteSongs.length} song${favoriteSongs.length !== 1 ? "s" : ""}</p>
-                <div class="flex gap-4 mt-4">
-                  <button class="play-all-btn bg-accent-primary text-white px-6 py-2 rounded-full hover:bg-accent-secondary transition-colors flex items-center gap-2">
+              <div class="page-header favorites-header">
+                <h1 class="favorites-title">Favorite Songs</h1>
+                <p class="favorites-count">${favoriteSongs.length} song${favoriteSongs.length !== 1 ? "s" : ""}</p>
+                <div class="favorites-actions">
+                  <button class="play-all-btn">
                     ${ICONS.play}
                     Play All
                   </button>
-                  <button class="shuffle-all-btn bg-gray-600 text-white px-6 py-2 rounded-full hover:bg-gray-500 transition-colors flex items-center gap-2">
+                  <button class="shuffle-all-btn">
                     ${ICONS.shuffle}
                     Shuffle
                   </button>
@@ -719,24 +719,24 @@ export const views = {
                 ${favoriteSongs
                   .map(
                     (song, index) => `
-                  <div class="song-row flex items-center gap-4 p-3 rounded-lg hover:bg-white/5 transition-colors cursor-pointer" data-song='${JSON.stringify(song).replace(/"/g, "&quot;")}'>
-                    <div class="track-number text-gray-400 w-8 text-center">${index + 1}</div>
-                    <img src="${utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="w-12 h-12 rounded object-cover">
-                    <div class="song-info flex-1">
-                      <div class="song-title font-medium">${song.title}</div>
-                      <div class="song-artist text-gray-400 text-sm cursor-pointer hover:text-white transition-colors" data-artist="${song.artist}">${song.artist}</div>
+                  <div class="song-row" data-song='${JSON.stringify(song).replace(/"/g, "&quot;")}'>
+                    <div class="track-number">${index + 1}</div>
+                    <img src="${utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="song-cover">
+                    <div class="song-info">
+                      <div class="song-title">${song.title}</div>
+                      <div class="song-artist" data-artist="${song.artist}">${song.artist}</div>
                     </div>
-                    <div class="album-name text-gray-400 text-sm hidden md:block">${song.album}</div>
-                    <div class="song-duration text-gray-400 text-sm">${song.duration || "0:00"}</div>
-                    <div class="song-actions flex items-center gap-2">
-                      <button class="action-btn p-2 hover:bg-white/10 rounded transition-colors" data-action="favorite" data-song-id="${song.id}" title="Remove from favorites">
-                        <svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                    <div class="album-name">${song.album}</div>
+                    <div class="song-duration">${song.duration || "0:00"}</div>
+                    <div class="song-actions">
+                      <button class="action-btn" data-action="favorite" data-song-id="${song.id}" title="Remove from favorites">
+                        <svg class="action-icon icon-red" fill="currentColor" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
                       </button>
-                      <button class="action-btn p-2 hover:bg-white/10 rounded transition-colors" data-action="add-queue" title="Add to queue">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                      <button class="action-btn" data-action="add-queue" title="Add to queue">
+                        <svg class="action-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
                       </button>
-                      <button class="action-btn p-2 hover:bg-white/10 rounded transition-colors" data-action="add-playlist" title="Add to playlist">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012 2v2M7 7h10"/></svg>
+                      <button class="action-btn" data-action="add-playlist" title="Add to playlist">
+                        <svg class="action-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012 2v2M7 7h10"/></svg>
                       </button>
                     </div>
                   </div>
@@ -973,15 +973,15 @@ export const views = {
 
     renderEmptyState: (title, subtitle, description) => {
         return `
-          <div class="empty-state text-center py-12">
-            <div class="mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 mx-auto text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div class="empty-state">
+            <div class="empty-state-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
               </svg>
             </div>
-            <h3 class="text-xl font-bold mb-2">${title}</h3>
-            <p class="text-gray-400 mb-2">${subtitle}</p>
-            <p class="text-gray-500 text-sm">${description}</p>
+            <h3 class="empty-state-title">${title}</h3>
+            <p class="empty-state-subtitle">${subtitle}</p>
+            <p class="empty-state-description">${description}</p>
           </div>
         `;
     },

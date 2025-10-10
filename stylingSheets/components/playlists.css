@@ -1,0 +1,310 @@
+/* Playlist Selector Styles */
+
+.empty-songs-message {
+  color: #9ca3af;
+  text-align: center;
+  padding: 1rem 0;
+}
+
+/* Favorites Page Styles */
+.favorites-page {
+  padding: 1rem;
+}
+
+.favorites-header {
+  margin-bottom: 2rem;
+}
+
+.favorites-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.favorites-count {
+  color: #9ca3af;
+}
+
+.favorites-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.play-all-btn,
+.shuffle-all-btn {
+  background-color: var(--accent-primary, #3b82f6);
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 9999px;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.play-all-btn:hover {
+  background-color: var(--accent-secondary, #2563eb);
+}
+
+.shuffle-all-btn {
+  background-color: #4b5563;
+}
+
+.shuffle-all-btn:hover {
+  background-color: #6b7280;
+}
+
+/* Song Row Styles */
+.songs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.song-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s;
+  cursor: pointer;
+}
+
+.song-row:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.track-number {
+  color: #9ca3af;
+  width: 2rem;
+  text-align: center;
+}
+
+.song-cover {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.25rem;
+  object-fit: cover;
+}
+
+.song-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.song-title {
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.song-artist {
+  color: #9ca3af;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.song-artist:hover {
+  color: white;
+}
+
+.album-name {
+  color: #9ca3af;
+  font-size: 0.875rem;
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .album-name {
+    display: block;
+  }
+}
+
+.song-duration {
+  color: #9ca3af;
+  font-size: 0.875rem;
+}
+
+.song-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.action-btn {
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  transition: background-color 0.2s;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: white;
+}
+
+.action-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.action-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.action-icon.icon-red {
+  color: #ef4444;
+}
+
+/* Empty State Styles */
+.empty-state {
+  text-align: center;
+  padding: 3rem 0;
+}
+
+.empty-state-icon {
+  margin-bottom: 1rem;
+}
+
+.empty-state-icon svg {
+  width: 4rem;
+  height: 4rem;
+  margin: 0 auto;
+  color: #4b5563;
+}
+
+.empty-state-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.empty-state-subtitle {
+  color: #9ca3af;
+  margin-bottom: 0.5rem;
+}
+
+.empty-state-description {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+/* Playlist Selector Styles */
+
+.playlist-selector {
+  padding: 1rem;
+}
+
+.playlist-selector-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.playlist-list {
+  max-height: 16rem;
+  overflow-y: auto;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.playlist-option {
+  width: 100%;
+  text-align: left;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: white;
+}
+
+.playlist-option:hover {
+  background-color: #374151;
+}
+
+.playlist-icon {
+  width: 2rem;
+  height: 2rem;
+  background: linear-gradient(to bottom right, #a855f7, #2563eb);
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.playlist-icon svg {
+  width: 1rem;
+  height: 1rem;
+  color: white;
+}
+
+.playlist-info {
+  flex: 1;
+}
+
+.playlist-name {
+  font-weight: 500;
+}
+
+.playlist-count {
+  font-size: 0.875rem;
+  color: #9ca3af;
+}
+
+.playlist-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.create-new-playlist {
+  flex: 1;
+  background-color: var(--accent-primary, #3b82f6);
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.create-new-playlist:hover {
+  background-color: var(--accent-secondary, #2563eb);
+}
+
+.create-new-playlist .btn-icon {
+  width: 1rem;
+  height: 1rem;
+  display: inline-block;
+}
+
+.cancel-playlist-selection {
+  background-color: #4b5563;
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.cancel-playlist-selection:hover {
+  background-color: #6b7280;
+}
