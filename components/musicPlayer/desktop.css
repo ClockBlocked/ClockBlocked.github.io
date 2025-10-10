@@ -1,0 +1,79 @@
+/* ========================================
+   MUSIC PLAYER - DESKTOP/TABLET STYLES
+   ======================================== */
+
+@media (min-width: 768px) {
+  .drawer {
+    inset: auto 24px 24px auto;
+    width: 420px;
+    height: auto;
+    max-height: 90vh;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .drawerScroller {
+    max-height: 90vh;
+  }
+
+  .drawerAnchors {
+    display: none;
+  }
+
+  .drawerCurtain {
+    display: none;
+  }
+
+  .mpNav {
+    position: relative;
+    background: none;
+    padding: 12px 0 0;
+  }
+
+  .drawerDrag {
+    display: none;
+  }
+
+  .tabsContainer {
+    position: relative;
+    top: 0;
+    background: none;
+    padding: 0 20px 12px;
+  }
+
+  .albumArtwork {
+    max-width: 280px;
+  }
+
+  .songName {
+    font-size: 1.75rem;
+  }
+
+  .artistName {
+    font-size: 1.125rem;
+  }
+
+  .playerControls {
+    gap: 20px;
+  }
+
+  .btn--icon-only.is-primary {
+    width: 56px;
+    height: 56px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .drawer {
+    width: 480px;
+  }
+
+  .albumArtwork {
+    max-width: 320px;
+  }
+
+  .songName {
+    font-size: 2rem;
+  }
+}

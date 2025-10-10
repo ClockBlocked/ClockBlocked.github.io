@@ -1,0 +1,185 @@
+<!-- Music Player Drawer - Works for both Mobile and Desktop -->
+<aside class="drawer" popover="auto" id="drawer">
+  <div class="drawerScroller">
+    <div class="drawerSlide">
+      <div class="drawerAnchors">
+        <div class="drawerAnchor"></div>
+        <div class="drawerAnchor"></div>
+      </div>
+
+      <button popovertargetaction="hide" popovertarget="drawer" class="drawerCurtain" tabindex="-1"></button>
+
+      <!-- Tabs Navigation -->
+      <div class="tabsContainer">
+        <div class="tabs">
+          <button class="tab active" data-tab="playing">Now Playing</button>
+          <button class="tab" data-tab="recent">Recent Plays</button>
+          <button class="tab" data-tab="queue">Up Next</button>
+        </div>
+      </div>
+
+      <div class="drawerContent">
+        <div class="mpNav">
+          <button autofocus class="drawerDrag" popovertargetaction="hide" popovertarget="drawer">
+            <span></span>
+          </button>
+        </div>
+
+        <div class="content">
+          <div class="musicPlayer" id="musicPlayer">
+            <!-- Close Button -->
+            <div class="header">
+              <button class="btn btn--close use-site-colors" id="closeBtn" aria-label="Close player">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 432 540" aria-hidden="true">
+                  <path fill="currentColor" d="M97.5 118.5c-14.1-14.1-36.9-14.1-50.9 0s-14.1 36.9 0 50.9L152.4 275.3c6.9 6.9 6.9 18.5 0 25.5L46.5 406.5c-14.1 14.1-14.1 36.9 0 50.9s36.9 14.1 50.9 0L203.3 351.6c7-7 18.4-7 25.5 0L334.5 457.5c14.1 14.1 36.9 14.1 50.9 0s14.1-36.9 0-50.9L279.6 300.7c-7-7-7-18.4 0-25.5L385.5 169.5c14.1-14.1 14.1-36.9 0-50.9s-36.9-14.1-50.9 0L228.7 224.4c-7 7-18.4 7-25.5 0L97.5 118.5zM21.1 93.1C49.2 65 94.8 65 122.9 93.1l93.1 93.1 93.1-93.1c28.1-28.1 73.7-28.1 101.8 0s28.1 73.7 0 101.8l-93.1 93.1 93.1 93.1c28.1 28.1 28.1 73.7 0 101.8s-73.7 28.1-101.8 0l-93.1-93.1-93.1 93.1C94.8 511 49.2 511 21.1 482.9s-28.1-73.7 0-101.8l93.1-93.1-93.1-93.1C-7 166.8-7 121.2 21.1 93.1z" />
+                </svg>
+              </button>
+            </div>
+
+            <div class="body">
+              <!-- Now Playing Tab -->
+              <div class="content active" data-tab="playing">
+                <img id="cover" src="" alt="Album Cover" class="albumArtwork cover" />
+
+                <div class="info">
+                  <h4 id="title" class="songName title"></h4>
+                  <p id="artist" class="artistName artist"></p>
+                  <p id="album" class="albumName album"></p>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="progress" id="musicProgress">
+                  <div class="time">
+                    <span id="currentTime">0:00</span>
+                    <span id="totalTime">0:00</span>
+                  </div>
+
+                  <div class="progressBar" id="progressBar" tabindex="0" role="slider" 
+                       aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Seek">
+                    <div class="progressBuffer" id="progressBuffer" style="width: 0%;"></div>
+                    <div class="progressFill" id="progressFill" style="width: 0%;">
+                      <div class="progressThumb" id="progressThumb" style="left: 0%;"></div>
+                    </div>
+                    <div class="progressShadow" aria-hidden="true"></div>
+                  </div>
+                </div>
+
+                <!-- Playback Controls -->
+                <div class="controls playerControls playback-bar">
+                  <button class="btn btn--icon-only use-site-colors" id="prevBtn" title="Previous">
+                    <span data-icon="prev" class="icon">
+                      <svg viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M8.445 14.832A1 1 0 0010 14v-2.798l5.445 3.63A1 1 0 0017 14V6a1 1 0 00-1.555-.832L10 8.798V6a1 1 0 00-1.555-.832l-6 4a1 1 0 000 1.664l6 4z" />
+                      </svg>
+                    </span>
+                  </button>
+
+                  <button class="btn btn--icon-only use-site-colors" id="rewindBtn" title="Rewind 10s">
+                    <span data-icon="rewind" class="icon">
+                      <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M11.99 5V1l-5 5 5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6h-2c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8zm-1.1 11h-.85v-3.26l-1.01.31v-.69l1.77-.63h.09V16zm4.28-1.76c0 .32-.03.6-.1.82s-.17.42-.29.57-.28.26-.45.33-.37.1-.59.10-.41-.03-.59-.1-.33-.18-.46-.33-.23-.34-.3-.57-.11-.5-.11-.82v-.74c0-.32.03-.6.1-.82s.17-.42.29-.57.28-.26.45-.33.37-.1.59-.1.41.03.59.1.33.18.46.33.23.34.3.57.11.5.11.82v.74zm-.85-.86c0-.19-.01-.35-.04-.48s-.07-.23-.12-.31-.11-.14-.19-.17-.16-.05-.25-.05-.18.02-.25.05-.14.09-.19.17-.09.18-.12.31-.04.29-.04.48v.97c0 .19.01.35.04.48s.07.24.12.32.11.14.19.17.16.05.25.05.18-.02.25-.05.14-.09.19-.17.09-.19.11-.32.04-.29.04-.48v-.97z"/>
+                      </svg>
+                    </span>
+                  </button>
+
+                  <button class="btn btn--icon-only is-primary" id="playBtn" title="Play/Pause">
+                    <span data-icon="play" class="icon play">
+                      <svg viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                      </svg>
+                    </span>
+                    <span data-icon="pause" class="icon pause hidden">
+                      <svg viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                      </svg>
+                    </span>
+                  </button>
+
+                  <button class="btn btn--icon-only use-site-colors" id="forwardBtn" title="Forward 10s">
+                    <span data-icon="forward" class="icon">
+                      <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 5V1l5 5-5 5V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8zm-1.1 11h-.85v-3.26l-1.01.31v-.69l1.77-.63h.09V16zm4.28-1.76c0 .32-.03.6-.1.82s-.17.42-.29.57-.28.26-.45.33-.37.1-.59.10-.41-.03-.59-.1-.33-.18-.46-.33-.23-.34-.3-.57-.11-.5-.11-.82v-.74c0-.32.03-.6.1-.82s.17-.42.29-.57.28-.26.45-.33.37-.1.59-.1.41.03.59.1.33.18.46.33.23.34.3.57.11.5.11.82v.74zm-.85-.86c0-.19-.01-.35-.04-.48s-.07-.23-.12-.31-.11-.14-.19-.17-.16-.05-.25-.05-.18.02-.25.05-.14.09-.19.17-.09.18-.12.31-.04.29-.04.48v.97c0 .19.01.35.04.48s.07.24.12.32.11.14.19.17.16.05.25.05.18-.02.25-.05.14-.09.19-.17.09-.19.11-.32.04-.29.04-.48v-.97z"/>
+                      </svg>
+                    </span>
+                  </button>
+
+                  <button class="btn btn--icon-only use-site-colors" id="nextBtn" title="Next">
+                    <span data-icon="next" class="icon">
+                      <svg viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798L4.555 5.168z" />
+                      </svg>
+                    </span>
+                  </button>
+                </div>
+
+                <!-- Secondary Actions -->
+                <div class="actions">
+                  <button class="btn btn--icon-only use-site-colors" id="favoriteBtn" title="Add to Favorites">
+                    <span data-icon="heart" class="icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                      </svg>
+                    </span>
+                  </button>
+
+                  <button class="btn btn--icon-only use-site-colors" id="queueBtn" title="View Queue">
+                    <span data-icon="queue" class="icon">
+                      <svg viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" />
+                      </svg>
+                    </span>
+                  </button>
+
+                  <button class="btn btn--icon-only use-site-colors" id="shareBtn" title="Share">
+                    <span data-icon="share" class="icon">
+                      <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"/>
+                      </svg>
+                    </span>
+                  </button>
+
+                  <button class="btn btn--icon-only use-site-colors" id="moreBtn" title="More Options">
+                    <span data-icon="more" class="icon">
+                      <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                      </svg>
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Queue Tab -->
+              <div class="content" data-tab="queue">
+                <ul id="queueList" class="list">
+                  <div class="empty">
+                    <div class="emptyIcon">
+                      <svg class="icon" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                        <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+                      </svg>
+                    </div>
+                    <div class="emptyText">Queue is empty.</div>
+                  </div>
+                </ul>
+              </div>
+
+              <!-- Recent Tab -->
+              <div class="content" data-tab="recent">
+                <ul id="recentList" class="list">
+                  <div class="empty">
+                    <div class="emptyIcon">
+                      <svg class="icon" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                      </svg>
+                    </div>
+                    <div class="emptyText">No recently played songs.</div>
+                  </div>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <canvas id="reactionCanvas"></canvas>
+</aside>
