@@ -1,4 +1,3 @@
-
 import {
   appState,
   storage,
@@ -6,7 +5,6 @@ import {
   musicPlayer,
   utils
 } from '../global.js';
-
 
 export const pageUpdates = {
   breadCrumbs: (items, options = {}) => {
@@ -78,15 +76,15 @@ export const pageUpdates = {
           e.preventDefault();
           e.stopPropagation();
           if (item.onClick) { item.onClick(); return; }
-          if (appState.siteMapInstance) {
+          if (appState.router) {
             if (item.route) {
-              if (item.route === ROUTES.HOME) appState.siteMapInstance.navigateTo(ROUTES.HOME);
-              else if (item.route === ROUTES.ARTIST && item.artist) appState.siteMapInstance.navigateTo(ROUTES.ARTIST, { artist: item.artist });
-              else if (item.route === ROUTES.ALL_ARTISTS) appState.siteMapInstance.navigateTo(ROUTES.ALL_ARTISTS);
+              if (item.route === ROUTES.HOME) appState.router.navigateTo(ROUTES.HOME);
+              else if (item.route === ROUTES.ARTIST && item.artist) appState.router.navigateTo(ROUTES.ARTIST, { artist: item.artist });
+              else if (item.route === ROUTES.ALL_ARTISTS) appState.router.navigateTo(ROUTES.ALL_ARTISTS);
             } else {
-              if (item.text === "Home" || item.isHome) appState.siteMapInstance.navigateTo(ROUTES.HOME);
-              else if (item.artist) appState.siteMapInstance.navigateTo(ROUTES.ARTIST, { artist: item.artist });
-              else if (item.text === "All Artists") appState.siteMapInstance.navigateTo(ROUTES.ALL_ARTISTS);
+              if (item.text === "Home" || item.isHome) appState.router.navigateTo(ROUTES.HOME);
+              else if (item.artist) appState.router.navigateTo(ROUTES.ARTIST, { artist: item.artist });
+              else if (item.text === "All Artists") appState.router.navigateTo(ROUTES.ALL_ARTISTS);
             }
           }
         });
@@ -111,10 +109,11 @@ export const pageUpdates = {
     }
   }
 };
+
 export const ui = {
   setLoadingState: (loading) => {
-    const nowPlayingArea = $bySelector(NAVBAR.nowPlaying);
-    const songTitle = $bySelector(NAVBAR.songName);
+    const nowPlayingArea = document.querySelector(NAVBAR.nowPlaying);
+    const songTitle = document.querySelector(NAVBAR.songName);
 
     if (nowPlayingArea) nowPlayingArea.style.opacity = loading ? "0.5" : "1";
     if (songTitle) songTitle.textContent = loading ? "Loading..." : appState.currentSong?.title || "";
@@ -124,10 +123,10 @@ export const ui = {
     if (!appState.currentSong) return;
 
     const elements = {
-      albumCover: $bySelector(MUSIC_PLAYER.albumArtwork),
-      songTitle: $bySelector(MUSIC_PLAYER.songName),
-      artistName: $bySelector(MUSIC_PLAYER.artistName),
-      albumName: $bySelector(MUSIC_PLAYER.albumName),
+      albumCover: document.querySelector(MUSIC_PLAYER.albumArtwork),
+      songTitle: document.querySelector(MUSIC_PLAYER.songName),
+      artistName: document.querySelector(MUSIC_PLAYER.artistName),
+      albumName: document.querySelector(MUSIC_PLAYER.albumName),
     };
 
     if (elements.albumCover) {
@@ -145,11 +144,11 @@ export const ui = {
   updateNavbar: () => {
     if (!appState.currentSong) return;
 
-    const container = $bySelector(NAVBAR.albumArtwork);
-    const artist = $bySelector(NAVBAR.artistName);
-    const songTitle = $bySelector(NAVBAR.songName);
-    const playIndicator = $bySelector(NAVBAR.playIndicator);
-    const nowPlayingArea = $bySelector(NAVBAR.nowPlaying);
+    const container = document.querySelector(NAVBAR.albumArtwork);
+    const artist = document.querySelector(NAVBAR.artistName);
+    const songTitle = document.querySelector(NAVBAR.songName);
+    const playIndicator = document.querySelector(NAVBAR.playIndicator);
+    const nowPlayingArea = document.querySelector(NAVBAR.nowPlaying);
 
     if (container) {
       const svg = container.querySelector("svg");
@@ -220,21 +219,21 @@ export const ui = {
     }
   },
 
-updateFavoriteButton: () => {
-  if (!appState.currentSong) return;
-  const favoriteBtn = $byId(IDS.favoriteBtn);
-  if (favoriteBtn) {
-    const isFavorite = appState.favorites.has("songs", appState.currentSong.id);
-    favoriteBtn.classList.toggle("favorited", isFavorite);
-    favoriteBtn.classList.toggle(CLASSES.active, isFavorite);
-    favoriteBtn.setAttribute("data-favorite-songs", appState.currentSong.id);
-    const heartIcon = favoriteBtn.querySelector("svg");
-    if (heartIcon) {
-      heartIcon.style.color = isFavorite ? "#ef4444" : "";
-      heartIcon.style.fill = isFavorite ? "currentColor" : "none";
+  updateFavoriteButton: () => {
+    if (!appState.currentSong) return;
+    const favoriteBtn = $byId(IDS.favoriteBtn);
+    if (favoriteBtn) {
+      const isFavorite = appState.favorites.has("songs", appState.currentSong.id);
+      favoriteBtn.classList.toggle("favorited", isFavorite);
+      favoriteBtn.classList.toggle(CLASSES.active, isFavorite);
+      favoriteBtn.setAttribute("data-favorite-songs", appState.currentSong.id);
+      const heartIcon = favoriteBtn.querySelector("svg");
+      if (heartIcon) {
+        heartIcon.style.color = isFavorite ? "#ef4444" : "";
+        heartIcon.style.fill = isFavorite ? "currentColor" : "none";
+      }
     }
-  }
-},
+  },
 
   updateCounts: () => {
     const counts = {
