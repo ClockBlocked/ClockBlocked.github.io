@@ -524,7 +524,7 @@ renderAlbumSongs: (albumContainer, album, artistName) => {
   songsContainer.innerHTML = "";
 
   if (!album.songs || album.songs.length === 0) {
-    songsContainer.innerHTML = '<p class="text-gray-400 text-center py-4">No songs found in this album</p>';
+    songsContainer.innerHTML = '<p class="empty-songs-message">No songs found in this album</p>';
     return;
   }
 
@@ -1034,33 +1034,33 @@ bindSongItemEvents: (container) => {
       }
 
       const playlistOptions = appState.playlists.map(playlist => `
-        <button class="playlist-option w-full text-left p-3 rounded hover:bg-gray-700 transition-colors flex items-center gap-3" data-playlist-id="${playlist.id}">
-          <div class="playlist-icon w-8 h-8 bg-gradient-to-br from-purple-500 to-blue-600 rounded flex items-center justify-center">
-            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+        <button class="playlist-option" data-playlist-id="${playlist.id}">
+          <div class="playlist-icon">
+            <svg fill="currentColor" viewBox="0 0 20 20">
               <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
             </svg>
           </div>
-          <div class="flex-1">
-            <div class="font-medium">${playlist.name}</div>
-            <div class="text-sm text-gray-400">${playlist.songs.length} songs</div>
+          <div class="playlist-info">
+            <div class="playlist-name">${playlist.name}</div>
+            <div class="playlist-count">${playlist.songs.length} songs</div>
           </div>
         </button>
       `).join('');
 
       const content = `
         <div class="playlist-selector">
-          <h3 class="text-xl font-bold mb-4">Add to Playlist</h3>
-          <div class="playlist-list max-h-64 overflow-y-auto space-y-2 mb-6">
+          <h3 class="playlist-selector-title">Add to Playlist</h3>
+          <div class="playlist-list">
             ${playlistOptions}
           </div>
-          <div class="actions flex gap-3">
-            <button class="create-new-playlist flex-1 bg-accent-primary text-white py-3 px-4 rounded hover:bg-accent-secondary transition-colors">
-              <svg class="w-4 h-4 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+          <div class="playlist-actions">
+            <button class="create-new-playlist">
+              <svg class="btn-icon" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
               </svg>
               Create New Playlist
             </button>
-            <button class="cancel-playlist-selection bg-gray-600 text-white py-3 px-4 rounded hover:bg-gray-500 transition-colors">
+            <button class="cancel-playlist-selection">
               Cancel
             </button>
           </div>
