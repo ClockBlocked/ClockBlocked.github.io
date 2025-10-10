@@ -3,8 +3,9 @@ import { music } from "../modules/library.js";
 import { render, create } from "./utilities/templates.js";
 import { encodeURIComponent } from './utilities/parsers.js';
 import { homePage, views } from './pages/statics.js';
-import { pageLoader, pageManager } from './pages/rendering.js';
+import { pageLoader, navigation } from './pages/rendering.js';
 import { ui, pageUpdates } from './pages/updates.js';
+import { deepLinkRouter } from './pages/router.js';
 
 const ACTION_GRID_ITEMS = [
   { id: 'play-next', icon: 'M9 5l7 7-7 7M15 5v14', label: 'Play Next' },
@@ -14,6 +15,7 @@ const ACTION_GRID_ITEMS = [
   { id: 'download', icon: 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4', label: 'Download' },
   { id: 'view-artist', icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z', label: 'View Artist' }
 ];
+
 const TOAST_ICONS = {
   [NOTIFICATION_TYPES.SUCCESS]: '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>',
   [NOTIFICATION_TYPES.ERROR]: '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>',
@@ -43,8 +45,8 @@ const appState = {
   notificationContainer: null,
   notifications: [],
   currentNotificationTimeout: null,
-  siteMapInstance: null,
-  homePageManagerInstance: null,
+  router: null,
+  homePageManager: null,
 
   favorites: {
     songs: new Set(),
@@ -154,6 +156,7 @@ const appState = {
     }
   }
 };
+
 const utils = {
   getAlbumImageUrl: (albumName) => {
     if (!albumName) return utils.getDefaultAlbumImage();
@@ -260,8 +263,18 @@ const utils = {
       left: 0,
       behavior: 'smooth'
     });
+  },
+
+  getParameterByName: (name, url) => {
+    name = name.replace(/[\[\]]/g, "\\$&");
+    const regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)");
+    const results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return "";
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
   }
 };
+
 const storage = {
   save: (key, data) => {
     try {
@@ -305,159 +318,6 @@ const storage = {
       const data = storage.load(key);
       if (data) loader(data);
     });
-  }
-};
-
-const loadingBar = {
-  element: null,
-  activeTimers: [],
-  isActive: false,
-  _pacing: {
-    minActiveMs: 1800,
-    maxActiveMs: 3200,
-    completionLingerMsMin: 700,
-    completionLingerMsMax: 1200
-  },
-  _startedAt: 0,
-
-  initialize: () => {
-    if (loadingBar.element) return;
-    const el = document.createElement('div');
-    el.className = 'loading-bar';
-    document.body.appendChild(el);
-    loadingBar.element = el;
-  },
-
-  _schedule: function(fn, delay) {
-    const t = setTimeout(() => {
-      if (!loadingBar.isActive) return;
-      fn();
-    }, delay);
-    loadingBar.activeTimers.push(t);
-  },
-
-  clearTimers: () => {
-    loadingBar.activeTimers.forEach((t) => clearTimeout(t));
-    loadingBar.activeTimers = [];
-  },
-
-  start: () => {
-    loadingBar.initialize();
-    loadingBar.clearTimers();
-    loadingBar.isActive = true;
-
-    const el = loadingBar.element;
-    el.classList.remove('complete');
-    el.classList.add('active');
-    el.style.transform = 'scaleX(0.04)';
-    loadingBar._startedAt = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
-
-    const totalBudget = 3800 + Math.random() * 4700;
-    const cap = 0.92 + Math.random() * 0.04;
-    let progress = 0.04;
-    let elapsed = 0;
-
-    const tick = () => {
-      if (!loadingBar.isActive) return;
-      if (!el.classList.contains('active')) return;
-      if (elapsed >= totalBudget || progress >= cap) return;
-
-      let interval = 180 + Math.random() * 520;
-      if (Math.random() < 1 / 6) interval = 800 + Math.random() * 500;
-
-      let delta = 0.02 + Math.random() * 0.08;
-      if (Math.random() < 0.12) delta = -(0.005 + Math.random() * 0.010);
-
-      const distance = Math.max(0, cap - progress);
-      const ease = Math.max(0.15, Math.min(1, distance / 0.25));
-      delta *= ease;
-
-      if (Math.random() < 0.08) delta += 0.02 + Math.random() * 0.04;
-
-      progress = Math.max(0.03, Math.min(progress + delta, cap));
-
-      loadingBar._schedule(() => {
-        if (!loadingBar.isActive) return;
-        el.style.transform = `scaleX(${progress})`;
-      }, interval * 0.35);
-
-      loadingBar._schedule(() => {
-        elapsed += interval;
-        tick();
-      }, interval);
-    };
-
-    const microJitters = 2 + Math.floor(Math.random() * 3);
-    for (let i = 0; i < microJitters; i++) {
-      const d = 90 + Math.random() * 140;
-      loadingBar._schedule(() => {
-        let p = progress + 0.01 + Math.random() * 0.02;
-        progress = Math.min(p, 0.12);
-        el.style.transform = `scaleX(${progress})`;
-      }, d);
-    }
-
-    loadingBar._schedule(tick, 160 + Math.random() * 240);
-
-    const hoverJitter = () => {
-      if (!loadingBar.isActive) return;
-      if (!el.classList.contains('active')) return;
-      if (progress >= cap * 0.95) {
-        const j = (Math.random() * 0.008) * (Math.random() < 0.5 ? -1 : 1);
-        const next = Math.max(0.03, Math.min(progress + j, cap));
-        loadingBar._schedule(() => {
-          el.style.transform = `scaleX(${next})`;
-        }, 0);
-      }
-      loadingBar._schedule(hoverJitter, 350 + Math.random() * 900);
-    };
-
-    loadingBar._schedule(hoverJitter, 1200 + Math.random() * 1000);
-    return true;
-  },
-
-  complete: () => {
-    if (!loadingBar.element) return;
-
-    const now = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
-    const elapsed = now - (loadingBar._startedAt || now);
-    const minMs = loadingBar._pacing.minActiveMs + Math.random() * (loadingBar._pacing.maxActiveMs - loadingBar._pacing.minActiveMs);
-    const waitMore = Math.max(0, minMs - elapsed);
-
-    const finalize = () => {
-      loadingBar.isActive = false;
-      loadingBar.clearTimers();
-      const el = loadingBar.element;
-      el.style.transform = 'scaleX(1)';
-      el.classList.add('complete');
-      const linger = loadingBar._pacing.completionLingerMsMin + Math.random() * (loadingBar._pacing.completionLingerMsMax - loadingBar._pacing.completionLingerMsMin);
-      loadingBar._schedule(() => {
-        el.classList.remove('active', 'complete');
-        el.style.transform = 'scaleX(0)';
-      }, linger);
-    };
-
-    if (waitMore > 0) {
-      loadingBar._schedule(finalize, waitMore);
-    } else {
-      finalize();
-    }
-  },
-
-  hide: () => {
-    if (!loadingBar.element) return;
-    loadingBar.isActive = false;
-    loadingBar.clearTimers();
-    loadingBar.element.classList.remove('active', 'complete');
-    loadingBar.element.style.transform = 'scaleX(0)';
-  },
-
-  setPacing: (opts = {}) => {
-    const p = loadingBar._pacing;
-    if (typeof opts.minActiveMs === 'number') p.minActiveMs = Math.max(0, opts.minActiveMs);
-    if (typeof opts.maxActiveMs === 'number') p.maxActiveMs = Math.max(p.minActiveMs, opts.maxActiveMs);
-    if (typeof opts.completionLingerMsMin === 'number') p.completionLingerMsMin = Math.max(0, opts.completionLingerMsMin);
-    if (typeof opts.completionLingerMsMax === 'number') p.completionLingerMsMax = Math.max(p.completionLingerMsMin, opts.completionLingerMsMax);
   }
 };
 
@@ -515,10 +375,7 @@ const overlays = {
       document.body.appendChild(modal);
     }
 
-    modal.innerHTML = `
-      <div class="close" data-close>&times;</div>
-      <div class="content">${content}</div>
-    `;
+    modal.innerHTML = render.overlay('default', { content });
     
     modal.classList.remove('closing');
     
@@ -551,13 +408,12 @@ const overlays = {
         const id = "confirm-dialog";
         overlays.open(
           id,
-          `
-          <div class="header">${message}</div>
-          <div class="actions">
-            <button class="btn muted" data-cancel>${cancelText}</button>
-            <button class="btn ${danger ? "danger" : "primary"}" data-ok>${okText}</button>
-          </div>
-          `,
+          render.overlay('dialog', {
+            message,
+            okText,
+            cancelText,
+            danger,
+          }),
           'dialog'
         );
         
@@ -583,12 +439,12 @@ const overlays = {
         const id = "alert-dialog";
         overlays.open(
           id,
-          `
-          <div class="header">${message}</div>
-          <div class="actions">
-            <button class="btn primary" data-ok>${okText}</button>
-          </div>
-          `,
+          render.overlay('dialog', {
+            message,
+            okText,
+            cancelText: null,
+            danger: false,
+          }),
           'dialog'
         );
         
@@ -609,16 +465,13 @@ const overlays = {
         const id = "prompt-form";
         overlays.open(
           id,
-          `
-          <div class="header">${message}</div>
-          <div class="body">
-            <input class="input" type="text" placeholder="${placeholder}" value="${value}">
-          </div>
-          <div class="actions">
-            <button class="btn muted" data-cancel>${cancelText}</button>
-            <button class="btn primary" data-ok>${okText}</button>
-          </div>
-          `,
+          render.overlay('prompt', {
+            message,
+            okText,
+            cancelText,
+            placeholder,
+            value,
+          }),
           'form'
         );
         
@@ -684,29 +537,21 @@ const notifications = {
     const title = options.title || null;
     const iconHtml = options.iconHtml || TOAST_ICONS[type] || TOAST_ICONS[NOTIFICATION_TYPES.INFO];
 
-    const toast = document.createElement("div");
-    toast.setAttribute("role", "status");
-    toast.setAttribute("aria-live", "polite");
-    toast.className = `toast-item toast-${type}`;
+    const toastHtml = render.notification({
+      type,
+      iconHtml,
+      title,
+      message: this.escapeHtml(String(message)),
+    });
+    
+    const toast = create(toastHtml);
 
     if (!prefersReducedMotion) {
       toast.style.animation = "toast-in 200ms cubic-bezier(.2,.8,.25,1) both";
     }
 
-    const iconWrap = document.createElement("div");
-    iconWrap.className = "toast-icon";
-    iconWrap.innerHTML = iconHtml;
-
-    const content = document.createElement("div");
-    content.className = "toast-content";
-    content.innerHTML = title
-      ? `<strong>${title}</strong>${this.escapeHtml(String(message))}`
-      : this.escapeHtml(String(message));
-
-    const actions = document.createElement("div");
-    actions.className = "toast-actions";
-
-    if (typeof undoCallback === "function") {
+    const actions = toast.querySelector('.toast-actions');
+    if (actions && typeof undoCallback === "function") {
       const undoBtn = document.createElement("button");
       undoBtn.type = "button";
       undoBtn.textContent = "Undo";
@@ -717,13 +562,7 @@ const notifications = {
       actions.appendChild(undoBtn);
     }
 
-    const progress = document.createElement("div");
-    progress.className = "toast-progress";
-
-    toast.appendChild(progress);
-    toast.appendChild(iconWrap);
-    toast.appendChild(content);
-    toast.appendChild(actions);
+    const progress = toast.querySelector('.toast-progress');
 
     this.container.prepend(toast);
     this.items.add(toast);
@@ -873,7 +712,6 @@ const notifications = {
   }
 };
 
-
 const notificationPlayer = {
   state: {
     isInitialized: false,
@@ -883,11 +721,9 @@ const notificationPlayer = {
     lastPositionUpdate: 0
   },
 
-  // Metadata handling with proper artwork URL generation
   metadata: {
     generateArtworkUrl: (albumName) => {
       if (!albumName) return utils.getDefaultAlbumImage();
-      // Clean album name: remove spaces, special characters, convert to lowercase
       const cleanName = albumName
         .toLowerCase()
         .replace(/\s+/g, '')
@@ -909,7 +745,6 @@ const notificationPlayer = {
       if (!('mediaSession' in navigator) || !songData) return;
 
       try {
-        // Generate proper artwork URL using the specified format
         let artworkUrl = songData.cover;
         if (!artworkUrl && songData.album) {
           artworkUrl = notificationPlayer.metadata.generateArtworkUrl(songData.album);
@@ -927,14 +762,6 @@ const notificationPlayer = {
         navigator.mediaSession.metadata = metadata;
         notificationPlayer.state.currentMetadata = metadata;
 
-        console.log('Media Session metadata updated:', {
-          title: songData.title,
-          artist: songData.artist,
-          album: songData.album,
-          artworkUrl: artworkUrl
-        });
-
-        // Update position state immediately after metadata
         notificationPlayer.positionState.update();
 
       } catch (error) {
@@ -953,7 +780,6 @@ const notificationPlayer = {
     }
   },
 
-  // Position state management with proper synchronization
   positionState: {
     update: () => {
       if (!('mediaSession' in navigator) || !('setPositionState' in navigator.mediaSession)) {
@@ -1008,7 +834,6 @@ const notificationPlayer = {
     }
   },
 
-  // Playback state management with proper sync
   playbackState: {
     update: (state) => {
       if (!('mediaSession' in navigator)) return;
@@ -1016,17 +841,13 @@ const notificationPlayer = {
       try {
         navigator.mediaSession.playbackState = state;
         
-        // Start/stop continuous position updates based on playback state
         if (state === 'playing') {
           notificationPlayer.positionState.startContinuousUpdate();
         } else {
           notificationPlayer.positionState.stopContinuousUpdate();
         }
         
-        // Always update position when state changes
         notificationPlayer.positionState.update();
-        
-        console.log('Media Session playback state updated:', state);
       } catch (error) {
         console.warn("Failed to update playback state:", error);
       }
@@ -1051,14 +872,11 @@ const notificationPlayer = {
     }
   },
 
-  // Action handlers that properly sync with main player
   actions: {
     play: () => {
       try {
         if (appState.audio && appState.audio.paused) {
           appState.audio.play();
-        } else if (typeof controls !== 'undefined' && controls.play) {
-          controls.play();
         } else if (musicPlayer.playback && musicPlayer.playback.play) {
           musicPlayer.playback.play();
         }
@@ -1071,8 +889,6 @@ const notificationPlayer = {
       try {
         if (appState.audio && !appState.audio.paused) {
           appState.audio.pause();
-        } else if (typeof controls !== 'undefined' && controls.pause) {
-          controls.pause();
         } else if (musicPlayer.playback && musicPlayer.playback.pause) {
           musicPlayer.playback.pause();
         }
@@ -1095,15 +911,11 @@ const notificationPlayer = {
 
     previoustrack: () => {
       try {
-        // If more than 3 seconds in, restart current song
         if (appState.audio && appState.audio.currentTime > 3) {
           appState.audio.currentTime = 0;
           notificationPlayer.positionState.update();
         } else {
-          // Go to previous track
-          if (typeof controls !== 'undefined' && controls.previous) {
-            controls.previous();
-          } else if (musicPlayer.playback && musicPlayer.playback.previous) {
+          if (musicPlayer.playback && musicPlayer.playback.previous) {
             musicPlayer.playback.previous();
           }
         }
@@ -1114,9 +926,7 @@ const notificationPlayer = {
 
     nexttrack: () => {
       try {
-        if (typeof controls !== 'undefined' && controls.next) {
-          controls.next();
-        } else if (musicPlayer.playback && musicPlayer.playback.next) {
+        if (musicPlayer.playback && musicPlayer.playback.next) {
           musicPlayer.playback.next();
         }
       } catch (error) {
@@ -1170,15 +980,12 @@ const notificationPlayer = {
     }
   },
 
-  // Audio event handlers for proper synchronization
   events: {
     bind: () => {
       if (!appState.audio) return;
 
-      // Unbind existing listeners first
       notificationPlayer.events.unbind();
 
-      // Bind all necessary audio events
       const eventHandlers = notificationPlayer.events.handlers;
       
       appState.audio.addEventListener('loadstart', eventHandlers.onLoadStart);
@@ -1244,7 +1051,6 @@ const notificationPlayer = {
       },
 
       onTimeUpdate: () => {
-        // Only update occasionally to avoid performance issues
         const now = Date.now();
         if (now - notificationPlayer.state.lastPositionUpdate > 500) {
           notificationPlayer.positionState.update();
@@ -1271,7 +1077,6 @@ const notificationPlayer = {
     }
   },
 
-  // Main setup function
   setup: () => {
     if (!('mediaSession' in navigator)) {
       console.warn('Media Session API not supported');
@@ -1284,10 +1089,8 @@ const notificationPlayer = {
     }
 
     try {
-      // Clear any existing metadata
       navigator.mediaSession.metadata = null;
       
-      // Set up action handlers
       const actionHandlers = [
         ['play', notificationPlayer.actions.play],
         ['pause', notificationPlayer.actions.pause],
@@ -1308,17 +1111,13 @@ const notificationPlayer = {
         }
       });
 
-      // Bind audio events if audio element exists
       if (appState.audio) {
         notificationPlayer.events.bind();
       }
 
-      // Set initial playback state
       notificationPlayer.playbackState.update('none');
 
       notificationPlayer.state.isInitialized = true;
-      console.log('NotificationPlayer initialized successfully');
-      console.log('Supported actions:', Array.from(notificationPlayer.state.supportedActions));
       
       return true;
 
@@ -1328,21 +1127,15 @@ const notificationPlayer = {
     }
   },
 
-  // Cleanup function
   destroy: () => {
     try {
-      // Stop position updates
       notificationPlayer.positionState.stopContinuousUpdate();
-
-      // Unbind audio events
       notificationPlayer.events.unbind();
 
       if ('mediaSession' in navigator) {
-        // Clear metadata and position
         navigator.mediaSession.metadata = null;
         notificationPlayer.positionState.reset();
 
-        // Clear action handlers
         Array.from(notificationPlayer.state.supportedActions).forEach(action => {
           try {
             navigator.mediaSession.setActionHandler(action, null);
@@ -1351,24 +1144,19 @@ const notificationPlayer = {
           }
         });
 
-        // Reset playback state
         navigator.mediaSession.playbackState = 'none';
       }
 
-      // Reset internal state
       notificationPlayer.state.isInitialized = false;
       notificationPlayer.state.supportedActions.clear();
       notificationPlayer.state.currentMetadata = null;
       notificationPlayer.state.lastPositionUpdate = 0;
-
-      console.log('NotificationPlayer destroyed successfully');
 
     } catch (error) {
       console.error('Error during NotificationPlayer cleanup:', error);
     }
   },
 
-  // Utility functions
   utils: {
     isSupported: () => {
       return 'mediaSession' in navigator;
@@ -1409,6 +1197,7 @@ const notificationPlayer = {
     }
   }
 };
+
 const musicPlayer = {
     mainPlayer: {
         open: () => {
@@ -1478,32 +1267,8 @@ const musicPlayer = {
             existingItems.forEach(item => item.remove());
             
             appState.queue.items.forEach((song, index) => {
-                const listItem = document.createElement('li');
-                listItem.className = 'songItem';
-                listItem.dataset.index = index;
-                listItem.dataset.song = JSON.stringify(song);
-                
-                listItem.innerHTML = `
-                  <div class="songContent">
-                    <img src="${utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="songCover">
-                    <div class="songInfo">
-                      <div class="songTitle">${song.title}</div>
-                      <div class="artistName">${song.artist}</div>
-                    </div>
-                    <div class="songActions">
-                      <button class="playButton" data-action="play" title="Play now">
-                        <svg class="SVGimg" fill="currentColor" viewBox="0 0 20 20">
-                          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                        </svg>
-                      </button>
-                      <button class="removeButton" data-action="remove" title="Remove from queue">
-                        <svg class="SVGimg" fill="currentColor" viewBox="0 0 20 20">
-                          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-                `;
+                const listItemHTML = render.playerListItem({ song, index, type: 'queue', utils });
+                const listItem = create(listItemHTML);
                 
                 const playBtn = listItem.querySelector('[data-action="play"]');
                 if (playBtn) {
@@ -1547,32 +1312,8 @@ const musicPlayer = {
             existingItems.forEach(item => item.remove());
             
             appState.recentlyPlayed.slice(0, 20).forEach((song, index) => {
-                const listItem = document.createElement('li');
-                listItem.className = 'songItem';
-                listItem.dataset.index = index;
-                listItem.dataset.song = JSON.stringify(song);
-                
-                listItem.innerHTML = `
-                  <div class="songContent">
-                    <img src="${utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="songCover">
-                    <div class="songInfo">
-                      <div class="songTitle">${song.title}</div>
-                      <div class="artistName">${song.artist}</div>
-                    </div>
-                    <div class="songActions">
-                      <button class="playButton" data-action="play" title="Play now">
-                        <svg class="SVGimg" fill="currentColor" viewBox="0 0 20 20">
-                          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                        </svg>
-                      </button>
-                      <button class="queueButton" data-action="queue" title="Add to queue">
-                        <svg class="SVGimg" fill="currentColor" viewBox="0 0 20 20">
-                          <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-                `;
+                const listItemHTML = render.playerListItem({ song, index, type: 'recent', utils });
+                const listItem = create(listItemHTML);
                 
                 const playBtn = listItem.querySelector('[data-action="play"]');
                 if (playBtn) {
@@ -1916,15 +1657,11 @@ const musicPlayer = {
                 console.error('No song data or title provided:', songData);
                 return false;
             }
-
-            console.log('Original song title:', songData.title);
             
             const songFileName = songData.title
                 .toLowerCase()
                 .replace(/\s+/g, "")
                 .replace(/[^\w]/g, "");
-            
-            console.log('Cleaned song filename:', songFileName);
             
             if (!songFileName) {
                 console.error('Song filename is empty after cleaning:', songData.title);
@@ -1934,7 +1671,6 @@ const musicPlayer = {
             for (const format of AUDIO_FORMATS) {
                 try {
                     const audioUrl = `https://koders.cloud/global/content/audio/${songFileName}.${format}`;
-                    console.log(`Trying to load: ${audioUrl}`);
                     
                     appState.audio.src = audioUrl;
                     appState.audio.preload = "auto";
@@ -1947,7 +1683,6 @@ const musicPlayer = {
                         };
                         
                         const errorHandler = (e) => {
-                            console.error(`Failed to load ${audioUrl}:`, e);
                             appState.audio.removeEventListener("canplaythrough", loadHandler);
                             appState.audio.removeEventListener("error", errorHandler);
                             reject(e);
@@ -1962,7 +1697,6 @@ const musicPlayer = {
                     });
                     
                     await appState.audio.play();
-                    console.log(`Successfully loaded and playing: ${audioUrl}`);
                     return true;
                     
                 } catch (error) {
@@ -2208,8 +1942,6 @@ const musicPlayer = {
     },
 };
 
-
-
 const app = {
     initialize: function() {
         window.music = music;
@@ -2219,17 +1951,20 @@ const app = {
         
         musicPlayer.ui.initialize();
 
-        pageManager.routing.initialize();
+        navigation.initialize();
         homePage.initialize();
 
         eventHandlers.init();
 
         app.resetUI();
         app.syncGlobalState();
+
+        deepLinkRouter.initialize();
+        deepLinkRouter.bindPopState();
     },
 
     resetUI: function() {
-        const nowPlayingArea = $bySelector(NAVBAR.nowPlaying);
+        const nowPlayingArea = document.querySelector(NAVBAR.nowPlaying);
         if (nowPlayingArea) {
             nowPlayingArea.classList.remove(CLASSES.hasSong);
         }
@@ -2260,11 +1995,12 @@ const app = {
     },
 
     goHome: function() {
-        if (appState.siteMapInstance) {
-            appState.siteMapInstance.navigateTo(ROUTES.HOME);
+        if (appState.router) {
+            appState.router.navigateTo(ROUTES.HOME);
         }
     }
 };
+
 const playlists = {
     add: (name) => {
         if (!name || !name.trim()) {
@@ -2455,7 +2191,7 @@ const playlists = {
             return;
         }
 
-        views.showLoading();
+        pageLoader.start({ message: "Loading playlist..." });
 
         setTimeout(() => {
             const dynamicContent = $byId(IDS.dynamicContent);
@@ -2472,7 +2208,7 @@ const playlists = {
                     <div class="playlist-info flex-1">
                       <p class="text-sm text-gray-400 mb-2">PLAYLIST</p>
                       <h1 class="text-4xl font-bold mb-4">${playlist.name}</h1>
-                      <p class="text-gray-400 mb-6">${playlist.songs.length} song${playlist.songs.length !== 1 ? "s" : ""} â€¢ Created ${new Date(playlist.created).toLocaleDateString()}</p>
+                      <p class="text-gray-400 mb-6">${playlist.songs.length} song${playlist.songs.length !== 1 ? "s" : ""} • Created ${new Date(playlist.created).toLocaleDateString()}</p>
                       <div class="flex gap-4">
                         <button class="play-playlist-btn bg-accent-primary text-white px-8 py-3 rounded-full hover:bg-accent-secondary transition-colors flex items-center gap-2" data-playlist-id="${playlist.id}" ${
             playlist.songs.length === 0 ? "disabled" : ""
@@ -2565,7 +2301,8 @@ const playlists = {
               `;
 
             playlists.bindViewEvents(playlist);
-        }, 450);
+            pageLoader.complete();
+        }, 200);
     },
 
     bindEvents: (root = $byId(IDS.dynamicContent)) => {
@@ -2652,8 +2389,8 @@ const playlists = {
         if (deleteBtn) {
             deleteBtn.addEventListener("click", async () => {
                 if (await playlists.remove(playlist.id)) {
-                    if (appState.siteMapInstance) {
-                        appState.siteMapInstance.navigateTo(ROUTES.HOME);
+                    if (appState.router) {
+                        appState.router.navigateTo(ROUTES.HOME);
                     }
                 }
             });
@@ -2662,8 +2399,8 @@ const playlists = {
         const browseBtn = dynamicContent.querySelector(".browse-music-btn");
         if (browseBtn) {
             browseBtn.addEventListener("click", () => {
-                if (appState.siteMapInstance) {
-                    appState.siteMapInstance.navigateTo(ROUTES.HOME);
+                if (appState.router) {
+                    appState.router.navigateTo(ROUTES.HOME);
                 }
             });
         }
@@ -2694,8 +2431,8 @@ const playlists = {
             artistEl.addEventListener("click", (e) => {
                 e.stopPropagation();
                 const artistName = artistEl.dataset.artist;
-                if (appState.siteMapInstance) {
-                    appState.siteMapInstance.navigateTo(ROUTES.ARTIST, {
+                if (appState.router) {
+                    appState.router.navigateTo(ROUTES.ARTIST, {
                         artist: artistName,
                     });
                 }
@@ -2732,27 +2469,7 @@ const playlists = {
         });
     },
 };
-const loadArtistInfo = (artistName, albumName = null) => {
-  if (!window.music) return;
-  
-  const artistData = window.music.find(a => a.artist === artistName);
-  if (!artistData) return;
-  
-  // If albumName is provided, find and activate that album tab
-  if (albumName && artistData.albums) {
-    const albumIndex = artistData.albums.findIndex(album => album.album === albumName);
-    if (albumIndex !== -1) {
-      // Wait for the artist page to render, then activate the album tab
-      setTimeout(() => {
-        const albumTabs = document.querySelectorAll('.album-tab');
-        if (albumTabs.length > albumIndex) {
-          albumTabs[albumIndex].click();
-        }
-      }, 1000);
-    }
-  }
-console.log('Used loadArtistInfo Object from global script.');
-};
+
 const bindClick = (el, handler) => {
   if (!el || typeof handler !== "function") return;
   const fn = (e) => { e.stopPropagation(); handler(); };
@@ -2760,10 +2477,12 @@ const bindClick = (el, handler) => {
   el.addEventListener("click", fn);
   el._clickHandler = fn;
 };
+
 const bindClickAll = (nodeList, handler) => {
   if (!nodeList) return;
   nodeList.forEach((el) => bindClick(el, handler));
 };
+
 const eventHandlers = {
   init: () => {
     eventHandlers.bindMenus();
@@ -2776,13 +2495,13 @@ const eventHandlers = {
 
   bindControls: () => {
     const idTrigger = $byId(IDS.nowPlayingArea);
-    const selTrigger = $bySelector(NAVBAR.nowPlaying);
+    const selTrigger = document.querySelector(NAVBAR.nowPlaying);
     [idTrigger, selTrigger].filter(Boolean).forEach((el) => bindClick(el, () => musicPlayer.mainPlayer.toggle()));
-    const navbarPlayPause = $bySelector(NAVBAR.playPause);
+    const navbarPlayPause = document.querySelector(NAVBAR.playPause);
     if (navbarPlayPause) bindClick(navbarPlayPause, () => musicPlayer.mainPlayer.toggle());
-    const navbarPrevious = $bySelector(NAVBAR.previous);
+    const navbarPrevious = document.querySelector(NAVBAR.previous);
     if (navbarPrevious) bindClick(navbarPrevious, () => musicPlayer.playback.previous());
-    const navbarNext = $bySelector(NAVBAR.next);
+    const navbarNext = document.querySelector(NAVBAR.next);
     if (navbarNext) bindClick(navbarNext, () => musicPlayer.playback.next());
   },
 
@@ -2840,7 +2559,7 @@ const eventHandlers = {
   },
 
   bindProgress: () => {
-    const progressBar = $bySelector(MUSIC_PLAYER.progressBar);
+    const progressBar = document.querySelector(MUSIC_PLAYER.progressBar);
     if (!progressBar) return;
     const handleProgressClick = (e) => {
       if (!appState.currentSong || !appState.audio || !appState.duration) return;
@@ -2908,25 +2627,25 @@ const eventHandlers = {
       const menuTrigger = $byId(IDS.menuTrigger);
       if (dropdownMenu && !dropdownMenu.contains(e.target) && !menuTrigger?.contains(e.target)) dropdown.close();
       const drawerEl = $byId(IDS.drawer);
-      const nowPlayingEl = $bySelector(NAVBAR.nowPlaying);
+      const nowPlayingEl = document.querySelector(NAVBAR.nowPlaying);
       if (appState.isPopupVisible && drawerEl && !drawerEl.contains(e.target) && !nowPlayingEl?.contains(e.target)) musicPlayer.mainPlayer.close();
       const navItem = e.target.closest("[data-nav]");
       if (navItem) {
         e.preventDefault();
         const navType = navItem.dataset.nav;
         dropdown.close();
-        if (appState.siteMapInstance) {
+        if (appState.router) {
           const navHandlers = {
-            [ROUTES.HOME]: () => appState.siteMapInstance.navigateTo(ROUTES.HOME),
-            [ROUTES.ALL_ARTISTS]: () => appState.siteMapInstance.navigateTo(ROUTES.ALL_ARTISTS),
+            [ROUTES.HOME]: () => appState.router.navigateTo(ROUTES.HOME),
+            [ROUTES.ALL_ARTISTS]: () => appState.router.navigateTo(ROUTES.ALL_ARTISTS),
             [ROUTES.ARTIST]: () => {
               const artistName = navItem.dataset.artist;
-              if (artistName) appState.siteMapInstance.navigateTo(ROUTES.ARTIST, { artist: artistName });
+              if (artistName) appState.router.navigateTo(ROUTES.ARTIST, { artist: artistName });
             },
             [ROUTES.ALBUM]: () => {
               const artist = navItem.dataset.artist;
               const album = navItem.dataset.album;
-              if (artist && album) appState.siteMapInstance.navigateTo(ROUTES.ALBUM, { artist, album });
+              if (artist && album) appState.router.navigateTo(ROUTES.ALBUM, { artist, album });
             },
           };
           if (navHandlers[navType]) navHandlers[navType]();
@@ -2935,7 +2654,7 @@ const eventHandlers = {
       if (e.target.closest("#" + IDS.globalSearchTrigger)) {
         e.preventDefault();
         dropdown.close();
-        if (appState.siteMapInstance) appState.siteMapInstance.openSearchDialog();
+        if (appState.router) appState.router.openSearchDialog();
       }
     };
     document.addEventListener("click", fn);
@@ -2960,26 +2679,26 @@ const eventHandlers = {
   },
 };
 
-
-
 window.addEventListener("load", function() {
   if (!window.appState) {
     app.initialize();
   }
 });
+
 window.MyTunesApp = {
   initialize: app.initialize,
   state: function() { return appState; },
   api: function() { return window.musicAppAPI; },
   goHome: app.goHome,
 };
+
 if (window.music) {
   app.initialize();
 }
 
-
-
-
+window.navigation = navigation;
+window.playlists = playlists;
+window.views = views;
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
@@ -2992,12 +2711,10 @@ if (document.readyState === 'loading') {
 document.addEventListener('DOMContentLoaded', () => {
   app.initialize();
   
-  
   const progressBar = document.getElementById('progressBar');
   if (progressBar) {
     progressBar.addEventListener('keydown', musicPlayer.ui.handleProgressBarKeyDown);
   }
-  
   
   setTimeout(() => {
       if (notificationPlayer.utils.isSupported()) {
@@ -3018,32 +2735,7 @@ export {
     utils,
     eventHandlers,
     app,
-    loadingBar,
-    loadArtistInfo,
+    pageLoader,
+    navigation,
     ACTION_GRID_ITEMS
 };
-/**
- * 
- *
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- *  
- *    Copyright 2025
- *  William Cole Hanson
- * 
- * Chevrolay@Outlook.com
- * 
- *    m.me/Chevrolay
- * 
- * 
-**/
