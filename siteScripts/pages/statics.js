@@ -1,23 +1,20 @@
-
-
 import {
   appState,
   storage,
   notifications,
   musicPlayer,
   utils,
-  loadArtistInfo,
+  navigation,
   playlists,
   overlays,
 } from '../global.js';
 
 import { ui } from './updates.js';
-
-
+import { render } from '../utilities/templates.js';
 
 export const homePage = {
   initialize: () => {
-    appState.homePageManagerInstance = {
+    appState.homePageManager = {
       renderHomePage: homePage.render,
     };
   },
@@ -27,61 +24,7 @@ export const homePage = {
     if (!dynamicContent) return;
 
     dynamicContent.innerHTML = "";
-
-    dynamicContent.innerHTML = `
-      
-      <div class="bento-grid px-4 md:px-6 gap-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        <div class="bento-card col-span-full md:col-span-1" data-loader="true">
-          <div class="card-header">
-            <h2 class="text-xl font-bold">Recently Played</h2>
-            <a href="#" class="text-blue-400 hover:text-blue-300 text-sm" data-view="recent">View All</a>
-          </div>
-          <div id="${IDS.recentlyPlayedSection}" class="card-content">
-            <div class="skeleton-loader"></div>
-          </div>
-        </div>
-        
-        <div class="bento-card col-span-full md:col-span-2" data-loader="true">
-          <div class="card-header">
-            <h2 class="text-xl font-bold">Discover Albums</h2>
-            <a href="#" class="text-blue-400 hover:text-blue-300 text-sm" data-view="albums">Explore More</a>
-          </div>
-          <div id="${IDS.randomAlbumsSection}" class="card-content">
-            <div class="skeleton-loader"></div>
-          </div>
-        </div>
-        
-        <div class="bento-card col-span-full md:col-span-1" data-loader="true">
-          <div class="card-header">
-            <h2 class="text-xl font-bold">Favorite Artists</h2>
-            <a href="#" class="text-blue-400 hover:text-blue-300 text-sm" data-view="favorite-artists">View All</a>
-          </div>
-          <div id="${IDS.favoriteArtistsSection}" class="card-content">
-            <div class="skeleton-loader"></div>
-          </div>
-        </div>
-        
-        <div class="bento-card col-span-full md:col-span-1" data-loader="true">
-          <div class="card-header">
-            <h2 class="text-xl font-bold">Your Playlists</h2>
-            <a href="#" class="text-blue-400 hover:text-blue-300 text-sm" data-view="playlists">View All</a>
-          </div>
-          <div id="${IDS.playlistsSection}" class="card-content">
-            <div class="skeleton-loader"></div>
-          </div>
-        </div>
-        
-        <div class="bento-card col-span-full md:col-span-1" data-loader="true">
-          <div class="card-header">
-            <h2 class="text-xl font-bold">Favorite Songs</h2>
-            <a href="#" class="text-blue-400 hover:text-blue-300 text-sm" data-view="favorite-songs">View All</a>
-          </div>
-          <div id="${IDS.favoriteSongsSection}" class="card-content">
-            <div class="skeleton-loader"></div>
-          </div>
-        </div>
-      </div>
-    `;
+    dynamicContent.innerHTML = render.page("home_bento", { IDS: window.IDS });
 
     homePage.addStyles();
 
@@ -406,26 +349,7 @@ export const homePage = {
     }
 
     const recentTracks = appState.recentlyPlayed.slice(0, 5);
-
-    let html = `<div class="recent-tracks animate-fade-in">`;
-
-    recentTracks.forEach((track, index) => {
-      html += `
-        <div class="recent-track" data-song='${JSON.stringify(track).replace(/"/g, "&quot;")}' style="animation-delay: ${index * 100}ms;">
-          <img src="${utils.getAlbumImageUrl(track.album)}" alt="${track.title}" class="track-art">
-          <div class="track-info">
-            <div class="track-title">${track.title}</div>
-            <div class="track-artist" data-artist="${track.artist}">${track.artist}</div>
-          </div>
-          <div class="play-button-overlay">
-            ${ICONS.play}
-          </div>
-        </div>
-      `;
-    });
-
-    html += `</div>`;
-    container.innerHTML = html;
+    container.innerHTML = render.homeSection.recentlyPlayed(recentTracks, utils);
 
     container.querySelectorAll(".recent-track").forEach((track) => {
       track.addEventListener("click", (e) => {
@@ -442,8 +366,8 @@ export const homePage = {
       artistEl.addEventListener("click", (e) => {
         e.stopPropagation();
         const artistName = artistEl.dataset.artist;
-        if (appState.siteMapInstance) {
-          appState.siteMapInstance.navigateTo(ROUTES.ARTIST, {
+        if (appState.router) {
+          appState.router.navigateTo(ROUTES.ARTIST, {
             artist: artistName,
           });
         }
@@ -462,29 +386,7 @@ export const homePage = {
       return;
     }
 
-    let html = `<div class="album-grid animate-fade-in">`;
-
-    albums.forEach((album, index) => {
-      html += `
-        <div class="album-card" style="animation-delay: ${index * 100}ms;" data-artist="${album.artist}" data-album="${album.album}">
-          <div style="position: relative;">
-            <img src="${utils.getAlbumImageUrl(album.album)}" alt="${album.album}" class="album-cover">
-            <div class="album-overlay">
-              <button class="album-play-btn" data-artist="${album.artist}" data-album="${album.album}">
-                ${ICONS.play}
-              </button>
-            </div>
-          </div>
-          <div class="album-info">
-            <div class="album-title">${album.album}</div>
-            <div class="album-artist" data-artist="${album.artist}">${album.artist}</div>
-          </div>
-        </div>
-      `;
-    });
-
-    html += `</div>`;
-    container.innerHTML = html;
+    container.innerHTML = render.homeSection.randomAlbums(albums, utils);
 
     container.querySelectorAll(".album-play-btn").forEach((playBtn) => {
       playBtn.addEventListener("click", (e) => {
@@ -505,34 +407,35 @@ export const homePage = {
       });
     });
 
-container.querySelectorAll(".album-artist").forEach((artistEl) => {
-  artistEl.addEventListener("click", (e) => {
-    e.stopPropagation();
-    const artistName = artistEl.dataset.artist;
-    const albumCard = artistEl.closest('.album-card');
-    const albumName = albumCard ? albumCard.dataset.album : null;
-    
-    if (appState.siteMapInstance) {
-      appState.siteMapInstance.navigateTo(ROUTES.ARTIST, {
-        artist: artistName,
-      });
-      
-      // Store the album to be loaded when artist page is ready
-      if (albumName) {
-        sessionStorage.setItem('pendingAlbumLoad', albumName);
+    container.querySelectorAll(".album-artist").forEach((artistEl) => {
+      artistEl.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const artistName = artistEl.dataset.artist;
+        const albumCard = artistEl.closest('.album-card');
+        const albumName = albumCard ? albumCard.dataset.album : null;
         
-        // Add a small delay to ensure artist page is loaded first
-        setTimeout(() => {
-          const storedAlbum = sessionStorage.getItem('pendingAlbumLoad');
-          if (storedAlbum === albumName) {
-            loadArtistInfo(artistName, albumName);
-            sessionStorage.removeItem('pendingAlbumLoad');
+        if (appState.router) {
+          appState.router.navigateTo(ROUTES.ARTIST, {
+            artist: artistName,
+          });
+          
+          if (albumName) {
+            sessionStorage.setItem('pendingAlbumLoad', albumName);
+            
+            setTimeout(() => {
+              const storedAlbum = sessionStorage.getItem('pendingAlbumLoad');
+              if (storedAlbum === albumName) {
+                const artistData = window.music?.find((a) => a.artist === artistName);
+                if (artistData) {
+                  navigation.pages.loadArtistPage(artistData, albumName);
+                }
+                sessionStorage.removeItem('pendingAlbumLoad');
+              }
+            }, 100);
           }
-        }, 100);
-      }
-    }
-  });
-});
+        }
+      });
+    });
   },
 
   renderFavoriteArtists: () => {
@@ -545,34 +448,13 @@ container.querySelectorAll(".album-artist").forEach((artistEl) => {
     }
 
     const artists = Array.from(appState.favorites.artists).slice(0, 6);
-
-    let html = `<div class="artist-grid animate-fade-in">`;
-
-    artists.forEach((artistName, index) => {
-      const artistData = window.music?.find((a) => a.artist === artistName);
-      if (!artistData) return;
-
-      html += `
-        <div class="artist-card" data-artist="${artistName}" style="animation-delay: ${index * 100}ms;">
-          <div style="position: relative;">
-            <img src="${utils.getArtistImageUrl(artistName)}" alt="${artistName}" class="artist-avatar">
-            <div class="play-button-overlay">
-              ${ICONS.play}
-            </div>
-          </div>
-          <div class="artist-name">${artistName}</div>
-        </div>
-      `;
-    });
-
-    html += `</div>`;
-    container.innerHTML = html;
+    container.innerHTML = render.homeSection.favoriteArtists(artists, utils);
 
     container.querySelectorAll(".artist-card").forEach((artistEl) => {
       artistEl.addEventListener("click", () => {
         const artistName = artistEl.dataset.artist;
-        if (appState.siteMapInstance) {
-          appState.siteMapInstance.navigateTo(ROUTES.ARTIST, {
+        if (appState.router) {
+          appState.router.navigateTo(ROUTES.ARTIST, {
             artist: artistName,
           });
         }
@@ -589,30 +471,8 @@ container.querySelectorAll(".album-artist").forEach((artistEl) => {
     if (!appState.playlists || appState.playlists.length === 0) {
       html = homePage.renderEmptyState("No playlists yet", "playlist");
     } else {
-      html = `<div class="playlists-list animate-fade-in">`;
-
       const displayPlaylists = appState.playlists.slice(0, 3);
-
-      displayPlaylists.forEach((playlist, index) => {
-        html += `
-          <div class="playlist-card" data-playlist-id="${playlist.id}" style="animation-delay: ${index * 100}ms;">
-            <div class="playlist-icon" style="width: 40px; height: 40px; background: linear-gradient(45deg, #6366f1, #8b5cf6); border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="20" height="20">
-                <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v2H3v-2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
-              </svg>
-            </div>
-            <div class="playlist-info">
-              <div class="playlist-name">${playlist.name}</div>
-              <div class="playlist-tracks">${playlist.songs?.length || 0} track${playlist.songs?.length !== 1 ? "s" : ""}</div>
-            </div>
-            <div class="play-button-overlay">
-              ${ICONS.play}
-            </div>
-          </div>
-        `;
-      });
-
-      html += `</div>`;
+      html = render.homeSection.playlists(displayPlaylists);
     }
 
     html += `
@@ -654,31 +514,7 @@ container.querySelectorAll(".album-artist").forEach((artistEl) => {
     }
 
     const songs = homePage.getSongsByIds(Array.from(appState.favorites.songs).slice(0, 5));
-
-    let html = `<div class="recent-tracks animate-fade-in">`;
-
-    songs.forEach((song, index) => {
-      html += `
-        <div class="recent-track" data-song='${JSON.stringify(song).replace(/"/g, "&quot;")}' style="animation-delay: ${index * 100}ms;">
-          <img src="${utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="track-art">
-          <div class="track-info">
-            <div class="track-title">${song.title}</div>
-            <div class="track-artist" data-artist="${song.artist}">${song.artist}</div>
-          </div>
-          <div class="play-button-overlay">
-            ${ICONS.play}
-          </div>
-          <button class="favorite-heart" data-song-id="${song.id}" style="position: absolute; top: 0.5rem; right: 0.5rem; color: #ef4444; opacity: 0.8; background: none; border: none; cursor: pointer;">
-            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-            </svg>
-          </button>
-        </div>
-      `;
-    });
-
-    html += `</div>`;
-    container.innerHTML = html;
+    container.innerHTML = render.homeSection.favoriteSongs(songs, utils);
 
     container.querySelectorAll(".recent-track").forEach((track) => {
       track.addEventListener("click", (e) => {
@@ -695,8 +531,8 @@ container.querySelectorAll(".album-artist").forEach((artistEl) => {
       artistEl.addEventListener("click", (e) => {
         e.stopPropagation();
         const artistName = artistEl.dataset.artist;
-        if (appState.siteMapInstance) {
-          appState.siteMapInstance.navigateTo(ROUTES.ARTIST, {
+        if (appState.router) {
+          appState.router.navigateTo(ROUTES.ARTIST, {
             artist: artistName,
           });
         }
@@ -846,6 +682,7 @@ container.querySelectorAll(".album-artist").forEach((artistEl) => {
     `;
   },
 };
+
 export const views = {
     showFavoriteSongs: () => {
         const favoriteSongIds = Array.from(appState.favorites.songs);
@@ -915,115 +752,202 @@ export const views = {
         views.bindFavoriteSongsEvents(modalEl);
     },
 
-showFavoriteArtists: () => {
-    const favoriteArtistNames = Array.from(appState.favorites.artists);
-    
-    // Get or create modal element
-    let modalEl = document.getElementById('favorite-artists-modal');
-    if (!modalEl) {
-        modalEl = document.createElement('div');
-        modalEl.id = 'favorite-artists-modal';
-        modalEl.className = 'modal-overlay';
-        modalEl.innerHTML = `
-            <div class="modal-content slide-in">
-                <div class="modal-header">
-                    <div>
-                        <h2 class="modal-title">Favorite Artists</h2>
-                        <div class="artist-count">0 artists</div>
+    showFavoriteArtists: () => {
+        const favoriteArtistNames = Array.from(appState.favorites.artists);
+        
+        let modalEl = document.getElementById('favorite-artists-modal');
+        if (!modalEl) {
+            modalEl = document.createElement('div');
+            modalEl.id = 'favorite-artists-modal';
+            modalEl.className = 'modal-overlay';
+            modalEl.innerHTML = `
+                <div class="modal-content slide-in">
+                    <div class="modal-header">
+                        <div>
+                            <h2 class="modal-title">Favorite Artists</h2>
+                            <div class="artist-count">0 artists</div>
+                        </div>
+                        <button class="close-btn">&times;</button>
                     </div>
-                    <button class="close-btn">&times;</button>
+                    <div class="artists-list"></div>
                 </div>
-                <div class="artists-list"></div>
-            </div>
-        `;
-        document.body.appendChild(modalEl);
-        
-        // Add event listeners for modal
-        modalEl.querySelector('.close-btn').addEventListener('click', () => {
-            modalEl.style.display = 'none';
-        });
-        
-        modalEl.addEventListener('click', (e) => {
-            if (e.target === modalEl) {
+            `;
+            document.body.appendChild(modalEl);
+            
+            modalEl.querySelector('.close-btn').addEventListener('click', () => {
                 modalEl.style.display = 'none';
-            }
-        });
-    }
-    
-    const artistsList = modalEl.querySelector('.artists-list');
-    const artistCount = modalEl.querySelector('.artist-count');
-    
-    if (favoriteArtistNames.length === 0) {
-        artistsList.innerHTML = `
-            <div class="empty-state">
-                <div class="empty-icon">♡</div>
-                <h3 class="empty-title">No Favorite Artists</h3>
-                <p class="empty-text">You haven't added any artists to your favorites yet.</p>
-                <p class="empty-subtext">Browse artists and click the heart icon to add favorites.</p>
-            </div>
-        `;
-        artistCount.textContent = "0 artists";
-    } else {
-        const favoriteArtists = favoriteArtistNames
-            .map((artistName) => window.music?.find((a) => a.artist === artistName))
-            .filter(Boolean);
+            });
+            
+            modalEl.addEventListener('click', (e) => {
+                if (e.target === modalEl) {
+                    modalEl.style.display = 'none';
+                }
+            });
+        }
         
-        artistCount.textContent = `${favoriteArtists.length} artist${favoriteArtists.length !== 1 ? "s" : ""}`;
+        const artistsList = modalEl.querySelector('.artists-list');
+        const artistCount = modalEl.querySelector('.artist-count');
         
-        artistsList.innerHTML = favoriteArtists
-            .map((artist) => {
-                return `
-                    <div class="artist-item" data-artist="${artist.artist}">
-                        <div class="artist-image">
-                            <img src="${utils.getArtistImageUrl(artist.artist)}" alt="${artist.artist}">
-                            <button class="play-btn">
-                                ${ICONS.play}
-                            </button>
+        if (favoriteArtistNames.length === 0) {
+            artistsList.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">♡</div>
+                    <h3 class="empty-title">No Favorite Artists</h3>
+                    <p class="empty-text">You haven't added any artists to your favorites yet.</p>
+                    <p class="empty-subtext">Browse artists and click the heart icon to add favorites.</p>
+                </div>
+            `;
+            artistCount.textContent = "0 artists";
+        } else {
+            const favoriteArtists = favoriteArtistNames
+                .map((artistName) => window.music?.find((a) => a.artist === artistName))
+                .filter(Boolean);
+            
+            artistCount.textContent = `${favoriteArtists.length} artist${favoriteArtists.length !== 1 ? "s" : ""}`;
+            
+            artistsList.innerHTML = favoriteArtists
+                .map((artist) => {
+                    return `
+                        <div class="artist-item" data-artist="${artist.artist}">
+                            <div class="artist-image">
+                                <img src="${utils.getArtistImageUrl(artist.artist)}" alt="${artist.artist}">
+                                <button class="play-btn">
+                                    ${ICONS.play}
+                                </button>
+                            </div>
+                            <div class="artist-info">
+                                <div class="artist-name">${artist.artist}</div>
+                                <div class="song-count">${utils.getTotalSongs(artist)} song${utils.getTotalSongs(artist) !== 1 ? "s" : ""}</div>
+                            </div>
                         </div>
-                        <div class="artist-info">
-                            <div class="artist-name">${artist.artist}</div>
-                            <div class="song-count">${utils.getTotalSongs(artist)} song${utils.getTotalSongs(artist) !== 1 ? "s" : ""}</div>
-                        </div>
-                    </div>
-                `;
-            })
-            .join('');
+                    `;
+                })
+                .join('');
+            
+            const artistItems = artistsList.querySelectorAll('.artist-item');
+            artistItems.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    if (!e.target.closest('.play-btn')) {
+                        const artistName = item.getAttribute('data-artist');
+                        if (appState.router) {
+                            appState.router.navigateTo(ROUTES.ARTIST, { artist: artistName });
+                        }
+                    }
+                });
+            });
+            
+            const playButtons = artistsList.querySelectorAll('.play-btn');
+            playButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const artistItem = button.closest('.artist-item');
+                    const artistName = artistItem.getAttribute('data-artist');
+                    const artistData = window.music?.find((a) => a.artist === artistName);
+                    if (artistData) {
+                        navigation.actions.playArtistSongs(artistData);
+                    }
+                });
+            });
+        }
         
-        // Add event listeners to artist items
-        const artistItems = artistsList.querySelectorAll('.artist-item');
-        artistItems.forEach(item => {
-            item.addEventListener('click', (e) => {
-                if (!e.target.closest('.play-btn')) {
-                    const artistName = item.getAttribute('data-artist');
-                    // Handle artist item click
-                    console.log('Artist clicked:', artistName);
+        modalEl.style.display = 'flex';
+    },
+
+    bindFavoriteSongsEvents: (root) => {
+        if (!root) return;
+
+        const playAllBtn = root.querySelector('.play-all-btn');
+        if (playAllBtn) {
+            playAllBtn.addEventListener('click', () => {
+                const favoriteSongIds = Array.from(appState.favorites.songs);
+                const favoriteSongs = views.getSongsByIds(favoriteSongIds);
+                
+                if (favoriteSongs.length > 0) {
+                    appState.queue.clear();
+                    favoriteSongs.slice(1).forEach((song) => appState.queue.add(song));
+                    musicPlayer.ui.playSong(favoriteSongs[0]);
+                    notifications.show("Playing all favorite songs", NOTIFICATION_TYPES.SUCCESS);
+                }
+            });
+        }
+
+        const shuffleAllBtn = root.querySelector('.shuffle-all-btn');
+        if (shuffleAllBtn) {
+            shuffleAllBtn.addEventListener('click', () => {
+                const favoriteSongIds = Array.from(appState.favorites.songs);
+                let favoriteSongs = views.getSongsByIds(favoriteSongIds);
+                
+                if (favoriteSongs.length > 0) {
+                    for (let i = favoriteSongs.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [favoriteSongs[i], favoriteSongs[j]] = [favoriteSongs[j], favoriteSongs[i]];
+                    }
+                    
+                    appState.queue.clear();
+                    favoriteSongs.slice(1).forEach((song) => appState.queue.add(song));
+                    musicPlayer.ui.playSong(favoriteSongs[0]);
+                    appState.shuffleMode = true;
+                    ui.updateShuffleButton();
+                    notifications.show("Shuffling favorite songs", NOTIFICATION_TYPES.SUCCESS);
+                }
+            });
+        }
+
+        root.querySelectorAll('.song-row').forEach((row) => {
+            row.addEventListener('click', (e) => {
+                if (e.target.closest('.action-btn') || e.target.closest('.song-artist')) return;
+
+                try {
+                    const songData = JSON.parse(row.dataset.song);
+                    musicPlayer.ui.playSong(songData);
+                } catch (error) {
+                    console.error('Error playing song:', error);
                 }
             });
         });
-        
-        // Add event listeners to play buttons
-        const playButtons = artistsList.querySelectorAll('.play-btn');
-        playButtons.forEach(button => {
-            button.addEventListener('click', (e) => {
+
+        root.querySelectorAll('.song-artist').forEach((artistEl) => {
+            artistEl.addEventListener('click', (e) => {
                 e.stopPropagation();
-                const artistItem = button.closest('.artist-item');
-                const artistName = artistItem.getAttribute('data-artist');
-                // Handle play button click
-                console.log('Play artist:', artistName);
+                const artistName = artistEl.dataset.artist;
+                if (appState.router) {
+                    overlays.close('playlist-viewer');
+                    appState.router.navigateTo(ROUTES.ARTIST, { artist: artistName });
+                }
             });
         });
-    }
-    
-    // Show the modal
-    modalEl.style.display = 'flex';
-},
 
+        root.querySelectorAll('.action-btn').forEach((btn) => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const action = btn.dataset.action;
+                const songRow = btn.closest('.song-row');
+                const songData = JSON.parse(songRow.dataset.song);
 
-
-    bindFavoriteSongsEvents: (root) => {
-    },
-
-    bindFavoriteArtistsEvents: (root) => {
+                switch (action) {
+                    case 'favorite':
+                        appState.favorites.remove('songs', songData.id);
+                        songRow.style.transition = 'all 0.3s ease';
+                        songRow.style.opacity = '0';
+                        songRow.style.transform = 'translateX(-20px)';
+                        
+                        setTimeout(() => {
+                            songRow.remove();
+                            const remaining = root.querySelectorAll('.song-row');
+                            if (remaining.length === 0) {
+                                overlays.close('playlist-viewer');
+                            }
+                        }, 300);
+                        break;
+                    case 'add-queue':
+                        appState.queue.add(songData);
+                        break;
+                    case 'add-playlist':
+                        navigation.actions.showPlaylistSelector(songData);
+                        break;
+                }
+            });
+        });
     },
 
     getSongsByIds: (songIds) => {
@@ -1060,17 +984,6 @@ showFavoriteArtists: () => {
             <p class="text-gray-500 text-sm">${description}</p>
           </div>
         `;
-    },
-
-    showLoading: () => {
-        const dynamicContent = $byId(IDS.dynamicContent);
-        if (dynamicContent) {
-            dynamicContent.innerHTML = `
-                <div class="loading-state flex items-center justify-center py-12">
-                  <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-accent-primary"></div>
-                </div>
-              `;
-        }
     },
 };
 /**
