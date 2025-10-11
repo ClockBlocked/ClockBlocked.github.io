@@ -210,6 +210,9 @@
 /* Placeholder utilities */
 .placeholder-gray-400::placeholder { color: #9ca3af; }
 
+/* Decoration utilities */
+.decoration-2 { text-decoration-thickness: 2px; }
+
 /* Responsive utilities */
 @media (min-width: 640px) {
   .sm\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
