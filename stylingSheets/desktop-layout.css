@@ -3,8 +3,7 @@
    ============================================ */
 
 :root {
-  --desktop-sidebar-width: 400px;
-  --desktop-sidebar-spacing: 420px; /* Sidebar width + padding */
+  --desktop-sidebar-width: 35%;
   --desktop-menu-width: 320px;
 }
 
@@ -25,13 +24,15 @@
   /* Left side - Scrollable content area */
   #mainArea {
     flex: 1;
+    width: 65%;
     height: 100vh;
     overflow-y: auto;
     overflow-x: hidden;
     padding: 2rem;
-    padding-right: var(--desktop-sidebar-spacing) !important; /* Space for fixed sidebar */
-    padding-left: 0 !important; /* Remove left padding */
-    margin-left: 0 !important; /* Remove left margin */
+    padding-right: 2rem !important;
+    padding-left: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
   }
   
   /* Fix for dynamic content - remove left margin/padding */
@@ -39,6 +40,7 @@
     margin-left: 0 !important;
     margin-right: 0 !important;
     padding-left: 0 !important;
+    max-width: 100%;
   }
   
   /* Fix for bento grid on home page */
@@ -46,18 +48,21 @@
     margin-left: 0 !important;
     padding-left: 1rem !important;
     padding-right: 1rem !important;
+    max-width: 100%;
   }
   
   /* Fix for content wrapper */
   #contentWrapper {
     margin-left: 0 !important;
     padding-left: 0 !important;
+    max-width: 100%;
   }
   
   /* Fix for main container */
   #main-container {
     margin-left: 0 !important;
     padding-left: 0 !important;
+    max-width: 100%;
   }
 
   /* Right side - Fixed music player sidebar */
@@ -65,7 +70,7 @@
     position: fixed;
     right: 0;
     top: 0;
-    width: var(--desktop-sidebar-width);
+    width: 35%;
     height: 100vh;
     background: linear-gradient(135deg, rgba(17, 24, 39, 0.98) 0%, rgba(31, 41, 55, 0.98) 100%);
     backdrop-filter: blur(20px);
@@ -379,7 +384,7 @@
 @media (min-width: 768px) {
   .artistPage .fragments.albums {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1.5rem;
     padding: 1rem;
   }
@@ -414,10 +419,17 @@
   }
 }
 
+/* Desktop - More columns for artist albums */
+@media (min-width: 1024px) {
+  .artistPage .fragments.albums {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
 /* Additional tablet fixes - narrower columns for smaller screens */
 @media (min-width: 768px) and (max-width: 1023px) {
   .artistPage .fragments.albums {
     /* Use narrower minimum column width on tablets to fit more content */
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
