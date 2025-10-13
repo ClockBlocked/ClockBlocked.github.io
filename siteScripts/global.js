@@ -161,7 +161,7 @@ const utils = {
   getAlbumImageUrl: (albumName) => {
     if (!albumName) return utils.getDefaultAlbumImage();
     const cleanName = albumName.toLowerCase().replace(/\s+/g, '').replace(/[^\w]/g, '');
-    return `https://koders.cloud/global/content/images/albumCovers/${cleanName}.png`;
+    return `https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/copilot/fix-home-page-layout-issues/global/content/images/albumCovers/${cleanName}.png`;
   },
 
   formatTime: (seconds) => {
@@ -183,15 +183,15 @@ const utils = {
   getArtistImageUrl: (artistName) => {
     if (!artistName) return utils.getDefaultArtistImage();
     const normalized = utils.normalizeForUrl(artistName);
-    return `https://koders.cloud/global/content/images/artistPortraits/${normalized}.png`;
+    return `https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/copilot/fix-home-page-layout-issues/global/content/images/artistPortraits/${normalized}.png`;
   },
 
   getDefaultAlbumImage: () => {
-    return "https://koders.cloud/global/content/images/albumCovers/default-album.png";
+    return "https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/copilot/fix-home-page-layout-issues/global/content/images/albumCovers/default-album.png";
   },
 
   getDefaultArtistImage: () => {
-    return "https://koders.cloud/global/content/images/artistPortraits/default-artist.png";
+    return "https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/copilot/fix-home-page-layout-issues/global/content/images/artistPortraits/default-artist.png";
   },
 
   getTotalSongs: (artist) => {
