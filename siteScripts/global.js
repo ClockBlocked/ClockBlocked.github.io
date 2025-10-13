@@ -161,7 +161,7 @@ const utils = {
   getAlbumImageUrl: (albumName) => {
     if (!albumName) return utils.getDefaultAlbumImage();
     const cleanName = albumName.toLowerCase().replace(/\s+/g, '').replace(/[^\w]/g, '');
-    return `https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/copilot/fix-home-page-layout-issues/global/content/images/albumCovers/${cleanName}.png`;
+    return `https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/copilot/fix-mobile-layout-issues/global/content/images/albumCovers/${cleanName}.png`;
   },
 
   formatTime: (seconds) => {
@@ -183,15 +183,15 @@ const utils = {
   getArtistImageUrl: (artistName) => {
     if (!artistName) return utils.getDefaultArtistImage();
     const normalized = utils.normalizeForUrl(artistName);
-    return `https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/copilot/fix-home-page-layout-issues/global/content/images/artistPortraits/${normalized}.png`;
+    return `https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/copilot/fix-mobile-layout-issues/global/content/images/artistPortraits/${normalized}.png`;
   },
 
   getDefaultAlbumImage: () => {
-    return "https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/copilot/fix-home-page-layout-issues/global/content/images/albumCovers/default-album.png";
+    return "https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/copilot/fix-mobile-layout-issues/global/content/images/albumCovers/default-album.png";
   },
 
   getDefaultArtistImage: () => {
-    return "https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/copilot/fix-home-page-layout-issues/global/content/images/artistPortraits/default-artist.png";
+    return "https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/copilot/fix-mobile-layout-issues/global/content/images/artistPortraits/default-artist.png";
   },
 
   getTotalSongs: (artist) => {
@@ -728,7 +728,7 @@ const notificationPlayer = {
         .toLowerCase()
         .replace(/\s+/g, '')
         .replace(/[^\w]/g, '');
-      return `https://koders.cloud/global/content/images/albumCovers/${cleanName}.png`;
+      return `https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/copilot/fix-mobile-layout-issues/global/content/images/albumCovers/${cleanName}.png`;
     },
 
     createArtworkArray: (artworkUrl) => {
@@ -1684,7 +1684,7 @@ const musicPlayer = {
 
             for (const format of AUDIO_FORMATS) {
                 try {
-                    const audioUrl = `https://koders.cloud/global/content/audio/${songFileName}.${format}`;
+                    const audioUrl = `https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/copilot/fix-mobile-layout-issues/global/content/audio/${songFileName}.${format}`;
                     
                     appState.audio.src = audioUrl;
                     appState.audio.preload = "auto";
