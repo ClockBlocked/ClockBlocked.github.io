@@ -1,5 +1,4 @@
-// Desktop Layout Handler
-// This module manages the desktop split-screen layout with menu and player sidebars
+import { appState } from './global.js';
 
 export function initDesktopLayout() {
   // Use a flag to track if our desktop elements have been created
@@ -78,6 +77,8 @@ export function initDesktopLayout() {
       
       // Sync player sidebar with main player
       const syncPlayerSidebar = () => {
+        let state = playerState?.detail || {};
+        
         const mainSongName = document.querySelector('.songName')?.textContent;
         const mainArtistName = document.querySelector('.artistName')?.textContent;
         const mainAlbumArt = document.querySelector('#cover')?.src;
