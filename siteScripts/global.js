@@ -1478,7 +1478,7 @@ const musicPlayer = {
     },
 
     playback: {
-        dispatchPlayerStateChange: () {
+        dispatchPlayerStateChange: () => {
           const detail = {
             song: appState.currentSong,
             artist: appState.currentArtist,
