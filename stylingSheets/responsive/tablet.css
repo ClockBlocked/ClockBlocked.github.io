@@ -7,6 +7,53 @@
   #navbar {
     display: none !important;
   }
+
+  /* Tablet layout - similar to desktop */
+  #pageWrapper {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+  }
+
+  #mainArea {
+    flex: 1;
+    width: 65%;
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 2rem;
+    padding-right: 2rem !important;
+    padding-left: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  
+  #dynamic-content {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
+    max-width: 100%;
+  }
+  
+  .bento-grid {
+    margin-left: 0 !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    max-width: 100%;
+  }
+  
+  #contentWrapper {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    max-width: 100%;
+  }
+  
+  #main-container {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    max-width: 100%;
+  }
 }
 
 /* ============================================
@@ -77,12 +124,6 @@
 
   /* Player sidebar modifications for tablet */
   .desktop-player-sidebar {
-    position: fixed;
-    right: 0;
-    top: 0;
-    width: 35%;
-    height: 100vh;
-    z-index: 100;
     transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
