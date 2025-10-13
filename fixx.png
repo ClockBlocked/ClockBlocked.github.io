@@ -1,0 +1,45 @@
+import os
+
+# List of known extensions to remove if chained (add more if needed)
+BAD_EXTENSIONS = ['.jpg', '.jpeg', '.webp', '.jfif', '.heic', '.bmp', '.tiff', '.gif']
+TARGET_EXTENSION = '.png'
+
+def sanitize_filename(filename):
+    name, ext = os.path.splitext(filename)
+
+    # Loop to strip chained extensions
+    while True:
+        ext_lower = os.path.splitext(name)[1].lower()
+        if ext_lower in BAD_EXTENSIONS + [TARGET_EXTENSION]:
+            name = os.path.splitext(name)[0]
+        else:
+            break
+
+    return name + TARGET_EXTENSION
+
+def rename_files_in_current_directory():
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    files = os.listdir(current_dir)
+    
+    renamed_count = 0
+
+    for file in files:
+        full_path = os.path.join(current_dir, file)
+
+        if os.path.isfile(full_path):
+            new_name = sanitize_filename(file)
+            new_path = os.path.join(current_dir, new_name)
+
+            if new_name != file and not os.path.exists(new_path):
+                os.rename(full_path, new_path)
+                renamed_count += 1
+                print(f"✅ Renamed: {file} → {new_name}")
+            elif new_name == file:
+                print(f"⏭️  Skipped (already clean): {file}")
+            else:
+                print(f"⚠️  Conflict: {new_name} already exists — skipping.")
+
+    print(f"\n✔️ Done. {renamed_count} files renamed.")
+
+if __name__ == '__main__':
+    rename_files_in_current_directory()

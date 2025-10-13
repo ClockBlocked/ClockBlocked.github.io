@@ -1,0 +1,55 @@
+import os
+import re
+
+# Define the directory containing your images
+FOLDER_PATH = 'photosFix'  # Update this if using an absolute path
+
+# List of known image extensions to clean (can expand if needed)
+BAD_EXTENSIONS = ['.jpg', '.jpeg', '.webp', '.jfif', '.heic', '.bmp', '.tiff', '.gif']
+
+def sanitize_filename(filename):
+    # Split the filename from its full path
+    name, ext = os.path.splitext(filename)
+    
+    # Remove ALL bad extensions chained onto the base name
+    while any(name.lower().endswith(bad_ext) for bad_ext in BAD_EXTENSIONS + ['.png']):
+        for bad_ext in BAD_EXTENSIONS:
+            if name.lower().endswith(bad_ext):
+                name = name[: -len(bad_ext)]
+        # Allow loop to clear out multiple chained extensions like '.png.jpg.webp'
+
+    # Return clean name + correct extension
+    return name + '.png'
+
+def rename_files(folder_path):
+    if not os.path.exists(folder_path):
+        print(f"❌ Folder not found: {folder_path}")
+        return
+    
+    files = os.listdir(folder_path)
+    if not files:
+        print("📂 Folder is empty.")
+        return
+
+    rename_count = 0
+
+    for file in files:
+        file_path = os.path.join(folder_path, file)
+        if os.path.isfile(file_path):
+            new_name = sanitize_filename(file)
+            new_path = os.path.join(folder_path, new_name)
+            
+            # Avoid overwriting existing files
+            if new_path != file_path and not os.path.exists(new_path):
+                os.rename(file_path, new_path)
+                rename_count += 1
+                print(f"✅ Renamed: {file} → {new_name}")
+            elif new_path == file_path:
+                print(f"⏭️  Skipped (already clean): {file}")
+            else:
+                print(f"⚠️  Conflict: {new_name} already exists — skipping.")
+    
+    print(f"\n✔️ Done. {rename_count} files renamed.")
+
+if __name__ == '__main__':
+    rename_files(FOLDER_PATH)
