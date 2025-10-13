@@ -370,9 +370,18 @@
   }
 }
 
-/* Keep mobile layout unchanged */
-@media (max-width: 1023px) {
+/* Keep mobile layout unchanged - hide desktop elements only on mobile (below tablet) */
+@media (max-width: 767px) {
   .desktop-player-sidebar,
+  .desktop-menu-trigger,
+  .desktop-menu-sidebar,
+  .desktop-menu-overlay {
+    display: none !important;
+  }
+}
+
+/* On tablet, hide menu elements but allow player sidebar with trigger */
+@media (min-width: 768px) and (max-width: 1023px) {
   .desktop-menu-trigger,
   .desktop-menu-sidebar,
   .desktop-menu-overlay {
