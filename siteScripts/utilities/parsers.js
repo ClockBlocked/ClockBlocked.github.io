@@ -7,21 +7,21 @@ export function formatTime(seconds) {
 
 export function getAlbumImageUrl(albumName) {
   if (!albumName) return getDefaultAlbumImage();
-  return `https://koders.cloud/global/content/images/albumCovers/${albumName.toLowerCase().replace(/\s+/g, '')}.png`;
+  return `https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/copilot/fix-home-page-layout-issues/global/content/images/albumCovers/${albumName.toLowerCase().replace(/\s+/g, '')}.png`;
 }
 
 export function getArtistImageUrl(artistName) {
   if (!artistName) return getDefaultArtistImage();
   let normalizedName = normalizeNameForUrl(artistName);
-  return `https://koders.cloud/global/content/images/artistPortraits/${normalizedName}.png`;
+  return `https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/copilot/fix-home-page-layout-issues/global/content/images/artistPortraits/${normalizedName}.png`;
 }
 
 export function getDefaultArtistImage() {
-  return 'https://koders.cloud/global/content/images/artistPortraits/default-artist.png';
+  return 'https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/copilot/fix-home-page-layout-issues/global/content/images/artistPortraits/default-artist.png';
 }
 
 export function getDefaultAlbumImage() {
-  return 'https://koders.cloud/global/content/images/albumCovers/default-album.png';
+  return 'https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/copilot/fix-home-page-layout-issues/global/content/images/albumCovers/default-album.png';
 }
 
 export function normalizeNameForUrl(name) {
