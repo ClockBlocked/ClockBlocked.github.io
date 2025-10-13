@@ -43,8 +43,23 @@ export function initTabletLayout() {
       if (playerSidebar) {
         initTabletTrigger();
       } else {
-        // Wait for sidebar to be created
-        setTimeout(initTabletTrigger, 100);
+        // Wait for sidebar to be created using MutationObserver
+        const observer = new MutationObserver((mutations) => {
+          const sidebar = document.querySelector('.desktop-player-sidebar');
+          if (sidebar) {
+            observer.disconnect();
+            initTabletTrigger();
+          }
+        });
+        
+        observer.observe(document.body, { childList: true, subtree: false });
+        
+        // Fallback timeout to prevent infinite waiting
+        setTimeout(() => {
+          observer.disconnect();
+          const sidebar = document.querySelector('.desktop-player-sidebar');
+          if (sidebar) initTabletTrigger();
+        }, 1000);
       }
 
     } else if (!isTablet && tabletTriggerInitialized) {
