@@ -389,6 +389,8 @@
   }
 }
 
+
+
 /* Fix for artist page layout on desktop/tablet */
 @media (min-width: 768px) {
   .artistPage .fragments.albums {
