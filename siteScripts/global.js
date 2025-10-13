@@ -1478,6 +1478,18 @@ const musicPlayer = {
     },
 
     playback: {
+        dispatchPlayerStateChange: () {
+          const detail = {
+            song: appState.currentSong,
+            artist: appState.currentArtist,
+            album: appState.currentAlbum,
+            isPlaying: appState.isPlaying,
+            duration: appState.duration,
+            currentTime: appState.audio?.currentTime ?? 0,
+            totalTime: appState.audio?.duration ?? 0
+          };
+        window.dispatchEvent(new CustomEvent('playerstatechange', { detail }));
+      },
         play: () => {
             if (!appState.currentSong || !appState.audio) return;
             appState.audio.play().catch((err) => {
@@ -1619,11 +1631,11 @@ const musicPlayer = {
         },
 
         playSong: async (songData) => {
-            if (!songData) return;
+          if (!songData) return;
             musicPlayer.ui.initialize();
-            ui.setLoadingState(true);
+                ui.setLoadingState(true);
             
-            if (appState.currentSong) {
+          if (appState.currentSong) {
                 musicPlayer.ui.addToRecentlyPlayed(appState.currentSong);
             }
             
@@ -1644,13 +1656,15 @@ const musicPlayer = {
                     eventHandlers.bindControlEvents?.(); 
                     musicPlayer.ui.bindSeekBar(); 
                 }, 100);
+              dispatchPlayerStateChange();
             } else {
                 appState.isPlaying = false;
                 ui.updatePlayPauseButtons();
                 notificationPlayer.playbackState.onPause();
+              dispatchPlayerStateChange();
             }
             ui.setLoadingState(false);
-        },
+          },
 
         loadAudioFile: async (songData) => {
             if (!songData || !songData.title) {
@@ -1832,8 +1846,8 @@ const musicPlayer = {
             const percent = duration > 0 ? (currentTime / duration) * 100 : 0;
             
             musicPlayer.ui.setProgressUI(percent, currentTime);
-            
             musicPlayer.ui.updateBufferDisplay();
+          dispatchPlayerStateChange();
         },
 
         updateBufferDisplay: () => {
