@@ -77,6 +77,12 @@
 
   /* Player sidebar modifications for tablet */
   .desktop-player-sidebar {
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 35%;
+    height: 100vh;
+    z-index: 100;
     transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
