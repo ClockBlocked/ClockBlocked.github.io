@@ -36,41 +36,50 @@ MyBeats:  Stream & share your favorite music for free.
 <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
 
 
-<link rel="stylesheet" href="./overlays.css" />
-
-<link rel="stylesheet" href="./extra.css" />
-
-<link rel="stylesheet" href="./dynamicOverlays.css" />
-
+<!-- Core Styles - Load in order -->
+<link rel="stylesheet" href="./stylingSheets/00-variables.css" />
+<link rel="stylesheet" href="./stylingSheets/01-themes.css" />
+<link rel="stylesheet" href="./stylingSheets/02-reset.css" />
+<link rel="stylesheet" href="./stylingSheets/03-animations.css" />
 <link rel="stylesheet" href="./stylingSheets/main.css" />
+
+<!-- Page Styles -->
 <link rel="stylesheet" href="./stylingSheets/pages/core.css" />
-<link rel="stylesheet" href="./stylingSheets/components/breadCrumbs.css" />
-<link rel="stylesheet" href="./stylingSheets/components/navbarPlayer.css" />
-<link rel="stylesheet" href="./stylingSheets/components/lists.css" />
-<link rel="stylesheet" href="./stylingSheets/components/playlists.css" />
 <link rel="stylesheet" href="./stylingSheets/pages/home.css" />
 <link rel="stylesheet" href="./stylingSheets/pages/artist.css" />
-<link rel="stylesheet" href="./stylingSheets/global/animatedly.css" />
+
+<!-- Component Styles -->
+<link rel="stylesheet" href="./stylingSheets/components/breadCrumbs.css" />
+<link rel="stylesheet" href="./stylingSheets/components/navbarPlayer.css" />
+<link rel="stylesheet" href="./stylingSheets/components/playlists.css" />
+
+<!-- Global Styles -->
 <link rel="stylesheet" href="./stylingSheets/global/fonts.css" />
 <link rel="stylesheet" href="./stylingSheets/global/svg.css" />
 
-<!-- New modular stylesheets -->
+<!-- Layout Styles -->
 <link rel="stylesheet" href="./stylingSheets/desktop-layout.css" />
 <link rel="stylesheet" href="./stylingSheets/inline-styles.css" />
+
+<!-- Utility Styles -->
 <link rel="stylesheet" href="./stylingSheets/tailwind-conversion.css" />
 
+<!-- Overlay Styles -->
+<link rel="stylesheet" href="./stylingSheets/overlays/overlays.css" />
+<link rel="stylesheet" href="./stylingSheets/overlays/dynamicOverlays.css" />
 
-    <link 
-        rel="stylesheet" 
-        media="screen and (min-width: 768px) and (max-width: 1024px)" 
-        href="./stylingSheets/responsive/tablet.css"
-    >
-    
-    <link 
-        rel="stylesheet" 
-        media="screen and (min-width: 1024px)" 
-        href="./stylingSheets/responsive/desktop.css"
-    >
+<!-- Responsive Styles -->
+<link 
+    rel="stylesheet" 
+    media="screen and (min-width: 768px) and (max-width: 1024px)" 
+    href="./stylingSheets/responsive/tablet.css"
+>
+
+<link 
+    rel="stylesheet" 
+    media="screen and (min-width: 1024px)" 
+    href="./stylingSheets/responsive/desktop.css"
+>
 
 <!-- L I B R A R I E S ------------->
 <!-- Tailwind removed - converted to standard CSS in tailwind-conversion.css -->
@@ -102,15 +111,6 @@ MyBeats:  Stream & share your favorite music for free.
   gtag("js", new Date());
   gtag("config", "G-P0KCT8TSPW");
 </script>
-
-
-
-
-
-<link rel="stylesheet" href="./stylingSheets/pages/artist.css">
-
-
-
 
 </head>
 <body>
