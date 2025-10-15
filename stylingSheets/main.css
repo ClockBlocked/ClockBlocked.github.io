@@ -29,8 +29,6 @@
   border: 1px solid var(--border-750);
 }
 
-}
-
 .notification.fade-out {
   opacity: 0;
   transform: translateX(-50%) translateY(20px) scale(0.95);
@@ -43,8 +41,6 @@
 /**  overflow-y: auto;**/
   overscroll-behavior: none;
   overscroll-behavior-y: contain;
-}
-
 }
 
 .popup-album-cover {

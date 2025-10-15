@@ -2,6 +2,8 @@
    Animations and Keyframes
    Extracted from extra.css
    ======================================== */
+
+.toast {
   will-change: transform, opacity;
   overflow: hidden;
   animation: toast-in 200ms cubic-bezier(.2,.8,.25,1) both;
@@ -5131,9 +5133,3 @@ html {
     line-height: 1.4;
 }
 
-*
-*
-*
-*
-*
-*

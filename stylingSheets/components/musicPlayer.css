@@ -154,7 +154,7 @@
   color: var(--accent-primary);
   font-size: 0.875rem;
   text-align: center;
-
+}
 
 #musicPlayer {
   width: 100%;
@@ -1842,10 +1842,10 @@ flex-shrink: 0;
 
 
 .drawer content {
-padding: 0;
-
+  padding: 0;
 }
+
 #musicPlayer {
-width: 100%;
-overflow: hidden;
+  width: 100%;
+  overflow: hidden;
 }
