@@ -55,7 +55,7 @@ stylingSheets/
 6. `global/svg.css` → `base/svg.css`
 
 ### Files Created (2):
-1. `components/musicPlayer.css` - Extracted 1851 lines of music player styles from main.css
+1. `components/musicPlayer.css` - Extracted 1,851 lines of music player styles from main.css
 2. `responsive/mobile.css` - New file for mobile-specific responsive styles (<768px)
 
 ### Files Removed (1):
