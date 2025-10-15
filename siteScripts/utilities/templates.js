@@ -179,12 +179,16 @@ case "enhancedArtist":
   <div class="fragments artist-content">
     
     <!-- Quick Stats Grid -->
-    <div class="artist-quick-stats">
-      <div class="artist-stat-card stat-blue">
+    <div class="artist-quick-stats artist-bento-grid">
+      <div class="artist-stat-card artist-bento-card stat-blue">
+        <div class="loadingOverlay hidden" id="loadingDuration">
+          <div class="spinner"></div>
+          <div class="loadingText">Calculating...</div>
+        </div>
         <div class="stat-card-content">
           <div>
             <div class="stat-card-label">Total Duration</div>
-            <div class="stat-card-value" id="totalDuration">Calculating...</div>
+            <div class="stat-card-value" id="totalDuration">--:--</div>
           </div>
           <div class="stat-card-icon stat-icon-blue">
             <svg fill="currentColor" viewBox="0 0 20 20">
@@ -194,11 +198,15 @@ case "enhancedArtist":
         </div>
       </div>
 
-      <div class="artist-stat-card stat-purple">
+      <div class="artist-stat-card artist-bento-card stat-purple">
+        <div class="loadingOverlay hidden" id="loadingYear">
+          <div class="spinner"></div>
+          <div class="loadingText">Finding...</div>
+        </div>
         <div class="stat-card-content">
           <div>
             <div class="stat-card-label">Latest Release</div>
-            <div class="stat-card-value" id="latestYear">2024</div>
+            <div class="stat-card-value" id="latestYear">----</div>
           </div>
           <div class="stat-card-icon stat-icon-purple">
             <svg fill="currentColor" viewBox="0 0 20 20">
@@ -209,7 +217,11 @@ case "enhancedArtist":
         </div>
       </div>
 
-      <div class="artist-stat-card stat-pink">
+      <div class="artist-stat-card artist-bento-card stat-pink">
+        <div class="loadingOverlay hidden" id="loadingPopularity">
+          <div class="spinner"></div>
+          <div class="loadingText">Analyzing...</div>
+        </div>
         <div class="stat-card-content">
           <div>
             <div class="stat-card-label">Popularity</div>
@@ -492,52 +504,107 @@ case "enhancedArtist":
         return `
         <div class="bento-grid">
             <div class="bento-card" data-loader="true">
+              <div class="loadingOverlay" id="loadingRecent">
+                <div class="spinner"></div>
+                <div class="loadingText">Loading Recent Plays...</div>
+              </div>
               <div class="card-header">
-                <h2 class="card-title">Recently Played</h2>
-                <a href="#" class="card-link" data-view="recent">View All</a>
+                <div class="cardIcon">
+                  <i class="fas fa-history"></i>
+                </div>
+                <h2 class="cardTitle">Recently Played</h2>
+              </div>
+              <div class="cardBody">
+                Your most recently played tracks
               </div>
               <div id="${data.IDS.recentlyPlayedSection}" class="card-content">
-                <div class="skeleton-loader"></div>
+              </div>
+              <div class="cardFooter">
+                <a href="#" class="card-link" data-view="recent">View All →</a>
               </div>
             </div>
             
-            <div class="bento-card bento-span-2" data-loader="true">
+            <div class="bento-card large bento-span-2" data-loader="true">
+              <div class="loadingOverlay" id="loadingAlbums">
+                <div class="spinner"></div>
+                <div class="loadingText">Finding Albums...</div>
+              </div>
               <div class="card-header">
-                <h2 class="card-title">Discover Albums</h2>
-                <a href="#" class="card-link" data-view="albums">Explore More</a>
+                <div class="cardIcon">
+                  <i class="fas fa-compact-disc"></i>
+                </div>
+                <h2 class="cardTitle">Discover Albums</h2>
+              </div>
+              <div class="cardBody">
+                Explore your music collection
               </div>
               <div id="${data.IDS.randomAlbumsSection}" class="card-content">
-                <div class="skeleton-loader"></div>
+              </div>
+              <div class="cardFooter">
+                <a href="#" class="card-link" data-view="albums">Explore More →</a>
               </div>
             </div>
             
             <div class="bento-card" data-loader="true">
+              <div class="loadingOverlay" id="loadingArtists">
+                <div class="spinner"></div>
+                <div class="loadingText">Loading Artists...</div>
+              </div>
               <div class="card-header">
-                <h2 class="card-title">Favorite Artists</h2>
-                <a href="#" class="card-link" data-view="favorite-artists">View All</a>
+                <div class="cardIcon">
+                  <i class="fas fa-user-friends"></i>
+                </div>
+                <h2 class="cardTitle">Favorite Artists</h2>
+              </div>
+              <div class="cardBody">
+                Artists you love most
               </div>
               <div id="${data.IDS.favoriteArtistsSection}" class="card-content">
-                <div class="skeleton-loader"></div>
+              </div>
+              <div class="cardFooter">
+                <a href="#" class="card-link" data-view="favorite-artists">View All →</a>
               </div>
             </div>
             
-            <div class="bento-card" data-loader="true">
+            <div class="bento-card tall" data-loader="true">
+              <div class="loadingOverlay" id="loadingPlaylists">
+                <div class="spinner"></div>
+                <div class="loadingText">Fetching Playlists...</div>
+              </div>
               <div class="card-header">
-                <h2 class="card-title">Your Playlists</h2>
-                <a href="#" class="card-link" data-view="playlists">View All</a>
+                <div class="cardIcon">
+                  <i class="fas fa-list"></i>
+                </div>
+                <h2 class="cardTitle">Your Playlists</h2>
+              </div>
+              <div class="cardBody">
+                Your curated collections
               </div>
               <div id="${data.IDS.playlistsSection}" class="card-content">
-                <div class="skeleton-loader"></div>
+              </div>
+              <div class="cardFooter">
+                <a href="#" class="card-link" data-view="playlists">View All →</a>
               </div>
             </div>
             
             <div class="bento-card" data-loader="true">
+              <div class="loadingOverlay" id="loadingFavorites">
+                <div class="spinner"></div>
+                <div class="loadingText">Loading Favorites...</div>
+              </div>
               <div class="card-header">
-                <h2 class="card-title">Favorite Songs</h2>
-                <a href="#" class="card-link" data-view="favorite-songs">View All</a>
+                <div class="cardIcon">
+                  <i class="fas fa-heart"></i>
+                </div>
+                <h2 class="cardTitle">Favorite Songs</h2>
+              </div>
+              <div class="cardBody">
+                Songs you can't get enough of
               </div>
               <div id="${data.IDS.favoriteSongsSection}" class="card-content">
-                <div class="skeleton-loader"></div>
+              </div>
+              <div class="cardFooter">
+                <a href="#" class="card-link" data-view="favorite-songs">View All →</a>
               </div>
             </div>
           </div>
