@@ -39,38 +39,32 @@ These files must be loaded in order as they build upon each other:
 
 6. **base/svg.css** - SVG icon styles
 
-### Main Component Styles
-- **main.css** - Main component styles
-   - Artist components
-   - General UI components
-   - Component-specific overrides
+7. **base/utilities.css** - Utility classes (formerly tailwind-conversion.css)
+   - Width and height utilities
+   - Flexbox utilities
+   - Grid utilities
+   - Spacing utilities
+   - Display utilities
 
 ### Page Styles
-- **pages/core.css** - Core page layout styles
+- **pages/core.css** - Core page layout styles and main component styles
 - **pages/home.css** - Home page specific styles (including bento grid)
 - **pages/artist.css** - Artist page specific styles
 
 ### Component Styles
 - **components/breadCrumbs.css** - Breadcrumb navigation
-- **components/navbarPlayer.css** - Navigation bar and player
+- **components/navbarPlayer.css** - Navigation bar, player controls, and button styles
 - **components/playlists.css** - Playlist components
 - **components/musicPlayer.css** - Music player overlay and controls
-
-### Layout Styles
-- **desktop-layout.css** - Desktop-specific layout (>1024px)
-- **inline-styles.css** - Inline utility styles
-
-### Utility Styles
-- **tailwind-conversion.css** - Tailwind-like utility classes
-
-### Overlay Styles
-- **overlays/overlays.css** - Modal and dialog styles
-- **overlays/dynamicOverlays.css** - Dynamic UI overlay components
 
 ### Responsive Styles
 - **responsive/mobile.css** - Mobile layout (<768px)
 - **responsive/tablet.css** - Tablet layout (768px-1024px)
-- **responsive/desktop.css** - Desktop responsive styles (>1024px)
+- **responsive/desktop.css** - Desktop responsive styles and layout (>1024px)
+
+### Overlay Styles
+- **overlays/overlays.css** - Modal and dialog styles
+- **overlays/dynamicOverlays.css** - Dynamic UI overlay components
 
 ## 🔄 Migration Notes
 
@@ -103,9 +97,7 @@ These files must be loaded in order as they build upon each other:
 <link rel="stylesheet" href="./stylingSheets/base/animations.css" />
 <link rel="stylesheet" href="./stylingSheets/base/fonts.css" />
 <link rel="stylesheet" href="./stylingSheets/base/svg.css" />
-
-<!-- Main Component Styles -->
-<link rel="stylesheet" href="./stylingSheets/main.css" />
+<link rel="stylesheet" href="./stylingSheets/base/utilities.css" />
 
 <!-- Page Styles -->
 <link rel="stylesheet" href="./stylingSheets/pages/core.css" />
@@ -117,13 +109,6 @@ These files must be loaded in order as they build upon each other:
 <link rel="stylesheet" href="./stylingSheets/components/navbarPlayer.css" />
 <link rel="stylesheet" href="./stylingSheets/components/playlists.css" />
 <link rel="stylesheet" href="./stylingSheets/components/musicPlayer.css" />
-
-<!-- Layout Styles -->
-<link rel="stylesheet" href="./stylingSheets/desktop-layout.css" />
-<link rel="stylesheet" href="./stylingSheets/inline-styles.css" />
-
-<!-- Utility Styles -->
-<link rel="stylesheet" href="./stylingSheets/tailwind-conversion.css" />
 
 <!-- Overlay Styles -->
 <link rel="stylesheet" href="./stylingSheets/overlays/overlays.css" />
@@ -145,9 +130,10 @@ These files must be loaded in order as they build upon each other:
 2. **Theme colors**: Add to `base/themes.css`
 3. **Animations**: Add to `base/animations.css`
 4. **Fonts**: Add to `base/fonts.css`
-5. **Page-specific**: Add to appropriate `pages/*.css` file
-6. **Component**: Add to appropriate `components/*.css` file
-7. **Responsive**: Add to appropriate `responsive/*.css` file
+5. **Utilities**: Add to `base/utilities.css`
+6. **Page-specific**: Add to appropriate `pages/*.css` file
+7. **Component**: Add to appropriate `components/*.css` file
+8. **Responsive**: Add to appropriate `responsive/*.css` file
 
 ### Modifying Existing Styles
 1. Check the file structure above to find the right file
@@ -157,10 +143,10 @@ These files must be loaded in order as they build upon each other:
 
 ## 📝 Notes
 
-- All base styles are in the `base/` folder for better organization
+- All stylesheets are organized into folders (base/, pages/, components/, responsive/, overlays/)
+- No CSS files at the root of stylingSheets/ directory
 - Component styles like musicPlayer.css are separated for clarity
 - Mobile, tablet, and desktop responsive styles are in `responsive/` folder
-- Files are loaded in order: base → main → pages → components → layout → utilities → overlays → responsive
-- Responsive stylesheets use media queries and are loaded last to override base styles
-- The overlay directory contains all modal/dialog related styles
+- Utility classes (formerly tailwind-conversion.css) are now in `base/utilities.css`
+- Files are loaded in order: base → pages → components → overlays → responsive
 
