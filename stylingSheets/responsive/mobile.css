@@ -1,0 +1,24 @@
+/* Mobile styles - max-width: 767px */
+
+@media (max-width: 767px) {
+  /* Mobile-specific styles will be consolidated here */
+  /* Individual component files may have their own mobile overrides */
+  
+  body {
+    font-size: 14px;
+  }
+  
+  /* Ensure proper mobile layout */
+  #pageWrapper {
+    display: block;
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  #mainArea {
+    width: 100%;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 1rem;
+  }
+}

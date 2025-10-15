@@ -36,11 +36,15 @@ MyBeats:  Stream & share your favorite music for free.
 <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
 
 
-<!-- Core Styles - Load in order -->
-<link rel="stylesheet" href="./stylingSheets/00-variables.css" />
-<link rel="stylesheet" href="./stylingSheets/01-themes.css" />
-<link rel="stylesheet" href="./stylingSheets/02-reset.css" />
-<link rel="stylesheet" href="./stylingSheets/03-animations.css" />
+<!-- Base Styles - Load in order (critical) -->
+<link rel="stylesheet" href="./stylingSheets/base/variables.css" />
+<link rel="stylesheet" href="./stylingSheets/base/themes.css" />
+<link rel="stylesheet" href="./stylingSheets/base/reset.css" />
+<link rel="stylesheet" href="./stylingSheets/base/animations.css" />
+<link rel="stylesheet" href="./stylingSheets/base/fonts.css" />
+<link rel="stylesheet" href="./stylingSheets/base/svg.css" />
+
+<!-- Main Component Styles -->
 <link rel="stylesheet" href="./stylingSheets/main.css" />
 
 <!-- Page Styles -->
@@ -52,10 +56,7 @@ MyBeats:  Stream & share your favorite music for free.
 <link rel="stylesheet" href="./stylingSheets/components/breadCrumbs.css" />
 <link rel="stylesheet" href="./stylingSheets/components/navbarPlayer.css" />
 <link rel="stylesheet" href="./stylingSheets/components/playlists.css" />
-
-<!-- Global Styles -->
-<link rel="stylesheet" href="./stylingSheets/global/fonts.css" />
-<link rel="stylesheet" href="./stylingSheets/global/svg.css" />
+<link rel="stylesheet" href="./stylingSheets/components/musicPlayer.css" />
 
 <!-- Layout Styles -->
 <link rel="stylesheet" href="./stylingSheets/desktop-layout.css" />
@@ -69,6 +70,12 @@ MyBeats:  Stream & share your favorite music for free.
 <link rel="stylesheet" href="./stylingSheets/overlays/dynamicOverlays.css" />
 
 <!-- Responsive Styles -->
+<link 
+    rel="stylesheet" 
+    media="screen and (max-width: 767px)" 
+    href="./stylingSheets/responsive/mobile.css"
+>
+
 <link 
     rel="stylesheet" 
     media="screen and (min-width: 768px) and (max-width: 1024px)" 
