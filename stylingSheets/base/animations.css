@@ -1706,8 +1706,10 @@ html {
     border-radius: 12px;
     box-shadow: var(--shadow-lg);
     backdrop-filter: var(--blur-md);
-    color: var(--text-on-accent);
+    color: var(--text-100);
     font-weight: 500;
+    font-size: 14px;
+    line-height: 1.5;
     opacity: 1;
     transform: translateX(-50%);
     transition: all var(--transition-base);
