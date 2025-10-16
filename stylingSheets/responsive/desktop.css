@@ -347,6 +347,21 @@
     padding-left: 2rem !important;
     padding-right: 2rem !important;
     max-width: 80%;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+  }
+  
+  /* Desktop bento card variants */
+  .bento-card.large {
+    grid-column: span 2;
+  }
+  
+  .bento-card.tall {
+    grid-row: span 2;
+  }
+  
+  .bento-card.xl {
+    grid-column: span 3;
   }
   
   #contentWrapper {
@@ -824,27 +839,43 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1.5rem;
     padding: 1rem;
+    width: 100%;
   }
   
   .album-card {
     display: grid !important;
     grid-template-rows: auto 1fr;
+    background: var(--background-400);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    border: 1px solid var(--border-250);
+    transition: all 0.3s ease;
+    min-height: 400px;
+  }
+  
+  .album-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
   }
   
   .songs-container {
     max-height: 400px;
     overflow-y: auto;
+    width: 100%;
+    padding: 0.5rem 0;
   }
   
   .albumSongListArea {
     max-width: 100%;
     overflow-x: hidden;
+    width: 100%;
   }
   
   .album-selector {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
+    margin-bottom: 1rem;
   }
   
   .song-table,
@@ -852,16 +883,42 @@
     width: 100%;
     table-layout: fixed;
   }
+  
+  /* Album buttons should be full width within card */
+  .album-card .album-header {
+    margin-bottom: 1rem;
+  }
+  
+  .album-card .album-cover {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  
+  .album-card .album-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
 }
 
 @media (min-width: 1024px) {
   .artistPage .fragments.albums {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2rem;
+  }
+  
+  .album-card {
+    min-height: 450px;
   }
 }
 
 @media (min-width: 768px) and (max-width: 1023px) {
   .artistPage .fragments.albums {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+}
   }
 }
