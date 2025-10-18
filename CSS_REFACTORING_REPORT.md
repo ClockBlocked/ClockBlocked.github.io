@@ -59,6 +59,8 @@ Performed comprehensive CSS analysis and cleanup of all stylesheets in the `styl
 
 ### All Files Processed
 
+**Note**: Some files show increased line counts due to the regex-based CSS reformatting that adds spacing between rules for better readability. The key metric is the reduction in selector count and removal of duplicates/unused code.
+
 | File | Original Lines | Final Lines | Saved | Unused Removed | Duplicates Removed |
 |------|----------------|-------------|-------|----------------|-------------------|
 | animations.css | 5,134 | 3,590 | 1,544 | 151 | 39 |
@@ -114,7 +116,7 @@ Performed comprehensive CSS analysis and cleanup of all stylesheets in the `styl
 
 ### Syntax Fixes Applied
 1. **animations.css**: Fixed malformed comment block before `:root`
-2. **musicPlayer.css**: Fixed selector `.drawer content` → `.drawer .content`
+2. **musicPlayer.css**: Fixed selector `.drawer content` → `.drawer .content` (the HTML uses `class="content"`, not `<content>` elements)
 3. **dynamicOverlays.css**: Fixed inline comment in property value
 
 ## Tools Created
