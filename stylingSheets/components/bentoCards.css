@@ -43,25 +43,6 @@
     color: var(--text-muted-dark, #94a3b8);
 }
 
-/* Spinner animation */
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-/* Fade in animation for cards */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
 /* Apply animation to bento cards */
 .bento-card[data-loader="true"] {
     position: relative;
@@ -69,10 +50,15 @@
 }
 
 .bento-card:nth-child(1) { animation-delay: 0s; }
+
 .bento-card:nth-child(2) { animation-delay: 0.1s; }
+
 .bento-card:nth-child(3) { animation-delay: 0.2s; }
+
 .bento-card:nth-child(4) { animation-delay: 0.3s; }
+
 .bento-card:nth-child(5) { animation-delay: 0.4s; }
+
 .bento-card:nth-child(6) { animation-delay: 0.5s; }
 
 /* Enhanced bento grid with better spacing */
@@ -145,13 +131,6 @@
 .cardButton:hover {
     background: var(--accent-primary-dark, #7c3aed);
     transform: translateY(-2px);
-}
-
-/* Responsive breakpoints */
-@media (max-width: 1200px) {
-    .bento-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
 }
 
 @media (max-width: 768px) {
