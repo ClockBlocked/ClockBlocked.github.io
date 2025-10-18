@@ -7,6 +7,7 @@ import { initPWABanner } from './pwa.js';
 import { registerServiceWorker } from './serviceWorker.js';
 import { initBreadcrumbBorder } from './breadcrumb.js';
 import { initDesktopLayout } from './desktopLayout.js';
+import { initTabletLayout } from './tabletLayout.js';
 
 // Run cache buster immediately
 bustCache();
@@ -17,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initPWABanner();
   initBreadcrumbBorder();
   initDesktopLayout();
+  initTabletLayout();
 });
 
 // Register service worker

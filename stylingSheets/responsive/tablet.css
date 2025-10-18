@@ -7,6 +7,53 @@
   #navbar {
     display: none !important;
   }
+
+  /* Tablet layout - similar to desktop */
+  #pageWrapper {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+  }
+
+  #mainArea {
+    flex: 1;
+    width: 65%;
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 2rem;
+    padding-right: 2rem !important;
+    padding-left: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  
+  #dynamic-content {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
+    max-width: 100%;
+  }
+  
+  .bento-grid {
+    margin-left: 0 !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    max-width: 100%;
+  }
+  
+  #contentWrapper {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    max-width: 100%;
+  }
+  
+  #main-container {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    max-width: 100%;
+  }
 }
 
 /* ============================================
@@ -27,5 +74,97 @@
 @media (min-width: 768px) and (max-width: 1023px) {
   .drawerScroller {
     width: 85%;
+  }
+}
+
+/* ============================================
+   TABLET PLAYER SIDEBAR TRIGGER
+   ============================================ */
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* Trigger tab on right edge */
+  .tablet-player-trigger {
+    position: fixed;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1001;
+    width: 48px;
+    height: 120px;
+    border: none;
+    border-radius: 12px 0 0 12px;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.9) 0%, rgba(37, 99, 235, 0.9) 100%);
+    backdrop-filter: blur(10px);
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: white;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .tablet-player-trigger:hover {
+    width: 56px;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 1) 0%, rgba(37, 99, 235, 1) 100%);
+    box-shadow: -6px 0 30px rgba(59, 130, 246, 0.4);
+  }
+
+  .tablet-player-trigger.active {
+    right: 35%;
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.9) 0%, rgba(29, 78, 216, 0.9) 100%);
+  }
+
+  .tablet-player-trigger svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  /* Player sidebar modifications for tablet */
+  .desktop-player-sidebar {
+    transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .desktop-player-sidebar.tablet-hidden {
+    right: -35%;
+  }
+}
+
+
+
+
+
+
+.bento-grid {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0 4px;
+}
+
+.bento-card {
+  flex: 25%;
+  max-width: 25%;
+  padding: 0 4px;
+}
+
+.bento-card {
+  margin-top: 8px;
+  vertical-align: middle;
+  border-radius: 0.99rem;
+}
+
+@media screen and (max-width: 800px) {
+  .bento-card {
+    flex: 50%;
+    max-width: 50%;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .bento-card {
+    flex: 100%;
+    max-width: 100%;
   }
 }
