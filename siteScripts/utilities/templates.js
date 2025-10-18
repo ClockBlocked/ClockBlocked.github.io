@@ -249,6 +249,132 @@ case "enhancedArtist":
       <div class="names-row left" data-speed="119" data-gap="40"></div>
     </div>
   </section>
+
+
+
+
+
+
+
+
+
+            <div class="bento-card" data-loader="true">
+              <div class="loadingOverlay" id="loadingRecent">
+                <div class="spinner"></div>
+                <div class="loadingText">Loading Recent Plays...</div>
+              </div>
+              <div class="card-header">
+                <div class="cardIcon">
+                  <svg fill="currentColor" viewBox="0 0 20 20" style="width: 1.5rem; height: 1.5rem;">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                  </svg>
+                </div>
+                <h2 class="cardTitle">Recently Played</h2>
+              </div>
+              <div class="cardBody">
+                Your most recently played tracks
+              </div>
+              <div id="${data.IDS.recentlyPlayedSection}" class="card-content">
+              </div>
+              <div class="cardFooter">
+                <a href="#" class="card-link" data-view="recent">View All →</a>
+              </div>
+            </div>
+            
+            <div class="bento-card large bento-span-2" data-loader="true">
+              <div class="loadingOverlay" id="loadingAlbums">
+                <div class="spinner"></div>
+                <div class="loadingText">Finding Albums...</div>
+              </div>
+              <div class="card-header">
+                <div class="cardIcon">
+                  <svg fill="currentColor" viewBox="0 0 20 20" style="width: 1.5rem; height: 1.5rem;">
+                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                    <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+                  </svg>
+                </div>
+                <h2 class="cardTitle">Discover Albums</h2>
+              </div>
+              <div class="cardBody">
+                Explore your music collection
+              </div>
+              <div id="${data.IDS.randomAlbumsSection}" class="card-content">
+              </div>
+              <div class="cardFooter">
+                <a href="#" class="card-link" data-view="albums">Explore More →</a>
+              </div>
+            </div>
+            
+            <div class="bento-card" data-loader="true">
+              <div class="loadingOverlay" id="loadingArtists">
+                <div class="spinner"></div>
+                <div class="loadingText">Loading Artists...</div>
+              </div>
+              <div class="card-header">
+                <div class="cardIcon">
+                  <svg fill="currentColor" viewBox="0 0 20 20" style="width: 1.5rem; height: 1.5rem;">
+                    <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+                  </svg>
+                </div>
+                <h2 class="cardTitle">Favorite Artists</h2>
+              </div>
+              <div class="cardBody">
+                Artists you love most
+              </div>
+              <div id="${data.IDS.favoriteArtistsSection}" class="card-content">
+              </div>
+              <div class="cardFooter">
+                <a href="#" class="card-link" data-view="favorite-artists">View All →</a>
+              </div>
+            </div>
+            
+            <div class="bento-card tall" data-loader="true">
+              <div class="loadingOverlay" id="loadingPlaylists">
+                <div class="spinner"></div>
+                <div class="loadingText">Fetching Playlists...</div>
+              </div>
+              <div class="card-header">
+                <div class="cardIcon">
+                  <svg fill="currentColor" viewBox="0 0 20 20" style="width: 1.5rem; height: 1.5rem;">
+                    <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                  </svg>
+                </div>
+                <h2 class="cardTitle">Your Playlists</h2>
+              </div>
+              <div class="cardBody">
+                Your curated collections
+              </div>
+              <div id="${data.IDS.playlistsSection}" class="card-content">
+              </div>
+              <div class="cardFooter">
+                <a href="#" class="card-link" data-view="playlists">View All →</a>
+              </div>
+            </div>
+            
+            <div class="bento-card" data-loader="true">
+              <div class="loadingOverlay" id="loadingFavorites">
+                <div class="spinner"></div>
+                <div class="loadingText">Loading Favorites...</div>
+              </div>
+              <div class="card-header">
+                <div class="cardIcon">
+                  <svg fill="currentColor" viewBox="0 0 20 20" style="width: 1.5rem; height: 1.5rem;">
+                    <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
+                  </svg>
+                </div>
+                <h2 class="cardTitle">Favorite Songs</h2>
+              </div>
+              <div class="cardBody">
+                Songs you can't get enough of
+              </div>
+              <div id="${data.IDS.favoriteSongsSection}" class="card-content">
+              </div>
+              <div class="cardFooter">
+                <a href="#" class="card-link" data-view="favorite-songs">View All →</a>
+              </div>
+            </div>
+   
+
 </div>
 `;        
       default:

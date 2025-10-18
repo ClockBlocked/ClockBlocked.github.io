@@ -842,8 +842,8 @@
   }
   
   .album-selector {
-    display: flex;
-    flex-wrap: wrap;
+    display: inline-flex;
+    flex-wrap: nowrap;
     gap: 0.5rem;
   }
   
