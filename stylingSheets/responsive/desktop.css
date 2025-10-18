@@ -292,18 +292,20 @@
 /* Base player sidebar styles - shared by desktop and tablet */
 .desktop-player-sidebar {
   position: fixed;
-  right: 0;
-  top: 0;
-  width: 35%;
-  height: 100vh;
+  right: 2rem;
+  bottom: 2rem;
+  width: 15%;
+  height: 50%;
+  margin: auto;
+  border-radius: .99rem;
   background: linear-gradient(135deg, rgba(17, 24, 39, 0.98) 0%, rgba(31, 41, 55, 0.98) 100%);
   backdrop-filter: blur(20px);
-  border-left: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: -10px 0 40px rgba(0, 0, 0, 0.3);
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  box-shadow: -10px 0 40px rgba(0, 0, 0, 0.65);
   z-index: 100;
   display: flex;
   flex-direction: column;
-  padding: 2rem 1.5rem;
+  padding: 2rem;
   overflow-y: auto;
 }
 
@@ -340,10 +342,11 @@
   }
   
   .bento-grid {
-    margin-left: 0 !important;
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
-    max-width: 100%;
+    margin-left: 2.5% !important;
+    margin-top: 2.5%;
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+    max-width: 80%;
   }
   
   #contentWrapper {
@@ -839,8 +842,8 @@
   }
   
   .album-selector {
-    display: flex;
-    flex-wrap: wrap;
+    display: inline-flex;
+    flex-wrap: nowrap;
     gap: 0.5rem;
   }
   

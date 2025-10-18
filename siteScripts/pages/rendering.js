@@ -448,7 +448,25 @@ isValidRoute: (routeName, params = {}) => {
         songCount: utils.getTotalSongs(artistData),
       });
 
+      // Show loading overlays for stat cards
+      navigation.rendering.showArtistLoaders();
+
       navigation.rendering.setupAlbumsSection(artistData, targetAlbumName);
+      
+      // Calculate and update stats with loading animations
+      setTimeout(() => {
+        navigation.rendering.calculateArtistStats(artistData);
+        navigation.rendering.hideArtistLoader('loadingDuration');
+      }, 400);
+      
+      setTimeout(() => {
+        navigation.rendering.updateLatestYear(artistData);
+        navigation.rendering.hideArtistLoader('loadingYear');
+      }, 600);
+      
+      setTimeout(() => {
+        navigation.rendering.hideArtistLoader('loadingPopularity');
+      }, 800);
       
       pageUpdates.breadCrumbs(
         [
@@ -473,6 +491,56 @@ isValidRoute: (routeName, params = {}) => {
       const names = utils.getSimilarArtists(artistData.artist, { limit: 24 });
       navigation.rendering.buildSimilar(names);
       navigation.events.bindArtistPageEvents(artistData);
+    },
+
+    showArtistLoaders: () => {
+      const loaders = ['loadingDuration', 'loadingYear', 'loadingPopularity'];
+      loaders.forEach(loaderId => {
+        const loader = $byId(loaderId);
+        if (loader) {
+          loader.classList.remove('hidden');
+        }
+      });
+    },
+
+    hideArtistLoader: (loaderId) => {
+      const loader = $byId(loaderId);
+      if (loader) {
+        loader.classList.add('hidden');
+      }
+    },
+
+    calculateArtistStats: (artistData) => {
+      const totalDurationEl = $byId('totalDuration');
+      if (totalDurationEl && artistData.albums) {
+        let totalSeconds = 0;
+        artistData.albums.forEach(album => {
+          if (album.songs) {
+            album.songs.forEach(song => {
+              if (song.duration) {
+                const parts = song.duration.split(':');
+                totalSeconds += parseInt(parts[0]) * 60 + parseInt(parts[1]);
+              }
+            });
+          }
+        });
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        totalDurationEl.textContent = `${hours}h ${minutes}m`;
+      }
+    },
+
+    updateLatestYear: (artistData) => {
+      const latestYearEl = $byId('latestYear');
+      if (latestYearEl && artistData.albums && artistData.albums.length > 0) {
+        const years = artistData.albums
+          .map(album => album.year)
+          .filter(year => year && !isNaN(year))
+          .sort((a, b) => b - a);
+        if (years.length > 0) {
+          latestYearEl.textContent = years[0];
+        }
+      }
     },
 
     setupAlbumsSection: (artistData, targetAlbumName = null) => {
