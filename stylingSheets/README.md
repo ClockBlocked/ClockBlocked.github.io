@@ -4,10 +4,10 @@ This directory contains all the stylesheets for the MyBeats application, organiz
 
 ## 📁 File Structure
 
-### Core Styles (Load Order Critical)
-These files must be loaded in numerical order as they build upon each other:
+### Base Styles (Load Order Critical)
+These files must be loaded in order as they build upon each other:
 
-1. **00-variables.css** - CSS custom properties (variables)
+1. **base/variables.css** - CSS custom properties (variables)
    - Shadow definitions
    - Blur effects
    - Transitions and animations timing
@@ -16,52 +16,51 @@ These files must be loaded in numerical order as they build upon each other:
    - Spacing scale
    - Desktop layout variables
 
-2. **01-themes.css** - Theme color definitions
+2. **base/themes.css** - Theme color definitions
    - Dark theme
    - Dim theme
    - Light theme
    - All theme-specific color variables
 
-3. **02-reset.css** - Base resets and global styles
+3. **base/reset.css** - Base resets and global styles
    - Box model reset
    - Scroll behavior
    - Body and HTML base styles
    - Page wrapper structure
 
-4. **03-animations.css** - Keyframe animations
+4. **base/animations.css** - Keyframe animations
    - Toast animations
    - Fade effects
    - Image loading states
    - Navbar animations
    - All @keyframes definitions
 
-5. **main.css** - Main component styles
-   - Artist components
-   - General UI components
-   - Component-specific overrides
+5. **base/fonts.css** - Font definitions and @font-face rules
+
+6. **base/svg.css** - SVG icon styles
+
+7. **base/utilities.css** - Utility classes (formerly tailwind-conversion.css)
+   - Width and height utilities
+   - Flexbox utilities
+   - Grid utilities
+   - Spacing utilities
+   - Display utilities
 
 ### Page Styles
-- **pages/core.css** - Core page layout styles
-- **pages/home.css** - Home page specific styles
+- **pages/core.css** - Core page layout styles and main component styles
+- **pages/home.css** - Home page specific styles (including bento grid)
 - **pages/artist.css** - Artist page specific styles
 
 ### Component Styles
 - **components/breadCrumbs.css** - Breadcrumb navigation
-- **components/navbarPlayer.css** - Navigation bar and player
+- **components/navbarPlayer.css** - Navigation bar, player controls, and button styles
 - **components/playlists.css** - Playlist components
+- **components/musicPlayer.css** - Music player overlay and controls
 
-### Global Styles
-- **global/fonts.css** - Font definitions and @font-face rules
-- **global/svg.css** - SVG icon styles
-
-### Layout Styles
-- **desktop-layout.css** - Desktop-specific layout (>1024px)
-- **inline-styles.css** - Inline utility styles
+### Responsive Styles
+- **responsive/mobile.css** - Mobile layout (<768px)
 - **responsive/tablet.css** - Tablet layout (768px-1024px)
-- **responsive/desktop.css** - Desktop responsive styles (>1024px)
-
-### Utility Styles
-- **tailwind-conversion.css** - Tailwind-like utility classes
+- **responsive/desktop.css** - Desktop responsive styles and layout (>1024px)
 
 ### Overlay Styles
 - **overlays/overlays.css** - Modal and dialog styles
@@ -91,12 +90,14 @@ These files must be loaded in numerical order as they build upon each other:
 ## 📋 Load Order in index.html
 
 ```html
-<!-- Core Styles - Load in order -->
-<link rel="stylesheet" href="./stylingSheets/00-variables.css" />
-<link rel="stylesheet" href="./stylingSheets/01-themes.css" />
-<link rel="stylesheet" href="./stylingSheets/02-reset.css" />
-<link rel="stylesheet" href="./stylingSheets/03-animations.css" />
-<link rel="stylesheet" href="./stylingSheets/main.css" />
+<!-- Base Styles - Load in order (critical) -->
+<link rel="stylesheet" href="./stylingSheets/base/variables.css" />
+<link rel="stylesheet" href="./stylingSheets/base/themes.css" />
+<link rel="stylesheet" href="./stylingSheets/base/reset.css" />
+<link rel="stylesheet" href="./stylingSheets/base/animations.css" />
+<link rel="stylesheet" href="./stylingSheets/base/fonts.css" />
+<link rel="stylesheet" href="./stylingSheets/base/svg.css" />
+<link rel="stylesheet" href="./stylingSheets/base/utilities.css" />
 
 <!-- Page Styles -->
 <link rel="stylesheet" href="./stylingSheets/pages/core.css" />
@@ -107,23 +108,15 @@ These files must be loaded in numerical order as they build upon each other:
 <link rel="stylesheet" href="./stylingSheets/components/breadCrumbs.css" />
 <link rel="stylesheet" href="./stylingSheets/components/navbarPlayer.css" />
 <link rel="stylesheet" href="./stylingSheets/components/playlists.css" />
-
-<!-- Global Styles -->
-<link rel="stylesheet" href="./stylingSheets/global/fonts.css" />
-<link rel="stylesheet" href="./stylingSheets/global/svg.css" />
-
-<!-- Layout Styles -->
-<link rel="stylesheet" href="./stylingSheets/desktop-layout.css" />
-<link rel="stylesheet" href="./stylingSheets/inline-styles.css" />
-
-<!-- Utility Styles -->
-<link rel="stylesheet" href="./stylingSheets/tailwind-conversion.css" />
+<link rel="stylesheet" href="./stylingSheets/components/musicPlayer.css" />
 
 <!-- Overlay Styles -->
 <link rel="stylesheet" href="./stylingSheets/overlays/overlays.css" />
 <link rel="stylesheet" href="./stylingSheets/overlays/dynamicOverlays.css" />
 
 <!-- Responsive Styles -->
+<link rel="stylesheet" media="screen and (max-width: 767px)" 
+      href="./stylingSheets/responsive/mobile.css" />
 <link rel="stylesheet" media="screen and (min-width: 768px) and (max-width: 1024px)" 
       href="./stylingSheets/responsive/tablet.css" />
 <link rel="stylesheet" media="screen and (min-width: 1024px)" 
@@ -133,11 +126,14 @@ These files must be loaded in numerical order as they build upon each other:
 ## 🎨 Best Practices
 
 ### Adding New Styles
-1. **Variables**: Add to `00-variables.css`
-2. **Theme colors**: Add to `01-themes.css`
-3. **Animations**: Add to `03-animations.css`
-4. **Page-specific**: Add to appropriate `pages/*.css` file
-5. **Component**: Add to appropriate `components/*.css` file
+1. **Variables**: Add to `base/variables.css`
+2. **Theme colors**: Add to `base/themes.css`
+3. **Animations**: Add to `base/animations.css`
+4. **Fonts**: Add to `base/fonts.css`
+5. **Utilities**: Add to `base/utilities.css`
+6. **Page-specific**: Add to appropriate `pages/*.css` file
+7. **Component**: Add to appropriate `components/*.css` file
+8. **Responsive**: Add to appropriate `responsive/*.css` file
 
 ### Modifying Existing Styles
 1. Check the file structure above to find the right file
@@ -147,7 +143,10 @@ These files must be loaded in numerical order as they build upon each other:
 
 ## 📝 Notes
 
-- The numbered prefix (00-, 01-, 02-, 03-) indicates critical load order
-- Files without numbers can be loaded in any order (but maintain logical grouping)
-- Responsive stylesheets use media queries and are loaded last to override base styles
-- The overlay directory contains all modal/dialog related styles
+- All stylesheets are organized into folders (base/, pages/, components/, responsive/, overlays/)
+- No CSS files at the root of stylingSheets/ directory
+- Component styles like musicPlayer.css are separated for clarity
+- Mobile, tablet, and desktop responsive styles are in `responsive/` folder
+- Utility classes (formerly tailwind-conversion.css) are now in `base/utilities.css`
+- Files are loaded in order: base → pages → components → overlays → responsive
+
