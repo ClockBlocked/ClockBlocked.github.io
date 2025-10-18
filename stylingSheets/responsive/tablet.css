@@ -88,7 +88,7 @@
 
 /* ============================================
    DROPDOWN MENU - TABLET LAYOUT
-   Fixed to left side like desktop
+   Fixed to left side like desktop with proper styling
    ============================================ */
 @media (min-width: 768px) and (max-width: 1023px) {
   #dropdown-menu {
@@ -124,6 +124,7 @@
   .dropdown-header {
     padding: 2rem 2rem 1.5rem;
     margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .dropdown-title {
@@ -133,12 +134,79 @@
   }
 
   .dropdown-close {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
     color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    transition: all 0.2s ease;
   }
 
   .dropdown-close:hover {
     color: white;
     background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.05);
+  }
+  
+  /* Dropdown sections */
+  .dropdown-section {
+    padding: 1rem 0;
+  }
+  
+  .section-title {
+    padding: 0.75rem 2rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: rgba(255, 255, 255, 0.5);
+  }
+  
+  .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.875rem 2rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: rgba(255, 255, 255, 0.8);
+  }
+  
+  .dropdown-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+  }
+  
+  .dropdown-item-icon {
+    width: 20px;
+    height: 20px;
+    opacity: 0.6;
+  }
+  
+  .dropdown-item:hover .dropdown-item-icon {
+    opacity: 1;
+  }
+  
+  /* Menu overlay for tablet */
+  #dropdown-menu-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 998;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  
+  #dropdown-menu-overlay.show,
+  #dropdown-menu.show ~ #dropdown-menu-overlay {
+    opacity: 1;
+    pointer-events: all;
   }
 }
 
@@ -154,10 +222,10 @@
 
 /* ============================================
    TABLET PLAYER SIDEBAR
-   Ensure music player is always visible on tablet
+   Ensure music player is properly styled on tablet
    ============================================ */
 @media (min-width: 768px) and (max-width: 1023px) {
-  /* Make sure desktop-player-sidebar is visible on tablet */
+  /* Make sure desktop-player-sidebar is visible and properly styled on tablet */
   .desktop-player-sidebar {
     display: flex !important;
     position: fixed;
@@ -165,6 +233,14 @@
     top: 0;
     width: 35%;
     height: 100vh;
+    background: linear-gradient(135deg, rgba(17, 24, 39, 0.98) 0%, rgba(31, 41, 55, 0.98) 100%);
+    backdrop-filter: blur(20px);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: -10px 0 40px rgba(0, 0, 0, 0.3);
+    z-index: 100;
+    flex-direction: column;
+    padding: 2rem 1.5rem;
+    overflow-y: auto;
   }
 
   /* Remove tablet-hidden functionality - player should always be visible */
@@ -173,41 +249,261 @@
     opacity: 1 !important;
     visibility: visible !important;
   }
-}
-
-
-
-
-
-
-.bento-grid {
-  display: flex;
-  flex-wrap: wrap;
-  padding: 0 4px;
-}
-
-.bento-card {
-  flex: 25%;
-  max-width: 25%;
-  padding: 0 4px;
-}
-
-.bento-card {
-  margin-top: 8px;
-  vertical-align: middle;
-  border-radius: 0.99rem;
-}
-
-@media screen and (max-width: 800px) {
-  .bento-card {
-    flex: 50%;
-    max-width: 50%;
+  
+  /* Music Player Component Styling for Tablet */
+  #musicPlayer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+  
+  #musicPlayer .header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  #musicPlayer .close {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  #musicPlayer .close:hover {
+    background: rgba(218, 54, 51, 0.8);
+    color: #ffffff;
+    transform: scale(1.05);
+  }
+  
+  #musicPlayer .body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 0 1rem 1rem;
+    overflow-y: auto;
+  }
+  
+  #musicPlayer .body .cover {
+    width: 100%;
+    max-width: 240px;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    margin: 0 auto 1.5rem;
+    display: block;
+    background: var(--background-400, #444c56);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  #musicPlayer .body .info {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  #musicPlayer .body .info .title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #f0f6fc;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+  }
+  
+  #musicPlayer .body .info .artist {
+    font-size: 0.95rem;
+    color: var(--accent-primary, #1f6feb);
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+  
+  #musicPlayer .body .info .album {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 500;
+  }
+  
+  /* Player controls styling */
+  #musicPlayer .body .controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  #musicPlayer .body .actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Tabs container */
+  #popUpTabsWrapper {
+    margin-top: 1rem;
+  }
+  
+  .popup-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 0.25rem;
+  }
+  
+  .popup-tab {
+    flex: 1;
+    padding: 0.75rem;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 500;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+  }
+  
+  .popup-tab.active {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+  }
+  
+  .popup-tab:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.08);
   }
 }
 
-@media screen and (max-width: 600px) {
+
+
+
+
+
+/* ============================================
+   NOTIFICATIONS/TOASTS - TABLET STYLING
+   Properly style notifications for tablet viewport
+   ============================================ */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .toast,
+  .notification {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    min-width: 320px;
+    max-width: 400px;
+    padding: 1rem 1.25rem;
+    background: var(--background-400, #1e293b);
+    border: 1px solid var(--border-200, rgba(255, 255, 255, 0.1));
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(20px);
+    z-index: 9999;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    color: var(--text-200, #f0f6fc);
+    animation: toast-slide-in 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .toast-icon {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+  }
+  
+  .toast-content {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .toast-content strong {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    font-size: 0.9rem;
+  }
+  
+  .toast-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  
+  .toast-actions button {
+    padding: 0.25rem 0.75rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 6px;
+    color: currentColor;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: background 0.2s ease;
+  }
+  
+  .toast-actions button:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+  
+  @keyframes toast-slide-in {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+}
+
+/* ============================================
+   BENTO GRID - TABLET LAYOUT
+   Proper grid layout for tablet viewport
+   ============================================ */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .bento-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    padding: 1rem;
+    margin-bottom: 2rem;
+  }
+
   .bento-card {
-    flex: 100%;
-    max-width: 100%;
+    flex: unset;
+    max-width: unset;
+    padding: 1.75rem;
+    margin-top: 0;
+    border-radius: 1rem;
+  }
+
+  .bento-card.large {
+    grid-column: span 2;
+  }
+
+  .bento-card.tall {
+    grid-row: span 2;
+  }
+
+  .bento-card.xl {
+    grid-column: span 2;
   }
 }

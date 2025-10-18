@@ -21,4 +21,141 @@
     overflow-y: auto;
     padding: 1rem;
   }
+  
+  /* Bento Grid - Mobile Layout */
+  .bento-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 0.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  /* All cards should be single column on mobile */
+  .bento-card {
+    grid-column: span 1 !important;
+    grid-row: span 1 !important;
+    padding: 1.25rem;
+    border-radius: 1rem;
+  }
+  
+  .bento-card.large,
+  .bento-card.tall,
+  .bento-card.xl {
+    grid-column: span 1 !important;
+    grid-row: span 1 !important;
+  }
+  
+  /* Music Player - Mobile uses drawer/popover */
+  #musicPlayer {
+    width: 100%;
+    max-width: 100vw;
+    padding: 1rem;
+  }
+  
+  /* Notifications/Toasts - Mobile */
+  .toast,
+  .notification {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    right: 1rem;
+    width: auto;
+    max-width: calc(100vw - 2rem);
+    min-width: unset;
+    padding: 0.875rem 1rem;
+    background: var(--background-400, #1e293b);
+    border: 1px solid var(--border-200, rgba(255, 255, 255, 0.1));
+    border-radius: 10px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(20px);
+    z-index: 9999;
+  }
+  
+  .toast-content strong {
+    font-size: 0.85rem;
+  }
+  
+  .toast-actions button {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+  }
+  
+  /* Dropdown Menu - Mobile */
+  #dropdown-menu {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    max-width: 100vw;
+    height: 100vh;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 0;
+    background: linear-gradient(135deg, rgba(17, 24, 39, 0.98) 0%, rgba(31, 41, 55, 0.98) 100%);
+    backdrop-filter: blur(20px);
+    z-index: 999;
+    overflow-y: auto;
+    padding: 1.5rem 0;
+  }
+  
+  #dropdown-menu.show {
+    transform: translateY(0);
+  }
+  
+  .dropdown-header {
+    padding: 1rem 1.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .dropdown-title {
+    font-size: 1.25rem;
+  }
+  
+  .dropdown-item {
+    padding: 0.75rem 1.5rem;
+  }
+  
+  /* Artist Page Albums - Mobile */
+  .artistPage .fragments.albums {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 0.5rem;
+    width: 100%;
+  }
+  
+  .album-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--background-400);
+    border-radius: 1rem;
+    padding: 1rem;
+    border: 1px solid var(--border-250);
+    width: 100%;
+  }
+  
+  .album-card .album-cover {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .album-card .album-title {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  
+  .songs-container {
+    max-height: 300px;
+    overflow-y: auto;
+    width: 100%;
+  }
+  
+  .albumSongListArea {
+    width: 100%;
+    overflow-x: hidden;
+  }
 }
