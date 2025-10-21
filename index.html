@@ -35,7 +35,7 @@ MyBeats:  Stream & share your favorite music for free.
 <link rel="icon" href="favicon.ico" type="image/x-icon" />
 <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
 
-<link rel="stylesheet" href="./stylingSheets/dev.css" />
+
 
 <!-- Base Styles - Load in order (critical) -->
 <link rel="stylesheet" href="./stylingSheets/base/variables.css" />
@@ -80,7 +80,124 @@ MyBeats:  Stream & share your favorite music for free.
     media="screen and (min-width: 1024px)" 
     href="./stylingSheets/responsive/desktop.css"
 >
+<style>
+.bentoCardsWrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-column-gap: 24px;
+  grid-row-gap: 24px;
+  grid-template-rows: auto;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+}
 
+@media (min-width: 768px) {
+  .bentoCardsWrapper {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .bentoCardsWrapper {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1440px) {
+  .bentoCardsWrapper {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.bentoCardLarge {
+  grid-column: span 2;
+  grid-row-gap: 32px;
+  background-color: var(--alley-component-library--neutral--off-white, rgba(255, 255, 255, 0.05));
+  border-radius: 32px;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 582px;
+  padding: 48px;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.bentoCardLarge:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+}
+
+.bentoCardMedium {
+  grid-column: span 1;
+  grid-row-gap: 32px;
+  background-color: var(--alley-component-library--neutral--off-white, rgba(255, 255, 255, 0.05));
+  border-radius: 32px;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  min-height: 350px;
+  padding: 48px;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.bentoCardMedium:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+}
+
+.bentoCardSmall {
+  grid-column: span 1;
+  grid-column-gap: 24px;
+  grid-row-gap: 24px;
+  background-color: var(--alley-component-library--neutral--off-white, rgba(255, 255, 255, 0.05));
+  border-radius: 32px;
+  flex-direction: row;
+  flex: none;
+  justify-content: space-between;
+  padding: 24px 48px;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.bentoCardSmall:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.bentoCardMultiple {
+  grid-row-gap: 24px;
+  flex-direction: column;
+  display: flex;
+}
+
+@media (max-width: 767px) {
+  .bentoCardsWrapper {
+    grid-template-columns: 1fr;
+    padding: 16px;
+  }
+  
+  .bentoCardLarge,
+  .bentoCardMedium,
+  .bentoCardSmall {
+    grid-column: span 1;
+    padding: 24px;
+    min-height: 280px;
+  }
+  
+  .bentoCardLarge {
+    height: auto;
+  }
+}
+</style>
 <!-- L I B R A R I E S ------------->
 <!-- Tailwind removed - converted to standard CSS in tailwind-conversion.css -->
 
