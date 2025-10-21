@@ -153,7 +153,7 @@
 
   /* Tablet player trigger - floating button */
   .tablet-player-trigger {
-    display: flex;
+    display: flex !important; /* Override any hide rules */
     position: fixed;
     bottom: 2rem;
     right: 2rem;
