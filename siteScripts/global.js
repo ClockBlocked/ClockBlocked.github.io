@@ -6,6 +6,8 @@ import { homePage, views } from './pages/statics.js';
 import { pageLoader, navigation } from './pages/rendering.js';
 import { ui, pageUpdates } from './pages/updates.js';
 import { deepLinkRouter } from './pages/router.js';
+
+import { viewManager } from './viewManager.js';
 import { playerManager } from './playerManager.js';
 
 const ACTION_GRID_ITEMS = [
@@ -2725,7 +2727,10 @@ if (document.readyState === 'loading') {
 
 document.addEventListener('DOMContentLoaded', () => {
   app.initialize();
+
+    viewManager.init();
   playerManager.init();
+  navigation.initialize();
   
   const progressBar = document.getElementById('progressBar');
   if (progressBar) {
