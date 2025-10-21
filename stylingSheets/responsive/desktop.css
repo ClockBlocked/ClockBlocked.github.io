@@ -203,11 +203,11 @@
   .drawerContent {
     position: static;
     translate: 0 0 !important;
-    border-radius: 0;
-    border: none;
-    height: 100%;
-    padding: 2rem 1.5rem;
-    background: transparent;
+    border-radius: 1rem;
+    one;
+    height: 50%;
+    transform: translateY(50%);2rem 1.5rem;
+    background: var(--background-400);
     transition: none;
   }
 
@@ -241,6 +241,7 @@
   /* Tabs container styling for desktop */
   .tabsContainer {
     margin-top: 0;
+    transform: translateY(3in);
   }
 
   .tabs {
