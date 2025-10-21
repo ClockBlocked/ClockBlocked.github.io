@@ -947,46 +947,6 @@ PopOvers Injected Here
 <!-- Initialization modules -->
 <script type="module" src="./siteScripts/init.js"></script>
 
-<!-- Desktop Menu Trigger Handler -->
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const desktopMenuTrigger = document.getElementById('desktop-menu-trigger');
-    const mobileMenuTrigger = document.getElementById('menu-trigger');
-    const dropdownMenu = document.getElementById('dropdown-menu');
-    const dropdownClose = document.getElementById('dropdown-close');
-    
-    // Desktop menu trigger
-    if (desktopMenuTrigger && dropdownMenu) {
-        desktopMenuTrigger.addEventListener('click', () => {
-            dropdownMenu.classList.toggle('show');
-        });
-    }
-    
-    // Mobile menu trigger (existing)
-    if (mobileMenuTrigger && dropdownMenu) {
-        mobileMenuTrigger.addEventListener('click', () => {
-            dropdownMenu.classList.toggle('show');
-        });
-    }
-    
-    // Close button
-    if (dropdownClose && dropdownMenu) {
-        dropdownClose.addEventListener('click', () => {
-            dropdownMenu.classList.remove('show');
-        });
-    }
-    
-    // Close on clicking outside (for desktop overlay)
-    if (dropdownMenu) {
-        dropdownMenu.addEventListener('click', (e) => {
-            if (e.target === dropdownMenu && window.matchMedia('(min-width: 1024px)').matches) {
-                dropdownMenu.classList.remove('show');
-            }
-        });
-    }
-});
-</script>
-
 <!-- Global Initialize -->
 <script type="module">
     import { music } from './modules/library.js';

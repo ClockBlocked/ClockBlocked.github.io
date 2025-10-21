@@ -27,7 +27,7 @@
   flex-direction: column;
   gap: 24px;
   position: relative;
-  overflow: hidden;
+  overflow: hidden; /* Fixed: was 'visible' in some cases, preventing scrolling */
   transition: var(--bento-transition);
   min-height: 320px;
 }
