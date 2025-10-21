@@ -1,21 +1,67 @@
-// Code updates to add scrollability fixes and integrate with playerManager for proper viewport handling
+// viewManager.js
 
-// Assuming playerManager is already imported or available in the scope
+class ViewManager {
+    constructor() {
+        // Initialization code
+    }
 
-function enableScrollability() {
-    // Your scrollability fix code here
+    ensureScrollability() {
+        const containers = document.querySelectorAll('.container');
+        containers.forEach(container => {
+            container.style.overflowY = 'auto';
+            container.style.overflowX = 'hidden';
+            // Remove problematic overflow: visible settings
+            container.style.overflow = 'hidden';
+        });
+    }
+
+    switchView(newView) {
+        // Handle view transition
+        this.transitionIn(newView);
+        playerManager.handleViewportChange(); // Call after transition
+    }
+
+    // Existing methods
+    getRecentTracks() {
+        // Implementation
+    }
+
+    getRandomAlbums() {
+        // Implementation
+    }
+
+    getFavoriteArtists() {
+        // Implementation
+    }
+
+    getFavoriteSongs() {
+        // Implementation
+    }
+
+    calculateQuickStats() {
+        // Implementation
+    }
+
+    calculateArtistStats() {
+        // Implementation
+    }
+
+    getTopTracksForArtist() {
+        // Implementation
+    }
+
+    simulateDelay() {
+        // Implementation
+    }
+
+    renderPlayerCards() {
+        const viewport = playerManager.getCurrentViewport();
+        if (viewport === 'desktop') {
+            // Render player cards
+        }
+    }
 }
 
-function integrateWithPlayerManager() {
-    // Your integration code here
-}
-
-// Add event listeners or function calls as needed
-window.addEventListener('resize', function() {
-    enableScrollability();
-    integrateWithPlayerManager();
-});
-
-// Initial call to set up the viewport handling
-enableScrollability();
-integrateWithPlayerManager();
+const viewManager = new ViewManager();
+viewManager.ensureScrollability();
+// Other initialization code
