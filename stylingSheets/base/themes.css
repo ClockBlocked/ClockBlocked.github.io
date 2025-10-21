@@ -1,6 +1,4 @@
-/* ========================================
-   Theme Definitions
-   Dark, Dim, and Light themes
+and Light themes
    ======================================== */
 [data-theme="dark"] {
   /* Core variables */
@@ -355,4 +353,3 @@
   --button-hover: var(--background-300);
   --button-active: var(--background-400);
 }
-

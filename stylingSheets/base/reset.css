@@ -1,32 +1,8 @@
-/* ========================================
-   Base Resets and Global Styles
-   ======================================== */
-
 * {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  user-select: none;
-}
-
-*,
-body,
-html {
   scroll-behavior: smooth;
 }
 
-body,
-html {
-  position: relative;
-  height: 100%;
-  overflow-x: hidden;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-::-webkit-scrollbar,
-body::-webkit-scrollbar,
-html::-webkit-scrollbar {
+body::-webkit-scrollbar, html::-webkit-scrollbar {
   display: none;
 }
 
