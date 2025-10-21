@@ -234,8 +234,8 @@ export const render = {
       <div id="${albumsContainerId}"></div>
     </section>
 
-    <div class="bento-grid">
-      <div class="bento-card" data-loader="true">
+    <div class="bentoCardsWrapper">
+      <div class="bentoCardMedium" data-loader="true">
         <div class="loadingOverlay" id="loadingRecent">
           <div class="spinner"></div>
           <div class="loadingText">Loading Recent Plays...</div>
@@ -258,7 +258,7 @@ export const render = {
         </div>
       </div>
       
-      <div class="bento-card large bento-span-2" data-loader="true">
+      <div class="bentoCardLarge" data-loader="true">
         <div class="loadingOverlay" id="loadingAlbums">
           <div class="spinner"></div>
           <div class="loadingText">Finding Albums...</div>
@@ -282,7 +282,7 @@ export const render = {
         </div>
       </div>
       
-      <div class="bento-card" data-loader="true">
+      <div class="bentoCardMedium" data-loader="true">
         <div class="loadingOverlay" id="loadingArtists">
           <div class="spinner"></div>
           <div class="loadingText">Loading Artists...</div>
@@ -305,7 +305,7 @@ export const render = {
         </div>
       </div>
       
-      <div class="bento-card tall" data-loader="true">
+      <div class="bentoCardLarge" data-loader="true">
         <div class="loadingOverlay" id="loadingPlaylists">
           <div class="spinner"></div>
           <div class="loadingText">Fetching Playlists...</div>
@@ -328,7 +328,7 @@ export const render = {
         </div>
       </div>
       
-      <div class="bento-card" data-loader="true">
+      <div class="bentoCardMedium" data-loader="true">
         <div class="loadingOverlay" id="loadingFavorites">
           <div class="spinner"></div>
           <div class="loadingText">Loading Favorites...</div>
