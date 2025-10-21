@@ -89,7 +89,7 @@ export const render = {
         `;
       
       case "enhancedArtist":
-        const albumsContainerId = data.albumsContainerId || 'artist-albums-container';
+        const albumsContainerId = data.albumsContainerId || 'albumsWrapper';
         const recentlyPlayedId = data.recentlyPlayedId || 'artist-recently-played';
         const randomAlbumsId = data.randomAlbumsId || 'artist-random-albums';
         const favoriteArtistsId = data.favoriteArtistsId || 'artist-favorite-artists';
