@@ -1277,6 +1277,13 @@ html, body {
             background-color: #2563eb;
         }
 </style>
+<!-- Music Player Trigger for Tablet/Desktop (hidden on mobile) -->
+<button id="playerTrigger" class="player-trigger" popovertarget="drawer" title="Open Music Player">
+  <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+    <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.369 4.369 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z" />
+  </svg>
+</button>
+
 <!-- Music Player Drawer (refactored to align with new .btn system) -->
 <aside class="drawer" popover="auto" id="drawer">
   <div class="drawerScroller">
@@ -1304,6 +1311,17 @@ html, body {
         <div class="content">
           <div class="musicPlayer" id="musicPlayer">
             <div class="header">
+              <!-- Pin button for tablet mode (visible only on tablet) -->
+              <button class="btn btn--close use-site-colors player-pin-btn" id="pinBtn" title="Pin Player">
+                <svg class="pin-icon" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M10 2a1 1 0 011 1v1.323l3.954 1.582 1.599-.8a1 1 0 01.894 1.79l-1.233.616 1.738 5.42a1 1 0 01-.285 1.05A3.989 3.989 0 0115 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.715-5.349L11 6.477V16h2a1 1 0 110 2H7a1 1 0 110-2h2V6.477L6.237 7.582l1.715 5.349a1 1 0 01-.285 1.05A3.989 3.989 0 015 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.738-5.42-1.233-.617a1 1 0 01.894-1.788l1.599.799L9 4.323V3a1 1 0 011-1z"/>
+                </svg>
+                <svg class="unpin-icon hidden" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clip-rule="evenodd" />
+                  <path d="M12.454 16.697L9.75 13.992a4 4 0 01-3.742-3.741L2.335 6.578A9.98 9.98 0 00.458 10c1.274 4.057 5.065 7 9.542 7 .847 0 1.669-.105 2.454-.303z" />
+                </svg>
+              </button>
+              
               <!-- Close button → maps to .btn--close; ID preserved -->
               <button class="btn btn--close use-site-colors" id="closeBtn">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 432 540" aria-hidden="true">

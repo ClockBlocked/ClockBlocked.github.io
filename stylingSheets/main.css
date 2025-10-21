@@ -3380,6 +3380,299 @@ main {
   transition: color 0.65s ease-in-out;
 }
 
+/* ===================================================================
+   RESPONSIVE MUSIC PLAYER - Mobile, Tablet, Desktop
+   =================================================================== */
+
+/* Player Trigger Button - Hidden on mobile, visible on tablet/desktop */
+.player-trigger {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 64px;
+  background: var(--background-500);
+  border: 1px solid var(--border-200);
+  border-right: none;
+  border-radius: 12px 0 0 12px;
+  color: var(--text-200);
+  cursor: pointer;
+  z-index: 90;
+  display: none; /* Hidden on mobile by default */
+  align-items: center;
+  justify-content: center;
+  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.2);
+  transition: all var(--transition-fast);
+}
+
+.player-trigger:hover {
+  width: 56px;
+  background: var(--background-600);
+  box-shadow: -6px 0 16px rgba(0, 0, 0, 0.3);
+}
+
+.player-trigger svg {
+  transition: transform var(--transition-fast);
+}
+
+.player-trigger:hover svg {
+  transform: scale(1.1);
+}
+
+/* Pin button - Only visible on tablet */
+.player-pin-btn {
+  display: none;
+  margin-right: 0.5rem;
+}
+
+.player-pin-btn .unpin-icon {
+  display: none;
+}
+
+.player-pin-btn.pinned .pin-icon {
+  display: none;
+}
+
+.player-pin-btn.pinned .unpin-icon {
+  display: block;
+}
+
+/* Mobile: Default behavior (bottom drawer) - Max width 767px */
+@media (max-width: 767px) {
+  .player-trigger {
+    display: none !important;
+  }
+  
+  .player-pin-btn {
+    display: none !important;
+  }
+  
+  /* Mobile keeps the default drawer behavior */
+}
+
+/* Tablet: Slide from right with trigger and pin - 768px to 1023px */
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* Show trigger button */
+  .player-trigger {
+    display: flex;
+  }
+  
+  /* Show pin button */
+  .player-pin-btn {
+    display: inline-flex;
+  }
+  
+  /* Hide drawer drag handle on tablet */
+  .drawerDrag {
+    display: none;
+  }
+  
+  /* Modify drawer to slide from right */
+  .drawer {
+    inset: 0 0 0 auto;
+    width: 420px;
+    max-width: 90vw;
+  }
+  
+  .drawerScroller {
+    width: 100%;
+    margin: 0;
+    overflow-y: auto;
+    scroll-snap-type: none;
+  }
+  
+  .drawerScroller::after {
+    display: none;
+  }
+  
+  .drawerSlide {
+    flex: 1 0 auto;
+    height: 100%;
+  }
+  
+  .drawerAnchors {
+    display: none;
+  }
+  
+  .drawerContent {
+    position: relative;
+    translate: 100% 0;
+    border-radius: 12px 0 0 12px;
+    height: 100vh;
+    padding-top: 4rem;
+  }
+  
+  .drawer:popover-open .drawerContent {
+    translate: 0 0;
+  }
+  
+  /* Tabs on top */
+  .tabsContainer {
+    position: absolute;
+    top: 0.5rem;
+    left: 1rem;
+    right: 1rem;
+    width: auto;
+    padding: 0;
+  }
+  
+  .drawer:popover-open .tabsContainer {
+    translate: 0 0;
+    opacity: 1;
+    transition-delay: 0.2s;
+  }
+  
+  /* Hide trigger when drawer is open (unless pinned) */
+  .drawer:popover-open ~ .player-trigger:not(.pinned-mode) {
+    opacity: 0;
+    pointer-events: none;
+  }
+  
+  /* When pinned, drawer stays open */
+  .drawer.pinned {
+    position: fixed;
+    inset: 0 0 0 auto;
+  }
+  
+  .drawer.pinned ~ .player-trigger {
+    display: none;
+  }
+  
+  /* Hide curtain on tablet */
+  .drawerCurtain {
+    display: none;
+  }
+  
+  /* Backdrop adjustment */
+  .drawer::backdrop {
+    background: hsl(0 0% 0% / 0.25);
+  }
+  
+  .drawer.pinned::backdrop {
+    display: none;
+  }
+  
+  /* Music player body adjustments */
+  #musicPlayer .body {
+    padding: 0 1.5rem 1.5rem;
+  }
+}
+
+/* Desktop: Fixed to right side - 1024px and above */
+@media (min-width: 1024px) {
+  /* Hide trigger on desktop (player always visible) */
+  .player-trigger {
+    display: none;
+  }
+  
+  /* Hide pin button on desktop */
+  .player-pin-btn {
+    display: none;
+  }
+  
+  /* Hide drawer drag handle on desktop */
+  .drawerDrag {
+    display: none;
+  }
+  
+  /* Fixed drawer on right */
+  .drawer {
+    position: fixed;
+    inset: 0 0 0 auto;
+    width: 380px;
+    max-width: 25vw;
+    display: block;
+    pointer-events: auto;
+    margin: 0;
+    padding: 1rem 1rem 1rem 0;
+  }
+  
+  .drawer::backdrop {
+    display: none;
+  }
+  
+  .drawerScroller {
+    width: 100%;
+    margin: 0;
+    overflow-y: auto;
+    scroll-snap-type: none;
+    height: 100%;
+  }
+  
+  .drawerScroller::after {
+    display: none;
+  }
+  
+  .drawerSlide {
+    flex: 1 0 auto;
+    height: 100%;
+  }
+  
+  .drawerAnchors {
+    display: none;
+  }
+  
+  .drawerContent {
+    position: relative;
+    translate: 0 0;
+    border-radius: 12px;
+    height: calc(100vh - 2rem);
+    padding-top: 4rem;
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  /* Always show tabs on desktop */
+  .tabsContainer {
+    position: absolute;
+    top: 0.5rem;
+    left: 1rem;
+    right: 1rem;
+    width: auto;
+    padding: 0;
+    translate: 0 0;
+    opacity: 1;
+  }
+  
+  /* Hide curtain on desktop */
+  .drawerCurtain {
+    display: none;
+  }
+  
+  /* Music player body adjustments */
+  #musicPlayer .body {
+    padding: 0 1.5rem 1.5rem;
+  }
+  
+  /* Adjust main content to not overlap with fixed player */
+  #mainArea {
+    margin-right: calc(380px + 2rem);
+  }
+  
+  /* Prevent page scaling when player is "open" on desktop */
+  :root:has(.drawer) main {
+    scale: 1;
+    border-radius: 0;
+    translate: 0 0;
+    overflow: visible;
+  }
+  
+  :root:has(.drawer) {
+    --closed: 1;
+    --opened: 0;
+  }
+}
+
+/* Adjust featured artists grid to not overlap with player on desktop */
+@media (min-width: 1024px) {
+  #featured-artists,
+  #dynamic-content,
+  .content-container {
+    padding-right: 1rem;
+  }
+}
+
 #musicPlayer .favorite {
   color: var(--text-300);
   opacity: 0.35;

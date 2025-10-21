@@ -1719,6 +1719,35 @@ const musicPlayer = {
                 closeBtn.addEventListener('click', () => musicPlayer.mainPlayer.close());
             }
             
+            // Pin button functionality for tablet mode
+            const pinBtn = document.getElementById('pinBtn');
+            const drawer = document.querySelector('.drawer');
+            const playerTrigger = document.querySelector('.player-trigger');
+            
+            if (pinBtn && drawer) {
+                pinBtn.addEventListener('click', () => {
+                    const isPinned = drawer.classList.contains('pinned');
+                    
+                    if (isPinned) {
+                        // Unpin
+                        drawer.classList.remove('pinned');
+                        pinBtn.classList.remove('pinned');
+                        pinBtn.setAttribute('title', 'Pin Player');
+                        if (playerTrigger) {
+                            playerTrigger.classList.remove('pinned-mode');
+                        }
+                    } else {
+                        // Pin
+                        drawer.classList.add('pinned');
+                        pinBtn.classList.add('pinned');
+                        pinBtn.setAttribute('title', 'Unpin Player');
+                        if (playerTrigger) {
+                            playerTrigger.classList.add('pinned-mode');
+                        }
+                    }
+                });
+            }
+            
             document.querySelectorAll('.tabsContainer .tab').forEach(tab => {
                 tab.addEventListener('click', () => {
                     const tabName = tab.dataset.tab;
