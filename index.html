@@ -11,6 +11,1162 @@
 MyBeats:  Stream & share your favorite music for free.
 </title>
 
+
+  <script>
+ /**
+ * DevDebugger — Advanced in-page debugging console (Eruda-like replacement)
+ * - Vanilla JS, single-file, no external deps
+ * - GitHub Dark Dimmed color scheme
+ * - Captures: console.*, window.onerror, unhandledrejection, fetch, XHR, event firing, long-tasks, resource timings
+ * - Panels: Console, Errors, Network, DOM Inspector, Performance, Resources
+ * - Features: filtering, search, export, persistent logs, pause-on-exceptions (invokes `debugger;`), keyboard shortcuts, draggable/resizable UI
+ *
+ * Usage:
+ *  - Toggle with Ctrl+Shift+D (or call DevDebugger.toggle())
+ *
+ * Notes:
+ *  - `pauseOnException` will call `debugger;` inside the global error handler which opens DevTools if the user has them available.
+ *  - Some deep inspection (like full event listeners list) requires the page to use standard addEventListener — DevDebugger wraps EventTarget.addEventListener to track listeners.
+ *
+ * Author: Copilot-style DevDebugger (generated for ClockBlocked)
+ * Date: 2025-10-21
+ */
+
+(function (global) {
+  if (global.DevDebugger) return; // idempotent
+
+  const STORAGE_KEY = 'devdebugger:logs:v1';
+  const DEFAULT_MAX_LOGS = 5000;
+
+  // GitHub Dark Dimmed Theme (variables)
+  const THEME = {
+    '--bg': '#0d1117', // GitHub dark dimmed background
+    '--panel-bg': '#0b1220',
+    '--panel-elev': '#08101a',
+    '--muted': '#8b949e',
+    '--text': '#c9d1d9',
+    '--accent': '#58a6ff',
+    '--success': '#2ea043',
+    '--warn': '#d29922',
+    '--danger': '#ff7b72',
+    '--glass': 'rgba(255,255,255,0.02)',
+    '--border': 'rgba(110,118,129,0.12)',
+    '--shadow': '0 8px 30px rgba(2,6,23,0.6)'
+  };
+
+  // Utility helpers
+  const qs = (sel, root = document) => root.querySelector(sel);
+  const qsa = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+  const el = (tag, props = {}, ...children) => {
+    const node = document.createElement(tag);
+    Object.entries(props).forEach(([k, v]) => {
+      if (k === 'style') Object.assign(node.style, v);
+      else if (k.startsWith('data-')) node.setAttribute(k, v);
+      else if (k === 'html') node.innerHTML = v;
+      else node[k] = v;
+    });
+    children.forEach(c => {
+      if (typeof c === 'string') node.appendChild(document.createTextNode(c));
+      else if (c instanceof Node) node.appendChild(c);
+    });
+    return node;
+  };
+
+  // Simple safe stringify for logs (handles circular)
+  function safeStringify(obj, depth = 3) {
+    const seen = new WeakSet();
+    function _stringify(value, d) {
+      if (d === 0) return typeof value;
+      if (value === null) return 'null';
+      if (typeof value === 'string') return value;
+      if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+      if (value instanceof Error) return `${value.name}: ${value.message}\n${value.stack || ''}`;
+      if (Array.isArray(value)) return `[${value.map(v => _stringify(v, d - 1)).join(', ')}]`;
+      if (typeof value === 'object') {
+        if (seen.has(value)) return '[Circular]';
+        seen.add(value);
+        const keys = Object.keys(value).slice(0, 20);
+        const kv = keys.map(k => `${k}:${_stringify(value[k], d - 1)}`);
+        return `{${kv.join(', ')}}`;
+      }
+      try { return String(value); } catch (e) { return '<?>'; }
+    }
+    return _stringify(obj, depth);
+  }
+
+  // Pretty time
+  const now = () => (performance && performance.now ? performance.now() : Date.now());
+  const fmtTime = (t) => {
+    const d = new Date(t);
+    return d.toISOString().replace('T', ' ').replace('Z', '');
+  };
+
+  // Internal state
+  const state = {
+    visible: false,
+    pausedOnException: false,
+    pauseOnException: false,
+    maxLogs: DEFAULT_MAX_LOGS,
+    logs: [], // {id, ts, level, message, args, stack, source}
+    network: [],
+    resources: [],
+    errors: [],
+    recordLongTasks: true,
+    storedListeners: new WeakMap(),
+    originalConsole: {},
+    originalFetch: null,
+    originalXhr: {
+      open: null,
+      send: null,
+    },
+    originalAddEventListener: null,
+    performanceObserver: null,
+    longTaskObserver: null,
+    persistent: true,
+  };
+
+  // Simple ID generator
+  let idCounter = 1;
+  const genId = () => String(idCounter++);
+
+  // Storage helpers
+  function saveStateToStorage() {
+    if (!state.persistent) return;
+    try {
+      const payload = {
+        logs: state.logs.slice(-state.maxLogs),
+        network: state.network.slice(-1000),
+        errors: state.errors.slice(-1000),
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    } catch (e) {
+      // ignore
+    }
+  }
+  function loadStateFromStorage() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      const payload = JSON.parse(raw);
+      state.logs = payload.logs || [];
+      state.network = payload.network || [];
+      state.errors = payload.errors || [];
+    } catch (e) {
+      // ignore parsing errors
+    }
+  }
+
+  // DOM: build UI
+  const UI = {
+    root: null,
+    themeVars: THEME,
+    init() {
+      if (this.root) return;
+      // Root container
+      this.root = el('div', { id: 'dev-debugger-root', style: { position: 'fixed', zIndex: 2147483647, right: '12px', bottom: '12px', width: '840px', height: '420px', maxWidth: 'calc(100% - 24px)', maxHeight: 'calc(100% - 24px)', boxSizing: 'border-box', display: 'none', fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial', borderRadius: '12px', overflow: 'hidden', boxShadow: THEME['--shadow'] } });
+
+      // style
+      const style = el('style', { html: this.generateCss() });
+
+      // header
+      const header = el('div', { className: 'dbg-header', style: { display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 12px', background: 'linear-gradient(180deg,var(--panel-bg),var(--panel-elev))', borderBottom: `1px solid var(--border)`, cursor: 'move' } },
+        el('div', { className: 'dbg-title', html: '<strong>DevDebugger</strong> — Advanced Console', style: { color: 'var(--text)', fontSize: '13px' } }),
+        el('div', { style: { flex: '1' } }),
+        el('div', { className: 'dbg-controls' },
+          el('button', { className: 'dbg-btn', title: 'Clear (Ctrl+Shift+C)', html: 'Clear' }),
+          el('button', { className: 'dbg-btn', title: 'Export', html: 'Export' }),
+          el('button', { className: 'dbg-btn', title: 'Toggle Pause on Exceptions', html: 'PauseOnEx' }),
+          el('button', { className: 'dbg-close', title: 'Close (Esc)', html: '✕' })
+        )
+      );
+
+      // tabs
+      const tabs = el('div', { className: 'dbg-tabs', style: { display: 'flex', gap: '8px', padding: '10px 12px', background: 'transparent', borderBottom: `1px solid var(--border)` } },
+        ...['Console', 'Errors', 'Network', 'DOM', 'Performance', 'Resources'].map((t, i) =>
+          el('button', { className: `dbg-tab ${i === 0 ? 'active' : ''}`, html: t, dataset: { tab: t.toLowerCase() } })
+        )
+      );
+
+      // content
+      const content = el('div', { className: 'dbg-content', style: { display: 'flex', height: 'calc(100% - 112px)', background: 'var(--panel-bg)' } });
+
+      // left panel (main)
+      const mainPanel = el('div', { className: 'dbg-main', style: { flex: '1 1 60%', display: 'flex', flexDirection: 'column', minWidth: '360px' } });
+
+      // console area (list)
+      const consoleArea = el('div', { className: 'dbg-console-area dbg-panel active', dataset: { panel: 'console' }, style: { padding: '10px', overflow: 'auto', display: 'block' } },
+        el('div', { className: 'dbg-filter-row', style: { display: 'flex', gap: '8px', marginBottom: '8px' } },
+          el('input', { className: 'dbg-search', placeholder: 'Search logs...', style: { flex: '1', padding: '6px 8px', borderRadius: '6px', background: 'var(--panel-elev)', color: 'var(--text)', border: '1px solid var(--border)' } }),
+          el('select', { className: 'dbg-level-filter', style: { padding: '6px 8px', borderRadius: '6px', background: 'transparent', color: 'var(--text)', border: '1px solid var(--border)' } },
+            el('option', { value: 'all', html: 'All' }),
+            el('option', { value: 'log', html: 'Log' }),
+            el('option', { value: 'info', html: 'Info' }),
+            el('option', { value: 'warn', html: 'Warn' }),
+            el('option', { value: 'error', html: 'Error' }),
+            el('option', { value: 'debug', html: 'Debug' })
+          )
+        ),
+        el('ul', { className: 'dbg-log-list', style: { listStyle: 'none', padding: '0', margin: '0' } })
+      );
+
+      // errors area
+      const errorsArea = el('div', { className: 'dbg-panel', dataset: { panel: 'errors' }, style: { padding: '10px', overflow: 'auto', display: 'none' } },
+        el('div', { className: 'dbg-errors-list' })
+      );
+
+      // network area
+      const networkArea = el('div', { className: 'dbg-panel', dataset: { panel: 'network' }, style: { padding: '10px', overflow: 'auto', display: 'none' } },
+        el('div', { className: 'dbg-network-list' })
+      );
+
+      // DOM area (inspector)
+      const domArea = el('div', { className: 'dbg-panel', dataset: { panel: 'dom' }, style: { padding: '10px', overflow: 'auto', display: 'none', display: 'none' } },
+        el('div', { className: 'dbg-dom-tree', style: { display: 'flex', gap: '10px' } },
+          el('div', { className: 'dbg-dom-left', style: { width: '50%', overflow: 'auto' } }),
+          el('div', { className: 'dbg-dom-right', style: { width: '50%', overflow: 'auto' } })
+        )
+      );
+
+      // performance area
+      const perfArea = el('div', { className: 'dbg-panel', dataset: { panel: 'performance' }, style: { padding: '10px', overflow: 'auto', display: 'none' } },
+        el('div', { className: 'dbg-perf-summary' }),
+        el('div', { className: 'dbg-longtasks' })
+      );
+
+      // resources area
+      const resArea = el('div', { className: 'dbg-panel', dataset: { panel: 'resources' }, style: { padding: '10px', overflow: 'auto', display: 'none' } },
+        el('div', { className: 'dbg-resources-list' })
+      );
+
+      mainPanel.appendChild(consoleArea);
+      mainPanel.appendChild(errorsArea);
+      mainPanel.appendChild(networkArea);
+      mainPanel.appendChild(domArea);
+      mainPanel.appendChild(perfArea);
+      mainPanel.appendChild(resArea);
+
+      // right panel (details)
+      const rightPanel = el('div', { className: 'dbg-side', style: { width: '36%', borderLeft: `1px solid var(--border)`, background: 'linear-gradient(180deg,var(--panel-elev), var(--panel-bg))', display: 'flex', flexDirection: 'column' } },
+        el('div', { className: 'dbg-side-content', style: { padding: '10px', overflow: 'auto', flex: '1' },
+          html: `<div style="color:var(--muted);font-size:13px">Select a log/network/DOM node to inspect details here.</div>` })
+      );
+
+      content.appendChild(mainPanel);
+      content.appendChild(rightPanel);
+
+      // footer (resize handle)
+      const footer = el('div', { className: 'dbg-footer', style: { display: 'flex', alignItems: 'center', padding: '8px 12px', gap: '8px', borderTop: `1px solid var(--border)`, background: 'transparent' } },
+        el('div', { className: 'dbg-status', style: { color: 'var(--muted)', fontSize: '12px' }, html: 'Ready' }),
+        el('div', { style: { flex: '1' } }),
+        el('div', { className: 'dbg-dock-controls' },
+          el('button', { className: 'dbg-btn', html: 'Dock Bottom' }),
+          el('button', { className: 'dbg-btn', html: 'Float' })
+        )
+      );
+
+      this.root.appendChild(style);
+      this.root.appendChild(header);
+      this.root.appendChild(tabs);
+      this.root.appendChild(content);
+      this.root.appendChild(footer);
+
+      document.body.appendChild(this.root);
+
+      // Make draggable
+      makeDraggable(header, this.root);
+
+      // Make resizable
+      makeResizable(this.root);
+
+      // Hook up events
+      bindUiEvents(this.root);
+
+      // Load persisted logs
+      loadStateFromStorage();
+      // Populate initial logs if any
+      renderAllPanels();
+
+      // Add quick toggle button (floating handle)
+      addFloatingToggle();
+    },
+
+    generateCss() {
+      // Create CSS string using theme variables
+      return `
+:root {
+  --bg: ${THEME['--bg']};
+  --panel-bg: ${THEME['--panel-bg']};
+  --panel-elev: ${THEME['--panel-elev']};
+  --muted: ${THEME['--muted']};
+  --text: ${THEME['--text']};
+  --accent: ${THEME['--accent']};
+  --success: ${THEME['--success']};
+  --warn: ${THEME['--warn']};
+  --danger: ${THEME['--danger']};
+  --glass: ${THEME['--glass']};
+  --border: ${THEME['--border']};
+}
+
+#dev-debugger-root * { box-sizing: border-box; font-family: inherit; }
+
+.dbg-header .dbg-btn,
+.dbg-footer .dbg-btn,
+#dev-debugger-root .dbg-btn {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+.dbg-header .dbg-close {
+  background: transparent;
+  color: var(--muted);
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 6px 8px;
+}
+.dbg-tabs .dbg-tab {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid transparent;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+.dbg-tabs .dbg-tab.active {
+  color: var(--text);
+  background: linear-gradient(90deg, rgba(88,166,255,0.08), rgba(88,166,255,0.02));
+  border-color: rgba(88,166,255,0.12);
+}
+
+.dbg-content { color: var(--text); background: linear-gradient(180deg,var(--panel-bg), var(--panel-elev)); }
+
+.dbg-log-list .dbg-log-item {
+  padding: 8px;
+  border-radius: 8px;
+  margin-bottom: 6px;
+  color: var(--text);
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  font-size: 13px;
+}
+.dbg-log-item .dbg-log-meta { color: var(--muted); font-size: 12px; min-width: 180px; }
+.dbg-log-item.log { background: linear-gradient(90deg, rgba(255,255,255,0.01), transparent); border: 1px solid transparent; }
+.dbg-log-item.info { border-left: 4px solid var(--accent); }
+.dbg-log-item.warn { border-left: 4px solid var(--warn); background: linear-gradient(90deg, rgba(210,153,34,0.03), transparent); }
+.dbg-log-item.error { border-left: 4px solid var(--danger); background: linear-gradient(90deg, rgba(255,123,114,0.03), transparent); }
+.dbg-log-item.debug { border-left: 4px solid rgba(120,120,200,0.7); }
+
+.dbg-log-item pre { margin:0; white-space: pre-wrap; word-break: break-word; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', monospace; font-size: 12px; color: var(--text); background: transparent; }
+
+.dbg-side { color: var(--muted); font-size: 13px; }
+
+.dbg-panel { display: none; }
+.dbg-panel.active { display: block; }
+
+.dbg-network-entry { padding: 8px; border-radius: 8px; margin-bottom: 8px; background: linear-gradient(90deg, rgba(255,255,255,0.01), transparent); border: 1px solid rgba(255,255,255,0.03); font-size: 13px; }
+.dbg-errors-list .dbg-error-item { padding: 8px; border-radius: 8px; margin-bottom: 8px; border-left: 3px solid var(--danger); background: rgba(255,123,114,0.02); font-size: 13px; }
+
+.dbg-search { color: var(--text); }
+.dbg-status { color: var(--muted); font-size: 12px; }
+
+#dev-debugger-root .floating-toggle {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 2147483646;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(180deg,var(--panel-elev),var(--panel-bg));
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  cursor: pointer;
+  box-shadow: var(--shadow);
+}
+
+/* responsive */
+@media (max-width: 900px) {
+  #dev-debugger-root { width: calc(100% - 24px); left: 12px; right: 12px; bottom: 12px; top: auto; height: 55vh; }
+  #dev-debugger-root .dbg-side { display: none; }
+}
+`;
+    },
+
+    show() {
+      if (!this.root) this.init();
+      this.root.style.display = 'block';
+      state.visible = true;
+    },
+
+    hide() {
+      if (!this.root) return;
+      this.root.style.display = 'none';
+      state.visible = false;
+    },
+
+    toggle() {
+      if (!this.root) this.init();
+      if (state.visible) this.hide();
+      else this.show();
+    },
+
+    updateStatus(text) {
+      const s = qs('.dbg-status', this.root);
+      if (s) s.textContent = text;
+    },
+
+    appendLogItem(item) {
+      const list = qs('.dbg-log-list', this.root);
+      if (!list) return;
+      const li = renderLogItem(item);
+      list.insertBefore(li, list.firstChild);
+      // Trim list
+      const children = list.children;
+      while (children.length > state.maxLogs) list.removeChild(list.lastChild);
+    },
+
+    clearConsoleList() {
+      const list = qs('.dbg-log-list', this.root);
+      if (list) list.innerHTML = '';
+    },
+
+    renderNetwork() {
+      const container = qs('.dbg-network-list', this.root);
+      if (!container) return;
+      container.innerHTML = '';
+      state.network.slice().reverse().forEach(req => {
+        container.appendChild(renderNetworkEntry(req));
+      });
+    },
+
+    renderErrors() {
+      const container = qs('.dbg-errors-list', this.root);
+      if (!container) return;
+      container.innerHTML = '';
+      state.errors.slice().reverse().forEach(err => {
+        const node = el('div', { className: 'dbg-error-item', html: `<div style="color:var(--text);font-weight:600">${escapeHtml(err.message || String(err))}</div><pre style="color:var(--muted)">${escapeHtml(err.stack || '')}</pre><div style="color:var(--muted);font-size:12px">${fmtTime(err.timestamp)}</div>` });
+        container.appendChild(node);
+      });
+    },
+
+    renderResources() {
+      const container = qs('.dbg-resources-list', this.root);
+      if (!container) return;
+      container.innerHTML = '';
+      state.resources.slice().reverse().forEach(r => {
+        const node = el('div', { className: 'dbg-network-entry', html: `<div><strong>${escapeHtml(r.name)}</strong> — ${r.initiatorType || ''} (${r.transferSize || 0} bytes)</div><div style="color:var(--muted);font-size:12px">${fmtTime(r.ts)}</div>` });
+        container.appendChild(node);
+      });
+    },
+
+    renderPerf() {
+      const summary = qs('.dbg-perf-summary', this.root);
+      if (!summary) return;
+      const timing = performance.timing || {};
+      summary.innerHTML = `<div style="color:var(--text);font-weight:600">Performance Snapshot</div>
+        <div style="color:var(--muted);font-size:12px">Now: ${new Date().toLocaleString()}</div>
+        <pre style="color:var(--muted);font-size:12px">${escapeHtml(JSON.stringify(timing, null, 2))}</pre>
+      `;
+      const longtasks = qs('.dbg-longtasks', this.root);
+      longtasks.innerHTML = '<div style="color:var(--text);font-weight:600">Long Tasks</div>';
+      const tasks = state.longTasks || [];
+      tasks.slice().reverse().forEach(t => {
+        const node = el('div', { className: 'dbg-network-entry', html: `<div><strong>Duration:</strong> ${t.duration.toFixed(2)}ms — ${t.name || 'task'}</div><pre style="color:var(--muted);font-size:12px">${escapeHtml(JSON.stringify(t, null, 2))}</pre>` });
+        longtasks.appendChild(node);
+      });
+    },
+
+    renderDomTree() {
+      const left = qs('.dbg-dom-left', this.root);
+      const right = qs('.dbg-dom-right', this.root);
+      if (!left || !right) return;
+      left.innerHTML = '';
+      right.innerHTML = '';
+      // Build a shallow DOM tree explorer (body subtree)
+      function buildNode(node, depth = 0) {
+        const tag = node.nodeType === 3 ? '#text' : (node.tagName ? node.tagName.toLowerCase() : node.nodeName);
+        const display = el('div', { className: 'dbg-dom-node', style: { padding: '6px 8px', borderRadius: '6px', marginBottom: '4px', cursor: 'pointer', background: 'transparent', color: 'var(--text)', fontSize: '13px' } },
+          el('span', { style: { color: 'var(--muted)', marginRight: '8px' }, html: `${' '.repeat(depth * 2)}` }),
+          el('span', { html: tag })
+        );
+        display.addEventListener('click', () => {
+          inspectNode(node);
+        });
+        return display;
+      }
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_ELEMENT, { acceptNode: () => NodeFilter.FILTER_ACCEPT });
+      let current;
+      let count = 0;
+      while (walker.nextNode() && count < 200) {
+        current = walker.currentNode;
+        left.appendChild(buildNode(current, Math.min(4, Math.floor(Math.log2(current.childElementCount + 1)))));
+        count++;
+      }
+      // right panel: selected details
+      right.innerHTML = '<div style="color:var(--muted);font-size:13px">Click an element on the left to see computed styles, attributes and listeners here.</div>';
+    }
+  };
+
+  // --- Rendering helpers ---
+  function escapeHtml(str) {
+    if (!str && str !== 0) return '';
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function renderLogItem(item) {
+    const li = el('li', { className: `dbg-log-item ${item.level}`, dataset: { id: item.id } });
+    const meta = el('div', { className: 'dbg-log-meta', html: `${fmtTime(item.ts)}<br><span style="color:var(--muted)">${escapeHtml(item.source || '')}</span>` });
+    const body = el('div', { style: { flex: '1' } });
+    const pre = el('pre', {}, escapeHtml(item.message));
+    const details = el('div', { style: { color: 'var(--muted)', fontSize: '12px', marginTop: '6px' }, html: escapeHtml(safeStringify(item.args)) });
+    body.appendChild(pre);
+    if (item.stack) {
+      body.appendChild(el('pre', { style: { color: 'var(--muted)', fontSize: '12px', marginTop: '6px' } }, escapeHtml(item.stack)));
+    }
+    body.appendChild(details);
+    li.appendChild(meta);
+    li.appendChild(body);
+
+    li.addEventListener('click', () => {
+      // Show details in side panel
+      const side = qs('.dbg-side-content', UI.root);
+      if (!side) return;
+      side.innerHTML = `<div style="color:var(--text);font-weight:600">Log Details</div>
+        <div style="color:var(--muted);font-size:12px">${fmtTime(item.ts)}</div>
+        <pre style="color:var(--muted);font-size:12px">${escapeHtml(JSON.stringify(item, null, 2))}</pre>
+      `;
+    });
+
+    return li;
+  }
+
+  function renderNetworkEntry(req) {
+    const url = escapeHtml(req.url || req.name || '');
+    const method = req.method || 'GET';
+    const status = req.status || (req.response && req.response.status) || '';
+    const time = req.duration ? `${req.duration.toFixed(1)}ms` : '';
+    const node = el('div', { className: 'dbg-network-entry' });
+    node.innerHTML = `<div><strong>${escapeHtml(method)}</strong> <span style="color:var(--accent)">${url}</span></div>
+      <div style="color:var(--muted);font-size:12px">Status: ${status} ${time}</div>
+      <pre style="color:var(--muted);font-size:12px">${escapeHtml(req.payloadPreview || '')}</pre>
+    `;
+    node.addEventListener('click', () => {
+      const side = qs('.dbg-side-content', UI.root);
+      if (!side) return;
+      side.innerHTML = `<div style="color:var(--text);font-weight:600">Network Request</div>
+        <div style="color:var(--muted);font-size:12px">${fmtTime(req.ts)}</div>
+        <pre style="color:var(--muted);font-size:12px">${escapeHtml(JSON.stringify(req, null, 2))}</pre>
+      `;
+    });
+    return node;
+  }
+
+  // --- Event bindings for UI ---
+  function bindUiEvents(root) {
+    // Tabs
+    qsa('.dbg-tab', root).forEach(btn => {
+      btn.addEventListener('click', () => {
+        qsa('.dbg-tab', root).forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        // show panels
+        const tab = btn.dataset.tab;
+        qsa('.dbg-panel', root).forEach(p => {
+          p.classList.toggle('active', p.dataset.panel === tab);
+        });
+        // Update data
+        if (tab === 'network') UI.renderNetwork();
+        if (tab === 'errors') UI.renderErrors();
+        if (tab === 'resources') UI.renderResources();
+        if (tab === 'performance') UI.renderPerf();
+        if (tab === 'dom') UI.renderDomTree();
+      });
+    });
+
+    // Controls
+    qs('.dbg-close', root).addEventListener('click', () => UI.hide());
+    qs('.dbg-header .dbg-btn[title^="Clear"]', root).addEventListener('click', () => {
+      clearLogs();
+    });
+    qs('.dbg-header .dbg-btn[title^="Export"]', root).addEventListener('click', () => {
+      exportLogs();
+    });
+    qs('.dbg-header .dbg-btn[title^="Toggle Pause"]', root).addEventListener('click', () => {
+      togglePauseOnException();
+      updatePauseButton();
+    });
+
+    // Search and filter
+    const search = qs('.dbg-search', root);
+    const filter = qs('.dbg-level-filter', root);
+    search.addEventListener('input', () => applyFilters());
+    filter.addEventListener('change', () => applyFilters());
+
+    // Dock buttons
+    qsa('.dbg-dock-controls .dbg-btn', root).forEach(btn => {
+      btn.addEventListener('click', () => {
+        const text = btn.textContent.trim();
+        if (text === 'Dock Bottom') {
+          root.style.right = '12px';
+          root.style.left = '12px';
+          root.style.bottom = '12px';
+          root.style.top = 'auto';
+          root.style.width = 'calc(100% - 24px)';
+          root.style.height = '45vh';
+        } else if (text === 'Float') {
+          root.style.width = '840px';
+          root.style.height = '420px';
+          root.style.right = '12px';
+          root.style.bottom = '12px';
+        }
+      });
+    });
+
+    // Global keyboard shortcuts
+    window.addEventListener('keydown', (e) => {
+      if (e.ctrlKey && e.shiftKey && e.code === 'KeyD') {
+        e.preventDefault();
+        UI.toggle();
+      }
+      if (e.ctrlKey && e.shiftKey && e.code === 'KeyC') {
+        e.preventDefault();
+        clearLogs();
+      }
+      if (e.key === 'Escape') {
+        if (state.visible) UI.hide();
+      }
+    });
+
+    updatePauseButton();
+  }
+
+  function updatePauseButton() {
+    const btn = qsa('.dbg-header .dbg-btn').find(b => b.title && b.title.startsWith('Toggle Pause'));
+    if (!btn) return;
+    btn.textContent = state.pauseOnException ? 'PauseOnEx: ON' : 'PauseOnEx: OFF';
+    btn.style.background = state.pauseOnException ? 'linear-gradient(90deg, rgba(88,166,255,0.12), transparent)' : 'transparent';
+  }
+
+  function applyFilters() {
+    const root = UI.root;
+    const searchValue = qs('.dbg-search', root).value.toLowerCase();
+    const level = qs('.dbg-level-filter', root).value;
+    qsa('.dbg-log-list .dbg-log-item', root).forEach(li => {
+      const id = li.dataset.id;
+      const item = state.logs.find(l => l.id === id);
+      if (!item) return;
+      let visible = true;
+      if (level !== 'all' && item.level !== level) visible = false;
+      if (searchValue) {
+        const hay = (item.message + ' ' + JSON.stringify(item.args)).toLowerCase();
+        visible = visible && hay.includes(searchValue);
+      }
+      li.style.display = visible ? '' : 'none';
+    });
+  }
+
+  // draggable
+  function makeDraggable(handle, container) {
+    let isDown = false;
+    let startX = 0, startY = 0, origX = 0, origY = 0;
+    handle.style.cursor = 'move';
+    handle.addEventListener('pointerdown', (e) => {
+      isDown = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      const rect = container.getBoundingClientRect();
+      origX = rect.left;
+      origY = rect.top;
+      handle.setPointerCapture(e.pointerId);
+    });
+    window.addEventListener('pointermove', (e) => {
+      if (!isDown) return;
+      let dx = e.clientX - startX;
+      let dy = e.clientY - startY;
+      container.style.left = Math.max(8, origX + dx) + 'px';
+      container.style.top = Math.max(8, origY + dy) + 'px';
+      container.style.right = 'auto';
+      container.style.bottom = 'auto';
+    });
+    window.addEventListener('pointerup', (e) => {
+      isDown = false;
+    });
+  }
+
+  // resizable: simple bottom-right handle
+  function makeResizable(container) {
+    const grip = el('div', { style: { position: 'absolute', right: '6px', bottom: '6px', width: '16px', height: '16px', cursor: 'nwse-resize', opacity: '0.6' } });
+    container.appendChild(grip);
+    let isResizing = false, startW = 0, startH = 0, startX = 0, startY = 0;
+    grip.addEventListener('pointerdown', (e) => {
+      isResizing = true;
+      startW = container.getBoundingClientRect().width;
+      startH = container.getBoundingClientRect().height;
+      startX = e.clientX;
+      startY = e.clientY;
+      grip.setPointerCapture(e.pointerId);
+    });
+    window.addEventListener('pointermove', (e) => {
+      if (!isResizing) return;
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      container.style.width = Math.max(360, startW + dx) + 'px';
+      container.style.height = Math.max(200, startH + dy) + 'px';
+    });
+    window.addEventListener('pointerup', () => isResizing = false);
+  }
+
+  // floating toggle button
+  function addFloatingToggle() {
+    let btn = document.getElementById('dev-debugger-toggle');
+    if (btn) return;
+    btn = el('div', { id: 'dev-debugger-toggle', className: 'floating-toggle', title: 'Toggle DevDebugger' }, el('span', { html: '🛠' }));
+    btn.addEventListener('click', () => UI.toggle());
+    document.body.appendChild(btn);
+  }
+
+  // --- Core instrumentation ---
+
+  function captureConsole() {
+    if (state.originalConsole.captured) return;
+    state.originalConsole.log = console.log;
+    state.originalConsole.info = console.info;
+    state.originalConsole.warn = console.warn;
+    state.originalConsole.error = console.error;
+    state.originalConsole.debug = console.debug;
+    state.originalConsole.captured = true;
+
+    console.log = function (...args) { pushLog('log', args, getStack(1)); state.originalConsole.log.apply(console, args); };
+    console.info = function (...args) { pushLog('info', args, getStack(1)); state.originalConsole.info.apply(console, args); };
+    console.warn = function (...args) { pushLog('warn', args, getStack(1)); state.originalConsole.warn.apply(console, args); };
+    console.error = function (...args) { pushLog('error', args, getStack(1)); state.originalConsole.error.apply(console, args); };
+    console.debug = function (...args) { pushLog('debug', args, getStack(1)); state.originalConsole.debug.apply(console, args); };
+  }
+
+  function unpatchConsole() {
+    if (!state.originalConsole.captured) return;
+    console.log = state.originalConsole.log;
+    console.info = state.originalConsole.info;
+    console.warn = state.originalConsole.warn;
+    console.error = state.originalConsole.error;
+    console.debug = state.originalConsole.debug;
+    state.originalConsole.captured = false;
+  }
+
+  function getStack(skipFrames = 0) {
+    // Create an Error to capture stack
+    try {
+      throw new Error();
+    } catch (err) {
+      if (!err.stack) return '';
+      const lines = err.stack.split('\n').slice(1 + skipFrames); // skip message + frames
+      return lines.join('\n');
+    }
+  }
+
+  function pushLog(level, args, stack) {
+    const message = args.map(a => (typeof a === 'string' ? a : (a && a.message) ? a.message : safeStringify(a, 1))).join(' ');
+    const source = extractSourceFromStack(stack);
+    const item = { id: genId(), ts: Date.now(), level, message, args, stack, source };
+    state.logs.push(item);
+    if (state.logs.length > state.maxLogs) state.logs.shift();
+    saveStateToStorage();
+    if (UI.root) {
+      UI.appendLogItem(item);
+      applyFilters();
+    }
+  }
+
+  function extractSourceFromStack(stack) {
+    if (!stack) return '';
+    const m = stack.match(/(https?:\/\/[^:\s)]+:\d+:\d+)/);
+    return m ? m[1] : '';
+  }
+
+  // global error traps
+  function patchGlobalErrors() {
+    window.addEventListener('error', (ev) => {
+      const err = ev.error || { message: ev.message, stack: `${ev.filename}:${ev.lineno}:${ev.colno}` };
+      const entry = { id: genId(), ts: Date.now(), message: err.message || String(err), stack: err.stack || '', filename: ev.filename, lineno: ev.lineno, colno: ev.colno };
+      state.errors.push(entry);
+      saveStateToStorage();
+      if (UI.root) UI.renderErrors();
+      pushLog('error', [err], err.stack || `${ev.filename}:${ev.lineno}:${ev.colno}`);
+      if (state.pauseOnException) {
+        // Pause into debugger (will open devtools if available)
+        try { debugger; } catch (e) { /* ignore */ }
+      }
+    });
+
+    window.addEventListener('unhandledrejection', (ev) => {
+      const reason = ev.reason;
+      const entry = { id: genId(), ts: Date.now(), message: reason ? (reason.message || String(reason)) : 'Unhandled rejection', stack: reason && reason.stack ? reason.stack : '' };
+      state.errors.push(entry);
+      saveStateToStorage();
+      if (UI.root) UI.renderErrors();
+      pushLog('error', ['UnhandledRejection', reason], reason && reason.stack ? reason.stack : '');
+      if (state.pauseOnException) {
+        try { debugger; } catch (e) {}
+      }
+    });
+  }
+
+  // fetch interception
+  function patchFetch() {
+    if (state.originalFetch) return;
+    state.originalFetch = window.fetch;
+    window.fetch = async function (input, init) {
+      const t0 = now();
+      const method = (init && init.method) || (typeof input === 'object' && input.method) || 'GET';
+      const url = typeof input === 'string' ? input : (input && input.url) || '';
+      const req = { id: genId(), ts: Date.now(), url, method, requestInit: init };
+      try {
+        const resp = await state.originalFetch.apply(this, arguments);
+        const cloned = resp.clone();
+        const contentType = cloned.headers.get('content-type') || '';
+        let payloadPreview = '';
+        if (contentType.includes('application/json')) {
+          try { payloadPreview = JSON.stringify(await cloned.json()).slice(0, 1000); } catch (e) { payloadPreview = '<unable to parse json>'; }
+        } else {
+          try { payloadPreview = await cloned.text().then(t => t.slice(0, 1000)); } catch (e) { payloadPreview = '<no body>'; }
+        }
+        const duration = now() - t0;
+        const entry = { ...req, status: resp.status, duration, payloadPreview, headers: Object.fromEntries([...resp.headers]), ts: Date.now() };
+        state.network.push(entry);
+        saveStateToStorage();
+        if (UI.root) UI.renderNetwork();
+        pushLog('info', [`[fetch] ${method} ${url} -> ${resp.status} (${duration.toFixed(1)}ms)`], getStack(1));
+        return resp;
+      } catch (err) {
+        const duration = now() - t0;
+        const entry = { ...req, status: 'ERROR', duration, error: String(err), ts: Date.now() };
+        state.network.push(entry);
+        saveStateToStorage();
+        if (UI.root) UI.renderNetwork();
+        pushLog('error', [`[fetch] ${method} ${url} -> ERROR: ${err}`], getStack(1));
+        throw err;
+      }
+    };
+  }
+
+  // XHR interception
+  function patchXhr() {
+    if (state.originalXhr.open) return;
+    const X = XMLHttpRequest.prototype;
+    state.originalXhr.open = X.open;
+    state.originalXhr.send = X.send;
+
+    X.open = function (method, url) {
+      this.__dbg = { method, url, ts: Date.now() };
+      return state.originalXhr.open.apply(this, arguments);
+    };
+
+    X.send = function (body) {
+      const self = this;
+      const id = genId();
+      const onLoadend = function () {
+        try {
+          const duration = Date.now() - (self.__dbg && self.__dbg.ts);
+          const status = self.status;
+          const entry = { id, ts: Date.now(), url: self.__dbg && self.__dbg.url, method: self.__dbg && self.__dbg.method, status, duration, responseType: self.responseType, response: typeof self.response === 'string' ? self.response.slice(0, 1000) : undefined };
+          state.network.push(entry);
+          saveStateToStorage();
+          if (UI.root) UI.renderNetwork();
+          pushLog('info', [`[XHR] ${entry.method} ${entry.url} -> ${entry.status} (${duration}ms)`], getStack(1));
+        } catch (e) { /* ignore */ }
+      };
+      this.addEventListener('loadend', onLoadend);
+      return state.originalXhr.send.apply(this, arguments);
+    };
+  }
+
+  // EventTarget.addEventListener wrapper to track listeners
+  function patchAddEventListener() {
+    if (state.originalAddEventListener) return;
+    const proto = EventTarget.prototype;
+    state.originalAddEventListener = proto.addEventListener;
+    proto.addEventListener = function (type, listener, options) {
+      try {
+        if (!this.__dbgListeners) this.__dbgListeners = [];
+        this.__dbgListeners.push({ type, listener, options });
+      } catch (e) { /* ignore */ }
+      return state.originalAddEventListener.call(this, type, listener, options);
+    };
+  }
+
+  // Performance observers for long tasks and resources
+  function patchPerformanceObservers() {
+    try {
+      if ('PerformanceObserver' in window) {
+        // Long tasks
+        try {
+          const longTasks = [];
+          const longObs = new PerformanceObserver((list) => {
+            list.getEntries().forEach(entry => {
+              longTasks.push(entry);
+              state.longTasks = longTasks;
+              if (UI.root) UI.renderPerf();
+              pushLog('warn', [`Long Task: ${entry.name} ${entry.duration.toFixed(1)}ms`], getStack(1));
+            });
+          });
+          longObs.observe({ entryTypes: ['longtask'] });
+          state.longTaskObserver = longObs;
+        } catch (e) { /* ignore */ }
+
+        // Resource timing
+        try {
+          const resEntries = performance.getEntriesByType('resource') || [];
+          state.resources = resEntries.map(r => ({ name: r.name, initiatorType: r.initiatorType, transferSize: r.transferSize, ts: Date.now() }));
+          if (UI.root) UI.renderResources();
+        } catch (e) { /* ignore */ }
+      }
+    } catch (e) { /* ignore */ }
+  }
+
+  // Node inspector helpers
+  function inspectNode(node) {
+    const side = qs('.dbg-side-content', UI.root);
+    if (!side) return;
+    try {
+      let html = `<div style="color:var(--text);font-weight:600">${escapeHtml(node.nodeName)}</div>`;
+      html += `<div style="color:var(--muted);font-size:12px">Selected: ${node.tagName || node.nodeName}</div>`;
+      // attributes
+      if (node.attributes && node.attributes.length) {
+        html += `<div style="margin-top:8px;color:var(--muted);font-size:12px"><strong>Attributes</strong></div><pre style="color:var(--muted);font-size:12px">`;
+        Array.from(node.attributes).forEach(attr => {
+          html += `${attr.name}="${escapeHtml(attr.value)}"\n`;
+        });
+        html += `</pre>`;
+      }
+      // computed styles
+      try {
+        const cs = window.getComputedStyle(node);
+        const props = ['display', 'position', 'top', 'left', 'width', 'height', 'margin', 'padding', 'overflow', 'zIndex', 'backgroundColor', 'color'];
+        html += `<div style="margin-top:8px;color:var(--muted);font-size:12px"><strong>Computed</strong></div><pre style="color:var(--muted);font-size:12px">`;
+        props.forEach(p => {
+          html += `${p}: ${cs.getPropertyValue(p)}\n`;
+        });
+        html += `</pre>`;
+      } catch (e) { /* ignore */ }
+
+      // listeners if tracked
+      if (node.__dbgListeners) {
+        html += `<div style="margin-top:8px;color:var(--muted);font-size:12px"><strong>Listeners</strong></div><pre style="color:var(--muted);font-size:12px">`;
+        node.__dbgListeners.forEach(ls => {
+          html += `${ls.type} -> ${ls.listener.name || ls.listener.toString().slice(0, 80)}\n`;
+        });
+        html += `</pre>`;
+      } else {
+        html += `<div style="margin-top:8px;color:var(--muted);font-size:12px"><em>No tracked listeners on this node (EventTarget.addEventListener was wrapped after load?)</em></div>`;
+      }
+
+      side.innerHTML = html;
+    } catch (e) {
+      side.innerHTML = `<div style="color:var(--danger)">Error inspecting node: ${escapeHtml(String(e))}</div>`;
+    }
+  }
+
+  // --- Utilities: clear / export / toggles ---
+  function clearLogs() {
+    state.logs = [];
+    state.network = [];
+    state.errors = [];
+    state.resources = [];
+    saveStateToStorage();
+    if (UI.root) {
+      UI.clearConsoleList();
+      UI.renderNetwork();
+      UI.renderErrors();
+      UI.renderResources();
+    }
+    UI.updateStatus('Cleared');
+  }
+
+  function exportLogs() {
+    const payload = {
+      logs: state.logs,
+      network: state.network,
+      errors: state.errors,
+      resources: state.resources,
+      timestamp: Date.now(),
+      location: location.href
+    };
+    const json = JSON.stringify(payload, null, 2);
+    copyToClipboard(json);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `devdebugger-${Date.now()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    UI.updateStatus('Exported logs and copied JSON to clipboard');
+  }
+
+  function copyToClipboard(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).catch(() => {
+        fallbackCopy(text);
+      });
+    } else fallbackCopy(text);
+  }
+
+  function fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch (e) {/* ignore */}
+    ta.remove();
+  }
+
+  function togglePauseOnException() {
+    state.pauseOnException = !state.pauseOnException;
+    updatePauseButton();
+  }
+
+  // Render all panels initially from persisted state
+  function renderAllPanels() {
+    if (!UI.root) return;
+    UI.clearConsoleList();
+    state.logs.forEach(l => UI.appendLogItem(l));
+    UI.renderNetwork();
+    UI.renderErrors();
+    UI.renderResources();
+    UI.renderPerf();
+  }
+
+  // Helpers to extract compact payload preview for network body
+  function previewPayload(body) {
+    if (!body) return '';
+    try {
+      if (typeof body === 'string') return body.slice(0, 200);
+      if (body instanceof FormData) {
+        const kv = [];
+        for (const pair of body.entries()) kv.push(`${pair[0]}=${pair[1]}`);
+        return kv.join('&').slice(0, 200);
+      }
+      if (body instanceof URLSearchParams) return body.toString().slice(0, 200);
+      return JSON.stringify(body).slice(0, 200);
+    } catch (e) {
+      return '<unpreviewable>';
+    }
+  }
+
+  // Stack source parser convenience
+  function parseStackLine(line) {
+    // chrome-like "    at func (https://...:10:20)"
+    const m = line.match(/\(?((https?:\/\/|file:).+):(\d+):(\d+)\)?$/);
+    if (!m) return null;
+    return { url: m[1], line: Number(m[3]), col: Number(m[4]) };
+  }
+
+  // --- Initialization entrypoint ---
+  function init(options = {}) {
+    // merge options
+    if (options.maxLogs) state.maxLogs = options.maxLogs;
+    if (typeof options.persistent === 'boolean') state.persistent = options.persistent;
+
+    UI.init();
+    captureConsole();
+    patchGlobalErrors();
+    patchFetch();
+    patchXhr();
+    patchAddEventListener();
+    patchPerformanceObservers();
+
+    UI.updateStatus('Instrumentation active');
+
+    // Flush any existing logs into UI
+    renderAllPanels();
+  }
+
+  // Public API
+  const DevDebugger = {
+    init,
+    toggle: () => UI.toggle(),
+    show: () => UI.show(),
+    hide: () => UI.hide(),
+    clear: () => clearLogs(),
+    export: () => exportLogs(),
+    setPauseOnException: (v) => { state.pauseOnException = !!v; updatePauseButton(); },
+    getState: () => JSON.parse(JSON.stringify({ logs: state.logs, network: state.network, errors: state.errors })),
+    attachToWindow: function () { global.DevDebugger = DevDebugger; }
+  };
+
+  // Auto-init in a microtask so pages that attach events during load complete
+  setTimeout(() => {
+    init();
+    DevDebugger.attachToWindow();
+  }, 0);
+
+  // Helper: find first element in NodeList
+  NodeList.prototype.find = Array.prototype.find;
+
+  // Expose on window
+  global.DevDebugger = DevDebugger;
+
+  // --- Extra: diagnose / quick-run helpers ---
+  // Provide a simple "healthcheck" that runs a set of probes and logs results
+  DevDebugger.healthCheck = function () {
+    const probes = [
+      { id: 'dom-ready', name: 'DOM ready', run: () => document.readyState },
+      { id: 'fetch-ok', name: 'Fetch GET to /favicon.ico', run: async () => {
+        try {
+          const resp = await fetch('/favicon.ico', { method: 'GET', cache: 'no-store' });
+          return `${resp.status}`;
+        } catch (e) { return `ERR:${e.message}`; }
+      } },
+      { id: 'xhr-ok', name: 'XHR to /favicon.ico', run: () => new Promise((res) => {
+        const r = new XMLHttpRequest();
+        r.open('GET', '/favicon.ico');
+        r.onload = () => res(`status:${r.status}`);
+        r.onerror = () => res('ERR');
+        r.send();
+      }) },
+      { id: 'event-listeners', name: 'Tracked listeners count', run: () => {
+        // approximate: find first element with tracked listeners
+        const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_ELEMENT);
+        let c = 0, n;
+        while (walker.nextNode() && c < 1e6) {
+          n = walker.currentNode;
+          if (n.__dbgListeners && n.__dbgListeners.length) return `${n.__dbgListeners.length} on ${n.tagName.toLowerCase()}`;
+        }
+        return 'none-tracked';
+      } }
+    ];
+
+    (async () => {
+      for (let p of probes) {
+        try {
+          const result = await p.run();
+          pushLog('info', [`HealthCheck: ${p.name} -> ${result}`], getStack(1));
+        } catch (e) {
+          pushLog('error', [`HealthCheck: ${p.name} -> ERROR ${e.message}`], getStack(1));
+        }
+      }
+      UI.updateStatus('Health check complete');
+    })();
+  };
+
+  // Make available on global quickly
+  global.__DevDebugger = global.DevDebugger;
+
+})(window);   
+  </script>
+
 <meta name="description" content="Stream & share your favourite music for free." />
 <meta name="keywords" content="music, player, web, audio, streaming, playlist, songs, albums, artists, videos, sharing, media, radio, pop, hiphop, country, dance, party, dubstep, alternative, rock, free, forever" />
 <meta name="author" content="ClockBlocked" />
