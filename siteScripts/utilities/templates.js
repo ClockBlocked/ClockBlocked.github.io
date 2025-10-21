@@ -376,7 +376,7 @@ export const render = {
               <div class="gap-6 items-center md:items-start">
                 <div class="album-image relative flex-shrink-0">
                   <img src="${data.cover}" alt="${data.album}" class="album-cover w-full h-full object-cover">
-                  <button aria-label="Name" class="play-album absolute bottom-4 right-4 bg-blue-600 hover:bg-blue-700 w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition transform hover:scale-105">
+                  <button aria-label="Name" class="play-album absolute bottom-4 right-4 bg-blue-600 hover:bg-blue-700 w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition transform hover:scale-110">
                     <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
                     </svg>
@@ -397,7 +397,7 @@ export const render = {
             <div class="albumFade" data-album-id="${data.albumId}">
               <div class="gap-6 items-center md:items-start">
                 <div class="album-image relative flex-shrink-0">
-                  <button aria-label="Name" class="play-album absolute bottom-4 right-4 bg-blue-600 hover:bg-blue-700 w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition transform hover:scale-105">
+                  <button aria-label="Name" class="play-album absolute bottom-4 right-4 bg-blue-600 hover:bg-blue-700 w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition transform hover:scale-110">
                     <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
                     </svg>
@@ -579,7 +579,7 @@ export const render = {
             <div class="filter-controls mb-6 flex flex-wrap gap-4 items-center">
               <div class="search-wrapper relative flex-grow max-w-md">
                 <input type="text" id="artist-search" 
-                      class="w-full bg-gray-800 border border-gray-700 rounded-lg py-2 px-4 pl-10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      class="w-full bg-gray-800 border border-gray-700 rounded-lg py-2 px-4 pl-10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="Search artists...">
                 <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
@@ -605,8 +605,8 @@ export const render = {
         
       case "home_bento":
         return `
-        <div class="bento-grid">
-            <div class="bento-card" data-loader="true">
+        <div class="bentoCardsWrapper">
+            <div class="bentoCardMedium" data-loader="true">
               <div class="loadingOverlay" id="loadingRecent">
                 <div class="spinner"></div>
                 <div class="loadingText">Loading Recent Plays...</div>
@@ -629,7 +629,7 @@ export const render = {
               </div>
             </div>
             
-            <div class="bento-card large bento-span-2" data-loader="true">
+            <div class="bentoCardLarge" data-loader="true">
               <div class="loadingOverlay" id="loadingAlbums">
                 <div class="spinner"></div>
                 <div class="loadingText">Finding Albums...</div>
@@ -653,7 +653,7 @@ export const render = {
               </div>
             </div>
             
-            <div class="bento-card" data-loader="true">
+            <div class="bentoCardMedium" data-loader="true">
               <div class="loadingOverlay" id="loadingArtists">
                 <div class="spinner"></div>
                 <div class="loadingText">Loading Artists...</div>
@@ -676,7 +676,7 @@ export const render = {
               </div>
             </div>
             
-            <div class="bento-card tall" data-loader="true">
+            <div class="bentoCardLarge" data-loader="true">
               <div class="loadingOverlay" id="loadingPlaylists">
                 <div class="spinner"></div>
                 <div class="loadingText">Fetching Playlists...</div>
@@ -699,7 +699,7 @@ export const render = {
               </div>
             </div>
             
-            <div class="bento-card" data-loader="true">
+            <div class="bentoCardMedium" data-loader="true">
               <div class="loadingOverlay" id="loadingFavorites">
                 <div class="spinner"></div>
                 <div class="loadingText">Loading Favorites...</div>
@@ -755,7 +755,7 @@ export const render = {
       playlists.forEach((playlist, index) => {
         html += `
           <div class="playlist-card" data-playlist-id="${playlist.id}" style="animation-delay: ${index * 100}ms;">
-            <div class="playlist-icon" style="width: 40px; height: 40px; background: linear-gradient(45deg, #6366f1, #8b5cf6); border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <div class="playlist-icon" style="width: 40px; height: 40px; background: linear-gradient(45deg, #6366f1, #8b5cf6); border-radius: 0.5rem; display: flex; align-items: center; justify-content: center;">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="20" height="20">
                 <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v2H3v-2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
               </svg>
@@ -915,7 +915,7 @@ export const render = {
                  </button>`
               : `<button class="queueButton" data-action="queue" title="Add to queue">
                    <svg class="SVGimg" fill="currentColor" viewBox="0 0 20 20">
-                     <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+                     <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
                    </svg>
                  </button>`
             }
