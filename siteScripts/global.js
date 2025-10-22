@@ -7,7 +7,7 @@ import { pageLoader, navigation } from './pages/rendering.js';
 import { ui, pageUpdates } from './pages/updates.js';
 import { deepLinkRouter } from './pages/router.js';
 
-import { viewManager } from './viewManager.js';
+import viewManager from './viewManager.js';
 import { playerManager } from './playerManager.js';
 
 const ACTION_GRID_ITEMS = [
@@ -2728,7 +2728,7 @@ if (document.readyState === 'loading') {
 document.addEventListener('DOMContentLoaded', () => {
   app.initialize();
 
-    viewManager.init();
+  // viewManager.init() is called in constructor
   playerManager.init();
   navigation.initialize();
   
@@ -2758,5 +2758,7 @@ export {
     app,
     pageLoader,
     navigation,
-    ACTION_GRID_ITEMS
+    ACTION_GRID_ITEMS,
+    viewManager,
+    playerManager
 };

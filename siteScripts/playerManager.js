@@ -1,14 +1,22 @@
+// playerManager.js
+// Centralized music player management for all viewports (mobile, tablet, desktop)
+
 export const playerManager = {
   playerElement: null,
-  isTabletOffcanvasOpen: false,
-  isMobileOffcanvasOpen: false,
+  isOffcanvasOpen: false,
   currentViewport: 'mobile',
+  tabletTrigger: null,
+  initialized: false,
 
   init() {
+    if (this.initialized) return;
+    this.initialized = true;
+    
     this.detectViewport();
-    this.setupTabletTrigger();
-    this.setupMobileTrigger();
-    this.setupOffcanvasHandlers();
+    this.setupPlayerTriggers();
+    this.setupDrawerHandlers();
+    this.positionPlayer();
+    
     window.addEventListener('resize', () => this.handleResize());
   },
 
@@ -16,110 +24,143 @@ export const playerManager = {
     const width = window.innerWidth;
     if (width < 768) {
       this.currentViewport = 'mobile';
-    } else if (width >= 768 && width <= 1024) {
+    } else if (width >= 768 && width < 1024) {
       this.currentViewport = 'tablet';
     } else {
       this.currentViewport = 'desktop';
     }
   },
 
-  setupTabletTrigger() {
-    const trigger = document.getElementById('tabletPlayerTrigger');
-    if (trigger) {
-      trigger.addEventListener('click', () => {
-        this.toggleTabletPlayer();
-      });
-    }
+  getCurrentViewport() {
+    return this.currentViewport;
   },
 
-  setupMobileTrigger() {
-    const trigger = document.querySelector('.navbar-icon[data-action="player"]');
-    if (trigger) {
-      trigger.addEventListener('click', () => {
-        this.toggleMobilePlayer();
+  setupPlayerTriggers() {
+    // Mobile: Use navbar's "now playing" area to open drawer
+    const nowPlayingArea = document.getElementById('now-playing-area');
+    if (nowPlayingArea) {
+      nowPlayingArea.addEventListener('click', () => {
+        if (this.currentViewport === 'mobile') {
+          this.openDrawer();
+        }
       });
     }
+
+    // Tablet: Create a floating trigger button (navbar is hidden on tablet)
+    this.createTabletTrigger();
+    
+    // Desktop: No trigger needed - player is in bento grid
   },
 
-  setupOffcanvasHandlers() {
-    const offcanvas = document.querySelector('.offcanvas-player');
-    if (offcanvas) {
-      const handle = offcanvas.querySelector('.offcanvas-handle');
-      if (handle) {
-        let startY = 0;
-        let currentY = 0;
+  createTabletTrigger() {
+    // Remove existing trigger if any
+    if (this.tabletTrigger) {
+      this.tabletTrigger.remove();
+    }
 
-        handle.addEventListener('touchstart', (e) => {
-          startY = e.touches[0].clientY;
-        });
+    // Create new trigger
+    this.tabletTrigger = document.createElement('button');
+    this.tabletTrigger.className = 'tablet-player-trigger';
+    this.tabletTrigger.setAttribute('aria-label', 'Toggle music player');
+    this.tabletTrigger.innerHTML = `
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.369 4.369 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z" />
+      </svg>
+    `;
+    
+    document.body.appendChild(this.tabletTrigger);
+    
+    this.tabletTrigger.addEventListener('click', () => {
+      if (this.currentViewport === 'tablet') {
+        this.toggleDrawer();
+      }
+    });
+    
+    this.updateTabletTriggerVisibility();
+  },
 
-        handle.addEventListener('touchmove', (e) => {
-          currentY = e.touches[0].clientY;
-          const diff = currentY - startY;
-          if (diff > 0) {
-            offcanvas.style.transform = `translateY(${diff}px)`;
-          }
-        });
-
-        handle.addEventListener('touchend', (e) => {
-          const diff = currentY - startY;
-          if (diff > 100) {
-            this.closeOffcanvas();
-          } else {
-            offcanvas.style.transform = '';
-          }
-        });
+  updateTabletTriggerVisibility() {
+    if (this.tabletTrigger) {
+      if (this.currentViewport === 'tablet') {
+        this.tabletTrigger.style.display = 'flex';
+      } else {
+        this.tabletTrigger.style.display = 'none';
       }
     }
   },
 
-  toggleTabletPlayer() {
-    this.isTabletOffcanvasOpen = !this.isTabletOffcanvasOpen;
-    const offcanvas = document.querySelector('.offcanvas-player');
-    if (offcanvas) {
-      offcanvas.classList.toggle('active', this.isTabletOffcanvasOpen);
+  setupDrawerHandlers() {
+    const drawer = document.getElementById('drawer');
+    if (!drawer) return;
+
+    // Handle swipe down to close
+    const drawerDrag = drawer.querySelector('.drawerDrag');
+    if (drawerDrag) {
+      let startY = 0;
+      let currentY = 0;
+      let isDragging = false;
+
+      drawerDrag.addEventListener('touchstart', (e) => {
+        startY = e.touches[0].clientY;
+        isDragging = true;
+      });
+
+      drawerDrag.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        currentY = e.touches[0].clientY;
+        const diff = currentY - startY;
+        if (diff > 0) {
+          drawer.style.transform = `translateY(${diff}px)`;
+        }
+      });
+
+      drawerDrag.addEventListener('touchend', () => {
+        if (!isDragging) return;
+        isDragging = false;
+        
+        const diff = currentY - startY;
+        if (diff > 100) {
+          this.closeDrawer();
+        } else {
+          drawer.style.transform = '';
+        }
+      });
     }
   },
 
-  toggleMobilePlayer() {
-    this.isMobileOffcanvasOpen = !this.isMobileOffcanvasOpen;
-    const offcanvas = document.querySelector('.offcanvas-player');
-    if (offcanvas) {
-      offcanvas.classList.toggle('active', this.isMobileOffcanvasOpen);
+  openDrawer() {
+    const drawer = document.getElementById('drawer');
+    if (drawer && (this.currentViewport === 'mobile' || this.currentViewport === 'tablet')) {
+      drawer.showPopover();
+      this.isOffcanvasOpen = true;
     }
   },
 
-  closeOffcanvas() {
-    this.isTabletOffcanvasOpen = false;
-    this.isMobileOffcanvasOpen = false;
-    const offcanvas = document.querySelector('.offcanvas-player');
-    if (offcanvas) {
-      offcanvas.classList.remove('active');
-      offcanvas.style.transform = '';
+  closeDrawer() {
+    const drawer = document.getElementById('drawer');
+    if (drawer) {
+      drawer.hidePopover();
+      drawer.style.transform = '';
+      this.isOffcanvasOpen = false;
     }
   },
 
-  movePlayerToDesktopCard() {
-    const bentoPlayerCard = document.getElementById('bentoPlayerContent');
-    const currentPlayer = document.getElementById('musicPlayer');
+  toggleDrawer() {
+    if (this.isOffcanvasOpen) {
+      this.closeDrawer();
+    } else {
+      this.openDrawer();
+    }
+  },
+
+  positionPlayer() {
+    // Desktop: Player should be in bento grid
+    // Mobile/Tablet: Player should be in drawer
     
-    if (bentoPlayerCard && currentPlayer) {
-      bentoPlayerCard.appendChild(currentPlayer);
-      currentPlayer.style.position = 'relative';
-      currentPlayer.style.width = '100%';
-      currentPlayer.style.height = '100%';
-    }
-  },
-
-  movePlayerToOffcanvas() {
-    const offcanvasContent = document.querySelector('.offcanvas-content');
-    const currentPlayer = document.getElementById('musicPlayer');
-    
-    if (offcanvasContent && currentPlayer) {
-      offcanvasContent.appendChild(currentPlayer);
-      currentPlayer.style.position = 'relative';
-      currentPlayer.style.width = '100%';
-      currentPlayer.style.height = 'auto';
+    if (this.currentViewport === 'desktop') {
+      this.closeDrawer();
+      // Player remains in drawer, but bento grid card can show player controls
+      // The actual music player drawer is still used, just triggered differently
     }
   },
 
@@ -128,26 +169,32 @@ export const playerManager = {
     this.detectViewport();
 
     if (oldViewport !== this.currentViewport) {
-      if (this.currentViewport === 'desktop') {
-        this.closeOffcanvas();
-        this.movePlayerToDesktopCard();
-      } else {
-        this.movePlayerToOffcanvas();
-      }
+      this.handleViewportChange();
     }
   },
 
-  embedPlayer(playerHTML) {
+  handleViewportChange() {
+    // Update trigger visibility
+    this.updateTabletTriggerVisibility();
+    
+    // Position player appropriately
+    this.positionPlayer();
+    
+    // Close drawer if switching to desktop
     if (this.currentViewport === 'desktop') {
-      const bentoPlayerContent = document.getElementById('bentoPlayerContent');
-      if (bentoPlayerContent) {
-        bentoPlayerContent.innerHTML = playerHTML;
-      }
-    } else {
-      const offcanvasContent = document.querySelector('.offcanvas-content');
-      if (offcanvasContent) {
-        offcanvasContent.innerHTML = playerHTML;
-      }
+      this.closeDrawer();
     }
   }
 };
+
+// Auto-initialize when imported
+if (typeof window !== 'undefined') {
+  window.playerManager = playerManager;
+  
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => playerManager.init());
+  } else {
+    playerManager.init();
+  }
+}
