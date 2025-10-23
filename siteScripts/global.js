@@ -2,17 +2,16 @@ import { IDS, CLASSES, ROUTES, THEMES, STORAGE_KEYS, ICONS, AUDIO_FORMATS, REPEA
 import { music } from "../modules/library.js";
 import { render, create } from "./utilities/templates.js";
 import { encodeURIComponent } from './utilities/parsers.js';
-import { homePage } from './pages/statics.js'; // Remove views from this import
+import { homePage } from './pages/statics.js';
 import { pageLoader } from './pages/rendering.js';
 import { ui, pageUpdates } from './pages/updates.js';
 import { deepLinkRouter } from './pages/router.js';
-
 
 const ACTION_GRID_ITEMS = [
   { id: 'play-next', icon: 'M9 5l7 7-7 7M15 5v14', label: 'Play Next' },
   { id: 'add-queue', icon: 'M12 6v6m0 0v6m0-6h6m-6 0H6', label: 'Add to Queue' },
   { id: 'add-playlist', icon: 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012 2v2M7 7h10', label: 'Add to Playlist' },
-  { id: 'share', icon: 'M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z', label: 'Share' },
+  { id: 'share', icon: 'M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684z', label: 'Share' },
   { id: 'download', icon: 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4', label: 'Download' },
   { id: 'view-artist', icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z', label: 'View Artist' }
 ];
@@ -20,7 +19,7 @@ const ACTION_GRID_ITEMS = [
 const TOAST_ICONS = {
   [NOTIFICATION_TYPES.SUCCESS]: '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>',
   [NOTIFICATION_TYPES.ERROR]: '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>',
-  [NOTIFICATION_TYPES.WARNING]: '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.742-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>',
+  [NOTIFICATION_TYPES.WARNING]: '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>',
   [NOTIFICATION_TYPES.INFO]: '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>'
 };
 
@@ -319,6 +318,89 @@ const storage = {
       const data = storage.load(key);
       if (data) loader(data);
     });
+  }
+};
+
+// Create views object since it's referenced elsewhere
+const views = {
+  showFavoriteSongs: () => {
+    console.log('Show favorite songs');
+  },
+
+  showFavoriteArtists: () => {
+    console.log('Show favorite artists');
+  },
+
+  showFavoriteAlbums: () => {
+    console.log('Show favorite albums');
+  },
+
+  showRecentlyPlayed: () => {
+    if (window.musicPlayer?.mainPlayer) {
+      window.musicPlayer.mainPlayer.open();
+      setTimeout(() => window.musicPlayer.mainPlayer.switchTab('recent'), 50);
+    }
+  },
+
+  showAllAlbums: () => {
+    console.log('Show all albums');
+  },
+
+  showPlaylists: () => {
+    if (window.playlists?.showAll) {
+      window.playlists.showAll();
+    }
+  },
+
+  showStats: () => {
+    console.log('Show stats');
+  },
+
+  renderEmptyState: (title, message, description) => {
+    return `
+      <div class="empty-state text-center py-12">
+        <div class="empty-icon mb-4">
+          <svg class="w-16 h-16 mx-auto text-gray-600" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold mb-2">${title}</h3>
+        <p class="text-gray-400 mb-4">${message}</p>
+        ${description ? `<p class="text-sm text-gray-500">${description}</p>` : ''}
+      </div>
+    `;
+  }
+};
+
+// Create navigation object
+const navigation = {
+  initialize: () => {
+    console.log('Navigation initialized');
+  },
+  
+  pages: {
+    loadArtistPage: (artistData, albumName = null) => {
+      if (window.modernPageRenderer) {
+        window.modernPageRenderer.navigateToArtist(artistData);
+      }
+    },
+    
+    loadAlbumView: (albumName) => {
+      const artistData = window.music?.find(artist => 
+        artist.albums?.some(album => album.album === albumName)
+      );
+      if (artistData && window.modernPageRenderer) {
+        window.modernPageRenderer.navigateToArtist(artistData);
+        setTimeout(() => {
+          const albumElement = document.querySelector(`[data-album="${albumName}"]`);
+          if (albumElement) {
+            albumElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            albumElement.classList.add('highlighted');
+            setTimeout(() => albumElement.classList.remove('highlighted'), 2000);
+          }
+        }, 500);
+      }
+    }
   }
 };
 
@@ -1511,7 +1593,7 @@ const musicPlayer = {
             }
             const nextInAlbum = musicPlayer.ui.getNextInAlbum();
             if (nextInAlbum) {
-                musicPlayer.ui.playSong(nextInAlbum);
+                                musicPlayer.ui.playSong(nextInAlbum);
             }
         },
 
@@ -1632,11 +1714,11 @@ const musicPlayer = {
         },
 
         playSong: async (songData) => {
-          if (!songData) return;
+            if (!songData) return;
             musicPlayer.ui.initialize();
-                ui.setLoadingState(true);
+            ui.setLoadingState(true);
             
-          if (appState.currentSong) {
+            if (appState.currentSong) {
                 musicPlayer.ui.addToRecentlyPlayed(appState.currentSong);
             }
             
@@ -1657,15 +1739,15 @@ const musicPlayer = {
                     eventHandlers.bindControlEvents?.(); 
                     musicPlayer.ui.bindSeekBar(); 
                 }, 100);
-              dispatchPlayerStateChange();
+                musicPlayer.playback.dispatchPlayerStateChange();
             } else {
                 appState.isPlaying = false;
                 ui.updatePlayPauseButtons();
                 notificationPlayer.playbackState.onPause();
-              dispatchPlayerStateChange();
+                musicPlayer.playback.dispatchPlayerStateChange();
             }
             ui.setLoadingState(false);
-          },
+        },
 
         loadAudioFile: async (songData) => {
             if (!songData || !songData.title) {
@@ -1848,7 +1930,7 @@ const musicPlayer = {
             
             musicPlayer.ui.setProgressUI(percent, currentTime);
             musicPlayer.ui.updateBufferDisplay();
-          dispatchPlayerStateChange();
+            musicPlayer.playback.dispatchPlayerStateChange();
         },
 
         updateBufferDisplay: () => {
@@ -1966,7 +2048,7 @@ const app = {
         
         musicPlayer.ui.initialize();
 
-        
+        navigation.initialize();
         homePage.initialize();
 
         eventHandlers.init();
@@ -1974,14 +2056,15 @@ const app = {
         app.resetUI();
         app.syncGlobalState();
 
-        deepLinkRouter.initialize();
-        deepLinkRouter.bindPopState();
+        if (deepLinkRouter.init) {
+            deepLinkRouter.init();
+        }
     },
 
     resetUI: function() {
-        const nowPlayingArea = document.querySelector(NAVBAR.nowPlaying);
+        const nowPlayingArea = document.querySelector('.navbar-now-playing');
         if (nowPlayingArea) {
-            nowPlayingArea.classList.remove(CLASSES.hasSong);
+            nowPlayingArea.classList.remove('has-song');
         }
         ui.updateCounts();
     },
@@ -2168,7 +2251,9 @@ const playlists = {
                       </div>
                       <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button class="play-playlist-btn w-10 h-10 bg-accent-primary rounded-full flex items-center justify-center hover:scale-110 transition-transform" data-playlist-id="${playlist.id}">
-                          ${ICONS.play}
+                          <svg viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+                            <path d="M8 5v14l11-7z"/>
+                          </svg>
                         </button>
                       </div>
                     </div>
@@ -2181,7 +2266,7 @@ const playlists = {
                         </button>
                         <button class="delete-playlist-btn px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors" data-playlist-id="${playlist.id}">
                           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
-                            <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 013.878.512.75.75 0 11-.256 1.478l-.209-.035-1.005 13.07a3 3 0 01-2.991 2.77H8.084a3 3 0 01-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 01-.256-1.478A48.567 48.567 0 017.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 013.369 0c1.603.051 2.815 1.387 2.815 2.951zm-6.136-1.452a51.196 51.196 0 013.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 00-6 0v-.113c0-.794.609-1.428 1.364-1.452zm-.355 5.945a.75.75 0 10-1.5.058l.347 9a.75.75 0 101.499-.058l-.346-9zm5.48.058a.75.75 0 10-1.498-.058l-.347 9a.75.75 0 001.5.058l.345-9z" clip-rule="evenodd" />
+                            <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 013.878.512.75.75 0 11-.256 1.478l-.209-.035-1.005 13.07a3 3 0 01-2.991 2.77H8.084a3 3 0 01-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 01-.256-1.478A48.567 48.567 0 017.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 013.369 0c1.603.051 2.815 1.387 2.815 2.951zm-6.136-1.452a51.196 51.196 0 013.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 00-6 0v-.113c0-.794.609-1.428 1.364-1.452zm-.355 5.945a.75.75 0 10-1.5.058l.347 9a.75.75 0 101.499-.058l-.346-9zm5.48.058a.75.75 0 10-1.498-.058l-.347 9a.75.75 0 001.5.058l.345-9z" clip-rule="evenodd"/>
                           </svg>
                         </button>
                       </div>
@@ -2226,9 +2311,11 @@ const playlists = {
                       <p class="text-gray-400 mb-6">${playlist.songs.length} song${playlist.songs.length !== 1 ? "s" : ""} • Created ${new Date(playlist.created).toLocaleDateString()}</p>
                       <div class="flex gap-4">
                         <button class="play-playlist-btn bg-accent-primary text-white px-8 py-3 rounded-full hover:bg-accent-secondary transition-colors flex items-center gap-2" data-playlist-id="${playlist.id}" ${
-            playlist.songs.length === 0 ? "disabled" : ""
-          }>
-                          ${ICONS.play}
+                          playlist.songs.length === 0 ? "disabled" : ""
+                        }>
+                          <svg viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+                            <path d="M8 5v14l11-7z"/>
+                          </svg>
                           Play
                         </button>
                         <button class="edit-playlist-btn bg-gray-600 text-white px-6 py-3 rounded-full hover:bg-gray-500 transition-colors" data-playlist-id="${playlist.id}">
@@ -2267,13 +2354,15 @@ const playlists = {
                       ${playlist.songs
                         .map(
                           (song, index) => `
-                        <div class="song-row grid grid-cols-12 gap-4 items-center px-4 py-3 rounded-lg hover:bg-white/5 transition-colors cursor-pointer group" data-song='${JSON.stringify(song).replace(/"/g, "&quot;")}' data-playlist-id="${
+                        <div class="song-row grid grid-cols-12 gap-4 items-center px-4 py-3 rounded-lg hover:bg-white/5 transition-colors cursor-pointer group" data-song='${JSON.stringify(song).replace(/'/g, "&#39;")}' data-playlist-id="${
                             playlist.id
                           }" data-song-index="${index}">
                           <div class="col-span-1 text-gray-400 group-hover:hidden">${index + 1}</div>
                           <div class="col-span-1 hidden group-hover:block">
                             <button class="play-song-btn w-8 h-8 bg-accent-primary rounded-full flex items-center justify-center hover:scale-110 transition-transform">
-                              ${ICONS.play}
+                              <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+                                <path d="M8 5v14l11-7z"/>
+                              </svg>
                             </button>
                           </div>
                           <div class="col-span-5 flex items-center gap-3">
@@ -2510,13 +2599,13 @@ const eventHandlers = {
 
   bindControls: () => {
     const idTrigger = $byId(IDS.nowPlayingArea);
-    const selTrigger = document.querySelector(NAVBAR.nowPlaying);
+    const selTrigger = document.querySelector('.navbar-now-playing');
     [idTrigger, selTrigger].filter(Boolean).forEach((el) => bindClick(el, () => musicPlayer.mainPlayer.toggle()));
-    const navbarPlayPause = document.querySelector(NAVBAR.playPause);
+    const navbarPlayPause = document.querySelector('.navbar-play-pause');
     if (navbarPlayPause) bindClick(navbarPlayPause, () => musicPlayer.mainPlayer.toggle());
-    const navbarPrevious = document.querySelector(NAVBAR.previous);
+    const navbarPrevious = document.querySelector('.navbar-previous');
     if (navbarPrevious) bindClick(navbarPrevious, () => musicPlayer.playback.previous());
-    const navbarNext = document.querySelector(NAVBAR.next);
+    const navbarNext = document.querySelector('.navbar-next');
     if (navbarNext) bindClick(navbarNext, () => musicPlayer.playback.next());
   },
 
@@ -2549,13 +2638,13 @@ const eventHandlers = {
 
   bindPopups: () => {
     const popupControls = {
-      [MUSIC_PLAYER.close]: musicPlayer.mainPlayer.close,
-      [MUSIC_PLAYER.play]: musicPlayer.mainPlayer.toggle,
-      [MUSIC_PLAYER.previous]: musicPlayer.playback.previous,
-      [MUSIC_PLAYER.next]: musicPlayer.playback.next,
-      [MUSIC_PLAYER.shuffle]: musicPlayer.playback.shuffle.toggle,
-      [MUSIC_PLAYER.repeat]: musicPlayer.playback.repeat.toggle,
-      [MUSIC_PLAYER.favoriteBtn]: () => {
+      '.music-player-close': musicPlayer.mainPlayer.close,
+      '.music-player-play': musicPlayer.mainPlayer.toggle,
+      '.music-player-previous': musicPlayer.playback.previous,
+      '.music-player-next': musicPlayer.playback.next,
+      '.music-player-shuffle': musicPlayer.playback.shuffle.toggle,
+      '.music-player-repeat': musicPlayer.playback.repeat.toggle,
+      '.music-player-favorite-btn': () => {
         if (appState.currentSong) {
           appState.favorites.toggle("songs", appState.currentSong.id);
           ui.updateFavoriteButton();
@@ -2574,7 +2663,7 @@ const eventHandlers = {
   },
 
   bindProgress: () => {
-    const progressBar = document.querySelector(MUSIC_PLAYER.progressBar);
+    const progressBar = document.querySelector('.music-player-progress-bar');
     if (!progressBar) return;
     const handleProgressClick = (e) => {
       if (!appState.currentSong || !appState.audio || !appState.duration) return;
@@ -2642,7 +2731,7 @@ const eventHandlers = {
       const menuTrigger = $byId(IDS.menuTrigger);
       if (dropdownMenu && !dropdownMenu.contains(e.target) && !menuTrigger?.contains(e.target)) dropdown.close();
       const drawerEl = $byId(IDS.drawer);
-      const nowPlayingEl = document.querySelector(NAVBAR.nowPlaying);
+      const nowPlayingEl = document.querySelector('.navbar-now-playing');
       if (appState.isPopupVisible && drawerEl && !drawerEl.contains(e.target) && !nowPlayingEl?.contains(e.target)) musicPlayer.mainPlayer.close();
       const navItem = e.target.closest("[data-nav]");
       if (navItem) {
@@ -2711,7 +2800,7 @@ if (window.music) {
   app.initialize();
 }
 
-
+window.navigation = navigation;
 window.playlists = playlists;
 window.views = views;
 
@@ -2751,5 +2840,7 @@ export {
     eventHandlers,
     app,
     pageLoader,
+    navigation,
+    views,
     ACTION_GRID_ITEMS
 };
