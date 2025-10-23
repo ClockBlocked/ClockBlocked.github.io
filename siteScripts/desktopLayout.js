@@ -6,8 +6,9 @@ export function initDesktopLayout() {
 
   function handleDesktopLayout() {
     const isDesktop = window.innerWidth >= 1024;
+    const isTablet = window.innerWidth >= 768 && window.innerWidth < 1024;
 
-    if (isDesktop && !desktopElementsInitialized) {
+    if ((isDesktop || isTablet) && !desktopElementsInitialized) {
       desktopElementsInitialized = true;
 
       const menuTrigger = document.createElement('button');
@@ -175,7 +176,7 @@ export function initDesktopLayout() {
 
       menuObserver.observe(menuSidebar, { childList: true, subtree: true });
       setTimeout(() => menuObserver.disconnect(), 2000);
-    } else if (!isDesktop && desktopElementsInitialized) {
+    } else if (!isDesktop && !isTablet && desktopElementsInitialized) {
       desktopElementsInitialized = false;
       document.querySelector('.desktop-menu-trigger')?.remove();
       document.querySelector('.desktop-menu-sidebar')?.remove();

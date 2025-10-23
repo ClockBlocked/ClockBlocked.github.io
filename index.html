@@ -10,7 +10,7 @@
 <title id="dynamicTitle">
 MyBeats:  Stream & share your favorite music for free.
 </title>
-
+  
 <meta name="description" content="Stream & share your favourite music for free." />
 <meta name="keywords" content="music, player, web, audio, streaming, playlist, songs, albums, artists, videos, sharing, media, radio, pop, hiphop, country, dance, party, dubstep, alternative, rock, free, forever" />
 <meta name="author" content="ClockBlocked" />
@@ -924,7 +924,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 </script>
-
+    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+    
+  
+    <script>
+        eruda.init();
+        
+        // You can now use console.log and see it in the Eruda console!
+        console.log('Eruda has been initialized!');
+        console.warn('This is a test warning.');
+        console.error('This is a test error.');
+    </script>
 <!-- Global Initialize -->
 <script type="module">
     import { music } from './modules/library.js';
