@@ -116,10 +116,8 @@ MyBeats:  Stream & share your favorite music for free. TestTest
 <style>
 /*
  * ===========================================
- * BENTO GRID STYLES (Using [data-theme="dark"] variables)
+ * UPGRADED BENTO STYLES (Mobile-First & Distinct)
  * ===========================================
- * This file assumes your [data-theme="dark"] variables
- * are available in the scope where these components are rendered.
  */
 
 /* * 1. SCROLLBAR & ANIMATIONS
@@ -139,13 +137,11 @@ MyBeats:  Stream & share your favorite music for free. TestTest
   background-color: var(--scrollbar-thumb-hover);
 }
 
-/* Shimmer animation */
 @keyframes shimmer {
   0% { transform: translateX(-100%); }
   100% { transform: translateX(100%); }
 }
 
-/* Fade-in animation for content */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
@@ -156,13 +152,14 @@ MyBeats:  Stream & share your favorite music for free. TestTest
   animation: fadeIn 0.5s ease-out forwards;
 }
 
-/* * 2. BENTO GRID & CARD STYLES
+/* * 2. BENTO GRID (MOBILE-FIRST RESPONSIVE)
  * -----------------------------------------
  */
 .bento-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-auto-rows: 200px; /* You can adjust this base height */
+  /* Mobile: Single-column stack */
+  grid-template-columns: 1fr;
+  grid-auto-rows: auto;
   gap: 1rem;
   padding: 1rem;
   max-width: 1400px;
@@ -171,7 +168,7 @@ MyBeats:  Stream & share your favorite music for free. TestTest
 
 .bento-card {
   background-color: var(--background-200);
-  border-radius: 0.75rem; /* Using a slightly smaller radius */
+  border-radius: 0.75rem;
   border: 1px solid var(--border-200);
   padding: 1.25rem;
   display: flex;
@@ -179,19 +176,40 @@ MyBeats:  Stream & share your favorite music for free. TestTest
   overflow: hidden;
   position: relative;
   transition: all 0.3s ease;
+  /* Set a min-height for stacked mobile cards */
+  min-height: 250px;
+  /* Mobile: All cards span 1 column */
+  grid-column: span 1 !important;
+  grid-row: span 1 !important;
 }
 
 .bento-card:hover {
   border-color: var(--border-300);
   box-shadow: 0 8px 30px var(--shadowColor);
-  transform: translateY(-4px);
 }
 
-/* Grid spanning attributes */
-[data-span-col="2"] { grid-column: span 2; }
-[data-span-col="3"] { grid-column: span 3; }
-[data-span-row="2"] { grid-row: span 2; }
-[data-span-row="3"] { grid-row: span 3; }
+/* Tablet & Desktop: "Un-stack" the grid */
+@media (min-width: 768px) {
+  .bento-grid {
+    /* Tablet/Desktop: 3-column grid */
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: 220px; /* Taller base row */
+  }
+
+  .bento-card {
+    min-height: auto; /* Reset min-height */
+  }
+
+  /* Apply data-span attributes only on larger screens */
+  [data-span-col="2"] { grid-column: span 2 !important; }
+  [data-span-col="3"] { grid-column: span 3 !important; }
+  [data-span-row="2"] { grid-row: span 2 !important; }
+  [data-span-row="3"] { grid-row: span 3 !important; }
+
+  .bento-card:hover {
+     transform: translateY(-4px); /* Add lift effect only on desktop */
+  }
+}
 
 /* Card Header */
 .card-header {
@@ -201,14 +219,12 @@ MyBeats:  Stream & share your favorite music for free. TestTest
   margin-bottom: 1rem;
   flex-shrink: 0;
 }
-
 .card-title {
   font-size: 1.25rem;
   font-weight: 600;
   color: var(--text-100);
   margin: 0;
 }
-
 .card-link {
   font-size: 0.875rem;
   color: var(--accent-primary);
@@ -216,13 +232,10 @@ MyBeats:  Stream & share your favorite music for free. TestTest
   font-weight: 500;
   transition: all 0.2s ease;
 }
-
 .card-link:hover {
   color: var(--accent-primary-hover);
   text-decoration: underline;
 }
-
-/* Card Content */
 .card-content {
   flex-grow: 1;
   overflow-y: auto;
@@ -240,7 +253,6 @@ MyBeats:  Stream & share your favorite music for free. TestTest
   overflow: hidden;
   border-radius: 0.5rem;
 }
-
 .skeleton-loader::before {
   content: '';
   position: absolute;
@@ -249,85 +261,69 @@ MyBeats:  Stream & share your favorite music for free. TestTest
   background: linear-gradient(90deg, transparent, var(--background-400), transparent);
   animation: shimmer 1.5s infinite linear;
 }
-
 [data-loader="true"] .card-content > *:not(.skeleton-loader) {
   display: none;
   opacity: 0;
 }
-
 [data-loader="true"] .skeleton-loader {
   display: block;
 }
 
-
-/* * 4. COMPONENT: RECENTLY PLAYED / FAVORITE SONGS
+/* * 4. COMPONENT: SONGS (RECENT/FAVORITE)
  * -----------------------------------------
  */
-.recent-tracks {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
 
+/* Base styles for a single track item */
 .recent-track {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.5rem;
+  padding: 0.75rem; /* More padding */
   border-radius: 0.5rem;
   cursor: pointer;
   transition: background-color 0.2s ease;
-  position: relative; /* For the heart button */
+  position: relative;
 }
-
 .recent-track:hover {
   background-color: var(--background-300);
 }
-
 .track-art-container {
   position: relative;
-  width: 40px;
-  height: 40px;
+  width: 48px; /* Larger image */
+  height: 48px;
   flex-shrink: 0;
 }
-
 .track-art {
   width: 100%;
   height: 100%;
-  border-radius: 0.25rem;
+  border-radius: 0.375rem; /* Softer radius */
   object-fit: cover;
   transition: filter 0.2s ease;
 }
-
 .track-info {
   flex-grow: 1;
   min-width: 0;
 }
-
 .track-title {
-  font-weight: 500;
-  color: var(--text-200);
+  font-weight: 600; /* Bolder */
+  color: var(--text-100); /* Brighter */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
 .track-artist {
   font-size: 0.875rem;
-  color: var(--text-300);
+  color: var(--text-300); /* Lighter */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   cursor: pointer;
   transition: color 0.2s ease;
 }
-
 .track-artist:hover {
   color: var(--accent-primary-hover);
   text-decoration: underline;
 }
-
-/* Play button overlay for track art */
 .play-button-overlay {
   position: absolute;
   inset: 0;
@@ -335,30 +331,26 @@ MyBeats:  Stream & share your favorite music for free. TestTest
   align-items: center;
   justify-content: center;
   background-color: rgba(0, 0, 0, 0.5);
-  border-radius: 0.25rem;
+  border-radius: 0.375rem; /* Match image */
   color: var(--text-100);
   opacity: 0;
   transition: all 0.2s ease;
   pointer-events: none;
 }
-
 .play-button-overlay svg {
-  width: 20px;
-  height: 20px;
+  width: 24px; /* Larger icon */
+  height: 24px;
 }
-
 .recent-track:hover .play-button-overlay {
   opacity: 1;
 }
 .recent-track:hover .track-art {
   filter: brightness(0.7);
 }
-
-/* Favorite heart button */
 .favorite-heart {
   position: absolute;
   top: 50%;
-  right: 0.5rem;
+  right: 0.75rem;
   transform: translateY(-50%);
   background: none;
   border: none;
@@ -368,46 +360,75 @@ MyBeats:  Stream & share your favorite music for free. TestTest
   transition: all 0.2s ease;
   opacity: 0.7;
 }
-
 .favorite-heart.is-favorite {
   color: var(--accent-danger);
   opacity: 1;
 }
-
 .favorite-heart:hover {
   color: var(--accent-danger-hover);
   transform: translateY(-50%) scale(1.15);
   opacity: 1;
 }
 
-/* * 5. COMPONENT: PLAYLISTS
+/* === LAYOUT OVERRIDES FOR SONG LISTS === */
+
+/* 1. Favorite Songs (2x1 Card): Single column list */
+#${data.IDS.favoriteSongsSection} .recent-tracks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* 2. Recently Played (2x2 Card): 2-column grid */
+#${data.IDS.recentlyPlayedSection} .recent-tracks {
+  display: grid;
+  grid-template-columns: 1fr; /* Mobile: 1 column */
+  gap: 0.5rem;
+}
+
+/* On tablet+, make Recently Played a 2-column grid */
+@media (min-width: 768px) {
+  #${data.IDS.recentlyPlayedSection} .recent-tracks {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+
+/* * 5. COMPONENT: PLAYLISTS (NEW "STACK" STYLE)
  * -----------------------------------------
  */
 .playlists-list {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.75rem; /* Space between "stacked" items */
 }
 
 .playlist-card {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.5rem;
+  padding: 0.75rem;
   border-radius: 0.5rem;
   cursor: pointer;
-  transition: background-color 0.2s ease;
   position: relative;
+  /* "Stacked" item look */
+  background-color: var(--background-300);
+  border: 1px solid var(--border-300);
+  transition: all 0.2s ease-out;
 }
 
 .playlist-card:hover {
-  background-color: var(--background-300);
+  /* "Pop out" effect */
+  transform: scale(1.03);
+  border-color: var(--accent-primary);
+  box-shadow: 0 4px 15px var(--shadowColor);
+  background-color: var(--background-350);
 }
 
 .playlist-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 0.5rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 0.375rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -415,20 +436,18 @@ MyBeats:  Stream & share your favorite music for free. TestTest
   background: linear-gradient(45deg, var(--accent-primary), var(--accent-primary-hover));
   color: var(--text-on-accent);
 }
-
 .playlist-icon svg {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   fill: currentColor;
 }
-
 .playlist-info {
   flex-grow: 1;
   min-width: 0;
 }
 .playlist-name {
-  font-weight: 500;
-  color: var(--text-200);
+  font-weight: 600; /* Bolder */
+  color: var(--text-100); /* Brighter */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -437,24 +456,24 @@ MyBeats:  Stream & share your favorite music for free. TestTest
   font-size: 0.875rem;
   color: var(--text-300);
 }
-
 .playlist-card .play-button-overlay {
+  opacity: 0; /* Hide by default */
   left: 50%;
   transform: translate(-50%, -50%);
   border-radius: 50%;
   width: 32px;
   height: 32px;
 }
-
 .playlist-card:hover .play-button-overlay {
-  opacity: 1;
+  opacity: 1; /* Show on hover */
 }
 
-/* * 6. COMPONENT: FAVORITE ARTISTS
+/* * 6. COMPONENT: FAVORITE ARTISTS (NEW GRID STYLE)
  * -----------------------------------------
  */
 .artist-grid {
   display: grid;
+  /* Responsive grid, min 100px width, max 1fr */
   grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   gap: 1rem;
 }
@@ -469,48 +488,49 @@ MyBeats:  Stream & share your favorite music for free. TestTest
   border-radius: 0.5rem;
   transition: background-color 0.2s ease;
 }
-
 .artist-card:hover {
   background-color: var(--background-300);
 }
-
 .artist-avatar-container {
   position: relative;
-  width: 80px;
-  height: 80px;
+  width: 100%;
+  aspect-ratio: 1/1; /* Responsive square */
 }
-
 .artist-avatar {
   width: 100%;
   height: 100%;
   border-radius: 50%;
   object-fit: cover;
-  transition: filter 0.2s ease;
+  transition: all 0.3s ease;
 }
-
 .artist-name {
   font-size: 0.875rem;
+  font-weight: 500;
   color: var(--text-200);
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   width: 100%;
+  margin-top: 0.25rem;
 }
-
 .artist-avatar-container .play-button-overlay {
   border-radius: 50%;
-}
-
-.artist-card:hover .play-button-overlay {
-  opacity: 1;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.3s ease;
 }
 .artist-card:hover .artist-avatar {
+  transform: scale(1.05); /* Zoom effect */
   filter: brightness(0.7);
+}
+.artist-card:hover .play-button-overlay {
+  opacity: 1;
+  transform: scale(1); /* Pop effect */
 }
 
 
-/* * 7. COMPONENT: DISCOVER ALBUMS
+/* * 7. COMPONENT: DISCOVER ALBUMS (Largely Unchanged)
  * -----------------------------------------
  */
 .album-grid {
@@ -518,7 +538,6 @@ MyBeats:  Stream & share your favorite music for free. TestTest
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   gap: 1rem;
 }
-
 .album-card {
   background-color: var(--background-250);
   border-radius: 0.5rem;
@@ -526,23 +545,19 @@ MyBeats:  Stream & share your favorite music for free. TestTest
   transition: all 0.3s ease;
   cursor: pointer;
 }
-
 .album-card:hover {
   background-color: var(--background-350);
   transform: translateY(-5px);
 }
-
 .album-cover-container {
   position: relative;
 }
-
 .album-cover {
   width: 100%;
   aspect-ratio: 1/1;
   object-fit: cover;
   display: block;
 }
-
 .album-overlay {
   position: absolute;
   inset: 0;
@@ -550,7 +565,6 @@ MyBeats:  Stream & share your favorite music for free. TestTest
   opacity: 0;
   transition: opacity 0.3s ease;
 }
-
 .album-play-btn {
   position: absolute;
   bottom: 0.75rem;
@@ -569,30 +583,24 @@ MyBeats:  Stream & share your favorite music for free. TestTest
   opacity: 0;
   transition: all 0.3s cubic-bezier(0.215, 0.610, 0.355, 1);
 }
-
 .album-play-btn svg {
   width: 20px;
   height: 20px;
 }
-
 .album-card:hover .album-overlay {
   opacity: 1;
 }
-
 .album-card:hover .album-play-btn {
   transform: translateY(0);
   opacity: 1;
 }
-
 .album-play-btn:hover {
   background-color: var(--accent-primary-hover);
   transform: scale(1.1);
 }
-
 .album-info {
   padding: 0.75rem;
 }
-
 .album-title {
   font-weight: 500;
   color: var(--text-200);
@@ -601,7 +609,6 @@ MyBeats:  Stream & share your favorite music for free. TestTest
   text-overflow: ellipsis;
   margin-bottom: 0.25rem;
 }
-
 .album-artist {
   font-size: 0.875rem;
   color: var(--text-300);
@@ -611,11 +618,11 @@ MyBeats:  Stream & share your favorite music for free. TestTest
   cursor: pointer;
   transition: color 0.2s ease;
 }
-
 .album-artist:hover {
   color: var(--accent-primary-hover);
   text-decoration: underline;
 }
+
 
 
 </style>
