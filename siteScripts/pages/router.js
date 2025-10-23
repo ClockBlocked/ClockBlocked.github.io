@@ -73,7 +73,7 @@ export const deepLinkRouter = {
     }
 
     if (window.appState?.router) {
-      window.appState.router.navigateTo(
+            window.appState.router.navigateTo(
         window.ROUTES?.ARTIST || 'artist',
         { artist: decodedName }
       );
@@ -210,7 +210,7 @@ export const deepLinkRouter = {
     }
   },
 
-  // Initialize the router
+  // Initialize the router (this was missing!)
   init() {
     // Handle browser back/forward buttons
     window.addEventListener('popstate', () => {
@@ -221,6 +221,19 @@ export const deepLinkRouter = {
     // Handle initial page load
     const pathInfo = this.parseCurrentPath();
     this.resolveRoute(pathInfo);
+  },
+
+  // Legacy compatibility function
+  initialize() {
+    return this.init();
+  },
+
+  // Bind popstate events for browser navigation
+  bindPopState() {
+    window.addEventListener('popstate', () => {
+      const pathInfo = this.parseCurrentPath();
+      this.resolveRoute(pathInfo);
+    });
   }
 };
 
