@@ -1,42 +1,5 @@
 import { viewManager } from '../viewManager.js';
 import { playerManager } from '../playerManager.js';
-import {
-  NAVBAR,
-    MUSIC_PLAYER,
-    CLASSES,
-    IDS,
-    REPEAT_MODES,
-    NOTIFICATION_TYPES
-       } from '../map.js';
-
-// We need to make sure these exist in global.js or remove them if they don't
-let appState, storage, notifications, musicPlayer, utils, MUSIC_PLAYER, CLASSES, IDS, REPEAT_MODES, NOTIFICATION_TYPES;
-
-// Try to import from global.js, but handle if some don't exist
-try {
-  const globalImports = await import('../global.js');
-  ({
-    appState,
-    storage,
-    notifications,
-    musicPlayer,
-    utils
-  } = globalImports);
-} catch (error) {
-  console.warn('Some imports from global.js not available:', error);
-  // Set fallbacks
-  appState = window.appState || {};
-  storage = window.storage || {};
-  notifications = window.notifications || { show: console.log };
-  musicPlayer = window.musicPlayer || {};
-  utils = window.utils || {};
-  NAVBAR = window.NAVBAR || {};
-  MUSIC_PLAYER = window.MUSIC_PLAYER || {};
-  CLASSES = window.CLASSES || {};
-  IDS = window.IDS || {};
-  REPEAT_MODES = window.REPEAT_MODES || {};
-  NOTIFICATION_TYPES = window.NOTIFICATION_TYPES || {};
-}
 
 export const pageUpdates = {
   breadCrumbs: (items, options = {}) => {
@@ -150,7 +113,6 @@ export const pageUpdates = {
     }
   },
 
-  // Rest of the file remains the same as in my previous response...
   updatePageMetadata: (metadata = {}) => {
     if (metadata.title) {
       document.title = metadata.title;
@@ -486,7 +448,6 @@ export const ui = {
     }
   },
 
-  // Rest of the UI functions continue...
   updateVolumeControl: (volume) => {
     const volumeSliders = document.querySelectorAll('.volume-slider');
     volumeSliders.forEach(slider => {
