@@ -488,22 +488,17 @@ case "enhancedArtist":
           </div>
           <div id="artists-grid" class="artists-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 px-4 sm:px-6"></div>
         `;
+   getViewHtml: (view, data) => {
+    switch (view) {
       case "home_bento":
         return `
-          <!-- 
-            This grid is now a 3-column grid.
-            - Recently Played: 2x2 block
-            - Favorite Artists: 1x1 block
-            - Your Playlists: 1x1 block
-            - Discover Albums: 3x1 full-width banner
-            - Favorite Songs: 2x1 block
-          -->
           <div class="bento-grid">
             <div class="bento-card" data-span-col="2" data-span-row="2" data-loader="true">
               <div class="card-header">
                 <h2 class="card-title">Recently Played</h2>
                 <a href="#" class="card-link" data-view="recent">View All</a>
               </div>
+              <!-- This ID is used to style the contents as a 2-column grid -->
               <div id="${data.IDS.recentlyPlayedSection}" class="card-content">
                 <div class="skeleton-loader"></div>
               </div>
@@ -544,6 +539,7 @@ case "enhancedArtist":
                 <h2 class="card-title">Favorite Songs</h2>
                 <a href="#" class="card-link" data-view="favorite-songs">View All</a>
               </div>
+              <!-- This ID is used to style the contents as a 1-column list -->
               <div id="${data.IDS.favoriteSongsSection}" class="card-content">
                 <div class="skeleton-loader"></div>
               </div>
@@ -557,6 +553,8 @@ case "enhancedArtist":
   },
 
   homeSection: {
+    // This function renders the track component.
+    // The CSS will determine if it's in a 1-col or 2-col layout.
     recentlyPlayed: (tracks, utils) => {
       let html = `<div class="recent-tracks animate-fade-in">`;
       tracks.forEach((track, index) => {
@@ -579,6 +577,7 @@ case "enhancedArtist":
       return html;
     },
 
+    // New "stacked card" styling for playlists
     playlists: (playlists) => {
       let html = `<div class="playlists-list animate-fade-in">`;
       playlists.forEach((playlist, index) => {
@@ -603,6 +602,7 @@ case "enhancedArtist":
       return html;
     },
 
+    // New responsive grid styling for artists
     favoriteArtists: (artists, utils) => {
       let html = `<div class="artist-grid animate-fade-in">`;
       artists.forEach((artistName, index) => {
@@ -622,6 +622,7 @@ case "enhancedArtist":
       return html;
     },
 
+    // Unchanged, this component is already visually distinct
     randomAlbums: (albums, utils) => {
       let html = `<div class="album-grid animate-fade-in">`;
       albums.forEach((album, index) => {
@@ -646,10 +647,11 @@ case "enhancedArtist":
       return html;
     },
 
+    // This function also renders the track component.
+    // CSS will style this as a 1-column list.
     favoriteSongs: (songs, utils) => {
       let html = `<div class="recent-tracks animate-fade-in">`;
       songs.forEach((song, index) => {
-        // Assuming you have a way to check if a song is favorited, you'd add 'is-favorite' class
         const isFavorited = true; // Replace with your logic
         html += `
           <div class="recent-track" data-song='${JSON.stringify(song).replace(/"/g, "&quot;")}' style="animation-delay: ${index * 100}ms;">
