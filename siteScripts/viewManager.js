@@ -569,7 +569,7 @@ export const viewManager = {
   },
 
   getRecentTracks(limit = 6) {
-    return [];
+    return window.appState?.recentlyPlayed?.slice(0, limit) || [];
   },
 
   getRandomAlbums(limit = 8) {
@@ -593,7 +593,9 @@ export const viewManager = {
   },
 
   getFavoriteSongs(limit = 6) {
-    return [];
+    if (!window.appState?.favorites) return [];
+    const favorites = Array.from(window.appState.favorites.songs || []);
+    return favorites.slice(0, limit);
   },
 
   calculateQuickStats() {
