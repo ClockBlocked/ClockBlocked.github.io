@@ -2728,7 +2728,7 @@ if (document.readyState === 'loading') {
 document.addEventListener('DOMContentLoaded', () => {
   app.initialize();
 
-  // viewManager.init() is called in constructor
+  viewManager.init();
   playerManager.init();
   navigation.initialize();
   
