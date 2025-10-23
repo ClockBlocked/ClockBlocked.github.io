@@ -2070,7 +2070,7 @@ const musicPlayer = {
     },
 };
 
-// Update the app.initialize function to properly initialize the router:
+// Update the app.initialize function in your global.js:
 
 const app = {
     initialize: function() {
@@ -2096,17 +2096,40 @@ const app = {
             console.warn('Router initialization failed - init method not found');
         }
         
-        // Create a simple router instance for appState if it doesn't exist
+        // Create a NON-CIRCULAR router instance for appState
         if (!appState.router) {
             appState.router = {
                 navigateTo: (route, params = {}) => {
+                    // Use deepLinkRouter's updateUrl method instead of calling resolveRoute
                     if (deepLinkRouter.updateUrl) {
                         deepLinkRouter.updateUrl(route, params);
                     }
                     
-                    // Trigger navigation
-                    const pathInfo = deepLinkRouter.parseCurrentPath();
-                    deepLinkRouter.resolveRoute(pathInfo);
+                    // Directly call viewManager instead of going through router resolution
+                    switch (route) {
+                        case window.ROUTES?.HOME || '/':
+                            if (window.viewManager) {
+                                window.viewManager.switchView('home');
+                            }
+                            break;
+                        case window.ROUTES?.ALL_ARTISTS || 'artists':
+                            if (window.viewManager) {
+                                window.viewManager.switchView('allArtists');
+                            }
+                            break;
+                        case window.ROUTES?.ARTIST || 'artist':
+                            if (params.artist && window.music) {
+                                const artistData = window.music.find(a => a.artist === params.artist);
+                                if (artistData && window.viewManager) {
+                                    window.viewManager.switchView('artist', { artistData });
+                                }
+                            }
+                            break;
+                        default:
+                            if (window.viewManager) {
+                                window.viewManager.switchView('home');
+                            }
+                    }
                 }
             };
         }
@@ -2144,8 +2167,14 @@ const app = {
     },
 
     goHome: function() {
-        if (appState.router) {
-            appState.router.navigateTo(ROUTES.HOME);
+        // Use viewManager directly instead of router to avoid circular calls
+        if (window.viewManager) {
+            window.viewManager.switchView('home');
+        }
+        
+        // Update URL if needed
+        if (window.location.pathname !== '/') {
+            window.history.pushState(null, '', '/');
         }
     }
 };
