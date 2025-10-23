@@ -1,17 +1,5 @@
 import { viewManager } from '../viewManager.js';
-import { playerManager } from '../playerManager.js';
-import {
-  appState,
-  storage,  
-  notifications,
-  musicPlayer,
-  utils,
-  playlists,
-  overlays,
-} from '../global.js';
-
-import { ui } from './updates.js';
-import { render } from '../utilities/templates.js';
+import { pageRendering } from './rendering.js';
 
 export const deepLinkRouter = {
   // Helper to encode names (spaces to periods)
@@ -42,11 +30,8 @@ export const deepLinkRouter = {
   resolveRoute(pathInfo) {
     const { route, params } = pathInfo;
 
-    if (!window.appState?.router) {
-      console.warn('Router not initialized yet');
-      return;
-    }
-
+    // Don't check for router initialization here to avoid circular calls
+    
     const routeHandlers = {
       '': () => this.navigateToHome(),
       'home': () => this.navigateToHome(),
@@ -63,10 +48,16 @@ export const deepLinkRouter = {
   },
 
   async navigateToHome() {
-    if (window.appState?.router) {
-      window.appState.router.navigateTo(window.ROUTES?.HOME || '/');
+    // Remove the router.navigateTo call to prevent circular loop
+    // Just update the URL directly if needed
+    if (window.location.pathname !== '/') {
+      window.history.pushState(null, '', '/');
     }
-    await viewManager.switchView('home');
+    
+    // Switch to home view
+    if (window.viewManager) {
+      await viewManager.switchView('home');
+    }
   },
 
   async navigateToArtist(artistName) {
@@ -84,21 +75,26 @@ export const deepLinkRouter = {
       return;
     }
 
-    if (window.appState?.router) {
-      window.appState.router.navigateTo(
-        window.ROUTES?.ARTIST || 'artist',
-        { artist: decodedName }
-      );
+    // Update URL directly without using router.navigateTo
+    const artistUrl = `/artist/${this.encodeName(decodedName)}`;
+    if (window.location.pathname !== artistUrl) {
+      window.history.pushState(null, '', artistUrl);
     }
 
-    await viewManager.switchView('artist', { artistData });
+    if (window.viewManager) {
+      await viewManager.switchView('artist', { artistData });
+    }
   },
 
   async navigateToAllArtists() {
-    if (window.appState?.router) {
-      window.appState.router.navigateTo(window.ROUTES?.ALL_ARTISTS || 'artists');
+    // Update URL directly
+    if (window.location.pathname !== '/artists') {
+      window.history.pushState(null, '', '/artists');
     }
-    await viewManager.switchView('allArtists');
+    
+    if (window.viewManager) {
+      await viewManager.switchView('allArtists');
+    }
   },
 
   async navigateToAlbum(artistName, albumName) {
@@ -110,11 +106,19 @@ export const deepLinkRouter = {
     const decodedArtist = artistName;
     const decodedAlbum = albumName;
 
-    if (window.appState?.router && window.music) {
+    if (window.music) {
       const artistData = window.music.find(a => a.artist === decodedArtist);
       if (artistData) {
+        // Update URL directly
+        const albumUrl = `/album/${this.encodeName(decodedArtist)}/${this.encodeName(decodedAlbum)}`;
+        if (window.location.pathname !== albumUrl) {
+          window.history.pushState(null, '', albumUrl);
+        }
+        
         // Navigate to artist page with specific album highlighted
-        await this.navigateToArtist(decodedArtist);
+        if (window.viewManager) {
+          await viewManager.switchView('artist', { artistData });
+        }
         
         // After navigation, scroll to and highlight the album
         setTimeout(() => {
@@ -137,6 +141,12 @@ export const deepLinkRouter = {
       return;
     }
 
+    // Update URL directly
+    const playlistUrl = `/playlist/${playlistId}`;
+    if (window.location.pathname !== playlistUrl) {
+      window.history.pushState(null, '', playlistUrl);
+    }
+
     if (window.playlists) {
       window.playlists.show(playlistId);
     }
@@ -144,6 +154,12 @@ export const deepLinkRouter = {
 
   navigateToFavorites(type) {
     const favoriteType = type || 'songs';
+    
+    // Update URL directly
+    const favoritesUrl = `/favorites/${favoriteType}`;
+    if (window.location.pathname !== favoritesUrl) {
+      window.history.pushState(null, '', favoritesUrl);
+    }
 
     if (window.views) {
       const handlers = {
@@ -164,6 +180,12 @@ export const deepLinkRouter = {
     }
 
     const decodedQuery = this.decodeName(query);
+    
+    // Update URL directly
+    const searchUrl = `/search/${this.encodeName(decodedQuery)}`;
+    if (window.location.pathname !== searchUrl) {
+      window.history.pushState(null, '', searchUrl);
+    }
 
     if (window.search) {
       window.search.performSearch(decodedQuery);
@@ -222,7 +244,7 @@ export const deepLinkRouter = {
     }
   },
 
-  // Initialize the router (this was missing!)
+  // Initialize the router
   init() {
     // Handle browser back/forward buttons
     window.addEventListener('popstate', () => {
@@ -230,9 +252,16 @@ export const deepLinkRouter = {
       this.resolveRoute(pathInfo);
     });
 
-    // Handle initial page load
+    // Handle initial page load only if we're not already on the home page
     const pathInfo = this.parseCurrentPath();
-    this.resolveRoute(pathInfo);
+    if (pathInfo.route !== 'home' || pathInfo.params.length > 0) {
+      this.resolveRoute(pathInfo);
+    } else {
+      // We're already on home, just initialize the view
+      if (window.viewManager) {
+        viewManager.switchView('home');
+      }
+    }
   },
 
   // Legacy compatibility function
@@ -261,363 +290,5 @@ if (typeof window !== 'undefined') {
   }
 }
 
-
-
-
-
-
-export const homePage = {
-  initialize: () => {
-    appState.homePageManager = {
-      renderHomePage: homePage.render,
-    };
-  },
-
-  render: async () => {
-    await viewManager.switchView('home');
-    homePage.bindEvents();
-  },
-
-  addStyles: () => {
-    if ($byId("bento-grid-styles")) return;
-
-    const styleEl = document.createElement("style");
-    styleEl.id = "bento-grid-styles";
-    styleEl.textContent = `
-      .bento-grid {
-        display: grid;
-        gap: 1.5rem;
-      }
-      
-      .bento-card {
-        border-radius: 1rem;
-        padding: 1.5rem;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-      }
-      
-      .bento-card:hover {
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-      }
-      
-      .card-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      }
-      
-      .card-content {
-        min-height: 200px;
-      }
-      
-      .skeleton-loader {
-        height: 200px;
-        background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
-        background-size: 200% 100%;
-        animation: loading 1.5s infinite;
-        border-radius: 0.5rem;
-      }
-      
-      @keyframes loading {
-        0% { background-position: 200% 0; }
-        100% { background-position: -200% 0; }
-      }
-      
-      .recent-tracks, .album-grid, .artist-grid, .playlists-list {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-      }
-      
-      .album-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-        gap: 1rem;
-      }
-      
-      .artist-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-        gap: 1rem;
-      }
-      
-      .track-item {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        padding: 0.5rem;
-        border-radius: 0.5rem;
-        transition: background-color 0.2s ease;
-      }
-      
-      .track-item:hover {
-        background-color: rgba(255, 255, 255, 0.05);
-      }
-      
-      .track-cover {
-        width: 48px;
-        height: 48px;
-        border-radius: 0.25rem;
-        object-fit: cover;
-      }
-      
-      .track-info {
-        flex: 1;
-        min-width: 0;
-      }
-      
-      .track-title {
-        font-weight: 500;
-        color: white;
-        margin-bottom: 0.25rem;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-      
-      .track-artist {
-        font-size: 0.875rem;
-        color: rgba(255, 255, 255, 0.7);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-      
-      .album-card {
-        text-align: center;
-      }
-      
-      .album-cover {
-        width: 100%;
-        aspect-ratio: 1;
-        border-radius: 0.5rem;
-        object-fit: cover;
-        margin-bottom: 0.5rem;
-      }
-      
-      .album-title {
-        font-weight: 500;
-        color: white;
-        font-size: 0.875rem;
-        margin-bottom: 0.25rem;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-      
-      .album-artist {
-        font-size: 0.75rem;
-        color: rgba(255, 255, 255, 0.7);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-      
-      .artist-card {
-        text-align: center;
-      }
-      
-      .artist-avatar {
-        width: 100%;
-        aspect-ratio: 1;
-        border-radius: 50%;
-        object-fit: cover;
-        margin-bottom: 0.5rem;
-      }
-      
-      .artist-name {
-        font-weight: 500;
-        color: white;
-        font-size: 0.875rem;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-      
-      .playlist-item {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        padding: 0.75rem;
-        border-radius: 0.5rem;
-        background-color: rgba(255, 255, 255, 0.05);
-        transition: background-color 0.2s ease;
-      }
-      
-      .playlist-item:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-      }
-      
-      .playlist-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 0.25rem;
-        background: linear-gradient(45deg, #6366f1, #8b5cf6);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: bold;
-      }
-      
-      .playlist-info {
-        flex: 1;
-      }
-      
-      .playlist-name {
-        font-weight: 500;
-        color: white;
-        margin-bottom: 0.25rem;
-      }
-      
-      .playlist-count {
-        font-size: 0.875rem;
-        color: rgba(255, 255, 255, 0.7);
-      }
-    `;
-    document.head.appendChild(styleEl);
-  },
-
-
-
-  bindEvents: () => {
-    // Bind any additional home page specific events here
-    const bentoCards = document.querySelectorAll('.bentoCard');
-    bentoCards.forEach(card => {
-      const cardLink = card.querySelector('.card-link');
-      if (cardLink) {
-        cardLink.addEventListener('click', (e) => {
-          e.preventDefault();
-          const viewType = cardLink.getAttribute('data-view');
-          if (viewType) {
-            homePage.handleCardLinkClick(viewType);
-          }
-        });
-      }
-    });
-
-    // Bind album click events
-    document.addEventListener('click', (e) => {
-      const albumCard = e.target.closest('.album-compact-card');
-      if (albumCard) {
-        const albumName = albumCard.getAttribute('data-album');
-        if (albumName && window.pageRendering?.renderArtistPage) {
-          // Find the artist data for this album
-          const artistData = window.music?.find(artist => 
-            artist.albums?.some(album => album.album === albumName)
-          );
-          if (artistData) {
-            window.pageRendering.renderArtistPage(artistData, albumName);
-          }
-        }
-      }
-    });
-
-    // Bind artist click events
-    document.addEventListener('click', (e) => {
-      const artistCard = e.target.closest('.artist-card');
-      if (artistCard) {
-        const artistName = artistCard.getAttribute('data-artist');
-        if (artistName && window.pageRendering?.renderArtistPage) {
-          const artistData = window.music?.find(a => a.artist === artistName);
-          if (artistData) {
-            window.pageRendering.renderArtistPage(artistData);
-          }
-        }
-      }
-    });
-
-    // Bind track play events
-    document.addEventListener('click', (e) => {
-      const trackItem = e.target.closest('.track-item');
-      if (trackItem && e.target.closest('.play-button')) {
-        const trackData = {
-          title: trackItem.querySelector('.track-title')?.textContent,
-          artist: trackItem.querySelector('.track-artist')?.textContent,
-          cover: trackItem.querySelector('.track-cover')?.src
-        };
-        if (musicPlayer?.ui?.playSong) {
-          musicPlayer.ui.playSong(trackData);
-        }
-      }
-    });
-  },
-
-  handleCardLinkClick: (viewType) => {
-    const handlers = {
-      'recent-plays': () => window.views?.showRecentlyPlayed?.(),
-      'discover-albums': () => window.views?.showAllAlbums?.(),
-      'favorite-artists': () => window.views?.showFavoriteArtists?.(),
-      'playlists': () => window.views?.showPlaylists?.(),
-      'favorite-songs': () => window.views?.showFavoriteSongs?.(),
-      'quick-stats': () => window.views?.showStats?.()
-    };
-
-    const handler = handlers[viewType];
-    if (handler) {
-      handler();
-    }
-  }
-};
-
-export const views = {
-  showFavoriteSongs: () => {
-    console.log('Show favorite songs - implement with viewManager');
-    // Use viewManager to show favorite songs view
-    // This would be integrated with your existing favorites system
-  },
-
-  showFavoriteArtists: () => {
-    console.log('Show favorite artists - implement with viewManager');
-    // Use viewManager to show favorite artists view
-  },
-
-  showFavoriteAlbums: () => {
-    console.log('Show favorite albums - implement with viewManager');
-    // Use viewManager to show favorite albums view
-  },
-
-  showRecentlyPlayed: () => {
-    // Open music player to recent tab
-    if (window.musicPlayer?.mainPlayer) {
-      window.musicPlayer.mainPlayer.open();
-      setTimeout(() => window.musicPlayer.mainPlayer.switchTab('recent'), 50);
-    }
-  },
-
-  showAllAlbums: () => {
-    console.log('Show all albums - implement with viewManager');
-    // Use viewManager to show all albums view
-  },
-
-  showPlaylists: () => {
-    if (window.playlists?.showAll) {
-      window.playlists.showAll();
-    }
-  },
-
-  showStats: () => {
-    console.log('Show stats - implement with viewManager');
-    // Use viewManager to show statistics view
-  },
-
-  renderEmptyState: (title, message, description) => {
-    return `
-      <div class="empty-state text-center py-12">
-        <div class="empty-icon mb-4">
-          <svg class="w-16 h-16 mx-auto text-gray-600" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-          </svg>
-        </div>
-        <h3 class="text-xl font-bold mb-2">${title}</h3>
-        <p class="text-gray-400 mb-4">${message}</p>
-        ${description ? `<p class="text-sm text-gray-500">${description}</p>` : ''}
-      </div>
-    `;
-  }
-};
+// Make sure to export it as a named export
+export default deepLinkRouter;
