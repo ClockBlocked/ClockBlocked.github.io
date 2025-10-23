@@ -10,7 +10,7 @@ import {
        } from '../map.js';
 
 // We need to make sure these exist in global.js or remove them if they don't
-let appState, storage, notifications, musicPlayer, utils, NAVBAR, MUSIC_PLAYER, CLASSES, IDS, REPEAT_MODES, NOTIFICATION_TYPES;
+let appState, storage, notifications, musicPlayer, utils, MUSIC_PLAYER, CLASSES, IDS, REPEAT_MODES, NOTIFICATION_TYPES;
 
 // Try to import from global.js, but handle if some don't exist
 try {
