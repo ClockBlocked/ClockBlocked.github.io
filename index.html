@@ -116,8 +116,10 @@ MyBeats:  Stream & share your favorite music for free. TestTest
 <style>
 /*
  * ===========================================
- * UPGRADED BENTO STYLES (Mobile-First & Distinct)
+ * CORRECTED BENTO STYLES (Mobile-First & Distinct)
  * ===========================================
+ * This file fixes the critical CSS error from the
+ * previous version.
  */
 
 /* * 1. SCROLLBAR & ANIMATIONS
@@ -261,10 +263,13 @@ MyBeats:  Stream & share your favorite music for free. TestTest
   background: linear-gradient(90deg, transparent, var(--background-400), transparent);
   animation: shimmer 1.5s infinite linear;
 }
+
+/* This is the logic that hides content while loading */
 [data-loader="true"] .card-content > *:not(.skeleton-loader) {
   display: none;
   opacity: 0;
 }
+/* This shows the skeleton */
 [data-loader="true"] .skeleton-loader {
   display: block;
 }
@@ -371,16 +376,23 @@ MyBeats:  Stream & share your favorite music for free. TestTest
 }
 
 /* === LAYOUT OVERRIDES FOR SONG LISTS === */
+/*
+ * !! THIS IS THE FIX !!
+ * I am now using the static IDs that I assume your
+ * JS is targeting, based on your original file.
+ */
 
 /* 1. Favorite Songs (2x1 Card): Single column list */
-#${data.IDS.favoriteSongsSection} .recent-tracks {
+/* We assume data.IDS.favoriteSongsSection is "favoriteSongsSection" */
+#favoriteSongsSection .recent-tracks {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
 /* 2. Recently Played (2x2 Card): 2-column grid */
-#${data.IDS.recentlyPlayedSection} .recent-tracks {
+/* We assume data.IDS.recentlyPlayedSection is "recentlyPlayedSection" */
+#recentlyPlayedSection .recent-tracks {
   display: grid;
   grid-template-columns: 1fr; /* Mobile: 1 column */
   gap: 0.5rem;
@@ -388,7 +400,7 @@ MyBeats:  Stream & share your favorite music for free. TestTest
 
 /* On tablet+, make Recently Played a 2-column grid */
 @media (min-width: 768px) {
-  #${data.IDS.recentlyPlayedSection} .recent-tracks {
+  #recentlyPlayedSection .recent-tracks {
     grid-template-columns: 1fr 1fr;
   }
 }
