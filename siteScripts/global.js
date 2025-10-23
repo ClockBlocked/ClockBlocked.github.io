@@ -1965,7 +1965,7 @@ const app = {
         
         musicPlayer.ui.initialize();
 
-        navigation.initialize();
+        
         homePage.initialize();
 
         eventHandlers.init();
