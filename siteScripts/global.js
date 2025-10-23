@@ -2,10 +2,11 @@ import { IDS, CLASSES, ROUTES, THEMES, STORAGE_KEYS, ICONS, AUDIO_FORMATS, REPEA
 import { music } from "../modules/library.js";
 import { render, create } from "./utilities/templates.js";
 import { encodeURIComponent } from './utilities/parsers.js';
-import { homePage, views } from './pages/statics.js';
+import { homePage } from './pages/statics.js'; // Remove views from this import
 import { pageLoader } from './pages/rendering.js';
 import { ui, pageUpdates } from './pages/updates.js';
 import { deepLinkRouter } from './pages/router.js';
+
 
 const ACTION_GRID_ITEMS = [
   { id: 'play-next', icon: 'M9 5l7 7-7 7M15 5v14', label: 'Play Next' },
