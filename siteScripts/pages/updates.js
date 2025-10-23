@@ -5,14 +5,17 @@ import {
   storage,
   notifications,
   musicPlayer,
-  utils,
+  utils
+} from '../global.js';
+
+import {
   NAVBAR,
   MUSIC_PLAYER,
   CLASSES,
   IDS,
   REPEAT_MODES,
   NOTIFICATION_TYPES
-} from '../global.js';
+} from '../map.js";
 
 export const pageUpdates = {
   breadCrumbs: (items, options = {}) => {
