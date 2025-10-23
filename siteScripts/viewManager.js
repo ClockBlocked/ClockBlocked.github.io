@@ -1,5 +1,5 @@
-import { render, create } from '../utilities/templates.js';
-import { utils } from '../global.js';
+import { render, create } from './utilities/templates.js';
+import { utils } from './global.js';
 import { playerManager } from './playerManager.js';
 
 export const viewManager = {
