@@ -6,7 +6,6 @@ import {
   notifications,
   musicPlayer,
   utils,
-  navigation,
   playlists,
   overlays,
 } from '../global.js';
@@ -231,7 +230,25 @@ export const homePage = {
     document.head.appendChild(styleEl);
   },
 
-  
+  renderRecentlyPlayed: () => {
+    // This is now handled by viewManager's loadHomeContent
+  },
+
+  renderRandomAlbums: () => {
+    // This is now handled by viewManager's loadHomeContent
+  },
+
+  renderFavoriteArtists: () => {
+    // This is now handled by viewManager's loadHomeContent
+  },
+
+  renderPlaylists: () => {
+    // This is now handled by viewManager's loadHomeContent
+  },
+
+  renderFavoriteSongs: () => {
+    // This is now handled by viewManager's loadHomeContent
+  },
 
   bindEvents: () => {
     // Bind any additional home page specific events here
@@ -254,8 +271,14 @@ export const homePage = {
       const albumCard = e.target.closest('.album-compact-card');
       if (albumCard) {
         const albumName = albumCard.getAttribute('data-album');
-        if (albumName && window.navigation?.pages?.loadAlbumView) {
-          window.navigation.pages.loadAlbumView(albumName);
+        if (albumName && window.pageRendering?.renderArtistPage) {
+          // Find the artist data for this album
+          const artistData = window.music?.find(artist => 
+            artist.albums?.some(album => album.album === albumName)
+          );
+          if (artistData) {
+            window.pageRendering.renderArtistPage(artistData, albumName);
+          }
         }
       }
     });
@@ -265,10 +288,10 @@ export const homePage = {
       const artistCard = e.target.closest('.artist-card');
       if (artistCard) {
         const artistName = artistCard.getAttribute('data-artist');
-        if (artistName && window.navigation?.pages?.loadArtistPage) {
+        if (artistName && window.pageRendering?.renderArtistPage) {
           const artistData = window.music?.find(a => a.artist === artistName);
           if (artistData) {
-            window.navigation.pages.loadArtistPage(artistData);
+            window.pageRendering.renderArtistPage(artistData);
           }
         }
       }
@@ -283,8 +306,8 @@ export const homePage = {
           artist: trackItem.querySelector('.track-artist')?.textContent,
           cover: trackItem.querySelector('.track-cover')?.src
         };
-        if (musicPlayer?.playTrack) {
-          musicPlayer.playTrack(trackData);
+        if (musicPlayer?.ui?.playSong) {
+          musicPlayer.ui.playSong(trackData);
         }
       }
     });
