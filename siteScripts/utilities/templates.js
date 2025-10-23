@@ -491,9 +491,9 @@ case "enhancedArtist":
   
       case "home_bento":
         return `
-          <div class="bento-grid">
-            <!-- Recently Played - Span 2 columns -->
-            <div class="bento-card" data-span-col="2" data-loader="true">
+        <div class="bento-grid">
+
+            <div class="bento-card" data-loader="true">
               <div class="card-header">
                 <h2 class="card-title">Recently Played</h2>
                 <a href="#" class="card-link" data-view="recent">View All</a>
@@ -503,8 +503,7 @@ case "enhancedArtist":
               </div>
             </div>
             
-            <!-- Discover Albums - Span 3 columns -->
-            <div class="bento-card" data-span-col="3" data-loader="true">
+            <div class="bento-card bento-span-2" data-loader="true">
               <div class="card-header">
                 <h2 class="card-title">Discover Albums</h2>
                 <a href="#" class="card-link" data-view="albums">Explore More</a>
@@ -514,7 +513,6 @@ case "enhancedArtist":
               </div>
             </div>
             
-            <!-- Favorite Artists -->
             <div class="bento-card" data-loader="true">
               <div class="card-header">
                 <h2 class="card-title">Favorite Artists</h2>
@@ -525,7 +523,6 @@ case "enhancedArtist":
               </div>
             </div>
             
-            <!-- Your Playlists -->
             <div class="bento-card" data-loader="true">
               <div class="card-header">
                 <h2 class="card-title">Your Playlists</h2>
@@ -536,8 +533,7 @@ case "enhancedArtist":
               </div>
             </div>
             
-            <!-- Favorite Songs - Span 2 columns -->
-            <div class="bento-card" data-span-col="2" data-loader="true">
+            <div class="bento-card" data-loader="true">
               <div class="card-header">
                 <h2 class="card-title">Favorite Songs</h2>
                 <a href="#" class="card-link" data-view="favorite-songs">View All</a>
@@ -667,7 +663,6 @@ case "enhancedArtist":
       return html;
     }
   },
-
 
   overlay: function(templateName, data) {
     switch(templateName) {
