@@ -2710,7 +2710,7 @@ if (window.music) {
   app.initialize();
 }
 
-window.navigation = navigation;
+
 window.playlists = playlists;
 window.views = views;
 
