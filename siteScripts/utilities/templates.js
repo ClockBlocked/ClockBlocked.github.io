@@ -488,8 +488,7 @@ case "enhancedArtist":
           </div>
           <div id="artists-grid" class="artists-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 px-4 sm:px-6"></div>
         `;
-   getViewHtml: (view, data) => {
-    switch (view) {
+  
       case "home_bento":
         return `
           <div class="bento-grid">
