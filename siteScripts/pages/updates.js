@@ -15,7 +15,7 @@ import {
   IDS,
   REPEAT_MODES,
   NOTIFICATION_TYPES
-} from '../map.js";
+} from '../map.js';
 
 export const pageUpdates = {
   breadCrumbs: (items, options = {}) => {
