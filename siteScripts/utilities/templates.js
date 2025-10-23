@@ -490,23 +490,21 @@ case "enhancedArtist":
         `;
       case "home_bento":
         return `
-        <div class="bento-grid">
-            <div class="bento-card" data-loader="true">
+          <!-- 
+            This grid is now a 3-column grid.
+            - Recently Played: 2x2 block
+            - Favorite Artists: 1x1 block
+            - Your Playlists: 1x1 block
+            - Discover Albums: 3x1 full-width banner
+            - Favorite Songs: 2x1 block
+          -->
+          <div class="bento-grid">
+            <div class="bento-card" data-span-col="2" data-span-row="2" data-loader="true">
               <div class="card-header">
                 <h2 class="card-title">Recently Played</h2>
                 <a href="#" class="card-link" data-view="recent">View All</a>
               </div>
               <div id="${data.IDS.recentlyPlayedSection}" class="card-content">
-                <div class="skeleton-loader"></div>
-              </div>
-            </div>
-            
-            <div class="bento-card bento-span-2" data-loader="true">
-              <div class="card-header">
-                <h2 class="card-title">Discover Albums</h2>
-                <a href="#" class="card-link" data-view="albums">Explore More</a>
-              </div>
-              <div id="${data.IDS.randomAlbumsSection}" class="card-content">
                 <div class="skeleton-loader"></div>
               </div>
             </div>
@@ -530,8 +528,18 @@ case "enhancedArtist":
                 <div class="skeleton-loader"></div>
               </div>
             </div>
+
+            <div class="bento-card" data-span-col="3" data-loader="true">
+              <div class="card-header">
+                <h2 class="card-title">Discover Albums</h2>
+                <a href="#" class="card-link" data-view="albums">Explore More</a>
+              </div>
+              <div id="${data.IDS.randomAlbumsSection}" class="card-content">
+                <div class="skeleton-loader"></div>
+              </div>
+            </div>
             
-            <div class="bento-card" data-loader="true">
+            <div class="bento-card" data-span-col="2" data-loader="true">
               <div class="card-header">
                 <h2 class="card-title">Favorite Songs</h2>
                 <a href="#" class="card-link" data-view="favorite-songs">View All</a>
@@ -554,13 +562,15 @@ case "enhancedArtist":
       tracks.forEach((track, index) => {
         html += `
           <div class="recent-track" data-song='${JSON.stringify(track).replace(/"/g, "&quot;")}' style="animation-delay: ${index * 100}ms;">
-            <img src="${utils.getAlbumImageUrl(track.album)}" alt="${track.title}" class="track-art">
+            <div class="track-art-container">
+              <img src="${utils.getAlbumImageUrl(track.album)}" alt="${track.title}" class="track-art">
+              <div class="play-button-overlay">
+                ${window.ICONS.play}
+              </div>
+            </div>
             <div class="track-info">
               <div class="track-title">${track.title}</div>
               <div class="track-artist" data-artist="${track.artist}">${track.artist}</div>
-            </div>
-            <div class="play-button-overlay">
-              ${window.ICONS.play}
             </div>
           </div>
         `;
@@ -574,8 +584,8 @@ case "enhancedArtist":
       playlists.forEach((playlist, index) => {
         html += `
           <div class="playlist-card" data-playlist-id="${playlist.id}" style="animation-delay: ${index * 100}ms;">
-            <div class="playlist-icon" style="width: 40px; height: 40px; background: linear-gradient(45deg, #6366f1, #8b5cf6); border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="20" height="20">
+            <div class="playlist-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v2H3v-2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
               </svg>
             </div>
@@ -598,7 +608,7 @@ case "enhancedArtist":
       artists.forEach((artistName, index) => {
         html += `
           <div class="artist-card" data-artist="${artistName}" style="animation-delay: ${index * 100}ms;">
-            <div style="position: relative;">
+            <div class="artist-avatar-container">
               <img src="${utils.getArtistImageUrl(artistName)}" alt="${artistName}" class="artist-avatar">
               <div class="play-button-overlay">
                 ${window.ICONS.play}
@@ -617,7 +627,7 @@ case "enhancedArtist":
       albums.forEach((album, index) => {
         html += `
           <div class="album-card" style="animation-delay: ${index * 100}ms;" data-artist="${album.artist}" data-album="${album.album}">
-            <div style="position: relative;">
+            <div class="album-cover-container">
               <img src="${utils.getAlbumImageUrl(album.album)}" alt="${album.album}" class="album-cover">
               <div class="album-overlay">
                 <button class="album-play-btn" data-artist="${album.artist}" data-album="${album.album}">
@@ -639,17 +649,21 @@ case "enhancedArtist":
     favoriteSongs: (songs, utils) => {
       let html = `<div class="recent-tracks animate-fade-in">`;
       songs.forEach((song, index) => {
+        // Assuming you have a way to check if a song is favorited, you'd add 'is-favorite' class
+        const isFavorited = true; // Replace with your logic
         html += `
           <div class="recent-track" data-song='${JSON.stringify(song).replace(/"/g, "&quot;")}' style="animation-delay: ${index * 100}ms;">
-            <img src="${utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="track-art">
+            <div class="track-art-container">
+              <img src="${utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="track-art">
+              <div class="play-button-overlay">
+                ${window.ICONS.play}
+              </div>
+            </div>
             <div class="track-info">
               <div class="track-title">${song.title}</div>
               <div class="track-artist" data-artist="${song.artist}">${song.artist}</div>
             </div>
-            <div class="play-button-overlay">
-              ${window.ICONS.play}
-            </div>
-            <button class="favorite-heart" data-song-id="${song.id}" style="position: absolute; top: 0.5rem; right: 0.5rem; color: #ef4444; opacity: 0.8; background: none; border: none; cursor: pointer;">
+            <button class="favorite-heart ${isFavorited ? "is-favorite" : ""}" data-song-id="${song.id}">
               <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
               </svg>
@@ -751,3 +765,9 @@ export function create(htmlString) {
   div.innerHTML = htmlString.trim();
   return div.firstChild;
 }
+
+
+
+
+
+
