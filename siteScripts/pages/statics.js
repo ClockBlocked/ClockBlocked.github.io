@@ -28,13 +28,52 @@ export const homePage = {
 
     homePage.addStyles();
 
-    setTimeout(() => homePage.renderRecentlyPlayed(), 100);
-    setTimeout(() => homePage.renderRandomAlbums(), 300);
-    setTimeout(() => homePage.renderFavoriteArtists(), 500);
-    setTimeout(() => homePage.renderPlaylists(), 700);
-    setTimeout(() => homePage.renderFavoriteSongs(), 900);
+    // Show all loading overlays initially
+    homePage.showAllLoaders();
+
+    setTimeout(() => {
+      homePage.renderRecentlyPlayed();
+      homePage.hideLoader('loadingRecent');
+    }, 100);
+    
+    setTimeout(() => {
+      homePage.renderRandomAlbums();
+      homePage.hideLoader('loadingAlbums');
+    }, 300);
+    
+    setTimeout(() => {
+      homePage.renderFavoriteArtists();
+      homePage.hideLoader('loadingArtists');
+    }, 500);
+    
+    setTimeout(() => {
+      homePage.renderPlaylists();
+      homePage.hideLoader('loadingPlaylists');
+    }, 700);
+    
+    setTimeout(() => {
+      homePage.renderFavoriteSongs();
+      homePage.hideLoader('loadingFavorites');
+    }, 900);
 
     homePage.bindEvents();
+  },
+
+  showAllLoaders: () => {
+    const loaders = ['loadingRecent', 'loadingAlbums', 'loadingArtists', 'loadingPlaylists', 'loadingFavorites'];
+    loaders.forEach(loaderId => {
+      const loader = $byId(loaderId);
+      if (loader) {
+        loader.classList.remove('hidden');
+      }
+    });
+  },
+
+  hideLoader: (loaderId) => {
+    const loader = $byId(loaderId);
+    if (loader) {
+      loader.classList.add('hidden');
+    }
   },
 
   addStyles: () => {

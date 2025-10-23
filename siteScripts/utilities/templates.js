@@ -1,12 +1,5 @@
-
-
-
-
 import { getAlbumImageUrl } from './parsers.js';
 import { escapeForAttribute } from '../pages/rendering.js';
-
-
-
 
 export const render = {
   artist: function(templateName, data) {
@@ -95,8 +88,15 @@ export const render = {
           </div>
         `;
       
-case "enhancedArtist":
-  return `
+      case "enhancedArtist":
+        const albumsContainerId = data.albumsContainerId || 'albumsWrapper';
+        const recentlyPlayedId = data.recentlyPlayedId || 'artist-recently-played';
+        const randomAlbumsId = data.randomAlbumsId || 'artist-random-albums';
+        const favoriteArtistsId = data.favoriteArtistsId || 'artist-favorite-artists';
+        const playlistsId = data.playlistsId || 'artist-playlists';
+        const favoriteSongsId = data.favoriteSongsId || 'artist-favorite-songs';
+        
+        return `
 <div class="artistPage">
   <section class="fragments artist-hero">
     <div class="artist-hero-bg"></div>
@@ -106,7 +106,6 @@ case "enhancedArtist":
     
     <div class="artist-hero-content">
       <div class="artist-hero-flex">
-        <!-- Artist Avatar -->
         <div class="artist-avatar-group">
           <div class="artist-avatar-container">
             <img id="artistAvatar" alt="${data.artist}" src="${data.cover}" />
@@ -121,7 +120,6 @@ case "enhancedArtist":
           </div>
         </div>
 
-        <!-- Artist Info -->
         <div class="artist-info-section">
           <div class="artist-badge">
             <span class="artist-badge-dot"></span>
@@ -132,7 +130,6 @@ case "enhancedArtist":
           </h1>
           <p id="artistTagline" class="artist-genre">${data.genre || 'Various Genres'}</p>
           
-          <!-- Stats Row -->
           <div class="artist-stats-row">
             <div class="artist-stat">
               <div id="artistAlbums" class="artist-stat-value">${data.albumCount}</div>
@@ -150,7 +147,6 @@ case "enhancedArtist":
             </div>
           </div>
 
-          <!-- Action Buttons -->
           <div class="artist-actions">
             <button id="artistShuffle" class="artist-action-btn">
               <svg fill="currentColor" viewBox="0 0 20 20">
@@ -175,16 +171,18 @@ case "enhancedArtist":
     </div>
   </section>
 
-  <!-- Main Content -->
   <div class="fragments artist-content">
     
-    <!-- Quick Stats Grid -->
-    <div class="artist-quick-stats">
-      <div class="artist-stat-card stat-blue">
+    <div class="artist-quick-stats artist-bento-grid">
+      <div class="artist-stat-card artist-bento-card stat-blue">
+        <div class="loadingOverlay hidden" id="loadingDuration">
+          <div class="spinner"></div>
+          <div class="loadingText">Calculating...</div>
+        </div>
         <div class="stat-card-content">
           <div>
             <div class="stat-card-label">Total Duration</div>
-            <div class="stat-card-value" id="totalDuration">Calculating...</div>
+            <div class="stat-card-value" id="totalDuration">--:--</div>
           </div>
           <div class="stat-card-icon stat-icon-blue">
             <svg fill="currentColor" viewBox="0 0 20 20">
@@ -194,11 +192,15 @@ case "enhancedArtist":
         </div>
       </div>
 
-      <div class="artist-stat-card stat-purple">
+      <div class="artist-stat-card artist-bento-card stat-purple">
+        <div class="loadingOverlay hidden" id="loadingYear">
+          <div class="spinner"></div>
+          <div class="loadingText">Finding...</div>
+        </div>
         <div class="stat-card-content">
           <div>
             <div class="stat-card-label">Latest Release</div>
-            <div class="stat-card-value" id="latestYear">2024</div>
+            <div class="stat-card-value" id="latestYear">----</div>
           </div>
           <div class="stat-card-icon stat-icon-purple">
             <svg fill="currentColor" viewBox="0 0 20 20">
@@ -209,7 +211,11 @@ case "enhancedArtist":
         </div>
       </div>
 
-      <div class="artist-stat-card stat-pink">
+      <div class="artist-stat-card artist-bento-card stat-pink">
+        <div class="loadingOverlay hidden" id="loadingPopularity">
+          <div class="spinner"></div>
+          <div class="loadingText">Analyzing...</div>
+        </div>
         <div class="stat-card-content">
           <div>
             <div class="stat-card-label">Popularity</div>
@@ -224,10 +230,157 @@ case "enhancedArtist":
       </div>
     </div>
 
-    <!-- Albums Section -->
     <section class="fragments albums">
-      <div id="${IDS.albumsContainer}"></div>
+      <div id="${albumsContainerId}"></div>
     </section>
+
+    <div class="bentoCardsWrapper">
+      <div class="bentoCard bentoCard-medium" data-loader="true">
+        <div class="loadingOverlay" id="loadingRecent">
+          <div class="spinner"></div>
+          <div class="loadingText">Loading Recent Plays...</div>
+        </div>
+        <div class="card-header">
+          <div class="cardIcon">
+            <svg fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+            </svg>
+          </div>
+          <h2 class="cardTitle">Recently Played</h2>
+        </div>
+        <div class="cardBody">
+          Your most recently played tracks
+        </div>
+        <div id="${recentlyPlayedId}" class="card-content"></div>
+        <div class="cardFooter">
+          <a href="#" class="card-link" data-view="recent">View All →</a>
+        </div>
+      </div>
+      
+      <div class="bentoCard bentoCard-large" data-loader="true">
+        <div class="loadingOverlay" id="loadingAlbums">
+          <div class="spinner"></div>
+          <div class="loadingText">Finding Albums...</div>
+        </div>
+        <div class="card-header">
+          <div class="cardIcon">
+            <svg fill="currentColor" viewBox="0 0 20 20">
+              <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+              <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+            </svg>
+          </div>
+          <h2 class="cardTitle">Discover Albums</h2>
+        </div>
+        <div class="cardBody">
+          Explore your music collection
+        </div>
+        <div id="${randomAlbumsId}" class="card-content"></div>
+        <div class="cardFooter">
+          <a href="#" class="card-link" data-view="albums">Explore More →</a>
+        </div>
+      </div>
+      
+      <div class="bentoCard bentoCard-medium" data-loader="true">
+        <div class="loadingOverlay" id="loadingArtists">
+          <div class="spinner"></div>
+          <div class="loadingText">Loading Artists...</div>
+        </div>
+        <div class="card-header">
+          <div class="cardIcon">
+            <svg fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+            </svg>
+          </div>
+          <h2 class="cardTitle">Favorite Artists</h2>
+        </div>
+        <div class="cardBody">
+          Artists you love most
+        </div>
+        <div id="${favoriteArtistsId}" class="card-content"></div>
+        <div class="cardFooter">
+          <a href="#" class="card-link" data-view="favorite-artists">View All →</a>
+        </div>
+      </div>
+      
+      <div class="bentoCard bentoCard-player desktop-only" id="bentoPlayerCard">
+        <div class="card-header">
+          <div class="cardIcon">
+            <svg fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
+            </svg>
+          </div>
+          <h2 class="cardTitle">Now Playing</h2>
+        </div>
+        <div id="bentoPlayerContent" class="player-embed-container"></div>
+      </div>
+      
+      <div class="bentoCard bentoCard-large" data-loader="true">
+        <div class="loadingOverlay" id="loadingPlaylists">
+          <div class="spinner"></div>
+          <div class="loadingText">Fetching Playlists...</div>
+        </div>
+        <div class="card-header">
+          <div class="cardIcon">
+            <svg fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+            </svg>
+          </div>
+          <h2 class="cardTitle">Your Playlists</h2>
+        </div>
+        <div class="cardBody">
+          Your curated collections
+        </div>
+        <div id="${playlistsId}" class="card-content"></div>
+        <div class="cardFooter">
+          <a href="#" class="card-link" data-view="playlists">View All →</a>
+        </div>
+      </div>
+      
+      <div class="bentoCard bentoCard-medium" data-loader="true">
+        <div class="loadingOverlay" id="loadingFavorites">
+          <div class="spinner"></div>
+          <div class="loadingText">Loading Favorites...</div>
+        </div>
+        <div class="card-header">
+          <div class="cardIcon">
+            <svg fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
+            </svg>
+          </div>
+          <h2 class="cardTitle">Favorite Songs</h2>
+        </div>
+        <div class="cardBody">
+          Songs you can't get enough of
+        </div>
+        <div id="${favoriteSongsId}" class="card-content"></div>
+        <div class="cardFooter">
+          <a href="#" class="card-link" data-view="favorite-songs">View All →</a>
+        </div>
+      </div>
+      
+      <div class="bentoCard bentoCard-small">
+        <div class="card-header">
+          <div class="cardIcon">
+            <svg fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
+            </svg>
+          </div>
+          <h2 class="cardTitle">Quick Stats</h2>
+        </div>
+        <div class="cardBody">
+          <div class="quick-stats-grid">
+            <div class="stat-item">
+              <span class="stat-number" id="totalTracksCount">--</span>
+              <span class="stat-label">Total Tracks</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number" id="totalArtistsCount">--</span>
+              <span class="stat-label">Artists</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <section class="fragments similar">
@@ -238,6 +391,12 @@ case "enhancedArtist":
     </div>
   </section>
 </div>
+
+<button class="floating-player-trigger tablet-only" id="tabletPlayerTrigger" aria-label="Open Music Player">
+  <svg fill="currentColor" viewBox="0 0 20 20">
+    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
+  </svg>
+</button>
 `;        
       default:
         return "";
@@ -253,19 +412,17 @@ case "enhancedArtist":
               <div class="gap-6 items-center md:items-start">
                 <div class="album-image relative flex-shrink-0">
                   <img src="${data.cover}" alt="${data.album}" class="album-cover w-full h-full object-cover">
-                  <button aria-label="Name" class="play-album absolute bottom-4 right-4 bg-blue-600 hover:bg-blue-700 w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition transform hover:scale-105">
+                  <button aria-label="Name" class="play-album absolute bottom-4 right-4 bg-blue-600 hover:bg-blue-700 w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition transform hover:scale-110">
                     <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
                     </svg>
                   </button>
-          <div class="albumMetadata">
-                  <h3 class="metaAlbumName">${data.album}</h3>
-                  <p class="metaAlbumYear">${data.year || 'Unknown year'} • ${data.songCount} Tracks</p>
-                </div>
-      
+                  <div class="albumMetadata">
+                    <h3 class="metaAlbumName">${data.album}</h3>
+                    <p class="metaAlbumYear">${data.year || 'Unknown year'} • ${data.songCount} Tracks</p>
+                  </div>
                 </div>
               </div>
-            
             <div class="songs-container" id="songs-container-${data.albumId}"></div>
           </div></div>
         `;
@@ -276,7 +433,7 @@ case "enhancedArtist":
             <div class="albumFade" data-album-id="${data.albumId}">
               <div class="gap-6 items-center md:items-start">
                 <div class="album-image relative flex-shrink-0">
-                  <button aria-label="Name" class="play-album absolute bottom-4 right-4 bg-blue-600 hover:bg-blue-700 w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition transform hover:scale-105">
+                  <button aria-label="Name" class="play-album absolute bottom-4 right-4 bg-blue-600 hover:bg-blue-700 w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition transform hover:scale-110">
                     <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
                     </svg>
@@ -340,7 +497,6 @@ case "enhancedArtist":
        tabindex="0"
        aria-label="Track ${trackNumber}: ${title} — ${duration}">
 
-    <!-- 1) LEFT: Track # (replaced by Play on hover) -->
     <div class="cell index-play" aria-hidden="false">
       <span class="track-number">
         ${showTrackNumber ? trackNumber : '♪'}
@@ -351,24 +507,20 @@ case "enhancedArtist":
               title="Play"
               aria-label="Play ${title}"
               tabindex="-1">
-        <!-- Play Icon -->
         <svg class="global lightGray small" viewBox="0 0 384 512" aria-hidden="true">
           <path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80L0 432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/>
         </svg>
       </button>
     </div>
 
-    <!-- 2) Song Name -->
     <div class="cell title" title="${title}">
       <span class="song-title">${title}</span>
     </div>
 
-    <!-- 3) Duration -->
     <div class="cell duration" aria-label="Duration ${duration}">
       <span>${duration}</span>
     </div>
 
-    <!-- 4) Heart -->
     <div class="cell heart">
       <button aria-label="Name" class="action-btn favorite-btn ${isFavorite ? 'favorited' : ''}"
               data-action="favorite"
@@ -385,7 +537,6 @@ case "enhancedArtist":
       </button>
     </div>
 
-    <!-- 5) More (three dots) -->
     <div class="cell more">
       <button aria-label="Name" class="action-btn more-btn"
               data-action="more"
@@ -397,7 +548,6 @@ case "enhancedArtist":
       </button>
     </div>
   </div>
-
     `;
   },
   
@@ -465,7 +615,7 @@ case "enhancedArtist":
             <div class="filter-controls mb-6 flex flex-wrap gap-4 items-center">
               <div class="search-wrapper relative flex-grow max-w-md">
                 <input type="text" id="artist-search" 
-                      class="w-full bg-gray-800 border border-gray-700 rounded-lg py-2 px-4 pl-10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      class="w-full bg-gray-800 border border-gray-700 rounded-lg py-2 px-4 pl-10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="Search artists...">
                 <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
@@ -488,59 +638,162 @@ case "enhancedArtist":
           </div>
           <div id="artists-grid" class="artists-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 px-4 sm:px-6"></div>
         `;
+        
       case "home_bento":
         return `
-        <div class="bento-grid">
-            <div class="bento-card" data-loader="true">
-              <div class="card-header">
-                <h2 class="card-title">Recently Played</h2>
-                <a href="#" class="card-link" data-view="recent">View All</a>
+        <div class="bentoCardsWrapper">
+            <div class="bentoCard bentoCard-medium" data-loader="true">
+              <div class="loadingOverlay" id="loadingRecent">
+                <div class="spinner"></div>
+                <div class="loadingText">Loading Recent Plays...</div>
               </div>
-              <div id="${data.IDS.recentlyPlayedSection}" class="card-content">
-                <div class="skeleton-loader"></div>
+              <div class="card-header">
+                <div class="cardIcon">
+                  <svg fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                  </svg>
+                </div>
+                <h2 class="cardTitle">Recently Played</h2>
+              </div>
+              <div class="cardBody">
+                Your most recently played tracks
+              </div>
+              <div id="${data.IDS.recentlyPlayedSection}" class="card-content"></div>
+              <div class="cardFooter">
+                <a href="#" class="card-link" data-view="recent">View All →</a>
               </div>
             </div>
             
-            <div class="bento-card bento-span-2" data-loader="true">
-              <div class="card-header">
-                <h2 class="card-title">Discover Albums</h2>
-                <a href="#" class="card-link" data-view="albums">Explore More</a>
+            <div class="bentoCard bentoCard-large" data-loader="true">
+              <div class="loadingOverlay" id="loadingAlbums">
+                <div class="spinner"></div>
+                <div class="loadingText">Finding Albums...</div>
               </div>
-              <div id="${data.IDS.randomAlbumsSection}" class="card-content">
-                <div class="skeleton-loader"></div>
+              <div class="card-header">
+                <div class="cardIcon">
+                  <svg fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                    <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+                  </svg>
+                </div>
+                <h2 class="cardTitle">Discover Albums</h2>
+              </div>
+              <div class="cardBody">
+                Explore your music collection
+              </div>
+              <div id="${data.IDS.randomAlbumsSection}" class="card-content"></div>
+              <div class="cardFooter">
+                <a href="#" class="card-link" data-view="albums">Explore More →</a>
               </div>
             </div>
             
-            <div class="bento-card" data-loader="true">
-              <div class="card-header">
-                <h2 class="card-title">Favorite Artists</h2>
-                <a href="#" class="card-link" data-view="favorite-artists">View All</a>
+            <div class="bentoCard bentoCard-medium" data-loader="true">
+              <div class="loadingOverlay" id="loadingArtists">
+                <div class="spinner"></div>
+                <div class="loadingText">Loading Artists...</div>
               </div>
-              <div id="${data.IDS.favoriteArtistsSection}" class="card-content">
-                <div class="skeleton-loader"></div>
+              <div class="card-header">
+                <div class="cardIcon">
+                  <svg fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+                  </svg>
+                </div>
+                <h2 class="cardTitle">Favorite Artists</h2>
+              </div>
+              <div class="cardBody">
+                Artists you love most
+              </div>
+              <div id="${data.IDS.favoriteArtistsSection}" class="card-content"></div>
+              <div class="cardFooter">
+                <a href="#" class="card-link" data-view="favorite-artists">View All →</a>
               </div>
             </div>
             
-            <div class="bento-card" data-loader="true">
+            <div class="bentoCard bentoCard-player desktop-only" id="bentoPlayerCard">
               <div class="card-header">
-                <h2 class="card-title">Your Playlists</h2>
-                <a href="#" class="card-link" data-view="playlists">View All</a>
+                <div class="cardIcon">
+                  <svg fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
+                  </svg>
+                </div>
+                <h2 class="cardTitle">Now Playing</h2>
               </div>
-              <div id="${data.IDS.playlistsSection}" class="card-content">
-                <div class="skeleton-loader"></div>
+              <div id="bentoPlayerContent" class="player-embed-container"></div>
+            </div>
+            
+            <div class="bentoCard bentoCard-large" data-loader="true">
+              <div class="loadingOverlay" id="loadingPlaylists">
+                <div class="spinner"></div>
+                <div class="loadingText">Fetching Playlists...</div>
+              </div>
+              <div class="card-header">
+                <div class="cardIcon">
+                  <svg fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                  </svg>
+                </div>
+                <h2 class="cardTitle">Your Playlists</h2>
+              </div>
+              <div class="cardBody">
+                Your curated collections
+              </div>
+              <div id="${data.IDS.playlistsSection}" class="card-content"></div>
+              <div class="cardFooter">
+                <a href="#" class="card-link" data-view="playlists">View All →</a>
               </div>
             </div>
             
-            <div class="bento-card" data-loader="true">
-              <div class="card-header">
-                <h2 class="card-title">Favorite Songs</h2>
-                <a href="#" class="card-link" data-view="favorite-songs">View All</a>
+            <div class="bentoCard bentoCard-medium" data-loader="true">
+              <div class="loadingOverlay" id="loadingFavorites">
+                <div class="spinner"></div>
+                <div class="loadingText">Loading Favorites...</div>
               </div>
-              <div id="${data.IDS.favoriteSongsSection}" class="card-content">
-                <div class="skeleton-loader"></div>
+              <div class="card-header">
+                <div class="cardIcon">
+                  <svg fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
+                  </svg>
+                </div>
+                <h2 class="cardTitle">Favorite Songs</h2>
+              </div>
+              <div class="cardBody">
+                Songs you can't get enough of
+              </div>
+              <div id="${data.IDS.favoriteSongsSection}" class="card-content"></div>
+              <div class="cardFooter">
+                <a href="#" class="card-link" data-view="favorite-songs">View All →</a>
+              </div>
+            </div>
+            
+            <div class="bentoCard bentoCard-small">
+              <div class="card-header">
+                <div class="cardIcon">
+                  <svg fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
+                  </svg>
+                </div>
+                <h2 class="cardTitle">Quick Stats</h2>
+              </div>
+              <div class="cardBody">
+                <div class="quick-stats-grid">
+                  <div class="stat-item">
+                    <span class="stat-number" id="totalTracksCount">--</span>
+                    <span class="stat-label">Total Tracks</span>
+                  </div>
+                  <div class="stat-item">
+                    <span class="stat-number" id="totalArtistsCount">--</span>
+                    <span class="stat-label">Artists</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
+          
+          <button class="floating-player-trigger tablet-only" id="tabletPlayerTrigger" aria-label="Open Music Player">
+            <svg fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
+            </svg>
+          </button>
         `;
         
       default:
@@ -574,7 +827,7 @@ case "enhancedArtist":
       playlists.forEach((playlist, index) => {
         html += `
           <div class="playlist-card" data-playlist-id="${playlist.id}" style="animation-delay: ${index * 100}ms;">
-            <div class="playlist-icon" style="width: 40px; height: 40px; background: linear-gradient(45deg, #6366f1, #8b5cf6); border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <div class="playlist-icon" style="width: 40px; height: 40px; background: linear-gradient(45deg, #6366f1, #8b5cf6); border-radius: 0.5rem; display: flex; align-items: center; justify-content: center;">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="20" height="20">
                 <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v2H3v-2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
               </svg>
@@ -669,7 +922,7 @@ case "enhancedArtist":
           <div class="close" data-close>&times;</div>
           <div class="content">${data.content}</div>
         `;
-      case 'dialog': // Handles both confirm and alert
+      case 'dialog':
         return `
           <div class="header">${data.message}</div>
           <div class="actions">
@@ -709,7 +962,7 @@ case "enhancedArtist":
   },
 
   playerListItem: function(data) {
-    const { song, index, type, utils } = data; // type can be 'queue' or 'recent'
+    const { song, index, type, utils } = data;
     const isQueue = type === 'queue';
 
     return `
@@ -734,7 +987,7 @@ case "enhancedArtist":
                  </button>`
               : `<button class="queueButton" data-action="queue" title="Add to queue">
                    <svg class="SVGimg" fill="currentColor" viewBox="0 0 20 20">
-                     <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+                     <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
                    </svg>
                  </button>`
             }
@@ -744,7 +997,6 @@ case "enhancedArtist":
     `;
   },
 };
-
 
 export function create(htmlString) {
   const div = document.createElement('div');

@@ -4,8 +4,7 @@ import {
   appState,
   musicPlayer,
   utils,
-  notifications,
-  loadArtistInfo
+  notifications
 } from '../global.js';
 
 import { ROUTES } from '../map.js';
@@ -296,105 +295,91 @@ class MusicSearch {
     });
   }
   displayArtists(artists) {
-  const container = document.getElementById('artistsList');
-  const section = document.getElementById('artistsResults');
-  
-  if (!artists.length) {
-    section?.classList.add('hidden');
-    return;
-  }
-  
-  section?.classList.remove('hidden');
-  container.innerHTML = '';
-  
-  artists.forEach((artist, index) => {
-    const item = document.createElement('div');
-    item.className = 'search-result-item animate-fade-in-up';
-    item.style.animationDelay = `${index * 30}ms`;
-    item.dataset.index = index;
-    item.dataset.type = 'artist';
+    const container = document.getElementById('artistsList');
+    const section = document.getElementById('artistsResults');
     
-    item.innerHTML = `
-      <img src="${artist.cover}" alt="${artist.name}" class="w-12 h-12 rounded-full object-cover flex-shrink-0">
-      <div class="flex-1 min-w-0">
-        <div class="font-medium text-white truncate">${artist.name}</div>
-        <div class="text-sm text-gray-400 truncate">${artist.genre} • ${artist.albumCount} album${artist.albumCount !== 1 ? 's' : ''}</div>
-      </div>
-      <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-      </svg>
-    `;
+    if (!artists.length) {
+      section?.classList.add('hidden');
+      return;
+    }
     
-    // CORRECTED: Use the proper navigation pattern from your existing code
-    item.addEventListener('click', () => {
-      if (appState.siteMapInstance) {
-        appState.siteMapInstance.navigateTo(ROUTES.ARTIST, {
-          artist: artist.name
-        });
-        this.closeSearch();
-      }
-    });
+    section?.classList.remove('hidden');
+    container.innerHTML = '';
     
-    container.appendChild(item);
-  });
-}
-  displayAlbums(albums) {
-  const container = document.getElementById('albumsList');
-  const section = document.getElementById('albumsResults');
-  
-  if (!albums.length) {
-    section?.classList.add('hidden');
-    return;
-  }
-  
-  section?.classList.remove('hidden');
-  container.innerHTML = '';
-  
-  albums.forEach((album, index) => {
-    const item = document.createElement('div');
-    item.className = 'album-card-search animate-fade-in-up';
-    item.style.animationDelay = `${index * 30}ms`;
-    item.dataset.index = index;
-    item.dataset.type = 'album';
-    
-    item.innerHTML = `
-      <img src="${album.cover}" alt="${album.name}" class="w-full aspect-square rounded-lg object-cover mb-3">
-      <div class="font-medium text-white truncate">${album.name}</div>
-      <div class="text-sm text-gray-400 truncate">${album.artist}</div>
-      <div class="text-xs text-gray-500 mt-1">${album.year} • ${album.songCount} songs</div>
-    `;
-    
-    // CORRECTED: Use the proper navigation pattern with album loading
-    item.addEventListener('click', () => {
-      const artistName = album.artist;
-      const albumName = album.name;
+    artists.forEach((artist, index) => {
+      const item = document.createElement('div');
+      item.className = 'search-result-item animate-fade-in-up';
+      item.style.animationDelay = `${index * 30}ms`;
+      item.dataset.index = index;
+      item.dataset.type = 'artist';
       
-      if (appState.siteMapInstance) {
-        appState.siteMapInstance.navigateTo(ROUTES.ARTIST, {
-          artist: artistName
-        });
-        
-        // Store the album to be loaded when artist page is ready
-        if (albumName) {
-          sessionStorage.setItem('pendingAlbumLoad', albumName);
-          
-          // Add a small delay to ensure artist page is loaded first
-          setTimeout(() => {
-            const storedAlbum = sessionStorage.getItem('pendingAlbumLoad');
-            if (storedAlbum === albumName) {
-              loadArtistInfo(artistName, albumName);
-              sessionStorage.removeItem('pendingAlbumLoad');
-            }
-          }, 100);
+      item.innerHTML = `
+        <img src="${artist.cover}" alt="${artist.name}" class="w-12 h-12 rounded-full object-cover flex-shrink-0">
+        <div class="flex-1 min-w-0">
+          <div class="font-medium text-white truncate">${artist.name}</div>
+          <div class="text-sm text-gray-400 truncate">${artist.genre} • ${artist.albumCount} album${artist.albumCount !== 1 ? 's' : ''}</div>
+        </div>
+        <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      `;
+      
+      item.addEventListener('click', () => {
+        if (appState.siteMapInstance) {
+          appState.siteMapInstance.navigateTo(ROUTES.ARTIST, {
+            artist: artist.name
+          });
+          this.closeSearch();
         }
-        
-        this.closeSearch();
-      }
+      });
+      
+      container.appendChild(item);
     });
+  }
+  displayAlbums(albums) {
+    const container = document.getElementById('albumsList');
+    const section = document.getElementById('albumsResults');
     
-    container.appendChild(item);
-  });
-}
+    if (!albums.length) {
+      section?.classList.add('hidden');
+      return;
+    }
+    
+    section?.classList.remove('hidden');
+    container.innerHTML = '';
+    
+    albums.forEach((album, index) => {
+      const item = document.createElement('div');
+      item.className = 'album-card-search animate-fade-in-up';
+      item.style.animationDelay = `${index * 30}ms`;
+      item.dataset.index = index;
+      item.dataset.type = 'album';
+      
+      item.innerHTML = `
+        <img src="${album.cover}" alt="${album.name}" class="w-full aspect-square rounded-lg object-cover mb-3">
+        <div class="font-medium text-white truncate">${album.name}</div>
+        <div class="text-sm text-gray-400 truncate">${album.artist}</div>
+        <div class="text-xs text-gray-500 mt-1">${album.year} • ${album.songCount} songs</div>
+      `;
+      
+      item.addEventListener('click', () => {
+        const artistName = album.artist;
+        const albumName = album.name;
+        
+        if (appState.siteMapInstance) {
+          // Navigate to artist page with album parameter
+          appState.siteMapInstance.navigateTo(ROUTES.ARTIST, {
+            artist: artistName,
+            album: albumName
+          });
+          
+          this.closeSearch();
+        }
+      });
+      
+      container.appendChild(item);
+    });
+  }
   showNoResults() {
     document.getElementById('noResults')?.classList.remove('hidden');
     document.getElementById('songsResults')?.classList.add('hidden');

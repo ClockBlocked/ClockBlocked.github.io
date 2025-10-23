@@ -7,6 +7,9 @@ import { pageLoader, navigation } from './pages/rendering.js';
 import { ui, pageUpdates } from './pages/updates.js';
 import { deepLinkRouter } from './pages/router.js';
 
+import { viewManager } from './viewManager.js';
+import { playerManager } from './playerManager.js';
+
 const ACTION_GRID_ITEMS = [
   { id: 'play-next', icon: 'M9 5l7 7-7 7M15 5v14', label: 'Play Next' },
   { id: 'add-queue', icon: 'M12 6v6m0 0v6m0-6h6m-6 0H6', label: 'Add to Queue' },
@@ -2724,6 +2727,10 @@ if (document.readyState === 'loading') {
 
 document.addEventListener('DOMContentLoaded', () => {
   app.initialize();
+
+    viewManager.init();
+  playerManager.init();
+  navigation.initialize();
   
   const progressBar = document.getElementById('progressBar');
   if (progressBar) {
