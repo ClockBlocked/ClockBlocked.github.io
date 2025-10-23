@@ -25,6 +25,37 @@ const TOAST_ICONS = {
 
 const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
 
+const loadArtistInfo = (artistName, albumName = null) => {
+  if (!window.music) {
+    console.error('Music library not loaded');
+    return;
+  }
+
+  const artistData = window.music.find(a => a.artist === artistName);
+  if (!artistData) {
+    console.error(`Artist not found: ${artistName}`);
+    return;
+  }
+
+  // Use viewManager to switch to artist view
+  if (window.viewManager) {
+    window.viewManager.switchView('artist', { artistData });
+    
+    // If specific album requested, highlight it after load
+    if (albumName) {
+      setTimeout(() => {
+        const albumElement = document.querySelector(`[data-album="${albumName}"]`);
+        if (albumElement) {
+          albumElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          albumElement.classList.add('highlighted');
+          setTimeout(() => albumElement.classList.remove('highlighted'), 2000);
+        }
+      }, 500);
+    }
+  }
+};
+
+
 const appState = {
   audio: null,
   currentSong: null,
@@ -2842,5 +2873,6 @@ export {
     pageLoader,
     navigation,
     views,
-    ACTION_GRID_ITEMS
+    ACTION_GRID_ITEMS,
+  loadArtistInfo
 };
