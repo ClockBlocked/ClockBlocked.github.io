@@ -3,7 +3,7 @@ import { music } from "../modules/library.js";
 import { render, create } from "./utilities/templates.js";
 import { encodeURIComponent } from './utilities/parsers.js';
 import { homePage, views } from './pages/statics.js';
-import { pageLoader, navigation } from './pages/rendering.js';
+import { pageLoader } from './pages/rendering.js';
 import { ui, pageUpdates } from './pages/updates.js';
 import { deepLinkRouter } from './pages/router.js';
 
