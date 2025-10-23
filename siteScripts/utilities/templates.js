@@ -492,12 +492,12 @@ case "enhancedArtist":
       case "home_bento":
         return `
           <div class="bento-grid">
+            <!-- This ID is critical for your app's JS to target -->
             <div class="bento-card" data-span-col="2" data-span-row="2" data-loader="true">
               <div class="card-header">
                 <h2 class="card-title">Recently Played</h2>
                 <a href="#" class="card-link" data-view="recent">View All</a>
               </div>
-              <!-- This ID is used to style the contents as a 2-column grid -->
               <div id="${data.IDS.recentlyPlayedSection}" class="card-content">
                 <div class="skeleton-loader"></div>
               </div>
@@ -508,6 +508,7 @@ case "enhancedArtist":
                 <h2 class="card-title">Favorite Artists</h2>
                 <a href="#" class="card-link" data-view="favorite-artists">View All</a>
               </div>
+              <!-- This ID is critical for your app's JS to target -->
               <div id="${data.IDS.favoriteArtistsSection}" class="card-content">
                 <div class="skeleton-loader"></div>
               </div>
@@ -518,6 +519,7 @@ case "enhancedArtist":
                 <h2 class="card-title">Your Playlists</h2>
                 <a href="#" class="card-link" data-view="playlists">View All</a>
               </div>
+              <!-- This ID is critical for your app's JS to target -->
               <div id="${data.IDS.playlistsSection}" class="card-content">
                 <div class="skeleton-loader"></div>
               </div>
@@ -528,6 +530,7 @@ case "enhancedArtist":
                 <h2 class="card-title">Discover Albums</h2>
                 <a href="#" class="card-link" data-view="albums">Explore More</a>
               </div>
+              <!-- This ID is critical for your app's JS to target -->
               <div id="${data.IDS.randomAlbumsSection}" class="card-content">
                 <div class="skeleton-loader"></div>
               </div>
@@ -538,7 +541,7 @@ case "enhancedArtist":
                 <h2 class="card-title">Favorite Songs</h2>
                 <a href="#" class="card-link" data-view="favorite-songs">View All</a>
               </div>
-              <!-- This ID is used to style the contents as a 1-column list -->
+              <!-- This ID is critical for your app's JS to target -->
               <div id="${data.IDS.favoriteSongsSection}" class="card-content">
                 <div class="skeleton-loader"></div>
               </div>
@@ -553,7 +556,6 @@ case "enhancedArtist":
 
   homeSection: {
     // This function renders the track component.
-    // The CSS will determine if it's in a 1-col or 2-col layout.
     recentlyPlayed: (tracks, utils) => {
       let html = `<div class="recent-tracks animate-fade-in">`;
       tracks.forEach((track, index) => {
@@ -647,7 +649,6 @@ case "enhancedArtist":
     },
 
     // This function also renders the track component.
-    // CSS will style this as a 1-column list.
     favoriteSongs: (songs, utils) => {
       let html = `<div class="recent-tracks animate-fade-in">`;
       songs.forEach((song, index) => {
@@ -676,6 +677,7 @@ case "enhancedArtist":
       return html;
     }
   },
+
 
   overlay: function(templateName, data) {
     switch(templateName) {
@@ -766,7 +768,6 @@ export function create(htmlString) {
   div.innerHTML = htmlString.trim();
   return div.firstChild;
 }
-
 
 
 
