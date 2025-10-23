@@ -1,21 +1,42 @@
 import { viewManager } from '../viewManager.js';
 import { playerManager } from '../playerManager.js';
 import {
-  appState,
-  storage,
-  notifications,
-  musicPlayer,
-  utils
-} from '../global.js';
-
-import {
   NAVBAR,
-  MUSIC_PLAYER,
-  CLASSES,
-  IDS,
-  REPEAT_MODES,
-  NOTIFICATION_TYPES
-} from '../map.js';
+    MUSIC_PLAYER,
+    CLASSES,
+    IDS,
+    REPEAT_MODES,
+    NOTIFICATION_TYPES
+       } from '../map.js';
+
+// We need to make sure these exist in global.js or remove them if they don't
+let appState, storage, notifications, musicPlayer, utils, NAVBAR, MUSIC_PLAYER, CLASSES, IDS, REPEAT_MODES, NOTIFICATION_TYPES;
+
+// Try to import from global.js, but handle if some don't exist
+try {
+  const globalImports = await import('../global.js');
+  ({
+    appState,
+    storage,
+    notifications,
+    musicPlayer,
+    utils
+  } = globalImports);
+} catch (error) {
+  console.warn('Some imports from global.js not available:', error);
+  // Set fallbacks
+  appState = window.appState || {};
+  storage = window.storage || {};
+  notifications = window.notifications || { show: console.log };
+  musicPlayer = window.musicPlayer || {};
+  utils = window.utils || {};
+  NAVBAR = window.NAVBAR || {};
+  MUSIC_PLAYER = window.MUSIC_PLAYER || {};
+  CLASSES = window.CLASSES || {};
+  IDS = window.IDS || {};
+  REPEAT_MODES = window.REPEAT_MODES || {};
+  NOTIFICATION_TYPES = window.NOTIFICATION_TYPES || {};
+}
 
 export const pageUpdates = {
   breadCrumbs: (items, options = {}) => {
@@ -129,6 +150,7 @@ export const pageUpdates = {
     }
   },
 
+  // Rest of the file remains the same as in my previous response...
   updatePageMetadata: (metadata = {}) => {
     if (metadata.title) {
       document.title = metadata.title;
@@ -271,106 +293,111 @@ export const pageUpdates = {
 
 export const ui = {
   setLoadingState: (loading) => {
-    const nowPlayingArea = document.querySelector(NAVBAR.nowPlaying);
-    const songTitle = document.querySelector(NAVBAR.songName);
+    const nowPlayingArea = document.querySelector('.navbar-now-playing');
+    const songTitle = document.querySelector('.navbar-song-name');
 
     if (nowPlayingArea) nowPlayingArea.style.opacity = loading ? "0.5" : "1";
-    if (songTitle) songTitle.textContent = loading ? "Loading..." : appState.currentSong?.title || "";
+    if (songTitle) songTitle.textContent = loading ? "Loading..." : (window.appState?.currentSong?.title || "");
   },
 
   updateNowPlaying: () => {
-    if (!appState.currentSong) return;
+    if (!window.appState?.currentSong) return;
 
     const elements = {
-      albumCover: document.querySelector(MUSIC_PLAYER.albumArtwork),
-      songTitle: document.querySelector(MUSIC_PLAYER.songName),
-      artistName: document.querySelector(MUSIC_PLAYER.artistName),
-      albumName: document.querySelector(MUSIC_PLAYER.albumName),
+      albumCover: document.querySelector('.music-player-artwork'),
+      songTitle: document.querySelector('.music-player-song-name'),
+      artistName: document.querySelector('.music-player-artist-name'),
+      albumName: document.querySelector('.music-player-album-name'),
     };
 
-    if (elements.albumCover) {
-      utils.loadImageWithFallback(elements.albumCover, utils.getAlbumImageUrl(appState.currentSong.album), utils.getDefaultAlbumImage(), "album");
+    if (elements.albumCover && window.utils?.loadImageWithFallback) {
+      window.utils.loadImageWithFallback(
+        elements.albumCover, 
+        window.utils.getAlbumImageUrl(window.appState.currentSong.album), 
+        window.utils.getDefaultAlbumImage(), 
+        "album"
+      );
     }
 
-    if (elements.songTitle) elements.songTitle.textContent = appState.currentSong.title;
-    if (elements.artistName) elements.artistName.textContent = appState.currentSong.artist;
-    if (elements.albumName) elements.albumName.textContent = appState.currentSong.album;
+    if (elements.songTitle) elements.songTitle.textContent = window.appState.currentSong.title;
+    if (elements.artistName) elements.artistName.textContent = window.appState.currentSong.artist;
+    if (elements.albumName) elements.albumName.textContent = window.appState.currentSong.album;
 
     ui.updatePlayPauseButtons();
     ui.updateFavoriteButton();
   },
 
   updateNavbar: () => {
-    if (!appState.currentSong) return;
+    if (!window.appState?.currentSong) return;
 
-    const container = document.querySelector(NAVBAR.albumArtwork);
-    const artist = document.querySelector(NAVBAR.artistName);
-    const songTitle = document.querySelector(NAVBAR.songName);
-    const playIndicator = document.querySelector(NAVBAR.playIndicator);
-    const nowPlayingArea = document.querySelector(NAVBAR.nowPlaying);
+    const container = document.querySelector('.navbar-album-artwork');
+    const artist = document.querySelector('.navbar-artist-name');
+    const songTitle = document.querySelector('.navbar-song-name');
+    const playIndicator = document.querySelector('.navbar-play-indicator');
+    const nowPlayingArea = document.querySelector('.navbar-now-playing');
 
-    if (container) {
+    if (container && window.utils) {
       const svg = container.querySelector("svg");
       const img = container.querySelector("img");
 
       if (img) {
-        const albumUrl = utils.getAlbumImageUrl(appState.currentSong.album);
-        utils.loadImageWithFallback(img, albumUrl, utils.getDefaultAlbumImage(), "album");
+        const albumUrl = window.utils.getAlbumImageUrl(window.appState.currentSong.album);
+        window.utils.loadImageWithFallback(img, albumUrl, window.utils.getDefaultAlbumImage(), "album");
         img.classList.remove("opacity-0");
         img.classList.add("opacity-100");
       }
 
       if (svg) {
-        svg.classList.add(CLASSES.hidden);
+        svg.classList.add("hidden");
       }
     }
 
-    if (artist) artist.textContent = appState.currentSong.artist;
+    if (artist) artist.textContent = window.appState.currentSong.artist;
 
     if (songTitle) {
-      const title = appState.currentSong.title;
-      songTitle.classList.toggle(CLASSES.marquee, title.length > 25);
+      const title = window.appState.currentSong.title;
+      songTitle.classList.toggle("marquee", title.length > 25);
       songTitle.textContent = title;
     }
 
     if (playIndicator) {
-      playIndicator.classList.toggle(CLASSES.active, appState.isPlaying);
+      playIndicator.classList.toggle("active", window.appState.isPlaying);
     }
 
     if (nowPlayingArea) {
-      nowPlayingArea.classList.add(CLASSES.hasSong);
+      nowPlayingArea.classList.add("has-song");
     }
 
     // Also update desktop player card if it exists
     if (playerManager.getCurrentViewport() === 'desktop') {
-      playerManager.updateDesktopPlayerCard(appState.currentSong);
+      playerManager.updateDesktopPlayerCard(window.appState.currentSong);
     }
   },
 
   updatePlayPauseButtons: () => {
-    const navBarPlay = $byId(IDS.playIconNavbar);
-    const navBarPause = $byId(IDS.pauseIconNavbar);
+    const navBarPlay = document.getElementById('play-icon-navbar');
+    const navBarPause = document.getElementById('pause-icon-navbar');
     
-    if (navBarPlay && navBarPause) {
-      navBarPlay.style.display = appState.isPlaying ? "none" : "block";
-      navBarPause.style.display = appState.isPlaying ? "block" : "none";
+    if (navBarPlay && navBarPause && window.appState) {
+      navBarPlay.style.display = window.appState.isPlaying ? "none" : "block";
+      navBarPause.style.display = window.appState.isPlaying ? "block" : "none";
     }
 
-    const musicPlayerBtn = $byId(IDS.playBtn);
-    if (musicPlayerBtn) {
+    const musicPlayerBtn = document.getElementById('play-btn');
+    if (musicPlayerBtn && window.appState) {
       const playIcon = musicPlayerBtn.querySelector(".icon.play");
       const pauseIcon = musicPlayerBtn.querySelector(".icon.pause");
       if (playIcon && pauseIcon) {
-        playIcon.classList.toggle(CLASSES.hidden, appState.isPlaying);
-        pauseIcon.classList.toggle(CLASSES.hidden, !appState.isPlaying);
+        playIcon.classList.toggle("hidden", window.appState.isPlaying);
+        pauseIcon.classList.toggle("hidden", !window.appState.isPlaying);
       }
-      musicPlayerBtn.classList.toggle(CLASSES.playing, appState.isPlaying);
+      musicPlayerBtn.classList.toggle("playing", window.appState.isPlaying);
     }
 
     // Update desktop player card play button
     const desktopPlayBtn = document.getElementById('desktop-play-btn');
-    if (desktopPlayBtn) {
-      if (appState.isPlaying) {
+    if (desktopPlayBtn && window.appState) {
+      if (window.appState.isPlaying) {
         desktopPlayBtn.innerHTML = `
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
             <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
@@ -387,48 +414,51 @@ export const ui = {
   },
 
   updateShuffleButton: () => {
-    const shuffleBtn = $byId(IDS.shuffleBtn);
-    if (shuffleBtn) {
-      shuffleBtn.classList.toggle(CLASSES.active, appState.shuffleMode);
+    const shuffleBtn = document.getElementById('shuffle-btn');
+    if (shuffleBtn && window.appState) {
+      shuffleBtn.classList.toggle("active", window.appState.shuffleMode);
     }
 
     // Update any additional shuffle buttons in other views
     const shuffleButtons = document.querySelectorAll('[data-action="shuffle"]');
     shuffleButtons.forEach(btn => {
-      btn.classList.toggle(CLASSES.active, appState.shuffleMode);
-      btn.setAttribute('aria-pressed', appState.shuffleMode);
+      btn.classList.toggle("active", window.appState?.shuffleMode);
+      btn.setAttribute('aria-pressed', window.appState?.shuffleMode);
     });
   },
 
   updateRepeatButton: () => {
-    const repeatBtn = $byId(IDS.repeatBtn);
-    if (repeatBtn) {
-      repeatBtn.classList.toggle(CLASSES.active, appState.repeatMode !== REPEAT_MODES.OFF);
-      repeatBtn.classList.toggle(CLASSES.repeatOne, appState.repeatMode === REPEAT_MODES.ONE);
+    const repeatBtn = document.getElementById('repeat-btn');
+    if (repeatBtn && window.appState && window.REPEAT_MODES) {
+      repeatBtn.classList.toggle("active", window.appState.repeatMode !== window.REPEAT_MODES.OFF);
+      repeatBtn.classList.toggle("repeat-one", window.appState.repeatMode === window.REPEAT_MODES.ONE);
     }
 
     // Update any additional repeat buttons in other views
     const repeatButtons = document.querySelectorAll('[data-action="repeat"]');
     repeatButtons.forEach(btn => {
-      btn.classList.toggle(CLASSES.active, appState.repeatMode !== REPEAT_MODES.OFF);
-      btn.classList.toggle(CLASSES.repeatOne, appState.repeatMode === REPEAT_MODES.ONE);
+      const isActive = window.appState?.repeatMode !== (window.REPEAT_MODES?.OFF || 'off');
+      const isOne = window.appState?.repeatMode === (window.REPEAT_MODES?.ONE || 'one');
+      
+      btn.classList.toggle("active", isActive);
+      btn.classList.toggle("repeat-one", isOne);
       
       // Update aria-label based on current mode
       let label = 'Repeat off';
-      if (appState.repeatMode === REPEAT_MODES.ALL) label = 'Repeat all';
-      else if (appState.repeatMode === REPEAT_MODES.ONE) label = 'Repeat one';
+      if (window.appState?.repeatMode === (window.REPEAT_MODES?.ALL || 'all')) label = 'Repeat all';
+      else if (window.appState?.repeatMode === (window.REPEAT_MODES?.ONE || 'one')) label = 'Repeat one';
       btn.setAttribute('aria-label', label);
     });
   },
 
   updateFavoriteButton: () => {
-    if (!appState.currentSong) return;
+    if (!window.appState?.currentSong) return;
     
-    const favoriteBtn = $byId(IDS.favoriteBtn);
-    if (favoriteBtn) {
-      const isFavorite = appState.favorites.has("songs", appState.currentSong.id);
+    const favoriteBtn = document.getElementById('favorite-btn');
+    if (favoriteBtn && window.appState.favorites) {
+      const isFavorite = window.appState.favorites.has?.("songs", window.appState.currentSong.id);
       favoriteBtn.classList.toggle("favorited", isFavorite);
-      favoriteBtn.classList.toggle(CLASSES.active, isFavorite);
+      favoriteBtn.classList.toggle("active", isFavorite);
       favoriteBtn.setAttribute("aria-pressed", isFavorite);
       
       const heartIcon = favoriteBtn.querySelector("svg");
@@ -439,12 +469,12 @@ export const ui = {
     }
 
     // Update all favorite buttons for this song across the UI
-    if (appState.currentSong.id) {
-      const allFavoriteButtons = document.querySelectorAll(`[data-favorite-songs="${appState.currentSong.id}"]`);
+    if (window.appState.currentSong.id && window.appState.favorites) {
+      const allFavoriteButtons = document.querySelectorAll(`[data-favorite-songs="${window.appState.currentSong.id}"]`);
       allFavoriteButtons.forEach(btn => {
-        const isFavorite = appState.favorites.has("songs", appState.currentSong.id);
+        const isFavorite = window.appState.favorites.has?.("songs", window.appState.currentSong.id);
         btn.classList.toggle("favorited", isFavorite);
-        btn.classList.toggle(CLASSES.active, isFavorite);
+        btn.classList.toggle("active", isFavorite);
         btn.setAttribute("aria-pressed", isFavorite);
         
         const heartIcon = btn.querySelector("svg");
@@ -456,6 +486,7 @@ export const ui = {
     }
   },
 
+  // Rest of the UI functions continue...
   updateVolumeControl: (volume) => {
     const volumeSliders = document.querySelectorAll('.volume-slider');
     volumeSliders.forEach(slider => {
@@ -509,7 +540,7 @@ export const ui = {
 
   updateCounts: () => {
     // Update queue count
-    const queueCount = appState.queue?.items?.length || 0;
+    const queueCount = window.appState?.queue?.items?.length || 0;
     const queueCounters = document.querySelectorAll('.queue-count');
     queueCounters.forEach(counter => {
       counter.textContent = queueCount;
@@ -517,9 +548,9 @@ export const ui = {
     });
 
     // Update favorites counts
-    const favoriteSongsCount = appState.favorites?.songs?.size || 0;
-    const favoriteArtistsCount = appState.favorites?.artists?.size || 0;
-    const favoriteAlbumsCount = appState.favorites?.albums?.size || 0;
+    const favoriteSongsCount = window.appState?.favorites?.songs?.size || 0;
+    const favoriteArtistsCount = window.appState?.favorites?.artists?.size || 0;
+    const favoriteAlbumsCount = window.appState?.favorites?.albums?.size || 0;
 
     const favoriteSongsCounters = document.querySelectorAll('.favorite-songs-count');
     favoriteSongsCounters.forEach(counter => {
@@ -547,8 +578,8 @@ export const ui = {
     ui.updateCounts();
     
     // Update desktop player card if visible
-    if (playerManager.getCurrentViewport() === 'desktop' && appState.currentSong) {
-      playerManager.updateDesktopPlayerCard(appState.currentSong);
+    if (playerManager.getCurrentViewport() === 'desktop' && window.appState?.currentSong) {
+      playerManager.updateDesktopPlayerCard(window.appState.currentSong);
     }
   },
 
@@ -556,8 +587,8 @@ export const ui = {
   updateBreadcrumbs: pageUpdates.breadCrumbs,
   
   showNotification: (message, type = 'info', duration = 3000) => {
-    if (notifications?.show) {
-      notifications.show(message, type, duration);
+    if (window.notifications?.show) {
+      window.notifications.show(message, type, duration);
     } else {
       console.log(`${type.toUpperCase()}: ${message}`);
     }
