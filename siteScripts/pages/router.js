@@ -1,3 +1,6 @@
+import { viewManager } from '../viewManager.js';
+import { pageRendering } from './rendering.js';
+
 export const deepLinkRouter = {
   // Helper to encode names (spaces to periods)
   encodeName(name) {
@@ -47,20 +50,27 @@ export const deepLinkRouter = {
     return handler();
   },
 
-  navigateToHome() {
+  async navigateToHome() {
     if (window.appState?.router) {
       window.appState.router.navigateTo(window.ROUTES?.HOME || '/');
     }
+    await viewManager.switchView('home');
   },
 
-  navigateToArtist(artistName) {
+  async navigateToArtist(artistName) {
     if (!artistName) {
-      this.navigateToHome();
+      await this.navigateToHome();
       return;
     }
 
     // Already decoded if coming from parseCurrentPath
     const decodedName = artistName;
+    const artistData = window.music?.find(a => a.artist === decodedName);
+
+    if (!artistData) {
+      await this.navigateToHome();
+      return;
+    }
 
     if (window.appState?.router) {
       window.appState.router.navigateTo(
@@ -68,17 +78,20 @@ export const deepLinkRouter = {
         { artist: decodedName }
       );
     }
+
+    await viewManager.switchView('artist', { artistData });
   },
 
-  navigateToAllArtists() {
+  async navigateToAllArtists() {
     if (window.appState?.router) {
       window.appState.router.navigateTo(window.ROUTES?.ALL_ARTISTS || 'artists');
     }
+    await viewManager.switchView('allArtists');
   },
 
-  navigateToAlbum(artistName, albumName) {
+  async navigateToAlbum(artistName, albumName) {
     if (!artistName || !albumName) {
-      this.navigateToHome();
+      await this.navigateToHome();
       return;
     }
 
@@ -87,10 +100,21 @@ export const deepLinkRouter = {
 
     if (window.appState?.router && window.music) {
       const artistData = window.music.find(a => a.artist === decodedArtist);
-      if (artistData && window.navigation?.pages?.loadArtistPage) {
-        window.navigation.pages.loadArtistPage(artistData, decodedAlbum);
+      if (artistData) {
+        // Navigate to artist page with specific album highlighted
+        await this.navigateToArtist(decodedArtist);
+        
+        // After navigation, scroll to and highlight the album
+        setTimeout(() => {
+          const albumElement = document.querySelector(`[data-album="${decodedAlbum}"]`);
+          if (albumElement) {
+            albumElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            albumElement.classList.add('highlighted');
+            setTimeout(() => albumElement.classList.remove('highlighted'), 2000);
+          }
+        }, 500);
       } else {
-        this.navigateToHome();
+        await this.navigateToHome();
       }
     }
   },
@@ -122,45 +146,92 @@ export const deepLinkRouter = {
   },
 
   navigateToSearch(query) {
-    if (window.appState?.router && query) {
-      const decodedQuery = query;
-      window.appState.router.openSearchDialog?.(decodedQuery);
+    if (!query) {
+      this.navigateToHome();
+      return;
+    }
+
+    const decodedQuery = this.decodeName(query);
+
+    if (window.search) {
+      window.search.performSearch(decodedQuery);
     }
   },
 
-  initialize() {
-    if (window.deepLinkHandled) return;
-    window.deepLinkHandled = true;
+  // Enhanced URL building functions
+  buildUrl(route, params = {}) {
+    let url = '';
 
-    const pathInfo = this.parseCurrentPath();
-
-    if (pathInfo.fullPath !== '/' && pathInfo.route && pathInfo.route !== 'home') {
-      console.log('Deep link detected:', pathInfo);
-
-      const checkInitialized = setInterval(() => {
-        if (window.appState?.router && window.music && window.navigation) {
-          clearInterval(checkInitialized);
-
-          setTimeout(() => {
-            this.resolveRoute(pathInfo);
-          }, 100);
+    switch (route) {
+      case 'home':
+        url = '/';
+        break;
+      case 'artist':
+        if (params.artist) {
+          url = `/artist/${this.encodeName(params.artist)}`;
         }
-      }, 100);
-
-      setTimeout(() => {
-        clearInterval(checkInitialized);
-        if (!window.appState?.router) {
-          console.error('App not initialized after 5 seconds, redirecting to home');
-          window.location.href = '/';
+        break;
+      case 'artists':
+        url = '/artists';
+        break;
+      case 'album':
+        if (params.artist && params.album) {
+          url = `/album/${this.encodeName(params.artist)}/${this.encodeName(params.album)}`;
         }
-      }, 5000);
+        break;
+      case 'playlist':
+        if (params.id) {
+          url = `/playlist/${params.id}`;
+        }
+        break;
+      case 'favorites':
+        url = `/favorites/${params.type || 'songs'}`;
+        break;
+      case 'search':
+        if (params.query) {
+          url = `/search/${this.encodeName(params.query)}`;
+        }
+        break;
+      default:
+        url = '/';
+    }
+
+    return url;
+  },
+
+  // Update URL without triggering navigation
+  updateUrl(route, params = {}, replaceState = false) {
+    const url = this.buildUrl(route, params);
+    
+    if (replaceState) {
+      window.history.replaceState(null, '', url);
+    } else {
+      window.history.pushState(null, '', url);
     }
   },
 
-  bindPopState() {
-    window.addEventListener('popstate', (event) => {
+  // Initialize the router
+  init() {
+    // Handle browser back/forward buttons
+    window.addEventListener('popstate', () => {
       const pathInfo = this.parseCurrentPath();
       this.resolveRoute(pathInfo);
     });
-  },
+
+    // Handle initial page load
+    const pathInfo = this.parseCurrentPath();
+    this.resolveRoute(pathInfo);
+  }
 };
+
+// Auto-initialize when imported
+if (typeof window !== 'undefined') {
+  window.deepLinkRouter = deepLinkRouter;
+  
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => deepLinkRouter.init());
+  } else {
+    deepLinkRouter.init();
+  }
+}
