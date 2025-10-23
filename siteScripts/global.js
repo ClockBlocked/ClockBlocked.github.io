@@ -2070,6 +2070,8 @@ const musicPlayer = {
     },
 };
 
+// Update the app.initialize function to properly initialize the router:
+
 const app = {
     initialize: function() {
         window.music = music;
@@ -2087,8 +2089,26 @@ const app = {
         app.resetUI();
         app.syncGlobalState();
 
+        // Initialize router properly
         if (deepLinkRouter.init) {
             deepLinkRouter.init();
+        } else {
+            console.warn('Router initialization failed - init method not found');
+        }
+        
+        // Create a simple router instance for appState if it doesn't exist
+        if (!appState.router) {
+            appState.router = {
+                navigateTo: (route, params = {}) => {
+                    if (deepLinkRouter.updateUrl) {
+                        deepLinkRouter.updateUrl(route, params);
+                    }
+                    
+                    // Trigger navigation
+                    const pathInfo = deepLinkRouter.parseCurrentPath();
+                    deepLinkRouter.resolveRoute(pathInfo);
+                }
+            };
         }
     },
 
