@@ -34,6 +34,7 @@ const TOAST_ICONS = {
 
 const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
 
+
 const appState = {
   audio: null,
   currentSong: null,
@@ -56,6 +57,7 @@ const appState = {
   currentNotificationTimeout: null,
   router: null,
   homePageManager: null,
+  isInitialized: false, // Flag to prevent multiple initializations
 
   favorites: {
     songs: new Set(),
@@ -128,7 +130,7 @@ const appState = {
       }
       storage.save(STORAGE_KEYS.QUEUE, appState.queue.items);
       ui.updateCounts();
-      notifications.show(`Added "${song.title}" to queue`);
+      notifications.show(`Added "${utils.escapeHtml(song.title)}" to queue`);
     },
 
     remove: function (index) {
@@ -163,6 +165,7 @@ const appState = {
     },
   },
 };
+
 
 const utils = {
   getAlbumImageUrl: (albumName) => {
@@ -2822,31 +2825,76 @@ window.MyTunesApp = {
   initialize: app.initialize,
   goHome: app.goHome,
   state: appState,
-  music: music,
+  music: music, // Assign imported music library
   navigation: navigation,
   playlists: playlists,
   views: views,
-  playerController: null,
-  musicAppAPI: null,
+  utils: utils,
+  dropdown: dropdown,
+  overlays: overlays,
+  notifications: notifications,
+  musicPlayer: musicPlayer, // Expose the whole musicPlayer object
+  playerController: {
+    // Specific controls if needed elsewhere
+    playSong: musicPlayer.ui.playSong,
+    toggle: musicPlayer.mainPlayer.toggle,
+    next: musicPlayer.playback.next,
+    previous: musicPlayer.playback.previous,
+    seekTo: musicPlayer.playback.seekTo,
+    skip: musicPlayer.playback.skip,
+  },
+  // Add other necessary modules/functions if they need global access
 };
 
+// --- DOM Ready Initialization ---
+// Consolidated initialization logic
 function onDomReady() {
-  app.initialize();
+  console.log("DOM ready, initializing application...");
+  // Only call app.initialize here. It handles the rest.
+  window.MyTunesApp.initialize();
 
+  // Specific bindings that might rely on elements created by initialize
   const progressBar = document.getElementById("progressBar");
   if (progressBar) {
     progressBar.addEventListener("keydown", musicPlayer.ui.handleProgressBarKeyDown);
   }
 
-  setTimeout(() => {
-    if (notificationPlayer.utils.isSupported()) {
-      notificationPlayer.setup();
-    }
-  }, 100);
+  // Bind document-level events if not handled by eventHandlers.init()
+  // Example: eventHandlers.bindDocument(); (if needed here specifically)
 
-  eventHandlers.init();
+  console.log("Application initialization sequence started from onDomReady.");
 }
 
-const loadArtistInfo = (artistData) => app.loadArtistInfo(artistData);
+// Ensure initialization runs only once
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", onDomReady);
+} else {
+  // DOM is already ready, but ensure init hasn't run yet
+  if (!appState.isInitialized) {
+    onDomReady();
+  } else {
+    console.log("DOM ready, but app already initialized.");
+  }
+}
 
-export { appState, storage, notificationPlayer, musicPlayer, dropdown, overlays, playlists, notifications, utils, eventHandlers, app, pageLoader, navigation, ACTION_GRID_ITEMS, loadArtistInfo };
+// --- Exports ---
+// Export necessary components for other modules
+const loadArtistInfo = (artistData) => app.loadArtistInfo(artistData); // Keep exported helper
+
+export {
+  appState,
+  storage,
+  notificationPlayer,
+  musicPlayer,
+  dropdown,
+  overlays,
+  playlists,
+  notifications,
+  utils,
+  eventHandlers,
+  app, // Exporting app object might be needed
+  pageLoader, // Export pageLoader if used externally
+  navigation, // Export navigation if used externally
+  ACTION_GRID_ITEMS,
+  loadArtistInfo, // Keep exported helper
+};
