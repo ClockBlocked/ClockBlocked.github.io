@@ -248,7 +248,7 @@ const utils = {
 
   getSimilarArtists: (artistName, { limit = 12, includeSelf = false } = {}) => {
     const lib = Array.isArray(typeof music !== 'undefined' ? music : null) ? music : 
-                (Array.isArray(window.music) ? window.music : []);
+                (Array.isArray(window.MyTunesApp?.music) ? window.MyTunesApp.music : []);
     if (!Array.isArray(lib) || !lib.length) return [];
     const artist = lib.find(a => a.artist === artistName);
     if (!artist || !Array.isArray(artist.similar)) return [];
@@ -272,6 +272,15 @@ const utils = {
     if (!results) return null;
     if (!results[2]) return "";
     return decodeURIComponent(results[2].replace(/\+/g, " "));
+  },
+
+  escapeHtml: (s) => {
+    return String(s)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
   }
 };
 
@@ -541,7 +550,7 @@ const notifications = {
       type,
       iconHtml,
       title,
-      message: this.escapeHtml(String(message)),
+      message: utils.escapeHtml(String(message)),
     });
     
     const toast = create(toastHtml);
@@ -700,15 +709,6 @@ const notifications = {
         if (raf) cancelAnimationFrame(raf);
       }
     };
-  },
-
-  escapeHtml(s) {
-    return s
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
   }
 };
 
@@ -1553,12 +1553,12 @@ const musicPlayer = {
             },
 
             all: () => {
-                if (!window.music || window.music.length === 0) {
+                if (!window.MyTunesApp?.music || window.MyTunesApp.music.length === 0) {
                     notifications.show("No music library found", NOTIFICATION_TYPES.WARNING);
                     return;
                 }
                 const allSongs = [];
-                window.music.forEach((artist) => {
+                window.MyTunesApp.music.forEach((artist) => {
                     artist.albums.forEach((album) => {
                         album.songs.forEach((song) => {
                             allSongs.push({
@@ -1656,12 +1656,12 @@ const musicPlayer = {
                     eventHandlers.bindControlEvents?.(); 
                     musicPlayer.ui.bindSeekBar(); 
                 }, 100);
-              dispatchPlayerStateChange();
+              musicPlayer.playback.dispatchPlayerStateChange();
             } else {
                 appState.isPlaying = false;
                 ui.updatePlayPauseButtons();
                 notificationPlayer.playbackState.onPause();
-              dispatchPlayerStateChange();
+              musicPlayer.playback.dispatchPlayerStateChange();
             }
             ui.setLoadingState(false);
           },
@@ -1847,7 +1847,7 @@ const musicPlayer = {
             
             musicPlayer.ui.setProgressUI(percent, currentTime);
             musicPlayer.ui.updateBufferDisplay();
-          dispatchPlayerStateChange();
+          musicPlayer.playback.dispatchPlayerStateChange();
         },
 
         updateBufferDisplay: () => {
@@ -1920,8 +1920,8 @@ const musicPlayer = {
         },
 
         getNextInAlbum: () => {
-            if (!appState.currentSong || !window.music) return null;
-            const artist = window.music.find((a) => a.artist === appState.currentArtist);
+            if (!appState.currentSong || !window.MyTunesApp?.music) return null;
+            const artist = window.MyTunesApp.music.find((a) => a.artist === appState.currentArtist);
             const album = artist?.albums.find((al) => al.album === appState.currentAlbum);
             if (!album) return null;
             const currentIndex = album.songs.findIndex((s) => s.title === appState.currentSong.title);
@@ -1940,8 +1940,8 @@ const musicPlayer = {
         },
 
         getPreviousInAlbum: () => {
-            if (!appState.currentSong || !window.music) return null;
-            const artist = window.music.find((a) => a.artist === appState.currentArtist);
+            if (!appState.currentSong || !window.MyTunesApp?.music) return null;
+            const artist = window.MyTunesApp.music.find((a) => a.artist === appState.currentArtist);
             const album = artist?.albums.find((al) => al.album === appState.currentAlbum);
             if (!album) return null;
             const currentIndex = album.songs.findIndex((s) => s.title === appState.currentSong.title);
@@ -1958,8 +1958,6 @@ const musicPlayer = {
 
 const app = {
     initialize: function() {
-        window.music = music;
-
         storage.initialize();
         notifications.initialize();
         
@@ -1986,8 +1984,7 @@ const app = {
     },
 
     syncGlobalState: function() {
-        window.appState = appState;
-        window.playerController = {
+        window.MyTunesApp.playerController = {
             playSong: musicPlayer.ui.playSong,
             toggle: musicPlayer.mainPlayer.toggle,
             next: musicPlayer.playback.next,
@@ -1995,7 +1992,7 @@ const app = {
             seekTo: musicPlayer.playback.seekTo,
             skip: musicPlayer.playback.skip,
         };
-        window.musicAppAPI = {
+        window.MyTunesApp.musicAppAPI = {
             player: musicPlayer.mainPlayer,
             controls: musicPlayer.playback,
             musicPlayer: musicPlayer,
@@ -2012,6 +2009,85 @@ const app = {
         if (appState.router) {
             appState.router.navigateTo(ROUTES.HOME);
         }
+    },
+
+    async loadArtistInfo(artistData) {
+        const card = this.cardRegistry.get('artist-info');
+        if (!card || !card.contentElement) return;
+
+        card.contentElement.innerHTML = '';
+
+        const display = document.createElement('div');
+        display.className = 'artist-info-display';
+
+        const avatarDiv = document.createElement('div');
+        avatarDiv.className = 'artist-avatar-large';
+        const img = document.createElement('img');
+        img.src = utils.getArtistImageUrl(artistData.artist);
+        img.alt = artistData.artist;
+        avatarDiv.appendChild(img);
+        display.appendChild(avatarDiv);
+
+        const meta = document.createElement('div');
+        meta.className = 'artist-meta';
+        const statRow = document.createElement('div');
+        statRow.className = 'artist-stat-row';
+
+        const stat1 = document.createElement('div');
+        stat1.className = 'stat';
+        const val1 = document.createElement('span');
+        val1.className = 'stat-value';
+        val1.textContent = artistData.albums.length;
+        const lbl1 = document.createElement('span');
+        lbl1.className = 'stat-label';
+        lbl1.textContent = 'Albums';
+        stat1.appendChild(val1);
+        stat1.appendChild(lbl1);
+
+        const stat2 = document.createElement('div');
+        stat2.className = 'stat';
+        const val2 = document.createElement('span');
+        val2.className = 'stat-value';
+        val2.textContent = utils.getTotalSongs(artistData);
+        const lbl2 = document.createElement('span');
+        lbl2.className = 'stat-label';
+        lbl2.textContent = 'Songs';
+        stat2.appendChild(val2);
+        stat2.appendChild(lbl2);
+        
+        statRow.appendChild(stat1);
+        statRow.appendChild(stat2);
+        meta.appendChild(statRow);
+        display.appendChild(meta);
+
+        const actions = document.createElement('div');
+        actions.className = 'artist-actions-compact';
+        
+        const btnPlay = document.createElement('button');
+        btnPlay.id = 'artistPlay';
+        btnPlay.className = 'btn-primary';
+        btnPlay.innerHTML = `
+              <svg fill="currentColor" viewBox="0 0 20 20" style="width: 20px; height: 20px;">
+                <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/>
+              </svg>
+              Play All
+        `;
+        
+        const btnFollow = document.createElement('button');
+        btnFollow.id = 'artistFollow';
+        btnFollow.className = 'btn-secondary';
+        btnFollow.innerHTML = `
+              <svg fill="currentColor" viewBox="0 0 20 20" style="width: 20px; height: 20px;">
+                <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/>
+              </svg>
+              Favorite
+        `;
+        
+        actions.appendChild(btnPlay);
+        actions.appendChild(btnFollow);
+        display.appendChild(actions);
+
+        card.contentElement.appendChild(display);
     }
 };
 
@@ -2172,7 +2248,7 @@ const playlists = {
                       </div>
                     </div>
                     <div class="p-4">
-                      <h3 class="font-bold text-lg mb-1 truncate">${playlist.name}</h3>
+                      <h3 class="font-bold text-lg mb-1 truncate">${utils.escapeHtml(playlist.name)}</h3>
                       <p class="text-gray-400 text-sm mb-3">${playlist.songs.length} song${playlist.songs.length !== 1 ? "s" : ""}</p>
                       <div class="flex gap-2">
                         <button class="view-playlist-btn flex-1 bg-gray-600 text-white px-3 py-2 rounded hover:bg-gray-500 transition-colors text-sm" data-playlist-id="${playlist.id}">
@@ -2221,8 +2297,8 @@ const playlists = {
                     </div>
                     <div class="playlist-info flex-1">
                       <p class="text-sm text-gray-400 mb-2">PLAYLIST</p>
-                      <h1 class="text-4xl font-bold mb-4">${playlist.name}</h1>
-                      <p class="text-gray-400 mb-6">${playlist.songs.length} song${playlist.songs.length !== 1 ? "s" : ""} • Created ${new Date(playlist.created).toLocaleDateString()}</p>
+                      <h1 class="text-4xl font-bold mb-4">${utils.escapeHtml(playlist.name)}</h1>
+                      <p class="text-gray-400 mb-6">${playlist.songs.length} song${playlist.songs.length !== 1 ? "s" : ""} • Created ${utils.escapeHtml(new Date(playlist.created).toLocaleDateString())}</p>
                       <div class="flex gap-4">
                         <button class="play-playlist-btn bg-accent-primary text-white px-8 py-3 rounded-full hover:bg-accent-secondary transition-colors flex items-center gap-2" data-playlist-id="${playlist.id}" ${
             playlist.songs.length === 0 ? "disabled" : ""
@@ -2276,16 +2352,16 @@ const playlists = {
                             </button>
                           </div>
                           <div class="col-span-5 flex items-center gap-3">
-                            <img src="${utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="w-10 h-10 rounded object-cover">
+                            <img src="${utils.getAlbumImageUrl(song.album)}" alt="${utils.escapeHtml(song.title)}" class="w-10 h-10 rounded object-cover">
                             <div>
-                              <div class="font-medium">${song.title}</div>
-                              <div class="text-sm text-gray-400 cursor-pointer hover:text-white transition-colors" data-artist="${song.artist}">${song.artist}</div>
+                              <div class="font-medium">${utils.escapeHtml(song.title)}</div>
+                              <div class="text-sm text-gray-400 cursor-pointer hover:text-white transition-colors" data-artist="${song.artist}">${utils.escapeHtml(song.artist)}</div>
                             </div>
                           </div>
-                          <div class="col-span-3 hidden md:block text-gray-400 text-sm">${song.album}</div>
-                          <div class="col-span-2 hidden md:block text-gray-400 text-sm">${new Date().toLocaleDateString()}</div>
+                          <div class="col-span-3 hidden md:block text-gray-400 text-sm">${utils.escapeHtml(song.album)}</div>
+                          <div class="col-span-2 hidden md:block text-gray-400 text-sm">${utils.escapeHtml(new Date().toLocaleDateString())}</div>
                           <div class="col-span-1 flex items-center justify-between">
-                            <span class="text-gray-400 text-sm">${song.duration || "0:00"}</span>
+                            <span class="text-gray-400 text-sm">${utils.escapeHtml(song.duration || "0:00")}</span>
                             <div class="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
                               <button class="action-btn p-1 hover:bg-white/10 rounded transition-colors" data-action="favorite" data-song-id="${song.id}" title="Add to favorites">
                                 <svg class="w-4 h-4 ${appState.favorites.has("songs", song.id) ? "text-red-500" : ""}" fill="${appState.favorites.has("songs", song.id) ? "currentColor" : "none"}" stroke="currentColor" viewBox="0 0 24 24">
@@ -2693,36 +2769,19 @@ const eventHandlers = {
   },
 };
 
-window.addEventListener("load", function() {
-  if (!window.appState) {
-    app.initialize();
-  }
-});
-
 window.MyTunesApp = {
   initialize: app.initialize,
-  state: function() { return appState; },
-  api: function() { return window.musicAppAPI; },
   goHome: app.goHome,
+  state: appState,
+  music: music,
+  navigation: navigation,
+  playlists: playlists,
+  views: views,
+  playerController: null,
+  musicAppAPI: null,
 };
 
-if (window.music) {
-  app.initialize();
-}
-
-window.navigation = navigation;
-window.playlists = playlists;
-window.views = views;
-
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    eventHandlers.init();
-  });
-} else {
-  eventHandlers.init();
-}
-
-document.addEventListener('DOMContentLoaded', () => {
+function onDomReady() {
   app.initialize();
   
   const progressBar = document.getElementById('progressBar');
@@ -2735,7 +2794,15 @@ document.addEventListener('DOMContentLoaded', () => {
           notificationPlayer.setup();
       }
   }, 100);
-});
+  
+  eventHandlers.init();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', onDomReady);
+} else {
+  onDomReady();
+}
 
 export {
     appState,
@@ -2753,3 +2820,5 @@ export {
     navigation,
     ACTION_GRID_ITEMS
 };
+
+
