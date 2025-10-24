@@ -1,26 +1,19 @@
-import {
-  appState,
-  storage,
-  notifications,
-  musicPlayer,
-  utils,
-  navigation,
-  playlists,
-  overlays,
-} from '../global.js';
-
 import { ui } from './updates.js';
 import { render } from '../utilities/templates.js';
 
 export const homePage = {
   initialize: () => {
-    appState.homePageManager = {
-      renderHomePage: homePage.render,
-    };
+    if (window.MyTunesApp) {
+      window.MyTunesApp.state.homePageManager = {
+        renderHomePage: homePage.render,
+      };
+    } else {
+      console.error("MyTunesApp not initialized before homePage.initialize");
+    }
   },
 
   render: () => {
-    const dynamicContent = $byId(IDS.dynamicContent);
+    const dynamicContent = window.$byId(window.IDS.dynamicContent);
     if (!dynamicContent) return;
 
     dynamicContent.innerHTML = "";
@@ -38,7 +31,7 @@ export const homePage = {
   },
 
   addStyles: () => {
-    if ($byId("bento-grid-styles")) return;
+    if (window.$byId("bento-grid-styles")) return;
 
     const styleEl = document.createElement("style");
     styleEl.id = "bento-grid-styles";
@@ -340,11 +333,9 @@ export const homePage = {
   },
 
   renderRecentlyPlayed: () => {
-    const container = document.getElementById("recentlyPlayedSection");
-    if (!container) {
-      console.error("Recently Played container not found!");
-      return;
-    }
+    const container = window.$byId(window.IDS.recentlyPlayedSection);
+    if (!container) return;
+    const appState = window.MyTunesApp.state;
 
     if (!appState.recentlyPlayed || appState.recentlyPlayed.length === 0) {
       container.innerHTML = homePage.renderEmptyState("No recently played tracks", "music-note");
@@ -352,7 +343,7 @@ export const homePage = {
     }
 
     const recentTracks = appState.recentlyPlayed.slice(0, 5);
-    container.innerHTML = render.homeSection.recentlyPlayed(recentTracks, utils);
+    container.innerHTML = render.homeSection.recentlyPlayed(recentTracks, window.MyTunesApp.utils);
 
     container.querySelectorAll(".recent-track").forEach((track) => {
       track.addEventListener("click", (e) => {
@@ -360,7 +351,7 @@ export const homePage = {
 
         try {
           const songData = JSON.parse(track.dataset.song);
-          musicPlayer.ui.playSong(songData);
+          window.MyTunesApp.musicPlayer.ui.playSong(songData);
         } catch (error) {}
       });
     });
@@ -370,7 +361,7 @@ export const homePage = {
         e.stopPropagation();
         const artistName = artistEl.dataset.artist;
         if (appState.router) {
-          appState.router.navigateTo(ROUTES.ARTIST, {
+          appState.router.navigateTo(window.ROUTES.ARTIST, {
             artist: artistName,
           });
         }
@@ -379,11 +370,8 @@ export const homePage = {
   },
 
   renderRandomAlbums: () => {
-    const container = document.getElementById("randomAlbumsSection");
-    if (!container) {
-      console.error("Random Albums container not found!");
-      return;
-    }
+    const container = window.$byId(window.IDS.randomAlbumsSection);
+    if (!container) return;
 
     const albums = homePage.getRandomAlbums(6);
 
@@ -392,7 +380,7 @@ export const homePage = {
       return;
     }
 
-    container.innerHTML = render.homeSection.randomAlbums(albums, utils);
+    container.innerHTML = render.homeSection.randomAlbums(albums, window.MyTunesApp.utils);
 
     container.querySelectorAll(".album-play-btn").forEach((playBtn) => {
       playBtn.addEventListener("click", (e) => {
@@ -420,8 +408,9 @@ export const homePage = {
         const albumCard = artistEl.closest('.album-card');
         const albumName = albumCard ? albumCard.dataset.album : null;
         
+        const appState = window.MyTunesApp.state;
         if (appState.router) {
-          appState.router.navigateTo(ROUTES.ARTIST, {
+          appState.router.navigateTo(window.ROUTES.ARTIST, {
             artist: artistName,
           });
           
@@ -431,9 +420,9 @@ export const homePage = {
             setTimeout(() => {
               const storedAlbum = sessionStorage.getItem('pendingAlbumLoad');
               if (storedAlbum === albumName) {
-                const artistData = window.music?.find((a) => a.artist === artistName);
+                const artistData = window.MyTunesApp.music?.find((a) => a.artist === artistName);
                 if (artistData) {
-                  navigation.pages.loadArtistPage(artistData, albumName);
+                  window.MyTunesApp.navigation.pages.loadArtistPage(artistData, albumName);
                 }
                 sessionStorage.removeItem('pendingAlbumLoad');
               }
@@ -445,11 +434,9 @@ export const homePage = {
   },
 
   renderFavoriteArtists: () => {
-    const container = document.getElementById("favoriteArtistsSection");
-    if (!container) {
-      console.error("Favorite Artists container not found!");
-      return;
-    }
+    const container = window.$byId(window.IDS.favoriteArtistsSection);
+    if (!container) return;
+    const appState = window.MyTunesApp.state;
 
     if (!appState.favorites.artists || appState.favorites.artists.size === 0) {
       container.innerHTML = homePage.renderEmptyState("No favorite artists", "artist");
@@ -457,13 +444,13 @@ export const homePage = {
     }
 
     const artists = Array.from(appState.favorites.artists).slice(0, 6);
-    container.innerHTML = render.homeSection.favoriteArtists(artists, utils);
+    container.innerHTML = render.homeSection.favoriteArtists(artists, window.MyTunesApp.utils);
 
     container.querySelectorAll(".artist-card").forEach((artistEl) => {
       artistEl.addEventListener("click", () => {
         const artistName = artistEl.dataset.artist;
         if (appState.router) {
-          appState.router.navigateTo(ROUTES.ARTIST, {
+          appState.router.navigateTo(window.ROUTES.ARTIST, {
             artist: artistName,
           });
         }
@@ -472,11 +459,9 @@ export const homePage = {
   },
 
   renderPlaylists: () => {
-    const container = document.getElementById("playlistsSection");
-    if (!container) {
-      console.error("Playlists container not found!");
-      return;
-    }
+    const container = window.$byId(window.IDS.playlistsSection);
+    if (!container) return;
+    const appState = window.MyTunesApp.state;
 
     let html = "";
 
@@ -501,14 +486,14 @@ export const homePage = {
     container.querySelectorAll(".playlist-card").forEach((playlistEl) => {
       playlistEl.addEventListener("click", () => {
         const playlistId = playlistEl.dataset.playlistId;
-        playlists.show(playlistId);
+        window.MyTunesApp.playlists.show(playlistId);
       });
     });
 
     const createBtn = container.querySelector(".create-playlist-btn");
     if (createBtn) {
-      createBtn.addEventListener("click", () => {
-        const newPlaylist = playlists.create();
+      createBtn.addEventListener("click", async () => {
+        const newPlaylist = await window.MyTunesApp.playlists.create();
         if (newPlaylist) {
           setTimeout(() => homePage.renderPlaylists(), 100);
         }
@@ -517,11 +502,9 @@ export const homePage = {
   },
 
   renderFavoriteSongs: () => {
-    const container = document.getElementById("favoriteSongsSection");
-    if (!container) {
-      console.error("Favorite Songs container not found!");
-      return;
-    }
+    const container = window.$byId(window.IDS.favoriteSongsSection);
+    if (!container) return;
+    const appState = window.MyTunesApp.state;
 
     if (!appState.favorites.songs || appState.favorites.songs.size === 0) {
       container.innerHTML = homePage.renderEmptyState("No favorite songs", "heart");
@@ -529,7 +512,7 @@ export const homePage = {
     }
 
     const songs = homePage.getSongsByIds(Array.from(appState.favorites.songs).slice(0, 5));
-    container.innerHTML = render.homeSection.favoriteSongs(songs, utils);
+    container.innerHTML = render.homeSection.favoriteSongs(songs, window.MyTunesApp.utils);
 
     container.querySelectorAll(".recent-track").forEach((track) => {
       track.addEventListener("click", (e) => {
@@ -537,7 +520,7 @@ export const homePage = {
 
         try {
           const songData = JSON.parse(track.dataset.song);
-          musicPlayer.ui.playSong(songData);
+          window.MyTunesApp.musicPlayer.ui.playSong(songData);
         } catch (error) {}
       });
     });
@@ -547,7 +530,7 @@ export const homePage = {
         e.stopPropagation();
         const artistName = artistEl.dataset.artist;
         if (appState.router) {
-          appState.router.navigateTo(ROUTES.ARTIST, {
+          appState.router.navigateTo(window.ROUTES.ARTIST, {
             artist: artistName,
           });
         }
@@ -581,6 +564,7 @@ export const homePage = {
       link.addEventListener("click", (e) => {
         e.preventDefault();
         const view = link.dataset.view;
+        const { musicPlayer, notifications, views, playlists } = window.MyTunesApp;
 
         switch (view) {
           case "recent":
@@ -607,15 +591,16 @@ export const homePage = {
   },
 
   getRandomAlbums: (count = 6) => {
-    if (!window.music) return [];
+    const music = window.MyTunesApp.music;
+    if (!music) return [];
 
     const allAlbums = [];
-    window.music.forEach((artist) => {
+    music.forEach((artist) => {
       artist.albums.forEach((album) => {
         allAlbums.push({
           artist: artist.artist,
           album: album.album,
-          cover: utils.getAlbumImageUrl(album.album),
+          cover: window.MyTunesApp.utils.getAlbumImageUrl(album.album),
           songs: album.songs,
         });
       });
@@ -626,11 +611,12 @@ export const homePage = {
   },
 
   getSongsByIds: (ids) => {
-    if (!window.music || !ids.length) return [];
+    const music = window.MyTunesApp.music;
+    if (!music || !ids.length) return [];
 
     const songs = [];
 
-    window.music.forEach((artist) => {
+    music.forEach((artist) => {
       artist.albums.forEach((album) => {
         album.songs.forEach((song) => {
           if (ids.includes(song.id)) {
@@ -638,7 +624,7 @@ export const homePage = {
               ...song,
               artist: artist.artist,
               album: album.album,
-              cover: utils.getAlbumImageUrl(album.album),
+              cover: window.MyTunesApp.utils.getAlbumImageUrl(album.album),
             });
           }
         });
@@ -649,13 +635,16 @@ export const homePage = {
   },
 
   playAlbum: (artistName, albumName) => {
-    if (!window.music) return;
+    const music = window.MyTunesApp.music;
+    if (!music) return;
 
-    const artist = window.music.find((a) => a.artist === artistName);
+    const artist = music.find((a) => a.artist === artistName);
     if (!artist) return;
 
     const album = artist.albums.find((a) => a.album === albumName);
     if (!album || album.songs.length === 0) return;
+
+    const { appState, musicPlayer, utils, notifications } = window.MyTunesApp;
 
     appState.queue.clear();
 
@@ -675,7 +664,7 @@ export const homePage = {
       cover: utils.getAlbumImageUrl(albumName),
     });
 
-    notifications.show(`Playing album "${albumName}"`, NOTIFICATION_TYPES.SUCCESS);
+    notifications.show(`Playing album "${albumName}"`, window.NOTIFICATION_TYPES.SUCCESS);
   },
 
   renderEmptyState: (message, iconType) => {
@@ -700,7 +689,9 @@ export const homePage = {
 
 export const views = {
     showFavoriteSongs: () => {
-        const favoriteSongIds = Array.from(appState.favorites.songs);
+        const { state, overlays, utils, ICONS, musicPlayer, notifications } = window.MyTunesApp;
+        const favoriteSongIds = Array.from(state.favorites.songs);
+        
         if (favoriteSongIds.length === 0) {
             overlays.viewer.playlists(
                 views.renderEmptyState(
@@ -768,7 +759,8 @@ export const views = {
     },
 
     showFavoriteArtists: () => {
-        const favoriteArtistNames = Array.from(appState.favorites.artists);
+        const { state, overlays, utils, ICONS, navigation, music } = window.MyTunesApp;
+        const favoriteArtistNames = Array.from(state.favorites.artists);
         
         let modalEl = document.getElementById('favorite-artists-modal');
         if (!modalEl) {
@@ -815,7 +807,7 @@ export const views = {
             artistCount.textContent = "0 artists";
         } else {
             const favoriteArtists = favoriteArtistNames
-                .map((artistName) => window.music?.find((a) => a.artist === artistName))
+                .map((artistName) => music?.find((a) => a.artist === artistName))
                 .filter(Boolean);
             
             artistCount.textContent = `${favoriteArtists.length} artist${favoriteArtists.length !== 1 ? "s" : ""}`;
@@ -844,8 +836,8 @@ export const views = {
                 item.addEventListener('click', (e) => {
                     if (!e.target.closest('.play-btn')) {
                         const artistName = item.getAttribute('data-artist');
-                        if (appState.router) {
-                            appState.router.navigateTo(ROUTES.ARTIST, { artist: artistName });
+                        if (state.router) {
+                            state.router.navigateTo(window.ROUTES.ARTIST, { artist: artistName });
                         }
                     }
                 });
@@ -857,7 +849,7 @@ export const views = {
                     e.stopPropagation();
                     const artistItem = button.closest('.artist-item');
                     const artistName = artistItem.getAttribute('data-artist');
-                    const artistData = window.music?.find((a) => a.artist === artistName);
+                    const artistData = music?.find((a) => a.artist === artistName);
                     if (artistData) {
                         navigation.actions.playArtistSongs(artistData);
                     }
@@ -870,18 +862,19 @@ export const views = {
 
     bindFavoriteSongsEvents: (root) => {
         if (!root) return;
+        const { state, musicPlayer, notifications, navigation, overlays } = window.MyTunesApp;
 
         const playAllBtn = root.querySelector('.play-all-btn');
         if (playAllBtn) {
             playAllBtn.addEventListener('click', () => {
-                const favoriteSongIds = Array.from(appState.favorites.songs);
+                const favoriteSongIds = Array.from(state.favorites.songs);
                 const favoriteSongs = views.getSongsByIds(favoriteSongIds);
                 
                 if (favoriteSongs.length > 0) {
-                    appState.queue.clear();
-                    favoriteSongs.slice(1).forEach((song) => appState.queue.add(song));
+                    state.queue.clear();
+                    favoriteSongs.slice(1).forEach((song) => state.queue.add(song));
                     musicPlayer.ui.playSong(favoriteSongs[0]);
-                    notifications.show("Playing all favorite songs", NOTIFICATION_TYPES.SUCCESS);
+                    notifications.show("Playing all favorite songs", window.NOTIFICATION_TYPES.SUCCESS);
                 }
             });
         }
@@ -889,7 +882,7 @@ export const views = {
         const shuffleAllBtn = root.querySelector('.shuffle-all-btn');
         if (shuffleAllBtn) {
             shuffleAllBtn.addEventListener('click', () => {
-                const favoriteSongIds = Array.from(appState.favorites.songs);
+                const favoriteSongIds = Array.from(state.favorites.songs);
                 let favoriteSongs = views.getSongsByIds(favoriteSongIds);
                 
                 if (favoriteSongs.length > 0) {
@@ -898,12 +891,12 @@ export const views = {
                         [favoriteSongs[i], favoriteSongs[j]] = [favoriteSongs[j], favoriteSongs[i]];
                     }
                     
-                    appState.queue.clear();
-                    favoriteSongs.slice(1).forEach((song) => appState.queue.add(song));
+                    state.queue.clear();
+                    favoriteSongs.slice(1).forEach((song) => state.queue.add(song));
                     musicPlayer.ui.playSong(favoriteSongs[0]);
-                    appState.shuffleMode = true;
-                    ui.updateShuffleButton();
-                    notifications.show("Shuffling favorite songs", NOTIFICATION_TYPES.SUCCESS);
+                    state.shuffleMode = true;
+                    window.MyTunesApp.ui.updateShuffleButton();
+                    notifications.show("Shuffling favorite songs", window.NOTIFICATION_TYPES.SUCCESS);
                 }
             });
         }
@@ -925,9 +918,9 @@ export const views = {
             artistEl.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const artistName = artistEl.dataset.artist;
-                if (appState.router) {
+                if (state.router) {
                     overlays.close('playlist-viewer');
-                    appState.router.navigateTo(ROUTES.ARTIST, { artist: artistName });
+                    state.router.navigateTo(window.ROUTES.ARTIST, { artist: artistName });
                 }
             });
         });
@@ -941,7 +934,7 @@ export const views = {
 
                 switch (action) {
                     case 'favorite':
-                        appState.favorites.remove('songs', songData.id);
+                        state.favorites.remove('songs', songData.id);
                         songRow.style.transition = 'all 0.3s ease';
                         songRow.style.opacity = '0';
                         songRow.style.transform = 'translateX(-20px)';
@@ -955,7 +948,7 @@ export const views = {
                         }, 300);
                         break;
                     case 'add-queue':
-                        appState.queue.add(songData);
+                        state.queue.add(songData);
                         break;
                     case 'add-playlist':
                         navigation.actions.showPlaylistSelector(songData);
@@ -967,8 +960,9 @@ export const views = {
 
     getSongsByIds: (songIds) => {
         const allSongs = [];
-        if (window.music) {
-            window.music.forEach((artist) => {
+        const music = window.MyTunesApp.music;
+        if (music) {
+            music.forEach((artist) => {
                 artist.albums.forEach((album) => {
                     album.songs.forEach((song) => {
                         if (songIds.includes(song.id)) {
@@ -976,7 +970,7 @@ export const views = {
                                 ...song,
                                 artist: artist.artist,
                                 album: album.album,
-                                cover: utils.getAlbumImageUrl(album.album),
+                                cover: window.MyTunesApp.utils.getAlbumImageUrl(album.album),
                             });
                         }
                     });
