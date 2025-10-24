@@ -2818,7 +2818,8 @@ export {
     app,
     pageLoader,
     navigation,
-    ACTION_GRID_ITEMS
+    ACTION_GRID_ITEMS,
+    loadArtistInfo
 };
 
 
