@@ -17,15 +17,17 @@ export const homePage = {
     if (!dynamicContent) return;
 
     dynamicContent.innerHTML = "";
+    // Ensure data-loader attribute is present initially
     dynamicContent.innerHTML = render.page("home_bento", { IDS: window.IDS });
 
     homePage.addStyles();
 
-    setTimeout(() => homePage.renderRecentlyPlayed(), 100);
-    setTimeout(() => homePage.renderRandomAlbums(), 300);
-    setTimeout(() => homePage.renderFavoriteArtists(), 500);
-    setTimeout(() => homePage.renderPlaylists(), 700);
-    setTimeout(() => homePage.renderFavoriteSongs(), 900);
+    // Delay rendering slightly to allow DOM update
+    setTimeout(() => homePage.renderRecentlyPlayed(), 50); // Reduced delay slightly
+    setTimeout(() => homePage.renderRandomAlbums(), 100);
+    setTimeout(() => homePage.renderFavoriteArtists(), 150);
+    setTimeout(() => homePage.renderPlaylists(), 200);
+    setTimeout(() => homePage.renderFavoriteSongs(), 250);
 
     homePage.bindEvents();
   },
@@ -35,6 +37,7 @@ export const homePage = {
 
     const styleEl = document.createElement("style");
     styleEl.id = "bento-grid-styles";
+    // Using CSS directly here as provided by user
     styleEl.textContent = `
       .bento-grid {
         display: grid;
@@ -48,6 +51,10 @@ export const homePage = {
         backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 255, 255, 0.1);
         transition: transform 0.2s ease, box-shadow 0.2s ease;
+        position: relative; /* Needed for skeleton absolute positioning */
+        overflow: hidden; /* Prevent skeleton overflow */
+        display: flex; /* Ensure flex layout */
+        flex-direction: column; /* Stack header and content */
       }
       
       .bento-card:hover {
@@ -61,24 +68,58 @@ export const homePage = {
         margin-bottom: 1rem;
         padding-bottom: 0.5rem;
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        flex-shrink: 0; /* Prevent header from shrinking */
       }
+       .card-title {
+          font-size: 1.25rem;
+          font-weight: 600;
+          color: var(--text-100);
+          margin: 0;
+        }
+        .card-link {
+          font-size: 0.875rem;
+          color: var(--accent-primary);
+          text-decoration: none;
+          font-weight: 500;
+          transition: all 0.2s ease;
+        }
       
       .card-content {
         min-height: 200px;
+        flex-grow: 1; /* Allow content to grow */
+        position: relative; /* Position context for skeleton */
+        overflow-y: auto; /* Enable scrolling if content exceeds height */
       }
       
       .skeleton-loader {
-        height: 200px;
-        background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
-        background-size: 200% 100%;
-        animation: loading 1.5s infinite;
-        border-radius: 0.5rem;
+         display: none; /* Hide by default */
+         position: absolute;
+         inset: 0; /* Cover the entire card content area */
+         background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
+         background-size: 200% 100%;
+         animation: loading 1.5s infinite linear; /* Use linear for smoother shimmer */
+         border-radius: 0.5rem;
+         z-index: 10; /* Ensure it's above the content initially */
       }
       
       @keyframes loading {
         0% { background-position: 200% 0; }
         100% { background-position: -200% 0; }
       }
+
+       /* --- Visibility Logic --- */
+       [data-loader="true"] .card-content > *:not(.skeleton-loader) {
+           opacity: 0; /* Hide content smoothly */
+           pointer-events: none; /* Prevent interaction with hidden content */
+       }
+       [data-loader="true"] .skeleton-loader {
+           display: block; /* Show skeleton */
+       }
+       /* When data-loader is removed, content fades in */
+       .card-content > *:not(.skeleton-loader) {
+           transition: opacity 0.3s ease-in;
+           opacity: 1;
+       }
       
       .recent-tracks, .album-grid, .artist-grid, .playlists-list {
         display: flex;
@@ -321,7 +362,7 @@ export const homePage = {
       }
       
       .animate-fade-in {
-        animation: fadeIn 0.3s ease-in;
+        animation: fadeIn 0.3s ease-in forwards; /* Add forwards to keep final state */
       }
       
       @keyframes fadeIn {
@@ -336,132 +377,120 @@ export const homePage = {
     const container = window.$byId(window.IDS.recentlyPlayedSection);
     if (!container) return;
     const appState = window.MyTunesApp.state;
+    const card = container.closest('.bento-card'); // Find parent card
 
     if (!appState.recentlyPlayed || appState.recentlyPlayed.length === 0) {
       container.innerHTML = homePage.renderEmptyState("No recently played tracks", "music-note");
-      return;
+    } else {
+      const recentTracks = appState.recentlyPlayed.slice(0, 5);
+      container.innerHTML = render.homeSection.recentlyPlayed(recentTracks, window.MyTunesApp.utils);
+
+      container.querySelectorAll(".recent-track").forEach((track) => {
+        track.addEventListener("click", (e) => {
+          if (e.target.closest(".track-artist")) return;
+          try {
+            const songData = JSON.parse(track.dataset.song.replace(/&quot;/g, '"'));
+            window.MyTunesApp.musicPlayer.ui.playSong(songData);
+          } catch (error) { console.error("Error parsing song data:", error); }
+        });
+      });
+
+      container.querySelectorAll(".track-artist").forEach((artistEl) => {
+        artistEl.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const artistName = artistEl.dataset.artist;
+          if (appState.router) {
+            appState.router.navigateTo(window.ROUTES.ARTIST, { artist: artistName });
+          }
+        });
+      });
     }
-
-    const recentTracks = appState.recentlyPlayed.slice(0, 5);
-    container.innerHTML = render.homeSection.recentlyPlayed(recentTracks, window.MyTunesApp.utils);
-
-    container.querySelectorAll(".recent-track").forEach((track) => {
-      track.addEventListener("click", (e) => {
-        if (e.target.closest(".track-artist")) return;
-
-        try {
-          const songData = JSON.parse(track.dataset.song);
-          window.MyTunesApp.musicPlayer.ui.playSong(songData);
-        } catch (error) {}
-      });
-    });
-
-    container.querySelectorAll(".track-artist").forEach((artistEl) => {
-      artistEl.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const artistName = artistEl.dataset.artist;
-        if (appState.router) {
-          appState.router.navigateTo(window.ROUTES.ARTIST, {
-            artist: artistName,
-          });
-        }
-      });
-    });
+    // **FIX:** Remove data-loader after rendering
+    if (card) card.removeAttribute('data-loader');
   },
 
   renderRandomAlbums: () => {
     const container = window.$byId(window.IDS.randomAlbumsSection);
     if (!container) return;
+    const card = container.closest('.bento-card');
 
     const albums = homePage.getRandomAlbums(6);
 
     if (!albums || albums.length === 0) {
       container.innerHTML = homePage.renderEmptyState("No albums found", "album");
-      return;
-    }
+    } else {
+      container.innerHTML = render.homeSection.randomAlbums(albums, window.MyTunesApp.utils);
 
-    container.innerHTML = render.homeSection.randomAlbums(albums, window.MyTunesApp.utils);
-
-    container.querySelectorAll(".album-play-btn").forEach((playBtn) => {
-      playBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const artistName = playBtn.dataset.artist;
-        const albumName = playBtn.dataset.album;
-        homePage.playAlbum(artistName, albumName);
+      container.querySelectorAll(".album-play-btn").forEach((playBtn) => {
+        playBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const artistName = playBtn.dataset.artist;
+          const albumName = playBtn.dataset.album;
+          homePage.playAlbum(artistName, albumName);
+        });
       });
-    });
 
-    container.querySelectorAll(".album-card").forEach((albumCard) => {
-      albumCard.addEventListener("click", (e) => {
-        if (e.target.closest(".album-play-btn") || e.target.closest(".album-artist")) return;
-
-        const artistName = albumCard.dataset.artist;
-        const albumName = albumCard.dataset.album;
-        homePage.playAlbum(artistName, albumName);
+      container.querySelectorAll(".album-card").forEach((albumCard) => {
+         // Fix: Use currentTarget to ensure it's the card, not the artist link
+        albumCard.addEventListener("click", (e) => {
+          if (e.target.closest(".album-play-btn") || e.target.closest(".album-artist")) return;
+          const artistName = e.currentTarget.dataset.artist;
+          const albumName = e.currentTarget.dataset.album;
+           // **CHANGED:** Navigate to artist page, then load album within it
+           const appState = window.MyTunesApp.state;
+           if (appState.router) {
+             appState.router.navigateTo(window.ROUTES.ARTIST, { artist: artistName });
+             // Use sessionStorage to signal the artist page to load a specific album
+             sessionStorage.setItem('pendingAlbumLoad', albumName);
+           }
+        });
       });
-    });
 
-    container.querySelectorAll(".album-artist").forEach((artistEl) => {
-      artistEl.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const artistName = artistEl.dataset.artist;
-        const albumCard = artistEl.closest('.album-card');
-        const albumName = albumCard ? albumCard.dataset.album : null;
-        
-        const appState = window.MyTunesApp.state;
-        if (appState.router) {
-          appState.router.navigateTo(window.ROUTES.ARTIST, {
-            artist: artistName,
-          });
-          
-          if (albumName) {
-            sessionStorage.setItem('pendingAlbumLoad', albumName);
-            
-            setTimeout(() => {
-              const storedAlbum = sessionStorage.getItem('pendingAlbumLoad');
-              if (storedAlbum === albumName) {
-                const artistData = window.MyTunesApp.music?.find((a) => a.artist === artistName);
-                if (artistData) {
-                  window.MyTunesApp.navigation.pages.loadArtistPage(artistData, albumName);
-                }
-                sessionStorage.removeItem('pendingAlbumLoad');
-              }
-            }, 100);
+      container.querySelectorAll(".album-artist").forEach((artistEl) => {
+        artistEl.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const artistName = artistEl.dataset.artist;
+          const appState = window.MyTunesApp.state;
+          if (appState.router) {
+            appState.router.navigateTo(window.ROUTES.ARTIST, { artist: artistName });
           }
-        }
+        });
       });
-    });
+    }
+    // **FIX:** Remove data-loader after rendering
+    if (card) card.removeAttribute('data-loader');
   },
 
   renderFavoriteArtists: () => {
     const container = window.$byId(window.IDS.favoriteArtistsSection);
     if (!container) return;
     const appState = window.MyTunesApp.state;
+    const card = container.closest('.bento-card');
 
     if (!appState.favorites.artists || appState.favorites.artists.size === 0) {
       container.innerHTML = homePage.renderEmptyState("No favorite artists", "artist");
-      return;
-    }
+    } else {
+      const artists = Array.from(appState.favorites.artists).slice(0, 6);
+      container.innerHTML = render.homeSection.favoriteArtists(artists, window.MyTunesApp.utils);
 
-    const artists = Array.from(appState.favorites.artists).slice(0, 6);
-    container.innerHTML = render.homeSection.favoriteArtists(artists, window.MyTunesApp.utils);
-
-    container.querySelectorAll(".artist-card").forEach((artistEl) => {
-      artistEl.addEventListener("click", () => {
-        const artistName = artistEl.dataset.artist;
-        if (appState.router) {
-          appState.router.navigateTo(window.ROUTES.ARTIST, {
-            artist: artistName,
-          });
-        }
+      container.querySelectorAll(".artist-card").forEach((artistEl) => {
+        artistEl.addEventListener("click", () => {
+          const artistName = artistEl.dataset.artist;
+          if (appState.router) {
+            appState.router.navigateTo(window.ROUTES.ARTIST, { artist: artistName });
+          }
+        });
       });
-    });
+    }
+    // **FIX:** Remove data-loader after rendering
+    if (card) card.removeAttribute('data-loader');
   },
 
   renderPlaylists: () => {
     const container = window.$byId(window.IDS.playlistsSection);
     if (!container) return;
     const appState = window.MyTunesApp.state;
+    const card = container.closest('.bento-card');
 
     let html = "";
 
@@ -495,72 +524,78 @@ export const homePage = {
       createBtn.addEventListener("click", async () => {
         const newPlaylist = await window.MyTunesApp.playlists.create();
         if (newPlaylist) {
-          setTimeout(() => homePage.renderPlaylists(), 100);
+          setTimeout(() => homePage.renderPlaylists(), 100); // Re-render this card
         }
       });
     }
+     // **FIX:** Remove data-loader after rendering
+     if (card) card.removeAttribute('data-loader');
   },
 
   renderFavoriteSongs: () => {
     const container = window.$byId(window.IDS.favoriteSongsSection);
     if (!container) return;
     const appState = window.MyTunesApp.state;
+    const card = container.closest('.bento-card');
 
     if (!appState.favorites.songs || appState.favorites.songs.size === 0) {
       container.innerHTML = homePage.renderEmptyState("No favorite songs", "heart");
-      return;
-    }
+    } else {
+      const songs = homePage.getSongsByIds(Array.from(appState.favorites.songs).slice(0, 5));
+      container.innerHTML = render.homeSection.favoriteSongs(songs, window.MyTunesApp.utils);
 
-    const songs = homePage.getSongsByIds(Array.from(appState.favorites.songs).slice(0, 5));
-    container.innerHTML = render.homeSection.favoriteSongs(songs, window.MyTunesApp.utils);
-
-    container.querySelectorAll(".recent-track").forEach((track) => {
-      track.addEventListener("click", (e) => {
-        if (e.target.closest(".track-artist") || e.target.closest(".favorite-heart")) return;
-
-        try {
-          const songData = JSON.parse(track.dataset.song);
-          window.MyTunesApp.musicPlayer.ui.playSong(songData);
-        } catch (error) {}
+      container.querySelectorAll(".recent-track").forEach((track) => {
+        track.addEventListener("click", (e) => {
+          if (e.target.closest(".track-artist") || e.target.closest(".favorite-heart")) return;
+          try {
+            const songData = JSON.parse(track.dataset.song.replace(/&quot;/g, '"'));
+            window.MyTunesApp.musicPlayer.ui.playSong(songData);
+          } catch (error) { console.error("Error parsing song data:", error); }
+        });
       });
-    });
 
-    container.querySelectorAll(".track-artist").forEach((artistEl) => {
-      artistEl.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const artistName = artistEl.dataset.artist;
-        if (appState.router) {
-          appState.router.navigateTo(window.ROUTES.ARTIST, {
-            artist: artistName,
-          });
-        }
-      });
-    });
-
-    container.querySelectorAll(".favorite-heart").forEach((heartBtn) => {
-      heartBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const songId = heartBtn.dataset.songId;
-        appState.favorites.remove("songs", songId);
-
-        const track = heartBtn.closest(".recent-track");
-        track.style.transition = "all 0.3s ease";
-        track.style.opacity = "0";
-        track.style.transform = "translateX(-20px)";
-
-        setTimeout(() => {
-          track.remove();
-          const remaining = container.querySelectorAll(".recent-track");
-          if (remaining.length === 0) {
-            homePage.renderFavoriteSongs();
+      container.querySelectorAll(".track-artist").forEach((artistEl) => {
+        artistEl.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const artistName = artistEl.dataset.artist;
+          if (appState.router) {
+            appState.router.navigateTo(window.ROUTES.ARTIST, { artist: artistName });
           }
-        }, 300);
+        });
       });
-    });
+
+      container.querySelectorAll(".favorite-heart").forEach((heartBtn) => {
+        heartBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const songId = heartBtn.dataset.songId;
+          appState.favorites.remove("songs", songId); // remove handles notification and state update
+
+          const track = heartBtn.closest(".recent-track");
+          track.style.transition = "all 0.3s ease";
+          track.style.opacity = "0";
+          track.style.transform = "translateX(-20px)";
+
+          setTimeout(() => {
+            track.remove();
+            const remaining = container.querySelectorAll(".recent-track");
+            if (remaining.length === 0) {
+              homePage.renderFavoriteSongs(); // Re-render if empty now
+            }
+          }, 300);
+        });
+      });
+    }
+     // **FIX:** Remove data-loader after rendering
+     if (card) card.removeAttribute('data-loader');
   },
 
   bindEvents: () => {
+    // Use event delegation on a parent element if possible, otherwise querySelectorAll is fine
     document.querySelectorAll("[data-view]").forEach((link) => {
+       // Ensure listener isn't added multiple times if renderHomePage is called again
+       if (link._viewHandlerAttached) return;
+       link._viewHandlerAttached = true;
+
       link.addEventListener("click", (e) => {
         e.preventDefault();
         const view = link.dataset.view;
@@ -572,7 +607,7 @@ export const homePage = {
             setTimeout(() => musicPlayer.mainPlayer.switchTab("recent"), 50);
             break;
           case "albums":
-            notifications.show("Albums view coming soon");
+            notifications.show("Albums view coming soon", window.NOTIFICATION_TYPES.INFO); // Specify type
             break;
           case "favorite-artists":
             views.showFavoriteArtists();
@@ -584,7 +619,7 @@ export const homePage = {
             views.showFavoriteSongs();
             break;
           default:
-            notifications.show("View coming soon");
+            notifications.show("View coming soon", window.NOTIFICATION_TYPES.INFO);
         }
       });
     });
@@ -606,32 +641,31 @@ export const homePage = {
       });
     });
 
+    // Simple shuffle
     const shuffled = [...allAlbums].sort(() => 0.5 - Math.random());
     return shuffled.slice(0, count);
   },
 
   getSongsByIds: (ids) => {
     const music = window.MyTunesApp.music;
-    if (!music || !ids.length) return [];
+    if (!music || !ids || ids.length === 0) return [];
 
-    const songs = [];
+    const songsMap = new Map(); // Use map for faster lookup if library is large
+     music.forEach((artist) => {
+       artist.albums.forEach((album) => {
+         album.songs.forEach((song) => {
+             songsMap.set(song.id, {
+                 ...song,
+                 artist: artist.artist,
+                 album: album.album,
+                 cover: window.MyTunesApp.utils.getAlbumImageUrl(album.album),
+             });
+         });
+       });
+     });
 
-    music.forEach((artist) => {
-      artist.albums.forEach((album) => {
-        album.songs.forEach((song) => {
-          if (ids.includes(song.id)) {
-            songs.push({
-              ...song,
-              artist: artist.artist,
-              album: album.album,
-              cover: window.MyTunesApp.utils.getAlbumImageUrl(album.album),
-            });
-          }
-        });
-      });
-    });
-
-    return songs;
+     // Return songs in the order of the provided ids
+     return ids.map(id => songsMap.get(id)).filter(Boolean); // Filter out potential undefined if id not found
   },
 
   playAlbum: (artistName, albumName) => {
@@ -642,20 +676,21 @@ export const homePage = {
     if (!artist) return;
 
     const album = artist.albums.find((a) => a.album === albumName);
-    if (!album || album.songs.length === 0) return;
+    if (!album || !album.songs || album.songs.length === 0) return;
 
-    const { appState, musicPlayer, utils, notifications } = window.MyTunesApp;
+    const { state, musicPlayer, utils, notifications } = window.MyTunesApp;
 
-    appState.queue.clear();
+    state.queue.clear();
 
     album.songs.slice(1).forEach((song) => {
-      appState.queue.add({
+      state.queue.add({ // Use queue's add method
         ...song,
         artist: artistName,
         album: albumName,
         cover: utils.getAlbumImageUrl(albumName),
       });
     });
+     // No need to manually save/update counts, queue.add does it
 
     musicPlayer.ui.playSong({
       ...album.songs[0],
@@ -664,7 +699,7 @@ export const homePage = {
       cover: utils.getAlbumImageUrl(albumName),
     });
 
-    notifications.show(`Playing album "${albumName}"`, window.NOTIFICATION_TYPES.SUCCESS);
+    // No need for separate notification, playSong handles UI updates/notifications implicitly
   },
 
   renderEmptyState: (message, iconType) => {
@@ -681,7 +716,7 @@ export const homePage = {
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-12 h-12 mb-3 opacity-50">
           ${icons[iconType] || icons["music-note"]}
         </svg>
-        <p>${message}</p>
+        <p>${window.MyTunesApp.utils.escapeHtml(message)}</p>
       </div>
     `;
   },
@@ -693,7 +728,7 @@ export const views = {
         const favoriteSongIds = Array.from(state.favorites.songs);
         
         if (favoriteSongIds.length === 0) {
-            overlays.viewer.playlists(
+            overlays.viewer.playlists( // Using playlist viewer overlay for consistency
                 views.renderEmptyState(
                     "No Favorite Songs", 
                     "You haven't added any songs to your favorites yet.", 
@@ -722,143 +757,105 @@ export const views = {
                 </div>
               </div>
               <div class="songs-list">
-                ${favoriteSongs
-                  .map(
-                    (song, index) => `
-                  <div class="song-row" data-song='${JSON.stringify(song).replace(/"/g, "&quot;")}'>
-                    <div class="track-number">${index + 1}</div>
-                    <img src="${utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="song-cover">
-                    <div class="song-info">
-                      <div class="song-title">${song.title}</div>
-                      <div class="song-artist" data-artist="${song.artist}">${song.artist}</div>
-                    </div>
-                    <div class="album-name">${song.album}</div>
-                    <div class="song-duration">${song.duration || "0:00"}</div>
-                    <div class="song-actions">
-                      <button class="action-btn" data-action="favorite" data-song-id="${song.id}" title="Remove from favorites">
-                        <svg class="action-icon icon-red" fill="currentColor" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-                      </button>
-                      <button class="action-btn" data-action="add-queue" title="Add to queue">
-                        <svg class="action-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
-                      </button>
-                      <button class="action-btn" data-action="add-playlist" title="Add to playlist">
-                        <svg class="action-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012 2v2M7 7h10"/></svg>
-                      </button>
-                    </div>
-                  </div>
-                `
-                  )
-                  .join("")}
+                 ${favoriteSongs.map((song, index) => render.songItem({
+                      trackNumber: index + 1,
+                      title: song.title,
+                      artist: song.artist,
+                      duration: song.duration || "0:00",
+                      songData: song,
+                      context: 'favorites', // Specific context
+                      isFavorite: true, // They are favorites
+                      showTrackNumber: true,
+                      showArtist: true // Show artist in this list
+                 })).join("")}
               </div>
             </div>
           `;
         
-        overlays.viewer.playlists(content);
+        overlays.viewer.playlists(content); // Reusing playlist viewer
         const modalEl = document.getElementById("playlist-viewer");
-        views.bindFavoriteSongsEvents(modalEl);
+         if (modalEl) {
+             views.bindFavoriteSongsEvents(modalEl); // Pass modal root
+         }
     },
 
     showFavoriteArtists: () => {
+         // Reusing artist viewer overlay for consistency
         const { state, overlays, utils, ICONS, navigation, music } = window.MyTunesApp;
         const favoriteArtistNames = Array.from(state.favorites.artists);
-        
-        let modalEl = document.getElementById('favorite-artists-modal');
-        if (!modalEl) {
-            modalEl = document.createElement('div');
-            modalEl.id = 'favorite-artists-modal';
-            modalEl.className = 'modal-overlay';
-            modalEl.innerHTML = `
-                <div class="modal-content slide-in">
-                    <div class="modal-header">
-                        <div>
-                            <h2 class="modal-title">Favorite Artists</h2>
-                            <div class="artist-count">0 artists</div>
-                        </div>
-                        <button class="close-btn">&times;</button>
-                    </div>
-                    <div class="artists-list"></div>
-                </div>
-            `;
-            document.body.appendChild(modalEl);
-            
-            modalEl.querySelector('.close-btn').addEventListener('click', () => {
-                modalEl.style.display = 'none';
-            });
-            
-            modalEl.addEventListener('click', (e) => {
-                if (e.target === modalEl) {
-                    modalEl.style.display = 'none';
-                }
-            });
-        }
-        
-        const artistsList = modalEl.querySelector('.artists-list');
-        const artistCount = modalEl.querySelector('.artist-count');
-        
+
         if (favoriteArtistNames.length === 0) {
-            artistsList.innerHTML = `
-                <div class="empty-state">
-                    <div class="empty-icon">♡</div>
-                    <h3 class="empty-title">No Favorite Artists</h3>
-                    <p class="empty-text">You haven't added any artists to your favorites yet.</p>
-                    <p class="empty-subtext">Browse artists and click the heart icon to add favorites.</p>
-                </div>
-            `;
-            artistCount.textContent = "0 artists";
-        } else {
-            const favoriteArtists = favoriteArtistNames
-                .map((artistName) => music?.find((a) => a.artist === artistName))
-                .filter(Boolean);
-            
-            artistCount.textContent = `${favoriteArtists.length} artist${favoriteArtists.length !== 1 ? "s" : ""}`;
-            
-            artistsList.innerHTML = favoriteArtists
-                .map((artist) => {
-                    return `
-                        <div class="artist-item" data-artist="${artist.artist}">
-                            <div class="artist-image">
-                                <img src="${utils.getArtistImageUrl(artist.artist)}" alt="${artist.artist}">
-                                <button class="play-btn">
-                                    ${ICONS.play}
-                                </button>
-                            </div>
-                            <div class="artist-info">
-                                <div class="artist-name">${artist.artist}</div>
-                                <div class="song-count">${utils.getTotalSongs(artist)} song${utils.getTotalSongs(artist) !== 1 ? "s" : ""}</div>
-                            </div>
-                        </div>
-                    `;
-                })
-                .join('');
-            
-            const artistItems = artistsList.querySelectorAll('.artist-item');
-            artistItems.forEach(item => {
-                item.addEventListener('click', (e) => {
-                    if (!e.target.closest('.play-btn')) {
-                        const artistName = item.getAttribute('data-artist');
-                        if (state.router) {
-                            state.router.navigateTo(window.ROUTES.ARTIST, { artist: artistName });
-                        }
-                    }
-                });
-            });
-            
-            const playButtons = artistsList.querySelectorAll('.play-btn');
-            playButtons.forEach(button => {
-                button.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const artistItem = button.closest('.artist-item');
-                    const artistName = artistItem.getAttribute('data-artist');
-                    const artistData = music?.find((a) => a.artist === artistName);
-                    if (artistData) {
-                        navigation.actions.playArtistSongs(artistData);
-                    }
-                });
-            });
+             overlays.viewer.artists( // Use artist viewer
+                views.renderEmptyState(
+                    "No Favorite Artists",
+                    "You haven't added any artists to your favorites yet.",
+                    "Browse artists and click the heart icon to add favorites."
+                )
+             );
+            return;
         }
-        
-        modalEl.style.display = 'flex';
+
+        const favoriteArtists = favoriteArtistNames
+            .map((artistName) => music?.find((a) => a.artist === artistName))
+            .filter(Boolean);
+
+        const content = `
+            <div class="favorites-artists-page animate__animated animate__fadeIn">
+                <div class="page-header">
+                    <h1>Favorite Artists</h1>
+                    <p>${favoriteArtists.length} artist${favoriteArtists.length !== 1 ? "s" : ""}</p>
+                     </div>
+                 <div class="artist-grid">
+                     ${favoriteArtists.map(artist => `
+                         <div class="artist-card" data-artist="${artist.artist}">
+                             <div class="artist-avatar-container">
+                                 <img src="${utils.getArtistImageUrl(artist.artist)}" alt="${artist.artist}" class="artist-avatar">
+                                 <div class="play-button-overlay">
+                                     <button class="play-artist-btn" data-artist="${artist.artist}"> ${ICONS.play} </button>
+                                 </div>
+                             </div>
+                             <div class="artist-name">${artist.artist}</div>
+                         </div>
+                     `).join('')}
+                 </div>
+             </div>
+        `;
+
+
+         overlays.viewer.artists(content); // Use artist viewer
+         const modalEl = document.getElementById("artist-viewer");
+         if (modalEl) {
+             views.bindFavoriteArtistsEvents(modalEl); // Bind events specific to this view
+         }
     },
+
+     // Helper function to bind events within the favorite artists overlay
+     bindFavoriteArtistsEvents: (root) => {
+         if (!root) return;
+         const { navigation, music } = window.MyTunesApp;
+
+         root.querySelectorAll('.artist-card').forEach(card => {
+             card.addEventListener('click', (e) => {
+                 if (e.target.closest('.play-artist-btn')) return; // Let play button handler work
+                 const artistName = card.dataset.artist;
+                 overlays.close('artist-viewer'); // Close overlay
+                 navigation.router.navigateTo(window.ROUTES.ARTIST, { artist: artistName });
+             });
+         });
+
+         root.querySelectorAll('.play-artist-btn').forEach(button => {
+             button.addEventListener('click', (e) => {
+                 e.stopPropagation(); // Prevent card click
+                 const artistName = button.dataset.artist;
+                 const artistData = music?.find(a => a.artist === artistName);
+                 if (artistData) {
+                     overlays.close('artist-viewer'); // Close overlay
+                     navigation.actions.playArtistSongs(artistData);
+                 }
+             });
+         });
+     },
+
 
     bindFavoriteSongsEvents: (root) => {
         if (!root) return;
@@ -874,7 +871,8 @@ export const views = {
                     state.queue.clear();
                     favoriteSongs.slice(1).forEach((song) => state.queue.add(song));
                     musicPlayer.ui.playSong(favoriteSongs[0]);
-                    notifications.show("Playing all favorite songs", window.NOTIFICATION_TYPES.SUCCESS);
+                     overlays.close('playlist-viewer'); // Close overlay on play
+                    // Notification handled by queue.add / playSong
                 }
             });
         }
@@ -895,102 +893,110 @@ export const views = {
                     favoriteSongs.slice(1).forEach((song) => state.queue.add(song));
                     musicPlayer.ui.playSong(favoriteSongs[0]);
                     state.shuffleMode = true;
-                    window.MyTunesApp.ui.updateShuffleButton();
+                    ui.updateShuffleButton(); // Use global ui object
+                     overlays.close('playlist-viewer'); // Close overlay on play
                     notifications.show("Shuffling favorite songs", window.NOTIFICATION_TYPES.SUCCESS);
                 }
             });
         }
 
-        root.querySelectorAll('.song-row').forEach((row) => {
-            row.addEventListener('click', (e) => {
-                if (e.target.closest('.action-btn') || e.target.closest('.song-artist')) return;
+       // Event delegation for song rows
+         const songsList = root.querySelector('.songs-list');
+         if (songsList) {
+             songsList.addEventListener('click', (e) => {
+                 const songRow = e.target.closest('.song-item'); // Target .song-item now
+                 if (!songRow) return;
 
-                try {
-                    const songData = JSON.parse(row.dataset.song);
-                    musicPlayer.ui.playSong(songData);
-                } catch (error) {
-                    console.error('Error playing song:', error);
-                }
-            });
-        });
+                 const songDataStr = songRow.dataset.song;
+                 let songData;
+                 try { songData = JSON.parse(songDataStr.replace(/&quot;/g, '"')); } catch { return; }
 
-        root.querySelectorAll('.song-artist').forEach((artistEl) => {
-            artistEl.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const artistName = artistEl.dataset.artist;
-                if (state.router) {
-                    overlays.close('playlist-viewer');
-                    state.router.navigateTo(window.ROUTES.ARTIST, { artist: artistName });
-                }
-            });
-        });
+                 // Play song on row click (excluding actions/artist)
+                  if (!e.target.closest('.cell.heart, .cell.more, .action-btn, [data-artist]')) {
+                      musicPlayer.ui.playSong(songData);
+                      overlays.close('playlist-viewer');
+                      return;
+                  }
 
-        root.querySelectorAll('.action-btn').forEach((btn) => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const action = btn.dataset.action;
-                const songRow = btn.closest('.song-row');
-                const songData = JSON.parse(songRow.dataset.song);
+                 // Artist link
+                 const artistLink = e.target.closest('[data-artist]');
+                  if (artistLink) {
+                      e.stopPropagation();
+                      const artistName = artistLink.dataset.artist;
+                      overlays.close('playlist-viewer');
+                      state.router?.navigateTo(window.ROUTES.ARTIST, { artist: artistName });
+                      return;
+                  }
 
-                switch (action) {
-                    case 'favorite':
-                        state.favorites.remove('songs', songData.id);
-                        songRow.style.transition = 'all 0.3s ease';
-                        songRow.style.opacity = '0';
-                        songRow.style.transform = 'translateX(-20px)';
-                        
-                        setTimeout(() => {
-                            songRow.remove();
-                            const remaining = root.querySelectorAll('.song-row');
-                            if (remaining.length === 0) {
-                                overlays.close('playlist-viewer');
-                            }
-                        }, 300);
-                        break;
-                    case 'add-queue':
-                        state.queue.add(songData);
-                        break;
-                    case 'add-playlist':
-                        navigation.actions.showPlaylistSelector(songData);
-                        break;
-                }
-            });
-        });
+                 // Action buttons
+                 const actionBtn = e.target.closest('.action-btn');
+                 if (actionBtn) {
+                      e.stopPropagation();
+                      const action = actionBtn.dataset.action;
+
+                     switch (action) {
+                         case 'favorite': // Remove from favorites in this context
+                             state.favorites.remove('songs', songData.id); // Handles notification
+                             songRow.style.transition = 'all 0.3s ease';
+                             songRow.style.opacity = '0';
+                             songRow.style.transform = 'translateX(-20px)';
+                             setTimeout(() => {
+                                 songRow.remove();
+                                  // Re-render if list becomes empty?
+                                 if (!songsList.querySelector('.song-item')) {
+                                     views.showFavoriteSongs(); // Re-render to show empty state
+                                 }
+                             }, 300);
+                             break;
+                         case 'add-queue':
+                             state.queue.add(songData); // Handles notification
+                             break;
+                         case 'add-playlist':
+                             navigation.actions.showPlaylistSelector(songData); // Assumes this handles closing overlay
+                             break;
+                         case 'more':
+                              navigation.actions.showMoreActionsPopover(actionBtn, songData, 'favorites');
+                              break;
+                     }
+                 }
+             });
+         }
     },
 
+
     getSongsByIds: (songIds) => {
-        const allSongs = [];
         const music = window.MyTunesApp.music;
-        if (music) {
-            music.forEach((artist) => {
-                artist.albums.forEach((album) => {
-                    album.songs.forEach((song) => {
-                        if (songIds.includes(song.id)) {
-                            allSongs.push({
-                                ...song,
-                                artist: artist.artist,
-                                album: album.album,
-                                cover: window.MyTunesApp.utils.getAlbumImageUrl(album.album),
-                            });
-                        }
-                    });
-                });
-            });
-        }
-        return allSongs;
+        if (!music || !songIds || songIds.length === 0) return [];
+
+        const songsMap = new Map();
+        music.forEach((artist) => {
+           artist.albums.forEach((album) => {
+             album.songs.forEach((song) => {
+                 songsMap.set(song.id, {
+                     ...song,
+                     artist: artist.artist,
+                     album: album.album,
+                     cover: window.MyTunesApp.utils.getAlbumImageUrl(album.album),
+                 });
+             });
+           });
+         });
+
+         return songIds.map(id => songsMap.get(id)).filter(Boolean);
     },
 
     renderEmptyState: (title, subtitle, description) => {
+         // Consistent empty state rendering
         return `
           <div class="empty-state">
             <div class="empty-state-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="48" height="48">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
               </svg>
             </div>
-            <h3 class="empty-state-title">${title}</h3>
-            <p class="empty-state-subtitle">${subtitle}</p>
-            <p class="empty-state-description">${description}</p>
+            <h3 class="empty-state-title">${window.MyTunesApp.utils.escapeHtml(title)}</h3>
+            <p class="empty-state-subtitle">${window.MyTunesApp.utils.escapeHtml(subtitle)}</p>
+            <p class="empty-state-description">${window.MyTunesApp.utils.escapeHtml(description)}</p>
           </div>
         `;
     },
