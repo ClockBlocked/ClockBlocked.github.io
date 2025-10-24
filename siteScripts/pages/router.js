@@ -1,19 +1,15 @@
 export const deepLinkRouter = {
-  // Helper to encode names (spaces to periods)
   encodeName(name) {
-    return name.trim().replace(/\s+/g, '.');
+    return String(name).trim().replace(/\s+/g, '.');
   },
 
-  // Helper to decode names (periods to spaces)
   decodeName(segment) {
-    return segment.replace(/\./g, ' ');
+    return String(segment).replace(/\./g, ' ');
   },
 
   parseCurrentPath() {
     const path = window.location.pathname;
     const segments = path.split('/').filter(Boolean);
-
-    // Decode segments that might have been encoded with periods
     const decodedSegments = segments.map(seg => this.decodeName(seg));
 
     return {
@@ -26,9 +22,10 @@ export const deepLinkRouter = {
 
   resolveRoute(pathInfo) {
     const { route, params } = pathInfo;
+    const router = window.MyTunesApp?.state?.router;
 
-    if (!window.appState?.router) {
-      console.warn('Router not initialized yet');
+    if (!router) {
+      console.warn('Router not initialized yet, cannot resolve route');
       return;
     }
 
@@ -48,8 +45,9 @@ export const deepLinkRouter = {
   },
 
   navigateToHome() {
-    if (window.appState?.router) {
-      window.appState.router.navigateTo(window.ROUTES?.HOME || '/');
+    const router = window.MyTunesApp?.state?.router;
+    if (router) {
+      router.navigateTo(window.ROUTES?.HOME || '/');
     }
   },
 
@@ -58,21 +56,19 @@ export const deepLinkRouter = {
       this.navigateToHome();
       return;
     }
-
-    // Already decoded if coming from parseCurrentPath
-    const decodedName = artistName;
-
-    if (window.appState?.router) {
-      window.appState.router.navigateTo(
+    const router = window.MyTunesApp?.state?.router;
+    if (router) {
+      router.navigateTo(
         window.ROUTES?.ARTIST || 'artist',
-        { artist: decodedName }
+        { artist: artistName }
       );
     }
   },
 
   navigateToAllArtists() {
-    if (window.appState?.router) {
-      window.appState.router.navigateTo(window.ROUTES?.ALL_ARTISTS || 'artists');
+    const router = window.MyTunesApp?.state?.router;
+    if (router) {
+      router.navigateTo(window.ROUTES?.ALL_ARTISTS || 'artists');
     }
   },
 
@@ -82,13 +78,12 @@ export const deepLinkRouter = {
       return;
     }
 
-    const decodedArtist = artistName;
-    const decodedAlbum = albumName;
+    const { state, music, navigation } = window.MyTunesApp;
 
-    if (window.appState?.router && window.music) {
-      const artistData = window.music.find(a => a.artist === decodedArtist);
-      if (artistData && window.navigation?.pages?.loadArtistPage) {
-        window.navigation.pages.loadArtistPage(artistData, decodedAlbum);
+    if (state?.router && music) {
+      const artistData = music.find(a => a.artist === artistName);
+      if (artistData && navigation?.pages?.loadArtistPage) {
+        navigation.pages.loadArtistPage(artistData, albumName);
       } else {
         this.navigateToHome();
       }
@@ -100,20 +95,21 @@ export const deepLinkRouter = {
       this.navigateToHome();
       return;
     }
-
-    if (window.playlists) {
-      window.playlists.show(playlistId);
+    const playlists = window.MyTunesApp?.playlists;
+    if (playlists) {
+      playlists.show(playlistId);
     }
   },
 
   navigateToFavorites(type) {
     const favoriteType = type || 'songs';
+    const views = window.MyTunesApp?.views;
 
-    if (window.views) {
+    if (views) {
       const handlers = {
-        'songs': () => window.views.showFavoriteSongs(),
-        'artists': () => window.views.showFavoriteArtists(),
-        'albums': () => window.views.showFavoriteAlbums?.(),
+        'songs': () => views.showFavoriteSongs(),
+        'artists': () => views.showFavoriteArtists(),
+        'albums': () => views.showFavoriteAlbums?.(),
       };
 
       const handler = handlers[favoriteType];
@@ -122,9 +118,9 @@ export const deepLinkRouter = {
   },
 
   navigateToSearch(query) {
-    if (window.appState?.router && query) {
-      const decodedQuery = query;
-      window.appState.router.openSearchDialog?.(decodedQuery);
+    const router = window.MyTunesApp?.state?.router;
+    if (router && query) {
+      router.openSearchDialog?.(query);
     }
   },
 
@@ -138,7 +134,8 @@ export const deepLinkRouter = {
       console.log('Deep link detected:', pathInfo);
 
       const checkInitialized = setInterval(() => {
-        if (window.appState?.router && window.music && window.navigation) {
+        const app = window.MyTunesApp;
+        if (app?.state?.router && app?.music && app?.navigation) {
           clearInterval(checkInitialized);
 
           setTimeout(() => {
@@ -149,7 +146,7 @@ export const deepLinkRouter = {
 
       setTimeout(() => {
         clearInterval(checkInitialized);
-        if (!window.appState?.router) {
+        if (!window.MyTunesApp?.state?.router) {
           console.error('App not initialized after 5 seconds, redirecting to home');
           window.location.href = '/';
         }
