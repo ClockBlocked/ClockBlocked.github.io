@@ -1,10 +1,4 @@
-import {
-  appState,
-  storage,
-  notifications,
-  musicPlayer,
-  utils
-} from '../global.js';
+import { render } from '../utilities/templates.js'; // Keep this import
 
 export const pageUpdates = {
   breadCrumbs: (items, options = {}) => {
@@ -18,6 +12,14 @@ export const pageUpdates = {
 
     const list = document.querySelector(containerId);
     if (!list) return;
+    
+    // Access globals from window object
+    const appState = window.MyTunesApp?.state;
+    const ROUTES = window.ROUTES;
+    if (!appState || !ROUTES) {
+        console.warn("Breadcrumbs: MyTunesApp not ready.");
+        return;
+    }
 
     const prev = animateChanges ? list.innerHTML : null;
     list.innerHTML = "";
@@ -68,7 +70,7 @@ export const pageUpdates = {
       } else if (item.isHome || (index === 0 && showIcons)) {
         html += '<svg class="SVGimg" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h3m10-11v10a1 1 0 01-1 1h-3m-6 0V14a1 1 0 011-1h2a1 1 0 011 1v7"/></svg>';
       }
-      html += schemaMarkup ? `<span itemprop="name">${item.text}</span>` : item.text;
+      html += schemaMarkup ? `<span itemprop="name">${window.MyTunesApp.utils.escapeHtml(item.text)}</span>` : window.MyTunesApp.utils.escapeHtml(item.text);
       el.innerHTML = html;
 
       if (!item.active) {
@@ -112,6 +114,10 @@ export const pageUpdates = {
 
 export const ui = {
   setLoadingState: (loading) => {
+    const appState = window.MyTunesApp?.state;
+    const NAVBAR = window.NAVBAR;
+    if (!appState || !NAVBAR) return;
+    
     const nowPlayingArea = document.querySelector(NAVBAR.nowPlaying);
     const songTitle = document.querySelector(NAVBAR.songName);
 
@@ -120,7 +126,9 @@ export const ui = {
   },
 
   updateNowPlaying: () => {
-    if (!appState.currentSong) return;
+    const { state, utils } = window.MyTunesApp;
+    const MUSIC_PLAYER = window.MUSIC_PLAYER;
+    if (!state.currentSong || !MUSIC_PLAYER) return;
 
     const elements = {
       albumCover: document.querySelector(MUSIC_PLAYER.albumArtwork),
@@ -130,19 +138,22 @@ export const ui = {
     };
 
     if (elements.albumCover) {
-      utils.loadImageWithFallback(elements.albumCover, utils.getAlbumImageUrl(appState.currentSong.album), utils.getDefaultAlbumImage(), "album");
+      utils.loadImageWithFallback(elements.albumCover, utils.getAlbumImageUrl(state.currentSong.album), utils.getDefaultAlbumImage(), "album");
     }
 
-    if (elements.songTitle) elements.songTitle.textContent = appState.currentSong.title;
-    if (elements.artistName) elements.artistName.textContent = appState.currentSong.artist;
-    if (elements.albumName) elements.albumName.textContent = appState.currentSong.album;
+    if (elements.songTitle) elements.songTitle.textContent = state.currentSong.title;
+    if (elements.artistName) elements.artistName.textContent = state.currentSong.artist;
+    if (elements.albumName) elements.albumName.textContent = state.currentSong.album;
 
     ui.updatePlayPauseButtons();
     ui.updateFavoriteButton();
   },
 
   updateNavbar: () => {
-    if (!appState.currentSong) return;
+    const { state, utils } = window.MyTunesApp;
+    const NAVBAR = window.NAVBAR;
+    const CLASSES = window.CLASSES;
+    if (!state.currentSong || !NAVBAR || !CLASSES) return;
 
     const container = document.querySelector(NAVBAR.albumArtwork);
     const artist = document.querySelector(NAVBAR.artistName);
@@ -155,7 +166,7 @@ export const ui = {
       const img = container.querySelector("img");
 
       if (img) {
-        const albumUrl = utils.getAlbumImageUrl(appState.currentSong.album);
+        const albumUrl = utils.getAlbumImageUrl(state.currentSong.album);
         utils.loadImageWithFallback(img, albumUrl, utils.getDefaultAlbumImage(), "album");
         img.classList.remove("opacity-0");
         img.classList.add("opacity-100");
@@ -166,16 +177,16 @@ export const ui = {
       }
     }
 
-    if (artist) artist.textContent = appState.currentSong.artist;
+    if (artist) artist.textContent = state.currentSong.artist;
 
     if (songTitle) {
-      const title = appState.currentSong.title;
+      const title = state.currentSong.title;
       songTitle.classList.toggle(CLASSES.marquee, title.length > 25);
       songTitle.textContent = title;
     }
 
     if (playIndicator) {
-      playIndicator.classList.toggle(CLASSES.active, appState.isPlaying);
+      playIndicator.classList.toggle(CLASSES.active, state.isPlaying);
     }
 
     if (nowPlayingArea) {
@@ -184,15 +195,20 @@ export const ui = {
   },
 
   updatePlayPauseButtons: () => {
-    const navBarPlay = $byId(IDS.playIconNavbar);
-    const navBarPause = $byId(IDS.pauseIconNavbar);
+    const appState = window.MyTunesApp?.state;
+    const IDS = window.IDS;
+    const CLASSES = window.CLASSES;
+    if (!appState || !IDS || !CLASSES) return;
+    
+    const navBarPlay = window.$byId(IDS.playIconNavbar);
+    const navBarPause = window.$byId(IDS.pauseIconNavbar);
     
     if (navBarPlay && navBarPause) {
       navBarPlay.style.display = appState.isPlaying ? "none" : "block";
       navBarPause.style.display = appState.isPlaying ? "block" : "none";
     }
 
-    const musicPlayerBtn = $byId(IDS.playBtn);
+    const musicPlayerBtn = window.$byId(IDS.playBtn);
     if (musicPlayerBtn) {
       const playIcon = musicPlayerBtn.querySelector(".icon.play");
       const pauseIcon = musicPlayerBtn.querySelector(".icon.pause");
@@ -205,14 +221,25 @@ export const ui = {
   },
 
   updateShuffleButton: () => {
-    const shuffleBtn = $byId(IDS.shuffleBtn);
+    const appState = window.MyTunesApp?.state;
+    const IDS = window.IDS;
+    const CLASSES = window.CLASSES;
+    if (!appState || !IDS || !CLASSES) return;
+    
+    const shuffleBtn = window.$byId(IDS.shuffleBtn);
     if (shuffleBtn) {
       shuffleBtn.classList.toggle(CLASSES.active, appState.shuffleMode);
     }
   },
 
   updateRepeatButton: () => {
-    const repeatBtn = $byId(IDS.repeatBtn);
+    const appState = window.MyTunesApp?.state;
+    const IDS = window.IDS;
+    const CLASSES = window.CLASSES;
+    const REPEAT_MODES = window.REPEAT_MODES;
+    if (!appState || !IDS || !CLASSES || !REPEAT_MODES) return;
+    
+    const repeatBtn = window.$byId(IDS.repeatBtn);
     if (repeatBtn) {
       repeatBtn.classList.toggle(CLASSES.active, appState.repeatMode !== REPEAT_MODES.OFF);
       repeatBtn.classList.toggle(CLASSES.repeatOne, appState.repeatMode === REPEAT_MODES.ONE);
@@ -220,8 +247,12 @@ export const ui = {
   },
 
   updateFavoriteButton: () => {
-    if (!appState.currentSong) return;
-    const favoriteBtn = $byId(IDS.favoriteBtn);
+    const appState = window.MyTunesApp?.state;
+    const IDS = window.IDS;
+    const CLASSES = window.CLASSES;
+    if (!appState || !IDS || !CLASSES || !appState.currentSong) return;
+    
+    const favoriteBtn = window.$byId(IDS.favoriteBtn);
     if (favoriteBtn) {
       const isFavorite = appState.favorites.has("songs", appState.currentSong.id);
       favoriteBtn.classList.toggle("favorited", isFavorite);
@@ -236,6 +267,10 @@ export const ui = {
   },
 
   updateCounts: () => {
+    const appState = window.MyTunesApp?.state;
+    const IDS = window.IDS;
+    if (!appState || !IDS) return;
+    
     const counts = {
       [IDS.favoriteSongsCount]: appState.favorites.songs.size,
       [IDS.favoriteArtistsCount]: appState.favorites.artists.size,
@@ -244,7 +279,7 @@ export const ui = {
     };
 
     Object.entries(counts).forEach(([id, value]) => {
-      const element = $byId(id);
+      const element = window.$byId(id);
       if (element) element.textContent = value;
     });
   },
