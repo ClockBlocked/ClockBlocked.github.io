@@ -340,8 +340,11 @@ export const homePage = {
   },
 
   renderRecentlyPlayed: () => {
-    const container = $byId(IDS.recentlyPlayedSection);
-    if (!container) return;
+    const container = document.getElementById("recentlyPlayedSection");
+    if (!container) {
+      console.error("Recently Played container not found!");
+      return;
+    }
 
     if (!appState.recentlyPlayed || appState.recentlyPlayed.length === 0) {
       container.innerHTML = homePage.renderEmptyState("No recently played tracks", "music-note");
@@ -376,8 +379,11 @@ export const homePage = {
   },
 
   renderRandomAlbums: () => {
-    const container = $byId(IDS.randomAlbumsSection);
-    if (!container) return;
+    const container = document.getElementById("randomAlbumsSection");
+    if (!container) {
+      console.error("Random Albums container not found!");
+      return;
+    }
 
     const albums = homePage.getRandomAlbums(6);
 
@@ -439,8 +445,11 @@ export const homePage = {
   },
 
   renderFavoriteArtists: () => {
-    const container = $byId(IDS.favoriteArtistsSection);
-    if (!container) return;
+    const container = document.getElementById("favoriteArtistsSection");
+    if (!container) {
+      console.error("Favorite Artists container not found!");
+      return;
+    }
 
     if (!appState.favorites.artists || appState.favorites.artists.size === 0) {
       container.innerHTML = homePage.renderEmptyState("No favorite artists", "artist");
@@ -463,8 +472,11 @@ export const homePage = {
   },
 
   renderPlaylists: () => {
-    const container = $byId(IDS.playlistsSection);
-    if (!container) return;
+    const container = document.getElementById("playlistsSection");
+    if (!container) {
+      console.error("Playlists container not found!");
+      return;
+    }
 
     let html = "";
 
@@ -505,8 +517,11 @@ export const homePage = {
   },
 
   renderFavoriteSongs: () => {
-    const container = $byId(IDS.favoriteSongsSection);
-    if (!container) return;
+    const container = document.getElementById("favoriteSongsSection");
+    if (!container) {
+      console.error("Favorite Songs container not found!");
+      return;
+    }
 
     if (!appState.favorites.songs || appState.favorites.songs.size === 0) {
       container.innerHTML = homePage.renderEmptyState("No favorite songs", "heart");
@@ -986,28 +1001,3 @@ export const views = {
         `;
     },
 };
-/**
- * 
- *
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- *  
- *    Copyright 2025
- *  William Cole Hanson
- * 
- * Chevrolay@Outlook.com
- * 
- *    m.me/Chevrolay
- * 
- * 
-**/
