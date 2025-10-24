@@ -1,20 +1,10 @@
-import {
-  appState,
-  storage,
-  notifications,
-  musicPlayer,
-  utils,
-  ACTION_GRID_ITEMS
-} from '../global.js';
-
 import { ui, pageUpdates } from './updates.js';
 import { render, create } from '../utilities/templates.js';
 
 import { deepLinkRouter } from './router.js';
 
-
-
 export const escapeForAttribute = (str) => {
+  if (typeof str !== 'string') return '';
   return str
     .replace(/&/g, '&amp;')
     .replace(/'/g, '&#39;')
@@ -41,41 +31,37 @@ export const pageLoader = {
   },
 
   init() {
-    if (!pageLoader.bar) {
-      const bar = document.createElement('div');
-      bar.className = 'loading-bar';
-      document.body.appendChild(bar);
-      pageLoader.bar = bar;
-    }
+    if (pageLoader.bar) return; // Already initialized
 
-    if (!pageLoader.centerOverlay) {
-      const overlay = document.createElement('div');
-      overlay.className = 'center-loading-overlay';
-      
-      const spinner = document.createElement('div');
-      spinner.className = 'center-loading-spinner';
-      
-      const loadingText = document.createElement('div');
-      loadingText.className = 'center-loading-text';
-      loadingText.textContent = 'Loading...';
-      
-      overlay.appendChild(spinner);
-      overlay.appendChild(loadingText);
-      document.body.appendChild(overlay);
-      
-      pageLoader.centerOverlay = overlay;
-      pageLoader.loadingText = loadingText;
-    }
+    const bar = document.createElement('div');
+    bar.className = 'loading-bar';
+    document.body.appendChild(bar);
+    pageLoader.bar = bar;
 
-    if (!pageLoader.contentContainer) {
-      pageLoader.contentContainer = document.querySelector('#dynamic-content') || 
-                                     document.querySelector('#main-content') || 
-                                     document.querySelector('main') ||
-                                     document.body;
-      
-      if (pageLoader.contentContainer && !pageLoader.contentContainer.classList.contains('content-blur-container')) {
-        pageLoader.contentContainer.classList.add('content-blur-container');
-      }
+    const overlay = document.createElement('div');
+    overlay.className = 'center-loading-overlay';
+    
+    const spinner = document.createElement('div');
+    spinner.className = 'center-loading-spinner';
+    
+    const loadingText = document.createElement('div');
+    loadingText.className = 'center-loading-text';
+    loadingText.textContent = 'Loading...';
+    
+    overlay.appendChild(spinner);
+    overlay.appendChild(loadingText);
+    document.body.appendChild(overlay);
+    
+    pageLoader.centerOverlay = overlay;
+    pageLoader.loadingText = loadingText;
+
+    pageLoader.contentContainer = document.querySelector('#dynamic-content') || 
+                                   document.querySelector('#main-content') || 
+                                   document.querySelector('main') ||
+                                   document.body;
+    
+    if (pageLoader.contentContainer && !pageLoader.contentContainer.classList.contains('content-blur-container')) {
+      pageLoader.contentContainer.classList.add('content-blur-container');
     }
   },
 
@@ -93,6 +79,8 @@ export const pageLoader = {
     }
 
     const bar = pageLoader.bar;
+    if (!bar) return; // Safety check
+    
     bar.classList.remove('complete');
     bar.style.transform = 'scaleX(0)';
     bar.style.opacity = '0';
@@ -104,6 +92,7 @@ export const pageLoader = {
     }
 
     setTimeout(() => {
+      if (!pageLoader.isActive) return;
       bar.classList.add('active');
       bar.style.opacity = '1';
       bar.style.transform = 'scaleX(0.1)';
@@ -123,19 +112,23 @@ export const pageLoader = {
     ];
 
     let currentProgress = 0.1;
+    let accumulatedDelay = 0;
 
     intervals.forEach((interval, index) => {
+      accumulatedDelay += interval.duration;
       const timer = setTimeout(() => {
         if (!pageLoader.isActive) return;
         
         currentProgress = interval.progress;
         pageLoader.progress = currentProgress;
-        pageLoader.bar.style.transform = `scaleX(${currentProgress})`;
+        if (pageLoader.bar) {
+          pageLoader.bar.style.transform = `scaleX(${currentProgress})`;
+        }
         
         if (index === intervals.length - 1) {
           pageLoader.startFinalCrawl();
         }
-      }, interval.duration);
+      }, accumulatedDelay);
 
       pageLoader.timers.push(timer);
     });
@@ -155,7 +148,9 @@ export const pageLoader = {
       
       if (progress < 0.99) {
         pageLoader.progress = progress;
-        pageLoader.bar.style.transform = `scaleX(${progress})`;
+        if (pageLoader.bar) {
+          pageLoader.bar.style.transform = `scaleX(${progress})`;
+        }
         
         const timer = setTimeout(crawl, 50);
         pageLoader.timers.push(timer);
@@ -167,29 +162,37 @@ export const pageLoader = {
   },
 
   complete() {
-    if (!pageLoader.isActive || !pageLoader.bar) return;
+    if (!pageLoader.isActive || !pageLoader.bar) {
+      pageLoader.hide(); // Force hide if state is inconsistent
+      return;
+    }
 
     const elapsed = Date.now() - pageLoader.startedAt;
     const minDuration = pageLoader.pacing.minActiveMs;
     const waitTime = Math.max(0, minDuration - elapsed);
 
+    pageLoader.clearTimers(); // Stop any pending animations
+
     function finalize() {
-      pageLoader.bar.style.transform = 'scaleX(1)';
-      pageLoader.bar.classList.add('complete');
+      if (pageLoader.bar) {
+        pageLoader.bar.style.transform = 'scaleX(1)';
+        pageLoader.bar.classList.add('complete');
+      }
 
       if (pageLoader.contentContainer) {
         pageLoader.contentContainer.classList.remove('blur-active');
       }
 
-      setTimeout(() => {
+      if (pageLoader.centerOverlay) {
         pageLoader.centerOverlay.classList.remove('active');
-      }, 100);
+      }
 
       setTimeout(() => {
-        pageLoader.bar.classList.remove('active', 'complete');
-        pageLoader.bar.style.opacity = '0';
+        if (pageLoader.bar) {
+          pageLoader.bar.classList.remove('active', 'complete');
+          pageLoader.bar.style.opacity = '0';
+        }
         pageLoader.isActive = false;
-        pageLoader.clearTimers();
         
         if (pageLoader.loadingText) {
           pageLoader.loadingText.textContent = 'Loading...';
@@ -238,6 +241,7 @@ export const pageLoader = {
   },
 
   setMessage(message) {
+    pageLoader.init(); // Ensure it exists
     if (pageLoader.loadingText) {
       pageLoader.loadingText.textContent = message;
     }
@@ -248,24 +252,26 @@ export const navigation = {
   initialize: () => {
     pageLoader.init();
     
-    appState.router = navigation.createRouter();
+    if (window.MyTunesApp) {
+      window.MyTunesApp.state.router = navigation.createRouter();
     
-    window.addEventListener("popstate", () => {
-      appState.router.handleRoute(window.location.pathname + window.location.search);
-    });
+      window.addEventListener("popstate", () => {
+        window.MyTunesApp.state.router.handleRoute(window.location.pathname + window.location.search);
+      });
     
-    appState.router.handleInitialRoute();
+      window.MyTunesApp.state.router.handleInitialRoute();
+    } else {
+      console.error("MyTunesApp not ready for navigation.initialize");
+    }
   },
 
 createRouter: () => {
   const router = {
-    // Helper to encode names (spaces to periods)
     encodeName(name) {
-      return name.trim().replace(/\s+/g, '.');
+      return String(name).trim().replace(/\s+/g, '.');
     },
-    // Helper to decode names (periods to spaces)
     decodeName(segment) {
-      return segment.replace(/\./g, ' ');
+      return String(segment).replace(/\./g, ' ');
     },
 
     routes: {},
@@ -277,22 +283,30 @@ createRouter: () => {
 
     handleRoute: function (path) {
       let matchedRoute = false;
+      const ROUTES = window.ROUTES || {}; // Get routes from global
+      
       for (const key in this.routes) {
         const route = this.routes[key];
         const match = path.match(route.pattern);
         if (match) {
           const params = {};
           if (key === ROUTES.ARTIST) params.artist = router.decodeName(match[1]);
+          // Add other param decoding as needed
+          
           route.handler(params);
           matchedRoute = true;
           break;
         }
       }
-      if (!matchedRoute) navigation.pages.loadHomePage();
+      if (!matchedRoute) {
+        navigation.pages.loadHomePage();
+      }
     },
 
     navigateTo: function (routeName, params = {}) {
       let url;
+      const ROUTES = window.ROUTES || {}; // Get routes from global
+
       switch (routeName) {
         case ROUTES.HOME: url = "/"; break;
         case ROUTES.ARTIST:
@@ -301,22 +315,31 @@ createRouter: () => {
         case ROUTES.ALL_ARTISTS: url = "/artists"; break;
         default: url = "/";
       }
-      window.history.pushState({}, "", url);
-      if (this.routes[routeName]) this.routes[routeName].handler(params);
+      
+      if (window.location.pathname + window.location.search !== url) {
+        window.history.pushState(params, "", url);
+      }
+      
+      if (this.routes[routeName]) {
+        this.routes[routeName].handler(params);
+      } else {
+        console.warn(`No route handler found for: ${routeName}`);
+        navigation.pages.loadHomePage(); // Fallback to home
+      }
     },
 
     navigateToArtist: function (artistName) {
-      this.navigateTo(ROUTES.ARTIST, { artist: artistName });
+      this.navigateTo(window.ROUTES.ARTIST, { artist: artistName });
     },
 
     openSearchDialog: () => {
-      notifications.show("Search functionality coming soon");
+      window.MyTunesApp.notifications.show("Search functionality coming soon");
     },
 
     closeSearchDialog: () => { }
   };
 
-  // Now define the routes using `router` variable so helpers are always accessible
+  const ROUTES = window.ROUTES || {};
   router.routes = {
     [ROUTES.HOME]: {
       pattern: /^\/$/,
@@ -325,14 +348,14 @@ createRouter: () => {
     [ROUTES.ARTIST]: {
       pattern: /^\/artist\/(.+)$/,
       handler: (params) => {
-        // Use router.decodeName instead of this.decodeName
-        const artistName = params.artist || utils.getParameterByName("artist", window.location.href);
+        const artistName = params.artist || window.MyTunesApp.utils.getParameterByName("artist");
         const decodedArtistName = artistName ? router.decodeName(artistName) : '';
-        const artistData = window.music?.find(a => a.artist === decodedArtistName);
+        const artistData = window.MyTunesApp.music?.find(a => a.artist === decodedArtistName);
         if (artistData) {
           navigation.pages.loadArtistPage(artistData);
         } else {
-          appState.router.navigateTo(ROUTES.HOME);
+          console.warn(`Artist not found: ${decodedArtistName}`);
+          router.navigateTo(ROUTES.HOME);
         }
       },
     },
@@ -348,14 +371,17 @@ createRouter: () => {
 
 
 isValidRoute: (routeName, params = {}) => {
+  const ROUTES = window.ROUTES || {};
+  const music = window.MyTunesApp.music;
+  
   switch (routeName) {
     case ROUTES.HOME:
     case ROUTES.ALL_ARTISTS:
       return true;
       
     case ROUTES.ARTIST:
-      if (!params.artist || !window.music) return false;
-      return window.music.some(a => a.artist === params.artist);
+      if (!params.artist || !music) return false;
+      return music.some(a => a.artist === params.artist);
       
     default:
       return false;
@@ -366,20 +392,22 @@ isValidRoute: (routeName, params = {}) => {
     loadHomePage: () => {
       pageLoader.start({ message: "Loading Music..." });
       
-      if (appState.homePageManager) {
-        const dynamicContent = $byId(IDS.dynamicContent);
+      const homePageManager = window.MyTunesApp?.state?.homePageManager;
+      
+      if (homePageManager) {
+        const dynamicContent = window.$byId(window.IDS.dynamicContent);
         if (dynamicContent) {
           dynamicContent.innerHTML = "";
         }
 
         setTimeout(() => {
-          appState.homePageManager.renderHomePage();
+          homePageManager.renderHomePage();
           
           pageUpdates.breadCrumbs(
             [
               {
                 text: "Home",
-                route: ROUTES.HOME,
+                route: window.ROUTES.HOME,
                 active: true,
                 isHome: true,
                 icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M125.2 16.1c6.2-4.4 5.4-14.8-2.2-15.6c-3.6-.4-7.3-.5-11-.5C50.1 0 0 50.1 0 112s50.1 112 112 112c32.1 0 61.1-13.5 81.5-35.2c5.2-5.6-1-14-8.6-13.2c-2.9 .3-5.9 .4-9 .4c-48.6 0-88-39.4-88-88c0-29.7 14.7-55.9 37.2-71.9zm289.9 85.3c-8.8-7.2-21.5-7.2-30.3 0l-216 176c-10.3 8.4-11.8 23.5-3.4 33.8s23.5 11.8 33.8 3.4L224 294.4 224 456c0 30.9 25.1 56 56 56l240 0c30.9 0 56-25.1 56-56l0-161.6 24.8 20.2c10.3 8.4 25.4 6.8 33.8-3.4s6.8-25.4-3.4-33.8l-216-176zM528 255.3L528 456c0 4.4-3.6 8-8 8l-240 0c-4.4 0-8-3.6-8-8l0-200.7L400 151 528 255.3zM352 312l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0c-13.3 0-24 10.7-24 24zM248.5 12.3L236.6 44.6 204.3 56.5c-7 2.6-7 12.4 0 15l32.3 11.9 11.9 32.3c2.6 7 12.4 7 15 0l11.9-32.3 32.3-11.9c7-2.6 7-12.4 0-15L275.4 44.6 263.5 12.3c-2.6-7-12.4-7-15 0zm-145 320c-2.6-7-12.4-7-15 0L76.6 364.6 44.3 376.5c-7 2.6-7 12.4 0 15l32.3 11.9 11.9 32.3c2.6 7 12.4 7 15 0l11.9-32.3 32.3-11.9c7-2.6 7-12.4 0-15l-32.3-11.9-11.9-32.3z"/></svg>'
@@ -397,31 +425,42 @@ isValidRoute: (routeName, params = {}) => {
             pageLoader.complete();
           }, 700);
           
-          utils.scrollToTop();
+          window.MyTunesApp.utils.scrollToTop();
         }, 200);
+      } else {
+        console.error("HomePageManager is not initialized.");
+        pageLoader.complete();
       }
     },
 
     loadArtistPage: (artistData, targetAlbumName = null) => {
       pageLoader.start({ message: "Finding Artist..." });
       
-      const dynamicContent = $byId(IDS.dynamicContent);
-      if (!dynamicContent) return;
+      const dynamicContent = window.$byId(window.IDS.dynamicContent);
+      if (!dynamicContent) {
+        pageLoader.hide();
+        return;
+      }
 
       dynamicContent.innerHTML = "";
 
       setTimeout(() => {
         navigation.rendering.renderArtistPage(artistData, targetAlbumName);
         pageLoader.complete();
-        utils.scrollToTop();
+        window.MyTunesApp.utils.scrollToTop();
       }, 200);
     },
 
     loadAllArtistsPage: () => {
       pageLoader.start({ message: "Loading library..." });
       
-      const dynamicContent = $byId(IDS.dynamicContent);
-      if (!dynamicContent || !window.music) return;
+      const dynamicContent = window.$byId(window.IDS.dynamicContent);
+      const music = window.MyTunesApp.music;
+      
+      if (!dynamicContent || !music) {
+        pageLoader.hide();
+        return;
+      }
 
       dynamicContent.innerHTML = "";
 
@@ -437,8 +476,10 @@ isValidRoute: (routeName, params = {}) => {
 
   rendering: {
     renderArtistPage: (artistData, targetAlbumName = null) => {
-      const dynamicContent = $byId(IDS.dynamicContent);
+      const dynamicContent = window.$byId(window.IDS.dynamicContent);
       if (!dynamicContent) return;
+      
+      const { utils } = window.MyTunesApp;
       
       dynamicContent.innerHTML = render.artist("enhancedArtist", {
         artist: artistData.artist,
@@ -450,6 +491,7 @@ isValidRoute: (routeName, params = {}) => {
 
       navigation.rendering.setupAlbumsSection(artistData, targetAlbumName);
       
+      const ROUTES = window.ROUTES;
       pageUpdates.breadCrumbs(
         [
           { 
@@ -476,7 +518,7 @@ isValidRoute: (routeName, params = {}) => {
     },
 
     setupAlbumsSection: (artistData, targetAlbumName = null) => {
-      const albumsContainer = $byId(IDS.albumsContainer);
+      const albumsContainer = window.$byId(window.IDS.albumsContainer);
       if (!albumsContainer || !artistData.albums.length) return;
 
       albumsContainer.innerHTML = render.album('section', { albums: artistData.albums });
@@ -494,7 +536,7 @@ isValidRoute: (routeName, params = {}) => {
     },
 
     displaySingleAlbum: (artistData, albumIndex) => {
-      const currentAlbumDisplay = $byId("current-album-display");
+      const currentAlbumDisplay = window.$byId("current-album-display");
       if (!currentAlbumDisplay || !artistData.albums[albumIndex]) return;
 
       const album = artistData.albums[albumIndex];
@@ -506,7 +548,7 @@ isValidRoute: (routeName, params = {}) => {
         currentAlbumDisplay.innerHTML = render.album("card", {
           albumId: albumId,
           album: album.album,
-          cover: utils.getAlbumImageUrl(album.album),
+          cover: window.MyTunesApp.utils.getAlbumImageUrl(album.album),
           year: album.year || "Unknown",
           songCount: album.songs.length,
         });
@@ -529,13 +571,14 @@ renderAlbumSongs: (albumContainer, album, artistName) => {
   }
 
   songsContainer._songsData = [];
+  const { appState } = window.MyTunesApp;
 
   album.songs.forEach((song, index) => {
     const songData = {
       ...song,
       artist: artistName,
       album: album.album,
-      cover: utils.getAlbumImageUrl(album.album),
+      cover: window.MyTunesApp.utils.getAlbumImageUrl(album.album),
     };
 
     songsContainer._songsData.push(songData);
@@ -606,14 +649,16 @@ renderAlbumSongs: (albumContainer, album, artistName) => {
       a.appendChild(h4);
       a.addEventListener('click', e => {
         e.preventDefault();
-        if (appState.router) {
-          appState.router.navigateToArtist(name);
+        const router = window.MyTunesApp?.state?.router;
+        if (router) {
+          router.navigateToArtist(name);
         }
       });
       return a;
     },
 
     syncRowWidth: (row, copyA, gap) => {
+      if (!row || !copyA) return;
       const items = Array.from(copyA.children);
       if (!items.length) return;
       const contentWidth = items.reduce((w, el) => w + el.getBoundingClientRect().width, 0);
@@ -624,14 +669,17 @@ renderAlbumSongs: (albumContainer, album, artistName) => {
     },
 
     renderAllArtistsPage: () => {
-      const dynamicContent = $byId(IDS.dynamicContent);
-      if (!dynamicContent || !window.music) return;
+      const dynamicContent = window.$byId(window.IDS.dynamicContent);
+      const music = window.MyTunesApp.music;
+      const { utils, state } = window.MyTunesApp;
+      
+      if (!dynamicContent || !music) return;
 
       dynamicContent.innerHTML = render.page("allArtists");
 
-      const artistsGrid = $byId(IDS.artistsGrid);
+      const artistsGrid = window.$byId(window.IDS.artistsGrid);
       if (artistsGrid) {
-        window.music.forEach((artist, index) => {
+        music.forEach((artist, index) => {
           const artistCard = document.createElement("div");
           artistCard.className = "animate__animated animate__fadeIn";
           artistCard.style.animationDelay = `${0.05 * index}s`;
@@ -647,7 +695,7 @@ renderAlbumSongs: (albumContainer, album, artistName) => {
           artistsGrid.appendChild(artistCard);
 
           artistCard.querySelector(".artist-card").addEventListener("click", () => {
-            appState.router.navigateTo(ROUTES.ARTIST, { artist: artist.artist });
+            state.router.navigateTo(window.ROUTES.ARTIST, { artist: artist.artist });
           });
         });
       }
@@ -655,13 +703,13 @@ renderAlbumSongs: (albumContainer, album, artistName) => {
       pageUpdates.breadCrumbs([
         {
           text: "Home",
-          route: ROUTES.HOME,
+          route: window.ROUTES.HOME,
           active: false,
           isHome: true,
         },
         {
           text: "All Artists",
-          route: ROUTES.ALL_ARTISTS,
+          route: window.ROUTES.ALL_ARTISTS,
           active: true,
         },
       ]);
@@ -672,6 +720,8 @@ renderAlbumSongs: (albumContainer, album, artistName) => {
 
   events: {
     bindArtistPageEvents: (artistData) => {
+      const { appState, favorites } = window.MyTunesApp.state;
+
       const playButton = document.querySelector("#artistPlay");
       if (playButton) {
         playButton.addEventListener("click", () => {
@@ -681,13 +731,14 @@ renderAlbumSongs: (albumContainer, album, artistName) => {
 
       const followButton = document.querySelector("#artistFollow");
       if (followButton) {
-        const isFavorite = appState.favorites.has("artists", artistData.artist);
+        const isFavorite = favorites.has("artists", artistData.artist);
         followButton.textContent = isFavorite ? "Unfavorite" : "Favorite";
-        followButton.classList.toggle(CLASSES.active, isFavorite);
+        followButton.classList.toggle(window.CLASSES.active, isFavorite);
+        
         followButton.addEventListener("click", () => {
-          const wasFavorite = appState.favorites.toggle("artists", artistData.artist);
-          followButton.textContent = wasFavorite ? "Unfavorite" : "Favorite";
-          followButton.classList.toggle(CLASSES.active, wasFavorite);
+          const isNowFavorite = favorites.toggle("artists", artistData.artist);
+          followButton.textContent = isNowFavorite ? "Favorite" : "Unfavorite"; // Corrected logic
+          followButton.classList.toggle(window.CLASSES.active, isNowFavorite); // Use the *new* state
         });
       }
 
@@ -726,7 +777,7 @@ renderAlbumSongs: (albumContainer, album, artistName) => {
     },
 
     bindAllArtistsEvents: () => {
-      const artistSearch = $byId(IDS.artistSearch);
+      const artistSearch = window.$byId(window.IDS.artistSearch);
       if (artistSearch) {
         artistSearch.addEventListener("input", (e) => {
           const query = e.target.value.toLowerCase().trim();
@@ -739,10 +790,12 @@ renderAlbumSongs: (albumContainer, album, artistName) => {
         });
       }
 
-      const genreFilters = $byId(IDS.genreFilters);
-      if (genreFilters && window.music) {
+      const genreFilters = window.$byId(window.IDS.genreFilters);
+      const music = window.MyTunesApp.music;
+      
+      if (genreFilters && music) {
         const genres = new Set();
-        window.music.forEach((artist) => {
+        music.forEach((artist) => {
           if (artist.genre) genres.add(artist.genre);
         });
 
@@ -753,11 +806,11 @@ renderAlbumSongs: (albumContainer, album, artistName) => {
           genreBtn.textContent = genre;
 
           genreBtn.addEventListener("click", () => {
-            genreBtn.classList.toggle(CLASSES.active);
+            genreBtn.classList.toggle(window.CLASSES.active);
             genreBtn.classList.toggle("bg-accent-primary");
             genreBtn.classList.toggle("text-white");
 
-            const activeFilters = Array.from(genreFilters.querySelectorAll("." + CLASSES.active)).map((btn) => btn.textContent.toLowerCase());
+            const activeFilters = Array.from(genreFilters.querySelectorAll("." + window.CLASSES.active)).map((btn) => btn.textContent.toLowerCase());
 
             document.querySelectorAll(".artist-card").forEach((card) => {
               const cardGenre = card.querySelector(".genre-tag")?.textContent.toLowerCase() || "";
@@ -772,19 +825,17 @@ renderAlbumSongs: (albumContainer, album, artistName) => {
 
 bindSongItemEvents: (container) => {
   if (!container) return;
+  const { appState, musicPlayer, router } = window.MyTunesApp.state;
+  const { actions } = window.MyTunesApp.navigation;
 
-  container.querySelectorAll(".song-item").forEach((songItem, itemIndex) => {
+  container.querySelectorAll(".song-item").forEach((songItem) => {
     let clickCount = 0;
     let clickTimer = null;
 
-    // Get the song data from the container's stored array
     const songsContainer = songItem.closest('.songs-container');
     const songIndex = parseInt(songItem.dataset.index);
     
-    // Store song data in memory, not in HTML
-    if (!songsContainer._songsData) {
-      songsContainer._songsData = [];
-    }
+    if (isNaN(songIndex)) return;
 
     songItem.addEventListener("click", (e) => {
       if (e.target.closest(".song-actions") || e.target.closest("[data-action]")) return;
@@ -796,8 +847,7 @@ bindSongItemEvents: (container) => {
         clearTimeout(clickTimer);
         clickCount = 0;
         
-        // Get song data from memory instead of parsing JSON
-        const songData = songsContainer._songsData[songIndex];
+        const songData = songsContainer?._songsData?.[songIndex];
         if (songData) {
           musicPlayer.ui.playSong(songData);
         }
@@ -808,7 +858,7 @@ bindSongItemEvents: (container) => {
     if (playButton) {
       playButton.addEventListener("click", (e) => {
         e.stopPropagation();
-        const songData = songsContainer._songsData[songIndex];
+        const songData = songsContainer?._songsData?.[songIndex];
         if (songData) {
           musicPlayer.ui.playSong(songData);
         }
@@ -820,7 +870,9 @@ bindSongItemEvents: (container) => {
           artistElement.addEventListener("click", (e) => {
             e.stopPropagation();
             const artistName = artistElement.dataset.artist;
-            appState.router.navigateToArtist(artistName);
+            if (router) {
+                router.navigateToArtist(artistName);
+            }
           });
         }
 
@@ -828,13 +880,15 @@ bindSongItemEvents: (container) => {
           actionBtn.addEventListener("click", (e) => {
             e.stopPropagation();
             const action = actionBtn.dataset.action;
-            const songData = JSON.parse(songItem.dataset.song);
+            const songData = songsContainer?._songsData?.[songIndex];
             const context = songItem.dataset.context || 'base';
 
-            if (action === 'more') {
-              navigation.actions.showMoreActionsPopover(actionBtn, songData, context);
-            } else {
-              navigation.actions.handleSongAction(action, songData, context);
+            if (songData) {
+              if (action === 'more') {
+                actions.showMoreActionsPopover(actionBtn, songData, context);
+              } else {
+                actions.handleSongAction(action, songData, context);
+              }
             }
           });
         });
@@ -844,7 +898,9 @@ bindSongItemEvents: (container) => {
 
   actions: {
     playArtistSongs: (artistData) => {
+      const { appState, musicPlayer, utils } = window.MyTunesApp;
       const allSongs = [];
+      
       artistData.albums.forEach((album) => {
         album.songs.forEach((song) => {
           allSongs.push({
@@ -864,6 +920,7 @@ bindSongItemEvents: (container) => {
     },
 
     playAlbumSongs: (album, artistName) => {
+      const { appState, musicPlayer, utils } = window.MyTunesApp;
       if (album.songs.length === 0) return;
 
       appState.queue.clear();
@@ -885,11 +942,13 @@ bindSongItemEvents: (container) => {
     },
 
     handleSongAction: (action, songData, context) => {
+      const { appState, notifications, playlists, navigation } = window.MyTunesApp;
+      const NOTIFICATION_TYPES = window.NOTIFICATION_TYPES;
+      
       switch (action) {
         case "favorite":
-          const wasFavorite = appState.favorites.toggle("songs", songData.id);
-          const message = wasFavorite ? `Added "${songData.title}" to your favorite music` : `Removed "${songData.title}" from your favorite music`;
-          notifications.show(message, wasFavorite ? NOTIFICATION_TYPES.SUCCESS : NOTIFICATION_TYPES.INFO);
+          const isNowFavorite = appState.favorites.toggle("songs", songData.id);
+          // Note: 'notifications.show' is already called inside favorites.toggle
           break;
           
         case "play-next":
@@ -899,7 +958,7 @@ bindSongItemEvents: (container) => {
           
         case "add-queue":
           appState.queue.add(songData);
-          notifications.show(`Added "${songData.title}" to queue`, NOTIFICATION_TYPES.SUCCESS);
+          // Note: 'notifications.show' is already called inside queue.add
           break;
           
         case "add-playlist":
@@ -912,7 +971,7 @@ bindSongItemEvents: (container) => {
             const playlistId = playlistContainer.dataset.playlistId;
             if (playlists.removeSong(playlistId, songData.id)) {
               playlists.show(playlistId);
-              notifications.show(`Removed "${songData.title}" from playlist`, NOTIFICATION_TYPES.INFO);
+              // Note: 'notifications.show' is already called inside playlists.removeSong
             }
           }
           break;
@@ -936,13 +995,14 @@ bindSongItemEvents: (container) => {
 
     showMoreActionsPopover: (triggerButton, songData, context) => {
       document.querySelectorAll('.more-actions-popover').forEach(p => p.remove());
+      const { navigation } = window.MyTunesApp;
       
       const popover = document.createElement('div');
       popover.className = 'more-actions-popover';
       
       popover.innerHTML = `
         <div class="popover-grid">
-          ${ACTION_GRID_ITEMS.map(action => `
+          ${(window.ACTION_GRID_ITEMS || []).map(action => `
             <button class="popover-action-btn" data-action="${action.id}">
               <svg class="popover-icon" viewBox="0 0 24 24">
                 <path d="${action.icon}"/>
@@ -968,19 +1028,17 @@ bindSongItemEvents: (container) => {
       
       if (left + popoverRect.width > viewport.width - 16) {
         left = triggerRect.left - popoverRect.width - 8;
-        if (left < 16) {
-          left = Math.max(16, Math.min(
-            viewport.width - popoverRect.width - 16,
-            triggerRect.left + (triggerRect.width - popoverRect.width) / 2
-          ));
-        }
+      }
+      if (left < 16) {
+          left = 16;
       }
       
       if (top + popoverRect.height > viewport.height - 16) {
-        top = Math.max(16, viewport.height - popoverRect.height - 16);
+        top = viewport.height - popoverRect.height - 16;
       }
-      
-      top = Math.max(16, top);
+      if (top < 16) {
+          top = 16;
+      }
       
       popover.style.left = `${left}px`;
       popover.style.top = `${top}px`;
@@ -997,26 +1055,28 @@ bindSongItemEvents: (container) => {
       const closePopover = (e) => {
         if (!popover.contains(e.target) && !triggerButton.contains(e.target)) {
           popover.remove();
-          document.removeEventListener('click', closePopover);
-          document.removeEventListener('keydown', escapeHandler);
+          document.removeEventListener('click', closePopover, { capture: true });
+          document.removeEventListener('keydown', escapeHandler, { capture: true });
         }
       };
       
       const escapeHandler = (e) => {
         if (e.key === 'Escape') {
           popover.remove();
-          document.removeEventListener('click', closePopover);
-          document.removeEventListener('keydown', escapeHandler);
+          document.removeEventListener('click', closePopover, { capture: true });
+          document.removeEventListener('keydown', escapeHandler, { capture: true });
         }
       };
       
       setTimeout(() => {
-        document.addEventListener('click', closePopover);
-        document.addEventListener('keydown', escapeHandler);
-      }, 100);
+        document.addEventListener('click', closePopover, { capture: true, once: true });
+        document.addEventListener('keydown', escapeHandler, { capture: true, once: true });
+      }, 0);
     },
 
     showPlaylistSelector: (songData) => {
+      const { appState, overlays, playlists } = window.MyTunesApp;
+      
       if (appState.playlists.length === 0) {
         overlays.dialog.confirm(
           "No playlists found. Create a new playlist?",
@@ -1041,7 +1101,7 @@ bindSongItemEvents: (container) => {
             </svg>
           </div>
           <div class="playlist-info">
-            <div class="playlist-name">${playlist.name}</div>
+            <div class="playlist-name">${window.MyTunesApp.utils.escapeHtml(playlist.name)}</div>
             <div class="playlist-count">${playlist.songs.length} songs</div>
           </div>
         </button>
@@ -1093,6 +1153,7 @@ bindSongItemEvents: (container) => {
     },
 
     shareSong: (songData) => {
+      const notifications = window.MyTunesApp.notifications;
       if (navigator.share) {
         navigator.share({
           title: songData.title,
@@ -1107,7 +1168,10 @@ bindSongItemEvents: (container) => {
     },
 
     fallbackShare: (songData) => {
+      const notifications = window.MyTunesApp.notifications;
+      const NOTIFICATION_TYPES = window.NOTIFICATION_TYPES;
       const shareUrl = window.location.href;
+      
       if (navigator.clipboard) {
         navigator.clipboard.writeText(shareUrl).then(() => {
           notifications.show("Song link copied to clipboard!", NOTIFICATION_TYPES.SUCCESS);
@@ -1120,7 +1184,3 @@ bindSongItemEvents: (container) => {
     }
   }
 };
-
-
-
-
