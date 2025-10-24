@@ -498,7 +498,7 @@ case "home_bento":
           <h2 class="card-title">Recently Played</h2>
           <a href="#" class="card-link" data-view="recent">View All</a>
         </div>
-        <div id="recentlyPlayedSection" class="card-content">
+        <div id="recently-played-section" class="card-content">
           <div class="skeleton-loader"></div>
         </div>
       </div>
@@ -508,7 +508,7 @@ case "home_bento":
           <h2 class="card-title">Discover Albums</h2>
           <a href="#" class="card-link" data-view="albums">Explore More</a>
         </div>
-        <div id="randomAlbumsSection" class="card-content">
+        <div id="random-albums-section" class="card-content">
           <div class="skeleton-loader"></div>
         </div>
       </div>
@@ -518,7 +518,7 @@ case "home_bento":
           <h2 class="card-title">Favorite Artists</h2>
           <a href="#" class="card-link" data-view="favorite-artists">View All</a>
         </div>
-        <div id="favoriteArtistsSection" class="card-content">
+        <div id="favorite-artists-section" class="card-content">
           <div class="skeleton-loader"></div>
         </div>
       </div>
@@ -528,7 +528,7 @@ case "home_bento":
           <h2 class="card-title">Your Playlists</h2>
           <a href="#" class="card-link" data-view="playlists">View All</a>
         </div>
-        <div id="playlistsSection" class="card-content">
+        <div id="playlists-section" class="card-content">
           <div class="skeleton-loader"></div>
         </div>
       </div>
@@ -538,7 +538,7 @@ case "home_bento":
           <h2 class="card-title">Favorite Songs</h2>
           <a href="#" class="card-link" data-view="favorite-songs">View All</a>
         </div>
-        <div id="favoriteSongsSection" class="card-content">
+        <div id="favorite-songs-section" class="card-content">
           <div class="skeleton-loader"></div>
         </div>
       </div>
