@@ -491,57 +491,57 @@ case "enhancedArtist":
   
       case "home_bento":
         return `
-          <div class="bento-grid">
-            <div class="bento-card" data-loader="true">
-              <div class="card-header">
-                <h2 class="card-title">Recently Played</h2>
-                <a href="#" class="card-link" data-view="recent">View All</a>
-              </div>
-              <div id="recently-played-section" class="card-content">
-                <div class="skeleton-loader"></div>
-              </div>
-            </div>
-            
-            <div class="bento-card bento-span-2" data-loader="true">
-              <div class="card-header">
-                <h2 class="card-title">Discover Albums</h2>
-                <a href="#" class="card-link" data-view="albums">Explore More</a>
-              </div>
-              <div id="random-albums-section" class="card-content">
-                <div class="skeleton-loader"></div>
-              </div>
-            </div>
-            
-            <div class="bento-card" data-loader="true">
-              <div class="card-header">
-                <h2 class="card-title">Favorite Artists</h2>
-                <a href="#" class="card-link" data-view="favorite-artists">View All</a>
-              </div>
-              <div id="favorite-artists-section" class="card-content">
-                <div class="skeleton-loader"></div>
-              </div>
-            </div>
-            
-            <div class="bento-card" data-loader="true">
-              <div class="card-header">
-                <h2 class="card-title">Your Playlists</h2>
-                <a href="#" class="card-link" data-view="playlists">View All</a>
-              </div>
-              <div id="playlists-section" class="card-content">
-                <div class="skeleton-loader"></div>
-              </div>
-            </div>
-            
-            <div class="bento-card" data-loader="true">
-              <div class="card-header">
-                <h2 class="card-title">Favorite Songs</h2>
-                <a href="#" class="card-link" data-view="favorite-songs">View All</a>
-              </div>
-              <div id="favorite-songs-section" class="card-content">
-                <div class="skeleton-loader"></div>
-              </div>
-            </div>
-          </div>
+<div class="flexi-grid">
+  <div class="flexi-item" data-loader="true">
+    <div class="flexi-header">
+      <h2 class="flexi-title">Recently Played</h2>
+      <a href="#" class="flexi-link" data-view="recent">View All</a>
+    </div>
+    <div id="recently-played-section" class="flexi-content">
+      <div class="flexi-loader"></div>
+    </div>
+  </div>
+  
+  <div class="flexi-item flexi-wide" data-loader="true">
+    <div class="flexi-header">
+      <h2 class="flexi-title">Discover Albums</h2>
+      <a href="#" class="flexi-link" data-view="albums">Explore More</a>
+    </div>
+    <div id="random-albums-section" class="flexi-content">
+      <div class="flexi-loader"></div>
+    </div>
+  </div>
+  
+  <div class="flexi-item" data-loader="true">
+    <div class="flexi-header">
+      <h2 class="flexi-title">Favorite Artists</h2>
+      <a href="#" class="flexi-link" data-view="favorite-artists">View All</a>
+    </div>
+    <div id="favorite-artists-section" class="flexi-content">
+      <div class="flexi-loader"></div>
+    </div>
+  </div>
+  
+  <div class="flexi-item" data-loader="true">
+    <div class="flexi-header">
+      <h2 class="flexi-title">Your Playlists</h2>
+      <a href="#" class="flexi-link" data-view="playlists">View All</a>
+    </div>
+    <div id="playlists-section" class="flexi-content">
+      <div class="flexi-loader"></div>
+    </div>
+  </div>
+  
+  <div class="flexi-item" data-loader="true">
+    <div class="flexi-header">
+      <h2 class="flexi-title">Favorite Songs</h2>
+      <a href="#" class="flexi-link" data-view="favorite-songs">View All</a>
+    </div>
+    <div id="favorite-songs-section" class="flexi-content">
+      <div class="flexi-loader"></div>
+    </div>
+  </div>
+</div>
         `;
         
       default:
