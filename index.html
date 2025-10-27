@@ -103,7 +103,7 @@ MyBeats:  Stream & share your favorite music for free.
 <style>
 /* ===========================================
    UNIFIED MUSIC PLAYER CSS
-   Same player across all devices, different displays
+   Works with existing design system - NO OVERRIDES
    =========================================== */
 
 /* Base responsive utility classes */
@@ -125,12 +125,12 @@ MyBeats:  Stream & share your favorite music for free.
     }
 }
 
-/* Unified Triggers for Desktop/Tablet */
+/* Unified Triggers for Desktop/Tablet - uses your existing variables */
 .unified-triggers {
     position: fixed;
     top: 20px;
     right: 20px;
-    z-index: 1000;
+    z-index: var(--z-nav);
     display: flex;
     gap: 12px;
 }
@@ -138,18 +138,24 @@ MyBeats:  Stream & share your favorite music for free.
 .unified-trigger {
     width: 48px;
     height: 48px;
-    border-radius: 12px;
+    border-radius: var(--radius-lg);
+    background: var(--background-500);
+    border: 1px solid var(--border-200);
+    color: var(--text-200);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    transition: all var(--transition-fast);
+    box-shadow: var(--shadow-md);
 }
 
 .unified-trigger:hover {
+    background: var(--background-600);
+    border-color: var(--border-accent);
     transform: translateY(-2px);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+    box-shadow: var(--shadow-lg);
+    color: var(--text-100);
 }
 
 .unified-trigger:active {
@@ -161,335 +167,7 @@ MyBeats:  Stream & share your favorite music for free.
     height: 20px;
 }
 
-/* Unified Music Player Drawer Styles - NO COLOR OVERRIDES */
-.drawer {
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    pointer-events: none;
-    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-.drawer:popover-open {
-    pointer-events: auto;
-}
-
-/* Mobile Layout (Default Drawer Behavior) */
-.drawerScroller {
-    height: 100vh;
-    overflow-y: auto;
-    scroll-snap-type: y mandatory;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-}
-
-.drawerScroller::-webkit-scrollbar {
-    display: none;
-}
-
-.drawerSlide {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    scroll-snap-align: start;
-    position: relative;
-}
-
-.drawerAnchors {
-    flex: 1;
-    pointer-events: none;
-}
-
-.drawerCurtain {
-    position: absolute;
-    inset: 0;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    z-index: 1;
-}
-
-.drawerContent {
-    border-radius: 24px 24px 0 0;
-    min-height: 60vh;
-    position: relative;
-    z-index: 2;
-    padding: 0;
-    box-shadow: 
-        0 -20px 25px -5px rgba(0, 0, 0, 0.1),
-        0 -10px 10px -5px rgba(0, 0, 0, 0.04);
-}
-
-.mpNav {
-    padding: 16px;
-    display: flex;
-    justify-content: center;
-}
-
-.drawerDrag {
-    width: 40px;
-    height: 6px;
-    border: none;
-    border-radius: 3px;
-    cursor: grab;
-    transition: opacity 0.2s ease;
-}
-
-.drawerDrag:hover {
-    opacity: 0.8;
-}
-
-.drawerDrag:active {
-    cursor: grabbing;
-}
-
-.drawerDrag span {
-    display: none;
-}
-
-/* Tabs Container - NO COLOR OVERRIDES */
-.tabsContainer {
-    padding: 16px 24px 0;
-}
-
-.tabs {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 16px;
-}
-
-.tab {
-    flex: 1;
-    padding: 12px 16px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-align: center;
-}
-
-.tab:hover {
-    transform: translateY(-1px);
-}
-
-/* Music Player Content */
-.content {
-    padding: 24px;
-}
-
-.musicPlayer .content {
-    display: none;
-}
-
-.musicPlayer .content.active {
-    display: block;
-}
-
-/* Now Playing Content */
-.content[data-tab="playing"] {
-    text-align: center;
-}
-
-.albumArtwork.cover {
-    width: 280px;
-    height: 280px;
-    border-radius: 16px;
-    object-fit: cover;
-    margin: 0 auto 24px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-    transition: transform 0.3s ease;
-}
-
-.albumArtwork.cover:hover {
-    transform: scale(1.02);
-}
-
-.info {
-    margin-bottom: 32px;
-}
-
-.songName.title {
-    font-size: 24px;
-    font-weight: 700;
-    margin-bottom: 8px;
-    line-height: 1.2;
-}
-
-.artistName.artist {
-    font-size: 16px;
-    margin-bottom: 4px;
-    cursor: pointer;
-    transition: opacity 0.2s ease;
-}
-
-.artistName.artist:hover {
-    opacity: 0.8;
-    text-decoration: underline;
-}
-
-.albumName.album {
-    font-size: 14px;
-    opacity: 0.7;
-}
-
-/* Progress Bar - NO COLOR OVERRIDES */
-.progress {
-    margin-bottom: 32px;
-}
-
-.time {
-    display: flex;
-    justify-content: space-between;
-    font-size: 12px;
-    opacity: 0.7;
-    margin-bottom: 8px;
-}
-
-.progressBar {
-    height: 6px;
-    border-radius: 3px;
-    position: relative;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.progressBar:hover {
-    transform: scaleY(1.2);
-}
-
-.progressBuffer {
-    height: 100%;
-    border-radius: 3px;
-    transition: width 0.3s ease;
-    opacity: 0.3;
-}
-
-.progressFill {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    border-radius: 3px;
-    transition: width 0.1s ease;
-}
-
-.progressThumb {
-    position: absolute;
-    top: 50%;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    opacity: 0;
-    transition: opacity 0.2s ease;
-}
-
-.progressBar:hover .progressThumb,
-.progressBar.is-dragging .progressThumb {
-    opacity: 1;
-}
-
-/* Player Controls - NO COLOR OVERRIDES */
-.controls.playerControls {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    margin-bottom: 24px;
-}
-
-.btn {
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.btn:hover {
-    transform: scale(1.05);
-}
-
-.btn:active {
-    transform: scale(0.95);
-}
-
-.btn--icon-only {
-    width: 48px;
-    height: 48px;
-}
-
-.btn.is-primary {
-    width: 64px;
-    height: 64px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-}
-
-.btn.is-primary:hover {
-    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
-}
-
-.btn .icon {
-    width: 20px;
-    height: 20px;
-}
-
-.btn.is-primary .icon {
-    width: 24px;
-    height: 24px;
-}
-
-.btn .icon.hidden {
-    display: none;
-}
-
-/* Secondary Actions */
-.actions {
-    display: flex;
-    justify-content: center;
-    gap: 24px;
-}
-
-.actions .btn {
-    width: 40px;
-    height: 40px;
-}
-
-.actions .btn .icon {
-    width: 18px;
-    height: 18px;
-}
-
-/* List Styles for Queue and Recent - NO COLOR OVERRIDES */
-.list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.list .empty {
-    text-align: center;
-    padding: 48px 24px;
-    opacity: 0.6;
-}
-
-.list .empty .emptyIcon {
-    width: 48px;
-    height: 48px;
-    margin: 0 auto 16px;
-    opacity: 0.5;
-}
-
-.list .empty .emptyText {
-    font-size: 16px;
-    font-weight: 500;
-}
-
-/* Tablet Responsive Adjustments */
+/* Tablet/Desktop responsive adjustments for existing drawer */
 @media (min-width: 768px) and (max-width: 1023px) {
     /* Tablet: Centered modal-style drawer */
     .drawer {
@@ -502,15 +180,17 @@ MyBeats:  Stream & share your favorite music for free.
     .drawerScroller {
         height: auto;
         max-height: 80vh;
-        overflow-y: auto;
-        scroll-snap-type: none;
         width: 100%;
         max-width: 600px;
+        overflow-y: auto;
+        scroll-snap-type: none;
     }
     
     .drawerSlide {
+        width: 100%;
         min-height: auto;
         height: auto;
+        flex: none;
     }
     
     .drawerAnchors {
@@ -519,20 +199,22 @@ MyBeats:  Stream & share your favorite music for free.
     
     .drawerContent {
         min-height: auto;
-        border-radius: 24px;
+        border-radius: var(--radius-xl);
         max-height: 80vh;
         overflow-y: auto;
+        position: relative;
+        translate: 0 0;
+        transition: none;
     }
     
-    .albumArtwork.cover {
-        width: 240px;
-        height: 240px;
+    .drawerCurtain {
+        display: block;
     }
 }
 
-/* Desktop Responsive Adjustments */
+/* Desktop responsive adjustments */
 @media (min-width: 1024px) {
-    /* Desktop: Keep drawer behavior but adjust sizing */
+    /* Desktop: Larger centered modal */
     .drawer {
         display: flex;
         align-items: center;
@@ -543,15 +225,17 @@ MyBeats:  Stream & share your favorite music for free.
     .drawerScroller {
         height: auto;
         max-height: 85vh;
-        overflow-y: auto;
-        scroll-snap-type: none;
         width: 100%;
         max-width: 700px;
+        overflow-y: auto;
+        scroll-snap-type: none;
     }
     
     .drawerSlide {
+        width: 100%;
         min-height: auto;
         height: auto;
+        flex: none;
     }
     
     .drawerAnchors {
@@ -560,40 +244,43 @@ MyBeats:  Stream & share your favorite music for free.
     
     .drawerContent {
         min-height: auto;
-        border-radius: 24px;
+        border-radius: var(--radius-xl);
         max-height: 85vh;
         overflow-y: auto;
+        position: relative;
+        translate: 0 0;
+        transition: none;
     }
     
-    .albumArtwork.cover {
-        width: 320px;
-        height: 320px;
+    .drawerCurtain {
+        display: block;
     }
     
-    /* Desktop: Player can be embedded in bento grid */
-    .drawer.desktop-embedded {
+    /* Desktop bento grid embedding support */
+    .drawer.bento-embedded {
         position: relative;
         display: block;
         inset: unset;
         z-index: auto;
         padding: 0;
         pointer-events: auto;
+        height: 100%;
     }
     
-    .drawer.desktop-embedded .drawerScroller {
+    .drawer.bento-embedded .drawerScroller {
         height: 100%;
         max-height: none;
         overflow: visible;
         scroll-snap-type: none;
     }
     
-    .drawer.desktop-embedded .drawerSlide {
+    .drawer.bento-embedded .drawerSlide {
         height: 100%;
         min-height: auto;
     }
     
-    .drawer.desktop-embedded .drawerContent {
-        border-radius: 16px;
+    .drawer.bento-embedded .drawerContent {
+        border-radius: var(--radius-lg);
         min-height: 100%;
         max-height: none;
         position: static;
@@ -601,87 +288,46 @@ MyBeats:  Stream & share your favorite music for free.
         border: none;
     }
     
-    .drawer.desktop-embedded .drawerCurtain,
-    .drawer.desktop-embedded .mpNav {
+    .drawer.bento-embedded .drawerCurtain,
+    .drawer.bento-embedded .mpNav {
         display: none;
     }
     
-    /* Compact desktop view */
-    .drawer.desktop-embedded.compact .albumArtwork.cover {
-        width: 120px;
-        height: 120px;
-        margin-bottom: 16px;
-    }
-    
-    .drawer.desktop-embedded.compact .songName.title {
-        font-size: 18px;
-        margin-bottom: 4px;
-    }
-    
-    .drawer.desktop-embedded.compact .artistName.artist {
-        font-size: 14px;
-        margin-bottom: 2px;
-    }
-    
-    .drawer.desktop-embedded.compact .albumName.album {
-        font-size: 12px;
-    }
-    
-    .drawer.desktop-embedded.compact .controls.playerControls .btn {
-        width: 36px;
-        height: 36px;
-    }
-    
-    .drawer.desktop-embedded.compact .controls.playerControls .btn.is-primary {
-        width: 48px;
-        height: 48px;
-    }
-    
-    .drawer.desktop-embedded.compact .actions {
-        gap: 16px;
-    }
-    
-    .drawer.desktop-embedded.compact .actions .btn {
-        width: 32px;
-        height: 32px;
+    .drawer.bento-embedded .drawerAnchors {
+        display: none;
     }
 }
 
-/* Animation States */
-@keyframes slideInUp {
-    from {
-        transform: translateY(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-@keyframes slideOutDown {
-    from {
-        transform: translateY(0);
-        opacity: 1;
-    }
-    to {
-        transform: translateY(100%);
-        opacity: 0;
-    }
-}
-
-/* Mobile animations */
-@media (max-width: 767px) {
-    .drawer:popover-open .drawerContent {
-        animation: slideInUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+/* Fix tablet popover behavior - prevent immediate closing */
+@media (min-width: 768px) {
+    .drawer::backdrop {
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: var(--blur-md);
     }
     
-    .drawer.closing .drawerContent {
-        animation: slideOutDown 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    .drawer:not(:popover-open) {
+        display: none;
+    }
+    
+    .drawer:popover-open {
+        display: flex;
+    }
+    
+    /* Ensure drawer content doesn't trigger backdrop clicks */
+    .drawer .drawerContent {
+        pointer-events: auto;
+        position: relative;
+        z-index: 10;
+    }
+    
+    /* Make sure curtain only covers empty areas */
+    .drawer .drawerCurtain {
+        pointer-events: auto;
+        z-index: 1;
     }
 }
 
-/* Tablet/Desktop fade animations */
+/* Animation fixes for tablet/desktop */
 @media (min-width: 768px) {
     .drawer:popover-open {
         animation: fadeIn 0.3s ease;
@@ -702,223 +348,130 @@ MyBeats:  Stream & share your favorite music for free.
     }
 }
 
-/* Focus and Accessibility */
-.btn:focus-visible {
-    outline: 2px solid currentColor;
-    outline-offset: 2px;
+/* Bento card integration styles */
+.bento-card.music-player-card {
+    overflow: hidden;
+    position: relative;
 }
 
-.progressBar:focus-visible {
-    outline: 2px solid currentColor;
-    outline-offset: 4px;
-}
-
-.tab:focus-visible {
-    outline: 2px solid currentColor;
-    outline-offset: 2px;
-}
-
-/* Loading and Error States */
-.musicPlayer.loading .albumArtwork.cover {
-    opacity: 0.5;
-    animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-    0%, 100% { opacity: 0.5; }
-    50% { opacity: 0.8; }
-}
-
-.musicPlayer.error .albumArtwork.cover {
-    opacity: 0.3;
-    filter: grayscale(100%);
-}
-
-/* Song Item Styles for Lists - NO COLOR OVERRIDES */
-.songItem {
+.bento-card.music-player-card .card-header {
     display: flex;
     align-items: center;
-    padding: 12px 16px;
-    margin: 8px 0;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s ease;
+    justify-content: space-between;
+    padding: var(--space-md);
+    border-bottom: 1px solid var(--border-200);
 }
 
-.songItem:hover {
-    transform: translateX(4px);
+.bento-card.music-player-card .card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-100);
+    margin: 0;
 }
 
-.songCover {
-    width: 48px;
-    height: 48px;
-    border-radius: 6px;
-    object-fit: cover;
-    margin-right: 12px;
-}
-
-.songInfo {
-    flex: 1;
-    min-width: 0;
-}
-
-.songTitle {
-    font-size: 14px;
-    font-weight: 500;
-    margin-bottom: 2px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.songInfo .artistName {
-    font-size: 12px;
-    opacity: 0.7;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.songActions {
+.bento-card.music-player-card .card-actions {
     display: flex;
-    gap: 8px;
-    opacity: 0;
-    transition: opacity 0.2s ease;
+    gap: var(--space-sm);
 }
 
-.songItem:hover .songActions {
-    opacity: 1;
-}
-
-.playButton,
-.removeButton,
-.queueButton {
+.bento-card.music-player-card .expand-player-btn,
+.bento-card.music-player-card .minimize-player-btn {
     width: 32px;
     height: 32px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
+    background: var(--background-400);
+    border: 1px solid var(--border-200);
+    border-radius: var(--radius-sm);
+    color: var(--text-300);
+    cursor: pointer;
+    transition: all var(--transition-fast);
 }
 
-.playButton:hover,
-.queueButton:hover {
-    transform: scale(1.1);
+.bento-card.music-player-card .expand-player-btn:hover,
+.bento-card.music-player-card .minimize-player-btn:hover {
+    background: var(--background-500);
+    color: var(--text-100);
+    border-color: var(--border-accent);
 }
 
-.removeButton:hover {
-    transform: scale(1.1);
+/* Playing state indicator for unified triggers */
+.unified-trigger.playing {
+    background: var(--accent-primary);
+    color: var(--text-on-accent);
+    border-color: var(--accent-primary);
 }
 
-.SVGimg {
-    width: 16px;
-    height: 16px;
-}
-
-/* Reaction Canvas */
-#reactionCanvas {
+.unified-trigger.playing::after {
+    content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 9999;
+    top: -2px;
+    right: -2px;
+    width: 8px;
+    height: 8px;
+    background: var(--accent-success);
+    border-radius: 50%;
+    border: 2px solid var(--background-canvas);
 }
 
-/* Fix for tablet popover behavior */
-@media (min-width: 768px) and (max-width: 1023px) {
-    .drawer::backdrop {
-        background: rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(4px);
-    }
-    
-    /* Ensure proper popover behavior on tablet */
-    .drawer:not(:popover-open) {
-        display: none;
-    }
-    
-    .drawer:popover-open {
-        display: flex;
+/* Focus states using your existing variables */
+.unified-trigger:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .unified-trigger,
+    .drawer,
+    .drawerContent {
+        transition: none;
+        animation: none;
     }
 }
 
-/* Fix for desktop popover behavior */
-@media (min-width: 1024px) {
-    .drawer::backdrop {
-        background: rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(6px);
+/* High contrast support */
+@media (prefers-contrast: high) {
+    .unified-trigger {
+        border-width: 2px;
     }
     
-    /* Ensure proper popover behavior on desktop */
-    .drawer:not(:popover-open) {
-        display: none;
-    }
-    
-    .drawer:popover-open {
-        display: flex;
+    .drawer .drawerContent {
+        border-width: 2px;
     }
 }
 
 
 /* ===========================================
    RESPONSIVE LAYOUT CSS
-   Controls navbar visibility and layout adjustments
-   NO COLOR OVERRIDES FOR DROPDOWN OR PLAYER
+   Works with existing navbar styles - NO OVERRIDES
    =========================================== */
 
-/* Mobile First Approach */
-/* Default: Mobile layout with navbar visible */
-
-/* Base Layout */
-#pageWrapper {
-    position: relative;
-    min-height: 100vh;
-}
-
+/* Base Layout - respects existing pageWrapper */
 #mainArea {
-    padding-top: 0;
-    transition: padding-top 0.3s ease;
+    transition: padding-top var(--transition-smooth);
 }
 
-/* Mobile Layout (Default) */
+/* Mobile Layout (Default) - preserves existing navbar styles */
 @media (max-width: 767px) {
-    /* Navbar visible on mobile */
-    #navbar {
-        display: block;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        z-index: 1000;
-        padding: 12px 16px;
-    }
-    
-    /* Add bottom padding to main content to account for navbar */
-    #mainArea {
-        padding-bottom: 120px;
-    }
+    /* Your existing navbar styles from navbarPlayer.css are preserved */
     
     /* Hide desktop/tablet triggers */
     .unified-triggers {
         display: none;
     }
     
-    /* Dropdown menu positioning for mobile - NO COLOR OVERRIDES */
+    /* Dropdown menu positioning for mobile - respects existing variables */
     .dropdown-menu {
         position: fixed;
-        bottom: 80px;
-        left: 16px;
-        right: 16px;
-        top: auto;
+        bottom: calc(45px + 1rem + 16px); /* Based on your navbar height + bottom + padding */
+        left: 4vw; /* Matches your navbar width calculation */
+        right: 4vw;
         max-height: 70vh;
-        border-radius: 16px 16px 0 0;
         transform: translateY(100%);
-        transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-        z-index: 1001;
+        transition: transform var(--transition-smooth);
+        z-index: calc(var(--z-player) + 1);
     }
     
     .dropdown-menu.show {
@@ -936,19 +489,14 @@ MyBeats:  Stream & share your favorite music for free.
     /* Show unified triggers */
     .unified-triggers {
         display: flex;
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 1000;
-        gap: 12px;
     }
     
-    /* No bottom padding needed since navbar is hidden */
+    /* Adjust main area padding */
     #mainArea {
-        padding-bottom: 24px;
+        padding-bottom: var(--space-xl);
     }
     
-    /* Dropdown menu positioning for tablet - NO COLOR OVERRIDES */
+    /* Dropdown menu positioning for tablet */
     .dropdown-menu {
         position: fixed;
         top: 80px;
@@ -957,30 +505,18 @@ MyBeats:  Stream & share your favorite music for free.
         bottom: auto;
         width: 320px;
         max-height: calc(100vh - 120px);
-        border-radius: 16px;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        box-shadow: var(--shadow-xl);
         transform: translateY(-10px) scale(0.95);
         opacity: 0;
-        transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        transition: all var(--transition-smooth);
         pointer-events: none;
-        z-index: 1001;
+        z-index: calc(var(--z-player) + 1);
     }
     
     .dropdown-menu.show {
         transform: translateY(0) scale(1);
         opacity: 1;
         pointer-events: auto;
-    }
-    
-    /* Adjust main content grid for tablet */
-    .bento-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 20px;
-        padding: 20px;
-    }
-    
-    .bento-card.bento-span-2 {
-        grid-column: span 2;
     }
 }
 
@@ -994,35 +530,32 @@ MyBeats:  Stream & share your favorite music for free.
     /* Show unified triggers */
     .unified-triggers {
         display: flex;
-        position: fixed;
-        top: 24px;
-        right: 24px;
-        z-index: 1000;
-        gap: 16px;
+        top: var(--space-xl);
+        right: var(--space-xl);
+        gap: var(--space-md);
     }
     
-    /* No bottom padding needed since navbar is hidden */
+    /* Adjust main area padding */
     #mainArea {
-        padding-bottom: 32px;
-        padding-top: 20px;
+        padding-bottom: var(--space-2xl);
+        padding-top: var(--space-md);
     }
     
-    /* Dropdown menu positioning for desktop - NO COLOR OVERRIDES */
+    /* Dropdown menu positioning for desktop */
     .dropdown-menu {
         position: fixed;
         top: 80px;
-        right: 24px;
+        right: var(--space-xl);
         left: auto;
         bottom: auto;
         width: 360px;
         max-height: calc(100vh - 120px);
-        border-radius: 16px;
-        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+        box-shadow: var(--shadow-2xl);
         transform: translateY(-10px) scale(0.95);
         opacity: 0;
-        transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        transition: all var(--transition-smooth);
         pointer-events: none;
-        z-index: 1001;
+        z-index: calc(var(--z-player) + 1);
     }
     
     .dropdown-menu.show {
@@ -1031,136 +564,72 @@ MyBeats:  Stream & share your favorite music for free.
         pointer-events: auto;
     }
     
-    /* Desktop Bento Grid Layout */
+    /* Desktop Bento Grid Layout - respects existing bento-grid class */
     .bento-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 24px;
-        padding: 24px;
-        max-width: 1400px;
-        margin: 0 auto;
+        gap: var(--space-xl);
+        padding: var(--space-xl);
     }
     
-    .bento-card {
-        grid-column: span 1;
-        min-height: 280px;
-    }
-    
-    .bento-card.bento-span-2 {
-        grid-column: span 2;
-    }
-    
-    .bento-card.bento-span-3 {
-        grid-column: span 3;
-    }
-    
-    .bento-card.bento-span-4 {
-        grid-column: span 4;
-    }
-    
-    /* Desktop music player can be embedded in bento grid - NO COLOR OVERRIDES */
-    .bento-card.music-player-card {
-        overflow: hidden;
-        position: relative;
-    }
-    
-    /* When music player is embedded in bento grid */
-    .drawer.bento-embedded {
-        position: static;
-        height: 100%;
-        pointer-events: auto;
-    }
-    
-    .drawer.bento-embedded .drawerScroller {
-        height: 100%;
-        overflow: visible;
-        scroll-snap-type: none;
-    }
-    
-    .drawer.bento-embedded .drawerSlide {
-        height: 100%;
-        min-height: auto;
-    }
-    
-    .drawer.bento-embedded .drawerContent {
-        border-radius: 0;
-        min-height: 100%;
-        box-shadow: none;
-        padding: 0;
-    }
-    
-    .drawer.bento-embedded .drawerAnchors,
-    .drawer.bento-embedded .drawerCurtain,
-    .drawer.bento-embedded .mpNav {
-        display: none;
+    /* Desktop music player bento integration */
+    .drawer.bento-embedded .content {
+        padding: var(--space-md);
     }
     
     .drawer.bento-embedded .tabsContainer {
-        padding: 16px 16px 0;
+        padding: var(--space-md) var(--space-md) 0;
     }
     
-    .drawer.bento-embedded .content {
-        padding: 16px;
-    }
-    
-    .drawer.bento-embedded .albumArtwork.cover {
+    .drawer.bento-embedded .cover {
         width: 160px;
-        height: 160px;
-        margin-bottom: 16px;
+        max-width: 160px;
+        margin-bottom: var(--space-md);
     }
     
-    .drawer.bento-embedded .songName.title {
-        font-size: 20px;
-        margin-bottom: 6px;
+    .drawer.bento-embedded .info .title {
+        font-size: 1.125rem;
+        margin-bottom: var(--space-sm);
     }
     
-    .drawer.bento-embedded .artistName.artist {
-        font-size: 14px;
-        margin-bottom: 4px;
+    .drawer.bento-embedded .info .artist {
+        font-size: 0.875rem;
+        margin-bottom: var(--space-xs);
     }
     
-    .drawer.bento-embedded .albumName.album {
-        font-size: 12px;
-        margin-bottom: 20px;
+    .drawer.bento-embedded .info .album {
+        font-size: 0.75rem;
+        margin-bottom: var(--space-lg);
     }
     
-    .drawer.bento-embedded .controls.playerControls {
-        gap: 12px;
-        margin-bottom: 16px;
+    .drawer.bento-embedded .controls {
+        gap: var(--space-sm);
+        margin-bottom: var(--space-md);
     }
     
-    .drawer.bento-embedded .controls.playerControls .btn {
-        width: 40px;
-        height: 40px;
+    .drawer.bento-embedded .controls .btn {
+        width: 36px;
+        height: 36px;
     }
     
-    .drawer.bento-embedded .controls.playerControls .btn.is-primary {
-        width: 52px;
-        height: 52px;
+    .drawer.bento-embedded .controls .btn.primary {
+        width: 48px;
+        height: 48px;
     }
     
     .drawer.bento-embedded .actions {
-        gap: 20px;
+        gap: var(--space-lg);
     }
     
-    .drawer.bento-embedded .actions .btn {
-        width: 36px;
-        height: 36px;
+    .drawer.bento-embedded .actions .action {
+        width: 32px;
+        height: 32px;
     }
 }
 
 /* Ultra-wide Desktop Layout */
 @media (min-width: 1440px) {
-    .bento-grid {
-        grid-template-columns: repeat(5, 1fr);
-        gap: 28px;
-        padding: 32px;
-        max-width: 1600px;
-    }
-    
     .unified-triggers {
-        top: 32px;
-        right: 32px;
+        top: var(--space-2xl);
+        right: var(--space-2xl);
         gap: 18px;
     }
     
@@ -1171,71 +640,20 @@ MyBeats:  Stream & share your favorite music for free.
     
     .dropdown-menu {
         top: 96px;
-        right: 32px;
+        right: var(--space-2xl);
         width: 380px;
     }
 }
 
 /* Landscape Mobile Layout */
 @media (max-width: 767px) and (orientation: landscape) {
-    #navbar {
-        position: fixed;
-        bottom: 0;
-        height: 60px;
-        padding: 8px 16px;
-    }
-    
-    #mainArea {
-        padding-bottom: 80px;
-    }
-    
     .dropdown-menu {
-        bottom: 60px;
+        bottom: calc(45px + 16px); /* Your navbar height + spacing */
         max-height: 60vh;
     }
 }
 
-/* Print Styles */
-@media print {
-    .unified-triggers,
-    .dropdown-menu,
-    #navbar,
-    .drawer {
-        display: none !important;
-    }
-    
-    #mainArea {
-        padding: 0;
-    }
-}
-
-/* Reduced Motion */
-@media (prefers-reduced-motion: reduce) {
-    .dropdown-menu,
-    .unified-trigger,
-    .drawer,
-    .drawerContent {
-        transition: none;
-        animation: none;
-    }
-}
-
-/* High Contrast Mode */
-@media (prefers-contrast: high) {
-    .unified-trigger {
-        border: 2px solid currentColor;
-    }
-    
-    .dropdown-menu {
-        border: 2px solid currentColor;
-    }
-    
-    .drawer .drawerContent {
-        border: 2px solid currentColor;
-    }
-}
-
-/* Focus Management */
+/* Focus Management - respects existing variables */
 .dropdown-menu:not(.show) {
     visibility: hidden;
 }
@@ -1244,48 +662,19 @@ MyBeats:  Stream & share your favorite music for free.
     visibility: visible;
 }
 
-/* Scroll Behavior */
-html {
-    scroll-behavior: smooth;
-}
-
-@media (prefers-reduced-motion: reduce) {
-    html {
-        scroll-behavior: auto;
-    }
-}
-
-/* Loading States */
-.bento-grid.loading .bento-card {
-    opacity: 0.6;
-    animation: shimmer 1.5s infinite;
-}
-
-@keyframes shimmer {
-    0% { opacity: 0.6; }
-    50% { opacity: 0.8; }
-    100% { opacity: 0.6; }
-}
-
-/* Error States */
-.bento-grid.error .bento-card {
-    opacity: 0.4;
-    filter: grayscale(100%);
-}
-
 /* Accessibility Improvements */
-@media (prefers-reduced-motion: reduce) {
-    * {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-    }
+.unified-trigger:focus-visible {
+    outline: 3px solid var(--accent-primary);
+    outline-offset: 2px;
 }
 
-/* Focus Indicators */
-.unified-trigger:focus-visible {
-    outline: 3px solid currentColor;
-    outline-offset: 2px;
+/* Preserve existing scroll behavior */
+@media (prefers-reduced-motion: reduce) {
+    .dropdown-menu,
+    .unified-trigger {
+        transition: none;
+        animation: none;
+    }
 }
 
 /* CRITICAL FIX: Prevent popover from closing immediately on tablet/desktop */
@@ -1295,7 +684,7 @@ html {
         position: fixed;
         display: flex;
         inset: 0;
-        z-index: 9999;
+        z-index: var(--z-player);
     }
     
     /* Prevent backdrop clicks from immediately closing */
@@ -1303,50 +692,24 @@ html {
         position: fixed;
         inset: 0;
         pointer-events: auto;
-    }
-    
-    /* Ensure drawer content doesn't trigger backdrop clicks */
-    .drawer .drawerContent {
-        pointer-events: auto;
-        position: relative;
-        z-index: 10;
-    }
-    
-    /* Make sure curtain only covers empty areas */
-    .drawer .drawerCurtain {
-        pointer-events: auto;
-        z-index: 1;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: var(--blur-md);
     }
 }
 
-/* Tablet-specific fixes */
-@media (min-width: 768px) and (max-width: 1023px) {
-    .drawer:popover-open {
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-    }
-    
-    .drawer .drawerContent {
-        position: relative;
-        z-index: 10;
-        pointer-events: auto;
-    }
+/* Device-specific classes for JavaScript */
+.device-mobile .desktop-tablet-only {
+    display: none !important;
 }
 
-/* Desktop-specific fixes */
-@media (min-width: 1024px) {
-    .drawer:popover-open {
-        align-items: center;
-        justify-content: center;
-        padding: 40px;
-    }
-    
-    .drawer .drawerContent {
-        position: relative;
-        z-index: 10;
-        pointer-events: auto;
-    }
+.device-tablet .mobile-only,
+.device-desktop .mobile-only {
+    display: none !important;
+}
+
+.device-tablet .desktop-tablet-only,
+.device-desktop .desktop-tablet-only {
+    display: flex !important;
 }
 </style>
 </head>
