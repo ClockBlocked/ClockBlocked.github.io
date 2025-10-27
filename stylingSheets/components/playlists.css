@@ -308,3 +308,835 @@
 .cancel-playlist-selection:hover {
   background-color: #6b7280;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ============================================
+   UNIFIED MODAL SYSTEM - LAYOUT & STRUCTURE
+   ============================================ */
+
+/* Modal Overlay Base */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0;
+  animation: modalFadeIn 0.3s ease forwards;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Modal Content Container */
+.modal-content {
+  max-width: 900px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform: scale(0.9);
+  animation: modalSlideIn 0.3s ease forwards;
+}
+
+@keyframes modalSlideIn {
+  from {
+    transform: scale(0.9) translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Modal Header */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0;
+  background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.8) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.modal-subtitle,
+.artist-count,
+.favorites-count {
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.close-btn {
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  line-height: 1;
+}
+
+.close-btn:hover {
+  transform: scale(1.05);
+}
+
+/* Modal Body */
+.modal-body,
+.artists-list,
+.songs-list,
+.playlists-list,
+.recent-tracks-list {
+  overflow-y: auto;
+  flex: 1;
+}
+
+.modal-body::-webkit-scrollbar,
+.artists-list::-webkit-scrollbar,
+.songs-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-body::-webkit-scrollbar-track,
+.artists-list::-webkit-scrollbar-track,
+.songs-list::-webkit-scrollbar-track {
+  border-radius: 4px;
+}
+
+.modal-body::-webkit-scrollbar-thumb,
+.artists-list::-webkit-scrollbar-thumb,
+.songs-list::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+}
+
+/* ============================================
+   UNIFIED ITEM CARDS - ALL TYPES
+   ============================================ */
+
+/* Base Item Card */
+.modal-item-card,
+.artist-item,
+.song-row,
+.playlist-item,
+.recent-track-item,
+.modern-track-item,
+.modern-playlist-card,
+.modern-artist-card,
+.modern-favorite-item {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.modal-item-card::before,
+.artist-item::before,
+.song-row::before,
+.playlist-item::before,
+.recent-track-item::before,
+.modern-track-item::before,
+.modern-playlist-card::before,
+.modern-artist-card::before,
+.modern-favorite-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.modal-item-card:hover,
+.artist-item:hover,
+.song-row:hover,
+.playlist-item:hover,
+.recent-track-item:hover,
+.modern-track-item:hover,
+.modern-playlist-card:hover,
+.modern-artist-card:hover,
+.modern-favorite-item:hover {
+  transform: translateY(-2px);
+}
+
+.modal-item-card:hover::before,
+.artist-item:hover::before,
+.song-row:hover::before,
+.playlist-item:hover::before,
+.recent-track-item:hover::before,
+.modern-track-item:hover::before,
+.modern-playlist-card:hover::before,
+.modern-artist-card:hover::before,
+.modern-favorite-item:hover::before {
+  opacity: 1;
+}
+
+/* Artist Items */
+.artist-image {
+  position: relative;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.artist-image img {
+  object-fit: cover;
+}
+
+.play-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 2;
+}
+
+.artist-item:hover .play-btn {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.play-btn:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.artist-info,
+.song-info,
+.playlist-info,
+.track-info,
+.track-content,
+.favorite-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.artist-name,
+.song-title,
+.playlist-name,
+.track-title,
+.favorite-title-text {
+  font-size: 1rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.song-count,
+.song-artist,
+.playlist-tracks,
+.track-artist,
+.artist-name-text,
+.favorite-artist-text {
+  font-size: 0.875rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.2s ease;
+}
+
+/* Song Row Specific */
+.song-row {
+  display: grid;
+  grid-template-columns: auto 3rem 1fr auto auto auto auto;
+  align-items: center;
+}
+
+.track-number {
+  text-align: center;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.song-cover,
+.track-art,
+.track-artwork,
+.favorite-artwork {
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.album-name {
+  font-size: 0.875rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.song-duration,
+.track-meta,
+.favorite-meta {
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+/* Action Buttons */
+.song-actions,
+.track-actions,
+.favorite-actions,
+.playlist-actions {
+  display: flex;
+  align-items: center;
+}
+
+.action-btn,
+.track-action-btn,
+.favorite-action-btn,
+.playlist-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.action-btn:hover,
+.track-action-btn:hover,
+.favorite-action-btn:hover,
+.playlist-action-btn:hover {
+  transform: scale(1.05);
+}
+
+/* Playlist Items */
+.playlist-item,
+.modern-playlist-card {
+  gap: 1rem;
+}
+
+.playlist-artwork-container,
+.playlist-icon-wrapper {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.3) 0%, rgba(59, 130, 246, 0.3) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.playlist-icon-wrapper svg {
+  z-index: 1;
+}
+
+.playlist-play-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.modern-playlist-card:hover .playlist-play-overlay {
+  opacity: 1;
+}
+
+.playlist-play-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.playlist-play-btn:hover {
+  transform: scale(1.1);
+}
+
+/* Recent Tracks */
+.track-artwork-container,
+.favorite-artwork-container {
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.track-play-overlay,
+.favorite-play-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.modern-track-item:hover .track-play-overlay,
+.modern-favorite-item:hover .favorite-play-overlay {
+  opacity: 1;
+}
+
+.track-play-btn,
+.favorite-play-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.track-play-btn:hover,
+.favorite-play-btn:hover {
+  transform: scale(1.1);
+}
+
+/* ============================================
+   ACTION BUTTONS IN HEADER
+   ============================================ */
+
+.favorites-actions {
+  display: flex;
+  margin-top: 1rem;
+}
+
+.play-all-btn,
+.shuffle-all-btn {
+  font-weight: 600;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.play-all-btn:hover {
+  transform: translateY(-2px);
+}
+
+.shuffle-all-btn {
+  transition: all 0.2s ease;
+}
+
+.shuffle-all-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* ============================================
+   EMPTY STATES
+   ============================================ */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  opacity: 0.3;
+}
+
+.empty-state-icon {
+  margin-bottom: 1.5rem;
+}
+
+.empty-title,
+.empty-state-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.empty-text,
+.empty-state-subtitle {
+  font-size: 1rem;
+}
+
+.empty-subtext,
+.empty-state-description {
+  font-size: 0.875rem;
+}
+
+/* ============================================
+   MODERN GRID LAYOUTS
+   ============================================ */
+
+.modern-artist-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+}
+
+.modern-artist-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.artist-artwork-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.artist-avatar-image {
+  object-fit: cover;
+}
+
+.artist-play-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.modern-artist-card:hover .artist-play-overlay {
+  opacity: 1;
+}
+
+.artist-play-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.artist-play-btn:hover {
+  transform: scale(1.1);
+}
+
+.artist-gradient-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.4) 0%, transparent 100%);
+}
+
+.artist-name-text {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.artist-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.artist-action-btn,
+.artist-follow-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.artist-action-btn:hover,
+.artist-follow-btn:hover {
+  transform: scale(1.05);
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 768px) {
+  .modal-content {
+    max-width: 100%;
+    max-height: 100vh;
+  }
+
+  .modal-title {
+    font-size: 1.5rem;
+  }
+
+  .song-row {
+    grid-template-columns: auto 2.5rem 1fr auto auto;
+  }
+
+  .album-name {
+    display: none;
+  }
+
+  .modern-artist-grid {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .song-row {
+    grid-template-columns: 2.5rem 1fr auto;
+  }
+
+  .track-number {
+    display: none;
+  }
+
+  .favorites-actions {
+    flex-direction: column;
+  }
+
+  .play-all-btn,
+  .shuffle-all-btn {
+    justify-content: center;
+  }
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+.animate-fade-in {
+  animation: fadeInUp 0.4s ease forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-in {
+  animation: slideIn 0.3s ease forwards;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Stagger animation for list items */
+.modal-item-card:nth-child(1) { animation-delay: 0.05s; }
+.modal-item-card:nth-child(2) { animation-delay: 0.1s; }
+.modal-item-card:nth-child(3) { animation-delay: 0.15s; }
+.modal-item-card:nth-child(4) { animation-delay: 0.2s; }
+.modal-item-card:nth-child(5) { animation-delay: 0.25s; }
+
+.artist-item:nth-child(1),
+.song-row:nth-child(1),
+.playlist-item:nth-child(1) { animation-delay: 0.05s; }
+.artist-item:nth-child(2),
+.song-row:nth-child(2),
+.playlist-item:nth-child(2) { animation-delay: 0.1s; }
+.artist-item:nth-child(3),
+.song-row:nth-child(3),
+.playlist-item:nth-child(3) { animation-delay: 0.15s; }
+.artist-item:nth-child(4),
+.song-row:nth-child(4),
+.playlist-item:nth-child(4) { animation-delay: 0.2s; }
+.artist-item:nth-child(5),
+.song-row:nth-child(5),
+.playlist-item:nth-child(5) { animation-delay: 0.25s; }
+
+/* ============================================
+   DIALOG ELEMENT INTEGRATION
+   ============================================ */
+
+dialog.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  margin: 0;
+  overflow: visible;
+  opacity: 0;
+  transition: all 0.25s ease;
+}
+
+dialog.modal::backdrop {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+dialog.modal[open] {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+dialog.modal[open]::backdrop {
+  opacity: 1;
+}
+
+dialog.modal.closing {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.95);
+}
+
+dialog.modal.closing::backdrop {
+  opacity: 0;
+}
+
+/* Viewer Type Modals */
+dialog.modal.viewer .modal-content {
+  max-width: 900px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Dialog Type Modals */
+dialog.modal.dialog {
+  max-width: 500px;
+}
+
+dialog.modal.dialog .header {
+  font-size: 1.25rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+dialog.modal.dialog .actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+dialog.modal.dialog .btn {
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Form Type Modals */
+dialog.modal.form {
+  max-width: 500px;
+}
+
+dialog.modal.form .header {
+  font-size: 1.25rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+dialog.modal.form .input {
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+dialog.modal.form .input:focus {
+  outline: none;
+}
+
+dialog.modal.form .actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+dialog.modal.form .btn {
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Viewer Container */
+.viewer-container {
+  position: relative;
+}
+
+.viewer-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.viewer-content {
+  overflow-y: auto;
+}
+
+/* Close button for default overlays */
+.close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+/* Ensure modal content is not cut off */
+dialog.modal.viewer,
+dialog.modal.playlist,
+dialog.modal.artist,
+dialog.modal.unified,
+dialog.modal.recent,
+dialog.modal.favorites {
+  width: auto;
+  height: auto;
+}
