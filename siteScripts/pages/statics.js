@@ -114,11 +114,6 @@ export const homePage = {
         overflow: hidden;
       }
 
-      .track-artwork, .favorite-artwork, .artist-avatar-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
 
       .playlist-icon-wrapper {
         width: 100%;
