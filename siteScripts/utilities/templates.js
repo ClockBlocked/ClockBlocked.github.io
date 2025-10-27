@@ -724,35 +724,48 @@ homeSection: {
     return html;
   }
 },  overlay: function(templateName, data) {
-    switch(templateName) {
-      case 'default':
-        return `
-          <div class="close" data-close>&times;</div>
-          <div class="content">${data.content}</div>
-        `;
-      case 'dialog': // Handles both confirm and alert
-        return `
-          <div class="header">${data.message}</div>
-          <div class="actions">
-            ${data.cancelText ? `<button class="btn muted" data-cancel>${data.cancelText}</button>` : ''}
-            <button class="btn ${data.danger ? "danger" : "primary"}" data-ok>${data.okText}</button>
+  switch(templateName) {
+    case 'default':
+      return `
+        <div class="close" data-close>&times;</div>
+        <div class="content">${data.content}</div>
+      `;
+    case 'dialog':
+      return `
+        <div class="header">${data.message}</div>
+        <div class="actions">
+          ${data.cancelText ? `<button class="btn muted" data-cancel>${data.cancelText}</button>` : ''}
+          <button class="btn ${data.danger ? "danger" : "primary"}" data-ok>${data.okText}</button>
+        </div>
+      `;
+    case 'prompt':
+      return `
+        <div class="header">${data.message}</div>
+        <div class="body">
+          <input class="input" type="text" placeholder="${data.placeholder}" value="${data.value}">
+        </div>
+        <div class="actions">
+          <button class="btn muted" data-cancel>${data.cancelText}</button>
+          <button class="btn primary" data-ok>${data.okText}</button>
+        </div>
+      `;
+    case 'viewer':
+      return `
+        <div class="viewer-container">
+          <button class="viewer-close" data-close aria-label="Close">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+          <div class="viewer-content">
+            ${data.content}
           </div>
-        `;
-      case 'prompt':
-        return `
-          <div class="header">${data.message}</div>
-          <div class="body">
-            <input class="input" type="text" placeholder="${data.placeholder}" value="${data.value}">
-          </div>
-          <div class="actions">
-            <button class="btn muted" data-cancel>${data.cancelText}</button>
-            <button class="btn primary" data-ok>${data.okText}</button>
-          </div>
-        `;
-      default:
-        return '';
-    }
-  },
+        </div>
+      `;
+    default:
+      return '';
+  }
+},
 
   notification: function(data) {
     const { type, iconHtml, title, message } = data;
