@@ -1,5 +1,5 @@
 /* ============================================
-   UNIFIED MODAL SYSTEM - GLOBAL THEME
+   UNIFIED MODAL SYSTEM - LAYOUT & STRUCTURE ONLY
    ============================================ */
 
 /* Modal Overlay Base */
@@ -9,14 +9,12 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.75);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 9999;
-  padding: 1rem;
   opacity: 0;
   animation: modalFadeIn 0.3s ease forwards;
 }
@@ -32,11 +30,7 @@
 
 /* Modal Content Container */
 .modal-content {
-  background: linear-gradient(135deg, rgba(17, 24, 39, 0.95) 0%, rgba(31, 41, 55, 0.95) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 1.5rem;
   max-width: 900px;
-  width: 100%;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
@@ -60,12 +54,9 @@
 
 /* Modal Header */
 .modal-header {
-  padding: 1.5rem 2rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(255, 255, 255, 0.02);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
@@ -73,7 +64,6 @@
 .modal-title {
   font-size: 1.75rem;
   font-weight: 700;
-  color: #ffffff;
   margin: 0;
   background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.8) 100%);
   -webkit-background-clip: text;
@@ -85,31 +75,20 @@
 .artist-count,
 .favorites-count {
   font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.6);
   margin-top: 0.25rem;
 }
 
 .close-btn {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.5rem;
-  color: rgba(255, 255, 255, 0.8);
   font-size: 1.5rem;
-  width: 2.5rem;
-  height: 2.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
-  padding: 0;
   line-height: 1;
 }
 
 .close-btn:hover {
-  background: rgba(255, 59, 48, 0.2);
-  border-color: rgba(255, 59, 48, 0.3);
-  color: #ff3b30;
   transform: scale(1.05);
 }
 
@@ -119,7 +98,6 @@
 .songs-list,
 .playlists-list,
 .recent-tracks-list {
-  padding: 1.5rem 2rem;
   overflow-y: auto;
   flex: 1;
 }
@@ -128,26 +106,6 @@
 .artists-list::-webkit-scrollbar,
 .songs-list::-webkit-scrollbar {
   width: 8px;
-}
-
-.modal-body::-webkit-scrollbar-track,
-.artists-list::-webkit-scrollbar-track,
-.songs-list::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 4px;
-}
-
-.modal-body::-webkit-scrollbar-thumb,
-.artists-list::-webkit-scrollbar-thumb,
-.songs-list::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
-}
-
-.modal-body::-webkit-scrollbar-thumb:hover,
-.artists-list::-webkit-scrollbar-thumb:hover,
-.songs-list::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
 }
 
 /* ============================================
@@ -164,14 +122,8 @@
 .modern-playlist-card,
 .modern-artist-card,
 .modern-favorite-item {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 0.75rem;
-  padding: 0.75rem 1rem;
-  margin-bottom: 0.75rem;
   display: flex;
   align-items: center;
-  gap: 1rem;
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
@@ -208,8 +160,6 @@
 .modern-playlist-card:hover,
 .modern-artist-card:hover,
 .modern-favorite-item:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
   transform: translateY(-2px);
   box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.3);
 }
@@ -227,24 +177,13 @@
 }
 
 /* Artist Items */
-.artist-item {
-  padding: 1rem;
-}
-
 .artist-image {
   position: relative;
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  overflow: hidden;
   flex-shrink: 0;
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(168, 85, 247, 0.3) 100%);
-  border: 2px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
 }
 
 .artist-image img {
-  width: 100%;
-  height: 100%;
   object-fit: cover;
 }
 
@@ -253,17 +192,11 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) scale(0);
-  width: 2.5rem;
-  height: 2.5rem;
-  background: rgba(59, 130, 246, 0.95);
-  border: none;
-  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
-  color: white;
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
   z-index: 2;
 }
@@ -273,14 +206,7 @@
 }
 
 .play-btn:hover {
-  background: rgba(37, 99, 235, 1);
   transform: translate(-50%, -50%) scale(1.1);
-}
-
-.play-btn svg {
-  width: 1rem;
-  height: 1rem;
-  margin-left: 2px;
 }
 
 .artist-info,
@@ -293,7 +219,6 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
 }
 
 .artist-name,
@@ -303,7 +228,6 @@
 .favorite-title-text {
   font-size: 1rem;
   font-weight: 600;
-  color: #ffffff;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -316,34 +240,21 @@
 .artist-name-text,
 .favorite-artist-text {
   font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.6);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   transition: color 0.2s ease;
 }
 
-.song-artist:hover,
-.track-artist:hover,
-.album-artist:hover,
-.favorite-artist-text:hover {
-  color: rgba(59, 130, 246, 0.9);
-  text-decoration: underline;
-}
-
 /* Song Row Specific */
 .song-row {
   display: grid;
   grid-template-columns: auto 3rem 1fr auto auto auto auto;
-  gap: 1rem;
   align-items: center;
-  padding: 0.75rem 1rem;
 }
 
 .track-number {
-  width: 2rem;
   text-align: center;
-  color: rgba(255, 255, 255, 0.5);
   font-size: 0.875rem;
   font-weight: 500;
 }
@@ -352,16 +263,12 @@
 .track-art,
 .track-artwork,
 .favorite-artwork {
-  width: 3rem;
-  height: 3rem;
-  border-radius: 0.5rem;
   object-fit: cover;
   flex-shrink: 0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .album-name {
-  color: rgba(255, 255, 255, 0.5);
   font-size: 0.875rem;
   white-space: nowrap;
   overflow: hidden;
@@ -371,7 +278,6 @@
 .song-duration,
 .track-meta,
 .favorite-meta {
-  color: rgba(255, 255, 255, 0.5);
   font-size: 0.875rem;
   white-space: nowrap;
 }
@@ -382,7 +288,6 @@
 .favorite-actions,
 .playlist-actions {
   display: flex;
-  gap: 0.5rem;
   align-items: center;
 }
 
@@ -390,48 +295,18 @@
 .track-action-btn,
 .favorite-action-btn,
 .playlist-action-btn {
-  width: 2rem;
-  height: 2rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.375rem;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
-  color: rgba(255, 255, 255, 0.7);
-  padding: 0;
 }
 
 .action-btn:hover,
 .track-action-btn:hover,
 .favorite-action-btn:hover,
 .playlist-action-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
-  color: #ffffff;
   transform: scale(1.05);
-}
-
-.action-icon,
-.track-action-btn svg,
-.favorite-action-btn svg,
-.playlist-action-btn svg {
-  width: 1rem;
-  height: 1rem;
-}
-
-.icon-red,
-.favorite-heart-btn.active,
-.favorite-action-btn.active {
-  color: #ef4444;
-}
-
-.favorite-heart-btn.active:hover,
-.favorite-action-btn.active:hover {
-  background: rgba(239, 68, 68, 0.2);
-  border-color: rgba(239, 68, 68, 0.3);
 }
 
 /* Playlist Items */
@@ -442,11 +317,7 @@
 
 .playlist-artwork-container,
 .playlist-icon-wrapper {
-  width: 3rem;
-  height: 3rem;
   background: linear-gradient(135deg, rgba(168, 85, 247, 0.3) 0%, rgba(59, 130, 246, 0.3) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -456,9 +327,6 @@
 }
 
 .playlist-icon-wrapper svg {
-  width: 1.5rem;
-  height: 1.5rem;
-  color: rgba(255, 255, 255, 0.8);
   z-index: 1;
 }
 
@@ -468,7 +336,6 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -481,21 +348,14 @@
 }
 
 .playlist-play-btn {
-  width: 2rem;
-  height: 2rem;
-  background: rgba(59, 130, 246, 0.95);
-  border: none;
-  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .playlist-play-btn:hover {
-  background: rgba(37, 99, 235, 1);
   transform: scale(1.1);
 }
 
@@ -503,9 +363,6 @@
 .track-artwork-container,
 .favorite-artwork-container {
   position: relative;
-  width: 3rem;
-  height: 3rem;
-  border-radius: 0.5rem;
   overflow: hidden;
   flex-shrink: 0;
 }
@@ -517,7 +374,6 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -532,30 +388,16 @@
 
 .track-play-btn,
 .favorite-play-btn {
-  width: 2rem;
-  height: 2rem;
-  background: rgba(59, 130, 246, 0.95);
-  border: none;
-  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .track-play-btn:hover,
 .favorite-play-btn:hover {
-  background: rgba(37, 99, 235, 1);
   transform: scale(1.1);
-}
-
-.track-play-btn svg,
-.favorite-play-btn svg {
-  width: 0.875rem;
-  height: 0.875rem;
-  margin-left: 2px;
 }
 
 /* ============================================
@@ -564,52 +406,31 @@
 
 .favorites-actions {
   display: flex;
-  gap: 0.75rem;
   margin-top: 1rem;
 }
 
 .play-all-btn,
 .shuffle-all-btn {
-  padding: 0.625rem 1.25rem;
-  border-radius: 9999px;
   font-weight: 600;
   font-size: 0.875rem;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
   cursor: pointer;
-  border: none;
   transition: all 0.2s ease;
-}
-
-.play-all-btn {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.9) 0%, rgba(37, 99, 235, 0.9) 100%);
-  color: white;
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .play-all-btn:hover {
-  background: linear-gradient(135deg, rgba(37, 99, 235, 1) 0%, rgba(29, 78, 216, 1) 100%);
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
 }
 
 .shuffle-all-btn {
-  background: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.2s ease;
 }
 
 .shuffle-all-btn:hover {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.3);
   transform: translateY(-2px);
-}
-
-.play-all-btn svg,
-.shuffle-all-btn svg {
-  width: 1rem;
-  height: 1rem;
 }
 
 /* ============================================
@@ -621,9 +442,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 3rem 2rem;
   text-align: center;
-  color: rgba(255, 255, 255, 0.5);
 }
 
 .empty-icon {
@@ -636,71 +455,49 @@
   margin-bottom: 1.5rem;
 }
 
-.empty-state-icon svg {
-  width: 4rem;
-  height: 4rem;
-  color: rgba(255, 255, 255, 0.2);
-}
-
 .empty-title,
 .empty-state-title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.8);
   margin-bottom: 0.5rem;
 }
 
 .empty-text,
 .empty-state-subtitle {
   font-size: 1rem;
-  color: rgba(255, 255, 255, 0.6);
   margin-bottom: 0.5rem;
 }
 
 .empty-subtext,
 .empty-state-description {
   font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.4);
 }
 
 /* ============================================
    MODERN GRID LAYOUTS
    ============================================ */
-/***
+
 .modern-artist-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 1rem;
-  padding: 0.5rem 0;
 }
 
 .modern-artist-card {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 0.75rem;
-  padding: 1rem;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
   display: flex;
   flex-direction: column;
   align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
 }
 
 .artist-artwork-container {
   position: relative;
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
   overflow: hidden;
-  margin-bottom: 0.75rem;
   background: linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(168, 85, 247, 0.3) 100%);
-  border: 2px solid rgba(255, 255, 255, 0.1);
 }
 
 .artist-avatar-image {
-  width: 100%;
-  height: 100%;
   object-fit: cover;
 }
 
@@ -710,7 +507,6 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -723,29 +519,16 @@
 }
 
 .artist-play-btn {
-  width: 2.5rem;
-  height: 2.5rem;
-  background: rgba(59, 130, 246, 0.95);
-  border: none;
-  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
 }
 
 .artist-play-btn:hover {
-  background: rgba(37, 99, 235, 1);
   transform: scale(1.1);
-}
-
-.artist-play-btn svg {
-  width: 1rem;
-  height: 1rem;
-  margin-left: 2px;
 }
 
 .artist-gradient-overlay {
@@ -753,18 +536,12 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 50%;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.4) 0%, transparent 100%);
-}
-
-.artist-content {
-  width: 100%;
 }
 
 .artist-name-text {
   font-size: 0.9375rem;
   font-weight: 600;
-  color: #ffffff;
   margin-bottom: 0.25rem;
   white-space: nowrap;
   overflow: hidden;
@@ -773,44 +550,24 @@
 
 .artist-label {
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
-.artist-actions {
-  margin-top: 0.5rem;
-}
-
 .artist-action-btn,
 .artist-follow-btn {
-  width: 2rem;
-  height: 2rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.375rem;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
-  color: rgba(255, 255, 255, 0.7);
-  padding: 0;
 }
 
 .artist-action-btn:hover,
 .artist-follow-btn:hover {
-  background: rgba(59, 130, 246, 0.2);
-  border-color: rgba(59, 130, 246, 0.3);
-  color: rgba(59, 130, 246, 0.9);
   transform: scale(1.05);
 }
 
-.artist-action-btn svg {
-  width: 1rem;
-  height: 1rem;
-}
-***/
 /* ============================================
    RESPONSIVE DESIGN
    ============================================ */
@@ -819,27 +576,14 @@
   .modal-content {
     max-width: 100%;
     max-height: 100vh;
-    border-radius: 0;
-  }
-
-  .modal-header {
-    padding: 1rem 1.5rem;
   }
 
   .modal-title {
     font-size: 1.5rem;
   }
 
-  .modal-body,
-  .artists-list,
-  .songs-list {
-    padding: 1rem 1.5rem;
-  }
-
   .song-row {
     grid-template-columns: auto 2.5rem 1fr auto auto;
-    gap: 0.75rem;
-    padding: 0.625rem 0.75rem;
   }
 
   .album-name {
@@ -848,59 +592,24 @@
 
   .modern-artist-grid {
     grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-    gap: 0.75rem;
-  }
-
-  .artist-artwork-container {
-    width: 80px;
-    height: 80px;
-  }
-
-  .artist-image {
-    width: 56px;
-    height: 56px;
   }
 }
 
 @media (max-width: 480px) {
-  .modal-overlay {
-    padding: 0;
-  }
-
-  .modal-header {
-    padding: 1rem;
-  }
-
-  .modal-body,
-  .artists-list,
-  .songs-list {
-    padding: 0.75rem 1rem;
-  }
-
   .song-row {
     grid-template-columns: 2.5rem 1fr auto;
-    gap: 0.5rem;
   }
 
   .track-number {
     display: none;
   }
 
-  .song-cover,
-  .track-art,
-  .track-artwork {
-    width: 2.5rem;
-    height: 2.5rem;
-  }
-
   .favorites-actions {
     flex-direction: column;
-    gap: 0.5rem;
   }
 
   .play-all-btn,
   .shuffle-all-btn {
-    width: 100%;
     justify-content: center;
   }
 }
@@ -961,3 +670,159 @@
 .artist-item:nth-child(5),
 .song-row:nth-child(5),
 .playlist-item:nth-child(5) { animation-delay: 0.25s; }
+
+/* ============================================
+   DIALOG ELEMENT INTEGRATION
+   ============================================ */
+
+dialog.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  margin: 0;
+  overflow: visible;
+  opacity: 0;
+  transition: all 0.25s ease;
+}
+
+dialog.modal::backdrop {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+dialog.modal[open] {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+dialog.modal[open]::backdrop {
+  opacity: 1;
+}
+
+dialog.modal.closing {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.95);
+}
+
+dialog.modal.closing::backdrop {
+  opacity: 0;
+}
+
+/* Viewer Type Modals */
+dialog.modal.viewer .modal-content {
+  max-width: 900px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Dialog Type Modals */
+dialog.modal.dialog {
+  max-width: 500px;
+}
+
+dialog.modal.dialog .header {
+  font-size: 1.25rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+dialog.modal.dialog .actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+dialog.modal.dialog .btn {
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Form Type Modals */
+dialog.modal.form {
+  max-width: 500px;
+}
+
+dialog.modal.form .header {
+  font-size: 1.25rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+dialog.modal.form .body {
+  margin-bottom: 1.5rem;
+}
+
+dialog.modal.form .input {
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+dialog.modal.form .input:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+dialog.modal.form .actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+dialog.modal.form .btn {
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Viewer Container */
+.viewer-container {
+  position: relative;
+}
+
+.viewer-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.viewer-content {
+  overflow-y: auto;
+}
+
+/* Close button for default overlays */
+.close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+/* Ensure modal content is not cut off */
+dialog.modal.viewer,
+dialog.modal.playlist,
+dialog.modal.artist,
+dialog.modal.unified,
+dialog.modal.recent,
+dialog.modal.favorites {
+  width: auto;
+  height: auto;
+}
