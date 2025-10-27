@@ -8,6 +8,36 @@
     display: none !important;
   }
 
+  /* Show desktop menu trigger on tablet */
+  .desktop-menu-trigger {
+    display: flex !important;
+    position: fixed !important;
+    top: 2rem;
+    left: 2rem;
+    z-index: 1000;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: white;
+  }
+
+  .desktop-menu-trigger svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .desktop-menu-trigger:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.05);
+  }
+
   /* Tablet layout - similar to desktop */
   #pageWrapper {
     display: flex;
@@ -57,13 +87,58 @@
 }
 
 /* ============================================
-   DROPDOWN MENU - TABLET CENTERED LAYOUT
-   Similar to mobile but slightly wider
+   DROPDOWN MENU - TABLET LAYOUT
+   Fixed to left side like desktop
    ============================================ */
 @media (min-width: 768px) and (max-width: 1023px) {
   #dropdown-menu {
-    max-width: 600px;
-    width: 85vw;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: auto;
+    width: 320px;
+    max-width: 320px;
+    height: 100vh;
+    max-height: 100vh;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 0;
+    border: none;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 10px 0 40px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(135deg, rgba(17, 24, 39, 0.98) 0%, rgba(31, 41, 55, 0.98) 100%);
+    backdrop-filter: blur(20px);
+    z-index: 999;
+    opacity: 1;
+    visibility: visible;
+    overflow-y: auto;
+    padding: 2rem 0;
+  }
+
+  #dropdown-menu.show {
+    transform: translateX(0);
+  }
+
+  /* Adjust dropdown header for tablet */
+  .dropdown-header {
+    padding: 2rem 2rem 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .dropdown-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+  }
+
+  .dropdown-close {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .dropdown-close:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
   }
 }
 
@@ -78,57 +153,25 @@
 }
 
 /* ============================================
-   TABLET PLAYER SIDEBAR TRIGGER
+   TABLET PLAYER SIDEBAR
+   Ensure music player is always visible on tablet
    ============================================ */
 @media (min-width: 768px) and (max-width: 1023px) {
-  /* Trigger tab on right edge */
-  .tablet-player-trigger {
+  /* Make sure desktop-player-sidebar is visible on tablet */
+  .desktop-player-sidebar {
+    display: flex !important;
     position: fixed;
     right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 1001;
-    width: 48px;
-    height: 120px;
-    border: none;
-    border-radius: 12px 0 0 12px;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.9) 0%, rgba(37, 99, 235, 0.9) 100%);
-    backdrop-filter: blur(10px);
-    border-left: 1px solid rgba(255, 255, 255, 0.2);
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    color: white;
-    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.3);
+    top: 0;
+    width: 35%;
+    height: 100vh;
   }
 
-  .tablet-player-trigger:hover {
-    width: 56px;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 1) 0%, rgba(37, 99, 235, 1) 100%);
-    box-shadow: -6px 0 30px rgba(59, 130, 246, 0.4);
-  }
-
-  .tablet-player-trigger.active {
-    right: 35%;
-    background: linear-gradient(135deg, rgba(37, 99, 235, 0.9) 0%, rgba(29, 78, 216, 0.9) 100%);
-  }
-
-  .tablet-player-trigger svg {
-    width: 28px;
-    height: 28px;
-  }
-
-  /* Player sidebar modifications for tablet */
-  .desktop-player-sidebar {
-    transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
+  /* Remove tablet-hidden functionality - player should always be visible */
   .desktop-player-sidebar.tablet-hidden {
-    right: -35%;
+    right: 0 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
   }
 }
 
