@@ -1,11 +1,5 @@
-
-
-
-
 import { getAlbumImageUrl } from './parsers.js';
 import { escapeForAttribute } from '../pages/rendering.js';
-
-
 
 
 export const render = {
@@ -160,7 +154,7 @@ case "enhancedArtist":
             </button>
             <button id="artistFollow" class="artist-action-btn">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 [...]
               </svg>
               Follow
             </button>
@@ -203,7 +197,7 @@ case "enhancedArtist":
           <div class="stat-card-icon stat-icon-purple">
             <svg fill="currentColor" viewBox="0 0 20 20">
               <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
-              <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+              <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="even[...]
             </svg>
           </div>
         </div>
@@ -217,7 +211,7 @@ case "enhancedArtist":
           </div>
           <div class="stat-card-icon stat-icon-pink">
             <svg fill="currentColor" viewBox="0 0 20 20">
-              <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
+              <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-[...]
             </svg>
           </div>
         </div>
@@ -253,7 +247,7 @@ case "enhancedArtist":
               <div class="gap-6 items-center md:items-start">
                 <div class="album-image relative flex-shrink-0">
                   <img src="${data.cover}" alt="${data.album}" class="album-cover w-full h-full object-cover">
-                  <button aria-label="Name" class="play-album absolute bottom-4 right-4 bg-blue-600 hover:bg-blue-700 w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition transform hover:scale-105">
+                  <button aria-label="Name" class="play-album absolute bottom-4 right-4 bg-blue-600 hover:bg-blue-700 w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition [...]
                     <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
                     </svg>
@@ -276,7 +270,7 @@ case "enhancedArtist":
             <div class="albumFade" data-album-id="${data.albumId}">
               <div class="gap-6 items-center md:items-start">
                 <div class="album-image relative flex-shrink-0">
-                  <button aria-label="Name" class="play-album absolute bottom-4 right-4 bg-blue-600 hover:bg-blue-700 w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition transform hover:scale-105">
+                  <button aria-label="Name" class="play-album absolute bottom-4 right-4 bg-blue-600 hover:bg-blue-700 w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition [...]
                     <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
                     </svg>
@@ -289,14 +283,14 @@ case "enhancedArtist":
             <div class="songs-container" id="songs-container-${data.albumId}"></div>
           </div>
         `;
-
+  
       case "section":
         return `
           <div class="albumSongListArea">
             <div class="album-buttons">
               <div class="album-selector">
                 ${data.albums.map((album, index) => `
-                  <button class="album-tab px-4 py-2 rounded-lg transition-all duration-300 ${index === 0 ? "active bg-accent-primary text-white" : "bg-gray-700 text-gray-300 hover:bg-gray-600"}" 
+                  <button class="album-tab px-4 py-2 rounded-lg transition-all duration-300 ${index === 0 ? "active bg-accent-primary text-white" : "bg-gray-700 text-gray-300 hover:bg-gray-600"}"[...]
                           data-album-index="${index}" 
                           data-album-name="${album.album}">
                     <div class="flex items-center gap-2">
@@ -465,7 +459,7 @@ case "enhancedArtist":
             <div class="filter-controls mb-6 flex flex-wrap gap-4 items-center">
               <div class="search-wrapper relative flex-grow max-w-md">
                 <input type="text" id="artist-search" 
-                      class="w-full bg-gray-800 border border-gray-700 rounded-lg py-2 px-4 pl-10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      class="w-full bg-gray-800 border border-gray-700 rounded-lg py-2 px-4 pl-10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-[...]
                       placeholder="Search artists...">
                 <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
@@ -475,12 +469,12 @@ case "enhancedArtist":
               <div class="view-toggle ml-auto">
                 <button aria-label="Name" id="grid-view-btn" class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-white transition-colors">
                   <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+                    <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 [...]
                   </svg>
                 </button>
                 <button aria-label="Name" id="list-view-btn" class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-white transition-colors">
                   <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                    <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a[...]
                   </svg>
                 </button>
               </div>
@@ -489,178 +483,301 @@ case "enhancedArtist":
           <div id="artists-grid" class="artists-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 px-4 sm:px-6"></div>
         `;
   
-      case "home_bento":
-        return `
-<div class="flexi-grid">
-  <div class="flexi-item" data-loader="true">
-    <div class="flexi-header">
-      <h2 class="flexi-title">Recently Played</h2>
-      <a href="#" class="flexi-link" data-view="recent">View All</a>
+// In the home_bento case, update the IDs to match what your homeSection functions expect
+case "home_bento":
+  return `
+  <div class="bento-grid">
+      <div class="bento-card" data-loader="true">
+        <div class="card-header">
+          <h2 class="card-title">Recently Played</h2>
+          <a href="#" class="card-link" data-view="recent">View All</a>
+        </div>
+        <div id="recentlyPlayedSection" class="card-content">
+          <div class="skeleton-loader"></div>
+        </div>
+      </div>
+      
+      <div class="bento-card bento-span-2" data-loader="true">
+        <div class="card-header">
+          <h2 class="card-title">Discover Albums</h2>
+          <a href="#" class="card-link" data-view="albums">Explore More</a>
+        </div>
+        <div id="randomAlbumsSection" class="card-content">
+          <div class="skeleton-loader"></div>
+        </div>
+      </div>
+      
+      <div class="bento-card" data-loader="true">
+        <div class="card-header">
+          <h2 class="card-title">Favorite Artists</h2>
+          <a href="#" class="card-link" data-view="favorite-artists">View All</a>
+        </div>
+        <div id="favoriteArtistsSection" class="card-content">
+          <div class="skeleton-loader"></div>
+        </div>
+      </div>
+      
+      <div class="bento-card" data-loader="true">
+        <div class="card-header">
+          <h2 class="card-title">Your Playlists</h2>
+          <a href="#" class="card-link" data-view="playlists">View All</a>
+        </div>
+        <div id="playlistsSection" class="card-content">
+          <div class="skeleton-loader"></div>
+        </div>
+      </div>
+      
+      <div class="bento-card" data-loader="true">
+        <div class="card-header">
+          <h2 class="card-title">Favorite Songs</h2>
+          <a href="#" class="card-link" data-view="favorite-songs">View All</a>
+        </div>
+        <div id="favoriteSongsSection" class="card-content">
+          <div class="skeleton-loader"></div>
+        </div>
+      </div>
     </div>
-    <div id="recently-played-section" class="flexi-content">
-      <div class="flexi-loader"></div>
-    </div>
-  </div>
-  
-  <div class="flexi-item flexi-wide" data-loader="true">
-    <div class="flexi-header">
-      <h2 class="flexi-title">Discover Albums</h2>
-      <a href="#" class="flexi-link" data-view="albums">Explore More</a>
-    </div>
-    <div id="random-albums-section" class="flexi-content">
-      <div class="flexi-loader"></div>
-    </div>
-  </div>
-  
-  <div class="flexi-item" data-loader="true">
-    <div class="flexi-header">
-      <h2 class="flexi-title">Favorite Artists</h2>
-      <a href="#" class="flexi-link" data-view="favorite-artists">View All</a>
-    </div>
-    <div id="favorite-artists-section" class="flexi-content">
-      <div class="flexi-loader"></div>
-    </div>
-  </div>
-  
-  <div class="flexi-item" data-loader="true">
-    <div class="flexi-header">
-      <h2 class="flexi-title">Your Playlists</h2>
-      <a href="#" class="flexi-link" data-view="playlists">View All</a>
-    </div>
-    <div id="playlists-section" class="flexi-content">
-      <div class="flexi-loader"></div>
-    </div>
-  </div>
-  
-  <div class="flexi-item" data-loader="true">
-    <div class="flexi-header">
-      <h2 class="flexi-title">Favorite Songs</h2>
-      <a href="#" class="flexi-link" data-view="favorite-songs">View All</a>
-    </div>
-    <div id="favorite-songs-section" class="flexi-content">
-      <div class="flexi-loader"></div>
-    </div>
-  </div>
-</div>
-        `;
+  `;
         
+
       default:
+
         return "";
+
     }
-  },
-homeSection: {
-  recentlyPlayed: (tracks, utils) => {
-    let html = `<div class="music-track-list fadein-motion">`;
-    tracks.forEach((track, index) => {
-      html += `
-        <div class="music-track-card" data-song='${JSON.stringify(track).replace(/"/g, "&quot;")}' style="animation-delay: ${index * 100}ms;">
-          <img src="${utils.getAlbumImageUrl(track.album)}" alt="${track.title}" class="music-cover-img">
-          <div class="music-details">
-            <div class="music-title">${track.title}</div>
-            <div class="music-artist" data-artist="${track.artist}">${track.artist}</div>
-          </div>
-          <div class="music-action-overlay">
-            ${window.ICONS.play}
-          </div>
-        </div>
-      `;
-    });
-    html += `</div>`;
-    return html;
+
   },
 
-  playlists: (playlists) => {
-    let html = `<div class="music-playlist-list fadein-motion">`;
-    playlists.forEach((playlist, index) => {
-      html += `
-        <div class="music-playlist-card" data-playlist-id="${playlist.id}" style="animation-delay: ${index * 100}ms;">
-          <div class="music-playlist-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="20" height="20">
-              <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v2H3v-2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
-            </svg>
-          </div>
-          <div class="music-playlist-details">
-            <div class="music-playlist-name">${playlist.name}</div>
-            <div class="music-song-count">${playlist.songs?.length || 0} track${playlist.songs?.length !== 1 ? "s" : ""}</div>
-          </div>
-          <div class="music-action-overlay">
-            ${window.ICONS.play}
-          </div>
-        </div>
-      `;
-    });
-    html += `</div>`;
-    return html;
-  },
 
-  favoriteArtists: (artists, utils) => {
-    let html = `<div class="music-artist-list fadein-motion">`;
-    artists.forEach((artistName, index) => {
-      html += `
-        <div class="music-artist-card" data-artist="${artistName}" style="animation-delay: ${index * 100}ms;">
-          <div class="music-artist-imgwrap">
-            <img src="${utils.getArtistImageUrl(artistName)}" alt="${artistName}" class="music-artist-img">
-            <div class="music-action-overlay">
-              ${window.ICONS.play}
-            </div>
-          </div>
-          <div class="music-artist-label">${artistName}</div>
-        </div>
-      `;
-    });
-    html += `</div>`;
-    return html;
-  },
+  homeSection: {
 
-randomAlbums: (albums, utils) => {
-      let html = `<div class="album-grid animate-fade-in">`;
-      albums.forEach((album, index) => {
+    recentlyPlayed: (tracks, utils) => {
+
+      let html = `<div class="recent-tracks animate-fade-in">`;
+
+      tracks.forEach((track, index) => {
+
         html += `
-          <div class="album-card" style="animation-delay: ${index * 100}ms;" data-artist="${album.artist}" data-album="${album.album}">
-            <div style="position: relative;">
-              <img src="${utils.getAlbumImageUrl(album.album)}" alt="${album.album}" class="album-cover">
-              <div class="album-overlay">
-                <button class="album-play-btn" data-artist="${album.artist}" data-album="${album.album}">
-                  ${window.ICONS.play}
-                </button>
-              </div>
+
+          <div class="recent-track" data-song='${JSON.stringify(track).replace(/"/g, "&quot;")}' style="animation-delay: ${index * 100}ms;">
+
+            <img src="${utils.getAlbumImageUrl(track.album)}" alt="${track.title}" class="track-art">
+
+            <div class="track-info">
+
+              <div class="track-title">${track.title}</div>
+
+              <div class="track-artist" data-artist="${track.artist}">${track.artist}</div>
+
             </div>
-            <div class="album-info">
-              <div class="album-title">${album.album}</div>
-              <div class="album-artist" data-artist="${album.artist}">${album.artist}</div>
+
+            <div class="play-button-overlay">
+
+              ${window.ICONS.play}
+
             </div>
+
           </div>
+
         `;
+
       });
+
       html += `</div>`;
+
       return html;
+
     },
 
-  favoriteSongs: (songs, utils) => {
-    let html = `<div class="music-track-list fadein-motion">`;
-    songs.forEach((song, index) => {
-      html += `
-        <div class="music-track-card" data-song='${JSON.stringify(song).replace(/"/g, "&quot;")}' style="animation-delay: ${index * 100}ms;">
-          <img src="${utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="music-cover-img">
-          <div class="music-details">
-            <div class="music-title">${song.title}</div>
-            <div class="music-artist" data-artist="${song.artist}">${song.artist}</div>
+
+
+    playlists: (playlists) => {
+
+      let html = `<div class="playlists-list animate-fade-in">`;
+
+      playlists.forEach((playlist, index) => {
+
+        html += `
+
+          <div class="playlist-card" data-playlist-id="${playlist.id}" style="animation-delay: ${index * 100}ms;">
+
+            <div class="playlist-icon" style="width: 40px; height: 40px; background: linear-gradient(45deg, #6366f1, #8b5cf6); border-radius: 0.5rem; display: flex; align-items: center; justify-c[...]
+
+
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="20" height="20">
+
+                <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v2H3v-2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
+
+              </svg>
+
+            </div>
+
+            <div class="playlist-info">
+
+              <div class="playlist-name">${playlist.name}</div>
+
+              <div class="playlist-tracks">${playlist.songs?.length || 0} track${playlist.songs?.length !== 1 ? "s" : ""}</div>
+
+            </div>
+
+            <div class="play-button-overlay">
+
+              ${window.ICONS.play}
+
+            </div>
+
           </div>
-          <div class="music-action-overlay">
-            ${window.ICONS.play}
+
+        `;
+
+      });
+
+      html += `</div>`;
+
+      return html;
+
+    },
+
+
+
+    favoriteArtists: (artists, utils) => {
+
+      let html = `<div class="artist-grid animate-fade-in">`;
+
+      artists.forEach((artistName, index) => {
+
+        html += `
+
+          <div class="artist-card" data-artist="${artistName}" style="animation-delay: ${index * 100}ms;">
+
+            <div style="position: relative;">
+
+              <img src="${utils.getArtistImageUrl(artistName)}" alt="${artistName}" class="artist-avatar">
+
+              <div class="play-button-overlay">
+
+                ${window.ICONS.play}
+
+              </div>
+
+            </div>
+
+            <div class="artist-name">${artistName}</div>
+
           </div>
-          <button class="music-heart-btn" data-song-id="${song.id}">
-            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-            </svg>
-          </button>
-        </div>
-      `;
-    });
-    html += `</div>`;
-    return html;
-  }
-},
+
+        `;
+
+      });
+
+      html += `</div>`;
+
+      return html;
+
+    },
+
+
+
+    randomAlbums: (albums, utils) => {
+
+      let html = `<div class="album-grid animate-fade-in">`;
+
+      albums.forEach((album, index) => {
+
+        html += `
+
+          <div class="album-card" style="animation-delay: ${index * 100}ms;" data-artist="${album.artist}" data-album="${album.album}">
+
+            <div style="position: relative;">
+
+              <img src="${utils.getAlbumImageUrl(album.album)}" alt="${album.album}" class="album-cover">
+
+              <div class="album-overlay">
+
+                <button class="album-play-btn" data-artist="${album.artist}" data-album="${album.album}">
+
+                  ${window.ICONS.play}
+
+                </button>
+
+              </div>
+
+            </div>
+
+            <div class="album-info">
+
+              <div class="album-title">${album.album}</div>
+
+              <div class="album-artist" data-artist="${album.artist}">${album.artist}</div>
+
+            </div>
+
+          </div>
+
+        `;
+
+      });
+
+      html += `</div>`;
+
+      return html;
+
+    },
+
+
+
+    favoriteSongs: (songs, utils) => {
+
+      let html = `<div class="recent-tracks animate-fade-in">`;
+
+      songs.forEach((song, index) => {
+
+        html += `
+
+          <div class="recent-track" data-song='${JSON.stringify(song).replace(/"/g, "&quot;")}' style="animation-delay: ${index * 100}ms;">
+
+            <img src="${utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="track-art">
+
+            <div class="track-info">
+
+              <div class="track-title">${song.title}</div>
+
+              <div class="track-artist" data-artist="${song.artist}">${song.artist}</div>
+
+            </div>
+
+            <div class="play-button-overlay">
+
+              ${window.ICONS.play}
+
+            </div>
+
+            <button class="favorite-heart" data-song-id="${song.id}" style="position: absolute; top: 0.5rem; right: 0.5rem; color: #ef4444; opacity: 0.8; background: none; border: none; cursor: p[...]
+
+              <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+
+                <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+
+              </svg>
+
+            </button>
+
+          </div>
+
+        `;
+
+      });
+
+      html += `</div>`;
+
+      return html;
+
+    }
+
+  },
+
+
+
   overlay: function(templateName, data) {
     switch(templateName) {
       case 'default':
@@ -728,12 +845,12 @@ randomAlbums: (albums, utils) => {
             ${isQueue 
               ? `<button class="removeButton" data-action="remove" title="Remove from queue">
                    <svg class="SVGimg" fill="currentColor" viewBox="0 0 20 20">
-                     <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                     <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-[...]
                    </svg>
                  </button>`
               : `<button class="queueButton" data-action="queue" title="Add to queue">
                    <svg class="SVGimg" fill="currentColor" viewBox="0 0 20 20">
-                     <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+                     <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1[...]
                    </svg>
                  </button>`
             }
@@ -750,11 +867,6 @@ export function create(htmlString) {
   div.innerHTML = htmlString.trim();
   return div.firstChild;
 }
-
-
-
-
-
 
 
 
