@@ -161,7 +161,7 @@ const utils = {
   getAlbumImageUrl: (albumName) => {
     if (!albumName) return utils.getDefaultAlbumImage();
     const cleanName = albumName.toLowerCase().replace(/\s+/g, '').replace(/[^\w]/g, '');
-    return `https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/copilot/fix-mobile-layout-issues/global/content/images/albumCovers/${cleanName}.png`;
+    return `https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/finalfinal/global/content/images/albumCovers/${cleanName}.png`;
   },
 
   formatTime: (seconds) => {
@@ -183,7 +183,7 @@ const utils = {
   getArtistImageUrl: (artistName) => {
     if (!artistName) return utils.getDefaultArtistImage();
     const normalized = utils.normalizeForUrl(artistName);
-    return `https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/copilot/fix-mobile-layout-issues/global/content/images/artistPortraits/${normalized}.png`;
+    return `https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/finalfinal/global/content/images/artistPortraits/${normalized}.png`;
   },
 
   getDefaultAlbumImage: () => {
@@ -1684,7 +1684,7 @@ const musicPlayer = {
 
             for (const format of AUDIO_FORMATS) {
                 try {
-                    const audioUrl = `https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/copilot/fix-mobile-layout-issues/global/content/audio/${songFileName}.${format}`;
+                    const audioUrl = `https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/finalfinal/global/content/audio/${songFileName}.${format}`;
                     
                     appState.audio.src = audioUrl;
                     appState.audio.preload = "auto";
