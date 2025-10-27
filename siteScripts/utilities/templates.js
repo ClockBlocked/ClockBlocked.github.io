@@ -548,121 +548,119 @@ case "enhancedArtist":
         return "";
     }
   },
-
-  homeSection: {
-    recentlyPlayed: (tracks, utils) => {
-      let html = `<div class="recent-tracks animate-fade-in">`;
-      tracks.forEach((track, index) => {
-        html += `
-          <div class="recent-track" data-song='${JSON.stringify(track).replace(/"/g, "&quot;")}' style="animation-delay: ${index * 100}ms;">
-            <img src="${utils.getAlbumImageUrl(track.album)}" alt="${track.title}" class="track-art">
-            <div class="track-info">
-              <div class="track-title">${track.title}</div>
-              <div class="track-artist" data-artist="${track.artist}">${track.artist}</div>
-            </div>
-            <div class="play-button-overlay">
-              ${window.ICONS.play}
-            </div>
+homeSection: {
+  recentlyPlayed: (tracks, utils) => {
+    let html = `<div class="music-track-list fadein-motion">`;
+    tracks.forEach((track, index) => {
+      html += `
+        <div class="music-track-card" data-song='${JSON.stringify(track).replace(/"/g, "&quot;")}' style="animation-delay: ${index * 100}ms;">
+          <img src="${utils.getAlbumImageUrl(track.album)}" alt="${track.title}" class="music-cover-img">
+          <div class="music-details">
+            <div class="music-title">${track.title}</div>
+            <div class="music-artist" data-artist="${track.artist}">${track.artist}</div>
           </div>
-        `;
-      });
-      html += `</div>`;
-      return html;
-    },
-
-    playlists: (playlists) => {
-      let html = `<div class="playlists-list animate-fade-in">`;
-      playlists.forEach((playlist, index) => {
-        html += `
-          <div class="playlist-card" data-playlist-id="${playlist.id}" style="animation-delay: ${index * 100}ms;">
-            <div class="playlist-icon" style="width: 40px; height: 40px; background: linear-gradient(45deg, #6366f1, #8b5cf6); border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="20" height="20">
-                <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v2H3v-2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
-              </svg>
-            </div>
-            <div class="playlist-info">
-              <div class="playlist-name">${playlist.name}</div>
-              <div class="playlist-tracks">${playlist.songs?.length || 0} track${playlist.songs?.length !== 1 ? "s" : ""}</div>
-            </div>
-            <div class="play-button-overlay">
-              ${window.ICONS.play}
-            </div>
+          <div class="music-action-overlay">
+            ${window.ICONS.play}
           </div>
-        `;
-      });
-      html += `</div>`;
-      return html;
-    },
-
-    favoriteArtists: (artists, utils) => {
-      let html = `<div class="artist-grid animate-fade-in">`;
-      artists.forEach((artistName, index) => {
-        html += `
-          <div class="artist-card" data-artist="${artistName}" style="animation-delay: ${index * 100}ms;">
-            <div style="position: relative;">
-              <img src="${utils.getArtistImageUrl(artistName)}" alt="${artistName}" class="artist-avatar">
-              <div class="play-button-overlay">
-                ${window.ICONS.play}
-              </div>
-            </div>
-            <div class="artist-name">${artistName}</div>
-          </div>
-        `;
-      });
-      html += `</div>`;
-      return html;
-    },
-
-    randomAlbums: (albums, utils) => {
-      let html = `<div class="album-grid animate-fade-in">`;
-      albums.forEach((album, index) => {
-        html += `
-          <div class="album-card" style="animation-delay: ${index * 100}ms;" data-artist="${album.artist}" data-album="${album.album}">
-            <div style="position: relative;">
-              <img src="${utils.getAlbumImageUrl(album.album)}" alt="${album.album}" class="album-cover">
-              <div class="album-overlay">
-                <button class="album-play-btn" data-artist="${album.artist}" data-album="${album.album}">
-                  ${window.ICONS.play}
-                </button>
-              </div>
-            </div>
-            <div class="album-info">
-              <div class="album-title">${album.album}</div>
-              <div class="album-artist" data-artist="${album.artist}">${album.artist}</div>
-            </div>
-          </div>
-        `;
-      });
-      html += `</div>`;
-      return html;
-    },
-
-    favoriteSongs: (songs, utils) => {
-      let html = `<div class="recent-tracks animate-fade-in">`;
-      songs.forEach((song, index) => {
-        html += `
-          <div class="recent-track" data-song='${JSON.stringify(song).replace(/"/g, "&quot;")}' style="animation-delay: ${index * 100}ms;">
-            <img src="${utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="track-art">
-            <div class="track-info">
-              <div class="track-title">${song.title}</div>
-              <div class="track-artist" data-artist="${song.artist}">${song.artist}</div>
-            </div>
-            <div class="play-button-overlay">
-              ${window.ICONS.play}
-            </div>
-            <button class="favorite-heart" data-song-id="${song.id}" style="position: absolute; top: 0.5rem; right: 0.5rem; color: #ef4444; opacity: 0.8; background: none; border: none; cursor: pointer;">
-              <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-              </svg>
-            </button>
-          </div>
-        `;
-      });
-      html += `</div>`;
-      return html;
-    }
+        </div>
+      `;
+    });
+    html += `</div>`;
+    return html;
   },
 
+  playlists: (playlists) => {
+    let html = `<div class="music-playlist-list fadein-motion">`;
+    playlists.forEach((playlist, index) => {
+      html += `
+        <div class="music-playlist-card" data-playlist-id="${playlist.id}" style="animation-delay: ${index * 100}ms;">
+          <div class="music-playlist-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="20" height="20">
+              <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v2H3v-2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
+            </svg>
+          </div>
+          <div class="music-playlist-details">
+            <div class="music-playlist-name">${playlist.name}</div>
+            <div class="music-song-count">${playlist.songs?.length || 0} track${playlist.songs?.length !== 1 ? "s" : ""}</div>
+          </div>
+          <div class="music-action-overlay">
+            ${window.ICONS.play}
+          </div>
+        </div>
+      `;
+    });
+    html += `</div>`;
+    return html;
+  },
+
+  favoriteArtists: (artists, utils) => {
+    let html = `<div class="music-artist-list fadein-motion">`;
+    artists.forEach((artistName, index) => {
+      html += `
+        <div class="music-artist-card" data-artist="${artistName}" style="animation-delay: ${index * 100}ms;">
+          <div class="music-artist-imgwrap">
+            <img src="${utils.getArtistImageUrl(artistName)}" alt="${artistName}" class="music-artist-img">
+            <div class="music-action-overlay">
+              ${window.ICONS.play}
+            </div>
+          </div>
+          <div class="music-artist-label">${artistName}</div>
+        </div>
+      `;
+    });
+    html += `</div>`;
+    return html;
+  },
+
+  randomAlbums: (albums, utils) => {
+    let html = `<div class="music-album-list fadein-motion">`;
+    albums.forEach((album, index) => {
+      html += `
+        <div class="music-album-card" style="animation-delay: ${index * 100}ms;" data-artist="${album.artist}" data-album="${album.album}">
+          <div class="music-album-imgwrap">
+            <img src="${utils.getAlbumImageUrl(album.album)}" alt="${album.album}" class="music-album-img">
+            <div class="music-album-overlay">
+              <button class="music-album-play" data-artist="${album.artist}" data-album="${album.album}">
+                ${window.ICONS.play}
+              </button>
+            </div>
+          </div>
+          <div class="music-album-details">
+            <div class="music-album-title">${album.album}</div>
+            <div class="music-album-artist" data-artist="${album.artist}">${album.artist}</div>
+          </div>
+        </div>
+      `;
+    });
+    html += `</div>`;
+    return html;
+  },
+
+  favoriteSongs: (songs, utils) => {
+    let html = `<div class="music-track-list fadein-motion">`;
+    songs.forEach((song, index) => {
+      html += `
+        <div class="music-track-card" data-song='${JSON.stringify(song).replace(/"/g, "&quot;")}' style="animation-delay: ${index * 100}ms;">
+          <img src="${utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="music-cover-img">
+          <div class="music-details">
+            <div class="music-title">${song.title}</div>
+            <div class="music-artist" data-artist="${song.artist}">${song.artist}</div>
+          </div>
+          <div class="music-action-overlay">
+            ${window.ICONS.play}
+          </div>
+          <button class="music-heart-btn" data-song-id="${song.id}">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+            </svg>
+          </button>
+        </div>
+      `;
+    });
+    html += `</div>`;
+    return html;
+  }
+},
   overlay: function(templateName, data) {
     switch(templateName) {
       case 'default':
