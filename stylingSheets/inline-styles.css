@@ -657,7 +657,7 @@ html, body {
   margin-top: 1rem;
 }
 
-/* Modal Overlay Styles ***
+/* Modal Overlay Styles */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -874,7 +874,7 @@ html, body {
 .artists-list::-webkit-scrollbar-thumb:hover {
   background: #6b7280;
 }
-***/
+
 @keyframes fadeIn {
   from { 
     opacity: 0; 
