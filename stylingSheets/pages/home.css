@@ -90,9 +90,13 @@
   text-decoration: none;
 }
 .card-link:hover { color: #93c5fd; }
+
+
+
+/**
 .card-content { min-height: 200px; }
 
-/* Skeleton */
+
 .skeleton-loader {
   height: 200px;
   border-radius: .5rem;
@@ -105,14 +109,16 @@
   100% { background-position: -200% 0; }
 }
 
-/* Lists & rows */
 .list-vert {
   display: flex;
   flex-direction: column;
   gap: .5rem;
 }
 
-/* Album grid */
+***/
+
+
+
 .album-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -163,7 +169,9 @@
 }
 .album-artist:hover { color: rgba(255,255,255,.95); text-decoration: underline; }
 
-/* Artist grid */
+
+
+/**
 .artist-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(100px,1fr));
@@ -179,3 +187,4 @@
   margin-top: .5rem; font-size: .9rem; font-weight: 600;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
+**/
