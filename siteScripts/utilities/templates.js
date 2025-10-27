@@ -548,121 +548,182 @@ case "enhancedArtist":
     }
   },
 
-  homeSection: {
-    recentlyPlayed: (tracks, utils) => {
-      let html = `<div class="recent-tracks animate-fade-in">`;
-      tracks.forEach((track, index) => {
-        html += `
-          <div class="recent-track" data-song='${JSON.stringify(track).replace(/"/g, "&quot;")}' style="animation-delay: ${index * 100}ms;">
-            <img src="${utils.getAlbumImageUrl(track.album)}" alt="${track.title}" class="track-art">
-            <div class="track-info">
-              <div class="track-title">${track.title}</div>
-              <div class="track-artist" data-artist="${track.artist}">${track.artist}</div>
-            </div>
-            <div class="play-button-overlay">
-              ${window.ICONS.play}
-            </div>
-          </div>
-        `;
-      });
-      html += `</div>`;
-      return html;
-    },
-
-    playlists: (playlists) => {
-      let html = `<div class="playlists-list animate-fade-in">`;
-      playlists.forEach((playlist, index) => {
-        html += `
-          <div class="playlist-card" data-playlist-id="${playlist.id}" style="animation-delay: ${index * 100}ms;">
-            <div class="playlist-icon" style="width: 40px; height: 40px; background: linear-gradient(45deg, #6366f1, #8b5cf6); border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="20" height="20">
-                <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v2H3v-2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
-              </svg>
-            </div>
-            <div class="playlist-info">
-              <div class="playlist-name">${playlist.name}</div>
-              <div class="playlist-tracks">${playlist.songs?.length || 0} track${playlist.songs?.length !== 1 ? "s" : ""}</div>
-            </div>
-            <div class="play-button-overlay">
-              ${window.ICONS.play}
-            </div>
-          </div>
-        `;
-      });
-      html += `</div>`;
-      return html;
-    },
-
-    favoriteArtists: (artists, utils) => {
-      let html = `<div class="artist-grid animate-fade-in">`;
-      artists.forEach((artistName, index) => {
-        html += `
-          <div class="artist-card" data-artist="${artistName}" style="animation-delay: ${index * 100}ms;">
-            <div style="position: relative;">
-              <img src="${utils.getArtistImageUrl(artistName)}" alt="${artistName}" class="artist-avatar">
-              <div class="play-button-overlay">
+homeSection: {
+  recentlyPlayed: (tracks, utils) => {
+    let html = `<div class="recent-tracks animate-fade-in">`;
+    tracks.forEach((track, index) => {
+      html += `
+        <div class="modern-track-item" data-song='${JSON.stringify(track).replace(/"/g, "&quot;")}' style="animation-delay: ${index * 100}ms;">
+          <div class="track-artwork-container">
+            <img src="${utils.getAlbumImageUrl(track.album)}" alt="${track.title}" class="track-artwork">
+            <div class="track-play-overlay">
+              <button class="track-play-btn">
                 ${window.ICONS.play}
-              </div>
-            </div>
-            <div class="artist-name">${artistName}</div>
-          </div>
-        `;
-      });
-      html += `</div>`;
-      return html;
-    },
-
-    randomAlbums: (albums, utils) => {
-      let html = `<div class="album-grid animate-fade-in">`;
-      albums.forEach((album, index) => {
-        html += `
-          <div class="album-card" style="animation-delay: ${index * 100}ms;" data-artist="${album.artist}" data-album="${album.album}">
-            <div style="position: relative;">
-              <img src="${utils.getAlbumImageUrl(album.album)}" alt="${album.album}" class="album-cover">
-              <div class="album-overlay">
-                <button class="album-play-btn" data-artist="${album.artist}" data-album="${album.album}">
-                  ${window.ICONS.play}
-                </button>
-              </div>
-            </div>
-            <div class="album-info">
-              <div class="album-title">${album.album}</div>
-              <div class="album-artist" data-artist="${album.artist}">${album.artist}</div>
+              </button>
             </div>
           </div>
-        `;
-      });
-      html += `</div>`;
-      return html;
-    },
-
-    favoriteSongs: (songs, utils) => {
-      let html = `<div class="recent-tracks animate-fade-in">`;
-      songs.forEach((song, index) => {
-        html += `
-          <div class="recent-track" data-song='${JSON.stringify(song).replace(/"/g, "&quot;")}' style="animation-delay: ${index * 100}ms;">
-            <img src="${utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="track-art">
-            <div class="track-info">
-              <div class="track-title">${song.title}</div>
-              <div class="track-artist" data-artist="${song.artist}">${song.artist}</div>
+          <div class="track-content">
+            <div class="track-main-info">
+              <div class="track-title-text">${track.title}</div>
+              <div class="track-artist-text" data-artist="${track.artist}">${track.artist}</div>
             </div>
-            <div class="play-button-overlay">
-              ${window.ICONS.play}
+            <div class="track-meta">
+              <span class="track-duration">3:24</span>
             </div>
-            <button class="favorite-heart" data-song-id="${song.id}" style="position: absolute; top: 0.5rem; right: 0.5rem; color: #ef4444; opacity: 0.8; background: none; border: none; cursor: pointer;">
-              <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+          </div>
+          <div class="track-actions">
+            <button class="track-action-btn track-favorite-btn" title="Add to favorites">
+              <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+              </svg>
+            </button>
+            <button class="track-action-btn track-more-btn" title="More options">
+              <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
               </svg>
             </button>
           </div>
-        `;
-      });
-      html += `</div>`;
-      return html;
-    }
+        </div>
+      `;
+    });
+    html += `</div>`;
+    return html;
   },
 
-  overlay: function(templateName, data) {
+  playlists: (playlists) => {
+    let html = `<div class="playlists-list animate-fade-in">`;
+    playlists.forEach((playlist, index) => {
+      html += `
+        <div class="modern-playlist-card" data-playlist-id="${playlist.id}" style="animation-delay: ${index * 100}ms;">
+          <div class="playlist-artwork-container">
+            <div class="playlist-icon-wrapper">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v2H3v-2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
+              </svg>
+            </div>
+            <div class="playlist-play-overlay">
+              <button class="playlist-play-btn">
+                ${window.ICONS.play}
+              </button>
+            </div>
+          </div>
+          <div class="playlist-content">
+            <div class="playlist-main-info">
+              <div class="playlist-name-text">${playlist.name}</div>
+              <div class="playlist-tracks-text">${playlist.songs?.length || 0} track${playlist.songs?.length !== 1 ? "s" : ""}</div>
+            </div>
+          </div>
+          <div class="playlist-actions">
+            <button class="playlist-action-btn playlist-more-btn" title="More options">
+              <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      `;
+    });
+    html += `</div>`;
+    return html;
+  },
+
+  favoriteArtists: (artists, utils) => {
+    let html = `<div class="modern-artist-grid animate-fade-in">`;
+    artists.forEach((artistName, index) => {
+      html += `
+        <div class="modern-artist-card" data-artist="${artistName}" style="animation-delay: ${index * 100}ms;">
+          <div class="artist-artwork-container">
+            <img src="${utils.getArtistImageUrl(artistName)}" alt="${artistName}" class="artist-avatar-image">
+            <div class="artist-play-overlay">
+              <button class="artist-play-btn">
+                ${window.ICONS.play}
+              </button>
+            </div>
+            <div class="artist-gradient-overlay"></div>
+          </div>
+          <div class="artist-content">
+            <div class="artist-name-text">${artistName}</div>
+            <div class="artist-label">Artist</div>
+          </div>
+          <div class="artist-actions">
+            <button class="artist-action-btn artist-follow-btn" title="Follow artist">
+              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      `;
+    });
+    html += `</div>`;
+    return html;
+  },
+
+  randomAlbums: (albums, utils) => {
+    let html = `<div class="album-grid animate-fade-in">`;
+    albums.forEach((album, index) => {
+      html += `
+        <div class="album-card" style="animation-delay: ${index * 100}ms;" data-artist="${album.artist}" data-album="${album.album}">
+          <div style="position: relative;">
+            <img src="${utils.getAlbumImageUrl(album.album)}" alt="${album.album}" class="album-cover">
+            <div class="album-overlay">
+              <button class="album-play-btn" data-artist="${album.artist}" data-album="${album.album}">
+                ${window.ICONS.play}
+              </button>
+            </div>
+          </div>
+          <div class="album-info">
+            <div class="album-title">${album.album}</div>
+            <div class="album-artist" data-artist="${album.artist}">${album.artist}</div>
+          </div>
+        </div>
+      `;
+    });
+    html += `</div>`;
+    return html;
+  },
+
+  favoriteSongs: (songs, utils) => {
+    let html = `<div class="favorite-tracks animate-fade-in">`;
+    songs.forEach((song, index) => {
+      html += `
+        <div class="modern-favorite-item" data-song='${JSON.stringify(song).replace(/"/g, "&quot;")}' style="animation-delay: ${index * 100}ms;">
+          <div class="favorite-artwork-container">
+            <img src="${utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="favorite-artwork">
+            <div class="favorite-play-overlay">
+              <button class="favorite-play-btn">
+                ${window.ICONS.play}
+              </button>
+            </div>
+          </div>
+          <div class="favorite-content">
+            <div class="favorite-main-info">
+              <div class="favorite-title-text">${song.title}</div>
+              <div class="favorite-artist-text" data-artist="${song.artist}">${song.artist}</div>
+            </div>
+            <div class="favorite-meta">
+              <span class="favorite-duration">3:24</span>
+            </div>
+          </div>
+          <div class="favorite-actions">
+            <button class="favorite-action-btn favorite-heart-btn active" data-song-id="${song.id}" title="Remove from favorites">
+              <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+              </svg>
+            </button>
+            <button class="favorite-action-btn favorite-more-btn" title="More options">
+              <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      `;
+    });
+    html += `</div>`;
+    return html;
+  }
+},  overlay: function(templateName, data) {
     switch(templateName) {
       case 'default':
         return `
