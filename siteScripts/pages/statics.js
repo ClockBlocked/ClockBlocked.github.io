@@ -321,19 +321,25 @@ export const homePage = {
         opacity: 0.6;
       }
       
+      /* --- ENHANCEMENT: Updated overlay styles --- */
       .track-play-overlay, .playlist-play-overlay, .artist-play-overlay, .favorite-play-overlay {
         position: absolute;
         top: 0;
         left: 0;
         right: 0;
         bottom: 0;
-        background: rgba(0, 0, 0, 0.6);
+        /* Frosted glass effect */
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
         display: flex;
         align-items: center;
         justify-content: center;
         opacity: 0;
-        transition: opacity 0.2s ease;
+        /* Pop-in animation */
+        transform: scale(0.95);
+        transition: opacity 0.2s ease, transform 0.2s ease;
         border-radius: 0.25rem;
+        cursor: pointer;
       }
       
       .modern-track-item:hover .track-play-overlay,
@@ -341,13 +347,43 @@ export const homePage = {
       .modern-artist-card:hover .artist-play-overlay,
       .modern-favorite-item:hover .favorite-play-overlay {
         opacity: 1;
+        /* Pop-in animation */
+        transform: scale(1);
       }
 
       .artist-artwork-container {
         border-radius: 50%;
       }
-      .modern-artist-card:hover .artist-play-overlay {
+      /* Keep artist overlay circular */
+      .modern-artist-card .artist-play-overlay {
         border-radius: 50%;
+      }
+
+      /* --- ENHANCEMENT: New styles for the bento play buttons --- */
+      .track-play-btn, .playlist-play-btn, .artist-play-btn, .favorite-play-btn {
+        width: 2.5rem; /* 40px */
+        height: 2.5rem; /* 40px */
+        background: rgba(59, 130, 246, 0.9); /* Blue, matching album button */
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        transform: scale(1); /* Base scale for hover effect */
+      }
+
+      .track-play-btn:hover, .playlist-play-btn:hover, .artist-play-btn:hover, .favorite-play-btn:hover {
+        transform: scale(1.1);
+        background: rgba(59, 130, 246, 1); /* Brighter on hover */
+      }
+
+      .track-play-btn svg, .playlist-play-btn svg, .artist-play-btn svg, .favorite-play-btn svg {
+        width: 1.125rem; /* 18px */
+        height: 1.125rem; /* 18px */
+        margin-left: 2px; /* Optical centering for play icon */
       }
       
       .animate-fade-in {
@@ -378,7 +414,7 @@ export const homePage = {
     container.querySelectorAll(".modern-track-item").forEach((track) => {
       track.addEventListener("click", (e) => {
         // *** UPDATED CLASS ***
-        if (e.target.closest(".track-artist-text")) return;
+        if (e.target.closest(".track-artist-text") || e.target.closest(".track-action-btn")) return; // Also ignore other buttons
 
         try {
           const songData = JSON.parse(track.dataset.song);
@@ -479,7 +515,8 @@ export const homePage = {
 
     // *** UPDATED SELECTOR ***
     container.querySelectorAll(".modern-artist-card").forEach((artistEl) => {
-      artistEl.addEventListener("click", () => {
+      artistEl.addEventListener("click", (e) => {
+        if (e.target.closest(".artist-action-btn")) return; // Ignore action buttons
         const artistName = artistEl.dataset.artist;
         if (appState.router) {
           appState.router.navigateTo(ROUTES.ARTIST, {
@@ -516,7 +553,8 @@ export const homePage = {
 
     // *** UPDATED SELECTOR ***
     container.querySelectorAll(".modern-playlist-card").forEach((playlistEl) => {
-      playlistEl.addEventListener("click", () => {
+      playlistEl.addEventListener("click", (e) => {
+        if (e.target.closest(".playlist-action-btn")) return; // Ignore action buttons
         const playlistId = playlistEl.dataset.playlistId;
         playlists.show(playlistId);
       });
@@ -550,7 +588,7 @@ export const homePage = {
     container.querySelectorAll(".modern-favorite-item").forEach((track) => {
       track.addEventListener("click", (e) => {
         // *** UPDATED CLASSES ***
-        if (e.target.closest(".favorite-artist-text") || e.target.closest(".favorite-heart-btn")) return;
+        if (e.target.closest(".favorite-artist-text") || e.target.closest(".favorite-action-btn")) return;
 
         try {
           const songData = JSON.parse(track.dataset.song);
@@ -1029,4 +1067,3 @@ export const views = {
  * * Chevrolay@Outlook.com
  * * m.me/Chevrolay
  * * **/
-
