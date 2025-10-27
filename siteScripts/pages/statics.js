@@ -242,40 +242,6 @@ export const homePage = {
         text-decoration: underline;
       }
       
-      /* Style for .modern-artist-card */
-      .modern-artist-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-        gap: 1rem;
-      }
-      
-      .modern-artist-card {
-        text-align: center;
-        cursor: pointer;
-        transition: transform 0.2s ease;
-        position: relative;
-      }
-      
-      .modern-artist-card:hover {
-        transform: scale(1.05);
-      }
-      
-      .artist-avatar-image {
-        border-radius: 50%;
-        width: 100%;
-        aspect-ratio: 1;
-        object-fit: cover;
-      }
-      
-      .artist-name-text {
-        font-size: 0.875rem;
-        font-weight: 500;
-        margin-top: 0.5rem;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-      
       .create-playlist-btn {
         display: flex;
         align-items: center;
