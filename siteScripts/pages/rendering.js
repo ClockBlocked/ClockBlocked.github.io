@@ -4,7 +4,8 @@ import {
   notifications,
   musicPlayer,
   utils,
-  ACTION_GRID_ITEMS
+  ACTION_GRID_ITEMS,
+  overlays
 } from '../global.js';
 
 import { ui, pageUpdates } from './updates.js';
