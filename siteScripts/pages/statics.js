@@ -87,8 +87,13 @@ export const homePage = {
         100% { background-position: -200% 0; }
       }
       
-      /* Updated styles from templates.js for .modern-track-item */
-      .modern-track-item, .modern-playlist-card {
+      .recent-tracks, .album-grid, .artist-grid, .playlists-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+      
+      .recent-track, .playlist-card {
         display: flex;
         align-items: center;
         gap: 0.75rem;
@@ -100,36 +105,29 @@ export const homePage = {
         position: relative;
       }
       
-      .modern-track-item:hover, .modern-playlist-card:hover {
+      .recent-track:hover, .playlist-card:hover {
         background: rgba(255, 255, 255, 0.1);
         transform: translateY(-2px);
       }
-
-      .track-artwork-container, .playlist-artwork-container, .artist-artwork-container {
+      
+      .track-art, .artist-avatar {
         width: 40px;
         height: 40px;
         border-radius: 0.25rem;
+        object-fit: cover;
         flex-shrink: 0;
-        position: relative;
-        overflow: hidden;
       }
-
-
-      .playlist-icon-wrapper {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: rgba(96, 165, 250, 0.3); /* Example color */
+      
+      .artist-avatar {
+        border-radius: 50%;
       }
-
-      .track-content, .playlist-content, .artist-content {
+      
+      .track-info, .playlist-info {
         flex: 1;
         min-width: 0;
       }
-
-      .track-title-text, .favorite-title-text, .playlist-name-text, .artist-name-text {
+      
+      .track-title, .playlist-name {
         font-weight: 500;
         margin-bottom: 0.125rem;
         white-space: nowrap;
@@ -137,7 +135,7 @@ export const homePage = {
         text-overflow: ellipsis;
       }
       
-      .track-artist-text, .favorite-artist-text, .playlist-tracks-text, .artist-label {
+      .track-artist, .playlist-tracks {
         font-size: 0.875rem;
         color: rgba(255, 255, 255, 0.7);
         cursor: pointer;
@@ -145,8 +143,8 @@ export const homePage = {
         overflow: hidden;
         text-overflow: ellipsis;
       }
-
-      .track-artist-text:hover, .favorite-artist-text:hover {
+      
+      .track-artist:hover {
         color: rgba(255, 255, 255, 0.9);
         text-decoration: underline;
       }
@@ -242,6 +240,31 @@ export const homePage = {
         text-decoration: underline;
       }
       
+      .artist-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 1rem;
+      }
+      
+      .artist-card {
+        text-align: center;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+      }
+      
+      .artist-card:hover {
+        transform: scale(1.05);
+      }
+      
+      .artist-name {
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin-top: 0.5rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      
       .create-playlist-btn {
         display: flex;
         align-items: center;
@@ -282,69 +305,26 @@ export const homePage = {
         opacity: 0.6;
       }
       
-      /* --- ENHANCEMENT: Updated overlay styles --- */
-      .track-play-overlay, .playlist-play-overlay, .artist-play-overlay, .favorite-play-overlay {
+      .play-button-overlay {
         position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        /* Frosted glass effect */
-        background: rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(4px);
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
         opacity: 0;
-        /* Pop-in animation */
-        transform: scale(0.95);
-        transition: opacity 0.2s ease, transform 0.2s ease;
-        border-radius: 0.25rem;
-        cursor: pointer;
-      }
-      
-      .modern-track-item:hover .track-play-overlay,
-      .modern-playlist-card:hover .playlist-play-overlay,
-      .modern-artist-card:hover .artist-play-overlay,
-      .modern-favorite-item:hover .favorite-play-overlay {
-        opacity: 1;
-        /* Pop-in animation */
-        transform: scale(1);
-      }
-
-      .artist-artwork-container {
+        transition: opacity 0.2s ease;
+        background: rgba(59, 130, 246, 0.9);
         border-radius: 50%;
-      }
-      /* Keep artist overlay circular */
-      .modern-artist-card .artist-play-overlay {
-        border-radius: 50%;
-      }
-
-      /* --- ENHANCEMENT: New styles for the bento play buttons --- */
-      .track-play-btn, .playlist-play-btn, .artist-play-btn, .favorite-play-btn {
-        width: 2.5rem; /* 40px */
-        height: 2.5rem; /* 40px */
-        background: rgba(59, 130, 246, 0.9); /* Blue, matching album button */
-        border-radius: 50%;
+        width: 2rem;
+        height: 2rem;
         display: flex;
         align-items: center;
         justify-content: center;
         color: white;
-        border: none;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        transform: scale(1); /* Base scale for hover effect */
       }
-
-      .track-play-btn:hover, .playlist-play-btn:hover, .artist-play-btn:hover, .favorite-play-btn:hover {
-        transform: scale(1.1);
-        background: rgba(59, 130, 246, 1); /* Brighter on hover */
-      }
-
-      .track-play-btn svg, .playlist-play-btn svg, .artist-play-btn svg, .favorite-play-btn svg {
-        width: 1.125rem; /* 18px */
-        height: 1.125rem; /* 18px */
-        margin-left: 2px; /* Optical centering for play icon */
+      
+      .recent-track:hover .play-button-overlay,
+      .artist-card:hover .play-button-overlay {
+        opacity: 1;
       }
       
       .animate-fade-in {
@@ -371,11 +351,9 @@ export const homePage = {
     const recentTracks = appState.recentlyPlayed.slice(0, 5);
     container.innerHTML = render.homeSection.recentlyPlayed(recentTracks, utils);
 
-    // *** UPDATED SELECTOR ***
-    container.querySelectorAll(".modern-track-item").forEach((track) => {
+    container.querySelectorAll(".recent-track").forEach((track) => {
       track.addEventListener("click", (e) => {
-        // *** UPDATED CLASS ***
-        if (e.target.closest(".track-artist-text") || e.target.closest(".track-action-btn")) return; // Also ignore other buttons
+        if (e.target.closest(".track-artist")) return;
 
         try {
           const songData = JSON.parse(track.dataset.song);
@@ -384,8 +362,7 @@ export const homePage = {
       });
     });
 
-    // *** UPDATED SELECTOR ***
-    container.querySelectorAll(".track-artist-text").forEach((artistEl) => {
+    container.querySelectorAll(".track-artist").forEach((artistEl) => {
       artistEl.addEventListener("click", (e) => {
         e.stopPropagation();
         const artistName = artistEl.dataset.artist;
@@ -411,7 +388,6 @@ export const homePage = {
 
     container.innerHTML = render.homeSection.randomAlbums(albums, utils);
 
-    // This section's selectors were already correct!
     container.querySelectorAll(".album-play-btn").forEach((playBtn) => {
       playBtn.addEventListener("click", (e) => {
         e.stopPropagation();
@@ -474,10 +450,8 @@ export const homePage = {
     const artists = Array.from(appState.favorites.artists).slice(0, 6);
     container.innerHTML = render.homeSection.favoriteArtists(artists, utils);
 
-    // *** UPDATED SELECTOR ***
-    container.querySelectorAll(".modern-artist-card").forEach((artistEl) => {
-      artistEl.addEventListener("click", (e) => {
-        if (e.target.closest(".artist-action-btn")) return; // Ignore action buttons
+    container.querySelectorAll(".artist-card").forEach((artistEl) => {
+      artistEl.addEventListener("click", () => {
         const artistName = artistEl.dataset.artist;
         if (appState.router) {
           appState.router.navigateTo(ROUTES.ARTIST, {
@@ -512,10 +486,8 @@ export const homePage = {
 
     container.innerHTML = html;
 
-    // *** UPDATED SELECTOR ***
-    container.querySelectorAll(".modern-playlist-card").forEach((playlistEl) => {
-      playlistEl.addEventListener("click", (e) => {
-        if (e.target.closest(".playlist-action-btn")) return; // Ignore action buttons
+    container.querySelectorAll(".playlist-card").forEach((playlistEl) => {
+      playlistEl.addEventListener("click", () => {
         const playlistId = playlistEl.dataset.playlistId;
         playlists.show(playlistId);
       });
@@ -524,11 +496,10 @@ export const homePage = {
     const createBtn = container.querySelector(".create-playlist-btn");
     if (createBtn) {
       createBtn.addEventListener("click", () => {
-        playlists.create().then(newPlaylist => { // Wait for the async create to finish
-          if (newPlaylist) {
-            setTimeout(() => homePage.renderPlaylists(), 100); // Re-render if successful
-          }
-        });
+        const newPlaylist = playlists.create();
+        if (newPlaylist) {
+          setTimeout(() => homePage.renderPlaylists(), 100);
+        }
       });
     }
   },
@@ -545,11 +516,9 @@ export const homePage = {
     const songs = homePage.getSongsByIds(Array.from(appState.favorites.songs).slice(0, 5));
     container.innerHTML = render.homeSection.favoriteSongs(songs, utils);
 
-    // *** UPDATED SELECTOR ***
-    container.querySelectorAll(".modern-favorite-item").forEach((track) => {
+    container.querySelectorAll(".recent-track").forEach((track) => {
       track.addEventListener("click", (e) => {
-        // *** UPDATED CLASSES ***
-        if (e.target.closest(".favorite-artist-text") || e.target.closest(".favorite-action-btn")) return;
+        if (e.target.closest(".track-artist") || e.target.closest(".favorite-heart")) return;
 
         try {
           const songData = JSON.parse(track.dataset.song);
@@ -558,8 +527,7 @@ export const homePage = {
       });
     });
 
-    // *** UPDATED SELECTOR ***
-    container.querySelectorAll(".favorite-artist-text").forEach((artistEl) => {
+    container.querySelectorAll(".track-artist").forEach((artistEl) => {
       artistEl.addEventListener("click", (e) => {
         e.stopPropagation();
         const artistName = artistEl.dataset.artist;
@@ -571,23 +539,20 @@ export const homePage = {
       });
     });
 
-    // *** UPDATED SELECTOR ***
-    container.querySelectorAll(".favorite-heart-btn").forEach((heartBtn) => {
+    container.querySelectorAll(".favorite-heart").forEach((heartBtn) => {
       heartBtn.addEventListener("click", (e) => {
         e.stopPropagation();
         const songId = heartBtn.dataset.songId;
         appState.favorites.remove("songs", songId);
 
-        // *** UPDATED CLASS ***
-        const track = heartBtn.closest(".modern-favorite-item");
+        const track = heartBtn.closest(".recent-track");
         track.style.transition = "all 0.3s ease";
         track.style.opacity = "0";
         track.style.transform = "translateX(-20px)";
 
         setTimeout(() => {
           track.remove();
-          // *** UPDATED CLASS ***
-          const remaining = container.querySelectorAll(".modern-favorite-item");
+          const remaining = container.querySelectorAll(".recent-track");
           if (remaining.length === 0) {
             homePage.renderFavoriteSongs();
           }
@@ -1022,9 +987,27 @@ export const views = {
     },
 };
 /**
- * *
- * * * * * * * * * * * * * Copyright 2025
- * William Cole Hanson
- * * Chevrolay@Outlook.com
- * * m.me/Chevrolay
- * * **/
+ * 
+ *
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  
+ *    Copyright 2025
+ *  William Cole Hanson
+ * 
+ * Chevrolay@Outlook.com
+ * 
+ *    m.me/Chevrolay
+ * 
+ * 
+**/
