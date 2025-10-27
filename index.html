@@ -2202,15 +2202,19 @@ MyBeats:  Stream & share your favorite music for free.
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy.umd.min.js"></script>
 
-<!-- ToolTips - PopOvers -->
-<script type="module" src="./siteScripts/utilities/overlays.js"></script>
-
+<!-- Refactored JavaScript Modules -->
 <!-- Music Library -->
 <script type="module" src="./modules/library.js"></script>
-<script type="module" src="./siteScripts/utilities/search.js"></script>
 
-<!-- Initialization modules -->
-<script type="module" src="./siteScripts/init.js"></script>
+<!-- Core Modules (New Refactored Structure) -->
+<script type="module" src="./siteScripts/map.js"></script>
+<script type="module" src="./siteScripts/helpers.js"></script>
+<script type="module" src="./siteScripts/search.js"></script>
+<script type="module" src="./siteScripts/templates.js"></script>
+<script type="module" src="./siteScripts/misc.js"></script>
+
+<!-- Legacy modules (still needed for full functionality) -->
+<script type="module" src="./siteScripts/utilities/overlays.js"></script>
 <script type="module" src="./siteScripts/unifiedPlayerController.js"></script>
 <script type="module" src="./siteScripts/unifiedPlayerIntergration.js"></script>
 
@@ -2286,7 +2290,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <!-- Global Initialize -->
 <script type="module">
     import { music } from './modules/library.js';
-    import { app } from './siteScripts/global.js';
+    import { app } from './siteScripts/main.js';
     
     window.music = music;
     
