@@ -612,29 +612,29 @@ homeSection: {
     return html;
   },
 
-  randomAlbums: (albums, utils) => {
-    let html = `<div class="music-album-list fadein-motion">`;
-    albums.forEach((album, index) => {
-      html += `
-        <div class="music-album-card" style="animation-delay: ${index * 100}ms;" data-artist="${album.artist}" data-album="${album.album}">
-          <div class="music-album-imgwrap">
-            <img src="${utils.getAlbumImageUrl(album.album)}" alt="${album.album}" class="music-album-img">
-            <div class="music-album-overlay">
-              <button class="music-album-play" data-artist="${album.artist}" data-album="${album.album}">
-                ${window.ICONS.play}
-              </button>
+randomAlbums: (albums, utils) => {
+      let html = `<div class="album-grid animate-fade-in">`;
+      albums.forEach((album, index) => {
+        html += `
+          <div class="album-card" style="animation-delay: ${index * 100}ms;" data-artist="${album.artist}" data-album="${album.album}">
+            <div style="position: relative;">
+              <img src="${utils.getAlbumImageUrl(album.album)}" alt="${album.album}" class="album-cover">
+              <div class="album-overlay">
+                <button class="album-play-btn" data-artist="${album.artist}" data-album="${album.album}">
+                  ${window.ICONS.play}
+                </button>
+              </div>
+            </div>
+            <div class="album-info">
+              <div class="album-title">${album.album}</div>
+              <div class="album-artist" data-artist="${album.artist}">${album.artist}</div>
             </div>
           </div>
-          <div class="music-album-details">
-            <div class="music-album-title">${album.album}</div>
-            <div class="music-album-artist" data-artist="${album.artist}">${album.artist}</div>
-          </div>
-        </div>
-      `;
-    });
-    html += `</div>`;
-    return html;
-  },
+        `;
+      });
+      html += `</div>`;
+      return html;
+    },
 
   favoriteSongs: (songs, utils) => {
     let html = `<div class="music-track-list fadein-motion">`;
