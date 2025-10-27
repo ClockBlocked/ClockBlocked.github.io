@@ -88,7 +88,7 @@ export const homePage = {
       }
       
       /* Updated styles from templates.js for .modern-track-item */
-      .modern-track-item, .modern-favorite-item, .modern-playlist-card {
+      .modern-track-item, .modern-playlist-card {
         display: flex;
         align-items: center;
         gap: 0.75rem;
@@ -100,12 +100,12 @@ export const homePage = {
         position: relative;
       }
       
-      .modern-track-item:hover, .modern-favorite-item:hover, .modern-playlist-card:hover {
+      .modern-track-item:hover, .modern-playlist-card:hover {
         background: rgba(255, 255, 255, 0.1);
         transform: translateY(-2px);
       }
 
-      .track-artwork-container, .favorite-artwork-container, .playlist-artwork-container, .artist-artwork-container {
+      .track-artwork-container, .playlist-artwork-container, .artist-artwork-container {
         width: 40px;
         height: 40px;
         border-radius: 0.25rem;
@@ -124,7 +124,7 @@ export const homePage = {
         background-color: rgba(96, 165, 250, 0.3); /* Example color */
       }
 
-      .track-content, .favorite-content, .playlist-content, .artist-content {
+      .track-content, .playlist-content, .artist-content {
         flex: 1;
         min-width: 0;
       }
