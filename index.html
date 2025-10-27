@@ -35,11 +35,8 @@ MyBeats:  Stream & share your favorite music for free.
 <link rel="icon" href="favicon.ico" type="image/x-icon" />
 <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
 
-
 <link rel="stylesheet" href="./overlays.css" />
-
 <link rel="stylesheet" href="./extra.css" />
-
 <link rel="stylesheet" href="./dynamicOverlays.css" />
 
 <link rel="stylesheet" href="./stylingSheets/main.css" />
@@ -54,27 +51,26 @@ MyBeats:  Stream & share your favorite music for free.
 <link rel="stylesheet" href="./stylingSheets/global/fonts.css" />
 <link rel="stylesheet" href="./stylingSheets/global/svg.css" />
 
-<!-- New modular stylesheets -->
-<link rel="stylesheet" href="./stylingSheets/desktop-layout.css" />
+<!-- Unified responsive stylesheets -->
+<link rel="stylesheet" href="./stylingSheets/unified-player.css" />
+<link rel="stylesheet" href="./stylingSheets/responsive-layout.css" />
 <link rel="stylesheet" href="./stylingSheets/inline-styles.css" />
 <link rel="stylesheet" href="./stylingSheets/tailwind-conversion.css" />
 
+<!-- Responsive stylesheets -->
+<link 
+    rel="stylesheet" 
+    media="screen and (min-width: 768px) and (max-width: 1024px)" 
+    href="./stylingSheets/responsive/tablet.css"
+>
 
-    <link 
-        rel="stylesheet" 
-        media="screen and (min-width: 768px) and (max-width: 1024px)" 
-        href="./stylingSheets/responsive/tablet.css"
-    >
-    
-    <link 
-        rel="stylesheet" 
-        media="screen and (min-width: 1024px)" 
-        href="./stylingSheets/responsive/desktop.css"
-    >
+<link 
+    rel="stylesheet" 
+    media="screen and (min-width: 1024px)" 
+    href="./stylingSheets/responsive/desktop.css"
+>
 
 <!-- L I B R A R I E S ------------->
-<!-- Tailwind removed - converted to standard CSS in tailwind-conversion.css -->
-
 <link
   rel="stylesheet"
   href="https://cdn.jsdelivr.net/npm/preline@2.0.3/dist/preline.min.css" />
@@ -86,8 +82,6 @@ MyBeats:  Stream & share your favorite music for free.
 <link
   rel="stylesheet"
   href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" />
-
-
 
 <!-- A N A L Y T I C S ------------->
 <script
@@ -103,768 +97,1861 @@ MyBeats:  Stream & share your favorite music for free.
   gtag("config", "G-P0KCT8TSPW");
 </script>
 
-
-
-
-
 <link rel="stylesheet" href="./stylingSheets/pages/artist.css">
 
 
+<style>
+/* ===========================================
+   UNIFIED MUSIC PLAYER CSS
+   Same player across all devices, different displays
+   =========================================== */
+
+/* Base responsive utility classes */
+.mobile-only {
+    display: block;
+}
+
+.desktop-tablet-only {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .mobile-only {
+        display: none;
+    }
+    
+    .desktop-tablet-only {
+        display: block;
+    }
+}
+
+/* Unified Triggers for Desktop/Tablet */
+.unified-triggers {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    gap: 12px;
+}
+
+.unified-trigger {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.unified-trigger:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+}
+
+.unified-trigger:active {
+    transform: translateY(0);
+}
+
+.unified-trigger svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Unified Music Player Drawer Styles */
+.drawer {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: transparent;
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.drawer:popover-open {
+    pointer-events: auto;
+}
+
+/* Mobile Layout (Default Drawer Behavior) */
+.drawerScroller {
+    height: 100vh;
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.drawerScroller::-webkit-scrollbar {
+    display: none;
+}
+
+.drawerSlide {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    scroll-snap-align: start;
+    position: relative;
+}
+
+.drawerAnchors {
+    flex: 1;
+    pointer-events: none;
+}
+
+.drawerCurtain {
+    position: absolute;
+    inset: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.drawerContent {
+    background: linear-gradient(135deg, 
+        rgba(15, 23, 42, 0.95) 0%, 
+        rgba(30, 41, 59, 0.95) 50%, 
+        rgba(15, 23, 42, 0.95) 100%);
+    backdrop-filter: blur(20px);
+    border-radius: 24px 24px 0 0;
+    min-height: 60vh;
+    position: relative;
+    z-index: 2;
+    padding: 0;
+    box-shadow: 
+        0 -20px 25px -5px rgba(0, 0, 0, 0.1),
+        0 -10px 10px -5px rgba(0, 0, 0, 0.04),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: none;
+}
+
+.mpNav {
+    padding: 16px;
+    display: flex;
+    justify-content: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.drawerDrag {
+    width: 40px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.3);
+    border: none;
+    border-radius: 3px;
+    cursor: grab;
+    transition: background-color 0.2s ease;
+}
+
+.drawerDrag:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.drawerDrag:active {
+    cursor: grabbing;
+}
+
+.drawerDrag span {
+    display: none;
+}
+
+/* Tabs Container */
+.tabsContainer {
+    padding: 16px 24px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.tab {
+    flex: 1;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.tab:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.tab.active {
+    background: rgba(59, 130, 246, 0.2);
+    border-color: rgba(59, 130, 246, 0.4);
+    color: rgb(59, 130, 246);
+}
+
+/* Music Player Content */
+.content {
+    padding: 24px;
+}
+
+.musicPlayer .content {
+    display: none;
+}
+
+.musicPlayer .content.active {
+    display: block;
+}
+
+/* Now Playing Content */
+.content[data-tab="playing"] {
+    text-align: center;
+}
+
+.albumArtwork.cover {
+    width: 280px;
+    height: 280px;
+    border-radius: 16px;
+    object-fit: cover;
+    margin: 0 auto 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease;
+}
+
+.albumArtwork.cover:hover {
+    transform: scale(1.02);
+}
+
+.info {
+    margin-bottom: 32px;
+}
+
+.songName.title {
+    font-size: 24px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 8px;
+    line-height: 1.2;
+}
+
+.artistName.artist {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 4px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.artistName.artist:hover {
+    color: rgba(59, 130, 246, 0.9);
+    text-decoration: underline;
+}
+
+.albumName.album {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Progress Bar */
+.progress {
+    margin-bottom: 32px;
+}
+
+.time {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 8px;
+}
+
+.progressBar {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.progressBar:hover {
+    transform: scaleY(1.2);
+}
+
+.progressBuffer {
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.progressFill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+    border-radius: 3px;
+    transition: width 0.1s ease;
+}
+
+.progressThumb {
+    position: absolute;
+    top: 50%;
+    width: 16px;
+    height: 16px;
+    background: white;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.progressBar:hover .progressThumb,
+.progressBar.is-dragging .progressThumb {
+    opacity: 1;
+}
+
+/* Player Controls */
+.controls.playerControls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.btn {
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.btn:active {
+    transform: scale(0.95);
+}
+
+.btn--icon-only {
+    width: 48px;
+    height: 48px;
+}
+
+.btn.is-primary {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+}
+
+.btn.is-primary:hover {
+    background: linear-gradient(135deg, #1d4ed8, #1e40af);
+    box-shadow: 0 12px 25px rgba(59, 130, 246, 0.5);
+}
+
+.btn .icon {
+    width: 20px;
+    height: 20px;
+}
+
+.btn.is-primary .icon {
+    width: 24px;
+    height: 24px;
+}
+
+.btn .icon.hidden {
+    display: none;
+}
+
+/* Secondary Actions */
+.actions {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+}
+
+.actions .btn {
+    width: 40px;
+    height: 40px;
+}
+
+.actions .btn .icon {
+    width: 18px;
+    height: 18px;
+}
+
+/* List Styles for Queue and Recent */
+.list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.list .empty {
+    text-align: center;
+    padding: 48px 24px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.list .empty .emptyIcon {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 16px;
+    opacity: 0.5;
+}
+
+.list .empty .emptyText {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+/* Desktop/Tablet Responsive Adjustments */
+@media (min-width: 768px) {
+    /* On tablet, keep drawer behavior but adjust sizing */
+    .drawerContent {
+        min-height: 70vh;
+        max-width: 600px;
+        margin: 0 auto;
+        border-radius: 24px;
+        position: relative;
+        top: 10vh;
+    }
+    
+    .albumArtwork.cover {
+        width: 320px;
+        height: 320px;
+    }
+}
+
+@media (min-width: 1024px) {
+    /* Desktop: Player can be embedded in bento grid OR used as overlay */
+    .drawer.desktop-embedded {
+        position: relative;
+        inset: unset;
+        z-index: auto;
+        background: transparent;
+        pointer-events: auto;
+    }
+    
+    .drawer.desktop-embedded .drawerScroller {
+        height: auto;
+        overflow: visible;
+        scroll-snap-type: none;
+    }
+    
+    .drawer.desktop-embedded .drawerSlide {
+        min-height: auto;
+    }
+    
+    .drawer.desktop-embedded .drawerContent {
+        background: rgba(15, 23, 42, 0.8);
+        border-radius: 16px;
+        min-height: auto;
+        position: static;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .drawer.desktop-embedded .drawerAnchors,
+    .drawer.desktop-embedded .drawerCurtain {
+        display: none;
+    }
+    
+    .drawer.desktop-embedded .mpNav {
+        display: none;
+    }
+    
+    /* Compact desktop view */
+    .drawer.desktop-embedded.compact .albumArtwork.cover {
+        width: 120px;
+        height: 120px;
+        margin-bottom: 16px;
+    }
+    
+    .drawer.desktop-embedded.compact .songName.title {
+        font-size: 18px;
+        margin-bottom: 4px;
+    }
+    
+    .drawer.desktop-embedded.compact .artistName.artist {
+        font-size: 14px;
+        margin-bottom: 2px;
+    }
+    
+    .drawer.desktop-embedded.compact .albumName.album {
+        font-size: 12px;
+    }
+    
+    .drawer.desktop-embedded.compact .controls.playerControls .btn {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .drawer.desktop-embedded.compact .controls.playerControls .btn.is-primary {
+        width: 48px;
+        height: 48px;
+    }
+    
+    .drawer.desktop-embedded.compact .actions {
+        gap: 16px;
+    }
+    
+    .drawer.desktop-embedded.compact .actions .btn {
+        width: 32px;
+        height: 32px;
+    }
+}
+
+/* Animation States */
+@keyframes slideInUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutDown {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+}
+
+.drawer:popover-open .drawerContent {
+    animation: slideInUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.drawer.closing .drawerContent {
+    animation: slideOutDown 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Focus and Accessibility */
+.btn:focus-visible {
+    outline: 2px solid rgba(59, 130, 246, 0.8);
+    outline-offset: 2px;
+}
+
+.progressBar:focus-visible {
+    outline: 2px solid rgba(59, 130, 246, 0.8);
+    outline-offset: 4px;
+}
+
+.tab:focus-visible {
+    outline: 2px solid rgba(59, 130, 246, 0.8);
+    outline-offset: 2px;
+}
+
+/* Loading and Error States */
+.musicPlayer.loading .albumArtwork.cover {
+    opacity: 0.5;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 0.8; }
+}
+
+.musicPlayer.error .albumArtwork.cover {
+    opacity: 0.3;
+    filter: grayscale(100%);
+}
+
+/* Song Item Styles for Lists */
+.songItem {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    margin: 8px 0;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.songItem:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateX(4px);
+}
+
+.songCover {
+    width: 48px;
+    height: 48px;
+    border-radius: 6px;
+    object-fit: cover;
+    margin-right: 12px;
+}
+
+.songInfo {
+    flex: 1;
+    min-width: 0;
+}
+
+.songTitle {
+    font-size: 14px;
+    font-weight: 500;
+    color: white;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.songInfo .artistName {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.songActions {
+    display: flex;
+    gap: 8px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.songItem:hover .songActions {
+    opacity: 1;
+}
+
+.playButton,
+.removeButton,
+.queueButton {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.playButton:hover,
+.queueButton:hover {
+    background: rgba(59, 130, 246, 0.3);
+}
+
+.removeButton:hover {
+    background: rgba(239, 68, 68, 0.3);
+}
+
+.SVGimg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Reaction Canvas */
+#reactionCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+}
 
 
+
+
+/* ===========================================
+   RESPONSIVE LAYOUT CSS
+   Controls navbar visibility and layout adjustments
+   =========================================== */
+
+/* Mobile First Approach */
+/* Default: Mobile layout with navbar visible */
+
+/* Base Layout */
+#pageWrapper {
+    position: relative;
+    min-height: 100vh;
+}
+
+#mainArea {
+    padding-top: 0;
+    transition: padding-top 0.3s ease;
+}
+
+/* Mobile Layout (Default) */
+@media (max-width: 767px) {
+    /* Navbar visible on mobile */
+    #navbar {
+        display: block;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        background: rgba(15, 23, 42, 0.95);
+        backdrop-filter: blur(20px);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 12px 16px;
+    }
+    
+    /* Add bottom padding to main content to account for navbar */
+    #mainArea {
+        padding-bottom: 120px;
+    }
+    
+    /* Hide desktop/tablet triggers */
+    .unified-triggers {
+        display: none;
+    }
+    
+    /* Dropdown menu positioning for mobile */
+    .dropdown-menu {
+        position: fixed;
+        bottom: 80px;
+        left: 16px;
+        right: 16px;
+        top: auto;
+        max-height: 70vh;
+        border-radius: 16px 16px 0 0;
+        background: rgba(15, 23, 42, 0.98);
+        backdrop-filter: blur(25px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-bottom: none;
+        transform: translateY(100%);
+        transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        z-index: 1001;
+    }
+    
+    .dropdown-menu.show {
+        transform: translateY(0);
+    }
+}
+
+/* Tablet Layout */
+@media (min-width: 768px) and (max-width: 1023px) {
+    /* Hide navbar on tablet */
+    #navbar {
+        display: none !important;
+    }
+    
+    /* Show unified triggers */
+    .unified-triggers {
+        display: flex;
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        gap: 12px;
+    }
+    
+    /* No bottom padding needed since navbar is hidden */
+    #mainArea {
+        padding-bottom: 24px;
+    }
+    
+    /* Dropdown menu positioning for tablet */
+    .dropdown-menu {
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        left: auto;
+        bottom: auto;
+        width: 320px;
+        max-height: calc(100vh - 120px);
+        border-radius: 16px;
+        background: rgba(15, 23, 42, 0.95);
+        backdrop-filter: blur(25px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        transform: translateY(-10px) scale(0.95);
+        opacity: 0;
+        transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        pointer-events: none;
+        z-index: 1001;
+    }
+    
+    .dropdown-menu.show {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+        pointer-events: auto;
+    }
+    
+    /* Adjust main content grid for tablet */
+    .bento-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        padding: 20px;
+    }
+    
+    .bento-card.bento-span-2 {
+        grid-column: span 2;
+    }
+}
+
+/* Desktop Layout */
+@media (min-width: 1024px) {
+    /* Hide navbar on desktop */
+    #navbar {
+        display: none !important;
+    }
+    
+    /* Show unified triggers */
+    .unified-triggers {
+        display: flex;
+        position: fixed;
+        top: 24px;
+        right: 24px;
+        z-index: 1000;
+        gap: 16px;
+    }
+    
+    /* No bottom padding needed since navbar is hidden */
+    #mainArea {
+        padding-bottom: 32px;
+        padding-top: 20px;
+    }
+    
+    /* Dropdown menu positioning for desktop */
+    .dropdown-menu {
+        position: fixed;
+        top: 80px;
+        right: 24px;
+        left: auto;
+        bottom: auto;
+        width: 360px;
+        max-height: calc(100vh - 120px);
+        border-radius: 16px;
+        background: rgba(15, 23, 42, 0.95);
+        backdrop-filter: blur(25px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+        transform: translateY(-10px) scale(0.95);
+        opacity: 0;
+        transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        pointer-events: none;
+        z-index: 1001;
+    }
+    
+    .dropdown-menu.show {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+        pointer-events: auto;
+    }
+    
+    /* Desktop Bento Grid Layout */
+    .bento-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+        padding: 24px;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+    
+    .bento-card {
+        grid-column: span 1;
+        min-height: 280px;
+    }
+    
+    .bento-card.bento-span-2 {
+        grid-column: span 2;
+    }
+    
+    .bento-card.bento-span-3 {
+        grid-column: span 3;
+    }
+    
+    .bento-card.bento-span-4 {
+        grid-column: span 4;
+    }
+    
+    /* Desktop music player can be embedded in bento grid */
+    .bento-card.music-player-card {
+        background: linear-gradient(135deg, 
+            rgba(15, 23, 42, 0.8) 0%, 
+            rgba(30, 41, 59, 0.8) 50%, 
+            rgba(15, 23, 42, 0.8) 100%);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        overflow: hidden;
+        position: relative;
+    }
+    
+    /* When music player is embedded in bento grid */
+    .drawer.bento-embedded {
+        position: static;
+        background: transparent;
+        height: 100%;
+        pointer-events: auto;
+    }
+    
+    .drawer.bento-embedded .drawerScroller {
+        height: 100%;
+        overflow: visible;
+        scroll-snap-type: none;
+    }
+    
+    .drawer.bento-embedded .drawerSlide {
+        height: 100%;
+        min-height: auto;
+    }
+    
+    .drawer.bento-embedded .drawerContent {
+        background: transparent;
+        border-radius: 0;
+        min-height: 100%;
+        border: none;
+        box-shadow: none;
+        padding: 0;
+    }
+    
+    .drawer.bento-embedded .drawerAnchors,
+    .drawer.bento-embedded .drawerCurtain,
+    .drawer.bento-embedded .mpNav {
+        display: none;
+    }
+    
+    .drawer.bento-embedded .tabsContainer {
+        padding: 16px 16px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .drawer.bento-embedded .content {
+        padding: 16px;
+    }
+    
+    .drawer.bento-embedded .albumArtwork.cover {
+        width: 160px;
+        height: 160px;
+        margin-bottom: 16px;
+    }
+    
+    .drawer.bento-embedded .songName.title {
+        font-size: 20px;
+        margin-bottom: 6px;
+    }
+    
+    .drawer.bento-embedded .artistName.artist {
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+    
+    .drawer.bento-embedded .albumName.album {
+        font-size: 12px;
+        margin-bottom: 20px;
+    }
+    
+    .drawer.bento-embedded .controls.playerControls {
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+    
+    .drawer.bento-embedded .controls.playerControls .btn {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .drawer.bento-embedded .controls.playerControls .btn.is-primary {
+        width: 52px;
+        height: 52px;
+    }
+    
+    .drawer.bento-embedded .actions {
+        gap: 20px;
+    }
+    
+    .drawer.bento-embedded .actions .btn {
+        width: 36px;
+        height: 36px;
+    }
+}
+
+/* Ultra-wide Desktop Layout */
+@media (min-width: 1440px) {
+    .bento-grid {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 28px;
+        padding: 32px;
+        max-width: 1600px;
+    }
+    
+    .unified-triggers {
+        top: 32px;
+        right: 32px;
+        gap: 18px;
+    }
+    
+    .unified-trigger {
+        width: 52px;
+        height: 52px;
+    }
+    
+    .dropdown-menu {
+        top: 96px;
+        right: 32px;
+        width: 380px;
+    }
+}
+
+/* Landscape Mobile Layout */
+@media (max-width: 767px) and (orientation: landscape) {
+    #navbar {
+        position: fixed;
+        bottom: 0;
+        height: 60px;
+        padding: 8px 16px;
+    }
+    
+    #mainArea {
+        padding-bottom: 80px;
+    }
+    
+    .dropdown-menu {
+        bottom: 60px;
+        max-height: 60vh;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .unified-triggers,
+    .dropdown-menu,
+    #navbar,
+    .drawer {
+        display: none !important;
+    }
+    
+    #mainArea {
+        padding: 0;
+    }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    .dropdown-menu,
+    .unified-trigger,
+    .drawer,
+    .drawerContent {
+        transition: none;
+        animation: none;
+    }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+    .unified-trigger {
+        border: 2px solid currentColor;
+        background: rgba(0, 0, 0, 0.9);
+    }
+    
+    .dropdown-menu {
+        border: 2px solid currentColor;
+        background: rgba(0, 0, 0, 0.95);
+    }
+    
+    .drawer .drawerContent {
+        border: 2px solid currentColor;
+        background: rgba(0, 0, 0, 0.95);
+    }
+}
+
+/* Focus Management */
+.dropdown-menu:not(.show) {
+    visibility: hidden;
+}
+
+.dropdown-menu.show {
+    visibility: visible;
+}
+
+/* Scroll Behavior */
+html {
+    scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+}
+
+/* Loading States */
+.bento-grid.loading .bento-card {
+    opacity: 0.6;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% { opacity: 0.6; }
+    50% { opacity: 0.8; }
+    100% { opacity: 0.6; }
+}
+
+/* Error States */
+.bento-grid.error .bento-card {
+    opacity: 0.4;
+    filter: grayscale(100%);
+}
+
+/* Accessibility Improvements */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Focus Indicators */
+.unified-trigger:focus-visible {
+    outline: 3px solid rgba(59, 130, 246, 0.8);
+    outline-offset: 2px;
+}
+
+/* Dark Mode Adjustments */
+@media (prefers-color-scheme: dark) {
+    .unified-trigger {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.15);
+    }
+    
+    .dropdown-menu {
+        background: rgba(0, 0, 0, 0.95);
+        border-color: rgba(255, 255, 255, 0.15);
+    }
+}
+
+/* Light Mode Adjustments */
+@media (prefers-color-scheme: light) {
+    .unified-trigger {
+        background: rgba(0, 0, 0, 0.08);
+        border-color: rgba(0, 0, 0, 0.15);
+        color: #1f2937;
+    }
+    
+    .dropdown-menu {
+        background: rgba(255, 255, 255, 0.95);
+        border-color: rgba(0, 0, 0, 0.15);
+        color: #1f2937;
+    }
+    
+    .drawer .drawerContent {
+        background: linear-gradient(135deg, 
+            rgba(255, 255, 255, 0.95) 0%, 
+            rgba(248, 250, 252, 0.95) 50%, 
+            rgba(255, 255, 255, 0.95) 100%);
+        color: #1f2937;
+    }
+}
+</style>
 </head>
 <body>
 
 <!-- Main Page Wrapper ---------------------------------------->
 <div id="pageWrapper" data-label="Outermost container for the whole page">
 
-
-
-<!-- Toast container (optional; JS will create if not present) -->
+<!-- Toast container -->
 <div id="toast-portal"></div>
-
-
-
-
-
 
 <!-- Theme Toggle Component -->
 <div class="theme-toggle-container">
-        <div class="theme-trigger">
-          <svg width="24" height="24" viewBox="0 0 24 24">
-            <path fill="currentColor" d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121z"/>
-          </svg>
-        </div>
-        <div class="theme-options">
-          <button data-theme="light" aria-label="Light theme">
-            <svg width="20" height="20" viewBox="0 0 24 24">
-              <path fill="currentColor" d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121z"/>
-            </svg>
-          </button>
-          <button data-theme="dim" aria-label="Dim theme">
-            <svg width="20" height="20" viewBox="0 0 24 24">
-              <path fill="currentColor" d="M9.822 2.238a9 9 0 0 0 11.94 11.94C20.768 18.654 16.775 22 12 22 6.477 22 2 17.523 2 12c0-4.775 3.346-8.768 7.822-9.762zm8.342.053L19 2.5v1l-.836.209a2 2 0 0 0-1.455 1.455L16.5 6h-1l-.209-.836a2 2 0 0 0-1.455-1.455L13 3.5v-1l.836-.209A2 2 0 0 0 15.291.836L15.5 0h1l.209.836a2 2 0 0 0 1.455 1.455zm5 5L24 7.5v1l-.836.209a2 2 0 0 0-1.455 1.455L21.5 11h-1l-.209-.836a2 2 0 0 0-1.455-1.455L18 8.5v-1l.836-.209a2 2 0 0 0 1.455-1.455L20.5 5h1l.209.836a2 2 0 0 0 1.455 1.455z"/>
-            </svg>
-          </button>
-          <button data-theme="dark" aria-label="Dark theme">
-            <svg width="20" height="20" viewBox="0 0 24 24">
-              <path fill="currentColor" d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1-8.313-12.454z"/>
-            </svg>
-          </button>
-        </div>
-      </div>
-
-
-
-
-<!-- Desktop Menu Trigger (visible only on desktop) -->
-<button class="desktop-menu-trigger" id="desktop-menu-trigger" title="Menu" data-label="Desktop Menu Trigger" style="display: none;">
-    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-    <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
-    </svg>
-</button>
-
-<!-- Navigation Bar -->
-  <nav
-      id="navbar"
-      class="glass-effect">
-
-  <div class="navbar-content" data-label="All elements within navbar container">
-
-<!--- L E F T --->
-   <div class="navbar-left" data-label="Left container">
-
-
-
-
-
-
-<button class="menu-trigger" id="menu-trigger" title="Menu" data-label="DropUp Menu's Open & Close Button">
-    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-    <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
-    </svg>
-</button>
-</div>
-
-
-<!--- C E N T E R --->
-   <div class="navbar-center" id="now-playing-area" data-tooltip="Open Now Playing" data-tooltip-placement="top">
-  <div class="nowPlaying" data-label="Opens the Music Player Drawer when clicked">
-
-    <div class="albumArtwork flex items-center justify-center relative">
-      <svg class="w-6 h-6 text-white transition-opacity duration-500 ease-in-out" fill="currentColor" viewBox="0 0 20 20">
-        <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.369 4.369 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z" />
+    <div class="theme-trigger">
+      <svg width="24" height="24" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121z"/>
       </svg>
-      
-      <img src="" alt="Album Cover" class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 ease-in-out" />
     </div>
-
-    <div class="songInfo">
-      <div class="songName truncate">No song playing</div>
-      <div class="artistName truncate">Select a song to get started</div>
+    <div class="theme-options">
+      <button data-theme="light" aria-label="Light theme">
+        <svg width="20" height="20" viewBox="0 0 24 24">
+          <path fill="currentColor" d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121z"/>
+        </svg>
+      </button>
+      <button data-theme="dim" aria-label="Dim theme">
+        <svg width="20" height="20" viewBox="0 0 24 24">
+          <path fill="currentColor" d="M9.822 2.238a9 9 0 0 0 11.94 11.94C20.768 18.654 16.775 22 12 22 6.477 22 2 17.523 2 12c0-4.775 3.346-8.768 7.822-9.762zm8.342.053L19 2.5v1l-.836.209a2 2 0 0 0-1.455 1.455L16.5 6h-1l-.209-.836a2 2 0 0 0-1.455-1.455L13 3.5v-1l.836-.209A2 2 0 0 0 15.291.836L15.5 0h1l.209.836a2 2 0 0 0 1.455 1.455zm5 5L24 7.5v1l-.836.209a2 2 0 0 0-1.455 1.455L21.5 11h-1l-.209-.836a2 2 0 0 0-1.455-1.455L18 8.5v-1l.836-.209a2 2 0 0 0 1.455-1.455L20.5 5h1l.209.836a2 2 0 0 0 1.455 1.455z"/>
+        </svg>
+      </button>
+      <button data-theme="dark" aria-label="Dark theme">
+        <svg width="20" height="20" viewBox="0 0 24 24">
+          <path fill="currentColor" d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1-8.313-12.454z"/>
+        </svg>
+      </button>
     </div>
-
-    <div class="play-indicator" id="play-indicator"></div>
-  </div>
 </div>
 
-          <div class="navbar-right">
-            <div class="nav-controls">
-              <button class="previous nav-control-btn" title="Previous Track">
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M8.445 14.832A1 1 0 0010 14v-2.798l5.445 3.63A1 1 0 0017 14V6a1 1 0 00-1.555-.832L10 8.798V6a1 1 0 00-1.555-.832l-6 4a1 1 0 000 1.664l6 4z" />
-                </svg>
-              </button>
+<!-- Unified Menu & Player Triggers for Tablet/Desktop -->
+<div class="unified-triggers desktop-tablet-only">
+    <button class="unified-trigger menu-trigger" id="unified-menu-trigger" title="Menu" data-label="Unified Menu Trigger">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
+        </svg>
+    </button>
+    
+    <button class="unified-trigger player-trigger" id="unified-player-trigger" title="Music Player" data-label="Unified Player Trigger">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.369 4.369 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z" />
+        </svg>
+    </button>
+</div>
 
-              <button class="playPause nav-control-btn play-pause" title="Play/Pause">
-                <svg id="play-icon-navbar" class="play w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                </svg>
-                <svg id="pause-icon-navbar" class="pause w-6 h-6 hidden" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
-                </svg>
-              </button>
+<!-- Navigation Bar (Mobile Only) -->
+<nav id="navbar" class="glass-effect mobile-only">
+    <div class="navbar-content" data-label="All elements within navbar container">
 
-              <button class="next nav-control-btn" title="Next Track">
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798L4.555 5.168z" />
+        <!--- L E F T --->
+        <div class="navbar-left" data-label="Left container">
+            <button class="menu-trigger" id="menu-trigger" title="Menu" data-label="DropUp Menu's Open & Close Button">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
                 </svg>
-              </button>
-            </div>
-
-          </div>
+            </button>
         </div>
-      </nav>
 
+        <!--- C E N T E R --->
+        <div class="navbar-center" id="now-playing-area" data-tooltip="Open Now Playing" data-tooltip-placement="top">
+            <div class="nowPlaying" data-label="Opens the Music Player Drawer when clicked">
 
+                <div class="albumArtwork flex items-center justify-center relative">
+                    <svg class="w-6 h-6 text-white transition-opacity duration-500 ease-in-out" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.369 4.369 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z" />
+                    </svg>
+                    
+                    <img src="" alt="Album Cover" class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 ease-in-out" />
+                </div>
 
+                <div class="songInfo">
+                    <div class="songName truncate">No song playing</div>
+                    <div class="artistName truncate">Select a song to get started</div>
+                </div>
 
+                <div class="play-indicator" id="play-indicator"></div>
+            </div>
+        </div>
 
+        <div class="navbar-right">
+            <div class="nav-controls">
+                <button class="previous nav-control-btn" title="Previous Track">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M8.445 14.832A1 1 0 0010 14v-2.798l5.445 3.63A1 1 0 0017 14V6a1 1 0 00-1.555-.832L10 8.798V6a1 1 0 00-1.555-.832l-6 4a1 1 0 000 1.664l6 4z" />
+                    </svg>
+                </button>
+
+                <button class="playPause nav-control-btn play-pause" title="Play/Pause">
+                    <svg id="play-icon-navbar" class="play w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                    </svg>
+                    <svg id="pause-icon-navbar" class="pause w-6 h-6 hidden" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+
+                <button class="next nav-control-btn" title="Next Track">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798L4.555 5.168z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</nav>
 
 <!-- Dropdown Menu ----------------------------------------->
-    <div class="dropdown-menu" id="dropdown-menu">
-        <div class="dropdown-header">
-          <h3 class="dropdown-title">Music Library</h3>
-          <button class="dropdown-close" id="dropdown-close">
+<div class="dropdown-menu" id="dropdown-menu">
+    <div class="dropdown-header">
+        <h3 class="dropdown-title">Music Library</h3>
+        <button class="dropdown-close" id="dropdown-close">
             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
             </svg>
-          </button>
+        </button>
     </div>
 
-
-
-        <div class="dropdown-section">
-          <h4 class="section-title">
+    <div class="dropdown-section">
+        <h4 class="section-title">
             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
+                <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
             </svg>
             Search
-          </h4>
+        </h4>
 
-          <div class="dropdown-item" id="favorite-songs">
+        <div class="dropdown-item" id="favorite-songs">
             <div class="dropdown-item-icon">
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <div class="dropdown-item-content">
-              <div class="dropdown-item-title">
-                Find Songs, Albums, Artists</div>
-              <div class="dropdown-item-subtitle">Your liked tracks</div>
-            </div>
-<div class="dropdown-item-badge" id="favorite-songs-count">New!</div>
-          </div>
-
-<!-- Search Trigger Button (Add to your existing navbar/header) -->
-<button id="searchTrigger" class="search-trigger-btn flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-300 backdrop-blur-sm">
-  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-  </svg>
-  <span class="text-sm">Search</span>
-  <kbd class="hidden md:inline-block px-2 py-1 text-xs rounded bg-white/10">⌘K</kbd>
-</button>
-        </div>
-
-
-
-        <div class="dropdown-section">
-          <h4 class="section-title">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
-            </svg>
-            Favorites
-          </h4>
-
-          <div class="dropdown-item" id="favorite-songs">
-            <div class="dropdown-item-icon">
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <div class="dropdown-item-content">
-              <div class="dropdown-item-title">Favorite Songs</div>
-              <div class="dropdown-item-subtitle">Your liked tracks</div>
-            </div>
-            <div class="dropdown-item-badge" id="favorite-songs-count">0</div>
-          </div>
-
-          <div class="dropdown-item" id="favorite-artists">
-            <div class="dropdown-item-icon">
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9 12a3 3 0 00-3-3H2a1 1 0 100 2h4a1 1 0 011 1v.5a1 1 0 102 0V12zm3-8a3 3 0 100 6 3 3 0 000-6zm-1 4a1 1 0 11-2 0 1 1 0 012 0z" />
-              </svg>
-            </div>
-            <div class="dropdown-item-content">
-              <div class="dropdown-item-title">Favorite Artists</div>
-              <div class="dropdown-item-subtitle">Artists you follow</div>
-            </div>
-            <div class="dropdown-item-badge" id="favorite-artists-count">0</div>
-          </div>
-        </div>
-
-
-
-        <div class="dropdown-section">
-          <h4 class="section-title">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
-            </svg>
-            Library
-          </h4>
-
-          <div class="dropdown-item" id="recently-played">
-            <div class="dropdown-item-icon">
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
-              </svg>
-            </div>
-            <div class="dropdown-item-content">
-              <div class="dropdown-item-title">Recent Plays</div>
-              <div class="dropdown-item-subtitle">Recently played songs</div>
-            </div>
-            <div class="dropdown-item-badge" id="recent-count">0</div>
-          </div>
-
-          <div class="dropdown-item" id="queue-view">
-            <div class="dropdown-item-icon">
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" />
-              </svg>
-            </div>
-            <div class="dropdown-item-content">
-              <div class="dropdown-item-title">Up Next</div>
-              <div class="dropdown-item-subtitle">Songs in queue</div>
-            </div>
-            <div class="dropdown-item-badge" id="queue-count">0</div>
-          </div>
-        </div>
-
-        <div class="dropdown-section">
-          <h4 class="section-title">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
-            </svg>
-            Playlists
-          </h4>
-
-          <div class="dropdown-item" id="create-playlist">
-            <div class="dropdown-item-icon">
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-              </svg>
-            </div>
-            <div class="dropdown-item-content">
-              <div class="dropdown-item-title">Create Playlist</div>
-              <div class="dropdown-item-subtitle">Make a new playlist</div>
-            </div>
-          </div>
-
-          <div id="playlists-list">
-            <div class="empty-state" id="playlists-empty">
-              <div class="empty-state-icon">
-                <svg class="w-full h-full" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-              </div>
-              <div class="empty-state-text">
-                No playlists yet.<br />
-                Create your first playlist!
-              </div>
             </div>
-          </div>
+            <div class="dropdown-item-content">
+                <div class="dropdown-item-title">
+                    Find Songs, Albums, Artists</div>
+                <div class="dropdown-item-subtitle">Your liked tracks</div>
+            </div>
+            <div class="dropdown-item-badge" id="favorite-songs-count">New!</div>
         </div>
 
-        <div class="dropdown-section">
-          <h4 class="section-title">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
+        <!-- Search Trigger Button -->
+        <button id="searchTrigger" class="search-trigger-btn flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-300 backdrop-blur-sm">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
             </svg>
-            Actions
-          </h4>
-
-          <div class="dropdown-item" id="shuffle-all">
-            <div class="dropdown-item-icon">
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
-              </svg>
-            </div>
-            <div class="dropdown-item-content">
-              <div class="dropdown-item-title">Shuffle All</div>
-              <div class="dropdown-item-subtitle">Play all songs randomly</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="dropdown-section">
-          <h4 class="section-title">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
-            </svg>
-            Settings
-          </h4>
-
-          <div class="dropdown-item" id="app-settings">
-            <div class="dropdown-item-icon">
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-              </svg>
-            </div>
-            <div class="dropdown-item-content">
-              <div class="dropdown-item-title">Preferences</div>
-              <div class="dropdown-item-subtitle">App settings & options</div>
-            </div>
-          </div>
-
-          <div class="dropdown-item" id="about-app">
-            <div class="dropdown-item-icon">
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-              </svg>
-            </div>
-            <div class="dropdown-item-content">
-              <div class="dropdown-item-title">About</div>
-              <div class="dropdown-item-subtitle">Version & information</div>
-            </div>
-          </div>
-        </div>
-
-
+            <span class="text-sm">Search</span>
+            <kbd class="hidden md:inline-block px-2 py-1 text-xs rounded bg-white/10">⌘K</kbd>
+        </button>
     </div>
 
+    <div class="dropdown-section">
+        <h4 class="section-title">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
+            </svg>
+            Favorites
+        </h4>
 
-
-
-
-
-<!-- Music Player Drawer (refactored to align with new .btn system) -->
-<aside class="drawer" popover="auto" id="drawer">
-  <div class="drawerScroller">
-    <div class="drawerSlide">
-      <div class="drawerAnchors">
-        <div class="drawerAnchor"></div>
-        <div class="drawerAnchor"></div>
-      </div>
-
-      <button popovertargetaction="hide" popovertarget="drawer" class="drawerCurtain" tabindex="-1"></button>
-
-      <div class="tabsContainer">
-        <div class="tabs">
-          <button class="tab active" data-tab="playing">Now Playing</button>
-          <button class="tab" data-tab="recent">Recent Plays</button>
-          <button class="tab" data-tab="queue">Up Next</button>
-        </div>
-      </div>
-
-      <div class="drawerContent">
-        <div class="mpNav">
-          <button autofocus class="drawerDrag" popovertargetaction="hide" popovertarget="drawer"><span></span></button>
-        </div>
-
-        <div class="content">
-          <div class="musicPlayer" id="musicPlayer">
-            <div class="header">
-              <!-- Close button → maps to .btn--close; ID preserved -->
-              <button class="btn btn--close use-site-colors" id="closeBtn">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 432 540" aria-hidden="true">
-                  <path fill="currentColor" d="M97.5 118.5c-14.1-14.1-36.9-14.1-50.9 0s-14.1 36.9 0 50.9L152.4 275.3c6.9 6.9 6.9 18.5 0 25.5L46.5 406.5c-14.1 14.1-14.1 36.9 0 50.9s36.9 14.1 50.9 0L203.3 351.6c7-7 18.4-7 25.5 0L334.5 457.5c14.1 14.1 36.9 14.1 50.9 0s14.1-36.9 0-50.9L279.6 300.7c-7-7-7-18.4 0-25.5L385.5 169.5c14.1-14.1 14.1-36.9 0-50.9s-36.9-14.1-50.9 0L228.7 224.4c-7 7-18.4 7-25.5 0L97.5 118.5zM21.1 93.1C49.2 65 94.8 65 122.9 93.1l93.1 93.1 93.1-93.1c28.1-28.1 73.7-28.1 101.8 0s28.1 73.7 0 101.8l-93.1 93.1 93.1 93.1c28.1 28.1 28.1 73.7 0 101.8s-73.7 28.1-101.8 0l-93.1-93.1-93.1 93.1C94.8 511 49.2 511 21.1 482.9s-28.1-73.7 0-101.8l93.1-93.1-93.1-93.1C-7 166.8-7 121.2 21.1 93.1z" />
+        <div class="dropdown-item" id="favorite-songs">
+            <div class="dropdown-item-icon">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-              </button>
+            </div>
+            <div class="dropdown-item-content">
+                <div class="dropdown-item-title">Favorite Songs</div>
+                <div class="dropdown-item-subtitle">Your liked tracks</div>
+            </div>
+            <div class="dropdown-item-badge" id="favorite-songs-count">0</div>
+        </div>
+
+        <div class="dropdown-item" id="favorite-artists">
+            <div class="dropdown-item-icon">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9 12a3 3 0 00-3-3H2a1 1 0 100 2h4a1 1 0 011 1v.5a1 1 0 102 0V12zm3-8a3 3 0 100 6 3 3 0 000-6zm-1 4a1 1 0 11-2 0 1 1 0 012 0z" />
+                </svg>
+            </div>
+            <div class="dropdown-item-content">
+                <div class="dropdown-item-title">Favorite Artists</div>
+                <div class="dropdown-item-subtitle">Artists you follow</div>
+            </div>
+            <div class="dropdown-item-badge" id="favorite-artists-count">0</div>
+        </div>
+    </div>
+
+    <div class="dropdown-section">
+        <h4 class="section-title">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+            </svg>
+            Library
+        </h4>
+
+        <div class="dropdown-item" id="recently-played">
+            <div class="dropdown-item-icon">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                </svg>
+            </div>
+            <div class="dropdown-item-content">
+                <div class="dropdown-item-title">Recent Plays</div>
+                <div class="dropdown-item-subtitle">Recently played songs</div>
+            </div>
+            <div class="dropdown-item-badge" id="recent-count">0</div>
+        </div>
+
+        <div class="dropdown-item" id="queue-view">
+            <div class="dropdown-item-icon">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" />
+                </svg>
+            </div>
+            <div class="dropdown-item-content">
+                <div class="dropdown-item-title">Up Next</div>
+                <div class="dropdown-item-subtitle">Songs in queue</div>
+            </div>
+            <div class="dropdown-item-badge" id="queue-count">0</div>
+        </div>
+    </div>
+
+    <div class="dropdown-section">
+        <h4 class="section-title">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+            </svg>
+            Playlists
+        </h4>
+
+        <div class="dropdown-item" id="create-playlist">
+            <div class="dropdown-item-icon">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                </svg>
+            </div>
+            <div class="dropdown-item-content">
+                <div class="dropdown-item-title">Create Playlist</div>
+                <div class="dropdown-item-subtitle">Make a new playlist</div>
+            </div>
+        </div>
+
+        <div id="playlists-list">
+            <div class="empty-state" id="playlists-empty">
+                <div class="empty-state-icon">
+                    <svg class="w-full h-full" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+                    </svg>
+                </div>
+                <div class="empty-state-text">
+                    No playlists yet.<br />
+                    Create your first playlist!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dropdown-section">
+        <h4 class="section-title">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
+            </svg>
+            Actions
+        </h4>
+
+        <div class="dropdown-item" id="shuffle-all">
+            <div class="dropdown-item-icon">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                </svg>
+            </div>
+            <div class="dropdown-item-content">
+                <div class="dropdown-item-title">Shuffle All</div>
+                <div class="dropdown-item-subtitle">Play all songs randomly</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dropdown-section">
+        <h4 class="section-title">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+            </svg>
+            Settings
+        </h4>
+
+        <div class="dropdown-item" id="app-settings">
+            <div class="dropdown-item-icon">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                </svg>
+            </div>
+            <div class="dropdown-item-content">
+                <div class="dropdown-item-title">Preferences</div>
+                <div class="dropdown-item-subtitle">App settings & options</div>
+            </div>
+        </div>
+
+        <div class="dropdown-item" id="about-app">
+            <div class="dropdown-item-icon">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                </svg>
+            </div>
+            <div class="dropdown-item-content">
+                <div class="dropdown-item-title">About</div>
+                <div class="dropdown-item-subtitle">Version & information</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- UNIFIED Music Player Drawer (SAME PLAYER FOR ALL DEVICES) -->
+<aside class="drawer" popover="auto" id="drawer">
+    <div class="drawerScroller">
+        <div class="drawerSlide">
+            <div class="drawerAnchors">
+                <div class="drawerAnchor"></div>
+                <div class="drawerAnchor"></div>
             </div>
 
-            <div class="body">
-              <!-- Now Playing -->
-              <div class="content active" data-tab="playing">
-                <img id="cover" src="" alt="Album Cover" class="albumArtwork cover" />
+            <button popovertargetaction="hide" popovertarget="drawer" class="drawerCurtain" tabindex="-1"></button>
 
-                <div class="info">
-                  <h4 id="title" class="songName title"></h4>
-                  <p id="artist" class="artistName artist"></p>
-                  <p id="album" class="albumName album"></p>
+            <div class="tabsContainer">
+                <div class="tabs">
+                    <button class="tab active" data-tab="playing">Now Playing</button>
+                    <button class="tab" data-tab="recent">Recent Plays</button>
+                    <button class="tab" data-tab="queue">Up Next</button>
                 </div>
-
-                <!-- Progress slider (untouched aside from formatting) -->
-                <div class="progress" id="musicProgress">
-                  <div class="time">
-                    <span id="currentTime">0:00</span>
-                    <span id="totalTime">0:00</span>
-                  </div>
-
-                  <div class="progressBar" id="progressBar" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Seek">
-                    <div class="progressBuffer" id="progressBuffer" style="width: 0%;"></div>
-
-                    <div class="progressFill" id="progressFill" style="width: 0%;">
-                      <div class="progressThumb" id="progressThumb" style="left: 0%;"></div>
-                    </div>
-
-                    <div class="progressShadow" aria-hidden="true"></div>
-                  </div>
-                </div>
-
-                <!-- Playback controls → map to .btn--playback; IDs preserved -->
-                <div class="controls playerControls playback-bar">
-                  <button class="btn btn--icon-only use-site-colors" id="prevBtn" title="Previous">
-                    <span data-icon="prev" class="icon"></span>
-                  </button>
-
-                  <button class="btn btn--icon-only use-site-colors" id="rewindBtn" title="Rewind 10s">
-                    <span data-icon="rewind" class="icon"></span>
-                  </button>
-
-                  <button class="btn btn--icon-only is-primary" id="playBtn" title="Play/Pause">
-                    <span data-icon="play" class="icon play"></span>
-                    <span data-icon="pause" class="icon pause"></span>
-                  </button>
-
-                  <button class="btn btn--icon-only use-site-colors" id="forwardBtn" title="Forward 10s">
-                    <span data-icon="forward" class="icon"></span>
-                  </button>
-
-                  <button class="btn btn--icon-only use-site-colors" id="nextBtn" title="Next">
-                    <span data-icon="next" class="icon"></span>
-                  </button>
-                </div>
-
-                <!-- Secondary player actions → compact icon buttons -->
-                <div class="actions">
-                  <button class="btn btn--icon-only use-site-colors" id="favoriteBtn" title="Add to Favorites">
-                    <span data-icon="heart" class="icon"></span>
-                  </button>
-
-                  <button class="btn btn--icon-only use-site-colors" id="queueBtn" title="View Queue">
-                    <span data-icon="queue" class="icon"></span>
-                  </button>
-
-                  <button class="btn btn--icon-only use-site-colors" id="shareBtn" title="Share">
-                    <span data-icon="share" class="icon"></span>
-                  </button>
-
-                  <button class="btn btn--icon-only use-site-colors" id="moreBtn" title="More Options">
-                    <span data-icon="more" class="icon"></span>
-                  </button>
-                </div>
-              </div>
-
-              <!-- Queue -->
-              <div class="content" data-tab="queue">
-                <ul id="queueList" class="list">
-                  <div class="empty">
-                    <div class="emptyIcon">
-                      <svg class="icon" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                        <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
-                      </svg>
-                    </div>
-                    <div class="emptyText">Queue is empty.</div>
-                  </div>
-                </ul>
-              </div>
-
-              <!-- Recent -->
-              <div class="content" data-tab="recent">
-                <ul id="recentList" class="list">
-                  <div class="empty">
-                    <div class="emptyIcon">
-                      <svg class="icon" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                        <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
-                      </svg>
-                    </div>
-                    <div class="emptyText">No recently played songs.</div>
-                  </div>
-                </ul>
-              </div>
             </div>
-          </div><!-- Music Player -->
-        </div><!-- Content -->
-      </div><!-- drawerContent -->
-    </div><!-- drawerSlide -->
-  </div><!-- drawerScroller -->
-  <canvas id="reactionCanvas"></canvas>
+
+            <div class="drawerContent">
+                <div class="mpNav">
+                    <button autofocus class="drawerDrag" popovertargetaction="hide" popovertarget="drawer"><span></span></button>
+                </div>
+
+                <div class="content">
+                    <div class="musicPlayer" id="musicPlayer">
+                        <div class="header">
+                            <button class="btn btn--close use-site-colors" id="closeBtn">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 432 540" aria-hidden="true">
+                                    <path fill="currentColor" d="M97.5 118.5c-14.1-14.1-36.9-14.1-50.9 0s-14.1 36.9 0 50.9L152.4 275.3c6.9 6.9 6.9 18.5 0 25.5L46.5 406.5c-14.1 14.1-14.1 36.9 0 50.9s36.9 14.1 50.9 0L203.3 351.6c7-7 18.4-7 25.5 0L334.5 457.5c14.1 14.1 36.9 14.1 50.9 0s14.1-36.9 0-50.9L279.6 300.7c-7-7-7-18.4 0-25.5L385.5 169.5c14.1-14.1 14.1-36.9 0-50.9s-36.9-14.1-50.9 0L228.7 224.4c-7 7-18.4 7-25.5 0L97.5 118.5zM21.1 93.1C49.2 65 94.8 65 122.9 93.1l93.1 93.1 93.1-93.1c28.1-28.1 73.7-28.1 101.8 0s28.1 73.7 0 101.8l-93.1 93.1 93.1 93.1c28.1 28.1 28.1 73.7 0 101.8s-73.7 28.1-101.8 0l-93.1-93.1-93.1 93.1C94.8 511 49.2 511 21.1 482.9s-28.1-73.7 0-101.8l93.1-93.1-93.1-93.1C-7 166.8-7 121.2 21.1 93.1z" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div class="body">
+                            <!-- Now Playing -->
+                            <div class="content active" data-tab="playing">
+                                <img id="cover" src="" alt="Album Cover" class="albumArtwork cover" />
+
+                                <div class="info">
+                                    <h4 id="title" class="songName title"></h4>
+                                    <p id="artist" class="artistName artist"></p>
+                                    <p id="album" class="albumName album"></p>
+                                </div>
+
+                                <!-- Progress slider -->
+                                <div class="progress" id="musicProgress">
+                                    <div class="time">
+                                        <span id="currentTime">0:00</span>
+                                        <span id="totalTime">0:00</span>
+                                    </div>
+
+                                    <div class="progressBar" id="progressBar" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Seek">
+                                        <div class="progressBuffer" id="progressBuffer" style="width: 0%;"></div>
+
+                                        <div class="progressFill" id="progressFill" style="width: 0%;">
+                                            <div class="progressThumb" id="progressThumb" style="left: 0%;"></div>
+                                        </div>
+
+                                        <div class="progressShadow" aria-hidden="true"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Playback controls -->
+                                <div class="controls playerControls playback-bar">
+                                    <button class="btn btn--icon-only use-site-colors" id="prevBtn" title="Previous">
+                                        <span data-icon="prev" class="icon"></span>
+                                    </button>
+
+                                    <button class="btn btn--icon-only use-site-colors" id="rewindBtn" title="Rewind 10s">
+                                        <span data-icon="rewind" class="icon"></span>
+                                    </button>
+
+                                    <button class="btn btn--icon-only is-primary" id="playBtn" title="Play/Pause">
+                                        <span data-icon="play" class="icon play"></span>
+                                        <span data-icon="pause" class="icon pause"></span>
+                                    </button>
+
+                                    <button class="btn btn--icon-only use-site-colors" id="forwardBtn" title="Forward 10s">
+                                        <span data-icon="forward" class="icon"></span>
+                                    </button>
+
+                                    <button class="btn btn--icon-only use-site-colors" id="nextBtn" title="Next">
+                                        <span data-icon="next" class="icon"></span>
+                                    </button>
+                                </div>
+
+                                <!-- Secondary player actions -->
+                                <div class="actions">
+                                    <button class="btn btn--icon-only use-site-colors" id="favoriteBtn" title="Add to Favorites">
+                                        <span data-icon="heart" class="icon"></span>
+                                    </button>
+
+                                    <button class="btn btn--icon-only use-site-colors" id="queueBtn" title="View Queue">
+                                        <span data-icon="queue" class="icon"></span>
+                                    </button>
+
+                                    <button class="btn btn--icon-only use-site-colors" id="shareBtn" title="Share">
+                                        <span data-icon="share" class="icon"></span>
+                                    </button>
+
+                                    <button class="btn btn--icon-only use-site-colors" id="moreBtn" title="More Options">
+                                        <span data-icon="more" class="icon"></span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Queue -->
+                            <div class="content" data-tab="queue">
+                                <ul id="queueList" class="list">
+                                    <div class="empty">
+                                        <div class="emptyIcon">
+                                            <svg class="icon" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                                <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+                                            </svg>
+                                        </div>
+                                        <div class="emptyText">Queue is empty.</div>
+                                    </div>
+                                </ul>
+                            </div>
+
+                            <!-- Recent -->
+                            <div class="content" data-tab="recent">
+                                <ul id="recentList" class="list">
+                                    <div class="empty">
+                                        <div class="emptyIcon">
+                                            <svg class="icon" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                                <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+                                            </svg>
+                                        </div>
+                                        <div class="emptyText">No recently played songs.</div>
+                                    </div>
+                                </ul>
+                            </div>
+                        </div>
+                    </div><!-- Music Player -->
+                </div><!-- Content -->
+            </div><!-- drawerContent -->
+        </div><!-- drawerSlide -->
+    </div><!-- drawerScroller -->
+    <canvas id="reactionCanvas"></canvas>
 </aside><!-- drawer -->
-
-
-
-
-
-
 
 <!-- Main Content Area -->
 <div id="mainArea">
-        
-        <main id="main-container" class="content-container max-w-6xl mx-auto pb-24">
-          <div id="contentWrapper" class="relative">
+    <main id="main-container" class="content-container max-w-6xl mx-auto pb-24">
+        <div id="contentWrapper" class="relative">
 
+            <nav aria-label="Breadcrumb" class="breadcrumb-wrapper breadcrumb-fade-in">
+                <ol class="breadcrumb-list">
+                    <li class="breadcrumb-item">
+                        <a href="#" class="breadcrumb-link">
+                            <svg class="breadcrumb-home-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                            </svg>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
 
+                    <li class="breadcrumb-chevron">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </li>
 
+                    <li class="breadcrumb-item">
+                        <a href="#" class="breadcrumb-link">
+                            <span>Projects</span>
+                        </a>
+                    </li>
 
- 
-<nav aria-label="Breadcrumb" class="breadcrumb-wrapper breadcrumb-fade-in">
-  <ol class="breadcrumb-list">
-    <li class="breadcrumb-item">
-      <a href="#" class="breadcrumb-link">
-        <svg class="breadcrumb-home-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-        </svg>
-        <span>Dashboard</span>
-      </a>
+                    <li class="breadcrumb-chevron">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </li>
+
+                    <li class="breadcrumb-item">
+                        <a href="#" class="breadcrumb-link">
+                            <span>Web Development</span>
+                        </a>
+                    </li>
+
+                    <li class="breadcrumb-chevron">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
+                        </svg>
     </li>
 
-    <li class="breadcrumb-chevron">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
-      </svg>
-    </li>
-
-    <li class="breadcrumb-item">
-      <a href="#" class="breadcrumb-link">
-        <span>Projects</span>
-      </a>
-    </li>
-
-    <li class="breadcrumb-chevron">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
-      </svg>
-    </li>
-
-    <li class="breadcrumb-item">
-      <a href="#" class="breadcrumb-link">
-        <span>Web Development</span>
-      </a>
-    </li>
-
-    <li class="breadcrumb-chevron">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
-      </svg>
-    </li>
-
-    <li class="breadcrumb-item active" aria-current="page">
-      <span class="breadcrumb-link">
-        <span>E-Commerce Platform</span>
-      </span>
-    </li>
-  </ol>
-</nav>
-
-
-
-
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <span class="breadcrumb-link">
+                            <span>E-Commerce Platform</span>
+                        </span>
+                    </li>
+                </ol>
+            </nav>
 
             <div id="dynamic-content">
-
-              <div id="featured-artists" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 px-4"></div>
+                <div id="featured-artists" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 px-4"></div>
             </div>
-
-
-
-
-
-
-
-
             
-            
-          </div>
-        </main>
-        
-      </div>
-
-
-
-
-
-
-
-
-
-
-
+        </div>
+    </main>
+</div>
 
 <!--------   O V E R LA Y S   -------------------->
 <!-- Popover Portal -->
 <div id="popover-portal" class="popover-portal">
-<!-- 
-PopOvers Injected Here 
--->
+<!-- PopOvers Injected Here -->
 </div>
-
 
 <!-- PWA Install Banner -->
 <div id="pwa-install-banner" class="fixed bottom-0 end-0 z-60 sm:max-w-sm w-full mx-auto p-6 opacity-0 pointer-events-none transition-all duration-300">
-        <div class="p-4 bg-white border border-gray-200 rounded-xl shadow-2xs dark:bg-neutral-900 dark:border-neutral-800 flex gap-x-4">
-          <svg class="shrink-0 w-8 h-auto" width="72" height="63" viewBox="0 0 72 63" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <div class="p-4 bg-white border border-gray-200 rounded-xl shadow-2xs dark:bg-neutral-900 dark:border-neutral-800 flex gap-x-4">
+        <svg class="shrink-0 w-8 h-auto" width="72" height="63" viewBox="0 0 72 63" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M15.5174 56.1528C16.2903 57.6825 16.929 61.4559 14.8118 60.9459C13.5013 60.5381 11.4445 57.6213 12.493 56.1528C12.661 55.8468 13.2189 55.2757 14.106 55.4389" stroke="currentColor" class="dark:stroke-neutral-200" stroke-width="2" stroke-linecap="round"/>
             <path d="M15.5173 49.6263L14.0262 48.5579C13.5346 48.2056 12.8477 48.3707 12.658 48.945C12.3456 49.8907 12.1258 51.1463 12.462 52.2324C12.5336 52.4636 12.7127 52.6466 12.9449 52.7146C13.8342 52.9751 15.2568 52.9048 15.8197 51.054" stroke="currentColor" class="dark:stroke-neutral-200" stroke-width="2" stroke-linecap="round"/>
             <ellipse cx="51.2061" cy="22.3973" rx="3.02446" ry="3.05945" fill="currentColor" class="text-gray-800 dark:fill-neutral-200"/>
-          </svg>
-          <div class="grow">
+        </svg>
+        <div class="grow">
             <p class="text-sm text-gray-800 dark:text-neutral-200">
-              Open in the app, or 
-              <a id="pwa-download-link" class="inline-flex items-center gap-x-1.5 text-blue-600 decoration-2 hover:underline font-medium dark:text-blue-500" href="#">
-                Install App
-              </a>
+                Open in the app, or 
+                <a id="pwa-download-link" class="inline-flex items-center gap-x-1.5 text-blue-600 decoration-2 hover:underline font-medium dark:text-blue-500" href="#">
+                    Install App
+                </a>
             </p>
-          </div>
-          <div>
-            <button id="pwa-dismiss" type="button" class="p-2 inline-flex items-center gap-x-2 text-sm font-semibold rounded-full border border-transparent text-gray-500 hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700">
-              <span class="sr-only">Dismiss</span>
-              <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
-            </button>
-          </div>
         </div>
+        <div>
+            <button id="pwa-dismiss" type="button" class="p-2 inline-flex items-center gap-x-2 text-sm font-semibold rounded-full border border-transparent text-gray-500 hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700">
+                <span class="sr-only">Dismiss</span>
+                <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+            </button>
+        </div>
+    </div>
 </div>
-<!------------------------------------------------->
-
 
 <!-- Search Modal -->
 <div id="searchModal" class="search-modal-overlay hidden fixed inset-0 z-[9999] opacity-0 transition-opacity duration-300">
-  <!-- Backdrop with blur -->
-  <div class="search-backdrop absolute inset-0 bg-black/60 backdrop-blur-xl"></div>
-  
-  <!-- Search Container -->
-  <div class="search-container relative flex items-start justify-center min-h-screen p-4 pt-[15vh]">
-    <div class="search-content w-full max-w-3xl transform scale-95 opacity-0 transition-all duration-300">
-      
-      <!-- Search Input Area -->
-      <div class="search-input-wrapper relative bg-gradient-to-br from-gray-900/95 to-gray-800/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/10 overflow-hidden">
-        
-        <!-- Search Bar -->
-        <div class="flex items-center gap-4 px-6 py-5 border-b border-white/10">
-          <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-          </svg>
-          
-          <input 
-            type="text" 
-            id="searchInput" 
-            placeholder="Search songs, artists, albums..." 
-            class="flex-1 bg-transparent text-white text-lg placeholder-gray-400 outline-none"
-            autocomplete="off"
-            spellcheck="false"
-          />
-          
-          <!-- Clear Button -->
-          <button id="clearSearch" class="clear-btn hidden text-gray-400 hover:text-white transition-colors p-2 rounded-full hover:bg-white/10">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-            </svg>
-          </button>
-          
-          <!-- Close Button -->
-          <button id="closeSearch" class="text-gray-400 hover:text-white transition-colors">
-            <span class="text-sm font-medium">ESC</span>
-          </button>
+    <!-- Backdrop with blur -->
+    <div class="search-backdrop absolute inset-0 bg-black/60 backdrop-blur-xl"></div>
+    
+    <!-- Search Container -->
+    <div class="search-container relative flex items-start justify-center min-h-screen p-4 pt-[15vh]">
+        <div class="search-content w-full max-w-3xl transform scale-95 opacity-0 transition-all duration-300">
+            
+            <!-- Search Input Area -->
+            <div class="search-input-wrapper relative bg-gradient-to-br from-gray-900/95 to-gray-800/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/10 overflow-hidden">
+                
+                <!-- Search Bar -->
+                <div class="flex items-center gap-4 px-6 py-5 border-b border-white/10">
+                    <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                    
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        placeholder="Search songs, artists, albums..." 
+                        class="flex-1 bg-transparent text-white text-lg placeholder-gray-400 outline-none"
+                        autocomplete="off"
+                        spellcheck="false"
+                    />
+                    
+                    <!-- Clear Button -->
+                    <button id="clearSearch" class="clear-btn hidden text-gray-400 hover:text-white transition-colors p-2 rounded-full hover:bg-white/10">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                        </svg>
+                    </button>
+                    
+                    <!-- Close Button -->
+                    <button id="closeSearch" class="text-gray-400 hover:text-white transition-colors">
+                        <span class="text-sm font-medium">ESC</span>
+                    </button>
+                </div>
+                
+                <!-- Search Results / Content Area -->
+                <div id="searchResults" class="search-results max-h-[60vh] overflow-y-auto custom-scrollbar">
+                    
+                    <!-- Recent Searches (Default View) -->
+                    <div id="recentSearches" class="recent-searches p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Recent Searches</h3>
+                            <button id="clearRecentBtn" class="text-xs text-gray-500 hover:text-white transition-colors">Clear All</button>
+                        </div>
+                        
+                        <div id="recentSearchList" class="space-y-2">
+                            <!-- Recent search items will be inserted here -->
+                        </div>
+                        
+                        <div id="recentSearchesEmpty" class="hidden text-center py-12 text-gray-500">
+                            <svg class="w-16 h-16 mx-auto mb-4 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                            <p>No recent searches</p>
+                            <p class="text-sm mt-2">Start searching to see your history</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Search Results Content -->
+                    <div id="searchResultsContent" class="hidden">
+                        <!-- Categories -->
+                        <div id="songsResults" class="search-category hidden">
+                            <div class="px-6 py-4 border-b border-white/5">
+                                <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Songs</h3>
+                            </div>
+                            <div id="songsList" class="divide-y divide-white/5"></div>
+                        </div>
+                        
+                        <div id="artistsResults" class="search-category hidden">
+                            <div class="px-6 py-4 border-b border-white/5">
+                                <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Artists</h3>
+                            </div>
+                            <div id="artistsList" class="divide-y divide-white/5"></div>
+                        </div>
+                        
+                        <div id="albumsResults" class="search-category hidden">
+                            <div class="px-6 py-4 border-b border-white/5">
+                                <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Albums</h3>
+                            </div>
+                            <div id="albumsList" class="grid grid-cols-2 gap-4 p-6"></div>
+                        </div>
+                        
+                        <!-- No Results -->
+                        <div id="noResults" class="hidden text-center py-16 px-6">
+                            <svg class="w-20 h-20 mx-auto mb-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <h3 class="text-xl font-semibold text-gray-300 mb-2">No results found</h3>
+                            <p class="text-gray-500">Try adjusting your search terms</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Loading State -->
+                    <div id="searchLoading" class="hidden py-16 text-center">
+                        <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-700 border-t-accent-primary"></div>
+                    </div>
+                    
+                </div>
+                
+                <!-- Quick Filters (Optional) -->
+                <div class="px-6 py-3 border-t border-white/10 bg-black/20 flex gap-2 overflow-x-auto custom-scrollbar">
+                    <button class="filter-chip active" data-filter="all">All</button>
+                    <button class="filter-chip" data-filter="songs">Songs</button>
+                    <button class="filter-chip" data-filter="artists">Artists</button>
+                    <button class="filter-chip" data-filter="albums">Albums</button>
+                </div>
+                
+            </div>
+            
+            <!-- Search Tips -->
+            <div class="mt-4 px-4 text-center text-xs text-gray-500">
+                <span class="inline-flex items-center gap-4">
+                    <span>↑↓ to navigate</span>
+                    <span>↵ to select</span>
+                    <span>ESC to close</span>
+                </span>
+            </div>
+            
         </div>
-        
-        <!-- Search Results / Content Area -->
-        <div id="searchResults" class="search-results max-h-[60vh] overflow-y-auto custom-scrollbar">
-          
-          <!-- Recent Searches (Default View) -->
-          <div id="recentSearches" class="recent-searches p-6">
-            <div class="flex items-center justify-between mb-4">
-              <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Recent Searches</h3>
-              <button id="clearRecentBtn" class="text-xs text-gray-500 hover:text-white transition-colors">Clear All</button>
-            </div>
-            
-            <div id="recentSearchList" class="space-y-2">
-              <!-- Recent search items will be inserted here -->
-            </div>
-            
-            <div id="recentSearchesEmpty" class="hidden text-center py-12 text-gray-500">
-              <svg class="w-16 h-16 mx-auto mb-4 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-              </svg>
-              <p>No recent searches</p>
-              <p class="text-sm mt-2">Start searching to see your history</p>
-            </div>
-          </div>
-          
-          <!-- Search Results Content -->
-          <div id="searchResultsContent" class="hidden">
-            <!-- Categories -->
-            <div id="songsResults" class="search-category hidden">
-              <div class="px-6 py-4 border-b border-white/5">
-                <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Songs</h3>
-              </div>
-              <div id="songsList" class="divide-y divide-white/5"></div>
-            </div>
-            
-            <div id="artistsResults" class="search-category hidden">
-              <div class="px-6 py-4 border-b border-white/5">
-                <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Artists</h3>
-              </div>
-              <div id="artistsList" class="divide-y divide-white/5"></div>
-            </div>
-            
-            <div id="albumsResults" class="search-category hidden">
-              <div class="px-6 py-4 border-b border-white/5">
-                <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Albums</h3>
-              </div>
-              <div id="albumsList" class="grid grid-cols-2 gap-4 p-6"></div>
-            </div>
-            
-            <!-- No Results -->
-            <div id="noResults" class="hidden text-center py-16 px-6">
-              <svg class="w-20 h-20 mx-auto mb-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-              </svg>
-              <h3 class="text-xl font-semibold text-gray-300 mb-2">No results found</h3>
-              <p class="text-gray-500">Try adjusting your search terms</p>
-            </div>
-          </div>
-          
-          <!-- Loading State -->
-          <div id="searchLoading" class="hidden py-16 text-center">
-            <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-700 border-t-accent-primary"></div>
-          </div>
-          
-        </div>
-        
-        <!-- Quick Filters (Optional) -->
-        <div class="px-6 py-3 border-t border-white/10 bg-black/20 flex gap-2 overflow-x-auto custom-scrollbar">
-          <button class="filter-chip active" data-filter="all">All</button>
-          <button class="filter-chip" data-filter="songs">Songs</button>
-          <button class="filter-chip" data-filter="artists">Artists</button>
-          <button class="filter-chip" data-filter="albums">Albums</button>
-        </div>
-        
-      </div>
-      
-      <!-- Search Tips -->
-      <div class="mt-4 px-4 text-center text-xs text-gray-500">
-        <span class="inline-flex items-center gap-4">
-          <span>↑↓ to navigate</span>
-          <span>↵ to select</span>
-          <span>ESC to close</span>
-        </span>
-      </div>
-      
     </div>
-  </div>
 </div>
 
 </div><!-- W R A P P E R -->
-
 
 <!-- L I B R A R I E S -->
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -872,11 +1959,8 @@ PopOvers Injected Here
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy.umd.min.js"></script>
 
-
 <!-- ToolTips - PopOvers -->
 <script type="module" src="./siteScripts/utilities/overlays.js"></script>
-
-
 
 <!-- Music Library -->
 <script type="module" src="./modules/library.js"></script>
@@ -884,43 +1968,74 @@ PopOvers Injected Here
 
 <!-- Initialization modules -->
 <script type="module" src="./siteScripts/init.js"></script>
+<script type="module" src="./siteScripts/unifiedPlayerController.js"></script>
+<script type="module" src="./siteScripts/unifiedPlayerIntergration.js"></script>
 
-<!-- Desktop Menu Trigger Handler -->
+<!-- Unified Player Controller Script -->
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    const desktopMenuTrigger = document.getElementById('desktop-menu-trigger');
+    // Unified menu triggers (works for both mobile navbar and desktop/tablet triggers)
     const mobileMenuTrigger = document.getElementById('menu-trigger');
+    const unifiedMenuTrigger = document.getElementById('unified-menu-trigger');
     const dropdownMenu = document.getElementById('dropdown-menu');
     const dropdownClose = document.getElementById('dropdown-close');
     
-    // Desktop menu trigger
-    if (desktopMenuTrigger && dropdownMenu) {
-        desktopMenuTrigger.addEventListener('click', () => {
-            dropdownMenu.classList.toggle('show');
-        });
+    // Menu trigger handlers
+    function toggleMenu() {
+        dropdownMenu.classList.toggle('show');
     }
     
-    // Mobile menu trigger (existing)
+    function closeMenu() {
+        dropdownMenu.classList.remove('show');
+    }
+    
+    // Bind mobile menu trigger
     if (mobileMenuTrigger && dropdownMenu) {
-        mobileMenuTrigger.addEventListener('click', () => {
-            dropdownMenu.classList.toggle('show');
-        });
+        mobileMenuTrigger.addEventListener('click', toggleMenu);
+    }
+    
+    // Bind unified menu trigger (desktop/tablet)
+    if (unifiedMenuTrigger && dropdownMenu) {
+        unifiedMenuTrigger.addEventListener('click', toggleMenu);
     }
     
     // Close button
     if (dropdownClose && dropdownMenu) {
-        dropdownClose.addEventListener('click', () => {
-            dropdownMenu.classList.remove('show');
+        dropdownClose.addEventListener('click', closeMenu);
+    }
+    
+    // Close on clicking outside
+    if (dropdownMenu) {
+        dropdownMenu.addEventListener('click', (e) => {
+            if (e.target === dropdownMenu) {
+                closeMenu();
+            }
         });
     }
     
-    // Close on clicking outside (for desktop overlay)
-    if (dropdownMenu) {
-        dropdownMenu.addEventListener('click', (e) => {
-            if (e.target === dropdownMenu && window.matchMedia('(min-width: 1024px)').matches) {
-                dropdownMenu.classList.remove('show');
+    // Unified player triggers
+    const mobilePlayerTrigger = document.getElementById('now-playing-area');
+    const unifiedPlayerTrigger = document.getElementById('unified-player-trigger');
+    const drawer = document.getElementById('drawer');
+    
+    function togglePlayer() {
+        if (drawer) {
+            if (drawer.matches(':popover-open')) {
+                drawer.hidePopover();
+            } else {
+                drawer.showPopover();
             }
-        });
+        }
+    }
+    
+    // Bind mobile player trigger (navbar center)
+    if (mobilePlayerTrigger) {
+        mobilePlayerTrigger.addEventListener('click', togglePlayer);
+    }
+    
+    // Bind unified player trigger (desktop/tablet)
+    if (unifiedPlayerTrigger) {
+        unifiedPlayerTrigger.addEventListener('click', togglePlayer);
     }
 });
 </script>
@@ -937,8 +2052,6 @@ document.addEventListener('DOMContentLoaded', () => {
         await app.initialize();
     });
 </script>
-
-
 
 <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
     
