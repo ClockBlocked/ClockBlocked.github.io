@@ -961,3 +961,310 @@
 .artist-item:nth-child(5),
 .song-row:nth-child(5),
 .playlist-item:nth-child(5) { animation-delay: 0.25s; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ============================================
+   DIALOG ELEMENT INTEGRATION
+   ============================================ */
+
+dialog.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: visible;
+  opacity: 0;
+  transition: all 0.25s ease;
+}
+
+dialog.modal::backdrop {
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+dialog.modal[open] {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+dialog.modal[open]::backdrop {
+  opacity: 1;
+}
+
+dialog.modal.closing {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.95);
+}
+
+dialog.modal.closing::backdrop {
+  opacity: 0;
+}
+
+/* Viewer Type Modals */
+dialog.modal.viewer .modal-content {
+  background: linear-gradient(135deg, rgba(17, 24, 39, 0.95) 0%, rgba(31, 41, 55, 0.95) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.5rem;
+  max-width: 900px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5),
+              0 0 0 1px rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+}
+
+/* Dialog Type Modals */
+dialog.modal.dialog {
+  max-width: 500px;
+  width: 90%;
+}
+
+dialog.modal.dialog .modal-content {
+  background: linear-gradient(135deg, rgba(17, 24, 39, 0.98) 0%, rgba(31, 41, 55, 0.98) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.6);
+}
+
+dialog.modal.dialog .header {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+dialog.modal.dialog .actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+dialog.modal.dialog .btn {
+  padding: 0.625rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+dialog.modal.dialog .btn.primary {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.9) 0%, rgba(37, 99, 235, 0.9) 100%);
+  color: white;
+}
+
+dialog.modal.dialog .btn.primary:hover {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 1) 0%, rgba(29, 78, 216, 1) 100%);
+}
+
+dialog.modal.dialog .btn.danger {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.9) 0%, rgba(220, 38, 38, 0.9) 100%);
+  color: white;
+}
+
+dialog.modal.dialog .btn.danger:hover {
+  background: linear-gradient(135deg, rgba(220, 38, 38, 1) 0%, rgba(185, 28, 28, 1) 100%);
+}
+
+dialog.modal.dialog .btn.muted {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+dialog.modal.dialog .btn.muted:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Form Type Modals */
+dialog.modal.form {
+  max-width: 500px;
+  width: 90%;
+}
+
+dialog.modal.form .modal-content {
+  background: linear-gradient(135deg, rgba(17, 24, 39, 0.98) 0%, rgba(31, 41, 55, 0.98) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.6);
+}
+
+dialog.modal.form .header {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+dialog.modal.form .body {
+  margin-bottom: 1.5rem;
+}
+
+dialog.modal.form .input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.5rem;
+  color: #ffffff;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+dialog.modal.form .input:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(59, 130, 246, 0.5);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+dialog.modal.form .input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+dialog.modal.form .actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+dialog.modal.form .btn {
+  padding: 0.625rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+dialog.modal.form .btn.primary {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.9) 0%, rgba(37, 99, 235, 0.9) 100%);
+  color: white;
+}
+
+dialog.modal.form .btn.primary:hover {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 1) 0%, rgba(29, 78, 216, 1) 100%);
+}
+
+dialog.modal.form .btn.muted {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+dialog.modal.form .btn.muted:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Viewer Container */
+.viewer-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.viewer-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+  color: rgba(255, 255, 255, 0.8);
+  padding: 0;
+}
+
+.viewer-close:hover {
+  background: rgba(255, 59, 48, 0.2);
+  border-color: rgba(255, 59, 48, 0.3);
+  color: #ff3b30;
+}
+
+.viewer-close svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.viewer-content {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* Content wrapper that gets injected */
+.content {
+  width: 100%;
+  height: 100%;
+}
+
+/* Close button for default overlays */
+.close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.close:hover {
+  background: rgba(255, 59, 48, 0.2);
+  border-color: rgba(255, 59, 48, 0.3);
+  color: #ff3b30;
+}
+
+/* Ensure modal content is not cut off */
+dialog.modal.viewer,
+dialog.modal.playlist,
+dialog.modal.artist,
+dialog.modal.unified,
+dialog.modal.recent,
+dialog.modal.favorites {
+  width: auto;
+  height: auto;
+}
