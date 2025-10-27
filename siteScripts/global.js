@@ -2530,15 +2530,35 @@ const eventHandlers = {
       if (el) bindClick(el, handler);
     });
     const menuActions = {
-      [IDS.favoriteSongs]: () => { dropdown.close(); views.showFavoriteSongs(); },
-      [IDS.favoriteArtists]: () => { dropdown.close(); views.showFavoriteArtists(); },
-      [IDS.recentlyPlayed]: () => { dropdown.close(); musicPlayer.mainPlayer.open(); setTimeout(() => musicPlayer.mainPlayer.switchTab("recent"), 50); },
-      [IDS.queueView]: () => { dropdown.close(); musicPlayer.mainPlayer.open(); setTimeout(() => musicPlayer.mainPlayer.switchTab("queue"), 50); },
-      [IDS.createPlaylist]: () => { dropdown.close(); playlists.create(); },
+      [IDS.favoriteSongs]: () => {
+        dropdown.close();
+        views.showFavoriteSongs();
+      },
+      [IDS.favoriteArtists]: () => {
+        dropdown.close();
+        views.showFavoriteArtists();
+      },
+      [IDS.recentlyPlayed]: () => {
+        dropdown.close();
+        musicPlayer.mainPlayer.open();
+        setTimeout(() => musicPlayer.mainPlayer.switchTab("recent"), 50);
+      },
+      [IDS.queueView]: () => {
+        dropdown.close();
+        musicPlayer.mainPlayer.open();
+        setTimeout(() => musicPlayer.mainPlayer.switchTab("queue"), 50);
+      },
+      [IDS.createPlaylist]: () => {
+        dropdown.close();
+        playlists.create();
+      },
       [IDS.shuffleAll]: musicPlayer.playback.shuffle.all,
     };
     if (IDS.favoriteAlbums) {
-      menuActions[IDS.favoriteAlbums] = () => { dropdown.close(); views.showFavoriteAlbums(); };
+      menuActions[IDS.favoriteAlbums] = () => {
+        dropdown.close();
+        views.showFavoriteAlbums();
+      };
     }
     Object.entries(menuActions).forEach(([id, handler]) => {
       const el = $byId(id);
@@ -2549,7 +2569,7 @@ const eventHandlers = {
   bindPopups: () => {
     const popupControls = {
       [MUSIC_PLAYER.close]: musicPlayer.mainPlayer.close,
-      [MUSIC_PLAYER.play]: musicPlayer.mainPlayer.toggle,
+      [MUSIC_PLAYER.play]: musicPlayer.playback.play,
       [MUSIC_PLAYER.previous]: musicPlayer.playback.previous,
       [MUSIC_PLAYER.next]: musicPlayer.playback.next,
       [MUSIC_PLAYER.shuffle]: musicPlayer.playback.shuffle.toggle,
@@ -2618,14 +2638,50 @@ const eventHandlers = {
     const fn = (e) => {
       if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
       const shortcuts = {
-        " ": (e) => { e.preventDefault(); musicPlayer.mainPlayer.toggle(); },
-        ArrowLeft: (e) => { if (e.ctrlKey || e.metaKey) { e.preventDefault(); musicPlayer.playback.previous(); } },
-        ArrowRight: (e) => { if (e.ctrlKey || e.metaKey) { e.preventDefault(); musicPlayer.playback.next(); } },
-        KeyN: (e) => { if (e.ctrlKey || e.metaKey) { e.preventDefault(); musicPlayer.mainPlayer.open(); } },
-        KeyM: (e) => { if (e.ctrlKey || e.metaKey) { e.preventDefault(); dropdown.toggle(); } },
-        KeyS: (e) => { if (e.ctrlKey || e.metaKey) { e.preventDefault(); musicPlayer.playback.shuffle.toggle(); } },
-        KeyR: (e) => { if (e.ctrlKey || e.metaKey) { e.preventDefault(); musicPlayer.playback.repeat.toggle(); } },
-        Escape: () => { musicPlayer.mainPlayer.close(); dropdown.close(); },
+        " ": (e) => {
+          e.preventDefault();
+          musicPlayer.mainPlayer.toggle();
+        },
+        ArrowLeft: (e) => {
+          if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            musicPlayer.playback.previous();
+          }
+        },
+        ArrowRight: (e) => {
+          if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            musicPlayer.playback.next();
+          }
+        },
+        KeyN: (e) => {
+          if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            musicPlayer.mainPlayer.open();
+          }
+        },
+        KeyM: (e) => {
+          if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            dropdown.toggle();
+          }
+        },
+        KeyS: (e) => {
+          if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            musicPlayer.playback.shuffle.toggle();
+          }
+        },
+        KeyR: (e) => {
+          if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            musicPlayer.playback.repeat.toggle();
+          }
+        },
+        Escape: () => {
+          musicPlayer.mainPlayer.close();
+          dropdown.close();
+        },
       };
       const handler = shortcuts[e.code] || shortcuts[e.key];
       if (handler) handler(e);
@@ -2682,8 +2738,8 @@ const eventHandlers = {
       [IDS.nextBtn]: musicPlayer.playback.next,
       [IDS.shuffleBtn]: musicPlayer.playback.shuffle.toggle,
       [IDS.repeatBtn]: musicPlayer.playback.repeat.toggle,
-      [IDS.favoriteBtn]: () => { 
-        if (appState.currentSong) appState.favorites.toggle("songs", appState.currentSong.id); 
+      [IDS.favoriteBtn]: () => {
+        if (appState.currentSong) appState.favorites.toggle("songs", appState.currentSong.id);
       },
     };
     Object.entries(map).forEach(([id, handler]) => {
