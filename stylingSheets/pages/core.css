@@ -28,7 +28,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 9999;
+  z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -45,10 +45,11 @@
 }
 
 .center-loading-spinner {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
+  padding: 2rem;
   border: 4px solid rgba(255, 255, 255, 0.3);
-  border-left: 4px solid #ffffff;
+  border-left: 4px solid var(--text-accent);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
@@ -56,12 +57,14 @@
 
 /* Content blur container */
 .content-blur-container {
-  transition: filter 0.5s ease;
+  pointer-events: none !important;
+  transition: filter 0.5s ease-in-out;
   filter: blur(0px);
+  z-index: 100;
 }
 
 .content-blur-container.blur-active {
-  filter: blur(20px);
+  filter: blur(10px);
 }
 
 @keyframes spin {
