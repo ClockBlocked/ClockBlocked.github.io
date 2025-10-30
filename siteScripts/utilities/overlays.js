@@ -371,7 +371,6 @@
 
     _addEventListener(element, event, handler) {
       if (!element || !element.addEventListener) {
-        console.warn('Invalid element provided to _addEventListener:', element);
         return;
       }
       
@@ -395,7 +394,6 @@
       this.trigger = typeof trigger === 'string' ? document.querySelector(trigger) : trigger;
       
       if (!this.trigger) {
-        console.warn('Tooltip trigger element not found');
         return;
       }
       
@@ -508,7 +506,6 @@
       this.trigger = typeof trigger === 'string' ? document.querySelector(trigger) : trigger;
       
       if (!this.trigger) {
-        console.warn('Popover trigger element not found');
         return;
       }
       
@@ -669,7 +666,6 @@
       this.trigger = typeof trigger === 'string' ? document.querySelector(trigger) : trigger;
       
       if (!this.trigger) {
-        console.warn('Dropdown trigger element not found');
         return;
       }
       

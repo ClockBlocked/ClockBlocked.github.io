@@ -8,7 +8,6 @@ export function initPWABanner() {
   const dismissBtn = document.getElementById("pwa-dismiss");
 
   if (!banner || !installLink || !dismissBtn) {
-    console.warn('PWA banner elements not found');
     return;
   }
 
@@ -35,7 +34,6 @@ export function initPWABanner() {
     if (deferredPrompt) {
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
-      console.log(`User response to the install prompt: ${outcome}`);
       deferredPrompt = null;
     }
   });
@@ -44,14 +42,11 @@ export function initPWABanner() {
   
   window.addEventListener("DOMContentLoaded", () => {
     if (window.matchMedia("(display-mode: standalone)").matches) {
-      console.log("App running in standalone mode.");
     } else if ("getInstalledRelatedApps" in navigator) {
       navigator.getInstalledRelatedApps().then((relatedApps) => {
         if (relatedApps.length > 0) {
-          console.log("PWA installed.");
           showPWABanner();
         } else {
-          console.log("PWA not installed.");
         }
       });
     }

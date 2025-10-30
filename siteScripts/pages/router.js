@@ -28,7 +28,6 @@ export const deepLinkRouter = {
     const { route, params } = pathInfo;
 
     if (!window.appState?.router) {
-      console.warn('Router not initialized yet');
       return;
     }
 
@@ -135,7 +134,6 @@ export const deepLinkRouter = {
     const pathInfo = this.parseCurrentPath();
 
     if (pathInfo.fullPath !== '/' && pathInfo.route && pathInfo.route !== 'home') {
-      console.log('Deep link detected:', pathInfo);
 
       const checkInitialized = setInterval(() => {
         if (window.appState?.router && window.music && window.navigation) {
@@ -150,7 +148,6 @@ export const deepLinkRouter = {
       setTimeout(() => {
         clearInterval(checkInitialized);
         if (!window.appState?.router) {
-          console.error('App not initialized after 5 seconds, redirecting to home');
           window.location.href = '/';
         }
       }, 5000);

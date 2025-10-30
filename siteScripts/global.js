@@ -795,7 +795,6 @@ const notificationPlayer = {
         notificationPlayer.positionState.update();
 
       } catch (error) {
-        console.error("Failed to update media metadata:", error);
       }
     },
 
@@ -805,7 +804,6 @@ const notificationPlayer = {
         navigator.mediaSession.metadata = null;
         notificationPlayer.state.currentMetadata = null;
       } catch (error) {
-        console.warn("Failed to clear metadata:", error);
       }
     }
   },
@@ -833,7 +831,6 @@ const notificationPlayer = {
           notificationPlayer.state.lastPositionUpdate = Date.now();
         }
       } catch (error) {
-        console.warn("Failed to update position state:", error);
       }
     },
 
@@ -845,7 +842,6 @@ const notificationPlayer = {
       try {
         navigator.mediaSession.setPositionState(null);
       } catch (error) {
-        console.warn("Failed to reset position state:", error);
       }
     },
 
@@ -879,7 +875,6 @@ const notificationPlayer = {
         
         notificationPlayer.positionState.update();
       } catch (error) {
-        console.warn("Failed to update playback state:", error);
       }
     },
 
@@ -911,7 +906,6 @@ const notificationPlayer = {
           musicPlayer.playback.play();
         }
       } catch (error) {
-        console.error('Failed to execute play action:', error);
       }
     },
 
@@ -923,7 +917,6 @@ const notificationPlayer = {
           musicPlayer.playback.pause();
         }
       } catch (error) {
-        console.error('Failed to execute pause action:', error);
       }
     },
 
@@ -935,7 +928,6 @@ const notificationPlayer = {
         }
         notificationPlayer.playbackState.onStop();
       } catch (error) {
-        console.error('Failed to execute stop action:', error);
       }
     },
 
@@ -950,7 +942,6 @@ const notificationPlayer = {
           }
         }
       } catch (error) {
-        console.error('Failed to execute previous track action:', error);
       }
     },
 
@@ -960,7 +951,6 @@ const notificationPlayer = {
           musicPlayer.playback.next();
         }
       } catch (error) {
-        console.error('Failed to execute next track action:', error);
       }
     },
 
@@ -978,7 +968,6 @@ const notificationPlayer = {
         
         notificationPlayer.positionState.update();
       } catch (error) {
-        console.error('Failed to execute seek to action:', error);
       }
     },
 
@@ -991,7 +980,6 @@ const notificationPlayer = {
           notificationPlayer.positionState.update();
         }
       } catch (error) {
-        console.error('Failed to execute seek backward action:', error);
       }
     },
 
@@ -1005,7 +993,6 @@ const notificationPlayer = {
           notificationPlayer.positionState.update();
         }
       } catch (error) {
-        console.error('Failed to execute seek forward action:', error);
       }
     }
   },
@@ -1100,7 +1087,6 @@ const notificationPlayer = {
       },
 
       onError: (error) => {
-        console.error('Audio error:', error);
         notificationPlayer.playbackState.update('paused');
         notificationPlayer.positionState.stopContinuousUpdate();
       }
@@ -1109,12 +1095,10 @@ const notificationPlayer = {
 
   setup: () => {
     if (!('mediaSession' in navigator)) {
-      console.warn('Media Session API not supported');
       return false;
     }
 
     if (notificationPlayer.state.isInitialized) {
-      console.warn('NotificationPlayer already initialized');
       return true;
     }
 
@@ -1137,7 +1121,6 @@ const notificationPlayer = {
           navigator.mediaSession.setActionHandler(action, handler);
           notificationPlayer.state.supportedActions.add(action);
         } catch (error) {
-          console.warn(`Media session action "${action}" not supported:`, error);
         }
       });
 
@@ -1152,7 +1135,6 @@ const notificationPlayer = {
       return true;
 
     } catch (error) {
-      console.error('Failed to setup NotificationPlayer:', error);
       return false;
     }
   },
@@ -1170,7 +1152,6 @@ const notificationPlayer = {
           try {
             navigator.mediaSession.setActionHandler(action, null);
           } catch (error) {
-            console.warn(`Failed to clear action handler "${action}":`, error);
           }
         });
 
@@ -1183,7 +1164,6 @@ const notificationPlayer = {
       notificationPlayer.state.lastPositionUpdate = 0;
 
     } catch (error) {
-      console.error('Error during NotificationPlayer cleanup:', error);
     }
   },
 
@@ -1523,7 +1503,6 @@ const musicPlayer = {
         play: () => {
             if (!appState.currentSong || !appState.audio) return;
             appState.audio.play().catch((err) => {
-                console.error("Play failed:", err);
             });
         },
 
@@ -1698,7 +1677,6 @@ const musicPlayer = {
 
         loadAudioFile: async (songData) => {
             if (!songData || !songData.title) {
-                console.error('No song data or title provided:', songData);
                 return false;
             }
             
@@ -1708,7 +1686,6 @@ const musicPlayer = {
                 .replace(/[^\w]/g, "");
             
             if (!songFileName) {
-                console.error('Song filename is empty after cleaning:', songData.title);
                 return false;
             }
 
@@ -1744,12 +1721,10 @@ const musicPlayer = {
                     return true;
                     
                 } catch (error) {
-                    console.warn(`Failed to load ${format} format:`, error);
                     continue;
                 }
             }
             
-            console.error("All audio format attempts failed for:", songData.title);
             return false;
         },
 
@@ -1929,7 +1904,6 @@ const musicPlayer = {
         },
 
         onError: (error) => {
-            console.error("Audio error:", error);
         },
 
         onEnded: () => {

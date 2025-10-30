@@ -287,9 +287,6 @@ export const REPEAT_MODES = Object.freeze({
 // Referencing Helpers
 export const getElement = (id) => {
   const element = document.getElementById(id);
-  if (!element) {
-    console.warn(`Element with ID '${id}' not found`);
-  }
   return element;
 };
 

@@ -25,7 +25,6 @@ class UnifiedPlayerIntegration {
             this.setupIntegration();
             this.bindGlobalEvents();
             this.isInitialized = true;
-            console.log('🎵 Unified Player Integration initialized');
         });
     }
     

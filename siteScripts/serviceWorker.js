@@ -7,10 +7,10 @@ export function registerServiceWorker() {
       navigator.serviceWorker
         .register("./system/serviceWorker.js")
         .then((registration) => {
-          console.log("Service Worker registered:", registration.scope);
+          // Service Worker registered successfully
         })
         .catch((err) => {
-          console.error("Service Worker registration failed:", err);
+          // Service Worker registration failed
         });
     });
   }

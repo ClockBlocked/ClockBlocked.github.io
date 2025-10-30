@@ -6,6 +6,7 @@ import { initTheme } from './theme.js';
 import { initPWABanner } from './pwa.js';
 import { registerServiceWorker } from './serviceWorker.js';
 import { initBreadcrumbBorder } from './breadcrumb.js';
+import { render } from './utilities/templates.js';
 
 // Run cache buster immediately
 bustCache();
@@ -25,7 +26,6 @@ registerServiceWorker();
 
 // Unified Player System Initialization
 function initUnifiedPlayerSystem() {
-  console.log('🎵 Initializing Unified Player System...');
   
   // Check device type and set appropriate classes
   const isMobile = window.innerWidth < 768;
@@ -49,7 +49,6 @@ function initUnifiedPlayerSystem() {
     setupBentoGridIntegration();
   }
   
-  console.log('✅ Unified Player System initialized');
 }
 
 function setupResponsiveListeners() {
@@ -138,7 +137,6 @@ function setupUnifiedTriggers() {
           const bentoGrid = document.querySelector('.bento-grid');
           if (bentoGrid && !drawer.classList.contains('bento-embedded')) {
             // Option to embed in bento grid (this would be handled by the music player logic)
-            console.log('🎵 Desktop player opened - could be embedded in bento grid');
           }
         }
       }
@@ -169,16 +167,7 @@ function setupBentoGridIntegration() {
     // Create a bento card for the music player
     const musicPlayerCard = document.createElement('div');
     musicPlayerCard.className = 'bento-card music-player-card';
-    musicPlayerCard.innerHTML = `
-      <div class="card-header">
-        <h2 class="card-title">Now Playing</h2>
-        <button class="expand-player-btn" title="Expand Player">
-          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h4a1 1 0 010 2H6.414l2.293 2.293a1 1 0 11-1.414 1.414L5 6.414V8a1 1 0 01-2 0V4zm9 1a1 1 0 010-2h4a1 1 0 011 1v4a1 1 0 01-2 0V6.414l-2.293 2.293a1 1 0 11-1.414-1.414L13.586 5H12zm-9 7a1 1 0 012 0v1.586l2.293-2.293a1 1 0 111.414 1.414L6.414 15H8a1 1 0 010 2H4a1 1 0 01-1-1v-4zm13-1a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 010-2h1.586l-2.293-2.293a1 1 0 111.414-1.414L15 13.586V12a1 1 0 011-1z" clip-rule="evenodd" />
-          </svg>
-        </button>
-      </div>
-    `;
+    musicPlayerCard.innerHTML = render.bentoMusicPlayerCard();
     
     // Insert the music player card into bento grid
     bentoGrid.appendChild(musicPlayerCard);

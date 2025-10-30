@@ -6,7 +6,6 @@ export function initBreadcrumbBorder() {
   const pageWrapper = document.getElementById('pageWrapper');
   
   if (!breadcrumb || !pageWrapper) {
-    console.warn('Breadcrumb or page wrapper not found');
     return;
   }
 

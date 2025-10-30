@@ -786,14 +786,13 @@ export const homePage = {
       heart: '<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>',
     };
 
-    return `
-      <div class="empty-state">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-12 h-12 mb-3 opacity-50">
-          ${icons[iconType] || icons["music-note"]}
-        </svg>
-        <p>${message}</p>
-      </div>
-    `;
+    const iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-12 h-12 mb-3 opacity-50">${icons[iconType] || icons["music-note"]}</svg>`;
+    
+    return render.emptyState({
+      icon: iconSvg,
+      title: '',
+      subtitle: message
+    });
   },
 };
 
@@ -874,18 +873,7 @@ export const views = {
             modalEl = document.createElement('div');
             modalEl.id = 'favorite-artists-modal';
             modalEl.className = 'modal-overlay';
-            modalEl.innerHTML = `
-                <div class="modal-content slide-in">
-                    <div class="modal-header">
-                        <div>
-                            <h2 class="modal-title">Favorite Artists</h2>
-                            <div class="artist-count">0 artists</div>
-                        </div>
-                        <button class="close-btn">&times;</button>
-                    </div>
-                    <div class="artists-list"></div>
-                </div>
-            `;
+            modalEl.innerHTML = render.favoriteArtistsModal();
             document.body.appendChild(modalEl);
             
             modalEl.querySelector('.close-btn').addEventListener('click', () => {
@@ -903,14 +891,12 @@ export const views = {
         const artistCount = modalEl.querySelector('.artist-count');
         
         if (favoriteArtistNames.length === 0) {
-            artistsList.innerHTML = `
-                <div class="empty-state">
-                    <div class="empty-icon">♡</div>
-                    <h3 class="empty-title">No Favorite Artists</h3>
-                    <p class="empty-text">You haven't added any artists to your favorites yet.</p>
-                    <p class="empty-subtext">Browse artists and click the heart icon to add favorites.</p>
-                </div>
-            `;
+            artistsList.innerHTML = render.emptyState({
+                icon: '♡',
+                title: 'No Favorite Artists',
+                subtitle: "You haven't added any artists to your favorites yet.",
+                subtext: 'Browse artists and click the heart icon to add favorites.'
+            });
             artistCount.textContent = "0 artists";
         } else {
             const favoriteArtists = favoriteArtistNames
@@ -1015,7 +1001,6 @@ export const views = {
                     const songData = JSON.parse(row.dataset.song);
                     musicPlayer.ui.playSong(songData);
                 } catch (error) {
-                    console.error('Error playing song:', error);
                 }
             });
         });
@@ -1086,18 +1071,16 @@ export const views = {
     },
 
     renderEmptyState: (title, subtitle, description) => {
-        return `
-          <div class="empty-state">
-            <div class="empty-state-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        const icon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
-              </svg>
-            </div>
-            <h3 class="empty-state-title">${title}</h3>
-            <p class="empty-state-subtitle">${subtitle}</p>
-            <p class="empty-state-description">${description}</p>
-          </div>
-        `;
+              </svg>`;
+        
+        return render.emptyState({
+          icon: icon,
+          title: title,
+          subtitle: subtitle,
+          subtext: description
+        });
     },
 };
 /**

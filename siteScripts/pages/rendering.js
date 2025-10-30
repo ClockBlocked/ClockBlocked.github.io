@@ -931,7 +931,6 @@ bindSongItemEvents: (container) => {
           break;
           
         default:
-          console.log(`Action ${action} not implemented yet`);
       }
     },
 
@@ -941,18 +940,7 @@ bindSongItemEvents: (container) => {
       const popover = document.createElement('div');
       popover.className = 'more-actions-popover';
       
-      popover.innerHTML = `
-        <div class="popover-grid">
-          ${ACTION_GRID_ITEMS.map(action => `
-            <button class="popover-action-btn" data-action="${action.id}">
-              <svg class="popover-icon" viewBox="0 0 24 24">
-                <path d="${action.icon}"/>
-              </svg>
-              <span class="popover-label">${action.label}</span>
-            </button>
-          `).join('')}
-        </div>
-      `;
+      popover.innerHTML = render.actionPopover(ACTION_GRID_ITEMS);
       
       document.body.appendChild(popover);
       

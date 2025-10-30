@@ -16,7 +16,6 @@ class UnifiedPlayerController {
         
         this.drawer = document.getElementById('drawer');
         if (!this.drawer) {
-            console.error('Unified Player: Drawer element not found');
             return;
         }
         
@@ -25,7 +24,6 @@ class UnifiedPlayerController {
         this.updateDisplayMode();
         
         this.isInitialized = true;
-        console.log('🎵 Unified Player Controller initialized');
     }
     
     getDeviceType() {
@@ -182,7 +180,6 @@ class UnifiedPlayerController {
         musicPlayerCard.appendChild(this.drawer);
         this.currentDisplayMode = 'embedded';
         
-        console.log('🎵 Player embedded in bento grid');
     }
     
     unembedFromBento() {
@@ -202,7 +199,6 @@ class UnifiedPlayerController {
         
         this.currentDisplayMode = 'overlay';
         
-        console.log('🎵 Player unembedded from bento grid');
     }
     
     createBentoPlayerCard() {
@@ -371,12 +367,10 @@ class UnifiedPlayerController {
     }
     
     onPlayerOpen() {
-        console.log('🎵 Player opened');
         document.body.classList.add('player-open');
     }
     
     onPlayerClose() {
-        console.log('🎵 Player closed');
         document.body.classList.remove('player-open');
     }
     

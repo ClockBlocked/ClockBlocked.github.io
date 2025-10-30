@@ -1676,7 +1676,6 @@ async search(query) {
         this.searchResults = results;
         this.renderResults(results);
       } catch (error) {
-        console.error('Search error:', error);
         resultsContainer.innerHTML = `
           <div style="text-align: center; padding: 20px; color: var(--gh-accent-danger);">
             An error occurred while searching

@@ -1,4 +1,5 @@
 import { utils } from "./global.js";
+import { render } from "./utilities/templates.js";
 
 export function initDesktopLayout() {
   let desktopElementsInitialized = false;
@@ -26,31 +27,7 @@ export function initDesktopLayout() {
 
       const playerSidebar = document.createElement('div');
       playerSidebar.className = 'desktop-player-sidebar';
-      playerSidebar.innerHTML = `
-        <div class="player-sidebar-header"><span class="player-sidebar-title">Now Playing</span></div>
-        <div class="player-sidebar-album">
-          <div class="player-sidebar-album-art"><img id="sidebar-album-art" src="" alt="Album Cover"></div>
-          <div class="player-sidebar-info">
-            <div class="player-sidebar-song" id="sidebar-song-name">No song playing</div>
-            <div class="player-sidebar-artist" id="sidebar-artist-name">Select a song to start</div>
-            <div class="player-sidebar-album-name" id="sidebar-album-name"></div>
-          </div>
-        </div>
-        <div class="player-sidebar-controls">
-          <div class="player-sidebar-progress"><div class="progress" id="sidebar-music-progress"><div class="time"><span id="sidebar-current-time">0:00</span><span id="sidebar-total-time">0:00</span></div><div class="bar"><div class="buffer" id="sidebar-progress-buffer"></div><div class="fill" id="sidebar-progress-fill" style="width:0%"></div></div></div></div>
-          <div class="player-sidebar-buttons">
-            <button class="sidebar-control-btn previous" id="sidebar-prev"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M8.445 14.832A1 1 0 0010 14v-2.798l5.445 3.63A1 1 0 0017 14V6a1 1 0 00-1.555-.832L10 8.798V6a1 1 0 00-1.555-.832l-5.89 4a1 1 0 000 1.664l5.89 4z"></path></svg></button>
-            <button class="sidebar-control-btn play-pause" id="sidebar-play-pause"><svg id="sidebar-play-icon" class="w-7 h-7" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm-2-9a1 1 0 012 0v4a1 1 0 01-2 0V9zm4 0a1 1 0 112 0v4a1 1 0 11-2 0V9z" clip-rule="evenodd"></path></svg><svg id="sidebar-pause-icon" class="w-7 h-7 hidden" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6 4a1 1 0 011 1v10a1 1 0 11-2 0V5a1 1 0 011-1zm6 0a1 1 0 011 1v10a1 1 0 11-2 0V5a1 1 0 011-1z" clip-rule="evenodd"></path></svg></button>
-            <button class="sidebar-control-btn next" id="sidebar-next"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l5.89-4a1 1 0 000-1.664l-5.89-4A1 1 0 0010 6v2.798L4.555 5.168z"></path></svg></button>
-          </div>
-          <div class="player-sidebar-actions">
-            <button class="sidebar-action-btn" id="sidebar-shuffle" title="Shuffle"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 00-1.05 9.294A1 1 0 004.05 15.606l2.828 2.829a1 1 0 001.415-1.415l-2.829-2.828a5 5 0 117.071-7.07l2.829 2.828a1 1 0 101.415-1.415l-2.828-2.828A7.001 7.001 0 004 2z" clip-rule="evenodd"></path></svg></button>
-            <button class="sidebar-action-btn" id="sidebar-favorite" title="Favorite"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg></button>
-            <button class="sidebar-action-btn" id="sidebar-repeat" title="Repeat"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 00-1.05 9.294A1 1 0 004.05 15.606l2.828 2.829a1 1 0 001.415-1.415l-2.829-2.828a5 5 0 117.071-7.07l2.829 2.828a1 1 0 101.415-1.415l-2.828-2.828A7.001 7.001 0 004 2z" clip-rule="evenodd"></path></svg></button>
-            <button class="sidebar-action-btn" id="sidebar-queue" title="Queue"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm1 4a1 1 0 100 2h4a1 1 0 100-2H4z"></path></svg></button>
-          </div>
-        </div>
-      `;
+      playerSidebar.innerHTML = render.desktopPlayerSidebar();
       document.body.appendChild(menuTrigger);
       document.body.appendChild(menuSidebar);
       document.body.appendChild(overlay);

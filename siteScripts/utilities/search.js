@@ -501,7 +501,6 @@ class MusicSearch {
     try {
       localStorage.setItem('recentSearches', JSON.stringify(this.recentSearches));
     } catch (error) {
-      console.error('Failed to save recent searches:', error);
     }
   }
 

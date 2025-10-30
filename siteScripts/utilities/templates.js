@@ -401,52 +401,6 @@ case "enhancedArtist":
     `;
   },
   
-  track: function(templateName, data) {
-    switch (templateName) {
-      case "row":
-      case "songItem":
-        return render.songItem({
-          trackNumber: data.trackNumber,
-          title: data.title,
-          artist: data.songData?.artist,
-          duration: data.duration,
-          songData: data.songData,
-          context: data.actionSet || 'base',
-          isFavorite: data.isFavorite || false,
-          showTrackNumber: true,
-          showArtist: false
-        });
-        
-      case "nowPlaying":
-        return `
-          <div class="now-playing-card bg-white/5 rounded-lg p-4 backdrop-blur-sm">
-            <div class="flex items-center gap-4">
-              <div class="album-art flex-shrink-0">
-                <img src="${data.songData.cover}" alt="${data.songData.album}" class="w-16 h-16 rounded-lg object-cover">
-              </div>
-              <div class="track-info flex-1 min-w-0">
-                <h3 class="track-title font-semibold text-white truncate">${data.title}</h3>
-                <p class="track-artist text-gray-400 text-sm truncate cursor-pointer hover:text-white transition-colors" data-artist="${data.songData.artist}">${data.songData.artist}</p>
-                <p class="track-album text-gray-500 text-xs truncate">${data.songData.album}</p>
-              </div>
-            </div>
-            <div class="progress-container mt-4">
-              <div class="progress-bar w-full bg-gray-700 rounded-full h-2 mb-2">
-                <div class="progress-fill bg-blue-500 h-2 rounded-full transition-all duration-300" style="width: ${data.progress || 0}%"></div>
-              </div>
-              <div class="time-display flex justify-between text-xs text-gray-400">
-                <span class="current-time">${formatTime(data.currentTime || 0)}</span>
-                <span class="duration">${formatTime(data.duration || 0)}</span>
-              </div>
-            </div>
-          </div>
-        `;
-        
-      default:
-        return "";
-    }
-  },
-  
   page: function(templateName, data) {
     switch (templateName) {
       case "home":
@@ -815,6 +769,89 @@ homeSection: {
           </div>
         </div>
       </li>
+    `;
+  },
+
+  desktopPlayerSidebar: function() {
+    return `
+      <div class="player-sidebar-header"><span class="player-sidebar-title">Now Playing</span></div>
+      <div class="player-sidebar-album">
+        <div class="player-sidebar-album-art"><img id="sidebar-album-art" src="" alt="Album Cover"></div>
+        <div class="player-sidebar-info">
+          <div class="player-sidebar-song" id="sidebar-song-name">No song playing</div>
+          <div class="player-sidebar-artist" id="sidebar-artist-name">Select a song to start</div>
+          <div class="player-sidebar-album-name" id="sidebar-album-name"></div>
+        </div>
+      </div>
+      <div class="player-sidebar-controls">
+        <div class="player-sidebar-progress"><div class="progress" id="sidebar-music-progress"><div class="time"><span id="sidebar-current-time">0:00</span><span id="sidebar-total-time">0:00</span></div><div class="bar"><div class="buffer" id="sidebar-progress-buffer"></div><div class="fill" id="sidebar-progress-fill" style="width:0%"></div></div></div></div>
+        <div class="player-sidebar-buttons">
+          <button class="sidebar-control-btn previous" id="sidebar-prev"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M8.445 14.832A1 1 0 0010 14v-2.798l5.445 3.63A1 1 0 0017 14V6a1 1 0 00-1.555-.832L10 8.798V6a1 1 0 00-1.555-.832l-5.89 4a1 1 0 000 1.664l5.89 4z"></path></svg></button>
+          <button class="sidebar-control-btn play-pause" id="sidebar-play-pause"><svg id="sidebar-play-icon" class="w-7 h-7" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm-2-9a1 1 0 012 0v4a1 1 0 01-2 0V9zm4 0a1 1 0 112 0v4a1 1 0 11-2 0V9z" clip-rule="evenodd"></path></svg><svg id="sidebar-pause-icon" class="w-7 h-7 hidden" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6 4a1 1 0 011 1v10a1 1 0 11-2 0V5a1 1 0 011-1zm6 0a1 1 0 011 1v10a1 1 0 11-2 0V5a1 1 0 011-1z" clip-rule="evenodd"></path></svg></button>
+          <button class="sidebar-control-btn next" id="sidebar-next"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l5.89-4a1 1 0 000-1.664l-5.89-4A1 1 0 0010 6v2.798L4.555 5.168z"></path></svg></button>
+        </div>
+        <div class="player-sidebar-actions">
+          <button class="sidebar-action-btn" id="sidebar-shuffle" title="Shuffle"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 00-1.05 9.294A1 1 0 004.05 15.606l2.828 2.829a1 1 0 001.415-1.415l-2.829-2.828a5 5 0 117.071-7.07l2.829 2.828a1 1 0 101.415-1.415l-2.828-2.828A7.001 7.001 0 004 2z" clip-rule="evenodd"></path></svg></button>
+          <button class="sidebar-action-btn" id="sidebar-favorite" title="Favorite"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg></button>
+          <button class="sidebar-action-btn" id="sidebar-repeat" title="Repeat"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 00-1.05 9.294A1 1 0 004.05 15.606l2.828 2.829a1 1 0 001.415-1.415l-2.829-2.828a5 5 0 117.071-7.07l2.829 2.828a1 1 0 101.415-1.415l-2.828-2.828A7.001 7.001 0 004 2z" clip-rule="evenodd"></path></svg></button>
+          <button class="sidebar-action-btn" id="sidebar-queue" title="Queue"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm1 4a1 1 0 100 2h4a1 1 0 100-2H4z"></path></svg></button>
+        </div>
+      </div>
+    `;
+  },
+
+  bentoMusicPlayerCard: function() {
+    return `
+      <div class="card-header">
+        <h2 class="card-title">Now Playing</h2>
+        <button class="expand-player-btn" title="Expand Player">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h4a1 1 0 010 2H6.414l2.293 2.293a1 1 0 11-1.414 1.414L5 6.414V8a1 1 0 01-2 0V4zm9 1a1 1 0 010-2h4a1 1 0 011 1v4a1 1 0 01-2 0V6.414l-2.293 2.293a1 1 0 11-1.414-1.414L13.586 5H12zm-9 7a1 1 0 012 0v1.586l2.293-2.293a1 1 0 111.414 1.414L6.414 15H8a1 1 0 010 2H4a1 1 0 01-1-1v-4zm13-1a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 010-2h1.586l-2.293-2.293a1 1 0 111.414-1.414L15 13.586V12a1 1 0 011-1z" clip-rule="evenodd" />
+          </svg>
+        </button>
+      </div>
+    `;
+  },
+
+  actionPopover: function(actions) {
+    return `
+      <div class="popover-grid">
+        ${actions.map(action => `
+          <button class="popover-action-btn" data-action="${action.id}">
+            <svg class="popover-icon" viewBox="0 0 24 24">
+              <path d="${action.icon}"/>
+            </svg>
+            <span class="popover-label">${action.label}</span>
+          </button>
+        `).join('')}
+      </div>
+    `;
+  },
+
+  favoriteArtistsModal: function() {
+    return `
+      <div class="modal-content slide-in">
+        <div class="modal-header">
+          <div>
+            <h2 class="modal-title">Favorite Artists</h2>
+            <div class="artist-count">0 artists</div>
+          </div>
+          <button class="close-btn">&times;</button>
+        </div>
+        <div class="artists-list"></div>
+      </div>
+    `;
+  },
+
+  emptyState: function(data) {
+    const { title, subtitle, icon } = data;
+    return `
+      <div class="empty-state">
+        <div class="empty-icon">${icon || '♡'}</div>
+        <h3 class="empty-title">${title}</h3>
+        <p class="empty-text">${subtitle}</p>
+        ${data.subtext ? `<p class="empty-subtext">${data.subtext}</p>` : ''}
+      </div>
     `;
   },
 };
