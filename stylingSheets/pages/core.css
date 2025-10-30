@@ -35,7 +35,8 @@
   background: transparent;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.3s ease;
+  transition: all 0.3s ease;
+  filter: blur(10px);
 }
 
 .center-loading-overlay.active {
