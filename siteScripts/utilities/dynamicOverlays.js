@@ -2088,4 +2088,12 @@ async search(query) {
         return;
       }
 
-      const dat
+      const data = this.getFormData();
+      if (this.options.onSubmit) {
+        await this.options.onSubmit(data);
+      }
+      this.close();
+    }
+  }
+
+})(window, document);

@@ -5,7 +5,7 @@ import {
   musicPlayer,
   utils,
   notifications,
-  loadArtistInfo
+  navigation
 } from '../global.js';
 
 import { ROUTES } from '../map.js';
@@ -382,7 +382,10 @@ class MusicSearch {
           setTimeout(() => {
             const storedAlbum = sessionStorage.getItem('pendingAlbumLoad');
             if (storedAlbum === albumName) {
-              loadArtistInfo(artistName, albumName);
+              const artistData = window.music?.find((a) => a.artist === artistName);
+              if (artistData) {
+                navigation.pages.loadArtistPage(artistData, albumName);
+              }
               sessionStorage.removeItem('pendingAlbumLoad');
             }
           }, 100);
