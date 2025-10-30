@@ -55,7 +55,7 @@
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
 
-/* Content blur container */
+/* Content blur container **
 .content-blur-container {
   pointer-events: none !important;
   transition: all 0.5s ease-in-out;
@@ -68,7 +68,7 @@
   filter: blur(10px);
   opacity: 1; visibility: visible;
 }
-
+**/
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
