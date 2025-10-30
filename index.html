@@ -5117,91 +5117,26 @@ Add this to your styleSheets/main.css file
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy.umd.min.js"></script>
 
-<!-- ToolTips - PopOvers -->
+<!-- ============================================== -->
+<!-- REORGANIZED SITESCRIPTS - NEW STRUCTURE -->
+<!-- ============================================== -->
+
+<!-- ToolTips - PopOvers (keeping old until tested) -->
 <script type="module" src="./siteScripts/utilities/overlays.js"></script>
 
 <!-- Music Library -->
 <script type="module" src="./modules/library.js"></script>
+
+<!-- Search functionality (keeping old until tested) -->
 <script type="module" src="./siteScripts/utilities/search.js"></script>
 
-<!-- Initialization modules -->
-<script type="module" src="./siteScripts/init.js"></script>
-<script type="module" src="./siteScripts/unifiedPlayerController.js"></script>
-<script type="module" src="./siteScripts/unifiedPlayerIntergration.js"></script>
-
-<!-- Unified Player Controller Script -->
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    // Unified menu triggers (works for both mobile navbar and desktop/tablet triggers)
-    const mobileMenuTrigger = document.getElementById('menu-trigger');
-    const unifiedMenuTrigger = document.getElementById('unified-menu-trigger');
-    const dropdownMenu = document.getElementById('dropdown-menu');
-    const dropdownClose = document.getElementById('dropdown-close');
-    
-    // Menu trigger handlers
-    function toggleMenu() {
-        dropdownMenu.classList.toggle('show');
-    }
-    
-    function closeMenu() {
-        dropdownMenu.classList.remove('show');
-    }
-    
-    // Bind mobile menu trigger
-    if (mobileMenuTrigger && dropdownMenu) {
-        mobileMenuTrigger.addEventListener('click', toggleMenu);
-    }
-    
-    // Bind unified menu trigger (desktop/tablet)
-    if (unifiedMenuTrigger && dropdownMenu) {
-        unifiedMenuTrigger.addEventListener('click', toggleMenu);
-    }
-    
-    // Close button
-    if (dropdownClose && dropdownMenu) {
-        dropdownClose.addEventListener('click', closeMenu);
-    }
-    
-    // Close on clicking outside
-    if (dropdownMenu) {
-        dropdownMenu.addEventListener('click', (e) => {
-            if (e.target === dropdownMenu) {
-                closeMenu();
-            }
-        });
-    }
-    
-    // Unified player triggers
-    const mobilePlayerTrigger = document.getElementById('now-playing-area');
-    const unifiedPlayerTrigger = document.getElementById('unified-player-trigger');
-    const drawer = document.getElementById('drawer');
-    
-    function togglePlayer() {
-        if (drawer) {
-            if (drawer.matches(':popover-open')) {
-                drawer.hidePopover();
-            } else {
-                drawer.showPopover();
-            }
-        }
-    }
-    
-    // Bind mobile player trigger (navbar center)
-    if (mobilePlayerTrigger) {
-        mobilePlayerTrigger.addEventListener('click', togglePlayer);
-    }
-    
-    // Bind unified player trigger (desktop/tablet)
-    if (unifiedPlayerTrigger) {
-        unifiedPlayerTrigger.addEventListener('click', togglePlayer);
-    }
-});
-</script>
+<!-- NEW: Main application initialization (consolidates init.js, unifiedPlayerController.js, unifiedPlayerIntergration.js) -->
+<script type="module" src="./siteScripts/primary.js"></script>
 
 <!-- Global Initialize -->
 <script type="module">
     import { music } from './modules/library.js';
-    import { app } from './siteScripts/global.js';
+    import { app } from './siteScripts/primary.js';
     
     window.music = music;
     
