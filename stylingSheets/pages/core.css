@@ -6,6 +6,8 @@
   z-index: 10000;
   height: 3px;
   background: linear-gradient(90deg, #ff0000, #ff4500, #ff0000);
+  /* Added a red glow shadow */
+  box-shadow: 0 0 10px 1px #ff0000;
   transform-origin: left;
   transform: scaleX(0);
   opacity: 0;
@@ -32,11 +34,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: transparent;
+  /* Changed to semi-transparent so backdrop-filter works */
+  background: rgba(0, 0, 0, 0.1);
   opacity: 0;
   pointer-events: none;
   transition: all 0.3s ease;
-  filter: blur(10px);
+  /* Changed from 'filter' (blurs spinner) to 'backdrop-filter' (blurs behind) */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px); /* For Safari support */
 }
 
 .center-loading-overlay.active {
@@ -47,29 +52,17 @@
 .center-loading-spinner {
   width: 40px;
   height: 40px;
-  padding: 2rem;
+  /* Removed 'padding: 2rem;' which made it oversized */
+  /* Set border to 4px and just changed the left color */
   border: 4px solid rgba(255, 255, 255, 0.25);
-  border-left: 2.5px solid #58a6ff;
+  border-left-color: #58a6ff;
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  /* Removed box-shadow to look more like GitHub's clean spinner */
 }
 
-/* Content blur container **
-.content-blur-container {
-  pointer-events: none !important;
-  transition: all 0.5s ease-in-out;
-  filter: blur(0px);
-  z-index: 100;
-  opacity: 0; visibility: hidden;
-}
-
-.content-blur-container.blur-active {
-  filter: blur(10px);
-  opacity: 1; visibility: visible;
-}
-**/
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
