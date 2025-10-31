@@ -694,14 +694,19 @@ homeSection: {
       `;
     case 'prompt':
       return `
-        <div class="header">${data.message}</div>
-        <div class="body">
-          <input class="input" type="text" placeholder="${data.placeholder}" value="${data.value}">
-        </div>
-        <div class="actions">
-          <button class="btn muted" data-cancel>${data.cancelText}</button>
-          <button class="btn primary" data-ok>${data.okText}</button>
-        </div>
+          <div class="modal-header">
+            <h3>${data.message}</h3>
+            <button class="modal-close">×</button>
+          </div>
+          
+          <div class="modal-body">
+            <input type="text" class="status-input" placeholder="${data.placeholder}" value="${data.value}">
+          </div>
+          
+          <div class="modal-footer">
+            <button class="btn-secondary">${data.cancelText}</button>
+            <button class="btn-primary">${data.okText}</button>
+          </div>
       `;
     case 'viewer':
       return `
