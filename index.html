@@ -1835,1357 +1835,1209 @@ MyBeats:  Stream & share your favorite music for free.
 
 
 
-<!-- NEW MUSIC PLAYER COMPONENT -->
-
-
+<!-- REVAMPED MUSIC PLAYER DRAWER -->
 <style>
 /* ====================================
-   MUSIC PLAYER DRAWER - MODERN REVAMP
+   MODERN MUSIC PLAYER DRAWER
    ==================================== */
 
 /* Main Drawer Container */
-.drawer {
-    position: fixed;
-    inset: 0;
-    background: transparent;
-    border: none;
-    padding: 0;
-    margin: 0;
-    z-index: 9999;
-    overflow: hidden;
+.music-drawer {
+  position: fixed;
+  inset: 0;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  z-index: 9999;
+  overflow: hidden;
 }
 
-.drawer::backdrop {
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    animation: backdropFadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+.music-drawer::backdrop {
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  animation: backdropFadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes backdropFadeIn {
-    from {
-        opacity: 0;
-        backdrop-filter: blur(0px);
-    }
-    to {
-        opacity: 1;
-        backdrop-filter: blur(12px);
-    }
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(12px);
+  }
 }
 
-.drawerScroller {
-    width: 100%;
-    height: 100%;
-    overflow-y: auto;
-    overflow-x: hidden;
-    scroll-snap-type: y mandatory;
-    -webkit-overflow-scrolling: touch;
+.music-drawer-scroller {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-snap-type: y mandatory;
+  -webkit-overflow-scrolling: touch;
 }
 
-.drawerSlide {
-    min-height: 100vh;
-    scroll-snap-align: start;
-    display: flex;
-    flex-direction: column;
-    position: relative;
+.music-drawer-slide {
+  min-height: 100vh;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  position: relative;
 }
 
-.drawerAnchors {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 200vh;
-    pointer-events: none;
-    z-index: -1;
-}
-
-.drawerAnchor {
-    height: 100vh;
-    scroll-snap-align: start;
-}
-
-.drawerCurtain {
-    position: fixed;
-    inset: 0;
-    background: transparent;
-    border: none;
-    cursor: default;
-    z-index: 1;
+.music-drawer-curtain {
+  position: fixed;
+  inset: 0;
+  background: transparent;
+  border: none;
+  cursor: default;
+  z-index: 1;
 }
 
 /* Drawer Content */
-.drawerContent {
-    position: relative;
-    width: 100%;
-    max-width: 480px;
-    margin: 0 auto;
-    min-height: 100vh;
-    background: linear-gradient(180deg, 
-        rgba(20, 20, 30, 0.95) 0%, 
-        rgba(15, 15, 25, 0.98) 50%,
-        rgba(10, 10, 20, 1) 100%);
-    border-radius: 24px 24px 0 0;
-    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.5);
-    z-index: 10;
-    overflow: hidden;
-    animation: drawerSlideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+.music-drawer-content {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: linear-gradient(180deg, 
+      rgba(18, 18, 28, 0.98) 0%, 
+      rgba(12, 12, 22, 0.98) 50%,
+      rgba(8, 8, 18, 1) 100%);
+  border-radius: 24px 24px 0 0;
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.5);
+  z-index: 10;
+  overflow: hidden;
+  animation: drawerSlideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 @keyframes drawerSlideUp {
-    from {
-        transform: translateY(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 /* Drag Handle */
-.mpNav {
-    display: flex;
-    justify-content: center;
-    padding: 12px 0;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: transparent;
+.music-drawer-nav {
+  display: flex;
+  justify-content: center;
+  padding: 16px 0 8px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: transparent;
 }
 
-.drawerDrag {
-    width: 48px;
-    height: 5px;
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 999px;
-    border: none;
-    cursor: grab;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
+.music-drawer-drag {
+  width: 48px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  border: none;
+  cursor: grab;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
 }
 
-.drawerDrag:active {
-    cursor: grabbing;
-    transform: scaleX(1.2);
+.music-drawer-drag:active {
+  cursor: grabbing;
+  transform: scaleX(1.2);
 }
 
-.drawerDrag:hover {
-    background: rgba(255, 255, 255, 0.5);
-    width: 64px;
+.music-drawer-drag:hover {
+  background: rgba(255, 255, 255, 0.5);
+  width: 64px;
 }
 
-.drawerDrag span {
-    display: none;
+/* Floating Close Button */
+.music-drawer-close {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1000;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ====================================
-   FLOATING CLOSE BUTTON
-   ==================================== */
-
-.btn--close-floating {
-    position: absolute;
-    top: 24px;
-    right: 24px;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 1000;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+.music-drawer-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: rotate(90deg) scale(1.1);
 }
 
-.btn--close-floating:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: rotate(90deg) scale(1.1);
+.music-drawer-close svg {
+  width: 20px;
+  height: 20px;
+  color: #fff;
 }
 
-.btn--close-floating svg {
-    width: 20px;
-    height: 20px;
-    color: #fff;
+/* Album Cover Section */
+.music-drawer-cover-section {
+  position: relative;
+  width: 100%;
+  height: 40vh;
+  min-height: 320px;
+  overflow: hidden;
 }
 
-/* ====================================
-   ALBUM COVER SECTION WITH WAVY SEPARATOR
-   ==================================== */
-
-.albumCoverSection {
-    position: relative;
-    width: 100%;
-    height: 50vh;
-    min-height: 400px;
-    overflow: hidden;
+.music-drawer-cover-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px 60px;
 }
 
-.albumCoverWrapper {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 60px 40px 80px;
-}
-
-.albumArtwork.cover {
-    width: 100%;
-    max-width: 320px;
-    height: auto;
-    aspect-ratio: 1;
-    object-fit: cover;
-    border-radius: 24px;
-    box-shadow: 
-        0 20px 60px rgba(0, 0, 0, 0.6),
-        0 8px 24px rgba(0, 0, 0, 0.4);
-    position: relative;
-    z-index: 2;
-    animation: albumFloat 6s ease-in-out infinite;
+.music-drawer-album-art {
+  width: 100%;
+  max-width: 280px;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 20px;
+  box-shadow: 
+      0 20px 60px rgba(0, 0, 0, 0.6),
+      0 8px 24px rgba(0, 0, 0, 0.4);
+  position: relative;
+  z-index: 2;
+  animation: albumFloat 6s ease-in-out infinite;
 }
 
 @keyframes albumFloat {
-    0%, 100% {
-        transform: translateY(0) scale(1);
-    }
-    50% {
-        transform: translateY(-10px) scale(1.02);
-    }
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-8px) scale(1.02);
+  }
 }
 
-.coverGlow {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(
-        ellipse at center,
-        rgba(139, 92, 246, 0.3) 0%,
-        rgba(59, 130, 246, 0.2) 30%,
-        transparent 70%
-    );
-    filter: blur(60px);
-    opacity: 0.6;
-    z-index: 1;
-    animation: glowPulse 4s ease-in-out infinite;
+.music-drawer-cover-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+      ellipse at center,
+      rgba(139, 92, 246, 0.3) 0%,
+      rgba(59, 130, 246, 0.2) 30%,
+      transparent 70%
+  );
+  filter: blur(60px);
+  opacity: 0.6;
+  z-index: 1;
+  animation: glowPulse 4s ease-in-out infinite;
 }
 
 @keyframes glowPulse {
-    0%, 100% {
-        opacity: 0.6;
-        transform: scale(1);
-    }
-    50% {
-        opacity: 0.8;
-        transform: scale(1.1);
-    }
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.1);
+  }
 }
 
 /* Wavy Separator */
-.wavySeparator {
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 100%;
-    height: 80px;
-    z-index: 3;
-    color: rgba(15, 15, 25, 0.98);
-    overflow: hidden;
+.music-drawer-wavy-separator {
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  z-index: 3;
+  color: rgba(12, 12, 22, 0.98);
+  overflow: hidden;
 }
 
-.wavySeparator svg {
-    width: 100%;
-    height: 100%;
-    display: block;
-    animation: waveFlow 8s ease-in-out infinite;
+.music-drawer-wavy-separator svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  animation: waveFlow 8s ease-in-out infinite;
 }
 
 @keyframes waveFlow {
-    0%, 100% {
-        transform: translateX(0) scaleY(1);
-    }
-    50% {
-        transform: translateX(-25px) scaleY(1.1);
-    }
+  0%, 100% {
+    transform: translateX(0) scaleY(1);
+  }
+  50% {
+    transform: translateX(-25px) scaleY(1.1);
+  }
 }
 
-/* ====================================
-   MUSIC PLAYER BODY
-   ==================================== */
-
-.musicPlayer {
-    position: relative;
-    width: 100%;
-    height: 100%;
+/* Tab Navigation */
+.music-drawer-tabs {
+  position: relative;
+  width: 100%;
+  padding: 0 24px;
+  margin: 16px 0 24px;
 }
 
-.musicPlayer .body {
-    padding: 0;
-    position: relative;
+.music-drawer-tabs-wrapper {
+  display: flex;
+  gap: 8px;
+  position: relative;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 6px;
+  backdrop-filter: blur(10px);
 }
 
-/* ====================================
-   MODERN TAB NAVIGATION
-   ==================================== */
-
-.modernTabsContainer {
-    position: relative;
-    width: 100%;
-    padding: 0 24px;
-    margin: 24px 0 32px;
+.music-drawer-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 8px;
+  background: transparent;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: rgba(255, 255, 255, 0.5);
 }
 
-.tabsWrapper {
-    display: flex;
-    gap: 8px;
-    position: relative;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 16px;
-    padding: 6px;
-    backdrop-filter: blur(10px);
+.music-drawer-tab:hover {
+  color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.05);
 }
 
-.modernTab {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    padding: 12px 8px;
-    background: transparent;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    position: relative;
-    z-index: 2;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    color: rgba(255, 255, 255, 0.5);
+.music-drawer-tab.active {
+  color: #fff;
 }
 
-.modernTab:hover {
-    color: rgba(255, 255, 255, 0.8);
-    background: rgba(255, 255, 255, 0.05);
+.music-drawer-tab-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.modernTab.active {
-    color: #fff;
+.music-drawer-tab.active .music-drawer-tab-icon {
+  transform: scale(1.15);
 }
 
-.tabIcon {
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+.music-drawer-tab svg {
+  width: 100%;
+  height: 100%;
 }
 
-.modernTab.active .tabIcon {
-    transform: scale(1.15);
+.music-drawer-tab-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
 }
 
-.modernTab svg {
-    width: 100%;
-    height: 100%;
+.music-drawer-tab-slider {
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: 6px;
+  width: calc(33.333% - 8px);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(59, 130, 246, 0.2));
+  border-radius: 12px;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 1;
+  pointer-events: none;
 }
 
-.tabLabel {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    white-space: nowrap;
+.music-drawer-tab:nth-child(2).active ~ .music-drawer-tab-slider {
+  transform: translateX(calc(100% + 8px));
 }
 
-.tabIndicator {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #8b5cf6, #3b82f6);
-    border-radius: 999px;
-    opacity: 0;
-    transform: scaleX(0);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+.music-drawer-tab:nth-child(3).active ~ .music-drawer-tab-slider {
+  transform: translateX(calc(200% + 16px));
 }
 
-.modernTab.active .tabIndicator {
-    opacity: 1;
-    transform: scaleX(1);
+/* Tab Content */
+.music-drawer-tab-content {
+  position: relative;
+  min-height: 400px;
 }
 
-.tabSlider {
-    position: absolute;
-    top: 6px;
-    bottom: 6px;
-    left: 6px;
-    width: calc(33.333% - 8px);
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(59, 130, 246, 0.2));
-    border-radius: 12px;
-    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    z-index: 1;
-    pointer-events: none;
+.music-drawer-tab-panel {
+  display: none;
+  animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.modernTab:nth-child(2).active ~ .tabSlider {
-    transform: translateX(calc(100% + 8px));
-}
-
-.modernTab:nth-child(3).active ~ .tabSlider {
-    transform: translateX(calc(200% + 16px));
-}
-
-/* ====================================
-   TAB CONTENT AREA
-   ==================================== */
-
-.tabContentArea {
-    position: relative;
-    min-height: 400px;
-}
-
-.tabContent {
-    display: none;
-    animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.tabContent.active {
-    display: block;
+.music-drawer-tab-panel.active {
+  display: block;
 }
 
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* ====================================
-   NOW PLAYING CONTENT
-   ==================================== */
-
-.playingContent {
-    padding: 0 24px 40px;
-    display: flex;
-    flex-direction: column;
-    gap: 32px;
+/* Now Playing Content */
+.music-drawer-now-playing {
+  padding: 0 24px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
-/* Song Info Card */
-.songInfoCard {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 20px;
-    padding: 24px;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.3s ease;
+/* Song Info */
+.music-drawer-song-info {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
 }
 
-.songInfoCard:hover {
-    background: rgba(255, 255, 255, 0.08);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+.music-drawer-song-info:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
-.songInfo {
-    flex: 1;
-    min-width: 0;
+.music-drawer-song-details {
+  flex: 1;
+  min-width: 0;
 }
 
-.songName {
-    font-size: 20px;
-    font-weight: 700;
-    color: #fff;
-    margin: 0 0 8px;
-    line-height: 1.3;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+.music-drawer-song-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 6px;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.artistName {
-    font-size: 15px;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.7);
-    margin: 0 0 4px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+.music-drawer-song-artist {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0 0 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.albumName {
-    font-size: 13px;
-    font-weight: 400;
-    color: rgba(255, 255, 255, 0.5);
-    margin: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+.music-drawer-song-album {
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-/* Inline Favorite Button */
-.btn--favorite-inline {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    flex-shrink: 0;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+/* Favorite Button */
+.music-drawer-favorite-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.btn--favorite-inline:hover {
-    background: rgba(239, 68, 68, 0.2);
-    border-color: #ef4444;
-    transform: scale(1.1);
+.music-drawer-favorite-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: #ef4444;
+  transform: scale(1.1);
 }
 
-.btn--favorite-inline.favorited {
-    background: rgba(239, 68, 68, 0.3);
-    border-color: #ef4444;
+.music-drawer-favorite-btn.favorited {
+  background: rgba(239, 68, 68, 0.3);
+  border-color: #ef4444;
 }
 
-.btn--favorite-inline svg {
-    width: 22px;
-    height: 22px;
-    color: rgba(255, 255, 255, 0.6);
-    transition: all 0.3s ease;
+.music-drawer-favorite-btn svg {
+  width: 22px;
+  height: 22px;
+  color: rgba(255, 255, 255, 0.6);
+  transition: all 0.3s ease;
 }
 
-.btn--favorite-inline:hover svg,
-.btn--favorite-inline.favorited svg {
-    color: #ef4444;
-    fill: #ef4444;
+.music-drawer-favorite-btn:hover svg,
+.music-drawer-favorite-btn.favorited svg {
+  color: #ef4444;
+  fill: #ef4444;
 }
 
-.btn--favorite-inline.favorited svg {
-    animation: heartBeat 0.6s ease;
+.music-drawer-favorite-btn.favorited svg {
+  animation: heartBeat 0.6s ease;
 }
 
 @keyframes heartBeat {
-    0%, 100% { transform: scale(1); }
-    25% { transform: scale(1.3); }
-    50% { transform: scale(0.9); }
-    75% { transform: scale(1.1); }
+  0%, 100% { transform: scale(1); }
+  25% { transform: scale(1.3); }
+  50% { transform: scale(0.9); }
+  75% { transform: scale(1.1); }
 }
 
-/* ====================================
-   ENHANCED PROGRESS SECTION
-   ==================================== */
-
-.progressSection {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+/* Progress Bar */
+.music-drawer-progress-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.progressBar {
-    position: relative;
-    width: 100%;
-    height: 6px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 999px;
-    cursor: pointer;
-    overflow: visible;
-    transition: height 0.2s ease;
+.music-drawer-progress-bar {
+  position: relative;
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  cursor: pointer;
+  overflow: visible;
+  transition: height 0.2s ease;
 }
 
-.progressBar:hover {
-    height: 8px;
+.music-drawer-progress-bar:hover {
+  height: 8px;
 }
 
-.progressBar:hover .progressThumb {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
+.music-drawer-progress-bar:hover .music-drawer-progress-thumb {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
 }
 
-.progressBuffer {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 999px;
-    transition: width 0.3s ease;
+.music-drawer-progress-buffer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  transition: width 0.3s ease;
 }
 
-.progressFill {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    background: linear-gradient(90deg, #8b5cf6, #3b82f6);
-    border-radius: 999px;
-    transition: width 0.1s linear;
-    position: relative;
+.music-drawer-progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: linear-gradient(90deg, #8b5cf6, #3b82f6);
+  border-radius: 999px;
+  transition: width 0.1s linear;
+  position: relative;
 }
 
-.progressThumb {
-    position: absolute;
-    top: 50%;
-    left: 100%;
-    width: 16px;
-    height: 16px;
-    background: #fff;
-    border-radius: 50%;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    transform: translate(-50%, -50%) scale(0);
-    opacity: 0;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+.music-drawer-progress-thumb {
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.progressBar.is-dragging .progressThumb,
-.progressBar.is-hovering .progressThumb {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
+.music-drawer-progress-bar.is-dragging .music-drawer-progress-thumb,
+.music-drawer-progress-bar.is-hovering .music-drawer-progress-thumb {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
 }
 
-.progressGlow {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    width: 0%;
-    height: 20px;
-    background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.3), transparent);
-    filter: blur(10px);
-    transform: translateY(-50%);
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+.music-drawer-time-display {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 4px;
 }
 
-.progressBar:hover .progressGlow {
-    opacity: 1;
-    width: 100%;
+.music-drawer-current-time,
+.music-drawer-total-time {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  font-variant-numeric: tabular-nums;
 }
 
-.timeDisplay {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 4px;
+/* Playback Controls */
+.music-drawer-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 8px 0;
 }
 
-.currentTime,
-.totalTime {
-    font-size: 12px;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.6);
-    font-variant-numeric: tabular-nums;
+.music-drawer-control-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
 }
 
-/* ====================================
-   PREMIUM PLAYBACK CONTROLS
-   ==================================== */
-
-.premiumControls {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    padding: 8px 0;
+.music-drawer-control-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
-.controlBtn {
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    border: none;
-    background: rgba(255, 255, 255, 0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
+.music-drawer-control-btn:hover::before {
+  opacity: 1;
 }
 
-.controlBtn::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
-    opacity: 0;
-    transition: opacity 0.3s ease;
+.music-drawer-control-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
 }
 
-.controlBtn:hover::before {
-    opacity: 1;
+.music-drawer-control-btn:active {
+  transform: translateY(0) scale(0.95);
 }
 
-.controlBtn:hover {
-    background: rgba(255, 255, 255, 0.15);
-    transform: translateY(-2px);
-}
-
-.controlBtn:active {
-    transform: translateY(0) scale(0.95);
-}
-
-.controlBtn svg {
-    width: 24px;
-    height: 24px;
-    color: #fff;
-    z-index: 1;
+.music-drawer-control-btn svg {
+  width: 24px;
+  height: 24px;
+  color: #fff;
+  z-index: 1;
 }
 
 /* Secondary Controls */
-.controlBtn--secondary {
-    width: 48px;
-    height: 48px;
+.music-drawer-control-btn--secondary {
+  width: 48px;
+  height: 48px;
 }
 
-.controlBtn--secondary svg {
-    width: 22px;
-    height: 22px;
+.music-drawer-control-btn--secondary svg {
+  width: 22px;
+  height: 22px;
 }
 
 /* Primary Play/Pause Button */
-.controlBtn--primary {
-    width: 72px;
-    height: 72px;
-    background: linear-gradient(135deg, #8b5cf6, #3b82f6);
-    box-shadow: 
-        0 8px 24px rgba(139, 92, 246, 0.4),
-        0 4px 12px rgba(59, 130, 246, 0.3);
+.music-drawer-control-btn--primary {
+  width: 68px;
+  height: 68px;
+  background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+  box-shadow: 
+      0 8px 24px rgba(139, 92, 246, 0.4),
+      0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
-.controlBtn--primary:hover {
-    background: linear-gradient(135deg, #9d6dff, #4c93ff);
-    box-shadow: 
-        0 12px 32px rgba(139, 92, 246, 0.5),
-        0 6px 16px rgba(59, 130, 246, 0.4);
-    transform: translateY(-4px) scale(1.05);
+.music-drawer-control-btn--primary:hover {
+  background: linear-gradient(135deg, #9d6dff, #4c93ff);
+  box-shadow: 
+      0 12px 32px rgba(139, 92, 246, 0.5),
+      0 6px 16px rgba(59, 130, 246, 0.4);
+  transform: translateY(-4px) scale(1.05);
 }
 
-.controlBtn--primary svg {
-    width: 32px;
-    height: 32px;
+.music-drawer-control-btn--primary svg {
+  width: 28px;
+  height: 28px;
 }
 
-.controlBtn--primary .pauseIcon {
-    display: none;
+.music-drawer-control-btn--primary .pause-icon {
+  display: none;
 }
 
-.musicPlayer.isPlaying .controlBtn--primary .playIcon {
-    display: none;
+.music-drawer.is-playing .music-drawer-control-btn--primary .play-icon {
+  display: none;
 }
 
-.musicPlayer.isPlaying .controlBtn--primary .pauseIcon {
-    display: block;
+.music-drawer.is-playing .music-drawer-control-btn--primary .pause-icon {
+  display: block;
 }
 
 /* Skip Time Buttons */
-.controlBtn--rewind,
-.controlBtn--forward {
-    position: relative;
+.music-drawer-control-btn--rewind,
+.music-drawer-control-btn--forward {
+  position: relative;
 }
 
-.skipLabel {
-    position: absolute;
-    bottom: 8px;
-    font-size: 9px;
-    font-weight: 700;
-    color: #fff;
+.music-drawer-skip-label {
+  position: absolute;
+  bottom: 8px;
+  font-size: 9px;
+  font-weight: 700;
+  color: #fff;
 }
 
-/* ====================================
-   SECONDARY ACTIONS BAR
-   ==================================== */
-
-.actionsBar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    padding: 16px 0 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+/* Secondary Actions */
+.music-drawer-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 16px 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.actionBtn {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+.music-drawer-action-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.actionBtn:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.3);
-    transform: translateY(-2px);
+.music-drawer-action-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
 }
 
-.actionBtn svg {
-    width: 20px;
-    height: 20px;
-    color: rgba(255, 255, 255, 0.7);
+.music-drawer-action-btn svg {
+  width: 20px;
+  height: 20px;
+  color: rgba(255, 255, 255, 0.7);
 }
 
-.actionBtn:hover svg {
-    color: #fff;
+.music-drawer-action-btn:hover svg {
+  color: #fff;
 }
 
-/* ====================================
-   LIST VIEWS (QUEUE & RECENT)
-   ==================================== */
-
-.listHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 24px 16px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+/* List Views */
+.music-drawer-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 24px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.listTitle {
-    font-size: 22px;
-    font-weight: 700;
-    color: #fff;
-    margin: 0;
+.music-drawer-list-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
 }
 
-.listCount {
-    font-size: 13px;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.5);
-    background: rgba(255, 255, 255, 0.1);
-    padding: 4px 12px;
-    border-radius: 999px;
+.music-drawer-list-count {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px 12px;
+  border-radius: 999px;
 }
 
-.modernList {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    max-height: 500px;
-    overflow-y: auto;
-    padding: 16px 24px 40px;
+.music-drawer-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 500px;
+  overflow-y: auto;
+  padding: 16px 24px 40px;
 }
 
-.modernList::-webkit-scrollbar {
-    width: 6px;
+.music-drawer-list::-webkit-scrollbar {
+  width: 6px;
 }
 
-.modernList::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 999px;
+.music-drawer-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 999px;
 }
 
-.modernList::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 999px;
+.music-drawer-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
 }
 
-.modernList::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.3);
+.music-drawer-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 /* Empty State */
-.empty {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 60px 20px;
-    text-align: center;
+.music-drawer-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
 }
 
-.emptyIcon {
-    width: 80px;
-    height: 80px;
-    margin-bottom: 20px;
-    color: rgba(255, 255, 255, 0.2);
+.music-drawer-empty-icon {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 20px;
+  color: rgba(255, 255, 255, 0.2);
 }
 
-.emptyIcon svg {
-    width: 100%;
-    height: 100%;
+.music-drawer-empty-icon svg {
+  width: 100%;
+  height: 100%;
 }
 
-.emptyText {
-    font-size: 18px;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.7);
-    margin-bottom: 8px;
+.music-drawer-empty-text {
+  font-size: 18px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 8px;
 }
 
-.emptySubtext {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.4);
+.music-drawer-empty-subtext {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.4);
 }
 
-/* ====================================
-   RESPONSIVE DESIGN
-   ==================================== */
+/* List Items */
+.music-drawer-list-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 8px;
+}
 
+.music-drawer-list-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.music-drawer-list-item.active {
+  background: rgba(139, 92, 246, 0.15);
+  border-left: 3px solid #8b5cf6;
+}
+
+.music-drawer-list-item-art {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.music-drawer-list-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.music-drawer-list-item-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  margin: 0 0 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.music-drawer-list-item-artist {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.music-drawer-list-item-actions {
+  display: flex;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.music-drawer-list-item:hover .music-drawer-list-item-actions {
+  opacity: 1;
+}
+
+.music-drawer-list-item-action {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.music-drawer-list-item-action:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.music-drawer-list-item-action svg {
+  width: 18px;
+  height: 18px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Responsive Design */
 @media (max-width: 480px) {
-    .drawerContent {
-        max-width: 100%;
-        border-radius: 20px 20px 0 0;
-    }
+  .music-drawer-content {
+    max-width: 100%;
+    border-radius: 20px 20px 0 0;
+  }
 
-    .albumCoverWrapper {
-        padding: 40px 24px 60px;
-    }
+  .music-drawer-cover-wrapper {
+    padding: 32px 20px 48px;
+  }
 
-    .albumArtwork.cover {
-        max-width: 280px;
-    }
+  .music-drawer-album-art {
+    max-width: 240px;
+  }
 
-    .songInfoCard {
-        padding: 20px;
-    }
+  .music-drawer-song-info {
+    padding: 16px;
+  }
 
-    .songName {
-        font-size: 18px;
-    }
+  .music-drawer-song-title {
+    font-size: 16px;
+  }
 
-    .artistName {
-        font-size: 14px;
-    }
+  .music-drawer-song-artist {
+    font-size: 13px;
+  }
 
-    .premiumControls {
-        gap: 8px;
-    }
+  .music-drawer-controls {
+    gap: 8px;
+  }
 
-    .controlBtn--primary {
-        width: 64px;
-        height: 64px;
-    }
+  .music-drawer-control-btn--primary {
+    width: 60px;
+    height: 60px;
+  }
 
-    .controlBtn--secondary {
-        width: 44px;
-        height: 44px;
-    }
+  .music-drawer-control-btn--secondary {
+    width: 44px;
+    height: 44px;
+  }
 
-    .tabLabel {
-        font-size: 10px;
-    }
+  .music-drawer-tab-label {
+    font-size: 10px;
+  }
 }
 
 @media (min-width: 768px) {
-    .drawerContent {
-        margin-top: 5vh;
-        min-height: 95vh;
-        border-radius: 24px;
-    }
+  .music-drawer-content {
+    margin-top: 5vh;
+    min-height: 95vh;
+    border-radius: 24px;
+  }
 
-    .albumCoverSection {
-        height: 55vh;
-        min-height: 450px;
-    }
+  .music-drawer-cover-section {
+    height: 45vh;
+    min-height: 380px;
+  }
 
-    .albumArtwork.cover {
-        max-width: 360px;
-    }
-}
-
-/* ====================================
-   ANIMATIONS & TRANSITIONS
-   ==================================== */
-
-@keyframes slideInFromBottom {
-    from {
-        transform: translateY(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-@keyframes shimmer {
-    0% {
-        background-position: -1000px 0;
-    }
-    100% {
-        background-position: 1000px 0;
-    }
+  .music-drawer-album-art {
+    max-width: 320px;
+  }
 }
 
 /* Loading State */
-.musicPlayer.loading .albumArtwork.cover {
-    animation: shimmer 2s infinite linear;
-    background: linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 0.05) 0%,
-        rgba(255, 255, 255, 0.1) 50%,
-        rgba(255, 255, 255, 0.05) 100%
-    );
-    background-size: 1000px 100%;
+.music-drawer.loading .music-drawer-album-art {
+  animation: shimmer 2s infinite linear;
+  background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.05) 0%,
+      rgba(255, 255, 255, 0.1) 50%,
+      rgba(255, 255, 255, 0.05) 100%
+  );
+  background-size: 1000px 100%;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
 }
 
 /* Accessibility */
-.controlBtn:focus,
-.actionBtn:focus,
-.modernTab:focus {
-    outline: 2px solid rgba(139, 92, 246, 0.6);
-    outline-offset: 2px;
+.music-drawer-control-btn:focus,
+.music-drawer-action-btn:focus,
+.music-drawer-tab:focus {
+  outline: 2px solid rgba(139, 92, 246, 0.6);
+  outline-offset: 2px;
 }
 
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-    }
-}
-
-
-
-/* ===========================================
-   UNIFIED MUSIC PLAYER CSS - MOBILE BASE
-   =========================================== */
-
-/* Base styles for the drawer on mobile */
-@media (max-width: 767px) {
-    .drawer {
-        /* Position as a bottom sheet */
-        inset: auto 0 0 0;
-        width: 100%;
-        max-height: 95vh; /* Allow a small gap at the top */
-        
-        /* Rounded corners only at the top */
-        border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-        
-        /* Remove desktop padding and alignment */
-        padding: 0;
-        display: block; /* Not flex */
-        align-items: unset;
-        justify-content: unset;
-        
-        /* Ensure it's above other content */
-        z-index: var(--z-player);
-        
-        /* Add a border and shadow for separation */
-        border-top: 1px solid var(--border-200);
-        box-shadow: var(--shadow-xl);
-    }
-    
-    .drawer:popover-open {
-        /* Animate sliding in from the bottom */
-        animation: slideInUp 0.3s var(--transition-curve-smooth);
-    }
-    
-    .drawer.closing {
-        /* Animate sliding out */
-        animation: slideOutDown 0.3s var(--transition-curve-smooth);
-    }
-
-    /* Make the scroller fill the drawer */
-    .drawerScroller {
-        height: auto;
-        max-height: 95vh; /* Match drawer */
-        width: 100%;
-        max-width: none;
-        overflow-y: auto;
-        scroll-snap-type: none; /* Disable snap for vertical scroll */
-    }
-    
-    .drawerSlide {
-        width: 100%;
-        min-height: auto;
-        height: auto;
-        flex: none;
-    }
-    
-    /* Show the mobile drag handle */
-    .drawer .mpNav {
-        display: flex;
-    }
-    
-    /* Hide the desktop close button on mobile */
-    .musicPlayer .header {
-        display: none;
-    }
-
-    /* The curtain is used to close on backdrop click for popovers */
-    .drawerCurtain {
-        display: block;
-    }
-
-    /* Add safe-area padding for mobile content */
-    .drawerContent {
-        min-height: auto;
-        padding-bottom: env(safe-area-inset-bottom, 1.5rem);
-    }
-
-    /* Keyframe animations for slide up/down */
-    @keyframes slideInUp {
-        from {
-            transform: translateY(100%);
-        }
-        to {
-            transform: translateY(0);
-        }
-    }
-    
-    @keyframes slideOutDown {
-        from {
-            transform: translateY(0);
-        }
-        to {
-            transform: translateY(100%);
-        }
-    }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 </style>
-<aside class="drawer" popover="auto" id="drawer">
-    <div class="drawerScroller">
-        <div class="drawerSlide">
-            <div class="drawerAnchors">
-                <div class="drawerAnchor"></div>
-                <div class="drawerAnchor"></div>
-            </div>
 
-            <button popovertargetaction="hide" popovertarget="drawer" class="drawerCurtain" tabindex="-1"></button>
+<aside class="music-drawer" popover="auto" id="musicDrawer">
+  <div class="music-drawer-scroller">
+    <div class="music-drawer-slide">
+      <button popovertargetaction="hide" popovertarget="musicDrawer" class="music-drawer-curtain" tabindex="-1"></button>
 
-            <div class="drawerContent">
-                <div class="mpNav">
-                    <button autofocus class="drawerDrag" popovertargetaction="hide" popovertarget="drawer">
-                        <span></span>
-                    </button>
-                </div>
-
-                <div class="content">
-                    <div class="musicPlayer" id="musicPlayer">
-                        <!-- Close Button - Floating Top Right -->
-                        <button class="btn btn--close-floating use-site-colors" id="closeBtn">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="18" y1="6" x2="6" y2="18"></line>
-                                <line x1="6" y1="6" x2="18" y2="18"></line>
-                            </svg>
-                        </button>
-
-                        <!-- Immersive Album Cover Section -->
-                        <div class="albumCoverSection">
-                            <div class="albumCoverWrapper">
-                                <img id="cover" src="" alt="Album Cover" class="albumArtwork cover" />
-                                <div class="coverGlow"></div>
-                            </div>
-                            
-                            <!-- Wavy Separator SVG -->
-                            <div class="wavySeparator">
-                                <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
-                                    <path d="M0,0 C150,80 350,0 600,50 C850,100 1050,20 1200,80 L1200,120 L0,120 Z" fill="currentColor"></path>
-                                </svg>
-                            </div>
-                        </div>
-
-                        <!-- Content Body -->
-                        <div class="body">
-                            <!-- Modern Tab Navigation -->
-                            <div class="modernTabsContainer">
-                                <div class="tabsWrapper">
-                                    <button class="modernTab active" data-tab="playing">
-                                        <span class="tabIcon">
-                                            <svg viewBox="0 0 24 24" fill="currentColor">
-                                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
-                                            </svg>
-                                        </span>
-                                        <span class="tabLabel">Now Playing</span>
-                                        <div class="tabIndicator"></div>
-                                    </button>
-                                    <button class="modernTab" data-tab="recent">
-                                        <span class="tabIcon">
-                                            <svg viewBox="0 0 24 24" fill="currentColor">
-                                                <path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/>
-                                            </svg>
-                                        </span>
-                                        <span class="tabLabel">Recent</span>
-                                        <div class="tabIndicator"></div>
-                                    </button>
-                                    <button class="modernTab" data-tab="queue">
-                                        <span class="tabIcon">
-                                            <svg viewBox="0 0 24 24" fill="currentColor">
-                                                <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
-                                            </svg>
-                                        </span>
-                                        <span class="tabLabel">Up Next</span>
-                                        <div class="tabIndicator"></div>
-                                    </button>
-                                </div>
-                                <div class="tabSlider"></div>
-                            </div>
-
-                            <!-- Tab Content -->
-                            <div class="tabContentArea">
-                                <!-- Now Playing -->
-                                <div class="tabContent active" data-tab="playing">
-                                    <div class="playingContent">
-                                        <!-- Song Info Card -->
-                                        <div class="songInfoCard">
-                                            <div class="songInfo">
-                                                <h4 id="title" class="songName title"></h4>
-                                                <p id="artist" class="artistName artist"></p>
-                                                <p id="album" class="albumName album"></p>
-                                            </div>
-                                            
-                                            <!-- Favorite Button in Info Card -->
-                                            <button class="btn btn--favorite-inline use-site-colors" id="favoriteBtn" title="Add to Favorites">
-                                                <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
-                                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                                                </svg>
-                                            </button>
-                                        </div>
-
-                                        <!-- Enhanced Progress Section -->
-                                        <div class="progressSection" id="musicProgress">
-                                            <div class="progressBar" id="progressBar" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Seek">
-                                                <div class="progressBuffer" id="progressBuffer"></div>
-                                                <div class="progressFill" id="progressFill">
-                                                    <div class="progressThumb" id="progressThumb"></div>
-                                                </div>
-                                                <div class="progressGlow"></div>
-                                            </div>
-                                            
-                                            <div class="timeDisplay">
-                                                <span id="currentTime" class="currentTime">0:00</span>
-                                                <span id="totalTime" class="totalTime">0:00</span>
-                                            </div>
-                                        </div>
-
-                                        <!-- Premium Playback Controls -->
-                                        <div class="premiumControls">
-                                            <button class="controlBtn controlBtn--secondary" id="prevBtn" title="Previous">
-                                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                                    <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
-                                                </svg>
-                                            </button>
-
-                                            <button class="controlBtn controlBtn--rewind" id="rewindBtn" title="Rewind 10s">
-                                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                                    <path d="M11.99 5V1l-5 5 5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6h-2c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8zm-1.1 11h-.85v-3.26l-1.01.31v-.69l1.77-.63h.09V16zm4.28-1.76c0 .32-.03.6-.1.82s-.17.42-.29.57-.28.26-.45.33-.37.1-.59.10-.41-.03-.59-.1-.33-.18-.46-.33-.23-.34-.3-.57-.11-.5-.11-.82v-.74c0-.32.03-.6.1-.82s.17-.42.29-.57.28-.26.45-.33.37-.1.59-.10.41.03.59.1.33.18.46.33.23.34.3.57.11.5.11.82v.74zm-.85-.86c0-.19-.01-.35-.04-.48s-.07-.23-.12-.31-.11-.14-.19-.17-.16-.05-.25-.05-.18.02-.25.05-.14.09-.19.17-.09.18-.12.31-.04.29-.04.48v.97c0 .19.01.35.04.48s.07.24.12.32.11.14.19.17.16.05.25.05.18-.02.25-.05.14-.09.19-.17.09-.19.12-.32.04-.29.04-.48v-.97z"/>
-                                                </svg>
-                                                <span class="skipLabel">10</span>
-                                            </button>
-
-                                            <button class="controlBtn controlBtn--primary" id="playBtn" title="Play/Pause">
-                                                <span class="playIcon">
-                                                    <svg viewBox="0 0 24 24" fill="currentColor">
-                                                        <path d="M8 5v14l11-7z"/>
-                                                    </svg>
-                                                </span>
-                                                <span class="pauseIcon">
-                                                    <svg viewBox="0 0 24 24" fill="currentColor">
-                                                        <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
-                                                    </svg>
-                                                </span>
-                                            </button>
-
-                                            <button class="controlBtn controlBtn--forward" id="forwardBtn" title="Forward 10s">
-                                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                                    <path d="M18 13c0 3.31-2.69 6-6 6s-6-2.69-6-6 2.69-6 6-6v4l5-5-5-5v4c-4.42 0-8 3.58-8 8s3.58 8 8 8 8-3.58 8-8h-2zm-7.46 2.22v-.68l-1.01-.31v3.26h.85v-2.11l1.01.31v.69l-1.77.63h-.09zM13 14.25c0 .32.03.6.1.82s.17.42.29.57.28.26.45.33.37.1.59.1.41-.03.59-.1.33-.18.46-.33.23-.34.3-.57.11-.5.11-.82v-.74c0-.32-.03-.6-.1-.82s-.17-.42-.29-.57-.28-.26-.45-.33-.37-.1-.59-.1-.41.03-.59.1-.33.18-.46.33-.23.34-.3.57-.11.5-.11.82v.74zm.85-.86v-.97c0-.19.01-.35.04-.48s.07-.23.12-.31.11-.14.19-.17.16-.05.25-.05.18.02.25.05.14.09.19.17.09.18.12.31.04.29.04.48v.97c0 .19-.01.35-.04.48s-.07.24-.12.32-.11.14-.19.17-.16.05-.25.05-.18-.02-.25-.05-.14-.09-.19-.17-.09-.19-.12-.32-.04-.29-.04-.48z"/>
-                                                </svg>
-                                                <span class="skipLabel">10</span>
-                                            </button>
-
-                                            <button class="controlBtn controlBtn--secondary" id="nextBtn" title="Next">
-                                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                                    <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
-                                                </svg>
-                                            </button>
-                                        </div>
-
-                                        <!-- Secondary Actions Bar -->
-                                        <div class="actionsBar">
-                                            <button class="actionBtn" id="queueBtn" title="View Queue">
-                                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                                    <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
-                                                </svg>
-                                            </button>
-
-                                            <button class="actionBtn" id="shareBtn" title="Share">
-                                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                                    <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/>
-                                                </svg>
-                                            </button>
-
-                                            <button class="actionBtn" id="moreBtn" title="More Options">
-                                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                                    <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Queue Tab -->
-                                <div class="tabContent" data-tab="queue">
-                                    <div class="listHeader">
-                                        <h3 class="listTitle">Up Next</h3>
-                                        <span class="listCount" id="queue-count-display">0 songs</span>
-                                    </div>
-                                    <ul id="queueList" class="modernList">
-                                        <div class="empty">
-                                            <div class="emptyIcon">
-                                                <svg fill="currentColor" viewBox="0 0 24 24">
-                                                    <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
-                                                </svg>
-                                            </div>
-                                            <div class="emptyText">Queue is empty</div>
-                                            <div class="emptySubtext">Songs you add will appear here</div>
-                                        </div>
-                                    </ul>
-                                </div>
-
-                                <!-- Recent Tab -->
-                                <div class="tabContent" data-tab="recent">
-                                    <div class="listHeader">
-                                        <h3 class="listTitle">Recently Played</h3>
-                                        <span class="listCount" id="recent-count-display">0 songs</span>
-                                    </div>
-                                    <ul id="recentList" class="modernList">
-                                        <div class="empty">
-                                            <div class="emptyIcon">
-                                                <svg fill="currentColor" viewBox="0 0 24 24">
-                                                    <path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/>
-                                                </svg>
-                                            </div>
-                                            <div class="emptyText">No recently played songs</div>
-                                            <div class="emptySubtext">Start playing music to see your history</div>
-                                        </div>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      <div class="music-drawer-content">
+        <div class="music-drawer-nav">
+          <button autofocus class="music-drawer-drag" popovertargetaction="hide" popovertarget="musicDrawer">
+            <span></span>
+          </button>
         </div>
+
+        <button class="music-drawer-close" id="musicDrawerCloseBtn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+
+        <!-- Album Cover Section -->
+        <div class="music-drawer-cover-section">
+          <div class="music-drawer-cover-wrapper">
+            <img id="musicDrawerCover" src="" alt="Album Cover" class="music-drawer-album-art" />
+            <div class="music-drawer-cover-glow"></div>
+          </div>
+          
+          <!-- Wavy Separator -->
+          <div class="music-drawer-wavy-separator">
+            <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+              <path d="M0,0 C150,80 350,0 600,50 C850,100 1050,20 1200,80 L1200,120 L0,120 Z" fill="currentColor"></path>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="music-drawer-tabs">
+          <div class="music-drawer-tabs-wrapper">
+            <button class="music-drawer-tab active" data-tab="playing">
+              <span class="music-drawer-tab-icon">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
+                </svg>
+              </span>
+              <span class="music-drawer-tab-label">Now Playing</span>
+            </button>
+            <button class="music-drawer-tab" data-tab="recent">
+              <span class="music-drawer-tab-icon">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/>
+                </svg>
+              </span>
+              <span class="music-drawer-tab-label">Recent</span>
+            </button>
+            <button class="music-drawer-tab" data-tab="queue">
+              <span class="music-drawer-tab-icon">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
+                </svg>
+              </span>
+              <span class="music-drawer-tab-label">Up Next</span>
+            </button>
+            <div class="music-drawer-tab-slider"></div>
+          </div>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="music-drawer-tab-content">
+          <!-- Now Playing -->
+          <div class="music-drawer-tab-panel active" data-tab="playing">
+            <div class="music-drawer-now-playing">
+              <!-- Song Info -->
+              <div class="music-drawer-song-info">
+                <div class="music-drawer-song-details">
+                  <h4 id="musicDrawerTitle" class="music-drawer-song-title"></h4>
+                  <p id="musicDrawerArtist" class="music-drawer-song-artist"></p>
+                  <p id="musicDrawerAlbum" class="music-drawer-song-album"></p>
+                </div>
+                
+                <!-- Favorite Button -->
+                <button class="music-drawer-favorite-btn" id="musicDrawerFavoriteBtn" title="Add to Favorites">
+                  <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                  </svg>
+                </button>
+              </div>
+
+              <!-- Progress Section -->
+              <div class="music-drawer-progress-section" id="musicDrawerProgress">
+                <div class="music-drawer-progress-bar" id="musicDrawerProgressBar" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Seek">
+                  <div class="music-drawer-progress-buffer" id="musicDrawerProgressBuffer"></div>
+                  <div class="music-drawer-progress-fill" id="musicDrawerProgressFill">
+                    <div class="music-drawer-progress-thumb" id="musicDrawerProgressThumb"></div>
+                  </div>
+                </div>
+                
+                <div class="music-drawer-time-display">
+                  <span id="musicDrawerCurrentTime" class="music-drawer-current-time">0:00</span>
+                  <span id="musicDrawerTotalTime" class="music-drawer-total-time">0:00</span>
+                </div>
+              </div>
+
+              <!-- Playback Controls -->
+              <div class="music-drawer-controls">
+                <button class="music-drawer-control-btn music-drawer-control-btn--secondary" id="musicDrawerPrevBtn" title="Previous">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
+                  </svg>
+                </button>
+
+                <button class="music-drawer-control-btn music-drawer-control-btn--rewind" id="musicDrawerRewindBtn" title="Rewind 10s">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M11.99 5V1l-5 5 5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6h-2c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8zm-1.1 11h-.85v-3.26l-1.01.31v-.69l1.77-.63h.09V16zm4.28-1.76c0 .32-.03.6-.1.82s-.17.42-.29.57-.28.26-.45.33-.37.1-.59.10-.41-.03-.59-.1-.33-.18-.46-.33-.23-.34-.3-.57-.11-.5-.11-.82v-.74c0-.32.03-.6.1-.82s.17-.42.29-.57.28-.26.45-.33.37-.1.59-.10.41.03.59.1.33.18.46.33.23.34.3.57.11.5.11.82v.74zm-.85-.86c0-.19-.01-.35-.04-.48s-.07-.23-.12-.31-.11-.14-.19-.17-.16-.05-.25-.05-.18.02-.25.05-.14.09-.19.17-.09.18-.12.31-.04.29-.04.48v.97c0 .19.01.35.04.48s.07.24.12.32.11.14.19.17.16.05.25.05.18-.02.25-.05.14-.09.19-.17.09-.19.12-.32.04-.29.04-.48v-.97z"/>
+                  </svg>
+                  <span class="music-drawer-skip-label">10</span>
+                </button>
+
+                <button class="music-drawer-control-btn music-drawer-control-btn--primary" id="musicDrawerPlayBtn" title="Play/Pause">
+                  <span class="play-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
+                  </span>
+                  <span class="pause-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                    </svg>
+                  </span>
+                </button>
+
+                <button class="music-drawer-control-btn music-drawer-control-btn--forward" id="musicDrawerForwardBtn" title="Forward 10s">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M18 13c0 3.31-2.69 6-6 6s-6-2.69-6-6 2.69-6 6-6v4l5-5-5-5v4c-4.42 0-8 3.58-8 8s3.58 8 8 8 8-3.58 8-8h-2zm-7.46 2.22v-.68l-1.01-.31v3.26h.85v-2.11l1.01.31v.69l-1.77.63h-.09zM13 14.25c0 .32.03.6.1.82s.17.42.29.57.28.26.45.33.37.1.59.1.41-.03.59-.1.33-.18.46-.33.23-.34.3-.57.11-.5.11-.82v-.74c0-.32-.03-.6-.1-.82s-.17-.42-.29-.57-.28-.26-.45-.33-.37-.1-.59-.1-.41.03-.59.1-.33.18-.46.33-.23.34-.3.57-.11.5-.11.82v.74zm.85-.86v-.97c0-.19.01-.35.04-.48s.07-.23.12-.31.11-.14.19-.17.16-.05.25-.05.18.02.25.05.14.09.19.17.09.18.12.31.04.29.04.48v.97c0 .19-.01.35-.04.48s-.07.24-.12.32-.11.14-.19.17-.16.05-.25.05-.18-.02-.25-.05-.14-.09-.19-.17-.09-.19-.12-.32-.04-.29-.04-.48z"/>
+                  </svg>
+                  <span class="music-drawer-skip-label">10</span>
+                </button>
+
+                <button class="music-drawer-control-btn music-drawer-control-btn--secondary" id="musicDrawerNextBtn" title="Next">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
+                  </svg>
+                </button>
+              </div>
+
+              <!-- Secondary Actions -->
+              <div class="music-drawer-actions">
+                <button class="music-drawer-action-btn" id="musicDrawerQueueBtn" title="View Queue">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
+                  </svg>
+                </button>
+
+                <button class="music-drawer-action-btn" id="musicDrawerShareBtn" title="Share">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/>
+                  </svg>
+                </button>
+
+                <button class="music-drawer-action-btn" id="musicDrawerMoreBtn" title="More Options">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Queue Tab -->
+          <div class="music-drawer-tab-panel" data-tab="queue">
+            <div class="music-drawer-list-header">
+              <h3 class="music-drawer-list-title">Up Next</h3>
+              <span class="music-drawer-list-count" id="musicDrawerQueueCount">0 songs</span>
+            </div>
+            <ul id="musicDrawerQueueList" class="music-drawer-list">
+              <div class="music-drawer-empty">
+                <div class="music-drawer-empty-icon">
+                  <svg fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
+                  </svg>
+                </div>
+                <div class="music-drawer-empty-text">Queue is empty</div>
+                <div class="music-drawer-empty-subtext">Songs you add will appear here</div>
+              </div>
+            </ul>
+          </div>
+
+          <!-- Recent Tab -->
+          <div class="music-drawer-tab-panel" data-tab="recent">
+            <div class="music-drawer-list-header">
+              <h3 class="music-drawer-list-title">Recently Played</h3>
+              <span class="music-drawer-list-count" id="musicDrawerRecentCount">0 songs</span>
+            </div>
+            <ul id="musicDrawerRecentList" class="music-drawer-list">
+              <div class="music-drawer-empty">
+                <div class="music-drawer-empty-icon">
+                  <svg fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/>
+                  </svg>
+                </div>
+                <div class="music-drawer-empty-text">No recently played songs</div>
+                <div class="music-drawer-empty-subtext">Start playing music to see your history</div>
+              </div>
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
-    <canvas id="reactionCanvas"></canvas>
+  </div>
 </aside>
 
-
-<!-- END NEW MUSIC PLAYER COMPONENT -->
-
+<!-- END REVAMPED MUSIC PLAYER DRAWER -->
 
 
 
