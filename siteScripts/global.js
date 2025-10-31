@@ -1729,9 +1729,12 @@ const musicPlayer = {
         },
 
         bindSeekBar: () => {
-            const bar = $byId(IDS.progressBar);
-            const thumb = $byId(IDS.progressThumb);
-            if (!bar || !thumb) return;
+            const bar = document.getElementById('progressBar');
+            const thumb = document.getElementById('progressThumb');
+            if (!bar || !thumb) {
+                console.error("bindSeekBar: Could not find progressBar or progressThumb");
+                return;
+            }
 
             const onPointerDown = (e) => {
                 e.preventDefault();
@@ -1767,11 +1770,14 @@ const musicPlayer = {
                 if (!musicPlayer.ui.isScrubbing) bar.classList.remove('is-hovering'); 
             };
             
-            bar.addEventListener('pointerdown', onPointerDown, { passive: false });
-            bar.addEventListener('pointerenter', onEnter);
-            bar.addEventListener('pointerleave', onLeave);
+            bar.replaceWith(bar.cloneNode(true));
+            const newBar = document.getElementById('progressBar');
             
-            bar.addEventListener('keydown', musicPlayer.ui.handleProgressBarKeyDown);
+            newBar.addEventListener('pointerdown', onPointerDown, { passive: false });
+            newBar.addEventListener('pointerenter', onEnter);
+            newBar.addEventListener('pointerleave', onLeave);
+            
+            newBar.addEventListener('keydown', musicPlayer.ui.handleProgressBarKeyDown);
         },
 
         seekFromEvent: (e, bar, finalize = false) => {
@@ -1791,9 +1797,10 @@ const musicPlayer = {
         },
 
         setProgressUI: (percent, currentTime) => {
-            const fill = $byId(IDS.progressFill);
-            const thumb = $byId(IDS.progressThumb);
-            const currentTimeElement = $byId(IDS.currentTime);
+            // Use direct ID selectors for the new HTML
+            const fill = document.getElementById('progressFill');
+            const thumb = document.getElementById('progressThumb');
+            const currentTimeElement = document.getElementById('currentTime');
             if (fill) fill.style.width = percent + '%';
             if (thumb) thumb.style.left = percent + '%';
             if (currentTimeElement && isFinite(currentTime)) {
@@ -2736,18 +2743,21 @@ const eventHandlers = {
   },
 
   bindControlEvents: () => {
+    // Use direct ID selectors for the new HTML
     const map = {
-      [IDS.playBtn]: musicPlayer.mainPlayer.toggle,
-      [IDS.prevBtn]: musicPlayer.playback.previous,
-      [IDS.nextBtn]: musicPlayer.playback.next,
-      [IDS.shuffleBtn]: musicPlayer.playback.shuffle.toggle,
-      [IDS.repeatBtn]: musicPlayer.playback.repeat.toggle,
-      [IDS.favoriteBtn]: () => {
+      'playBtn': musicPlayer.mainPlayer.toggle,
+      'prevBtn': musicPlayer.playback.previous,
+      'nextBtn': musicPlayer.playback.next,
+      'rewindBtn': () => musicPlayer.playback.skip(-10),
+      'forwardBtn': () => musicPlayer.playback.skip(10),
+      // 'shuffleBtn': musicPlayer.playback.shuffle.toggle, // Your new HTML doesn't have shuffle/repeat IDs
+      // 'repeatBtn': musicPlayer.playback.repeat.toggle,
+      'favoriteBtn': () => {
         if (appState.currentSong) appState.favorites.toggle("songs", appState.currentSong.id);
       },
     };
     Object.entries(map).forEach(([id, handler]) => {
-      const el = $byId(id);
+      const el = document.getElementById(id); // Use getElementById
       if (el) bindClick(el, handler);
     });
   },
