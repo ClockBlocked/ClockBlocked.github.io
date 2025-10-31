@@ -2856,6 +2856,108 @@ MyBeats:  Stream & share your favorite music for free.
         transition-duration: 0.01ms !important;
     }
 }
+
+
+
+
+
+
+/* ===========================================
+   UNIFIED MUSIC PLAYER CSS - MOBILE BASE
+   =========================================== */
+
+/* Base styles for the drawer on mobile */
+@media (max-width: 767px) {
+    .drawer {
+        /* Position as a bottom sheet */
+        inset: auto 0 0 0;
+        width: 100%;
+        max-height: 95vh; /* Allow a small gap at the top */
+        
+        /* Rounded corners only at the top */
+        border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+        
+        /* Remove desktop padding and alignment */
+        padding: 0;
+        display: block; /* Not flex */
+        align-items: unset;
+        justify-content: unset;
+        
+        /* Ensure it's above other content */
+        z-index: var(--z-player);
+        
+        /* Add a border and shadow for separation */
+        border-top: 1px solid var(--border-200);
+        box-shadow: var(--shadow-xl);
+    }
+    
+    .drawer:popover-open {
+        /* Animate sliding in from the bottom */
+        animation: slideInUp 0.3s var(--transition-curve-smooth);
+    }
+    
+    .drawer.closing {
+        /* Animate sliding out */
+        animation: slideOutDown 0.3s var(--transition-curve-smooth);
+    }
+
+    /* Make the scroller fill the drawer */
+    .drawerScroller {
+        height: auto;
+        max-height: 95vh; /* Match drawer */
+        width: 100%;
+        max-width: none;
+        overflow-y: auto;
+        scroll-snap-type: none; /* Disable snap for vertical scroll */
+    }
+    
+    .drawerSlide {
+        width: 100%;
+        min-height: auto;
+        height: auto;
+        flex: none;
+    }
+    
+    /* Show the mobile drag handle */
+    .drawer .mpNav {
+        display: flex;
+    }
+    
+    /* Hide the desktop close button on mobile */
+    .musicPlayer .header {
+        display: none;
+    }
+
+    /* The curtain is used to close on backdrop click for popovers */
+    .drawerCurtain {
+        display: block;
+    }
+
+    /* Add safe-area padding for mobile content */
+    .drawerContent {
+        min-height: auto;
+        padding-bottom: env(safe-area-inset-bottom, 1.5rem);
+    }
+
+    /* Keyframe animations for slide up/down */
+    @keyframes slideInUp {
+        from {
+            transform: translateY(100%);
+        }
+        to {
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes slideOutDown {
+        from {
+            transform: translateY(0);
+        }
+        to {
+            transform: translateY(100%);
+        }
+    }
+}
 </style>
 <aside class="drawer" popover="auto" id="drawer">
     <div class="drawerScroller">
