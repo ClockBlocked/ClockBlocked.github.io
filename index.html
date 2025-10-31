@@ -2139,8 +2139,8 @@ MyBeats:  Stream & share your favorite music for free.
   position: fixed;
   inset: 0;
   background: transparent;
-  border: 3px solid crimson;
-  padding: 0;
+  border:  ;
+  padding: 2rem;
   margin: 0;
   z-index: 9999;
   overflow: hidden;
@@ -2179,6 +2179,8 @@ MyBeats:  Stream & share your favorite music for free.
   display: flex;
   flex-direction: column;
   position: relative;
+  
+  padding: 1rem;
 }
 
 .music-drawer-curtain {
@@ -2193,20 +2195,51 @@ MyBeats:  Stream & share your favorite music for free.
 /* Drawer Content */
 .music-drawer-content {
   position: relative;
-  width: 100%;
+
+
+/**  width: 100%;
   max-width: 480px;
   margin: 0 auto;
-  min-height: 100vh;
-  background: linear-gradient(180deg, 
+  
+**/
+
+  min-height: 85vh;
+  
+/**  background: linear-gradient(180deg, 
       rgba(18, 18, 28, 0.98) 0%, 
       rgba(12, 12, 22, 0.98) 50%,
       rgba(8, 8, 18, 1) 100%);
   border-radius: 24px 24px 0 0;
   box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.5);
+**/
   z-index: 10;
   overflow: hidden;
   animation: drawerSlideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+
+  background-color: #2D333B; 
+  border: 1.5px solid #444C56; 
+  border-radius: 12px; 
+  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.25); 
+  color:  #ADBAC7;
+  
+  
+  width: 100%;
+  justify-content: space-between;
+
+
 }
+
+
+
+
+
+
+
+
+
+
+
 
 @keyframes drawerSlideUp {
   from {
