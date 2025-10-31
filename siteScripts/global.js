@@ -461,7 +461,7 @@ const overlays = {
   },
 
   form: {
-    prompt(message, { okText = "Create", cancelText = "Cancel", placeholder = "", value = "" } = {}) {
+    prompt(message, { okText = "Create", cancelText = "Go Back", placeholder = "", value = "" } = {}) {
       return new Promise((resolve) => {
         const id = "prompt-form";
         overlays.open(
@@ -479,7 +479,7 @@ const overlays = {
         const modal = document.getElementById(id);
         const input = modal.querySelector(".input");
         
-        setTimeout(() => input.focus(), 100);
+//      setTimeout(() => input.focus(), 100);
         
         const handleCancel = () => {
           overlays.close(id);
@@ -2280,7 +2280,7 @@ const playlists = {
             "Enter playlist name:", 
             {
                 okText: "Create",
-                placeholder: "My playlist",
+                placeholder: "i.e. Car Sounds Favorites",
             }
         );
         
