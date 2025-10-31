@@ -184,25 +184,35 @@ export const ui = {
   },
 
   updatePlayPauseButtons: () => {
-    const navBarPlay = $byId(IDS.playIconNavbar);
-    const navBarPause = $byId(IDS.pauseIconNavbar);
-    
-    if (navBarPlay && navBarPause) {
-      navBarPlay.style.display = appState.isPlaying ? "none" : "block";
-      navBarPause.style.display = appState.isPlaying ? "block" : "none";
-    }
+        // --- Update Drawer Player Button ---
+        const playBtn = document.getElementById('playBtn');
+        if (playBtn) {
+            const playIcon = playBtn.querySelector('.icon.play');
+            const pauseIcon = playBtn.querySelector('.icon.pause');
+            if (playIcon) playIcon.style.display = appState.isPlaying ? 'none' : 'block';
+            if (pauseIcon) pauseIcon.style.display = appState.isPlaying ? 'block' : 'none';
+        }
 
-    const musicPlayerBtn = $byId(IDS.playBtn);
-    if (musicPlayerBtn) {
-      const playIcon = musicPlayerBtn.querySelector(".icon.play");
-      const pauseIcon = musicPlayerBtn.querySelector(".icon.pause");
-      if (playIcon && pauseIcon) {
-        playIcon.classList.toggle(CLASSES.hidden, appState.isPlaying);
-        pauseIcon.classList.toggle(CLASSES.hidden, !appState.isPlaying);
-      }
-      musicPlayerBtn.classList.toggle(CLASSES.playing, appState.isPlaying);
-    }
-  },
+        // --- Update Navbar Player Button ---
+        const playIconNavbar = document.getElementById('play-icon-navbar');
+        const pauseIconNavbar = document.getElementById('pause-icon-navbar');
+        if (playIconNavbar) playIconNavbar.classList.toggle("hidden", appState.isPlaying);
+        if (pauseIconNavbar) pauseIconNavbar.classList.toggle("hidden", !appState.isPlaying);
+
+        // --- Update Navbar Play Indicator ---
+        const playIndicator = document.getElementById('play-indicator');
+        if (playIndicator) {
+            playIndicator.classList.toggle('active', appState.isPlaying);
+        }
+        
+        // --- Update Unified Trigger (Desktop/Tablet) ---
+        const unifiedTrigger = document.getElementById('unified-player-trigger');
+        if (unifiedTrigger) {
+            unifiedTrigger.classList.toggle('playing', appState.isPlaying);
+        }
+
+        notificationPlayer.playbackState.update(appState.isPlaying ? 'playing' : 'paused');
+    },
 
   updateShuffleButton: () => {
     const shuffleBtn = $byId(IDS.shuffleBtn);
