@@ -79,75 +79,107 @@ function setupResponsiveListeners() {
 
 function setupUnifiedTriggers() {
   // Menu triggers
-  const mobileMenuTrigger = document.getElementById('menu-trigger');
-  const unifiedMenuTrigger = document.getElementById('unified-menu-trigger');
+  const mobileMenuTrigger =
+    document.getElementById('menu-trigger') ||
+    document.querySelector('.menu-trigger'); // fallback if id missing
+
+  const unifiedMenuTrigger =
+    document.getElementById('unified-menu-trigger') ||
+    document.querySelector('.desktop-menu-trigger'); // desktop fallback
+
   const dropdownMenu = document.getElementById('dropdown-menu');
-  const dropdownClose = document.getElementById('dropdown-close');
-  
-  function toggleMenu() {
-    if (dropdownMenu) {
-      dropdownMenu.classList.toggle('show');
-    }
-  }
-  
-  function closeMenu() {
-    if (dropdownMenu) {
-      dropdownMenu.classList.remove('show');
-    }
-  }
-  
-  // Bind menu triggers
-  if (mobileMenuTrigger) {
+  // Support both an explicit #dropdown-close and a generic .close inside the menu
+  const dropdownClose =
+    document.getElementById('dropdown-close') ||
+    document.querySelector('#dropdown-menu .close');
+
+  const toggleMenu = (e) => {
+    e?.stopPropagation();
+    if (!dropdownMenu) return;
+    dropdownMenu.classList.toggle('show');
+  };
+
+  const closeMenu = (e) => {
+    e?.stopPropagation();
+    if (!dropdownMenu) return;
+    dropdownMenu.classList.remove('show');
+  };
+
+  // Bind menu triggers with stopPropagation to avoid immediate outside-close
+  if (mobileMenuTrigger && dropdownMenu) {
     mobileMenuTrigger.addEventListener('click', toggleMenu);
   }
-  
-  if (unifiedMenuTrigger) {
+  if (unifiedMenuTrigger && dropdownMenu) {
     unifiedMenuTrigger.addEventListener('click', toggleMenu);
   }
-  
-  if (dropdownClose) {
+  if (dropdownClose && dropdownMenu) {
     dropdownClose.addEventListener('click', closeMenu);
   }
-  
+
   // Close menu when clicking outside
   document.addEventListener('click', (e) => {
-    if (dropdownMenu && dropdownMenu.classList.contains('show')) {
-      if (!dropdownMenu.contains(e.target) && 
-          !mobileMenuTrigger?.contains(e.target) && 
-          !unifiedMenuTrigger?.contains(e.target)) {
-        closeMenu();
-      }
+    if (!dropdownMenu || !dropdownMenu.classList.contains('show')) return;
+
+    const clickedInsideMenu = dropdownMenu.contains(e.target);
+    const clickedTrigger =
+      (mobileMenuTrigger && mobileMenuTrigger.contains(e.target)) ||
+      (unifiedMenuTrigger && unifiedMenuTrigger.contains(e.target));
+
+    if (!clickedInsideMenu && !clickedTrigger) {
+      closeMenu();
     }
   });
-  
+
   // Player triggers
-  const mobilePlayerTrigger = document.getElementById('now-playing-area');
+  const mobilePlayerTrigger =
+    document.getElementById('now-playing-area') ||
+    document.querySelector('#navbar .navbar-center'); // fallback
+
   const unifiedPlayerTrigger = document.getElementById('unified-player-trigger');
   const drawer = document.getElementById('drawer');
-  
-  function togglePlayer() {
-    if (drawer) {
-      if (drawer.matches(':popover-open')) {
-        drawer.hidePopover();
-      } else {
-        drawer.showPopover();
-        
-        // On desktop, check if we should embed in bento grid instead
-        if (window.innerWidth >= 1024) {
-          const bentoGrid = document.querySelector('.bento-grid');
-          if (bentoGrid && !drawer.classList.contains('bento-embedded')) {
-            // Option to embed in bento grid (this would be handled by the music player logic)
-          }
-        }
-      }
+
+  const isPopoverOpen = () => {
+    try {
+      return drawer?.matches?.(':popover-open') || false;
+    } catch {
+      return drawer?.classList?.contains('open') || false;
     }
-  }
-  
-  // Bind player triggers
+  };
+
+  const openDrawer = () => {
+    if (!drawer) return;
+    if (typeof drawer.showPopover === 'function') {
+      drawer.showPopover();
+    } else {
+      drawer.classList.add('open'); // non-popover fallback
+    }
+  };
+
+  const closeDrawer = () => {
+    if (!drawer) return;
+    if (typeof drawer.hidePopover === 'function') {
+      drawer.hidePopover();
+    } else {
+      drawer.classList.remove('open'); // non-popover fallback
+    }
+  };
+
+  const togglePlayer = (e) => {
+    e?.stopPropagation();
+    if (!drawer) return;
+
+    if (isPopoverOpen()) {
+      closeDrawer();
+    } else {
+      openDrawer();
+      // If you want to ensure no menu overlap, close the menu on open
+      closeMenu();
+    }
+  };
+
   if (mobilePlayerTrigger) {
     mobilePlayerTrigger.addEventListener('click', togglePlayer);
   }
-  
   if (unifiedPlayerTrigger) {
     unifiedPlayerTrigger.addEventListener('click', togglePlayer);
   }
