@@ -3,7 +3,8 @@ import {
   storage,
   notifications,
   musicPlayer,
-  utils
+  utils,
+  notificationPlayer
 } from '../global.js';
 
 export const pageUpdates = {
