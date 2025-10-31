@@ -278,87 +278,84 @@ class UnifiedPlayerIntegration {
         this.bindDisplayModeSettings();
     }
     
-    bindUnifiedTriggers() {
-        // Menu triggers
-        const mobileMenuTrigger = document.getElementById('menu-trigger');
-        const unifiedMenuTrigger = document.getElementById('unified-menu-trigger');
-        const dropdownMenu = document.getElementById('dropdown-menu');
-        const dropdownClose = document.getElementById('dropdown-close');
-        
-        const toggleMenu = () => {
-            if (dropdownMenu) {
-                dropdownMenu.classList.toggle('show');
-                
-                // Close player if menu is opened (to avoid conflicts)
-                if (dropdownMenu.classList.contains('show') && this.playerController) {
-                    this.playerController.close();
-                }
-            }
-        };
-        
-        const closeMenu = () => {
-            if (dropdownMenu) {
-                dropdownMenu.classList.remove('show');
-            }
-        };
-        
-        // Bind triggers
-        if (mobileMenuTrigger) {
-            mobileMenuTrigger.addEventListener('click', (e) => {
-                e.stopPropagation();
-                toggleMenu();
-            });
-        }
-        
-        if (unifiedMenuTrigger) {
-            unifiedMenuTrigger.addEventListener('click', (e) => {
-                e.stopPropagation();
-                toggleMenu();
-            });
-        }
-        
-        if (dropdownClose) {
-            dropdownClose.addEventListener('click', closeMenu);
-        }
-        
-        // Player triggers
-        const mobilePlayerTrigger = document.getElementById('now-playing-area');
-        const unifiedPlayerTrigger = document.getElementById('unified-player-trigger');
-        
-        const togglePlayer = () => {
-            if (this.playerController) {
-                this.playerController.toggle();
-                
-                // Close menu if player is opened
-                closeMenu();
-            }
-        };
-        
-        if (mobilePlayerTrigger) {
-            mobilePlayerTrigger.addEventListener('click', (e) => {
-                e.stopPropagation();
-                togglePlayer();
-            });
-        }
-        
-        if (unifiedPlayerTrigger) {
-            unifiedPlayerTrigger.addEventListener('click', (e) => {
-                e.stopPropagation();
-                togglePlayer();
-            });
-        }
-        
-        // Close menu when clicking outside
-        document.addEventListener('click', (e) => {
-            if (dropdownMenu && dropdownMenu.classList.contains('show')) {
-                if (!dropdownMenu.contains(e.target) && 
-                    !mobileMenuTrigger?.contains(e.target) && 
-                    !unifiedMenuTrigger?.contains(e.target)) {
-                    closeMenu();
-                }
-            }
-        });
+bindUnifiedTriggers() {
+  // Menu triggers
+  const mobileMenuTrigger =
+    document.getElementById('menu-trigger') ||
+    document.querySelector('.menu-trigger');
+
+  const unifiedMenuTrigger =
+    document.getElementById('unified-menu-trigger') ||
+    document.querySelector('.desktop-menu-trigger');
+
+  const dropdownMenu = document.getElementById('dropdown-menu');
+  const dropdownClose =
+    document.getElementById('dropdown-close') ||
+    document.querySelector('#dropdown-menu .close');
+
+  const toggleMenu = (e) => {
+    e?.stopPropagation();
+    if (dropdownMenu) {
+      dropdownMenu.classList.toggle('show');
+      if (dropdownMenu.classList.contains('show') && this.playerController) {
+        this.playerController.close();
+      }
     }
+  };
+
+  const closeMenu = (e) => {
+    e?.stopPropagation();
+    if (dropdownMenu) {
+      dropdownMenu.classList.remove('show');
+    }
+  };
+
+  if (mobileMenuTrigger) {
+    mobileMenuTrigger.addEventListener('click', toggleMenu);
+  }
+  if (unifiedMenuTrigger) {
+    unifiedMenuTrigger.addEventListener('click', toggleMenu);
+  }
+  if (dropdownClose) {
+    dropdownClose.addEventListener('click', closeMenu);
+  }
+
+  // Player triggers
+  const mobilePlayerTrigger =
+    document.getElementById('now-playing-area') ||
+    document.querySelector('#navbar .navbar-center');
+
+  const unifiedPlayerTrigger = document.getElementById('unified-player-trigger');
+
+  const togglePlayer = (e) => {
+    e?.stopPropagation();
+    if (this.playerController) {
+      this.playerController.toggle();
+      closeMenu();
+    }
+  };
+
+  if (mobilePlayerTrigger) {
+    mobilePlayerTrigger.addEventListener('click', togglePlayer);
+  }
+  if (unifiedPlayerTrigger) {
+    unifiedPlayerTrigger.addEventListener('click', togglePlayer);
+  }
+
+  // Click outside closes dropdown
+  document.addEventListener('click', (e) => {
+    if (!dropdownMenu || !dropdownMenu.classList.contains('show')) return;
+
+    const clickedInsideMenu = dropdownMenu.contains(e.target);
+    const clickedTrigger =
+      (mobileMenuTrigger && mobileMenuTrigger.contains(e.target)) ||
+      (unifiedMenuTrigger && unifiedMenuTrigger.contains(e.target));
+
+    if (!clickedInsideMenu && !clickedTrigger) {
+      closeMenu();
+    }
+  });
+}
     
     bindMobileControls() {
         // Bind mobile navbar playback controls
