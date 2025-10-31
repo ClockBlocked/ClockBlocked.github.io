@@ -1665,12 +1665,12 @@ const musicPlayer = {
                     eventHandlers.bindControlEvents?.(); 
                     musicPlayer.ui.bindSeekBar(); 
                 }, 100);
-              dispatchPlayerStateChange();
+              musicPlayer.playback.dispatchPlayerStateChange();
             } else {
                 appState.isPlaying = false;
                 ui.updatePlayPauseButtons();
                 notificationPlayer.playbackState.onPause();
-              dispatchPlayerStateChange();
+              musicPlayer.playback.dispatchPlayerStateChange();
             }
             ui.setLoadingState(false);
           },
@@ -1859,7 +1859,7 @@ const musicPlayer = {
             
             musicPlayer.ui.setProgressUI(percent, currentTime);
             musicPlayer.ui.updateBufferDisplay();
-          dispatchPlayerStateChange();
+          musicPlayer.playback.dispatchPlayerStateChange();
         },
 
         updateBufferDisplay: () => {
