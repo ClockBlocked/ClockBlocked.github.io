@@ -1,15 +1,11 @@
 // Unified Player Controller
 // Handles the same music player across all devices with different display modes
 
-class UnifiedPlayerController {
-    constructor() {
-        this.drawer = null;
-        this.isInitialized = false;
-        this.currentDisplayMode = 'overlay'; // 'overlay', 'embedded'
-        this.deviceType = this.getDeviceType();
-        
-        this.init();
-    }
+const UnifiedPlayerController = {
+    drawer: null,
+    isInitialized: false,
+    currentDisplayMode: 'overlay', // 'overlay', 'embedded'
+    deviceType: null,
     
     init() {
         if (this.isInitialized) return;
@@ -19,19 +15,20 @@ class UnifiedPlayerController {
             return;
         }
         
+        this.deviceType = this.getDeviceType();
         this.setupEventListeners();
         this.setupResponsiveHandling();
         this.updateDisplayMode();
         
         this.isInitialized = true;
-    }
+    },
     
     getDeviceType() {
         const width = window.innerWidth;
         if (width < 768) return 'mobile';
         if (width < 1024) return 'tablet';
         return 'desktop';
-    }
+    },
     
     setupEventListeners() {
         // Listen for player state changes
@@ -53,7 +50,7 @@ class UnifiedPlayerController {
                 this.onPlayerClose();
             }
         });
-    }
+    },
     
     setupResponsiveHandling() {
         // Set up device-specific behaviors
@@ -68,7 +65,7 @@ class UnifiedPlayerController {
                 this.setupDesktopHandling();
                 break;
         }
-    }
+    },
     
     setupMobileHandling() {
         // Mobile: Full screen drawer from bottom
@@ -77,7 +74,7 @@ class UnifiedPlayerController {
         
         // Enable swipe to close
         this.setupSwipeToClose();
-    }
+    },
     
     setupTabletHandling() {
         // Tablet: Centered modal-style drawer
@@ -90,7 +87,7 @@ class UnifiedPlayerController {
             drawerContent.style.maxWidth = '600px';
             drawerContent.style.margin = '10vh auto';
         }
-    }
+    },
     
     setupDesktopHandling() {
         // Desktop: Can be overlay or embedded in bento grid
@@ -101,7 +98,7 @@ class UnifiedPlayerController {
         if (this.shouldEmbedInBento()) {
             this.embedInBentoGrid();
         }
-    }
+    },
     
     setupSwipeToClose() {
         let startY = 0;
@@ -152,7 +149,7 @@ class UnifiedPlayerController {
         drawerContent.addEventListener('touchstart', handleTouchStart, { passive: true });
         drawerContent.addEventListener('touchmove', handleTouchMove, { passive: false });
         drawerContent.addEventListener('touchend', handleTouchEnd, { passive: true });
-    }
+    },
     
     shouldEmbedInBento() {
         // Check user preference or app state
@@ -162,7 +159,7 @@ class UnifiedPlayerController {
         return userPreference === 'embedded' && 
                bentoGrid && 
                this.deviceType === 'desktop';
-    }
+    },
     
     embedInBentoGrid() {
         const bentoGrid = document.querySelector('.bento-grid');
@@ -179,8 +176,7 @@ class UnifiedPlayerController {
         
         musicPlayerCard.appendChild(this.drawer);
         this.currentDisplayMode = 'embedded';
-        
-    }
+    },
     
     unembedFromBento() {
         if (this.currentDisplayMode !== 'embedded') return;
@@ -198,8 +194,7 @@ class UnifiedPlayerController {
         this.drawer.style.height = '';
         
         this.currentDisplayMode = 'overlay';
-        
-    }
+    },
     
     createBentoPlayerCard() {
         const card = document.createElement('div');
@@ -240,7 +235,7 @@ class UnifiedPlayerController {
         }
         
         return card;
-    }
+    },
     
     updateDisplayMode() {
         if (this.deviceType === 'desktop' && this.shouldEmbedInBento()) {
@@ -252,7 +247,7 @@ class UnifiedPlayerController {
                 this.unembedFromBento();
             }
         }
-    }
+    },
     
     updatePlayerDisplay(playerState) {
         if (!playerState) return;
@@ -264,7 +259,7 @@ class UnifiedPlayerController {
         if (this.currentDisplayMode === 'embedded') {
             this.updateBentoCardDisplay(playerState);
         }
-    }
+    },
     
     updateNavbarDisplay(playerState) {
         const navbarCover = document.querySelector('#navbar .albumArtwork img');
@@ -288,7 +283,7 @@ class UnifiedPlayerController {
         if (playIndicator) {
             playIndicator.classList.toggle('active', playerState.isPlaying);
         }
-    }
+    },
     
     updateDrawerDisplay(playerState) {
         const drawerCover = document.querySelector('#drawer #cover');
@@ -311,7 +306,7 @@ class UnifiedPlayerController {
         if (drawerAlbum && playerState.song?.album) {
             drawerAlbum.textContent = playerState.song.album;
         }
-    }
+    },
     
     updateBentoCardDisplay(playerState) {
         const bentoCard = document.querySelector('.music-player-card');
@@ -319,7 +314,7 @@ class UnifiedPlayerController {
         
         // Update bento card with current player state
         // This would sync with the embedded drawer content
-    }
+    },
     
     open() {
         if (this.currentDisplayMode === 'embedded') {
@@ -330,7 +325,7 @@ class UnifiedPlayerController {
         if (this.drawer) {
             this.drawer.showPopover();
         }
-    }
+    },
     
     close() {
         if (this.currentDisplayMode === 'embedded') {
@@ -345,7 +340,7 @@ class UnifiedPlayerController {
         if (this.drawer) {
             this.drawer.hidePopover();
         }
-    }
+    },
     
     toggle() {
         if (this.currentDisplayMode === 'embedded') {
@@ -364,15 +359,15 @@ class UnifiedPlayerController {
                 this.open();
             }
         }
-    }
+    },
     
     onPlayerOpen() {
         document.body.classList.add('player-open');
-    }
+    },
     
     onPlayerClose() {
         document.body.classList.remove('player-open');
-    }
+    },
     
     // Utility function for debouncing
     debounce(func, wait) {
@@ -383,9 +378,9 @@ class UnifiedPlayerController {
                 func(...args);
             };
             clearTimeout(timeout);
-                        timeout = setTimeout(later, wait);
+            timeout = setTimeout(later, wait);
         };
-    }
+    },
     
     // Set display mode preference
     setDisplayMode(mode) {
@@ -393,23 +388,24 @@ class UnifiedPlayerController {
             localStorage.setItem('playerDisplayMode', mode);
             this.updateDisplayMode();
         }
-    }
+    },
     
     // Get current display mode
     getDisplayMode() {
         return this.currentDisplayMode;
-    }
+    },
     
     // Force refresh of player state
     refresh() {
         this.setupResponsiveHandling();
         this.updateDisplayMode();
     }
-}
+};
 
 // Initialize unified player controller when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-    window.unifiedPlayerController = new UnifiedPlayerController();
+    window.unifiedPlayerController = Object.create(UnifiedPlayerController);
+    window.unifiedPlayerController.init();
 });
 
 // Export for module usage
