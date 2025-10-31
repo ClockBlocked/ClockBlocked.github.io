@@ -2859,9 +2859,6 @@ MyBeats:  Stream & share your favorite music for free.
 
 
 
-
-
-
 /* ===========================================
    UNIFIED MUSIC PLAYER CSS - MOBILE BASE
    =========================================== */
@@ -3428,17 +3425,21 @@ MyBeats:  Stream & share your favorite music for free.
 <script type="module" src="./modules/library.js"></script>
 <script type="module" src="./siteScripts/utilities/search.js"></script>
 
+<!-- Initialization modules -->
+<script type="module" src="./siteScripts/init.js"></script>
+<script type="module" src="./siteScripts/unifiedPlayerController.js"></script>
+<script type="module" src="./siteScripts/unifiedPlayerIntergration.js"></script>
+
+<!-- Unified Player Controller Script -->
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // This script now ONLY handles opening/closing the menus,
-    // as global.js will handle the player logic.
-
-    // --- Menu Triggers ---
+    // Unified menu triggers (works for both mobile navbar and desktop/tablet triggers)
     const mobileMenuTrigger = document.getElementById('menu-trigger');
     const unifiedMenuTrigger = document.getElementById('unified-menu-trigger');
     const dropdownMenu = document.getElementById('dropdown-menu');
     const dropdownClose = document.getElementById('dropdown-close');
     
+    // Menu trigger handlers
     function toggleMenu() {
         dropdownMenu.classList.toggle('show');
     }
@@ -3447,41 +3448,68 @@ document.addEventListener('DOMContentLoaded', () => {
         dropdownMenu.classList.remove('show');
     }
     
-    if (mobileMenuTrigger) mobileMenuTrigger.addEventListener('click', toggleMenu);
-    if (unifiedMenuTrigger) unifiedMenuTrigger.addEventListener('click', toggleMenu);
-    if (dropdownClose) dropdownClose.addEventListener('click', closeMenu);
+    // Bind mobile menu trigger
+    if (mobileMenuTrigger && dropdownMenu) {
+        mobileMenuTrigger.addEventListener('click', toggleMenu);
+    }
     
-    // --- Player Triggers (to be handled by global.js) ---
-    // We bind these to the global.js 'musicPlayer' object
-    // once it's loaded.
+    // Bind unified menu trigger (desktop/tablet)
+    if (unifiedMenuTrigger && dropdownMenu) {
+        unifiedMenuTrigger.addEventListener('click', toggleMenu);
+    }
+    
+    // Close button
+    if (dropdownClose && dropdownMenu) {
+        dropdownClose.addEventListener('click', closeMenu);
+    }
+    
+    // Close on clicking outside
+    if (dropdownMenu) {
+        dropdownMenu.addEventListener('click', (e) => {
+            if (e.target === dropdownMenu) {
+                closeMenu();
+            }
+        });
+    }
+    
+    // Unified player triggers
     const mobilePlayerTrigger = document.getElementById('now-playing-area');
     const unifiedPlayerTrigger = document.getElementById('unified-player-trigger');
+    const drawer = document.getElementById('drawer');
     
-    // We must wait for global.js to load the musicPlayer object
-    function bindPlayerTriggers() {
-        if (window.musicPlayer && window.musicPlayer.mainPlayer && window.musicPlayer.mainPlayer.toggle) {
-            if (mobilePlayerTrigger) {
-                mobilePlayerTrigger.addEventListener('click', window.musicPlayer.mainPlayer.toggle);
+    function togglePlayer() {
+        if (drawer) {
+            if (drawer.matches(':popover-open')) {
+                drawer.hidePopover();
+            } else {
+                drawer.showPopover();
             }
-            if (unifiedPlayerTrigger) {
-                unifiedPlayerTrigger.addEventListener('click', window.musicPlayer.mainPlayer.toggle);
-            }
-        } else {
-            // If global.js hasn't loaded, try again
-            setTimeout(bindPlayerTriggers, 100);
         }
     }
-    bindPlayerTriggers();
+    
+    // Bind mobile player trigger (navbar center)
+    if (mobilePlayerTrigger) {
+        mobilePlayerTrigger.addEventListener('click', togglePlayer);
+    }
+    
+    // Bind unified player trigger (desktop/tablet)
+    if (unifiedPlayerTrigger) {
+        unifiedPlayerTrigger.addEventListener('click', togglePlayer);
+    }
 });
 </script>
 
-<script type"module">
-    // Import and initialize the main app from global.js
-    // This will run app.initialize() which wires up everything else.
+<!-- Global Initialize -->
+<script type="module">
+    import { music } from './modules/library.js';
     import { app } from './siteScripts/global.js';
-
-    // The DOMContentLoaded listener inside global.js will
-    // automatically call app.initialize().
+    
+    window.music = music;
+    
+    document.addEventListener('DOMContentLoaded', async () => {
+        console.log('📄 DOMContentLoaded - Starting app...');
+        await app.initialize();
+    });
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
