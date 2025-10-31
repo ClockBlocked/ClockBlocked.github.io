@@ -2109,6 +2109,13 @@ const musicPlayer = {
     },
 };
 
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    musicPlayer.mainPlayer.init();
+});
+
+// Make it available globally
+window.musicPlayer = musicPlayer;
 const app = {
     initialize: function() {
         window.music = music;
