@@ -1,15 +1,15 @@
 export const deepLinkRouter = {
   // Helper to encode names (spaces to periods)
-  encodeName(name) {
+  encodeName: function(name) {
     return name.trim().replace(/\s+/g, '.');
   },
 
   // Helper to decode names (periods to spaces)
-  decodeName(segment) {
+  decodeName: function(segment) {
     return segment.replace(/\./g, ' ');
   },
 
-  parseCurrentPath() {
+  parseCurrentPath: function() {
     const path = window.location.pathname;
     const segments = path.split('/').filter(Boolean);
 
@@ -24,7 +24,7 @@ export const deepLinkRouter = {
     };
   },
 
-  resolveRoute(pathInfo) {
+  resolveRoute: function(pathInfo) {
     const { route, params } = pathInfo;
 
     if (!window.appState?.router) {
@@ -32,27 +32,27 @@ export const deepLinkRouter = {
     }
 
     const routeHandlers = {
-      '': () => this.navigateToHome(),
-      'home': () => this.navigateToHome(),
-      'artist': () => this.navigateToArtist(params[0]),
-      'artists': () => this.navigateToAllArtists(),
-      'album': () => this.navigateToAlbum(params[0], params[1]),
-      'playlist': () => this.navigateToPlaylist(params[0]),
-      'favorites': () => this.navigateToFavorites(params[0]),
-      'search': () => this.navigateToSearch(params[0]),
+      '': function() { this.navigateToHome(); },
+      'home': function() { this.navigateToHome(); },
+      'artist': function() { this.navigateToArtist(params[0]); },
+      'artists': function() { this.navigateToAllArtists(); },
+      'album': function() { this.navigateToAlbum(params[0], params[1]); },
+      'playlist': function() { this.navigateToPlaylist(params[0]); },
+      'favorites': function() { this.navigateToFavorites(params[0]); },
+      'search': function() { this.navigateToSearch(params[0]); },
     };
 
     const handler = routeHandlers[route] || routeHandlers[''];
-    return handler();
+    return handler.call(this);
   },
 
-  navigateToHome() {
+  navigateToHome: function() {
     if (window.appState?.router) {
       window.appState.router.navigateTo(window.ROUTES?.HOME || '/');
     }
   },
 
-  navigateToArtist(artistName) {
+  navigateToArtist: function(artistName) {
     if (!artistName) {
       this.navigateToHome();
       return;
@@ -69,13 +69,13 @@ export const deepLinkRouter = {
     }
   },
 
-  navigateToAllArtists() {
+  navigateToAllArtists: function() {
     if (window.appState?.router) {
       window.appState.router.navigateTo(window.ROUTES?.ALL_ARTISTS || 'artists');
     }
   },
 
-  navigateToAlbum(artistName, albumName) {
+  navigateToAlbum: function(artistName, albumName) {
     if (!artistName || !albumName) {
       this.navigateToHome();
       return;
@@ -94,7 +94,7 @@ export const deepLinkRouter = {
     }
   },
 
-  navigateToPlaylist(playlistId) {
+  navigateToPlaylist: function(playlistId) {
     if (!playlistId) {
       this.navigateToHome();
       return;
@@ -105,14 +105,14 @@ export const deepLinkRouter = {
     }
   },
 
-  navigateToFavorites(type) {
+  navigateToFavorites: function(type) {
     const favoriteType = type || 'songs';
 
     if (window.views) {
       const handlers = {
-        'songs': () => window.views.showFavoriteSongs(),
-        'artists': () => window.views.showFavoriteArtists(),
-        'albums': () => window.views.showFavoriteAlbums?.(),
+        'songs': function() { window.views.showFavoriteSongs(); },
+        'artists': function() { window.views.showFavoriteArtists(); },
+        'albums': function() { window.views.showFavoriteAlbums?.(); },
       };
 
       const handler = handlers[favoriteType];
@@ -120,14 +120,14 @@ export const deepLinkRouter = {
     }
   },
 
-  navigateToSearch(query) {
+  navigateToSearch: function(query) {
     if (window.appState?.router && query) {
       const decodedQuery = query;
       window.appState.router.openSearchDialog?.(decodedQuery);
     }
   },
 
-  initialize() {
+  initialize: function() {
     if (window.deepLinkHandled) return;
     window.deepLinkHandled = true;
 
@@ -154,7 +154,7 @@ export const deepLinkRouter = {
     }
   },
 
-  bindPopState() {
+  bindPopState: function() {
     window.addEventListener('popstate', (event) => {
       const pathInfo = this.parseCurrentPath();
       this.resolveRoute(pathInfo);
