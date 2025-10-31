@@ -606,6 +606,15 @@ MyBeats:  Stream & share your favorite music for free.
         display: flex;
     }
     
+    /* Same rules for music-drawer class */
+    .music-drawer:not(:popover-open) {
+        display: none;
+    }
+    
+    .music-drawer:popover-open {
+        display: flex;
+    }
+    
     /* Ensure drawer content doesn't trigger backdrop clicks */
     .drawer .drawerContent {
         pointer-events: auto;
@@ -622,11 +631,13 @@ MyBeats:  Stream & share your favorite music for free.
 
 /* Animation fixes for tablet/desktop */
 @media (min-width: 768px) {
-    .drawer:popover-open {
+    .drawer:popover-open,
+    .music-drawer:popover-open {
         animation: fadeIn 0.3s ease;
     }
     
-    .drawer.closing {
+    .drawer.closing,
+    .music-drawer.closing {
         animation: fadeOut 0.3s ease;
     }
     
@@ -973,7 +984,8 @@ MyBeats:  Stream & share your favorite music for free.
 /* CRITICAL FIX: Prevent popover from closing immediately on tablet/desktop */
 @media (min-width: 768px) {
     /* Ensure the drawer stays open when clicked inside */
-    .drawer:popover-open {
+    .drawer:popover-open,
+    .music-drawer:popover-open {
         position: fixed;
         display: flex;
         inset: 0;
@@ -981,7 +993,8 @@ MyBeats:  Stream & share your favorite music for free.
     }
     
     /* Prevent backdrop clicks from immediately closing */
-    .drawer::backdrop {
+    .drawer::backdrop,
+    .music-drawer::backdrop {
         position: fixed;
         inset: 0;
         pointer-events: auto;
