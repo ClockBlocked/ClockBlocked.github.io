@@ -2145,6 +2145,9 @@ MyBeats:  Stream & share your favorite music for free.
 
 
 
+
+
+
 <style>
 .music-player {
   position: fixed;
@@ -2316,6 +2319,7 @@ MyBeats:  Stream & share your favorite music for free.
   50% { opacity: 0.8; transform: scale(1.1); }
 }
 
+/* Updated wavy separator */
 .music-player__separator {
   position: absolute;
   bottom: -38px;
@@ -2327,12 +2331,67 @@ MyBeats:  Stream & share your favorite music for free.
   overflow: visible;
   pointer-events: none;
   
-  & svg { width: 100%; height: 100%; display: block; animation: waveFlow 8s ease-in-out infinite; }
+  & svg { width: 100%; height: 100%; display: block; animation: waveFlow 12s ease-in-out infinite; }
+}
+
+.music-player__separator-top {
+  position: absolute;
+  top: -38px;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  z-index: 3;
+  color: #2D333B;
+  overflow: visible;
+  pointer-events: none;
+  transform: rotate(180deg);
+  
+  & svg { width: 100%; height: 100%; display: block; animation: waveFlow 10s ease-in-out infinite reverse; }
 }
 
 @keyframes waveFlow {
   0%, 100% { transform: translateX(0) scaleY(1); }
-  50% { transform: translateX(-25px) scaleY(1.1); }
+  25% { transform: translateX(-5%) scaleY(1.05); }
+  50% { transform: translateX(-10%) scaleY(0.95); }
+  75% { transform: translateX(-5%) scaleY(1.02); }
+}
+
+/* Music notes overlay */
+.music-player__music-notes {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.music-note {
+  position: absolute;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  animation: floatNote 8s ease-in-out infinite;
+  opacity: 0.7;
+}
+
+@keyframes floatNote {
+  0%, 100% { 
+    transform: translateY(0) rotate(0deg) scale(1);
+    opacity: 0.7;
+  }
+  25% { 
+    transform: translateY(-10px) rotate(5deg) scale(1.1);
+    opacity: 0.9;
+  }
+  50% { 
+    transform: translateY(5px) rotate(-3deg) scale(0.9);
+    opacity: 0.6;
+  }
+  75% { 
+    transform: translateY(-5px) rotate(2deg) scale(1.05);
+    opacity: 0.8;
+  }
 }
 
 .music-player__tabs {
@@ -2904,6 +2963,13 @@ MyBeats:  Stream & share your favorite music for free.
 
         <!-- Album Cover Section -->
         <div class="music-player__now-playing">
+          <!-- Top wavy separator -->
+          <div class="music-player__separator-top">
+            <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+              <path d="M0,0 C200,40 400,20 600,60 C800,100 1000,40 1200,80 L1200,120 L0,120 Z" fill="currentColor"></path>
+            </svg>
+          </div>
+          
           <div class="music-player__cover-wrapper">
             <img
               src="https://clockblocked.github.io/PLACEHOLDER_COVER_HERE_DONT_FORGET.png"
@@ -2912,12 +2978,15 @@ MyBeats:  Stream & share your favorite music for free.
               id="cover" />
                
             <div class="music-player__cover-glow"></div>
+            
+            <!-- Music notes overlay -->
+            <div class="music-player__music-notes" id="musicNotes"></div>
           </div>
           
-          <!-- Wavy Separator -->
+          <!-- Bottom wavy separator -->
           <div class="music-player__separator">
             <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
-              <path d="M0,0 C150,80 350,0 600,50 C850,100 1050,20 1200,80 L1200,120 L0,120 Z" fill="currentColor"></path>
+              <path d="M0,0 C200,40 400,20 600,60 C800,100 1000,40 1200,80 L1200,120 L0,120 Z" fill="currentColor"></path>
             </svg>
           </div>
         </div>
@@ -3096,11 +3165,32 @@ MyBeats:  Stream & share your favorite music for free.
     </div>
   </div>
 </aside>
-
-
-
-
-
+<script>
+// JavaScript to create music notes
+document.addEventListener('DOMContentLoaded', function() {
+  const musicNotesContainer = document.getElementById('musicNotes');
+  const noteSymbols = ['♪', '♫', '♬', '♩'];
+  
+  // Create 15-20 music notes randomly positioned
+  for (let i = 0; i < 18; i++) {
+    const note = document.createElement('div');
+    note.className = 'music-note';
+    note.textContent = noteSymbols[Math.floor(Math.random() * noteSymbols.length)];
+    
+    // Random position within the cover
+    const left = Math.random() * 90 + 5; // 5% to 95%
+    const top = Math.random() * 90 + 5; // 5% to 95%
+    
+    note.style.left = `${left}%`;
+    note.style.top = `${top}%`;
+    
+    // Random animation delay for staggered effect
+    note.style.animationDelay = `${Math.random() * 5}s`;
+    
+    musicNotesContainer.appendChild(note);
+  }
+});
+</script>
 
 
 
