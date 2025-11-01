@@ -2932,6 +2932,40 @@ MyBeats:  Stream & share your favorite music for free.
     transition-duration: 0.01ms !important;
   }
 }
+
+
+
+
+
+
+
+.custom-shape-divider-bottom-1762040716 {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    line-height: 0;
+}
+
+.custom-shape-divider-bottom-1762040716 svg {
+    position: relative;
+    display: block;
+    width: calc(100% + 1.3px);
+    height: 150px;
+}
+
+.custom-shape-divider-bottom-1762040716 .shape-fill {
+    fill: #2D333B;
+}
+
+/** For mobile devices **/
+@media (max-width: 767px) {
+    .custom-shape-divider-bottom-1762040716 svg {
+        width: calc(216% + 1.3px);
+        height: 264px;
+    }
+}
 </style>
 <aside class="music-player" popover="manual" id="drawer">
   <div class="music-player__scroller">
@@ -2954,12 +2988,6 @@ MyBeats:  Stream & share your favorite music for free.
 
         <!-- Album Cover Section -->
         <div class="music-player__now-playing">
-          <!-- Top wavy separator -->
-          <div class="music-player__separator-top">
-            <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
-              <path d="M0,0 C200,40 400,20 600,60 C800,100 1000,40 1200,80 L1200,120 L0,120 Z" fill="currentColor"></path>
-            </svg>
-          </div>
           
           <div class="music-player__cover-wrapper">
             <img
@@ -2974,12 +3002,11 @@ MyBeats:  Stream & share your favorite music for free.
             <div class="music-player__music-notes" id="musicNotes"></div>
           </div>
           
-          <!-- Bottom wavy separator -->
-          <div class="music-player__separator">
-            <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
-              <path d="M0,50 C100,80 150,20 250,60 C350,10 450,90 550,40 C650,70 750,15 850,55 C950,25 1050,75 1150,45 L1200,60 L1200,120 L0,120 Z" fill="currentColor"></path>
-            </svg>
-          </div>
+<div class="custom-shape-divider-bottom-1762040716">
+    <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+        <path d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z" class="shape-fill"></path>
+    </svg>
+</div>
         </div>
 
         <!-- Tab Navigation -->
@@ -3182,7 +3209,6 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 </script>
-
 
 
 
