@@ -2296,13 +2296,9 @@ MyBeats:  Stream & share your favorite music for free.
   box-shadow: none;
   position: relative;
   z-index: 2;
-  animation: albumFloat 6s ease-in-out infinite;
 }
 
-@keyframes albumFloat {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-8px) scale(1.02); }
-}
+
 
 .music-player__cover-glow {
   position: absolute;
@@ -2311,13 +2307,8 @@ MyBeats:  Stream & share your favorite music for free.
   filter: blur(60px);
   opacity: 0.6;
   z-index: 1;
-  animation: glowPulse 4s ease-in-out infinite;
 }
 
-@keyframes glowPulse {
-  0%, 100% { opacity: 0.6; transform: scale(1); }
-  50% { opacity: 0.8; transform: scale(1.1); }
-}
 
 /* Updated wavy separator */
 .music-player__separator {
@@ -2331,7 +2322,7 @@ MyBeats:  Stream & share your favorite music for free.
   overflow: visible;
   pointer-events: none;
   
-  & svg { width: 100%; height: 100%; display: block; animation: waveFlow 12s ease-in-out infinite; }
+  & svg { width: 100%; height: 100%; display: block; }
 }
 
 .music-player__separator-top {
@@ -2346,7 +2337,7 @@ MyBeats:  Stream & share your favorite music for free.
   pointer-events: none;
   transform: rotate(180deg);
   
-  & svg { width: 100%; height: 100%; display: block; animation: waveFlow 10s ease-in-out infinite reverse; }
+  & svg { width: 100%; height: 100%; display: block;}
 }
 
 @keyframes waveFlow {
