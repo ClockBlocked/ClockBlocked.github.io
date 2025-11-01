@@ -159,47 +159,128 @@ export const ICONS = Object.freeze({
 });
 
 export const MUSIC_PLAYER = (() => {
-  const parent = "#musicPlayer";
+  const parent = "#drawer";
   return Object.freeze({
+    // Root elements
     root: parent,
-    handle: `${parent} #mpHandle`,
+    handle: `${parent} .music-player__drag-handle`,
     close: `${parent} #closeBtn`,
+    curtain: `${parent} .music-player__curtain`,
+    scroller: `${parent} .music-player__scroller`,
+    slide: `${parent} .music-player__slide`,
+    inner: `${parent} .music-player__inner`,
     
     // Content sections
-    content: `${parent} .content`,
-    activeContent: `${parent} .content.active`,
+    content: `${parent} .music-player__content`,
+    activeContent: `${parent} .music-player__panel.active`,
     
     // Tabs
-    tabs: `${parent} .tab`,
-    activeTab: `${parent} .tab.active`,
+    tabs: `${parent} .music-player__tab`,
+    activeTab: `${parent} .music-player__tab.active`,
+    tabsWrapper: `${parent} .music-player__tabs-wrapper`,
+    tabSlider: `${parent} .music-player__tab-slider`,
     
-    // Player elements
+    // Now Playing section
+    nowPlaying: `${parent} .music-player__now-playing`,
+    coverWrapper: `${parent} .music-player__cover-wrapper`,
     albumArtwork: `${parent} #cover`,
+    coverGlow: `${parent} .music-player__cover-glow`,
+    separator: `${parent} .music-player__separator`,
+    
+    // Song info
+    songInfo: `${parent} .music-player__info`,
+    songDetails: `${parent} .music-player__details`,
     songName: `${parent} #title`,
     artistName: `${parent} #artist`,
     albumName: `${parent} #album`,
     
+    // Progress section
+    progressSection: `${parent} .music-player__progress-section`,
+    progressBar: `${parent} #progressBar`,
+    progressBuffer: `${parent} #progressBuffer`,
+    progressFill: `${parent} #progressFill`,
+    progressThumb: `${parent} #progressThumb`,
+    timeDisplay: `${parent} .music-player__time-display`,
     currentTime: `${parent} #current`,
     totalTime: `${parent} #total`,
     
-    progressBar: `${parent} #progressBar`,
-    progressFill: `${parent} #progressFill`,
-    progressThumb: `${parent} #progressThumb`,
-    
     // Control buttons
+    controls: `${parent} .music-player__controls`,
     play: `${parent} #playBtn`,
     previous: `${parent} #prevBtn`,
     next: `${parent} #nextBtn`,
     reWind: `${parent} #rewindBtn`,
     fastForward: `${parent} #forwardBtn`,
+    
+    // Action buttons
+    actions: `${parent} .music-player__actions`,
     favoriteBtn: `${parent} #favoriteBtn`,
     queueBtn: `${parent} #queueBtn`,
     shareBtn: `${parent} #shareBtn`,
     moreBtn: `${parent} #moreBtn`,
     
-    // Lists
+    // List sections
+    listHeader: `${parent} .music-player__list-header`,
+    listTitle: `${parent} .music-player__list-title`,
+    listCount: `${parent} .music-player__list-count`,
+    list: `${parent} .music-player__list`,
+    
+    // Queue elements
     queueList: `${parent} #queueList`,
+    queueCount: `${parent} #queueCount`,
+    
+    // Recent elements
     recentList: `${parent} #recentList`,
+    recentCount: `${parent} #recentCount`,
+    
+    // Empty states
+    empty: `${parent} .music-player__empty`,
+    emptyIcon: `${parent} .music-player__empty-icon`,
+    emptyText: `${parent} .music-player__empty-text`,
+    emptySubtext: `${parent} .music-player__empty-subtext`,
+    
+    // List items
+    listItem: `${parent} .music-player__list-item`,
+    listItemArt: `${parent} .music-player__list-item-art`,
+    listItemInfo: `${parent} .music-player__list-item-info`,
+    listItemTitle: `${parent} .music-player__list-item-title`,
+    listItemArtist: `${parent} .music-player__list-item-artist`,
+    listItemActions: `${parent} .music-player__list-item-actions`,
+    listItemAction: `${parent} .music-player__list-item-action`,
+    
+    // Class names for dynamic states
+    classes: {
+      active: 'active',
+      playing: 'is-playing',
+      favorited: 'favorited',
+      dragging: 'is-dragging',
+      hovering: 'is-hovering',
+      loading: 'loading'
+    },
+    
+    // Tab names
+    tabs: {
+      playing: 'playing',
+      recent: 'recent',
+      queue: 'queue'
+    },
+    
+    // Animation durations
+    animations: {
+      backdropFadeIn: 400,
+      drawerSlideUp: 500,
+      fadeIn: 400,
+      glowPulse: 4000,
+      albumFloat: 6000,
+      waveFlow: 8000,
+      heartBeat: 600
+    },
+    
+    // Skip times
+    skipTimes: {
+      rewind: -10,
+      forward: 10
+    }
   });
 })();
 
