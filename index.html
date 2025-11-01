@@ -589,39 +589,25 @@ MyBeats:  Stream & share your favorite music for free.
     }
 }
 
-/* Fix tablet popover behavior - prevent immediate closing */
+/* Fix tablet/desktop popover behavior - prevent immediate closing */
 @media (min-width: 768px) {
-    .drawer::backdrop {
+    .drawer::backdrop,
+    .music-drawer::backdrop {
         background: rgba(0, 0, 0, 0.5);
         backdrop-filter: var(--blur-md);
     }
     
-    .drawer:not(:popover-open) {
-        display: none;
-    }
-    
-    .drawer:popover-open {
-        display: flex;
-    }
-    
-    /* Same rules for music-drawer class */
-    .music-drawer:not(:popover-open) {
-        display: none;
-    }
-    
-    .music-drawer:popover-open {
-        display: flex;
-    }
-    
     /* Ensure drawer content doesn't trigger backdrop clicks */
-    .drawer .drawerContent {
+    .drawer .drawerContent,
+    .drawer .music-drawer-content {
         pointer-events: auto;
         position: relative;
         z-index: 10;
     }
     
     /* Make sure curtain only covers empty areas */
-    .drawer .drawerCurtain {
+    .drawer .drawerCurtain,
+    .drawer .music-drawer-curtain {
         pointer-events: auto;
         z-index: 1;
     }
@@ -2153,11 +2139,24 @@ MyBeats:  Stream & share your favorite music for free.
   position: fixed;
   inset: 0;
   background: transparent;
-  border:  ;
+  border: none;
   padding: 2rem;
   margin: 0;
   z-index: 9999;
   overflow: hidden;
+}
+
+/* CRITICAL: Hide drawer by default, show only when popover is open */
+.music-drawer:not(:popover-open),
+.drawer:not(:popover-open) {
+  display: none;
+}
+
+.music-drawer:popover-open,
+.drawer:popover-open {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .music-drawer::backdrop {
@@ -3628,8 +3627,9 @@ MyBeats:  Stream & share your favorite music for free.
 
 <!-- Initialization modules -->
 <script type="module" src="./siteScripts/init.js"></script>
-<script type="module" src="./siteScripts/unifiedPlayerController.js"></script>
-<script type="module" src="./siteScripts/unifiedPlayerIntergration.js"></script>
+<!-- REMOVED: Viewport-checking scripts - using CSS-only responsive design instead -->
+<!-- <script type="module" src="./siteScripts/unifiedPlayerController.js"></script> -->
+<!-- <script type="module" src="./siteScripts/unifiedPlayerIntergration.js"></script> -->
 
 <!-- Unified Player Controller Script -->
 <script>
