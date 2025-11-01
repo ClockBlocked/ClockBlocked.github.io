@@ -1569,6 +1569,15 @@ const musicPlayer = {
             window.dispatchEvent(new CustomEvent('playerstatechange', { detail }));
         },
         
+        togglePlayPause: () => {
+            if (!appState.audio) return;
+            if (appState.isPlaying) {
+                musicPlayer.playback.pause();
+            } else {
+                musicPlayer.playback.play();
+            }
+        },
+        
         play: () => {
             if (!appState.currentSong || !appState.audio) return;
             appState.audio.play().catch((err) => {
@@ -2105,6 +2114,39 @@ const musicPlayer = {
             if (titleEl && title) titleEl.textContent = title;
             if (artistEl && artist) artistEl.textContent = artist;
             if (albumEl && album) albumEl.textContent = album;
+        },
+
+        // Update now playing display in the music drawer
+        updateNowPlaying: () => {
+            if (!appState.currentSong) return;
+            
+            // Update cover image
+            const coverUrl = appState.currentSong.cover || utils.getAlbumImageUrl(appState.currentSong.album);
+            musicPlayer.ui.updateCover(coverUrl);
+            
+            // Update song info
+            musicPlayer.ui.updateSongInfo(
+                appState.currentSong.title,
+                appState.currentArtist,
+                appState.currentAlbum
+            );
+            
+            // Update play/pause button
+            const playBtn = document.getElementById('musicDrawerPlayBtn');
+            const drawer = document.querySelector('.music-drawer');
+            if (playBtn) {
+                const playIcon = playBtn.querySelector('.play-icon');
+                const pauseIcon = playBtn.querySelector('.pause-icon');
+                if (appState.isPlaying) {
+                    playIcon?.style.setProperty('display', 'none');
+                    pauseIcon?.style.setProperty('display', 'block');
+                    drawer?.classList.add('is-playing');
+                } else {
+                    playIcon?.style.setProperty('display', 'block');
+                    pauseIcon?.style.setProperty('display', 'none');
+                    drawer?.classList.remove('is-playing');
+                }
+            }
         }
     },
 };
@@ -2892,21 +2934,19 @@ const eventHandlers = {
   },
 
   bindControlEvents: () => {
-    // Use direct ID selectors for the new HTML
+    // Map to actual IDs in the music drawer HTML
     const map = {
-      'playBtn': musicPlayer.mainPlayer.toggle,
-      'prevBtn': musicPlayer.playback.previous,
-      'nextBtn': musicPlayer.playback.next,
-      'rewindBtn': () => musicPlayer.playback.skip(-10),
-      'forwardBtn': () => musicPlayer.playback.skip(10),
-      // 'shuffleBtn': musicPlayer.playback.shuffle.toggle, // Your new HTML doesn't have shuffle/repeat IDs
-      // 'repeatBtn': musicPlayer.playback.repeat.toggle,
-      'favoriteBtn': () => {
+      'musicDrawerPlayBtn': musicPlayer.playback.togglePlayPause,
+      'musicDrawerPrevBtn': musicPlayer.playback.previous,
+      'musicDrawerNextBtn': musicPlayer.playback.next,
+      'musicDrawerRewindBtn': () => musicPlayer.playback.skip(-10),
+      'musicDrawerForwardBtn': () => musicPlayer.playback.skip(10),
+      'musicDrawerFavoriteBtn': () => {
         if (appState.currentSong) appState.favorites.toggle("songs", appState.currentSong.id);
       },
     };
     Object.entries(map).forEach(([id, handler]) => {
-      const el = document.getElementById(id); // Use getElementById
+      const el = document.getElementById(id);
       if (el) bindClick(el, handler);
     });
   },

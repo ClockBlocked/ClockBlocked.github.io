@@ -589,39 +589,25 @@ MyBeats:  Stream & share your favorite music for free.
     }
 }
 
-/* Fix tablet popover behavior - prevent immediate closing */
+/* Fix tablet/desktop popover behavior - prevent immediate closing */
 @media (min-width: 768px) {
-    .drawer::backdrop {
+    .drawer::backdrop,
+    .music-drawer::backdrop {
         background: rgba(0, 0, 0, 0.5);
         backdrop-filter: var(--blur-md);
     }
     
-    .drawer:not(:popover-open) {
-        display: none;
-    }
-    
-    .drawer:popover-open {
-        display: flex;
-    }
-    
-    /* Same rules for music-drawer class */
-    .music-drawer:not(:popover-open) {
-        display: none;
-    }
-    
-    .music-drawer:popover-open {
-        display: flex;
-    }
-    
     /* Ensure drawer content doesn't trigger backdrop clicks */
-    .drawer .drawerContent {
+    .drawer .drawerContent,
+    .drawer .music-drawer-content {
         pointer-events: auto;
         position: relative;
         z-index: 10;
     }
     
     /* Make sure curtain only covers empty areas */
-    .drawer .drawerCurtain {
+    .drawer .drawerCurtain,
+    .drawer .music-drawer-curtain {
         pointer-events: auto;
         z-index: 1;
     }
@@ -1864,7 +1850,7 @@ MyBeats:  Stream & share your favorite music for free.
         </svg>
     </button>
     
-    <button class="unified-trigger player-trigger" id="unified-player-trigger" title="Music Player" data-label="Unified Player Trigger">
+    <button class="unified-trigger player-trigger" id="unified-player-trigger" popovertarget="drawer" title="Music Player" data-label="Unified Player Trigger">
         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
             <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.369 4.369 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z" />
         </svg>
@@ -2153,11 +2139,24 @@ MyBeats:  Stream & share your favorite music for free.
   position: fixed;
   inset: 0;
   background: transparent;
-  border:  ;
+  border: none;
   padding: 2rem;
   margin: 0;
   z-index: 9999;
   overflow: hidden;
+}
+
+/* CRITICAL: Hide drawer by default, show only when popover is open */
+.music-drawer:not(:popover-open),
+.drawer:not(:popover-open) {
+  display: none;
+}
+
+.music-drawer:popover-open,
+.drawer:popover-open {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .music-drawer::backdrop {
@@ -3628,12 +3627,14 @@ MyBeats:  Stream & share your favorite music for free.
 
 <!-- Initialization modules -->
 <script type="module" src="./siteScripts/init.js"></script>
-<script type="module" src="./siteScripts/unifiedPlayerController.js"></script>
-<script type="module" src="./siteScripts/unifiedPlayerIntergration.js"></script>
+<!-- REMOVED: Viewport-checking scripts - using CSS-only responsive design instead -->
+<!-- <script type="module" src="./siteScripts/unifiedPlayerController.js"></script> -->
+<!-- <script type="module" src="./siteScripts/unifiedPlayerIntegration.js"></script> -->
 
 <!-- Unified Player Controller Script -->
 <script>
-document.addEventListener('DOMContentLoaded', () => {
+// Use a small timeout to ensure this runs after all other DOMContentLoaded listeners
+function initializeTriggers() {
     // Unified menu triggers (works for both mobile navbar and desktop/tablet triggers)
     const mobileMenuTrigger = document.getElementById('menu-trigger');
     const unifiedMenuTrigger = document.getElementById('unified-menu-trigger');
@@ -3642,11 +3643,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Menu trigger handlers
     function toggleMenu() {
-        dropdownMenu.classList.toggle('show');
+        dropdownMenu?.classList.toggle('show');
     }
     
     function closeMenu() {
-        dropdownMenu.classList.remove('show');
+        dropdownMenu?.classList.remove('show');
     }
     
     // Bind mobile menu trigger
@@ -3678,7 +3679,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const unifiedPlayerTrigger = document.getElementById('unified-player-trigger');
     const drawer = document.getElementById('drawer');
     
-    function togglePlayer() {
+    function togglePlayer(e) {
+        e?.preventDefault();
+        e?.stopPropagation();
         if (drawer) {
             if (drawer.matches(':popover-open')) {
                 drawer.hidePopover();
@@ -3691,13 +3694,27 @@ document.addEventListener('DOMContentLoaded', () => {
     // Bind mobile player trigger (navbar center)
     if (mobilePlayerTrigger) {
         mobilePlayerTrigger.addEventListener('click', togglePlayer);
+        console.log('✅ Mobile player trigger bound');
     }
     
     // Bind unified player trigger (desktop/tablet)
     if (unifiedPlayerTrigger) {
         unifiedPlayerTrigger.addEventListener('click', togglePlayer);
+        console.log('✅ Unified player trigger bound');
     }
-});
+    
+    console.log('🎵 Music player triggers initialized');
+}
+
+// Run after DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(initializeTriggers, 100);
+    });
+} else {
+    // DOM already loaded
+    setTimeout(initializeTriggers, 100);
+}
 </script>
 
 <!-- Global Initialize -->
