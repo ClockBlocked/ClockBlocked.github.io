@@ -589,25 +589,39 @@ MyBeats:  Stream & share your favorite music for free.
     }
 }
 
-/* Fix tablet/desktop popover behavior - prevent immediate closing */
+/* Fix tablet popover behavior - prevent immediate closing */
 @media (min-width: 768px) {
-    .drawer::backdrop,
-    .music-drawer::backdrop {
+    .drawer::backdrop {
         background: rgba(0, 0, 0, 0.5);
         backdrop-filter: var(--blur-md);
     }
     
+    .drawer:not(:popover-open) {
+        display: none;
+    }
+    
+    .drawer:popover-open {
+        display: flex;
+    }
+    
+    /* Same rules for music-drawer class */
+    .music-drawer:not(:popover-open) {
+        display: none;
+    }
+    
+    .music-drawer:popover-open {
+        display: flex;
+    }
+    
     /* Ensure drawer content doesn't trigger backdrop clicks */
-    .drawer .drawerContent,
-    .drawer .music-drawer-content {
+    .drawer .drawerContent {
         pointer-events: auto;
         position: relative;
         z-index: 10;
     }
     
     /* Make sure curtain only covers empty areas */
-    .drawer .drawerCurtain,
-    .drawer .music-drawer-curtain {
+    .drawer .drawerCurtain {
         pointer-events: auto;
         z-index: 1;
     }
@@ -1850,7 +1864,7 @@ MyBeats:  Stream & share your favorite music for free.
         </svg>
     </button>
     
-    <button class="unified-trigger player-trigger" id="unified-player-trigger" popovertarget="drawer" title="Music Player" data-label="Unified Player Trigger">
+    <button class="unified-trigger player-trigger" id="unified-player-trigger" title="Music Player" data-label="Unified Player Trigger">
         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
             <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.369 4.369 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z" />
         </svg>
@@ -2139,24 +2153,11 @@ MyBeats:  Stream & share your favorite music for free.
   position: fixed;
   inset: 0;
   background: transparent;
-  border: none;
+  border:  ;
   padding: 2rem;
   margin: 0;
   z-index: 9999;
   overflow: hidden;
-}
-
-/* CRITICAL: Hide drawer by default, show only when popover is open */
-.music-drawer:not(:popover-open),
-.drawer:not(:popover-open) {
-  display: none;
-}
-
-.music-drawer:popover-open,
-.drawer:popover-open {
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .music-drawer::backdrop {
@@ -2208,51 +2209,16 @@ MyBeats:  Stream & share your favorite music for free.
 /* Drawer Content */
 .music-drawer-content {
   position: relative;
-
-
-/**  width: 100%;
-  max-width: 480px;
-  margin: 0 auto;
-  
-**/
-
   min-height: 85vh;
-  
-/**  background: linear-gradient(180deg, 
-      rgba(18, 18, 28, 0.98) 0%, 
-      rgba(12, 12, 22, 0.98) 50%,
-      rgba(8, 8, 18, 1) 100%);
-  border-radius: 24px 24px 0 0;
-  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.5);
-**/
-  z-index: 10;
-  overflow: hidden;
-  animation: drawerSlideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-
-
   background-color: #2D333B; 
   border: 1.5px solid #444C56; 
   border-radius: 12px; 
   box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.25); 
   color:  #ADBAC7;
-  
-  
   width: 100%;
   justify-content: space-between;
-
-
+  animation: drawerSlideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-
-
-
-
-
-
-
-
-
-
-
 
 @keyframes drawerSlideUp {
   from {
@@ -2327,13 +2293,15 @@ MyBeats:  Stream & share your favorite music for free.
   color: #fff;
 }
 
-/* Album Cover Section */
+/* MODIFIED: Album Cover Section */
 .music-drawer-cover-section {
   position: relative;
   width: 100%;
-  height: 40vh;
-  min-height: 320px;
+  height: 45vh; /* Changed to 45% of viewport height */
+  min-height: 250px; /* Reduced minimum height */
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .music-drawer-cover-wrapper {
@@ -2341,21 +2309,17 @@ MyBeats:  Stream & share your favorite music for free.
   width: 100%;
   height: 100%;
   display: flex;
-  align-items: center;
+  align-items: flex-start; /* Changed to align to top */
   justify-content: center;
-  padding: 40px 24px 60px;
+  padding: 0; /* Removed padding */
 }
 
 .music-drawer-album-art {
-  width: 100%;
-  max-width: 280px;
-  height: auto;
-  aspect-ratio: 1;
-  object-fit: cover;
-  border-radius: 20px;
-  box-shadow: 
-      0 20px 60px rgba(0, 0, 0, 0.6),
-      0 8px 24px rgba(0, 0, 0, 0.4);
+  width: 100%; /* Full width of container */
+  height: 100%; /* Full height of wrapper */
+  object-fit: cover; /* Cover the entire area */
+  border-radius: 0; /* Removed border radius */
+  box-shadow: none; /* Removed shadow */
   position: relative;
   z-index: 2;
   animation: albumFloat 6s ease-in-out infinite;
@@ -2396,7 +2360,7 @@ MyBeats:  Stream & share your favorite music for free.
   }
 }
 
-/* Wavy Separator */
+/* MODIFIED: Wavy Separator */
 .music-drawer-wavy-separator {
   position: absolute;
   bottom: -2px;
@@ -2404,7 +2368,7 @@ MyBeats:  Stream & share your favorite music for free.
   width: 100%;
   height: 60px;
   z-index: 3;
-  color: rgba(12, 12, 22, 0.98);
+  color: #2D333B; /* Match the background color */
   overflow: hidden;
 }
 
@@ -3070,12 +3034,8 @@ MyBeats:  Stream & share your favorite music for free.
     border-radius: 20px 20px 0 0;
   }
 
-  .music-drawer-cover-wrapper {
-    padding: 32px 20px 48px;
-  }
-
-  .music-drawer-album-art {
-    max-width: 240px;
+  .music-drawer-cover-section {
+    height: 45vh; /* Maintain 45% height on mobile */
   }
 
   .music-drawer-song-info {
@@ -3117,12 +3077,7 @@ MyBeats:  Stream & share your favorite music for free.
   }
 
   .music-drawer-cover-section {
-    height: 45vh;
-    min-height: 380px;
-  }
-
-  .music-drawer-album-art {
-    max-width: 320px;
+    height: 45vh; /* Maintain 45% height on tablet/desktop */
   }
 }
 
@@ -3186,7 +3141,7 @@ MyBeats:  Stream & share your favorite music for free.
           </svg>
         </button>
 
-        <!-- Album Cover Section -->
+        <!-- MODIFIED: Album Cover Section -->
         <div class="music-drawer-cover-section">
           <div class="music-drawer-cover-wrapper">
             <img id="musicDrawerCover" src="" alt="Album Cover" class="music-drawer-album-art" />
@@ -3627,14 +3582,12 @@ MyBeats:  Stream & share your favorite music for free.
 
 <!-- Initialization modules -->
 <script type="module" src="./siteScripts/init.js"></script>
-<!-- REMOVED: Viewport-checking scripts - using CSS-only responsive design instead -->
-<!-- <script type="module" src="./siteScripts/unifiedPlayerController.js"></script> -->
-<!-- <script type="module" src="./siteScripts/unifiedPlayerIntegration.js"></script> -->
+<script type="module" src="./siteScripts/unifiedPlayerController.js"></script>
+<script type="module" src="./siteScripts/unifiedPlayerIntergration.js"></script>
 
 <!-- Unified Player Controller Script -->
 <script>
-// Use a small timeout to ensure this runs after all other DOMContentLoaded listeners
-function initializeTriggers() {
+document.addEventListener('DOMContentLoaded', () => {
     // Unified menu triggers (works for both mobile navbar and desktop/tablet triggers)
     const mobileMenuTrigger = document.getElementById('menu-trigger');
     const unifiedMenuTrigger = document.getElementById('unified-menu-trigger');
@@ -3643,11 +3596,11 @@ function initializeTriggers() {
     
     // Menu trigger handlers
     function toggleMenu() {
-        dropdownMenu?.classList.toggle('show');
+        dropdownMenu.classList.toggle('show');
     }
     
     function closeMenu() {
-        dropdownMenu?.classList.remove('show');
+        dropdownMenu.classList.remove('show');
     }
     
     // Bind mobile menu trigger
@@ -3679,9 +3632,7 @@ function initializeTriggers() {
     const unifiedPlayerTrigger = document.getElementById('unified-player-trigger');
     const drawer = document.getElementById('drawer');
     
-    function togglePlayer(e) {
-        e?.preventDefault();
-        e?.stopPropagation();
+    function togglePlayer() {
         if (drawer) {
             if (drawer.matches(':popover-open')) {
                 drawer.hidePopover();
@@ -3694,27 +3645,13 @@ function initializeTriggers() {
     // Bind mobile player trigger (navbar center)
     if (mobilePlayerTrigger) {
         mobilePlayerTrigger.addEventListener('click', togglePlayer);
-        console.log('✅ Mobile player trigger bound');
     }
     
     // Bind unified player trigger (desktop/tablet)
     if (unifiedPlayerTrigger) {
         unifiedPlayerTrigger.addEventListener('click', togglePlayer);
-        console.log('✅ Unified player trigger bound');
     }
-    
-    console.log('🎵 Music player triggers initialized');
-}
-
-// Run after DOM is ready
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        setTimeout(initializeTriggers, 100);
-    });
-} else {
-    // DOM already loaded
-    setTimeout(initializeTriggers, 100);
-}
+});
 </script>
 
 <!-- Global Initialize -->
