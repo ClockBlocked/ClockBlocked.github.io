@@ -2144,6 +2144,14 @@ MyBeats:  Stream & share your favorite music for free.
 
 <!-- REVAMPED MUSIC PLAYER DRAWER -->
 <style>
+
+
+
+
+
+
+
+
 /* ====================================
    MODERN MUSIC PLAYER DRAWER
    ==================================== */
@@ -2328,13 +2336,19 @@ MyBeats:  Stream & share your favorite music for free.
   color: #fff;
 }
 
-/* Album Cover Section */
+
+
+
+
 .music-drawer-cover-section {
   position: relative;
   width: 100%;
-  height: 40vh;
-  min-height: 320px;
-  overflow: hidden;
+  height: 40vh; /* 40% of viewport height as requested */
+  min-height: 250px;
+  overflow: visible; /* CHANGED: Allow wavy separator to show */
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 40px; /* ADDED: Space for the wavy separator */
 }
 
 .music-drawer-cover-wrapper {
@@ -2342,25 +2356,61 @@ MyBeats:  Stream & share your favorite music for free.
   width: 100%;
   height: 100%;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  padding: 40px 24px 60px;
+  padding: 0;
+  overflow: hidden; /* MOVED: overflow hidden here instead */
+  border-radius: 0 0 12px 12px; /* ADDED: Optional rounded bottom corners */
 }
 
 .music-drawer-album-art {
   width: 100%;
-  max-width: 280px;
-  height: auto;
-  aspect-ratio: 1;
+  height: 100%;
   object-fit: cover;
-  border-radius: 20px;
-  box-shadow: 
-      0 20px 60px rgba(0, 0, 0, 0.6),
-      0 8px 24px rgba(0, 0, 0, 0.4);
+  border-radius: 0;
+  box-shadow: none;
   position: relative;
   z-index: 2;
   animation: albumFloat 6s ease-in-out infinite;
 }
+
+/* FIXED: Wavy Separator */
+.music-drawer-wavy-separator {
+  position: absolute;
+  bottom: -38px; /* CHANGED: Position it below the cover */
+  left: 0;
+  width: 100%;
+  height: 60px;
+  z-index: 3;
+  color: #2D333B; /* Match background */
+  overflow: visible; /* CHANGED */
+  pointer-events: none; /* ADDED: Don't block clicks */
+}
+
+.music-drawer-wavy-separator svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  animation: waveFlow 8s ease-in-out infinite;
+}
+
+@keyframes waveFlow {
+  0%, 100% {
+    transform: translateX(0) scaleY(1);
+  }
+  50% {
+    transform: translateX(-25px) scaleY(1.1);
+  }
+}
+
+
+
+
+
+
+
+
+
 
 @keyframes albumFloat {
   0%, 100% {
@@ -2397,33 +2447,7 @@ MyBeats:  Stream & share your favorite music for free.
   }
 }
 
-/* Wavy Separator */
-.music-drawer-wavy-separator {
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 100%;
-  height: 60px;
-  z-index: 3;
-  color: rgba(12, 12, 22, 0.98);
-  overflow: hidden;
-}
 
-.music-drawer-wavy-separator svg {
-  width: 100%;
-  height: 100%;
-  display: block;
-  animation: waveFlow 8s ease-in-out infinite;
-}
-
-@keyframes waveFlow {
-  0%, 100% {
-    transform: translateX(0) scaleY(1);
-  }
-  50% {
-    transform: translateX(-25px) scaleY(1.1);
-  }
-}
 
 /* Tab Navigation */
 .music-drawer-tabs {
