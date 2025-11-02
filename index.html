@@ -2484,11 +2484,13 @@ MyBeats:  Stream & share your favorite music for free.
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  
+  letter-spacing: 1.35px;
 }
 
 .music-player__favorite-btn {
-  width: 44px;
-  height: 44px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -2503,8 +2505,8 @@ MyBeats:  Stream & share your favorite music for free.
   &.favorited { background: rgba(239, 68, 68, 0.3); border-color: #ef4444; }
   
   & svg {
-    width: 22px;
-    height: 22px;
+    width: 15px;
+    height: 15px;
     color: rgba(255, 255, 255, 0.6);
     transition: all 0.3s ease;
   }
@@ -2991,7 +2993,7 @@ MyBeats:  Stream & share your favorite music for free.
               <!-- Song Info -->
               <div class="music-player__info">
                 <div class="music-player__details">
-                  <h4 id="title" class="music-player__title"></h4>
+                  <h3 id="title" class="music-player__title"></h3>
                   <p id="artist" class="music-player__artist"></p>
                   <p id="album" class="music-player__album"></p>
                 </div>
