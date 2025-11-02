@@ -2224,7 +2224,6 @@ MyBeats:  Stream & share your favorite music for free.
   justify-content: center;
   padding: 16px 0 8px;
   position: sticky;
-  top: -15%;
   z-index: 100;
   background: transparent;
 }
@@ -2237,7 +2236,7 @@ MyBeats:  Stream & share your favorite music for free.
   border: none;
   cursor: grab;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: absolute;
+  position: absolute; top: -15%;
   
   &:active { cursor: grabbing; transform: scaleX(1.2); }
   &:hover { background: rgba(255, 255, 255, 0.5); width: 64px; }
@@ -2952,7 +2951,7 @@ MyBeats:  Stream & share your favorite music for free.
     position: relative;
     display: block;
     width: calc(100% + 1.3px);
-    height: 150px;
+    height: fit-content;
     
     z-index: 99;
     pointer-events: none;
@@ -2966,7 +2965,7 @@ MyBeats:  Stream & share your favorite music for free.
 @media (max-width: 767px) {
     .custom-shape-divider-bottom-1762040716 svg {
         width: calc(216% + 1.3px);
-        height: 264px;
+        height: fit-content;
     }
 }
 </style>
