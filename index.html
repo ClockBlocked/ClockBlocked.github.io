@@ -2154,22 +2154,22 @@ MyBeats:  Stream & share your favorite music for free.
   inset: 0;
   background: transparent;
   border: none;
-  padding: 2rem;
+  padding: 1rem;
   margin: 0;
   z-index: 9999;
   overflow: hidden;
   
   &::backdrop {
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    animation: backdropFadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    animation: backdropFadeIn 0.45s cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 
 @keyframes backdropFadeIn {
   from { opacity: 0; backdrop-filter: blur(0px); }
-  to { opacity: 1; backdrop-filter: blur(12px); }
+  to { opacity: 1; backdrop-filter: blur(5px); }
 }
 
 .music-player__scroller {
@@ -2208,7 +2208,7 @@ MyBeats:  Stream & share your favorite music for free.
   color: #ADBAC7;
   width: 100%;
   justify-content: space-between;
-  min-height: 85vh;
+  height: 65dvh;
   z-index: 10;
   overflow: hidden;
   animation: drawerSlideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -2224,7 +2224,7 @@ MyBeats:  Stream & share your favorite music for free.
   justify-content: center;
   padding: 16px 0 8px;
   position: sticky;
-  top: 0;
+  top: -15%;
   z-index: 100;
   background: transparent;
 }
@@ -2237,7 +2237,7 @@ MyBeats:  Stream & share your favorite music for free.
   border: none;
   cursor: grab;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
+  position: absolute;
   
   &:active { cursor: grabbing; transform: scaleX(1.2); }
   &:hover { background: rgba(255, 255, 255, 0.5); width: 64px; }
@@ -2245,10 +2245,10 @@ MyBeats:  Stream & share your favorite music for free.
 
 .music-player__close-btn {
   position: absolute;
-  top: 24px;
-  right: 24px;
-  width: 40px;
-  height: 40px;
+  top: -15%;
+  right: 5%;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
@@ -2262,7 +2262,7 @@ MyBeats:  Stream & share your favorite music for free.
   
   &:hover { background: rgba(255, 255, 255, 0.2); transform: rotate(90deg) scale(1.1); }
   
-  & svg { width: 20px; height: 20px; color: #fff; }
+  & svg { width: 15px; height: 15px; color: #fff; }
 }
 
 .music-player__now-playing {
