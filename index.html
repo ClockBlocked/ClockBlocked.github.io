@@ -2160,59 +2160,32 @@ MyBeats:  Stream & share your favorite music for free.
 
 
 
-
 <style>
-.music-player {
-  position: fixed; bottom: -3rem;
+#drawer {
+  position: fixed;
+  bottom: -3rem;
   inset: 0;
   background: transparent;
   border: none;
   padding: 1rem;
   margin: 0;
-  z-index: 9999;
-  overflow: hidden;
   transform: translateY(100%);
   opacity: 0;
-  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), 
-              opacity 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
 }
 
-.music-player:popover-open {
+#drawer:popover-open {
   transform: translateY(0);
   opacity: 1;
 }
 
-.music-player::backdrop {
+#drawer::backdrop {
   background: rgba(0, 0, 0, 0.35);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
-  opacity: 0;
-  transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.music-player:popover-open::backdrop {
-  opacity: 1;
-}
-
-.music-player__scroller {
-  width: 100%;
-  height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
-  scroll-snap-type: y mandatory;
-  -webkit-overflow-scrolling: touch;
-}
-
-.music-player__slide {
-  min-height: 100vh;
-  scroll-snap-align: start;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  padding: 1rem;
-}
-
-.music-player__curtain {
+#drawer .curtain {
   position: fixed;
   inset: 0;
   background: transparent;
@@ -2221,38 +2194,30 @@ MyBeats:  Stream & share your favorite music for free.
   z-index: 1;
 }
 
-.music-player__inner {
+#drawer .body {
   position: relative;
   background-color: #2D333B;
   border: 1.5px solid #444C56;
   border-radius: 12px;
   box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.25);
   color: #ADBAC7;
-  width: 90svw;
-  justify-content: flex-start;
-  height: 85svh;
-  z-index: 10;
-  overflow: hidden; 
-  overflow-y: auto;
-  margin: auto;
-  display: flex;
-  flex-direction: column;
+  max-width: 500px;
+  margin: 0 auto;
+  overflow: hidden;
+  z-index: 2;
 }
 
-.music-player__drag-area {
+#drawer .handle-area {
   display: flex;
   justify-content: center;
-  padding: 16px 0 8px;
-  position: sticky;
-  z-index: 100;
-  background: transparent;
-  position: absolute; 
-  top: -15%; 
-  left: 0; 
+  position: absolute;
+  top: -15%;
+  left: 0;
   right: 0;
+  z-index: 100;
 }
 
-.music-player__drag-handle {
+#drawer .handle {
   width: 48px;
   height: 5px;
   background: rgba(255, 255, 255, 0.3);
@@ -2260,23 +2225,22 @@ MyBeats:  Stream & share your favorite music for free.
   border: none;
   cursor: grab;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
 }
 
-.music-player__drag-handle:active { 
-  cursor: grabbing; 
-  transform: scaleX(1.2); 
+#drawer .handle:active {
+  cursor: grabbing;
+  transform: scaleX(1.2);
 }
 
-.music-player__drag-handle:hover { 
-  background: rgba(255, 255, 255, 0.5); 
-  width: 64px; 
+#drawer .handle:hover {
+  background: rgba(255, 255, 255, 0.5);
+  width: 64px;
 }
 
-.music-player__close-btn {
+#drawer .close {
   position: absolute;
   top: -15%;
-  right: 5%;
+  right: 1rem;
   width: 30px;
   height: 30px;
   border-radius: 50%;
@@ -2287,49 +2251,36 @@ MyBeats:  Stream & share your favorite music for free.
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 1000;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 100;
+  transition: all 0.3s ease;
 }
 
-.music-player__close-btn:hover { 
-  background: rgba(255, 255, 255, 0.2); 
-  transform: rotate(90deg) scale(1.1); 
+#drawer .close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: rotate(90deg) scale(1.1);
 }
 
-.music-player__close-btn svg { 
-  width: 15px; 
-  height: 15px; 
-  color: #fff; 
+#drawer .close svg {
+  width: 15px;
+  height: 15px;
+  color: #fff;
 }
 
-.music-player__now-playing {
+#drawer .cover {
   position: relative;
   width: 100%;
-  height: 40vh;
-  min-height: 250px;
-  overflow: visible;
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 1rem;
-  flex-shrink: 0;
 }
 
-.music-player__cover-wrapper {
+#drawer .cover-wrapper {
   position: relative;
   width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 0;
   overflow: hidden;
   border-radius: 0 0 12px 12px;
   flex-shrink: 0;
-  
   border-bottom: none !important;
 }
 
-.music-player__cover {
+#drawer #cover {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -2341,69 +2292,498 @@ MyBeats:  Stream & share your favorite music for free.
   background: #1a1f24;
 }
 
-.music-player__cover-glow {
+#drawer .glow {
   position: absolute;
   inset: 0;
   background: radial-gradient(ellipse at center, rgba(139, 92, 246, 0.3) 0%, rgba(59, 130, 246, 0.2) 30%, transparent 70%);
   filter: blur(60px);
   opacity: 0.6;
   z-index: 1;
-}
-
-.music-player__separator {
-  position: absolute;
-  bottom: -38px;
-  left: 0;
-  width: 100%;
-  height: 60px;
-  z-index: 3;
-  color: #2D333B;
-  overflow: visible;
   pointer-events: none;
 }
 
-.music-player__separator svg { 
-  width: 100%; 
-  height: 100%; 
-  display: block; 
+#drawer .content {
+  position: relative;
+  height: auto;
 }
 
-.music-player__separator-top {
-  position: absolute;
-  top: -38px;
-  left: 0;
+#drawer .panel {
+  display: none;
+  animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#drawer .panel.active {
+  display: flex;
+  flex-direction: column;
+}
+
+#drawer .main {
+  padding: 0 0.5rem 0.45rem;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+#drawer .info {
+  padding: 20px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+#drawer .details {
+  flex: 1;
+  min-width: 0;
+}
+
+#drawer .song-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 8px 0;
+}
+
+#drawer .song-artist {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0 0 4px 0;
+}
+
+#drawer .song-album {
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+}
+
+#drawer .favorite {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+#drawer .favorite:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: #ef4444;
+  transform: scale(1.1);
+}
+
+#drawer .favorite.favorited {
+  background: rgba(239, 68, 68, 0.3);
+  border-color: #ef4444;
+}
+
+#drawer .favorite svg {
+  width: 15px;
+  height: 15px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+#drawer .favorite:hover svg,
+#drawer .favorite.favorited svg {
+  color: #ef4444;
+  fill: #ef4444;
+}
+
+#drawer .favorite.favorited svg {
+  animation: heartBeat 0.6s ease;
+}
+
+#drawer .progress-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 20px;
+}
+
+#drawer .progress {
+  position: relative;
   width: 100%;
-  height: 60px;
-  z-index: 3;
-  color: #2D333B;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  cursor: pointer;
   overflow: visible;
-  pointer-events: none;
-  transform: rotate(180deg);
+  transition: height 0.2s ease;
 }
 
-.music-player__separator-top svg { 
-  width: 100%; 
-  height: 100%; 
+#drawer .progress:hover {
+  height: 8px;
+}
+
+#drawer .buffer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+#drawer .fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: linear-gradient(90deg, #8b5cf6, #3b82f6);
+  border-radius: 999px;
+  transition: width 0.1s linear;
+  position: relative;
+}
+
+#drawer .thumb {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  transition: all 0.2s ease;
+}
+
+#drawer .progress:hover .thumb,
+#drawer .progress.is-dragging .thumb,
+#drawer .progress.is-hovering .thumb {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+#drawer .time {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 4px;
+}
+
+#drawer .current,
+#drawer .total {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+#drawer .controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 0 20px;
+}
+
+#drawer .control {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #fff;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+#drawer .control:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+#drawer .control:active {
+  transform: translateY(0) scale(0.95);
+}
+
+#drawer .control svg {
+  width: 24px;
+  height: 24px;
+}
+
+#drawer .control.secondary {
+  width: 48px;
+  height: 48px;
+}
+
+#drawer .control.secondary svg {
+  width: 22px;
+  height: 22px;
+}
+
+#drawer .control.primary {
+  width: 68px;
+  height: 68px;
+  background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.4), 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+#drawer .control.primary:hover {
+  background: linear-gradient(135deg, #9d6dff, #4c93ff);
+  box-shadow: 0 12px 32px rgba(139, 92, 246, 0.5), 0 6px 16px rgba(59, 130, 246, 0.4);
+  transform: translateY(-4px) scale(1.05);
+}
+
+#drawer .control.primary svg {
+  width: 28px;
+  height: 28px;
+}
+
+#drawer .control.primary .pause-icon {
+  display: none;
+}
+
+#drawer.is-playing .control.primary .play-icon {
+  display: none;
+}
+
+#drawer.is-playing .control.primary .pause-icon {
   display: block;
 }
 
-.music-player__tabs {
+#drawer .control.rewind,
+#drawer .control.forward {
   position: relative;
-  width: 100%;
-  padding: 1rem;
-  margin: auto;
-  flex-shrink: 0;
-  margin-top: auto;
 }
 
-.music-player__tabs-wrapper {
+#drawer .skip-label {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  font-size: 9px;
+  font-weight: 700;
+  color: #fff;
+}
+
+#drawer .actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 1rem 0 0 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#drawer .action {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.6);
+  transition: all 0.3s ease;
+}
+
+#drawer .action:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+#drawer .action svg {
+  width: 20px;
+  height: 20px;
+}
+
+#drawer .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 24px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#drawer .header .title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+
+#drawer .header .count {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+
+#drawer .list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+#drawer .list::-webkit-scrollbar {
+  width: 6px;
+}
+
+#drawer .list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 999px;
+}
+
+#drawer .list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+}
+
+#drawer .list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+#drawer .empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+#drawer .empty-icon {
+  width: 80px;
+  height: 80px;
+  color: rgba(255, 255, 255, 0.2);
+  margin-bottom: 16px;
+}
+
+#drawer .empty-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+#drawer .empty-text {
+  font-size: 18px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 8px;
+}
+
+#drawer .empty-subtext {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+#drawer .list .item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+#drawer .list .item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+#drawer .list .item.active {
+  background: rgba(139, 92, 246, 0.15);
+  border-left: 3px solid #8b5cf6;
+}
+
+#drawer .list .art {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+#drawer .list .item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+#drawer .list .item-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  margin: 0 0 4px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#drawer .list .item-artist {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#drawer .list .item-actions {
+  display: flex;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+#drawer .list .item:hover .item-actions {
+  opacity: 1;
+}
+
+#drawer .list .item-action {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.6);
+  transition: all 0.2s ease;
+}
+
+#drawer .list .item-action:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  transform: scale(1.1);
+}
+
+#drawer .list .item-action svg {
+  width: 18px;
+  height: 18px;
+}
+
+#drawer .tabs {
+  position: relative;
+  width: 100%;
+  padding: 16px 16px 12px;
+}
+
+#drawer .tabs-wrapper {
   display: flex;
   gap: 8px;
   position: relative;
-  padding: 6px;
 }
 
-.music-player__tab {
+#drawer .tab {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -2416,943 +2796,280 @@ MyBeats:  Stream & share your favorite music for free.
   cursor: pointer;
   position: relative;
   z-index: 2;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.6);
+  transition: all 0.3s ease;
 }
 
-.music-player__tab:hover { 
-  color: rgba(255, 255, 255, 0.8); 
-  background: rgba(255, 255, 255, 0.05); 
+#drawer .tab:hover {
+  color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.05);
 }
 
-.music-player__tab.active { 
-  color: #fff; 
+#drawer .tab.active {
+  color: #fff;
 }
 
-.music-player__tab-icon {
+#drawer .tab-icon {
   width: 24px;
   height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.3s ease;
 }
 
-.music-player__tab.active .music-player__tab-icon { 
-  transform: scale(1.15); 
+#drawer .tab.active .tab-icon {
+  transform: scale(1.15);
 }
 
-.music-player__tab-label {
+#drawer .tab-label {
   font-size: 11px;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  white-space: nowrap;
+  text-transform: capitalize;
 }
 
-.music-player__tab-slider {
+#drawer .slider {
   position: absolute;
   top: 6px;
-  bottom: 6px;
   left: 6px;
   width: calc(33.333% - 8px);
+  height: calc(100% - 12px);
   background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(59, 130, 246, 0.2));
   border-radius: 12px;
   transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   z-index: 1;
-  pointer-events: none;
 }
 
-.music-player__tab:nth-child(2).active ~ .music-player__tab-slider { 
-  transform: translateX(calc(100% + 8px)); 
+#drawer .tab:nth-child(2).active ~ .slider {
+  transform: translateX(calc(100% + 8px));
 }
 
-.music-player__tab:nth-child(3).active ~ .music-player__tab-slider { 
-  transform: translateX(calc(200% + 16px)); 
-}
-
-.music-player__content { 
-  position: relative; 
-  height: auto; 
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.music-player__panel {
-  display: none;
-  animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  flex: 1;
-  overflow-y: auto;
-}
-
-.music-player__panel.active { 
-  display: flex; 
-  flex-direction: column;
-}
-
-.music-player__main {
-  padding: 0 0.5rem 0.45rem;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  flex: 1;
-}
-
-.music-player__info {
-  padding: 20px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  transition: all 0.3s ease;
-}
-
-.music-player__details { 
-  flex: 1; 
-  min-width: 0; 
-}
-
-.music-player__title {
-  font-size: 18px;
-  font-weight: 700;
-  color: #fff;
-  margin: 0 0 6px;
-  line-height: 1.3;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  text-align: center;
-}
-
-.music-player__artist {
-  font-size: 14px;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.7);
-  margin: 0 0 4px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.music-player__album {
-  font-size: 12px;
-  font-weight: 400;
-  color: rgba(255, 255, 255, 0.5);
-  margin: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  letter-spacing: 1.35px;
-}
-
-.music-player__favorite-btn {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.music-player__favorite-btn:hover { 
-  background: rgba(239, 68, 68, 0.2); 
-  border-color: #ef4444; 
-  transform: scale(1.1); 
-}
-
-.music-player__favorite-btn.favorited { 
-  background: rgba(239, 68, 68, 0.3); 
-  border-color: #ef4444; 
-}
-
-.music-player__favorite-btn svg {
-  width: 15px;
-  height: 15px;
-  color: rgba(255, 255, 255, 0.6);
-  transition: all 0.3s ease;
-}
-
-.music-player__favorite-btn:hover svg, 
-.music-player__favorite-btn.favorited svg { 
-  color: #ef4444; 
-  fill: #ef4444; 
-}
-
-.music-player__favorite-btn.favorited svg { 
-  animation: heartBeat 0.6s ease; 
-}
-
-.music-player__progress-section { 
-  display: flex; 
-  flex-direction: column; 
-  gap: 12px; 
-}
-
-.music-player__progress-bar {
-  position: relative;
-  width: 100%;
-  height: 6px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 999px;
-  cursor: pointer;
-  overflow: visible;
-  transition: height 0.2s ease;
-}
-
-.music-player__progress-bar:hover {
-  height: 8px;
-}
-
-.music-player__progress-bar:hover .music-player__progress-thumb { 
-  opacity: 1; 
-  transform: translate(-50%, -50%) scale(1); 
-}
-
-.music-player__progress-buffer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 999px;
-  transition: width 0.3s ease;
-}
-
-.music-player__progress-fill {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  background: linear-gradient(90deg, #8b5cf6, #3b82f6);
-  border-radius: 999px;
-  transition: width 0.1s linear;
-  position: relative;
-}
-
-.music-player__progress-thumb {
-  position: absolute;
-  top: 50%;
-  left: 100%;
-  width: 16px;
-  height: 16px;
-  background: #fff;
-  border-radius: 50%;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  transform: translate(-50%, -50%) scale(0);
-  opacity: 0;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.music-player__progress-bar.is-dragging .music-player__progress-thumb,
-.music-player__progress-bar.is-hovering .music-player__progress-thumb {
-  opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
-}
-
-.music-player__time-display {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 4px;
-}
-
-.music-player__current-time,
-.music-player__total-time {
-  font-size: 12px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.6);
-  font-variant-numeric: tabular-nums;
-}
-
-.music-player__controls {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 8px 0;
-}
-
-.music-player__control-btn {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(255, 255, 255, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-}
-
-.music-player__control-btn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.music-player__control-btn:hover::before { 
-  opacity: 1; 
-}
-
-.music-player__control-btn:hover { 
-  background: rgba(255, 255, 255, 0.15); 
-  transform: translateY(-2px); 
-}
-
-.music-player__control-btn:active { 
-  transform: translateY(0) scale(0.95); 
-}
-
-.music-player__control-btn svg { 
-  width: 24px; 
-  height: 24px; 
-  color: #fff; 
-  z-index: 1; 
-}
-
-.music-player__control-btn--secondary {
-  width: 48px;
-  height: 48px;
-}
-
-.music-player__control-btn--secondary svg { 
-  width: 22px; 
-  height: 22px; 
-}
-
-.music-player__control-btn--primary {
-  width: 68px;
-  height: 68px;
-  background: linear-gradient(135deg, #8b5cf6, #3b82f6);
-  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.4), 0 4px 12px rgba(59, 130, 246, 0.3);
-}
-
-.music-player__control-btn--primary:hover {
-  background: linear-gradient(135deg, #9d6dff, #4c93ff);
-  box-shadow: 0 12px 32px rgba(139, 92, 246, 0.5), 0 6px 16px rgba(59, 130, 246, 0.4);
-  transform: translateY(-4px) scale(1.05);
-}
-
-.music-player__control-btn--primary svg { 
-  width: 28px; 
-  height: 28px; 
-}
-
-.music-player__control-btn--primary .pause-icon { 
-  display: none; 
-}
-
-.music-player.is-playing .music-player__control-btn--primary .play-icon { 
-  display: none; 
-}
-
-.music-player.is-playing .music-player__control-btn--primary .pause-icon { 
-  display: block; 
-}
-
-.music-player__control-btn--rewind,
-.music-player__control-btn--forward { 
-  position: relative; 
-}
-
-.music-player__skip-label {
-  position: absolute;
-  bottom: 8px;
-  font-size: 9px;
-  font-weight: 700;
-  color: #fff;
-}
-
-.music-player__actions {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  padding: 1rem 0 0 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.music-player__action-btn {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.music-player__action-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.3);
-  transform: translateY(-2px);
-}
-
-.music-player__action-btn svg {
-  width: 20px;
-  height: 20px;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.music-player__action-btn:hover svg { 
-  color: #fff; 
-}
-
-.music-player__list-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 24px 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.music-player__list-title {
-  font-size: 20px;
-  font-weight: 700;
-  color: #fff;
-  margin: 0;
-}
-
-.music-player__list-count {
-  font-size: 13px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.5);
-  background: rgba(255, 255, 255, 0.1);
-  padding: 4px 12px;
-  border-radius: 999px;
-}
-
-.music-player__list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  max-height: 500px;
-  overflow-y: auto;
-  padding: 16px 24px 40px;
-}
-
-.music-player__list::-webkit-scrollbar { 
-  width: 6px; 
-}
-
-.music-player__list::-webkit-scrollbar-track { 
-  background: rgba(255, 255, 255, 0.05); 
-  border-radius: 999px; 
-}
-
-.music-player__list::-webkit-scrollbar-thumb { 
-  background: rgba(255, 255, 255, 0.2); 
-  border-radius: 999px; 
-}
-
-.music-player__list::-webkit-scrollbar-thumb:hover { 
-  background: rgba(255, 255, 255, 0.3); 
-}
-
-.music-player__empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 20px;
-  text-align: center;
-}
-
-.music-player__empty-icon {
-  width: 80px;
-  height: 80px;
-  margin-bottom: 20px;
-  color: rgba(255, 255, 255, 0.2);
-}
-
-.music-player__empty-icon svg { 
-  width: 100%; 
-  height: 100%; 
-}
-
-.music-player__empty-text {
-  font-size: 18px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 8px;
-}
-
-.music-player__empty-subtext {
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.4);
-}
-
-.music-player__list-item {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 12px 16px;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  margin-bottom: 8px;
-}
-
-.music-player__list-item:hover {
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.music-player__list-item:hover .music-player__list-item-actions { 
-  opacity: 1; 
-}
-
-.music-player__list-item.active { 
-  background: rgba(139, 92, 246, 0.15); 
-  border-left: 3px solid #8b5cf6; 
-}
-
-.music-player__list-item-art {
-  width: 48px;
-  height: 48px;
-  border-radius: 8px;
-  object-fit: cover;
-  flex-shrink: 0;
-}
-
-.music-player__list-item-info { 
-  flex: 1; 
-  min-width: 0; 
-}
-
-.music-player__list-item-title {
-  font-size: 15px;
-  font-weight: 600;
-  color: #fff;
-  margin: 0 0 4px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.music-player__list-item-artist {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.6);
-  margin: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.music-player__list-item-actions {
-  display: flex;
-  gap: 8px;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-}
-
-.music-player__list-item-action {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.music-player__list-item-action:hover { 
-  background: rgba(255, 255, 255, 0.2); 
-  transform: scale(1.1); 
-}
-
-.music-player__list-item-action svg { 
-  width: 18px; 
-  height: 18px; 
-  color: rgba(255, 255, 255, 0.7); 
-}
-
-@media (max-width: 480px) {
-  .music-player__inner { 
-    width: 100%; 
-    border-radius: 20px 20px 0 0; 
-    height: 90svh;
-  }
-  .music-player__cover-wrapper { 
-    padding: 32px 20px 48px; 
-  }
-  .music-player__info { 
-    padding: 16px; 
-  }
-  .music-player__title { 
-    font-size: 16px; 
-  }
-  .music-player__artist { 
-    font-size: 13px; 
-  }
-  .music-player__controls { 
-    gap: 8px; 
-  }
-  .music-player__control-btn--primary { 
-    width: 60px; 
-    height: 60px; 
-  }
-  .music-player__control-btn--secondary { 
-    width: 44px; 
-    height: 44px; 
-  }
-  .music-player__tab-label { 
-    font-size: 10px; 
-  }
-}
-
-@media (min-width: 768px) {
-  .music-player__inner { 
-    margin-top: 5vh; 
-    min-height: 95vh; 
-    border-radius: 24px; 
-    max-width: 500px;
-  }
-  .music-player__now-playing { 
-    height: 45vh; 
-    min-height: 380px; 
-  }
-}
-
-.music-player.loading .music-player__cover {
-  animation: shimmer 2s infinite linear;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.05) 100%);
-  background-size: 1000px 100%;
-}
-
-.music-player__control-btn:focus,
-.music-player__action-btn:focus,
-.music-player__tab:focus {
-  outline: 2px solid rgba(139, 92, 246, 0.6);
-  outline-offset: 2px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-.custom-shape-divider-bottom-1762040716 {
-    position: absolute;
-    bottom: -2px;
-    left: -2px; right: -2px;
-    width: 105%;
-    overflow: hidden;
-    line-height: 0;
-}
-
-.custom-shape-divider-bottom-1762040716 svg {
-    position: relative;
-    display: block;
-    width: calc(105% + 2.3px);
-    height: 75px;
-    z-index: 99;
-    pointer-events: none;
-}
-
-.custom-shape-divider-bottom-1762040716 .shape-fill {
-    fill: #2D333B;
-}
-
-@media (max-width: 767px) {
-    .custom-shape-divider-bottom-1762040716 svg {
-        width: calc(216% + 1.3px);
-        height: 75px;
-    }
+#drawer .tab:nth-child(3).active ~ .slider {
+  transform: translateX(calc(200% + 16px));
 }
 
 @keyframes fadeIn {
-  from { 
-    opacity: 0; 
-    transform: translateY(20px); 
+  from {
+    opacity: 0;
+    transform: translateY(10px);
   }
-  to { 
-    opacity: 1; 
-    transform: translateY(0); 
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
 @keyframes heartBeat {
-  0%, 100% { 
-    transform: scale(1); 
-  }
-  25% { 
-    transform: scale(1.3); 
-  }
-  50% { 
-    transform: scale(0.9); 
-  }
-  75% { 
-    transform: scale(1.1); 
+  0%, 100% { transform: scale(1); }
+  25% { transform: scale(1.3); }
+  50% { transform: scale(1.1); }
+}
+
+@media (max-width: 480px) {
+  #drawer .body {
+    width: 100%;
+    border-radius: 20px 20px 0 0;
+    height: 90svh;
   }
 }
 
-@keyframes shimmer {
-  0% { 
-    background-position: -1000px 0; 
-  }
-  100% { 
-    background-position: 1000px 0; 
+@media (min-width: 768px) {
+  #drawer .body {
+    margin-top: 5vh;
+    min-height: 95vh;
+    border-radius: 24px;
+    max-width: 500px;
   }
 }
 </style>
-<aside class="music-player" popover="manual" id="drawer">
-  <div class="music-player__scroller">
-    <div class="music-player__slide">
-      <button popovertargetaction="hide" popovertarget="drawer" class="music-player__curtain" tabindex="-1"></button>
+<aside id="drawer" popover="manual">
+  <button class="curtain" popovertargetaction="hide" popovertarget="drawer" tabindex="-1"></button>
 
-      <div class="music-player__inner">
-        <div class="music-player__drag-area">
-          <button autofocus class="music-player__drag-handle" popovertargetaction="hide" popovertarget="drawer">
-            <span></span>
-          </button>
-        </div>
+  <div class="body">
+    <div class="handle-area">
+      <button class="handle" popovertargetaction="hide" popovertarget="drawer">
+        <span></span>
+      </button>
+    </div>
 
-        <button class="music-player__close-btn" id="closeBtn">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
+    <button class="close" id="closeBtn">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+
+    <div class="cover">
+      <div class="cover-wrapper">
+        <div class="custom-shape-divider-bottom-1.762040716e+09">
+          <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z" class="shape-fill"></path>
           </svg>
-        </button>
+        </div>
+        <img src="https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/stable/global/content/images/albumCovers/placeholder.png" alt="Album Cover" id="cover" />
+        <div class="glow"></div>
+      </div>
+    </div>
 
-        <!-- Album Cover Section -->
-        <div class="music-player__now-playing">
-          <div class="music-player__cover-wrapper">
-            <div class="custom-shape-divider-bottom-1762040716">
-              <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
-                <path
-                  d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"
-                  class="shape-fill"
-                ></path>
+    <div class="content">
+      <!-- Now Playing Panel -->
+      <div class="panel active" data-tab="playing">
+        <div class="main">
+          <div class="info">
+            <div class="details">
+              <h3 id="title" class="song-title"></h3>
+              <p id="artist" class="song-artist"></p>
+              <p id="album" class="song-album"></p>
+            </div>
+            <button class="favorite" id="favoriteBtn" title="Add to Favorites">
+              <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+              </svg>
+            </button>
+          </div>
+
+          <div class="progress-section">
+            <div class="progress" id="progressBar" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Seek">
+              <div class="buffer" id="progressBuffer"></div>
+              <div class="fill" id="progressFill">
+                <div class="thumb" id="progressThumb"></div>
+              </div>
+            </div>
+            <div class="time">
+              <span id="current" class="current">0:00</span>
+              <span id="total" class="total">0:00</span>
+            </div>
+          </div>
+
+          <div class="controls">
+            <button class="control secondary" id="prevBtn" title="Previous">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
+              </svg>
+            </button>
+
+            <button class="control rewind" id="rewindBtn" title="Rewind 10s">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M11.99 5V1l-5 5 5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6h-2c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8zm-1.1 11h-.85v-3.26l-1.01.31v-.69l1.77-.63h.09V16zm4.28-1.76c0 .32-.03.6-.1.82s-.17.42-.29.57-.28.26-.45.33-.37.1-.59.1-.41-.03-.59-.1-.33-.18-.46-.33-.23-.34-.3-.57-.11-.5-.11-.82v-.74c0-.32.03-.6.1-.82s.17-.42.29-.57.28-.26.45-.33.37-.1.59-.1.41.03.59.1.33.18.46.33.23.34.3.57.11.5.11.82v.74zm-.85-.86c0-.19-.01-.35-.04-.48s-.07-.23-.12-.31-.11-.14-.19-.17-.16-.05-.25-.05-.18.02-.25.05-.14.09-.19.17-.09.18-.12.31-.04.29-.04.48v.97c0 .19.01.35.04.48s.07.24.12.32.11.14.19.17.16.05.25.05.18-.02.25-.05.14-.09.19-.17.09-.19.12-.32.04-.29.04-.48v-.97z" />
+              </svg>
+              <span class="skip-label">10</span>
+            </button>
+
+            <button class="control primary" id="playBtn" title="Play/Pause">
+              <span class="play-icon">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </span>
+              <span class="pause-icon">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+                </svg>
+              </span>
+            </button>
+
+            <button class="control forward" id="forwardBtn" title="Forward 10s">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18 13c0 3.31-2.69 6-6 6s-6-2.69-6-6 2.69-6 6-6v4l5-5-5-5v4c-4.42 0-8 3.58-8 8s3.58 8 8 8 8-3.58 8-8h-2zm-7.46 2.22v-.68l-1.01-.31v3.26h.85v-2.11l1.01.31v.69l-1.77.63h-.09zM13 14.25c0 .32.03.6.1.82s.17.42.29.57.28.26.45.33.37.1.59.1.41-.03.59-.1.33-.18.46-.33.23-.34.3-.57.11-.5.11-.82v-.74c0-.32-.03-.6-.1-.82s-.17-.42-.29-.57-.28-.26-.45-.33-.37-.1-.59-.1-.41.03-.59.1-.33.18-.46.33-.23.34-.3.57-.11.5-.11.82v.74zm.85-.86v-.97c0-.19.01-.35.04-.48s.07-.23.12-.31.11-.14.19-.17.16-.05.25-.05.18.02.25.05.14.09.19.17.09.18.12.31.04.29.04.48v.97c0 .19-.01.35-.04.48s-.07.24-.12.32-.11.14-.19.17-.16.05-.25.05-.18-.02-.25-.05-.14-.09-.19-.17-.09-.19-.12-.32-.04-.29-.04-.48z" />
+              </svg>
+              <span class="skip-label">10</span>
+            </button>
+
+            <button class="control secondary" id="nextBtn" title="Next">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="actions">
+            <button class="action" id="queueBtn" title="View Queue">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z" />
+              </svg>
+            </button>
+            <button class="action" id="shareBtn" title="Share">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" />
+              </svg>
+            </button>
+            <button class="action" id="moreBtn" title="More Options">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Queue Panel -->
+      <div class="panel" data-tab="queue">
+        <div class="header">
+          <h3 class="title">Up Next</h3>
+          <span class="count" id="queueCount">0 songs</span>
+        </div>
+        <ul id="queueList" class="list">
+          <div class="empty">
+            <div class="empty-icon">
+              <svg fill="currentColor" viewBox="0 0 24 24">
+                <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z" />
               </svg>
             </div>
-
-            <img src="https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/stable/global/content/images/albumCovers/placeholder.png" alt="Album Cover" class="music-player__cover" id="cover" />
-
-            <div class="music-player__cover-glow"></div>
+            <div class="empty-text">Queue is empty</div>
+            <div class="empty-subtext">Songs you add will appear here</div>
           </div>
+        </ul>
+      </div>
+
+      <!-- Recent Panel -->
+      <div class="panel" data-tab="recent">
+        <div class="header">
+          <h3 class="title">Recently Played</h3>
+          <span class="count" id="recentCount">0 songs</span>
         </div>
-
-        <!-- Tab Content -->
-        <div class="music-player__content">
-          <!-- Now Playing -->
-          <div class="music-player__panel active" data-tab="playing">
-            <div class="music-player__main">
-              <!-- Song Info -->
-              <div class="music-player__info">
-                <div class="music-player__details">
-                  <h3 id="title" class="music-player__title"></h3>
-                  <p id="artist" class="music-player__artist"></p>
-                  <p id="album" class="music-player__album"></p>
-                </div>
-
-                <!-- Favorite Button -->
-                <button class="music-player__favorite-btn" id="favoriteBtn" title="Add to Favorites">
-                  <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                  </svg>
-                </button>
-              </div>
-
-              <!-- Progress Section -->
-              <div class="music-player__progress-section" id="progressSection">
-                <div class="music-player__progress-bar" id="progressBar" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Seek">
-                  <div class="music-player__progress-buffer" id="progressBuffer"></div>
-                  <div class="music-player__progress-fill" id="progressFill">
-                    <div class="music-player__progress-thumb" id="progressThumb"></div>
-                  </div>
-                </div>
-
-                <div class="music-player__time-display">
-                  <span id="current" class="music-player__current-time">0:00</span>
-                  <span id="total" class="music-player__total-time">0:00</span>
-                </div>
-              </div>
-
-              <!-- Playback Controls -->
-              <div class="music-player__controls">
-                <button class="music-player__control-btn music-player__control-btn--secondary" id="prevBtn" title="Previous">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
-                  </svg>
-                </button>
-
-                <button class="music-player__control-btn music-player__control-btn--rewind" id="rewindBtn" title="Rewind 10s">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path
-                      d="M11.99 5V1l-5 5 5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6h-2c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8zm-1.1 11h-.85v-3.26l-1.01.31v-.69l1.77-.63h.09V16zm4.28-1.76c0 .32-.03.6-.1.82s-.17.42-.29.57-.28.26-.45.33-.37.1-.59.10-.41-.03-.59-.1-.33-.18-.46-.33-.23-.34-.3-.57-.11-.5-.11-.82v-.74c0-.32.03-.6.1-.82s.17-.42.29-.57.28-.26.45-.33.37-.1.59-.10.41.03.59.1.33.18.46.33.23.34.3.57.11.5.11.82v.74zm-.85-.86c0-.19-.01-.35-.04-.48s-.07-.23-.12-.31-.11-.14-.19-.17-.16-.05-.25-.05-.18.02-.25.05-.14.09-.19.17-.09.18-.12.31-.04.29-.04.48v.97c0 .19.01.35.04.48s.07.24.12.32.11.14.19.17.16.05.25.05.18-.02.25-.05.14-.09.19-.17.09-.19.12-.32.04-.29.04-.48v-.97z"
-                    />
-                  </svg>
-                  <span class="music-player__skip-label">10</span>
-                </button>
-
-                <button class="music-player__control-btn music-player__control-btn--primary" id="playBtn" title="Play/Pause">
-                  <span class="play-icon">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
-                  </span>
-                  <span class="pause-icon">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
-                    </svg>
-                  </span>
-                </button>
-
-                <button class="music-player__control-btn music-player__control-btn--forward" id="forwardBtn" title="Forward 10s">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path
-                      d="M18 13c0 3.31-2.69 6-6 6s-6-2.69-6-6 2.69-6 6-6v4l5-5-5-5v4c-4.42 0-8 3.58-8 8s3.58 8 8 8 8-3.58 8-8h-2zm-7.46 2.22v-.68l-1.01-.31v3.26h.85v-2.11l1.01.31v.69l-1.77.63h-.09zM13 14.25c0 .32.03.6.1.82s.17.42.29.57.28.26.45.33.37.1.59.1.41-.03.59-.1.33-.18.46-.33.23-.34.3-.57.11-.5.11-.82v-.74c0-.32-.03-.6-.1-.82s-.17-.42-.29-.57-.28-.26-.45-.33-.37-.1-.59-.1-.41.03-.59.1-.33.18-.46.33-.23.34-.3.57-.11.5-.11.82v.74zm.85-.86v-.97c0-.19.01-.35.04-.48s.07-.23.12-.31.11-.14.19-.17.16-.05.25-.05.18.02.25.05.14.09.19.17.09.18.12.31.04.29.04.48v.97c0 .19-.01.35-.04.48s-.07.24-.12.32-.11.14-.19.17-.16.05-.25.05-.18-.02-.25-.05-.14-.09-.19-.17-.09-.19-.12-.32-.04-.29-.04-.48z"
-                    />
-                  </svg>
-                  <span class="music-player__skip-label">10</span>
-                </button>
-
-                <button class="music-player__control-btn music-player__control-btn--secondary" id="nextBtn" title="Next">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
-                  </svg>
-                </button>
-              </div>
-
-              <!-- Secondary Actions -->
-              <div class="music-player__actions">
-                <button class="music-player__action-btn" id="queueBtn" title="View Queue">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z" />
-                  </svg>
-                </button>
-
-                <button class="music-player__action-btn" id="shareBtn" title="Share">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path
-                      d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"
-                    />
-                  </svg>
-                </button>
-
-                <button class="music-player__action-btn" id="moreBtn" title="More Options">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
-                  </svg>
-                </button>
-              </div>
+        <ul id="recentList" class="list">
+          <div class="empty">
+            <div class="empty-icon">
+              <svg fill="currentColor" viewBox="0 0 24 24">
+                <path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z" />
+              </svg>
             </div>
+            <div class="empty-text">No recently played songs</div>
+            <div class="empty-subtext">Start playing music to see your history</div>
           </div>
+        </ul>
+      </div>
 
-          <!-- Queue Tab -->
-          <div class="music-player__panel" data-tab="queue">
-            <div class="music-player__list-header">
-              <h3 class="music-player__list-title">Up Next</h3>
-              <span class="music-player__list-count" id="queueCount">0 songs</span>
-            </div>
-            <ul id="queueList" class="music-player__list">
-              <div class="music-player__empty">
-                <div class="music-player__empty-icon">
-                  <svg fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z" />
-                  </svg>
-                </div>
-                <div class="music-player__empty-text">Queue is empty</div>
-                <div class="music-player__empty-subtext">Songs you add will appear here</div>
-              </div>
-            </ul>
-          </div>
-
-          <!-- Recent Tab -->
-          <div class="music-player__panel" data-tab="recent">
-            <div class="music-player__list-header">
-              <h3 class="music-player__list-title">Recently Played</h3>
-              <span class="music-player__list-count" id="recentCount">0 songs</span>
-            </div>
-            <ul id="recentList" class="music-player__list">
-              <div class="music-player__empty">
-                <div class="music-player__empty-icon">
-                  <svg fill="currentColor" viewBox="0 0 24 24">
-                    <path
-                      d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"
-                    />
-                  </svg>
-                </div>
-                <div class="music-player__empty-text">No recently played songs</div>
-                <div class="music-player__empty-subtext">Start playing music to see your history</div>
-              </div>
-            </ul>
-          </div>
-          
-          
-<!------- Tab Navigation -------->
-      <div class="music-player__tabs">
-        <div class="music-player__tabs-wrapper">
-          <button class="music-player__tab active" data-tab="playing">
-            <span class="music-player__tab-icon">
+      <!-- Tab Navigation -->
+      <div class="tabs">
+        <div class="tabs-wrapper">
+          <button class="tab active" data-tab="playing">
+            <span class="tab-icon">
               <svg viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" />
               </svg>
             </span>
-            <span class="music-player__tab-label">Now Playing</span>
+            <span class="tab-label">Now Playing</span>
           </button>
-          <button class="music-player__tab" data-tab="recent">
-            <span class="music-player__tab-icon">
+          <button class="tab" data-tab="recent">
+            <span class="tab-icon">
               <svg viewBox="0 0 24 24" fill="currentColor">
-                <path
-                  d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"
-                />
+                <path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z" />
               </svg>
             </span>
-            <span class="music-player__tab-label">Recent</span>
+            <span class="tab-label">Recent</span>
           </button>
-          <button class="music-player__tab" data-tab="queue">
-            <span class="music-player__tab-icon">
+          <button class="tab" data-tab="queue">
+            <span class="tab-icon">
               <svg viewBox="0 0 24 24" fill="currentColor">
                 <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z" />
               </svg>
             </span>
-            <span class="music-player__tab-label">Queue</span>
+            <span class="tab-label">Queue</span>
           </button>
-          <div class="music-player__tab-slider"></div>
+          <div class="slider"></div>
         </div>
       </div>
- <!------- END OF MUSIC PLAYER NAV ---------------------------->
-          
-          
-        </div>
-
-
-
-
-        <!-- C L O S I N G S -->
-      </div><!-- End of Inner -->
-
-
- 
- 
-      
-      
-    </div><!-- End of Slide -->
-  </div><!-- End of Scroller -->
-</aside><!-- End of Wrapper -->
-
+    </div>
+  </div>
+</aside>
 
 
 
