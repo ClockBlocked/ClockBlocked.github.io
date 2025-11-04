@@ -1214,7 +1214,12 @@ const musicPlayer = {
             const drawer = document.querySelector(MUSIC_PLAYER.root);
             if (!drawer) return;
             
+            // Show the popover first
             drawer.showPopover();
+            
+            // Force a reflow to ensure the transition works
+            drawer.offsetHeight;
+            
             appState.isPopupVisible = true;
             musicPlayer.mainPlayer.updateTabContent(appState.currentTab || MUSIC_PLAYER.tabs.playing);
             
@@ -1227,9 +1232,17 @@ const musicPlayer = {
             const drawer = document.querySelector(MUSIC_PLAYER.root);
             if (!drawer) return;
             
-            drawer.hidePopover();
-            appState.isPopupVisible = false;
-            setTimeout(() => musicPlayer.mainPlayer.switchTab(MUSIC_PLAYER.tabs.playing), 50);
+            // Wait for the CSS transition to complete before hiding the popover
+            drawer.addEventListener('transitionend', function handler() {
+                drawer.removeEventListener('transitionend', handler);
+                drawer.hidePopover();
+                appState.isPopupVisible = false;
+                setTimeout(() => musicPlayer.mainPlayer.switchTab(MUSIC_PLAYER.tabs.playing), 50);
+            }, { once: true });
+            
+            // Trigger the closing transition
+            drawer.style.transform = 'translateY(100%)';
+            drawer.style.opacity = '0';
         },
         
         toggle: () => {
