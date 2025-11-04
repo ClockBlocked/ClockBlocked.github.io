@@ -1210,138 +1210,217 @@ const notificationPlayer = {
 
 const musicPlayer = {
     mainPlayer: {
-    open: () => {
-      const drawer = document.querySelector(MUSIC_PLAYER.root);
-      if (!drawer) return;
-      // Show the popover first
-      drawer.showPopover();
-      // Force a reflow to ensure the transition works
-      drawer.offsetHeight;
-      appState.isPopupVisible = true;
-      musicPlayer.mainPlayer.updateTabContent(appState.currentTab || MUSIC_PLAYER.tabs.playing);
-      if (appState.currentSong) {
-        musicPlayer.ui.updateNowPlaying();
-      }
-    },
-
-    close: () => {
-      const drawer = document.querySelector(MUSIC_PLAYER.root);
-      if (!drawer) return;
-      // Wait for the CSS transition to complete before hiding the popover
-      const handleTransitionEnd = () => {
-        drawer.removeEventListener('transitionend', handleTransitionEnd);
-        drawer.hidePopover();
-        appState.isPopupVisible = false;
-        setTimeout(() => musicPlayer.mainPlayer.switchTab(MUSIC_PLAYER.tabs.playing), 50);
-        // Reset transform for next open
-        setTimeout(() => {
-          drawer.style.transform = 'translateY(100%)';
-          drawer.style.opacity = '0';
-        }, 10);
-      };
-      drawer.addEventListener('transitionend', handleTransitionEnd, { once: true });
-      // Trigger the closing transition
-      drawer.style.transform = 'translateY(100%)';
-      drawer.style.opacity = '0';
-    },
-
-    toggle: () => {
-      const drawer = document.querySelector(MUSIC_PLAYER.root);
-      if (!drawer) return;
-      if (drawer.matches(':popover-open')) {
-        musicPlayer.mainPlayer.close();
-      } else {
-        musicPlayer.mainPlayer.open();
-      }
-    },
-
-    switchTab: (tabName) => {
-      appState.currentTab = tabName;
-      // Update tab button active state
-      document.querySelectorAll('#drawer .tab').forEach(tab => {
-        tab.classList.toggle('active', tab.dataset.tab === tabName);
-      });
-      // Update tab panel active state
-      document.querySelectorAll('#drawer .panel').forEach(panel => {
-        panel.classList.toggle('active', panel.dataset.tab === tabName);
-      });
-      musicPlayer.mainPlayer.updateTabContent(tabName);
-    },
-
-    updateTabContent: (tabName) => {
-      if (tabName === MUSIC_PLAYER.tabs.recent) {
-        musicPlayer.mainPlayer.updateRecentTab();
-      } else if (tabName === MUSIC_PLAYER.tabs.queue) {
-        musicPlayer.mainPlayer.updateQueueTab();
-      }
-    },
-
-    updateQueueTab: () => {
-      const queueList = document.querySelector(MUSIC_PLAYER.queueList);
-      if (!queueList) return;
-      const emptyState = queueList.querySelector('.empty');
-      if (appState.queue.items.length === 0) {
-        if (emptyState) emptyState.style.display = 'flex';
-        const items = queueList.querySelectorAll('.item');
-        items.forEach(item => item.remove());
-        return;
-      }
-      if (emptyState) emptyState.style.display = 'none';
-      const existingItems = queueList.querySelectorAll('.item');
-      existingItems.forEach(item => item.remove());
-      appState.queue.items.forEach((song, index) => {
-        const listItem = document.createElement('li');
-        listItem.className = `item ${index === appState.queue.currentIndex ? 'active' : ''}`;
-        listItem.innerHTML = `
-          <img src="${song.artwork}" alt="${song.title}" class="art" />
-          <div class="item-info">
-            <p class="item-title">${song.title}</p>
-            <p class="item-artist">${song.artist}</p>
-          </div>
-          <div class="item-actions">
-            <button class="item-action" data-index="${index}" title="Play Song">
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M8 5v14l11-7z" />
-              </svg>
-            </button>
-            <button class="item-action" data-index="${index}" title="Remove from Queue">
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2" />
-                <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" />
-              </svg>
-            </button>
-          </div>
-        `;
-        queueList.appendChild(listItem);
-      });
-    },
-
-    updateRecentTab: () => {
-      const recentList = document.querySelector(MUSIC_PLAYER.recentList);
-      if (!recentList) return;
-      const emptyState = recentList.querySelector('.empty');
-      if (appState.recent.items.length === 0) {
-        if (emptyState) emptyState.style.display = 'flex';
-        const items = recentList.querySelectorAll('.item');
-        items.forEach(item => item.remove());
-        return;
-      }
-      if (emptyState) emptyState.style.display = 'none';
-      const existingItems = recentList.querySelectorAll('.item');
-      existingItems.forEach(item => item.remove());
-      appState.recent.items.forEach((song, index) => {
-        const listItem = document.createElement('li');
-        listItem.className = 'item';
-        listItem.innerHTML = `
-          <img src="${song.artwork}" alt="${song.title}" class="art" />
-          <div class="item-info">
-            <p class="item-title">${song.title}</p>
-            <p class="item-artist">${song.artist}</p>
-          </div>
-        `;
-        recentList.appendChild(listItem);
-      });
-    },
+        open: () => {
+            const drawer = document.querySelector(MUSIC_PLAYER.root);
+            if (!drawer) return;
+            
+            // Show the popover first
+            drawer.showPopover();
+            
+            // Force a reflow to ensure the transition works
+            drawer.offsetHeight;
+            
+            appState.isPopupVisible = true;
+            musicPlayer.mainPlayer.updateTabContent(appState.currentTab || MUSIC_PLAYER.tabs.playing);
+            
+            if (appState.currentSong) {
+                musicPlayer.ui.updateNowPlaying();
+            }
+        },
+        
+        close: () => {
+            const drawer = document.querySelector(MUSIC_PLAYER.root);
+            if (!drawer) return;
+            
+            // Wait for the CSS transition to complete before hiding the popover
+            const handleTransitionEnd = () => {
+                drawer.removeEventListener('transitionend', handleTransitionEnd);
+                drawer.hidePopover();
+                appState.isPopupVisible = false;
+                setTimeout(() => musicPlayer.mainPlayer.switchTab(MUSIC_PLAYER.tabs.playing), 50);
+                
+                // Reset transform for next open
+                setTimeout(() => {
+                    drawer.style.transform = 'translateY(100%)';
+                    drawer.style.opacity = '0';
+                }, 10);
+            };
+            
+            drawer.addEventListener('transitionend', handleTransitionEnd, { once: true });
+            
+            // Trigger the closing transition
+            drawer.style.transform = 'translateY(100%)';
+            drawer.style.opacity = '0';
+        },
+        
+        toggle: () => {
+            const drawer = document.querySelector(MUSIC_PLAYER.root);
+            if (!drawer) return;
+            
+            if (drawer.matches(':popover-open')) {
+                musicPlayer.mainPlayer.close();
+            } else {
+                musicPlayer.mainPlayer.open();
+            }
+        },
+        
+        switchTab: (tabName) => {
+            appState.currentTab = tabName;
+            
+            // FIXED: Use correct selectors for tabs
+            document.querySelectorAll('.music-player__tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.tab === tabName);
+            });
+            
+            // FIXED: Use correct selectors for panels
+            document.querySelectorAll('.music-player__panel').forEach(content => {
+                content.classList.toggle('active', content.dataset.tab === tabName);
+            });
+            
+            musicPlayer.mainPlayer.updateTabContent(tabName);
+        },
+        
+        updateTabContent: (tabName) => {
+            if (tabName === MUSIC_PLAYER.tabs.recent) musicPlayer.mainPlayer.updateRecentTab();
+            else if (tabName === MUSIC_PLAYER.tabs.queue) musicPlayer.mainPlayer.updateQueueTab();
+        },
+        
+        updateQueueTab: () => {
+            const queueList = document.querySelector(MUSIC_PLAYER.queueList);
+            if (!queueList) return;
+            
+            const emptyState = queueList.querySelector('.music-player__empty');
+            
+            if (appState.queue.items.length === 0) {
+                if (emptyState) emptyState.style.display = 'flex';
+                const items = queueList.querySelectorAll('.music-player__list-item');
+                items.forEach(item => item.remove());
+                return;
+            }
+            
+            if (emptyState) emptyState.style.display = 'none';
+            
+            const existingItems = queueList.querySelectorAll('.music-player__list-item');
+            existingItems.forEach(item => item.remove());
+            
+            appState.queue.items.forEach((song, index) => {
+                const listItem = document.createElement('li');
+                listItem.className = `music-player__list-item ${index === appState.queue.currentIndex ? 'active' : ''}`;
+                listItem.innerHTML = `
+                    <img src="${song.cover || utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="music-player__list-item-art">
+                    <div class="music-player__list-item-info">
+                        <div class="music-player__list-item-title">${song.title}</div>
+                        <div class="music-player__list-item-artist">${song.artist}</div>
+                    </div>
+                    <div class="music-player__list-item-actions">
+                        <button class="music-player__list-item-action" data-action="play" title="Play">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M8 5v14l11-7z"/>
+                            </svg>
+                        </button>
+                        <button class="music-player__list-item-action" data-action="remove" title="Remove">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                            </svg>
+                        </button>
+                    </div>
+                `;
+                
+                const playBtn = listItem.querySelector('[data-action="play"]');
+                if (playBtn) {
+                    playBtn.addEventListener('click', e => { 
+                        e.stopPropagation(); 
+                        appState.queue.playAt(index); 
+                    });
+                }
+                
+                const removeBtn = listItem.querySelector('[data-action="remove"]');
+                if (removeBtn) {
+                    removeBtn.addEventListener('click', e => { 
+                        e.stopPropagation(); 
+                        appState.queue.remove(index); 
+                        musicPlayer.mainPlayer.updateQueueTab(); 
+                        ui.updateCounts(); 
+                    });
+                }
+                
+                listItem.addEventListener('click', () => appState.queue.playAt(index));
+                queueList.appendChild(listItem);
+            });
+            
+            const queueCount = document.querySelector(MUSIC_PLAYER.queueCount);
+            if (queueCount) {
+                queueCount.textContent = `${appState.queue.items.length} song${appState.queue.items.length !== 1 ? 's' : ''}`;
+            }
+        },
+        
+        updateRecentTab: () => {
+            const recentList = document.querySelector(MUSIC_PLAYER.recentList);
+            if (!recentList) return;
+            
+            const emptyState = recentList.querySelector('.music-player__empty');
+            
+            if (!appState.recentlyPlayed || appState.recentlyPlayed.length === 0) {
+                if (emptyState) emptyState.style.display = 'flex';
+                const items = recentList.querySelectorAll('.music-player__list-item');
+                items.forEach(item => item.remove());
+                return;
+            }
+            
+            if (emptyState) emptyState.style.display = 'none';
+            
+            const existingItems = recentList.querySelectorAll('.music-player__list-item');
+            existingItems.forEach(item => item.remove());
+            
+            appState.recentlyPlayed.slice(0, 20).forEach((song, index) => {
+                const listItem = document.createElement('li');
+                listItem.className = 'music-player__list-item';
+                listItem.innerHTML = `
+                    <img src="${song.cover || utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="music-player__list-item-art">
+                    <div class="music-player__list-item-info">
+                        <div class="music-player__list-item-title">${song.title}</div>
+                        <div class="music-player__list-item-artist">${song.artist}</div>
+                    </div>
+                    <div class="music-player__list-item-actions">
+                        <button class="music-player__list-item-action" data-action="play" title="Play">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M8 5v14l11-7z"/>
+                            </svg>
+                        </button>
+                        <button class="music-player__list-item-action" data-action="queue" title="Add to Queue">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                            </svg>
+                        </button>
+                    </div>
+                `;
+                
+                const playBtn = listItem.querySelector('[data-action="play"]');
+                if (playBtn) {
+                    playBtn.addEventListener('click', e => { 
+                        e.stopPropagation(); 
+                        musicPlayer.ui.playSong(song); 
+                    });
+                }
+                
+                const queueBtn = listItem.querySelector('[data-action="queue"]');
+                if (queueBtn) {
+                    queueBtn.addEventListener('click', e => { 
+                        e.stopPropagation(); 
+                        appState.queue.add(song); 
+                        notifications.show(`Added "${song.title}" to queue`); 
+                    });
+                }
+                
+                listItem.addEventListener('click', () => musicPlayer.ui.playSong(song));
+                recentList.appendChild(listItem);
+            });
+            
+            const recentCount = document.querySelector(MUSIC_PLAYER.recentCount);
+            if (recentCount) {
+                recentCount.textContent = `${appState.recentlyPlayed.length} song${appState.recentlyPlayed.length !== 1 ? 's' : ''}`;
+            }
+        },
         
         init: () => {
             const closeBtn = document.querySelector(MUSIC_PLAYER.close);
@@ -1915,20 +1994,42 @@ const musicPlayer = {
             };
         },
 
-
-    updateNowPlaying: () => {
-      // Method logic unchanged but update selectors per new names
-      const songName = document.querySelector(MUSIC_PLAYER.songName);
-      const artistName = document.querySelector(MUSIC_PLAYER.artistName);
-      const albumName = document.querySelector(MUSIC_PLAYER.albumName);
-      const cover = document.querySelector(MUSIC_PLAYER.albumArtwork);
-      if (!appState.currentSong) return;
-      songName.textContent = appState.currentSong.title;
-      artistName.textContent = appState.currentSong.artist;
-      albumName.textContent = appState.currentSong.album;
-      cover.src = appState.currentSong.artwork || 'https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/stable/global/content/images/albumCovers/placeholder.png';
+        updateNowPlaying: () => {
+            if (!appState.currentSong) return;
+            
+            const coverUrl = appState.currentSong.cover || utils.getAlbumImageUrl(appState.currentSong.album);
+            const cover = document.querySelector(MUSIC_PLAYER.albumArtwork);
+            if (cover && coverUrl) {
+                cover.src = coverUrl;
+            }
+            
+            const titleEl = document.querySelector(MUSIC_PLAYER.songName);
+            const artistEl = document.querySelector(MUSIC_PLAYER.artistName);
+            const albumEl = document.querySelector(MUSIC_PLAYER.albumName);
+            
+            if (titleEl && appState.currentSong.title) titleEl.textContent = appState.currentSong.title;
+            if (artistEl && appState.currentArtist) artistEl.textContent = appState.currentArtist;
+            if (albumEl && appState.currentAlbum) albumEl.textContent = appState.currentAlbum;
+            
+            const playBtn = document.querySelector(MUSIC_PLAYER.play);
+            const drawer = document.querySelector(MUSIC_PLAYER.root);
+            if (playBtn) {
+                const playIcon = playBtn.querySelector('.play-icon');
+                const pauseIcon = playBtn.querySelector('.pause-icon');
+                if (appState.isPlaying) {
+                    playIcon?.style.setProperty('display', 'none');
+                    pauseIcon?.style.setProperty('display', 'block');
+                    drawer?.classList.add(MUSIC_PLAYER.classes.playing);
+                } else {
+                    playIcon?.style.setProperty('display', 'block');
+                    pauseIcon?.style.setProperty('display', 'none');
+                    drawer?.classList.remove(MUSIC_PLAYER.classes.playing);
+                }
+            }
+        }
     },
 };
+
 
 
 
