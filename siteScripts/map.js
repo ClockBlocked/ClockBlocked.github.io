@@ -284,6 +284,7 @@ export const MUSIC_PLAYER = (() => {
   });
 })();
 
+
 export const NAVBAR = (() => {
   const parent = "#navbar";
   return Object.freeze({
