@@ -160,94 +160,92 @@ export const ICONS = Object.freeze({
 
 export const MUSIC_PLAYER = (() => {
   const parent = "#drawer";
+
   return Object.freeze({
     // Root elements
     root: parent,
-    handle: `${parent} .music-player__drag-handle`,
+    handle: `${parent} .handle`,
     close: `${parent} #closeBtn`,
-    curtain: `${parent} .music-player__curtain`,
-    scroller: `${parent} .music-player__scroller`,
-    slide: `${parent} .music-player__slide`,
-    inner: `${parent} .music-player__inner`,
-    
+    curtain: `${parent} .curtain`,
+    body: `${parent} .body`,
+
     // Content sections
-    content: `${parent} .music-player__content`,
-    activeContent: `${parent} .music-player__panel.active`,
-    
+    content: `${parent} .content`,
+    activeContent: `${parent} .panel.active`,
+
     // Tabs
-    tabs: `${parent} .music-player__tab`,
-    activeTab: `${parent} .music-player__tab.active`,
-    tabsWrapper: `${parent} .music-player__tabs-wrapper`,
-    tabSlider: `${parent} .music-player__tab-slider`,
-    
+    tabs: `${parent} .tab`,
+    activeTab: `${parent} .tab.active`,
+    tabsWrapper: `${parent} .tabs-wrapper`,
+    tabSlider: `${parent} .slider`,
+
     // Now Playing section
-    nowPlaying: `${parent} .music-player__now-playing`,
-    coverWrapper: `${parent} .music-player__cover-wrapper`,
+    nowPlaying: `${parent} .cover`,
+    coverWrapper: `${parent} .cover-wrapper`,
     albumArtwork: `${parent} #cover`,
-    coverGlow: `${parent} .music-player__cover-glow`,
-    separator: `${parent} .music-player__separator`,
-    
+    coverGlow: `${parent} .glow`,
+
     // Song info
-    songInfo: `${parent} .music-player__info`,
-    songDetails: `${parent} .music-player__details`,
+    songInfo: `${parent} .info`,
+    songDetails: `${parent} .details`,
     songName: `${parent} #title`,
     artistName: `${parent} #artist`,
     albumName: `${parent} #album`,
-    
+
     // Progress section
-    progressSection: `${parent} .music-player__progress-section`,
+    progressSection: `${parent} .progress-section`,
     progressBar: `${parent} #progressBar`,
     progressBuffer: `${parent} #progressBuffer`,
     progressFill: `${parent} #progressFill`,
     progressThumb: `${parent} #progressThumb`,
-    timeDisplay: `${parent} .music-player__time-display`,
+    timeDisplay: `${parent} .time`,
     currentTime: `${parent} #current`,
     totalTime: `${parent} #total`,
-    
+
     // Control buttons
-    controls: `${parent} .music-player__controls`,
+    controls: `${parent} .controls`,
     play: `${parent} #playBtn`,
     previous: `${parent} #prevBtn`,
     next: `${parent} #nextBtn`,
     reWind: `${parent} #rewindBtn`,
     fastForward: `${parent} #forwardBtn`,
-    
+
     // Action buttons
-    actions: `${parent} .music-player__actions`,
+    actions: `${parent} .actions`,
     favoriteBtn: `${parent} #favoriteBtn`,
     queueBtn: `${parent} #queueBtn`,
     shareBtn: `${parent} #shareBtn`,
     moreBtn: `${parent} #moreBtn`,
-    
+
     // List sections
-    listHeader: `${parent} .music-player__list-header`,
-    listTitle: `${parent} .music-player__list-title`,
-    listCount: `${parent} .music-player__list-count`,
-    list: `${parent} .music-player__list`,
-    
+    listHeader: `${parent} .header`,
+    listTitle: `${parent} .title`,
+    listCount: `${parent} .count`,
+    list: `${parent} .list`,
+
     // Queue elements
     queueList: `${parent} #queueList`,
     queueCount: `${parent} #queueCount`,
-    
+
     // Recent elements
     recentList: `${parent} #recentList`,
     recentCount: `${parent} #recentCount`,
-    
+
     // Empty states
-    empty: `${parent} .music-player__empty`,
-    emptyIcon: `${parent} .music-player__empty-icon`,
-    emptyText: `${parent} .music-player__empty-text`,
-    emptySubtext: `${parent} .music-player__empty-subtext`,
-    
+    empty: `${parent} .empty`,
+    emptyIcon: `${parent} .empty-icon`,
+    emptyText: `${parent} .empty-text`,
+    emptySubtext: `${parent} .empty-subtext`,
+
     // List items
-    listItem: `${parent} .music-player__list-item`,
-    listItemArt: `${parent} .music-player__list-item-art`,
-    listItemInfo: `${parent} .music-player__list-item-info`,
-    listItemTitle: `${parent} .music-player__list-item-title`,
-    listItemArtist: `${parent} .music-player__list-item-artist`,
-    listItemActions: `${parent} .music-player__list-item-actions`,
-    listItemAction: `${parent} .music-player__list-item-action`,
-    
+    listItem: `${parent} .item`,
+    listItemArt: `${parent} .art`,
+    listItemInfo: `${parent} .item-info`,
+    listItemTitle: `${parent} .item-title`,
+    listItemArtist: `${parent} .item-artist`,
+    listItemActions: `${parent} .item-actions`,
+    listItemAction: `${parent} .item-action`,
+
     // Class names for dynamic states
     classes: {
       active: 'active',
@@ -257,15 +255,15 @@ export const MUSIC_PLAYER = (() => {
       hovering: 'is-hovering',
       loading: 'loading'
     },
-    
-    // Tab names
+
+    // Tab names (unchanged)
     tabs: {
       playing: 'playing',
       recent: 'recent',
       queue: 'queue'
     },
-    
-    // Animation durations
+
+    // Animation durations (unchanged)
     animations: {
       backdropFadeIn: 400,
       drawerSlideUp: 500,
@@ -275,8 +273,8 @@ export const MUSIC_PLAYER = (() => {
       waveFlow: 8000,
       heartBeat: 600
     },
-    
-    // Skip times
+
+    // Skip times (unchanged)
     skipTimes: {
       rewind: -10,
       forward: 10
