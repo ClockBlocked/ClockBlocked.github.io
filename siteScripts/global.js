@@ -1233,12 +1233,20 @@ const musicPlayer = {
             if (!drawer) return;
             
             // Wait for the CSS transition to complete before hiding the popover
-            drawer.addEventListener('transitionend', function handler() {
-                drawer.removeEventListener('transitionend', handler);
+            const handleTransitionEnd = () => {
+                drawer.removeEventListener('transitionend', handleTransitionEnd);
                 drawer.hidePopover();
                 appState.isPopupVisible = false;
                 setTimeout(() => musicPlayer.mainPlayer.switchTab(MUSIC_PLAYER.tabs.playing), 50);
-            }, { once: true });
+                
+                // Reset transform for next open
+                setTimeout(() => {
+                    drawer.style.transform = 'translateY(100%)';
+                    drawer.style.opacity = '0';
+                }, 10);
+            };
+            
+            drawer.addEventListener('transitionend', handleTransitionEnd, { once: true });
             
             // Trigger the closing transition
             drawer.style.transform = 'translateY(100%)';
@@ -1259,12 +1267,14 @@ const musicPlayer = {
         switchTab: (tabName) => {
             appState.currentTab = tabName;
             
-            document.querySelectorAll(MUSIC_PLAYER.tabs).forEach(tab => {
-                tab.classList.toggle(MUSIC_PLAYER.classes.active, tab.dataset.tab === tabName);
+            // FIXED: Use correct selectors for tabs
+            document.querySelectorAll('.music-player__tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.tab === tabName);
             });
             
-            document.querySelectorAll(MUSIC_PLAYER.panel).forEach(content => {
-                content.classList.toggle(MUSIC_PLAYER.classes.active, content.dataset.tab === tabName);
+            // FIXED: Use correct selectors for panels
+            document.querySelectorAll('.music-player__panel').forEach(content => {
+                content.classList.toggle('active', content.dataset.tab === tabName);
             });
             
             musicPlayer.mainPlayer.updateTabContent(tabName);
@@ -1279,23 +1289,23 @@ const musicPlayer = {
             const queueList = document.querySelector(MUSIC_PLAYER.queueList);
             if (!queueList) return;
             
-            const emptyState = queueList.querySelector(MUSIC_PLAYER.empty);
+            const emptyState = queueList.querySelector('.music-player__empty');
             
             if (appState.queue.items.length === 0) {
                 if (emptyState) emptyState.style.display = 'flex';
-                const items = queueList.querySelectorAll(MUSIC_PLAYER.listItem);
+                const items = queueList.querySelectorAll('.music-player__list-item');
                 items.forEach(item => item.remove());
                 return;
             }
             
             if (emptyState) emptyState.style.display = 'none';
             
-            const existingItems = queueList.querySelectorAll(MUSIC_PLAYER.listItem);
+            const existingItems = queueList.querySelectorAll('.music-player__list-item');
             existingItems.forEach(item => item.remove());
             
             appState.queue.items.forEach((song, index) => {
                 const listItem = document.createElement('li');
-                listItem.className = `music-player__list-item ${index === appState.queue.currentIndex ? MUSIC_PLAYER.classes.active : ''}`;
+                listItem.className = `music-player__list-item ${index === appState.queue.currentIndex ? 'active' : ''}`;
                 listItem.innerHTML = `
                     <img src="${song.cover || utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="music-player__list-item-art">
                     <div class="music-player__list-item-info">
@@ -1348,23 +1358,23 @@ const musicPlayer = {
             const recentList = document.querySelector(MUSIC_PLAYER.recentList);
             if (!recentList) return;
             
-            const emptyState = recentList.querySelector(MUSIC_PLAYER.empty);
+            const emptyState = recentList.querySelector('.music-player__empty');
             
             if (!appState.recentlyPlayed || appState.recentlyPlayed.length === 0) {
                 if (emptyState) emptyState.style.display = 'flex';
-                const items = recentList.querySelectorAll(MUSIC_PLAYER.listItem);
+                const items = recentList.querySelectorAll('.music-player__list-item');
                 items.forEach(item => item.remove());
                 return;
             }
             
             if (emptyState) emptyState.style.display = 'none';
             
-            const existingItems = recentList.querySelectorAll(MUSIC_PLAYER.listItem);
+            const existingItems = recentList.querySelectorAll('.music-player__list-item');
             existingItems.forEach(item => item.remove());
             
             appState.recentlyPlayed.slice(0, 20).forEach((song, index) => {
                 const listItem = document.createElement('li');
-                listItem.className = MUSIC_PLAYER.listItem.replace('.', '');
+                listItem.className = 'music-player__list-item';
                 listItem.innerHTML = `
                     <img src="${song.cover || utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="music-player__list-item-art">
                     <div class="music-player__list-item-info">
@@ -1412,124 +1422,14 @@ const musicPlayer = {
             }
         },
         
-        preventHorizontalScroll: () => {
-            const musicPlayerElement = document.querySelector(MUSIC_PLAYER.root);
-            if (!musicPlayerElement) return;
-
-            let startX = 0;
-            let startY = 0;
-
-            const handleTouchStart = (e) => {
-                startX = e.touches[0].clientX;
-                startY = e.touches[0].clientY;
-            };
-
-            const handleTouchMove = (e) => {
-                const deltaX = Math.abs(e.touches[0].clientX - startX);
-                const deltaY = Math.abs(e.touches[0].clientY - startY);
-                
-                if (deltaX > deltaY) {
-                    e.preventDefault();
-                }
-            };
-
-            musicPlayerElement.addEventListener('touchstart', handleTouchStart, { passive: true });
-            musicPlayerElement.addEventListener('touchmove', handleTouchMove, { passive: false });
-
-            musicPlayerElement.addEventListener('wheel', (e) => {
-                if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
-                    e.preventDefault();
-                }
-            }, { passive: false });
-        },
-        
-        initDrawerDrag: () => {
-            const drawerScroller = document.querySelector(MUSIC_PLAYER.scroller);
-            const drawer = document.querySelector(MUSIC_PLAYER.root);
-            
-            if (!drawerScroller || !drawer) return;
-            
-            let isDragging = false;
-            let startY = 0;
-            let currentY = 0;
-            
-            const handleTouchStart = (e) => {
-                isDragging = true;
-                startY = e.touches[0].clientY;
-                currentY = startY;
-                drawerScroller.style.scrollSnapType = 'none';
-            };
-            
-            const handleTouchMove = (e) => {
-                if (!isDragging) return;
-                
-                currentY = e.touches[0].clientY;
-                const deltaY = currentY - startY;
-                
-                if (deltaY > 0) {
-                    e.preventDefault();
-                }
-            };
-            
-            const handleTouchEnd = (e) => {
-                if (!isDragging) return;
-                
-                isDragging = false;
-                drawerScroller.style.scrollSnapType = 'y mandatory';
-                
-                const deltaY = currentY - startY;
-                
-                if (deltaY > 50) {
-                    musicPlayer.mainPlayer.close();
-                }
-            };
-            
-            drawerScroller.addEventListener('touchstart', handleTouchStart, { passive: true });
-            drawerScroller.addEventListener('touchmove', handleTouchMove, { passive: false });
-            drawerScroller.addEventListener('touchend', handleTouchEnd, { passive: true });
-            
-            drawerScroller.addEventListener('mousedown', (e) => {
-                isDragging = true;
-                startY = e.clientY;
-                currentY = startY;
-                drawerScroller.style.scrollSnapType = 'none';
-            });
-            
-            drawerScroller.addEventListener('mousemove', (e) => {
-                if (!isDragging) return;
-                currentY = e.clientY;
-                const deltaY = currentY - startY;
-                if (deltaY > 0) {
-                    e.preventDefault();
-                }
-            });
-            
-            drawerScroller.addEventListener('mouseup', (e) => {
-                if (!isDragging) return;
-                isDragging = false;
-                drawerScroller.style.scrollSnapType = 'y mandatory';
-                
-                const deltaY = currentY - startY;
-                if (deltaY > 50) {
-                    musicPlayer.mainPlayer.close();
-                }
-            });
-            
-            drawerScroller.addEventListener('mouseleave', (e) => {
-                if (isDragging) {
-                    isDragging = false;
-                    drawerScroller.style.scrollSnapType = 'y mandatory';
-                }
-            });
-        },
-
         init: () => {
             const closeBtn = document.querySelector(MUSIC_PLAYER.close);
             if (closeBtn) {
                 closeBtn.addEventListener('click', () => musicPlayer.mainPlayer.close());
             }
             
-            document.querySelectorAll(MUSIC_PLAYER.tabs).forEach(tab => {
+            // FIXED: Tab event listeners with correct selector
+            document.querySelectorAll('.music-player__tab').forEach(tab => {
                 tab.addEventListener('click', () => {
                     const tabName = tab.dataset.tab;
                     if (tabName) musicPlayer.mainPlayer.switchTab(tabName);
@@ -1547,10 +1447,10 @@ const musicPlayer = {
             const favoriteBtn = document.querySelector(MUSIC_PLAYER.favoriteBtn);
             if (favoriteBtn) {
                 favoriteBtn.addEventListener('click', () => {
-                    favoriteBtn.classList.toggle(MUSIC_PLAYER.classes.favorited);
+                    favoriteBtn.classList.toggle('favorited');
                 });
             }
-        }
+        },
     },
 
     playback: {
@@ -2129,6 +2029,11 @@ const musicPlayer = {
         }
     },
 };
+
+
+
+
+
 
 document.addEventListener('DOMContentLoaded', () => {
     musicPlayer.mainPlayer.init();
