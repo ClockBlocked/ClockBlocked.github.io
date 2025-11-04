@@ -21,7 +21,7 @@ export function getDefaultArtistImage() {
 }
 
 export function getDefaultAlbumImage() {
-  return 'https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/Finalfinal/global/content/images/albumCovers/default-album.png';
+  return 'https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/stable/global/content/images/albumCovers/placeholder.png';
 }
 
 export function normalizeNameForUrl(name) {
