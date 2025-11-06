@@ -2596,66 +2596,67 @@ const eventHandlers = {
   },
 
   bindControls: () => {
-    const idTrigger = $byId(IDS.nowPlayingArea);
-    const selTrigger = document.querySelector(NAVBAR.nowPlaying);
-    [idTrigger, selTrigger].filter(Boolean).forEach((el) => bindClick(el, () => musicPlayer.mainPlayer.toggle()));
-    const navbarPlayPause = document.querySelector(NAVBAR.playPause);
+    const nowPlayingTriggers = [DOM.nowPlayingArea, QUERY(NAVBAR.nowPlaying)].filter(Boolean);
+    nowPlayingTriggers.forEach(el => bindClick(el, () => musicPlayer.mainPlayer.toggle()));
+    
+    const navbarPlayPause = QUERY(NAVBAR.playPause);
     if (navbarPlayPause) bindClick(navbarPlayPause, () => musicPlayer.mainPlayer.toggle());
-    const navbarPrevious = document.querySelector(NAVBAR.previous);
+    
+    const navbarPrevious = QUERY(NAVBAR.previous);
     if (navbarPrevious) bindClick(navbarPrevious, () => musicPlayer.playback.previous());
-    const navbarNext = document.querySelector(NAVBAR.next);
+    
+    const navbarNext = QUERY(NAVBAR.next);
     if (navbarNext) bindClick(navbarNext, () => musicPlayer.playback.next());
   },
 
   bindMenus: () => {
     const menuElements = {
-      [IDS.menuTrigger]: dropdown.toggle,
-      [IDS.dropdownClose]: dropdown.close,
-      [IDS.willHideMenu]: dropdown.close,
+      menuTrigger: dropdown.toggle,
+      dropdownClose: dropdown.close,
+      willHideMenu: dropdown.close,
     };
-    Object.entries(menuElements).forEach(([id, handler]) => {
-      const el = $byId(id);
-      if (el) bindClick(el, handler);
+    
+    Object.entries(menuElements).forEach(([elementId, handler]) => {
+      if (DOM[elementId]) bindClick(DOM[elementId], handler);
     });
+    
     const menuActions = {
-      [IDS.favoriteSongs]: () => {
+      favoriteSongs: () => {
         dropdown.close();
         views.showFavoriteSongs();
       },
-      [IDS.favoriteArtists]: () => {
+      favoriteArtists: () => {
         dropdown.close();
         views.showFavoriteArtists();
       },
-      [IDS.recentlyPlayed]: () => {
+      favoriteAlbums: () => {
+        dropdown.close();
+        views.showFavoriteAlbums();
+      },
+      recentlyPlayed: () => {
         dropdown.close();
         musicPlayer.mainPlayer.open();
         setTimeout(() => musicPlayer.mainPlayer.switchTab("recent"), 50);
       },
-      [IDS.queueView]: () => {
+      queueView: () => {
         dropdown.close();
         musicPlayer.mainPlayer.open();
         setTimeout(() => musicPlayer.mainPlayer.switchTab("queue"), 50);
       },
-      [IDS.createPlaylist]: () => {
+      createPlaylist: () => {
         dropdown.close();
         playlists.create();
       },
-      [IDS.shuffleAll]: musicPlayer.playback.shuffle.all,
+      shuffleAll: musicPlayer.playback.shuffle.all,
     };
-    if (IDS.favoriteAlbums) {
-      menuActions[IDS.favoriteAlbums] = () => {
-        dropdown.close();
-        views.showFavoriteAlbums();
-      };
-    }
-    Object.entries(menuActions).forEach(([id, handler]) => {
-      const el = $byId(id);
-      if (el) bindClick(el, handler);
+    
+    Object.entries(menuActions).forEach(([elementId, handler]) => {
+      if (DOM[elementId]) bindClick(DOM[elementId], handler);
     });
   },
 
   bindPopups: () => {
-    const popupControls = {
+    const popupControlsMap = {
       [MUSIC_PLAYER.close]: musicPlayer.mainPlayer.close,
       [MUSIC_PLAYER.play]: musicPlayer.playback.play,
       [MUSIC_PLAYER.previous]: musicPlayer.playback.previous,
@@ -2669,10 +2670,12 @@ const eventHandlers = {
         }
       },
     };
-    Object.entries(popupControls).forEach(([selector, handler]) => {
-      bindClickAll(document.querySelectorAll(selector), handler);
+    
+    Object.entries(popupControlsMap).forEach(([selector, handler]) => {
+      bindClickAll(QUERY_ALL(selector), handler);
     });
-    document.querySelectorAll(".tab").forEach((tab) => {
+    
+    QUERY_ALL('.tab').forEach(tab => {
       bindClick(tab, () => {
         const tabName = tab.dataset.tab;
         if (tabName) musicPlayer.mainPlayer.switchTab(tabName);
@@ -2681,8 +2684,9 @@ const eventHandlers = {
   },
 
   bindProgress: () => {
-    const progressBar = document.querySelector(MUSIC_PLAYER.progressBar);
+    const progressBar = QUERY(MUSIC_PLAYER.progressBar);
     if (!progressBar) return;
+    
     const handleProgressClick = (e) => {
       if (!appState.currentSong || !appState.audio || !appState.duration) return;
       const rect = progressBar.getBoundingClientRect();
@@ -2690,12 +2694,14 @@ const eventHandlers = {
       const newTime = percent * appState.duration;
       if (!isNaN(newTime) && isFinite(newTime)) musicPlayer.playback.seekTo(newTime);
     };
+    
     const startDrag = (e) => {
       if (!appState.currentSong) return;
       progressBar._dragging = true;
       document.body.style.userSelect = "none";
       e.preventDefault();
     };
+    
     const onDrag = (e) => {
       if (!progressBar._dragging || !appState.currentSong || !appState.audio || !appState.duration) return;
       const rect = progressBar.getBoundingClientRect();
@@ -2703,16 +2709,20 @@ const eventHandlers = {
       const newTime = percent * appState.duration;
       if (!isNaN(newTime) && isFinite(newTime)) musicPlayer.playback.seekTo(newTime);
     };
+    
     const endDrag = () => {
       progressBar._dragging = false;
       document.body.style.userSelect = "";
     };
+    
     if (progressBar._clickHandler) progressBar.removeEventListener("click", progressBar._clickHandler);
     progressBar.addEventListener("click", handleProgressClick);
     progressBar._clickHandler = handleProgressClick;
+    
     if (progressBar._startDrag) progressBar.removeEventListener("mousedown", progressBar._startDrag);
     if (progressBar._onDrag) document.removeEventListener("mousemove", progressBar._onDrag);
     if (progressBar._endDrag) document.removeEventListener("mouseup", progressBar._endDrag);
+    
     progressBar.addEventListener("mousedown", startDrag);
     document.addEventListener("mousemove", onDrag);
     document.addEventListener("mouseup", endDrag);
@@ -2723,8 +2733,10 @@ const eventHandlers = {
 
   bindKeyboard: () => {
     if (document._kbHandler) document.removeEventListener("keydown", document._kbHandler);
-    const fn = (e) => {
+    
+    const keyboardHandler = (e) => {
       if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+      
       const shortcuts = {
         " ": (e) => {
           e.preventDefault();
@@ -2771,27 +2783,39 @@ const eventHandlers = {
           dropdown.close();
         },
       };
+      
       const handler = shortcuts[e.code] || shortcuts[e.key];
       if (handler) handler(e);
     };
-    document.addEventListener("keydown", fn);
-    document._kbHandler = fn;
+    
+    document.addEventListener("keydown", keyboardHandler);
+    document._kbHandler = keyboardHandler;
   },
 
   bindDocument: () => {
     if (document._docClickHandler) document.removeEventListener("click", document._docClickHandler);
-    const fn = (e) => {
-      const dropdownMenu = $byId(IDS.dropdownMenu);
-      const menuTrigger = $byId(IDS.menuTrigger);
-      if (dropdownMenu && !dropdownMenu.contains(e.target) && !menuTrigger?.contains(e.target)) dropdown.close();
-      const drawerEl = $byId(IDS.drawer);
-      const nowPlayingEl = document.querySelector(NAVBAR.nowPlaying);
-      if (appState.isPopupVisible && drawerEl && !drawerEl.contains(e.target) && !nowPlayingEl?.contains(e.target)) musicPlayer.mainPlayer.close();
+    
+    const documentClickHandler = (e) => {
+      const dropdownMenu = DOM.dropdownMenu;
+      const menuTrigger = DOM.menuTrigger;
+      
+      if (dropdownMenu && !dropdownMenu.contains(e.target) && !menuTrigger?.contains(e.target)) {
+        dropdown.close();
+      }
+      
+      const drawerEl = DOM.drawer;
+      const nowPlayingEl = QUERY(NAVBAR.nowPlaying);
+      
+      if (appState.isPopupVisible && drawerEl && !drawerEl.contains(e.target) && !nowPlayingEl?.contains(e.target)) {
+        musicPlayer.mainPlayer.close();
+      }
+      
       const navItem = e.target.closest("[data-nav]");
       if (navItem) {
         e.preventDefault();
         const navType = navItem.dataset.nav;
         dropdown.close();
+        
         if (appState.router) {
           const navHandlers = {
             [ROUTES.HOME]: () => appState.router.navigateTo(ROUTES.HOME),
@@ -2806,22 +2830,24 @@ const eventHandlers = {
               if (artist && album) appState.router.navigateTo(ROUTES.ALBUM, { artist, album });
             },
           };
+          
           if (navHandlers[navType]) navHandlers[navType]();
         }
       }
+      
       if (e.target.closest("#" + IDS.globalSearchTrigger)) {
         e.preventDefault();
         dropdown.close();
         if (appState.router) appState.router.openSearchDialog();
       }
     };
-    document.addEventListener("click", fn);
-    document._docClickHandler = fn;
+    
+    document.addEventListener("click", documentClickHandler);
+    document._docClickHandler = documentClickHandler;
   },
 
   bindControlEvents: () => {
-    // Map to actual IDs in the music drawer HTML
-    const map = {
+    const controlMap = {
       musicDrawerPlayBtn: musicPlayer.playback.togglePlayPause,
       musicDrawerPrevBtn: musicPlayer.playback.previous,
       musicDrawerNextBtn: musicPlayer.playback.next,
@@ -2831,12 +2857,13 @@ const eventHandlers = {
         if (appState.currentSong) appState.favorites.toggle("songs", appState.currentSong.id);
       },
     };
-    Object.entries(map).forEach(([id, handler]) => {
-      const el = document.getElementById(id);
-      if (el) bindClick(el, handler);
+    
+    Object.entries(controlMap).forEach(([elementId, handler]) => {
+      if (DOM[elementId]) bindClick(DOM[elementId], handler);
     });
   },
 };
+
 
 window.addEventListener("load", function() {
   if (!window.appState) {
