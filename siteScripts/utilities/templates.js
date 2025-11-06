@@ -5,6 +5,8 @@
 import { getAlbumImageUrl } from './parsers.js';
 import { escapeForAttribute } from '../pages/rendering.js';
 
+import * as PAGE from '../map.js';
+
 
 
 
