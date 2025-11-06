@@ -2502,15 +2502,6 @@ const playlists = {
     },
 };
 
-
-document.addEventListener('DOMContentLoaded', () => {
-    musicPlayer.mainPlayer.init();
-});
-
-window.musicPlayer = musicPlayer
-
-
-
 const app = {
     initialize: function() {
         window.music = music;
@@ -2570,347 +2561,397 @@ const app = {
     }
 };
 
-
-
-const bindClick = (el, handler) => {
-  if (!el || typeof handler !== "function") return;
-  const fn = (e) => { e.stopPropagation(); handler(); };
-  if (el._clickHandler) el.removeEventListener("click", el._clickHandler);
-  el.addEventListener("click", fn);
-  el._clickHandler = fn;
-};
-
-const bindClickAll = (nodeList, handler) => {
-  if (!nodeList) return;
-  nodeList.forEach((el) => bindClick(el, handler));
-};
-
-const eventHandlers = {
-  init: () => {
-    eventHandlers.bindMenus();
-    eventHandlers.bindControls();
-    eventHandlers.bindPopups();
-    eventHandlers.bindProgress();
-    eventHandlers.bindKeyboard();
-    eventHandlers.bindDocument();
-  },
-
-  bindControls: () => {
-//    const nowPlayingTriggers = [DOM.nowPlayingArea, QUERY(NAVBAR.nowPlaying)].filter(Boolean);
-//    nowPlayingTriggers.forEach(el => bindClick(el, () => musicPlayer.mainPlayer.toggle()));
-    
-    const navbarPlayPause = QUERY(NAVBAR.playPause);
-    if (navbarPlayPause) bindClick(navbarPlayPause, () => musicPlayer.playback.togglePlayPause());
-    
-    const nowPlaying = DOM.nowPlaying;
-    if (nowPlaying) bindClick(nowPlaying, () => musicPlayer.mainPlayer.toggle());
-    
-    const navbarPrevious = QUERY(NAVBAR.previous);
-    if (navbarPrevious) bindClick(navbarPrevious, () => musicPlayer.playback.previous());
-    
-    const navbarNext = QUERY(NAVBAR.next);
-    if (navbarNext) bindClick(navbarNext, () => musicPlayer.playback.next());
-  },
-
-  bindMenus: () => {
-    const menuElements = {
-      menuTrigger: dropdown.toggle,
-      dropdownClose: dropdown.close,
-      willHideMenu: dropdown.close,
-    };
-    
-    Object.entries(menuElements).forEach(([elementId, handler]) => {
-      if (DOM[elementId]) bindClick(DOM[elementId], handler);
-    });
-    
-    const menuActions = {
-      favoriteSongs: () => {
-        dropdown.close();
-        views.showFavoriteSongs();
-      },
-      favoriteArtists: () => {
-        dropdown.close();
-        views.showFavoriteArtists();
-      },
-      favoriteAlbums: () => {
-        dropdown.close();
-        views.showFavoriteAlbums();
-      },
-      recentlyPlayed: () => {
-        dropdown.close();
-        musicPlayer.mainPlayer.open();
-        setTimeout(() => musicPlayer.mainPlayer.switchTab("recent"), 50);
-      },
-      queueView: () => {
-        dropdown.close();
-        musicPlayer.mainPlayer.open();
-        setTimeout(() => musicPlayer.mainPlayer.switchTab("queue"), 50);
-      },
-      createPlaylist: () => {
-        dropdown.close();
-        playlists.create();
-      },
-      shuffleAll: musicPlayer.playback.shuffle.all,
-    };
-    
-    Object.entries(menuActions).forEach(([elementId, handler]) => {
-      if (DOM[elementId]) bindClick(DOM[elementId], handler);
-    });
-  },
-
-  bindPopups: () => {
-    const popupControlsMap = {
-      [MUSIC_PLAYER.close]: musicPlayer.mainPlayer.close,
-      [MUSIC_PLAYER.play]: musicPlayer.playback.play,
-      [MUSIC_PLAYER.previous]: musicPlayer.playback.previous,
-      [MUSIC_PLAYER.next]: musicPlayer.playback.next,
-      [MUSIC_PLAYER.shuffle]: musicPlayer.playback.shuffle.toggle,
-      [MUSIC_PLAYER.repeat]: musicPlayer.playback.repeat.toggle,
-      [MUSIC_PLAYER.favoriteBtn]: () => {
-        if (appState.currentSong) {
-          appState.favorites.toggle("songs", appState.currentSong.id);
-          ui.updateFavoriteButton();
-        }
-      },
-    };
-    
-    Object.entries(popupControlsMap).forEach(([selector, handler]) => {
-      bindClickAll(QUERY_ALL(selector), handler);
-    });
-    
-    QUERY_ALL('.tab').forEach(tab => {
-      bindClick(tab, () => {
-        const tabName = tab.dataset.tab;
-        if (tabName) musicPlayer.mainPlayer.switchTab(tabName);
-      });
-    });
-  },
-
-  bindProgress: () => {
-    const progressBar = QUERY(MUSIC_PLAYER.progressBar);
-    if (!progressBar) return;
-    
-    const handleProgressClick = (e) => {
-      if (!appState.currentSong || !appState.audio || !appState.duration) return;
-      const rect = progressBar.getBoundingClientRect();
-      const percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-      const newTime = percent * appState.duration;
-      if (!isNaN(newTime) && isFinite(newTime)) musicPlayer.playback.seekTo(newTime);
-    };
-    
-    const startDrag = (e) => {
-      if (!appState.currentSong) return;
-      progressBar._dragging = true;
-      document.body.style.userSelect = "none";
-      e.preventDefault();
-    };
-    
-    const onDrag = (e) => {
-      if (!progressBar._dragging || !appState.currentSong || !appState.audio || !appState.duration) return;
-      const rect = progressBar.getBoundingClientRect();
-      const percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-      const newTime = percent * appState.duration;
-      if (!isNaN(newTime) && isFinite(newTime)) musicPlayer.playback.seekTo(newTime);
-    };
-    
-    const endDrag = () => {
-      progressBar._dragging = false;
-      document.body.style.userSelect = "";
-    };
-    
-    if (progressBar._clickHandler) progressBar.removeEventListener("click", progressBar._clickHandler);
-    progressBar.addEventListener("click", handleProgressClick);
-    progressBar._clickHandler = handleProgressClick;
-    
-    if (progressBar._startDrag) progressBar.removeEventListener("mousedown", progressBar._startDrag);
-    if (progressBar._onDrag) document.removeEventListener("mousemove", progressBar._onDrag);
-    if (progressBar._endDrag) document.removeEventListener("mouseup", progressBar._endDrag);
-    
-    progressBar.addEventListener("mousedown", startDrag);
-    document.addEventListener("mousemove", onDrag);
-    document.addEventListener("mouseup", endDrag);
-    progressBar._startDrag = startDrag;
-    progressBar._onDrag = onDrag;
-    progressBar._endDrag = endDrag;
-  },
-
-  bindKeyboard: () => {
-    if (document._kbHandler) document.removeEventListener("keydown", document._kbHandler);
-    
-    const keyboardHandler = (e) => {
-      if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
-      
-      const shortcuts = {
-        " ": (e) => {
-          e.preventDefault();
-          musicPlayer.mainPlayer.toggle();
-        },
-        ArrowLeft: (e) => {
-          if (e.ctrlKey || e.metaKey) {
-            e.preventDefault();
-            musicPlayer.playback.previous();
-          }
-        },
-        ArrowRight: (e) => {
-          if (e.ctrlKey || e.metaKey) {
-            e.preventDefault();
-            musicPlayer.playback.next();
-          }
-        },
-        KeyN: (e) => {
-          if (e.ctrlKey || e.metaKey) {
-            e.preventDefault();
-            musicPlayer.mainPlayer.open();
-          }
-        },
-        KeyM: (e) => {
-          if (e.ctrlKey || e.metaKey) {
-            e.preventDefault();
-            dropdown.toggle();
-          }
-        },
-        KeyS: (e) => {
-          if (e.ctrlKey || e.metaKey) {
-            e.preventDefault();
-            musicPlayer.playback.shuffle.toggle();
-          }
-        },
-        KeyR: (e) => {
-          if (e.ctrlKey || e.metaKey) {
-            e.preventDefault();
-            musicPlayer.playback.repeat.toggle();
-          }
-        },
-        Escape: () => {
-          musicPlayer.mainPlayer.close();
-          dropdown.close();
-        },
-      };
-      
-      const handler = shortcuts[e.code] || shortcuts[e.key];
-      if (handler) handler(e);
-    };
-    
-    document.addEventListener("keydown", keyboardHandler);
-    document._kbHandler = keyboardHandler;
-  },
-
-  bindDocument: () => {
-    if (document._docClickHandler) document.removeEventListener("click", document._docClickHandler);
-    
-    const documentClickHandler = (e) => {
-      const dropdownMenu = DOM.dropdownMenu;
-      const menuTrigger = DOM.menuTrigger;
-      
-      if (dropdownMenu && !dropdownMenu.contains(e.target) && !menuTrigger?.contains(e.target)) {
-        dropdown.close();
-      }
-      
-      const drawerEl = DOM.drawer;
-      const nowPlayingEl = QUERY(NAVBAR.nowPlaying);
-      
-      if (appState.isPopupVisible && drawerEl && !drawerEl.contains(e.target) && !nowPlayingEl?.contains(e.target)) {
-        musicPlayer.mainPlayer.close();
-      }
-      
-      const navItem = e.target.closest("[data-nav]");
-      if (navItem) {
-        e.preventDefault();
-        const navType = navItem.dataset.nav;
-        dropdown.close();
-        
-        if (appState.router) {
-          const navHandlers = {
-            [ROUTES.HOME]: () => appState.router.navigateTo(ROUTES.HOME),
-            [ROUTES.ALL_ARTISTS]: () => appState.router.navigateTo(ROUTES.ALL_ARTISTS),
-            [ROUTES.ARTIST]: () => {
-              const artistName = navItem.dataset.artist;
-              if (artistName) appState.router.navigateTo(ROUTES.ARTIST, { artist: artistName });
-            },
-            [ROUTES.ALBUM]: () => {
-              const artist = navItem.dataset.artist;
-              const album = navItem.dataset.album;
-              if (artist && album) appState.router.navigateTo(ROUTES.ALBUM, { artist, album });
-            },
-          };
-          
-          if (navHandlers[navType]) navHandlers[navType]();
-        }
-      }
-      
-      if (e.target.closest("#" + IDS.globalSearchTrigger)) {
-        e.preventDefault();
-        dropdown.close();
-        if (appState.router) appState.router.openSearchDialog();
-      }
-    };
-    
-    document.addEventListener("click", documentClickHandler);
-    document._docClickHandler = documentClickHandler;
-  },
-
-  bindControlEvents: () => {
-    const controlMap = {
-      musicDrawerPlayBtn: musicPlayer.playback.togglePlayPause,
-      musicDrawerPrevBtn: musicPlayer.playback.previous,
-      musicDrawerNextBtn: musicPlayer.playback.next,
-      musicDrawerRewindBtn: () => musicPlayer.playback.skip(-10),
-      musicDrawerForwardBtn: () => musicPlayer.playback.skip(10),
-      musicDrawerFavoriteBtn: () => {
-        if (appState.currentSong) appState.favorites.toggle("songs", appState.currentSong.id);
-      },
-    };
-    
-    Object.entries(controlMap).forEach(([elementId, handler]) => {
-      if (DOM[elementId]) bindClick(DOM[elementId], handler);
-    });
-  },
-};
-
-
 window.addEventListener("load", function() {
-  if (!window.appState) {
-    app.initialize();
-  }
+    if (!window.appState) {
+        app.initialize();
+    }
 });
 
 window.MyTunesApp = {
-  initialize: app.initialize,
-  state: function() { return appState; },
-  api: function() { return window.musicAppAPI; },
-  goHome: app.goHome,
+    initialize: app.initialize,
+    state: function() { return appState; },
+    api: function() { return window.musicAppAPI; },
+    goHome: app.goHome,
 };
 
 if (window.music) {
-  app.initialize();
+    app.initialize();
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+    musicPlayer.mainPlayer.init();
+    app.initialize();
+    eventHandlers.init();
+    
+    const progressBar = document.getElementById('progressBar');
+    if (progressBar) {
+        progressBar.addEventListener('keydown', musicPlayer.ui.handleProgressBarKeyDown);
+    }
+    
+    setTimeout(() => {
+        if (notificationPlayer.utils.isSupported()) {
+            notificationPlayer.setup();
+        }
+    }, 100);
+});
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        eventHandlers.init();
+    });
+} else {
+    eventHandlers.init();
+}
+
+window.musicPlayer = musicPlayer;
 window.navigation = navigation;
 window.playlists = playlists;
 window.views = views;
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    eventHandlers.init();
-  });
-} else {
-  eventHandlers.init();
-}
 
-document.addEventListener('DOMContentLoaded', () => {
-  app.initialize();
-  
-  const progressBar = document.getElementById('progressBar');
-  if (progressBar) {
-    progressBar.addEventListener('keydown', musicPlayer.ui.handleProgressBarKeyDown);
-  }
-  
-  setTimeout(() => {
-      if (notificationPlayer.utils.isSupported()) {
-          notificationPlayer.setup();
-      }
-  }, 100);
-});
+
+const bindClick = (el, handler) => {
+    if (!el || typeof handler !== "function") return;
+    const fn = (e) => { 
+        e.stopPropagation(); 
+        handler(); 
+    };
+    if (el._clickHandler) {
+        el.removeEventListener("click", el._clickHandler);
+    }
+    el.addEventListener("click", fn);
+    el._clickHandler = fn;
+};
+
+const bindClickAll = (nodeList, handler) => {
+    if (!nodeList) return;
+    nodeList.forEach((el) => bindClick(el, handler));
+};
+
+const eventHandlers = {
+    init: () => {
+        eventHandlers.bindMenus();
+        eventHandlers.bindControls();
+        eventHandlers.bindPopups();
+        eventHandlers.bindProgress();
+        eventHandlers.bindKeyboard();
+        eventHandlers.bindDocument();
+    },
+
+    bindControls: () => {
+        const navbarPlayPause = QUERY(NAVBAR.playPause);
+        if (navbarPlayPause) {
+            bindClick(navbarPlayPause, () => musicPlayer.playback.togglePlayPause());
+        }
+        
+        const nowPlaying = DOM.nowPlaying;
+        if (nowPlaying) {
+            bindClick(nowPlaying, () => musicPlayer.mainPlayer.toggle());
+        }
+        
+        const navbarPrevious = QUERY(NAVBAR.previous);
+        if (navbarPrevious) {
+            bindClick(navbarPrevious, () => musicPlayer.playback.previous());
+        }
+        
+        const navbarNext = QUERY(NAVBAR.next);
+        if (navbarNext) {
+            bindClick(navbarNext, () => musicPlayer.playback.next());
+        }
+    },
+
+    bindMenus: () => {
+        const menuElements = {
+            menuTrigger: dropdown.toggle,
+            dropdownClose: dropdown.close,
+            willHideMenu: dropdown.close,
+        };
+        
+        Object.entries(menuElements).forEach(([elementId, handler]) => {
+            if (DOM[elementId]) {
+                bindClick(DOM[elementId], handler);
+            }
+        });
+        
+        const menuActions = {
+            favoriteSongs: () => {
+                dropdown.close();
+                views.showFavoriteSongs();
+            },
+            favoriteArtists: () => {
+                dropdown.close();
+                views.showFavoriteArtists();
+            },
+            favoriteAlbums: () => {
+                dropdown.close();
+                views.showFavoriteAlbums();
+            },
+            recentlyPlayed: () => {
+                dropdown.close();
+                musicPlayer.mainPlayer.open();
+                setTimeout(() => musicPlayer.mainPlayer.switchTab("recent"), 50);
+            },
+            queueView: () => {
+                dropdown.close();
+                musicPlayer.mainPlayer.open();
+                setTimeout(() => musicPlayer.mainPlayer.switchTab("queue"), 50);
+            },
+            createPlaylist: () => {
+                dropdown.close();
+                playlists.create();
+            },
+            shuffleAll: musicPlayer.playback.shuffle.all,
+        };
+        
+        Object.entries(menuActions).forEach(([elementId, handler]) => {
+            if (DOM[elementId]) {
+                bindClick(DOM[elementId], handler);
+            }
+        });
+    },
+
+    bindPopups: () => {
+        const popupControlsMap = {
+            [MUSIC_PLAYER.close]: musicPlayer.mainPlayer.close,
+            [MUSIC_PLAYER.play]: musicPlayer.playback.play,
+            [MUSIC_PLAYER.previous]: musicPlayer.playback.previous,
+            [MUSIC_PLAYER.next]: musicPlayer.playback.next,
+            [MUSIC_PLAYER.shuffle]: musicPlayer.playback.shuffle.toggle,
+            [MUSIC_PLAYER.repeat]: musicPlayer.playback.repeat.toggle,
+            [MUSIC_PLAYER.favoriteBtn]: () => {
+                if (appState.currentSong) {
+                    appState.favorites.toggle("songs", appState.currentSong.id);
+                    ui.updateFavoriteButton();
+                }
+            },
+        };
+        
+        Object.entries(popupControlsMap).forEach(([selector, handler]) => {
+            bindClickAll(QUERY_ALL(selector), handler);
+        });
+        
+        QUERY_ALL('.tab').forEach(tab => {
+            bindClick(tab, () => {
+                const tabName = tab.dataset.tab;
+                if (tabName) {
+                    musicPlayer.mainPlayer.switchTab(tabName);
+                }
+            });
+        });
+    },
+
+    bindProgress: () => {
+        const progressBar = QUERY(MUSIC_PLAYER.progressBar);
+        if (!progressBar) return;
+        
+        const handleProgressClick = (e) => {
+            if (!appState.currentSong || !appState.audio || !appState.duration) return;
+            const rect = progressBar.getBoundingClientRect();
+            const percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+            const newTime = percent * appState.duration;
+            if (!isNaN(newTime) && isFinite(newTime)) {
+                musicPlayer.playback.seekTo(newTime);
+            }
+        };
+        
+        const startDrag = (e) => {
+            if (!appState.currentSong) return;
+            progressBar._dragging = true;
+            document.body.style.userSelect = "none";
+            e.preventDefault();
+        };
+        
+        const onDrag = (e) => {
+            if (!progressBar._dragging || !appState.currentSong || !appState.audio || !appState.duration) return;
+            const rect = progressBar.getBoundingClientRect();
+            const percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+            const newTime = percent * appState.duration;
+            if (!isNaN(newTime) && isFinite(newTime)) {
+                musicPlayer.playback.seekTo(newTime);
+            }
+        };
+        
+        const endDrag = () => {
+            progressBar._dragging = false;
+            document.body.style.userSelect = "";
+        };
+        
+        if (progressBar._clickHandler) {
+            progressBar.removeEventListener("click", progressBar._clickHandler);
+        }
+        progressBar.addEventListener("click", handleProgressClick);
+        progressBar._clickHandler = handleProgressClick;
+        
+        if (progressBar._startDrag) {
+            progressBar.removeEventListener("mousedown", progressBar._startDrag);
+        }
+        if (progressBar._onDrag) {
+            document.removeEventListener("mousemove", progressBar._onDrag);
+        }
+        if (progressBar._endDrag) {
+            document.removeEventListener("mouseup", progressBar._endDrag);
+        }
+        
+        progressBar.addEventListener("mousedown", startDrag);
+        document.addEventListener("mousemove", onDrag);
+        document.addEventListener("mouseup", endDrag);
+        progressBar._startDrag = startDrag;
+        progressBar._onDrag = onDrag;
+        progressBar._endDrag = endDrag;
+    },
+
+    bindKeyboard: () => {
+        if (document._kbHandler) {
+            document.removeEventListener("keydown", document._kbHandler);
+        }
+        
+        const keyboardHandler = (e) => {
+            if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+            
+            const shortcuts = {
+                " ": (e) => {
+                    e.preventDefault();
+                    musicPlayer.mainPlayer.toggle();
+                },
+                ArrowLeft: (e) => {
+                    if (e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
+                        musicPlayer.playback.previous();
+                    }
+                },
+                ArrowRight: (e) => {
+                    if (e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
+                        musicPlayer.playback.next();
+                    }
+                },
+                KeyN: (e) => {
+                    if (e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
+                        musicPlayer.mainPlayer.open();
+                    }
+                },
+                KeyM: (e) => {
+                    if (e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
+                        dropdown.toggle();
+                    }
+                },
+                KeyS: (e) => {
+                    if (e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
+                        musicPlayer.playback.shuffle.toggle();
+                    }
+                },
+                KeyR: (e) => {
+                    if (e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
+                        musicPlayer.playback.repeat.toggle();
+                    }
+                },
+                Escape: () => {
+                    musicPlayer.mainPlayer.close();
+                    dropdown.close();
+                },
+            };
+            
+            const handler = shortcuts[e.code] || shortcuts[e.key];
+            if (handler) {
+                handler(e);
+            }
+        };
+        
+        document.addEventListener("keydown", keyboardHandler);
+        document._kbHandler = keyboardHandler;
+    },
+
+    bindDocument: () => {
+        if (document._docClickHandler) {
+            document.removeEventListener("click", document._docClickHandler);
+        }
+        
+        const documentClickHandler = (e) => {
+            const dropdownMenu = DOM.dropdownMenu;
+            const menuTrigger = DOM.menuTrigger;
+            
+            if (dropdownMenu && !dropdownMenu.contains(e.target) && !menuTrigger?.contains(e.target)) {
+                dropdown.close();
+            }
+            
+            const drawerEl = DOM.drawer;
+            const nowPlayingEl = QUERY(NAVBAR.nowPlaying);
+            
+            if (appState.isPopupVisible && drawerEl && !drawerEl.contains(e.target) && !nowPlayingEl?.contains(e.target)) {
+                musicPlayer.mainPlayer.close();
+            }
+            
+            const navItem = e.target.closest("[data-nav]");
+            if (navItem) {
+                e.preventDefault();
+                const navType = navItem.dataset.nav;
+                dropdown.close();
+                
+                if (appState.router) {
+                    const navHandlers = {
+                        [ROUTES.HOME]: () => appState.router.navigateTo(ROUTES.HOME),
+                        [ROUTES.ALL_ARTISTS]: () => appState.router.navigateTo(ROUTES.ALL_ARTISTS),
+                        [ROUTES.ARTIST]: () => {
+                            const artistName = navItem.dataset.artist;
+                            if (artistName) {
+                                appState.router.navigateTo(ROUTES.ARTIST, { artist: artistName });
+                            }
+                        },
+                        [ROUTES.ALBUM]: () => {
+                            const artist = navItem.dataset.artist;
+                            const album = navItem.dataset.album;
+                            if (artist && album) {
+                                appState.router.navigateTo(ROUTES.ALBUM, { artist, album });
+                            }
+                        },
+                    };
+                    
+                    if (navHandlers[navType]) {
+                        navHandlers[navType]();
+                    }
+                }
+            }
+            
+            if (e.target.closest("#" + IDS.globalSearchTrigger)) {
+                e.preventDefault();
+                dropdown.close();
+                if (appState.router) {
+                    appState.router.openSearchDialog();
+                }
+            }
+        };
+        
+        document.addEventListener("click", documentClickHandler);
+        document._docClickHandler = documentClickHandler;
+    },
+
+    bindControlEvents: () => {
+        const controlMap = {
+            musicDrawerPlayBtn: musicPlayer.playback.togglePlayPause,
+            musicDrawerPrevBtn: musicPlayer.playback.previous,
+            musicDrawerNextBtn: musicPlayer.playback.next,
+            musicDrawerRewindBtn: () => musicPlayer.playback.skip(-10),
+            musicDrawerForwardBtn: () => musicPlayer.playback.skip(10),
+            musicDrawerFavoriteBtn: () => {
+                if (appState.currentSong) {
+                    appState.favorites.toggle("songs", appState.currentSong.id);
+                }
+            },
+        };
+        
+        Object.entries(controlMap).forEach(([elementId, handler]) => {
+            if (DOM[elementId]) {
+                bindClick(DOM[elementId], handler);
+            }
+        });
+    },
+};
+
+
 
 export {
     appState,
