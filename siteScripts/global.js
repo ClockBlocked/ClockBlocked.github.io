@@ -1,5 +1,5 @@
 
-import { DOM, QUERY, QUERY_ALL, IDS, CLASSES, ROUTES, THEMES, STORAGE_KEYS, ICONS, AUDIO_FORMATS, REPEAT_MODES, NOTIFICATION_TYPES, $, $byId } from "./map.js";
+// import { DOM, QUERY, QUERY_ALL, IDS, CLASSES, ROUTES, THEMES, STORAGE_KEYS, ICONS, PAGE.AUDIO_FORMATS, REPEAT_MODES, NOTIFICATION_TYPES, $, $byId } from "./map.js";
 import { music } from "../modules/library.js";
 import { render, create } from "./utilities/templates.js";
 import { encodeURIComponent } from './utilities/parsers.js';
@@ -7,6 +7,9 @@ import { homePage, views } from './pages/statics.js';
 import { pageLoader, navigation } from './pages/rendering.js';
 import { ui, pageUpdates } from './pages/updates.js';
 import { deepLinkRouter } from './pages/router.js';
+
+import * as PAGE from './map.js';
+
 
 const ACTION_GRID_ITEMS = [
   { id: 'play-next', icon: 'M9 5l7 7-7 7M15 5v14', label: 'Play Next' },
@@ -18,10 +21,10 @@ const ACTION_GRID_ITEMS = [
 ];
 
 const TOAST_ICONS = {
-  [NOTIFICATION_TYPES.SUCCESS]: '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>',
-  [NOTIFICATION_TYPES.ERROR]: '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>',
-  [NOTIFICATION_TYPES.WARNING]: '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.742-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>',
-  [NOTIFICATION_TYPES.INFO]: '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>'
+  [PAGE.NOTIFICATION_TYPES.SUCCESS]: '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>',
+  [PAGE.NOTIFICATION_TYPES.ERROR]: '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>',
+  [PAGE.NOTIFICATION_TYPES.WARNING]: '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.742-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>',
+  [PAGE.NOTIFICATION_TYPES.INFO]: '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>'
 };
 
 const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
@@ -36,7 +39,7 @@ const appState = {
   recentlyPlayed: [],
   isDragging: false,
   shuffleMode: false,
-  repeatMode: REPEAT_MODES.OFF,
+  repeatMode: PAGE.REPEAT_MODES.OFF,
   seekTooltip: null,
   currentIndex: 0,
   playlists: [],
@@ -59,7 +62,7 @@ const appState = {
       appState.favorites.save(type);
       appState.favorites.updateIcon(type, id, true);
       const itemName = type === "songs" ? "song" : type.slice(0, -1);
-      notifications.show(`Added ${itemName} to favorites`, NOTIFICATION_TYPES.SUCCESS);
+      notifications.show(`Added ${itemName} to favorites`, PAGE.NOTIFICATION_TYPES.SUCCESS);
     },
 
     remove: function(type, id) {
@@ -67,7 +70,7 @@ const appState = {
       appState.favorites.save(type);
       appState.favorites.updateIcon(type, id, false);
       const itemName = type === "songs" ? "song" : type.slice(0, -1);
-      notifications.show(`Removed ${itemName} from favorites`, NOTIFICATION_TYPES.INFO);
+      notifications.show(`Removed ${itemName} from favorites`, PAGE.NOTIFICATION_TYPES.INFO);
     },
 
     toggle: function(type, id) {
@@ -85,9 +88,9 @@ const appState = {
     },
 
     save: function(type) {
-      const key = type === "songs" ? STORAGE_KEYS.FAVORITE_SONGS : 
-                 type === "artists" ? STORAGE_KEYS.FAVORITE_ARTISTS : 
-                 STORAGE_KEYS.FAVORITE_ALBUMS;
+      const key = type === "songs" ? PAGE.STORAGE_KEYS.FAVORITE_SONGS : 
+                 type === "artists" ? PAGE.STORAGE_KEYS.FAVORITE_ARTISTS : 
+                 PAGE.STORAGE_KEYS.FAVORITE_ALBUMS;
       storage.save(key, Array.from(appState.favorites[type]));
     },
 
@@ -95,7 +98,7 @@ const appState = {
       const icons = document.querySelectorAll(`[data-favorite-${type}="${id}"]`);
       icons.forEach((icon) => {
         icon.classList.toggle("favorited", isFavorite);
-        icon.classList.toggle(CLASSES.active, isFavorite);
+        icon.classList.toggle(PAGE.CLASSES.active, isFavorite);
         icon.setAttribute("aria-pressed", isFavorite);
         if (type === "songs") {
           const heartIcon = icon.querySelector("svg");
@@ -120,7 +123,7 @@ const appState = {
       } else {
         appState.queue.items.push(song);
       }
-      storage.save(STORAGE_KEYS.QUEUE, appState.queue.items);
+      storage.save(PAGE.STORAGE_KEYS.QUEUE, appState.queue.items);
       ui.updateCounts();
       notifications.show(`Added "${song.title}" to queue`);
     },
@@ -128,7 +131,7 @@ const appState = {
     remove: function(index) {
       if (index >= 0 && index < appState.queue.items.length) {
         const removed = appState.queue.items.splice(index, 1)[0];
-        storage.save(STORAGE_KEYS.QUEUE, appState.queue.items);
+        storage.save(PAGE.STORAGE_KEYS.QUEUE, appState.queue.items);
         ui.updateCounts();
         return removed;
       }
@@ -137,7 +140,7 @@ const appState = {
 
     clear: function() {
       appState.queue.items = [];
-      storage.save(STORAGE_KEYS.QUEUE, appState.queue.items);
+      storage.save(PAGE.STORAGE_KEYS.QUEUE, appState.queue.items);
       ui.updateCounts();
     },
 
@@ -201,27 +204,27 @@ const utils = {
 
   loadImageWithFallback: (imgElement, primaryUrl, fallbackUrl, type = "image") => {
     if (!imgElement) return;
-    imgElement.classList.add(CLASSES.imageLoading);
+    imgElement.classList.add(PAGE.CLASSES.imageLoading);
 
     const testImage = new Image();
     testImage.onload = () => {
       imgElement.src = primaryUrl;
-      imgElement.classList.remove(CLASSES.imageLoading, CLASSES.imageError);
-      imgElement.classList.add(CLASSES.imageLoaded);
+      imgElement.classList.remove(PAGE.CLASSES.imageLoading, PAGE.CLASSES.imageError);
+      imgElement.classList.add(PAGE.CLASSES.imageLoaded);
     };
 
     testImage.onerror = () => {
       const fallbackImage = new Image();
       fallbackImage.onload = () => {
         imgElement.src = fallbackUrl;
-        imgElement.classList.remove(CLASSES.imageLoading);
-        imgElement.classList.add(CLASSES.imageLoaded);
+        imgElement.classList.remove(PAGE.CLASSES.imageLoading);
+        imgElement.classList.add(PAGE.CLASSES.imageLoaded);
       };
 
       fallbackImage.onerror = () => {
         imgElement.src = utils.generatePlaceholder(type);
-        imgElement.classList.remove(CLASSES.imageLoading);
-        imgElement.classList.add(CLASSES.imageFallback);
+        imgElement.classList.remove(PAGE.CLASSES.imageLoading);
+        imgElement.classList.add(PAGE.CLASSES.imageFallback);
       };
 
       fallbackImage.src = fallbackUrl;
@@ -297,9 +300,9 @@ const storage = {
 
   initialize: () => {
     const favoriteTypes = [
-      { type: "songs", key: STORAGE_KEYS.FAVORITE_SONGS },
-      { type: "artists", key: STORAGE_KEYS.FAVORITE_ARTISTS },
-      { type: "albums", key: STORAGE_KEYS.FAVORITE_ALBUMS }
+      { type: "songs", key: PAGE.STORAGE_KEYS.FAVORITE_SONGS },
+      { type: "artists", key: PAGE.STORAGE_KEYS.FAVORITE_ARTISTS },
+      { type: "albums", key: PAGE.STORAGE_KEYS.FAVORITE_ALBUMS }
     ];
 
     favoriteTypes.forEach(({ type, key }) => {
@@ -310,9 +313,9 @@ const storage = {
     });
 
     const dataLoaders = {
-      [STORAGE_KEYS.RECENTLY_PLAYED]: (data) => (appState.recentlyPlayed = data || []),
-      [STORAGE_KEYS.PLAYLISTS]: (data) => (appState.playlists = data || []),
-      [STORAGE_KEYS.QUEUE]: (data) => (appState.queue.items = data || [])
+      [PAGE.STORAGE_KEYS.RECENTLY_PLAYED]: (data) => (appState.recentlyPlayed = data || []),
+      [PAGE.STORAGE_KEYS.PLAYLISTS]: (data) => (appState.playlists = data || []),
+      [PAGE.STORAGE_KEYS.QUEUE]: (data) => (appState.queue.items = data || [])
     };
 
     Object.entries(dataLoaders).forEach(([key, loader]) => {
@@ -326,12 +329,12 @@ const dropdown = {
   toggle: (e) => {
     e?.preventDefault();
     e?.stopPropagation();
-    const menu = $byId(IDS.dropdownMenu);
-    const trigger = $byId(IDS.menuTrigger);
+    const menu = PAGE.dropdownMenu;
+    const trigger = PAGE.menuTrigger;
 
     if (!menu || !trigger) return;
 
-    const isVisible = menu.classList.contains(CLASSES.show);
+    const isVisible = menu.classList.contains(PAGE.CLASSES.show);
     if (isVisible) {
       dropdown.close();
     } else {
@@ -342,27 +345,27 @@ const dropdown = {
   open: (e) => {
     e?.preventDefault();
     e?.stopPropagation();
-    const menu = $byId(IDS.dropdownMenu);
-    const trigger = $byId(IDS.menuTrigger);
+    const menu = PAGE.dropdownMenu;
+    const trigger = PAGE.menuTrigger;
 
     if (!menu || !trigger) return;
 
     ui.updateCounts();
-    menu.classList.add(CLASSES.show);
-    trigger.classList.add(CLASSES.active);
+    menu.classList.add(PAGE.CLASSES.show);
+    trigger.classList.add(PAGE.CLASSES.active);
     musicPlayer.mainPlayer.close();
   },
 
   close: (e) => {
     e?.preventDefault();
     e?.stopPropagation();
-    const menu = $byId(IDS.dropdownMenu);
-    const trigger = $byId(IDS.menuTrigger);
+    const menu = PAGE.dropdownMenu;
+    const trigger = PAGE.menuTrigger;
 
     if (!menu || !trigger) return;
 
-    menu.classList.remove(CLASSES.show);
-    trigger.classList.remove(CLASSES.active);
+    menu.classList.remove(PAGE.CLASSES.show);
+    trigger.classList.remove(PAGE.CLASSES.active);
   }
 };
 
@@ -561,12 +564,12 @@ const notifications = {
     if (!existing) document.body.appendChild(this.container);
   },
 
-  show(message, type = NOTIFICATION_TYPES.INFO, undoCallback = null, options = {}) {
+  show(message, type = PAGE.NOTIFICATION_TYPES.INFO, undoCallback = null, options = {}) {
     this.initialize();
 
     const duration = Number.isFinite(options.duration) ? Math.max(1200, options.duration) : 5000;
     const title = options.title || null;
-    const iconHtml = options.iconHtml || TOAST_ICONS[type] || TOAST_ICONS[NOTIFICATION_TYPES.INFO];
+    const iconHtml = options.iconHtml || PAGE.TOAST_ICONS[type] || PAGE.TOAST_ICONS[PAGE.NOTIFICATION_TYPES.INFO];
 
     const toastHtml = render.notification({
       type,
@@ -1212,7 +1215,7 @@ const notificationPlayer = {
 const musicPlayer = {
     mainPlayer: {
         open: () => {
-            const drawer = document.querySelector(MUSIC_PLAYER.root);
+            const drawer = document.querySelector(PAGE.drawer);
             if (!drawer) return;
             
             // Show the popover first
@@ -1222,7 +1225,7 @@ const musicPlayer = {
             drawer.offsetHeight;
             
             appState.isPopupVisible = true;
-            musicPlayer.mainPlayer.updateTabContent(appState.currentTab || MUSIC_PLAYER.tabs.playing);
+            musicPlayer.mainPlayer.updateTabContent(appState.currentTab || PAGE.musicPlayerTabs.playing);
             
             if (appState.currentSong) {
                 musicPlayer.ui.updateNowPlaying();
@@ -1230,7 +1233,7 @@ const musicPlayer = {
         },
         
         close: () => {
-            const drawer = document.querySelector(MUSIC_PLAYER.root);
+            const drawer = document.querySelector(PAGE.drawer);
             if (!drawer) return;
             
             // Wait for the CSS transition to complete before hiding the popover
@@ -1238,7 +1241,7 @@ const musicPlayer = {
                 drawer.removeEventListener('transitionend', handleTransitionEnd);
                 drawer.hidePopover();
                 appState.isPopupVisible = false;
-                setTimeout(() => musicPlayer.mainPlayer.switchTab(MUSIC_PLAYER.tabs.playing), 50);
+                setTimeout(() => musicPlayer.mainPlayer.switchTab(PAGE.musicPlayerTabs.playing), 50);
                 
                 // Reset transform for next open
                 setTimeout(() => {
@@ -1255,7 +1258,7 @@ const musicPlayer = {
         },
         
         toggle: () => {
-            const drawer = document.querySelector(MUSIC_PLAYER.root);
+            const drawer = document.querySelector(PAGE.drawer);
             if (!drawer) return;
             
             if (drawer.matches(':popover-open')) {
@@ -1282,12 +1285,12 @@ const musicPlayer = {
         },
         
         updateTabContent: (tabName) => {
-            if (tabName === MUSIC_PLAYER.tabs.recent) musicPlayer.mainPlayer.updateRecentTab();
-            else if (tabName === MUSIC_PLAYER.tabs.queue) musicPlayer.mainPlayer.updateQueueTab();
+            if (tabName === PAGE.musicPlayerTabs.recent) musicPlayer.mainPlayer.updateRecentTab();
+            else if (tabName === PAGE.musicPlayerTabs.queue) musicPlayer.mainPlayer.updateQueueTab();
         },
         
         updateQueueTab: () => {
-            const queueList = document.querySelector(MUSIC_PLAYER.queueList);
+            const queueList = document.querySelector(PAGE.queueList);
             if (!queueList) return;
             
             const emptyState = queueList.querySelector('.music-player__empty');
@@ -1349,14 +1352,14 @@ const musicPlayer = {
                 queueList.appendChild(listItem);
             });
             
-            const queueCount = document.querySelector(MUSIC_PLAYER.queueCount);
+            const queueCount = document.querySelector(PAGE.musicPlayerQueueCount);
             if (queueCount) {
                 queueCount.textContent = `${appState.queue.items.length} song${appState.queue.items.length !== 1 ? 's' : ''}`;
             }
         },
         
         updateRecentTab: () => {
-            const recentList = document.querySelector(MUSIC_PLAYER.recentList);
+            const recentList = document.querySelector(PAGE.recentList);
             if (!recentList) return;
             
             const emptyState = recentList.querySelector('.music-player__empty');
@@ -1417,14 +1420,14 @@ const musicPlayer = {
                 recentList.appendChild(listItem);
             });
             
-            const recentCount = document.querySelector(MUSIC_PLAYER.recentCount);
+            const recentCount = document.querySelector(PAGE.musicPlayerRecentCount);
             if (recentCount) {
                 recentCount.textContent = `${appState.recentlyPlayed.length} song${appState.recentlyPlayed.length !== 1 ? 's' : ''}`;
             }
         },
         
         init: () => {
-            const closeBtn = document.querySelector(MUSIC_PLAYER.close);
+            const closeBtn = document.querySelector(PAGE.musicPlayerCloseBtn);
             if (closeBtn) {
                 closeBtn.addEventListener('click', () => musicPlayer.mainPlayer.close());
             }
@@ -1437,15 +1440,15 @@ const musicPlayer = {
                 });
             });
             
-            const queueBtn = document.querySelector(MUSIC_PLAYER.queueBtn);
+            const queueBtn = document.querySelector(PAGE.queueBtn);
             if (queueBtn) {
-                queueBtn.addEventListener('click', () => musicPlayer.mainPlayer.switchTab(MUSIC_PLAYER.tabs.queue));
+                queueBtn.addEventListener('click', () => musicPlayer.mainPlayer.switchTab(PAGE.musicPlayerTabs.queue));
             }
             
             musicPlayer.mainPlayer.preventHorizontalScroll();
             musicPlayer.mainPlayer.initDrawerDrag();
             
-            const favoriteBtn = document.querySelector(MUSIC_PLAYER.favoriteBtn);
+            const favoriteBtn = document.querySelector(PAGE.favoriteBtn);
             if (favoriteBtn) {
                 favoriteBtn.addEventListener('click', () => {
                     favoriteBtn.classList.toggle('favorited');
@@ -1705,7 +1708,7 @@ const musicPlayer = {
                 return false;
             }
 
-            for (const format of window.AUDIO_FORMATS || ['mp3', 'ogg', 'wav']) {
+            for (const format of window.PAGE.AUDIO_FORMATS || ['mp3', 'ogg', 'wav']) {
                 try {
                     const audioUrl = `https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/Finalfinal/global/content/audio/${songFileName}.${format}`;
                     
@@ -1745,8 +1748,8 @@ const musicPlayer = {
         },
 
         bindSeekBar: () => {
-            const bar = document.querySelector(MUSIC_PLAYER.progressBar);
-            const thumb = document.querySelector(MUSIC_PLAYER.progressThumb);
+            const bar = document.querySelector(PAGE.musicPlayerprogressBar);
+            const thumb = document.querySelector(PAGE.musicPlayerprogressThumb);
             if (!bar || !thumb) {
                 console.error("bindSeekBar: Could not find progress bar elements");
                 return;
@@ -1759,7 +1762,7 @@ const musicPlayer = {
                 musicPlayer.ui.wasPlayingBeforeScrub = !!appState.isPlaying;
                 if (musicPlayer.ui.wasPlayingBeforeScrub) appState.audio.pause();
                 musicPlayer.ui.seekFromEvent(e, bar);
-                bar.classList.add(MUSIC_PLAYER.classes.dragging);
+                bar.classList.add(PAGE.musicPlayerclasses.dragging);
                 const moveTarget = bar;
                 moveTarget.addEventListener('pointermove', onPointerMove, { passive: false });
                 moveTarget.addEventListener('pointerup', onPointerUp, { once: true });
@@ -1775,15 +1778,15 @@ const musicPlayer = {
             const onPointerUp = (e) => {
                 musicPlayer.ui.seekFromEvent(e, bar, true);
                 musicPlayer.ui.isScrubbing = false;
-                bar.classList.remove(MUSIC_PLAYER.classes.dragging, MUSIC_PLAYER.classes.hovering);
+                bar.classList.remove(PAGE.musicPlayerclasses.dragging, PAGE.musicPlayerclasses.hovering);
                 if (musicPlayer.ui.wasPlayingBeforeScrub) appState.audio.play();
                 bar.releasePointerCapture?.(e.pointerId ?? 1);
                 bar.removeEventListener('pointermove', onPointerMove);
             };
 
-            const onEnter = () => bar.classList.add(MUSIC_PLAYER.classes.hovering);
+            const onEnter = () => bar.classList.add(PAGE.musicPlayerclasses.hovering);
             const onLeave = () => { 
-                if (!musicPlayer.ui.isScrubbing) bar.classList.remove(MUSIC_PLAYER.classes.hovering); 
+                if (!musicPlayer.ui.isScrubbing) bar.classList.remove(PAGE.musicPlayerclasses.hovering); 
             };
             
             bar.addEventListener('pointerdown', onPointerDown, { passive: false });
@@ -1812,9 +1815,9 @@ const musicPlayer = {
         },
 
         setProgressUI: (percent, currentTime) => {
-            const fill = document.querySelector(MUSIC_PLAYER.progressFill);
-            const thumb = document.querySelector(MUSIC_PLAYER.progressThumb);
-            const currentTimeElement = document.querySelector(MUSIC_PLAYER.currentTime);
+            const fill = document.querySelector(PAGE.musicPlayerprogressFill);
+            const thumb = document.querySelector(PAGE.musicPlayerprogressThumb);
+            const currentTimeElement = document.querySelector(PAGE.musicPlayercurrentTime);
             if (fill) fill.style.width = percent + '%';
             if (thumb) thumb.style.left = percent + '%';
             if (currentTimeElement && isFinite(currentTime)) {
@@ -1831,10 +1834,10 @@ const musicPlayer = {
             
             switch (e.key) {
                 case 'ArrowRight':
-                    timeChange = MUSIC_PLAYER.skipTimes.forward;
+                    timeChange = PAGE.musicPlayerskipTimes.forward;
                     break;
                 case 'ArrowLeft':
-                    timeChange = MUSIC_PLAYER.skipTimes.rewind;
+                    timeChange = PAGE.musicPlayerskipTimes.rewind;
                     break;
                 case 'PageUp':
                     timeChange = 10;
@@ -1883,7 +1886,7 @@ const musicPlayer = {
         },
 
         updateBufferDisplay: () => {
-            const buffer = document.querySelector(MUSIC_PLAYER.progressBuffer);
+            const buffer = document.querySelector(PAGE.musicPlayerProgressBuffer);
             if (!buffer || !appState.audio) return;
             
             if (!appState.audio.buffered || appState.audio.buffered.length === 0) {
@@ -1912,7 +1915,7 @@ const musicPlayer = {
             if (window.ui && ui.updatePlayPauseButtons) {
                 ui.updatePlayPauseButtons();
             }
-            document.querySelector(MUSIC_PLAYER.root)?.classList.add(MUSIC_PLAYER.classes.playing);
+            document.querySelector(PAGE.drawer)?.classList.add(PAGE.musicPlayerclasses.playing);
         },
 
         onPause: () => {
@@ -1920,14 +1923,14 @@ const musicPlayer = {
             if (window.ui && ui.updatePlayPauseButtons) {
                 ui.updatePlayPauseButtons();
             }
-            document.querySelector(MUSIC_PLAYER.root)?.classList.remove(MUSIC_PLAYER.classes.playing);
+            document.querySelector(PAGE.drawer)?.classList.remove(PAGE.musicPlayerclasses.playing);
         },
 
         onMetadataLoaded: () => {
             if (!appState.audio || isNaN(appState.audio.duration)) return;
             
             appState.duration = appState.audio.duration;
-            const totalTimeElement = document.querySelector(MUSIC_PLAYER.totalTime);
+            const totalTimeElement = document.querySelector(PAGE.musicPlayertotalTime);
             if (totalTimeElement) {
                 totalTimeElement.textContent = utils.formatTime(appState.duration);
             }
@@ -1956,7 +1959,7 @@ const musicPlayer = {
                 appState.recentlyPlayed = appState.recentlyPlayed.slice(0, 50);
             }
             if (window.storage && window.STORAGE_KEYS) {
-                storage.save(STORAGE_KEYS.RECENTLY_PLAYED, appState.recentlyPlayed.slice(0, 20));
+                storage.save(PAGE.STORAGE_KEYS.RECENTLY_PLAYED, appState.recentlyPlayed.slice(0, 20));
             }
         },
 
@@ -1999,32 +2002,32 @@ const musicPlayer = {
             if (!appState.currentSong) return;
             
             const coverUrl = appState.currentSong.cover || utils.getAlbumImageUrl(appState.currentSong.album);
-            const cover = document.querySelector(MUSIC_PLAYER.albumArtwork);
+            const cover = document.querySelector(PAGE.musicPlayerAlbumArtwork);
             if (cover && coverUrl) {
                 cover.src = coverUrl;
             }
             
-            const titleEl = document.querySelector(MUSIC_PLAYER.songName);
-            const artistEl = document.querySelector(MUSIC_PLAYER.artistName);
-            const albumEl = document.querySelector(MUSIC_PLAYER.albumName);
+            const titleEl = document.querySelector(PAGE.musicPlayerSongName);
+            const artistEl = document.querySelector(PAGE.musicPlayerArtistName);
+            const albumEl = document.querySelector(PAGE.musicPlayerAlbumName);
             
             if (titleEl && appState.currentSong.title) titleEl.textContent = appState.currentSong.title;
             if (artistEl && appState.currentArtist) artistEl.textContent = appState.currentArtist;
             if (albumEl && appState.currentAlbum) albumEl.textContent = appState.currentAlbum;
             
-            const playBtn = document.querySelector(MUSIC_PLAYER.play);
-            const drawer = document.querySelector(MUSIC_PLAYER.root);
+            const playBtn = document.querySelector(PAGE.playBtn);
+            const drawer = document.querySelector(PAGE.drawer);
             if (playBtn) {
                 const playIcon = playBtn.querySelector('.play-icon');
                 const pauseIcon = playBtn.querySelector('.pause-icon');
                 if (appState.isPlaying) {
                     playIcon?.style.setProperty('display', 'none');
                     pauseIcon?.style.setProperty('display', 'block');
-                    drawer?.classList.add(MUSIC_PLAYER.classes.playing);
+                    drawer?.classList.add(PAGE.musicPlayerclasses.playing);
                 } else {
                     playIcon?.style.setProperty('display', 'block');
                     pauseIcon?.style.setProperty('display', 'none');
-                    drawer?.classList.remove(MUSIC_PLAYER.classes.playing);
+                    drawer?.classList.remove(PAGE.musicPlayerclasses.playing);
                 }
             }
         }
@@ -2066,9 +2069,9 @@ const app = {
     },
 
     resetUI: function() {
-        const nowPlayingArea = document.querySelector(NAVBAR.nowPlaying);
+        const nowPlayingArea = document.querySelector(PAGE.navbarNowPlaying);
         if (nowPlayingArea) {
-            nowPlayingArea.classList.remove(CLASSES.hasSong);
+            nowPlayingArea.classList.remove(PAGE.CLASSES.hasSong);
         }
         ui.updateCounts();
     },
@@ -2098,7 +2101,7 @@ const app = {
 
     goHome: function() {
         if (appState.router) {
-            appState.router.navigateTo(ROUTES.HOME);
+            appState.router.navigateTo(PAGE.ROUTES.HOME);
         }
     }
 };
@@ -2106,7 +2109,7 @@ const app = {
 const playlists = {
     add: (name) => {
         if (!name || !name.trim()) {
-            notifications.show("Please enter a playlist name", NOTIFICATION_TYPES.WARNING);
+            notifications.show("Please enter a playlist name", PAGE.NOTIFICATION_TYPES.WARNING);
             return null;
         }
 
@@ -2120,33 +2123,33 @@ const playlists = {
         };
 
         appState.playlists.push(playlist);
-        storage.save(STORAGE_KEYS.PLAYLISTS, appState.playlists);
+        storage.save(PAGE.STORAGE_KEYS.PLAYLISTS, appState.playlists);
 
         if (typeof homePage?.renderPlaylists === "function") {
             homePage.renderPlaylists();
         }
 
-        notifications.show(`Created playlist "${playlist.name}"`, NOTIFICATION_TYPES.SUCCESS);
+        notifications.show(`Created playlist "${playlist.name}"`, PAGE.NOTIFICATION_TYPES.SUCCESS);
         return playlist;
     },
 
     addSong: (playlistId, song) => {
         const playlist = appState.playlists.find((p) => p.id === playlistId);
         if (!playlist) {
-            notifications.show("Playlist not found", NOTIFICATION_TYPES.ERROR);
+            notifications.show("Playlist not found", PAGE.NOTIFICATION_TYPES.ERROR);
             return false;
         }
 
         const exists = playlist.songs.some((s) => s.id === song.id);
         if (exists) {
-            notifications.show("Song already in playlist", NOTIFICATION_TYPES.WARNING);
+            notifications.show("Song already in playlist", PAGE.NOTIFICATION_TYPES.WARNING);
             return false;
         }
 
         playlist.songs.push(song);
-        storage.save(STORAGE_KEYS.PLAYLISTS, appState.playlists);
+        storage.save(PAGE.STORAGE_KEYS.PLAYLISTS, appState.playlists);
 
-        notifications.show(`Added "${song.title}" to "${playlist.name}"`, NOTIFICATION_TYPES.SUCCESS);
+        notifications.show(`Added "${song.title}" to "${playlist.name}"`, PAGE.NOTIFICATION_TYPES.SUCCESS);
         return true;
     },
 
@@ -2158,8 +2161,8 @@ const playlists = {
         playlist.songs = playlist.songs.filter((s) => s.id !== songId);
 
         if (playlist.songs.length < initialLength) {
-            storage.save(STORAGE_KEYS.PLAYLISTS, appState.playlists);
-            notifications.show("Song removed from playlist", NOTIFICATION_TYPES.INFO);
+            storage.save(PAGE.STORAGE_KEYS.PLAYLISTS, appState.playlists);
+            notifications.show("Song removed from playlist", PAGE.NOTIFICATION_TYPES.INFO);
             return true;
         }
 
@@ -2169,7 +2172,7 @@ const playlists = {
     play: (playlistId) => {
         const playlist = appState.playlists.find((p) => p.id === playlistId);
         if (!playlist || playlist.songs.length === 0) {
-            notifications.show("Playlist is empty", NOTIFICATION_TYPES.WARNING);
+            notifications.show("Playlist is empty", PAGE.NOTIFICATION_TYPES.WARNING);
             return;
         }
 
@@ -2177,7 +2180,7 @@ const playlists = {
         playlist.songs.slice(1).forEach((song) => appState.queue.add(song));
         musicPlayer.ui.playSong(playlist.songs[0]);
 
-        notifications.show(`Playing playlist "${playlist.name}"`, NOTIFICATION_TYPES.SUCCESS);
+        notifications.show(`Playing playlist "${playlist.name}"`, PAGE.NOTIFICATION_TYPES.SUCCESS);
     },
 
     remove: async (playlistId) => {
@@ -2196,8 +2199,8 @@ const playlists = {
         
         const playlistName = playlist.name;
         appState.playlists = appState.playlists.filter((p) => p.id !== playlistId);
-        storage.save(STORAGE_KEYS.PLAYLISTS, appState.playlists);
-        notifications.show(`Deleted playlist "${playlistName}"`, NOTIFICATION_TYPES.INFO);
+        storage.save(PAGE.STORAGE_KEYS.PLAYLISTS, appState.playlists);
+        notifications.show(`Deleted playlist "${playlistName}"`, PAGE.NOTIFICATION_TYPES.INFO);
         
         return true;
     },
@@ -2255,7 +2258,7 @@ const playlists = {
                       </div>
                       <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button class="play-playlist-btn w-10 h-10 bg-accent-primary rounded-full flex items-center justify-center hover:scale-110 transition-transform" data-playlist-id="${playlist.id}">
-                          ${ICONS.play}
+                          ${PAGE.ICONS.play}
                         </button>
                       </div>
                     </div>
@@ -2289,14 +2292,14 @@ const playlists = {
     show: (playlistId) => {
         const playlist = appState.playlists.find((p) => p.id === playlistId);
         if (!playlist) {
-            notifications.show("Playlist not found", NOTIFICATION_TYPES.ERROR);
+            notifications.show("Playlist not found", PAGE.NOTIFICATION_TYPES.ERROR);
             return;
         }
 
         pageLoader.start({ message: "Loading playlist..." });
 
         setTimeout(() => {
-            const dynamicContent = $byId(IDS.dynamicContent);
+            const dynamicContent = PAGE.dynamicContent;
             if (!dynamicContent) return;
 
             dynamicContent.innerHTML = `
@@ -2315,7 +2318,7 @@ const playlists = {
                         <button class="play-playlist-btn bg-accent-primary text-white px-8 py-3 rounded-full hover:bg-accent-secondary transition-colors flex items-center gap-2" data-playlist-id="${playlist.id}" ${
             playlist.songs.length === 0 ? "disabled" : ""
           }>
-                          ${ICONS.play}
+                          ${PAGE.ICONS.play}
                           Play
                         </button>
                         <button class="edit-playlist-btn bg-gray-600 text-white px-6 py-3 rounded-full hover:bg-gray-500 transition-colors" data-playlist-id="${playlist.id}">
@@ -2360,7 +2363,7 @@ const playlists = {
                           <div class="col-span-1 text-gray-400 group-hover:hidden">${index + 1}</div>
                           <div class="col-span-1 hidden group-hover:block">
                             <button class="play-song-btn w-8 h-8 bg-accent-primary rounded-full flex items-center justify-center hover:scale-110 transition-transform">
-                              ${ICONS.play}
+                              ${PAGE.ICONS.play}
                             </button>
                           </div>
                           <div class="col-span-5 flex items-center gap-3">
@@ -2407,7 +2410,7 @@ const playlists = {
         }, 200);
     },
 
-    bindEvents: (root = $byId(IDS.dynamicContent)) => {
+    bindEvents: (root = PAGE.dynamicContent) => {
         const dynamicContent = root;
         if (!dynamicContent) return;
 
@@ -2456,7 +2459,7 @@ const playlists = {
     },
 
     bindViewEvents: (playlist) => {
-        const dynamicContent = $byId(IDS.dynamicContent);
+        const dynamicContent = PAGE.dynamicContent;
         if (!dynamicContent) return;
 
         const playBtn = dynamicContent.querySelector(".play-playlist-btn");
@@ -2480,9 +2483,9 @@ const playlists = {
                 
                 if (newName && newName.trim() && newName.trim() !== playlist.name) {
                     playlist.name = newName.trim();
-                    storage.save(STORAGE_KEYS.PLAYLISTS, appState.playlists);
+                    storage.save(PAGE.STORAGE_KEYS.PLAYLISTS, appState.playlists);
                     playlists.show(playlist.id);
-                    notifications.show("Playlist renamed successfully", NOTIFICATION_TYPES.SUCCESS);
+                    notifications.show("Playlist renamed successfully", PAGE.NOTIFICATION_TYPES.SUCCESS);
                 }
             });
         }
@@ -2492,7 +2495,7 @@ const playlists = {
             deleteBtn.addEventListener("click", async () => {
                 if (await playlists.remove(playlist.id)) {
                     if (appState.router) {
-                        appState.router.navigateTo(ROUTES.HOME);
+                        appState.router.navigateTo(PAGE.ROUTES.HOME);
                     }
                 }
             });
@@ -2502,7 +2505,7 @@ const playlists = {
         if (browseBtn) {
             browseBtn.addEventListener("click", () => {
                 if (appState.router) {
-                    appState.router.navigateTo(ROUTES.HOME);
+                    appState.router.navigateTo(PAGE.ROUTES.HOME);
                 }
             });
         }
@@ -2534,7 +2537,7 @@ const playlists = {
                 e.stopPropagation();
                 const artistName = artistEl.dataset.artist;
                 if (appState.router) {
-                    appState.router.navigateTo(ROUTES.ARTIST, {
+                    appState.router.navigateTo(PAGE.ROUTES.ARTIST, {
                         artist: artistName,
                     });
                 }
@@ -2596,16 +2599,16 @@ const eventHandlers = {
   },
 
   bindControls: () => {
-    const nowPlayingTriggers = [DOM.nowPlayingArea, QUERY(NAVBAR.nowPlaying)].filter(Boolean);
+    const nowPlayingTriggers = [PAGE.nowPlayingArea, QUERY(PAGE.navbarNowPlaying)].filter(Boolean);
     nowPlayingTriggers.forEach(el => bindClick(el, () => musicPlayer.mainPlayer.toggle()));
     
-    const navbarPlayPause = QUERY(NAVBAR.playPause);
+    const navbarPlayPause = QUERY(PAGE.navbarPlayPause);
     if (navbarPlayPause) bindClick(navbarPlayPause, () => musicPlayer.mainPlayer.toggle());
     
-    const navbarPrevious = QUERY(NAVBAR.previous);
+    const navbarPrevious = QUERY(PAGE.navbarPrevious);
     if (navbarPrevious) bindClick(navbarPrevious, () => musicPlayer.playback.previous());
     
-    const navbarNext = QUERY(NAVBAR.next);
+    const navbarNext = QUERY(PAGE.navbarNext);
     if (navbarNext) bindClick(navbarNext, () => musicPlayer.playback.next());
   },
 
@@ -2657,13 +2660,13 @@ const eventHandlers = {
 
   bindPopups: () => {
     const popupControlsMap = {
-      [MUSIC_PLAYER.close]: musicPlayer.mainPlayer.close,
-      [MUSIC_PLAYER.play]: musicPlayer.playback.play,
-      [MUSIC_PLAYER.previous]: musicPlayer.playback.previous,
-      [MUSIC_PLAYER.next]: musicPlayer.playback.next,
-      [MUSIC_PLAYER.shuffle]: musicPlayer.playback.shuffle.toggle,
-      [MUSIC_PLAYER.repeat]: musicPlayer.playback.repeat.toggle,
-      [MUSIC_PLAYER.favoriteBtn]: () => {
+      [PAGE.musicPlayerCloseBtn]: musicPlayer.mainPlayer.close,
+      [PAGE.playBtn]: musicPlayer.playback.play,
+      [PAGE.prevBtn]: musicPlayer.playback.previous,
+      [PAGE.nextBtn]: musicPlayer.playback.next,
+      [PAGE.musicPlayershuffle]: musicPlayer.playback.shuffle.toggle,
+      [PAGE.musicPlayerrepeat]: musicPlayer.playback.repeat.toggle,
+      [PAGE.favoriteBtn]: () => {
         if (appState.currentSong) {
           appState.favorites.toggle("songs", appState.currentSong.id);
           ui.updateFavoriteButton();
@@ -2684,7 +2687,7 @@ const eventHandlers = {
   },
 
   bindProgress: () => {
-    const progressBar = QUERY(MUSIC_PLAYER.progressBar);
+    const progressBar = QUERY(PAGE.musicPlayerprogressBar);
     if (!progressBar) return;
     
     const handleProgressClick = (e) => {
@@ -2796,15 +2799,15 @@ const eventHandlers = {
     if (document._docClickHandler) document.removeEventListener("click", document._docClickHandler);
     
     const documentClickHandler = (e) => {
-      const dropdownMenu = DOM.dropdownMenu;
-      const menuTrigger = DOM.menuTrigger;
+      const dropdownMenu = PAGE.dropdownMenu;
+      const menuTrigger = PAGE.menuTrigger;
       
       if (dropdownMenu && !dropdownMenu.contains(e.target) && !menuTrigger?.contains(e.target)) {
         dropdown.close();
       }
       
-      const drawerEl = DOM.drawer;
-      const nowPlayingEl = QUERY(NAVBAR.nowPlaying);
+      const drawerEl = PAGE.drawer;
+      const nowPlayingEl = QUERY(PAGE.navbarNowPlaying);
       
       if (appState.isPopupVisible && drawerEl && !drawerEl.contains(e.target) && !nowPlayingEl?.contains(e.target)) {
         musicPlayer.mainPlayer.close();
@@ -2818,16 +2821,16 @@ const eventHandlers = {
         
         if (appState.router) {
           const navHandlers = {
-            [ROUTES.HOME]: () => appState.router.navigateTo(ROUTES.HOME),
-            [ROUTES.ALL_ARTISTS]: () => appState.router.navigateTo(ROUTES.ALL_ARTISTS),
-            [ROUTES.ARTIST]: () => {
+            [PAGE.ROUTES.HOME]: () => appState.router.navigateTo(PAGE.ROUTES.HOME),
+            [PAGE.ROUTES.ALL_ARTISTS]: () => appState.router.navigateTo(PAGE.ROUTES.ALL_ARTISTS),
+            [PAGE.ROUTES.ARTIST]: () => {
               const artistName = navItem.dataset.artist;
-              if (artistName) appState.router.navigateTo(ROUTES.ARTIST, { artist: artistName });
+              if (artistName) appState.router.navigateTo(PAGE.ROUTES.ARTIST, { artist: artistName });
             },
-            [ROUTES.ALBUM]: () => {
+            [PAGE.ROUTES.ALBUM]: () => {
               const artist = navItem.dataset.artist;
               const album = navItem.dataset.album;
-              if (artist && album) appState.router.navigateTo(ROUTES.ALBUM, { artist, album });
+              if (artist && album) appState.router.navigateTo(PAGE.ROUTES.ALBUM, { artist, album });
             },
           };
           
@@ -2835,7 +2838,7 @@ const eventHandlers = {
         }
       }
       
-      if (e.target.closest("#" + IDS.globalSearchTrigger)) {
+      if (e.target.closest("#" + PAGE.globalSearchTrigger)) {
         e.preventDefault();
         dropdown.close();
         if (appState.router) appState.router.openSearchDialog();
