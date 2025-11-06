@@ -8,7 +8,7 @@ import {
   navigation
 } from '../global.js';
 
-import { ROUTES } from '../map.js';
+import { ROUTES } from '../global.js';
 
 
 
