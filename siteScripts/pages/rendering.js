@@ -358,7 +358,7 @@ export const navigation = {
       pageLoader.start({ message: "Loading Music..." });
 
       if (appState.homePageManager) {
-        const dynamicContent = $byId(IDS.dynamicContent);
+        const dynamicContent = PAGE.dynamicContent;
         if (dynamicContent) {
           dynamicContent.innerHTML = "";
         }
@@ -397,7 +397,7 @@ export const navigation = {
     loadArtistPage: function (artistData, targetAlbumName = null) {
       pageLoader.start({ message: "Finding Artist..." });
 
-      const dynamicContent = $byId(IDS.dynamicContent);
+      const dynamicContent = PAGE.dynamicContent;
       if (!dynamicContent) return;
 
       dynamicContent.innerHTML = "";
@@ -412,7 +412,7 @@ export const navigation = {
     loadAllArtistsPage: function () {
       pageLoader.start({ message: "Loading library..." });
 
-      const dynamicContent = $byId(IDS.dynamicContent);
+      const dynamicContent = PAGE.dynamicContent;
       if (!dynamicContent || !window.music) return;
 
       dynamicContent.innerHTML = "";
@@ -429,7 +429,7 @@ export const navigation = {
 
   rendering: {
     renderArtistPage: function (artistData, targetAlbumName = null) {
-      const dynamicContent = $byId(IDS.dynamicContent);
+      const dynamicContent = PAGE.dynamicContent;
       if (!dynamicContent) return;
 
       dynamicContent.innerHTML = render.artist("enhancedArtist", {
@@ -469,7 +469,7 @@ export const navigation = {
     },
 
     setupAlbumsSection: function (artistData, targetAlbumName = null) {
-      const albumsContainer = $byId(IDS.albumsContainer);
+      const albumsContainer = PAGE.albumsContainer;
       if (!albumsContainer || !artistData.albums.length) return;
 
       albumsContainer.innerHTML = render.album("section", { albums: artistData.albums });
@@ -635,12 +635,12 @@ export const navigation = {
     },
 
     renderAllArtistsPage: function () {
-      const dynamicContent = $byId(IDS.dynamicContent);
+      const dynamicContent = PAGE.dynamicContent;
       if (!dynamicContent || !window.music) return;
 
       dynamicContent.innerHTML = render.page("allArtists");
 
-      const artistsGrid = $byId(IDS.artistsGrid);
+      const artistsGrid = PAGE.artistsGrid;
       if (artistsGrid) {
         window.music.forEach(function (artist, index) {
           const artistCard = document.createElement("div");
@@ -737,7 +737,7 @@ export const navigation = {
     },
 
     bindAllArtistsEvents: function () {
-      const artistSearch = $byId(IDS.artistSearch);
+      const artistSearch = PAGE.artistSearch;
       if (artistSearch) {
         artistSearch.addEventListener("input", function (e) {
           const query = e.target.value.toLowerCase().trim();
@@ -750,7 +750,7 @@ export const navigation = {
         });
       }
 
-      const genreFilters = $byId(IDS.genreFilters);
+      const genreFilters = PAGE.genreFilters;
       if (genreFilters && window.music) {
         const genres = new Set();
         window.music.forEach(function (artist) {
