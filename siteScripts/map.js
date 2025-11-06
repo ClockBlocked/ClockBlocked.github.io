@@ -1,9 +1,3 @@
-/**
- * ═══════════════════════════════════════════════════════════════
- *  MYBEATS - ELEMENT REGISTRY & CONSTANTS
- * ═══════════════════════════════════════════════════════════════
- */
-
 const elementCache = new Map();
 
 export const DOM = new Proxy({}, {
@@ -33,91 +27,122 @@ export function clearElementCache() {
   console.log('🗑️ Element cache cleared');
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  GLOBAL ELEMENT IDS (NOT in drawer/navbar)
-// ═══════════════════════════════════════════════════════════════
-
 export const IDS = Object.freeze({
-  // Theme & Search
   themeToggle: "theme-toggle",
   globalSearchTrigger: "global-search-trigger",
   searchDialog: "search-dialog",
   globalSearchForm: "global-search-form",
   globalSearchInput: "global-search-input",
   recentSearchesList: "recent-searches-list",
-  
-  // Modals & Overlays
   popoverPortal: "popover-portal",
-  searchModal: "searchModal",
-  searchInput: "searchInput",
-  clearSearch: "clearSearch",
-  closeSearch: "closeSearch",
-  searchResults: "searchResults",
-  recentSearches: "recentSearches",
-  recentSearchList: "recentSearchList",
-  clearRecentBtn: "clearRecentBtn",
-  recentSearchesEmpty: "recentSearchesEmpty",
-  searchResultsContent: "searchResultsContent",
-  songsResults: "songsResults",
-  songsList: "songsList",
-  artistsResults: "artistsResults",
-  artistsList: "artistsList",
-  albumsResults: "albumsResults",
-  albumsList: "albumsList",
-  noResults: "noResults",
-  searchLoading: "searchLoading",
-  
-  // Dropdown Menu
   willHideMenu: "will-hide-menu",
   menuTrigger: "menu-trigger",
   dropdownMenu: "dropdown-menu",
   dropdownClose: "dropdown-close",
-  
-  // Menu Items
   favoriteSongs: "favorite-songs",
   favoriteArtists: "favorite-artists",
-  favoriteAlbums: "favorite-albums",
   createPlaylist: "create-playlist",
   favoriteSongsCount: "favorite-songs-count",
   favoriteArtistsCount: "favorite-artists-count",
   recentlyPlayed: "recently-played",
   queueView: "queue-view",
+  recentCount: "recent-count",
+  queueCount: "queue-count",
+  recentlyPlayedSection: "recently-played-section",
+  randomAlbumsSection: "random-albums-section",
+  favoriteArtistsSection: "favorite-artists-section",
+  playlistsSection: "playlists-section",
+  favoriteSongsSection: "favorite-songs-section",
+  searchMusic: "search-music",
   shuffleAll: "shuffle-all",
   appSettings: "app-settings",
   aboutApp: "about-app",
-  searchTrigger: "searchTrigger",
-  
-  // Content Sections
   dynamicContent: "dynamic-content",
   contentLoading: "content-loading",
   albumsContainer: "albumWrapper",
   artistsGrid: "artists-grid",
   artistSearch: "artist-search",
   genreFilters: "genre-filters",
-  featuredArtists: "featured-artists",
-  
-  // Page Structure
-  pageWrapper: "pageWrapper",
-  mainArea: "mainArea",
-  mainContainer: "main-container",
-  contentWrapper: "contentWrapper",
-  
-  // PWA
-  pwaInstallBanner: "pwa-install-banner",
-  pwaDownloadLink: "pwa-download-link",
-  pwaDismiss: "pwa-dismiss",
-  
-  // Sections
-  recentlyPlayedSection: "recently-played-section",
-  randomAlbumsSection: "random-albums-section",
-  favoriteArtistsSection: "favorite-artists-section",
-  playlistsSection: "playlists-section",
-  favoriteSongsSection: "favorite-songs-section",
+  seekTooltip: "seek-tooltip",
+  drawer: "drawer",
+  drawerHandle: "drawerHandle",
+  musicPlayer: "musicPlayer",
+  albumCover: "albumCover", 
+  songTitle: "songTitle",
+  artistName: "artistName",
+  albumName: "albumName",
+  playBtn: "playBtn",
+  prevBtn: "prevBtn", 
+  nextBtn: "nextBtn",
+  rewindBtn: "rewindBtn",
+  forwardBtn: "forwardBtn",
+  shuffleBtn: "shuffleBtn",
+  repeatBtn: "repeatBtn",
+  favoriteBtn: "favoriteBtn",
+  queueBtn: "queueBtn",
+  shareBtn: "shareBtn",
+  moreBtn: "moreBtn",
+  progressBar: "progressBar",
+  progressFill: "progressFill", 
+  progressThumb: "progressThumb",
+  currentTime: "currentTime",
+  totalTime: "totalTime",
+  queueList: "queueList",
+  recentList: "recentList",
+  playPauseNavbar: "play-pause-navbar",
+  prevBtnNavbar: "prev-btn-navbar",
+  nextBtnNavbar: "next-btn-navbar",
+  playIconNavbar: "play-icon-navbar",
+  pauseIconNavbar: "pause-icon-navbar",
+  nowPlayingArea: "now-playing-area",
 });
 
-// ═══════════════════════════════════════════════════════════════
-//  MUSIC PLAYER (Drawer) - Selector-based
-// ═══════════════════════════════════════════════════════════════
+export const CLASSES = Object.freeze({
+  hidden: "hidden",
+  searchDialogOpening: "search-dialog-opening",
+  searchDialogClosing: "search-dialog-closing",
+  hasSong: "has-song",
+  light: "light",
+  medium: "medium",
+  show: "show",
+  active: "active",
+  marquee: "marquee",
+  repeatOne: "repeat-one",
+  animateRotate: "animate__animated animate__rotateIn",
+  animateFadeIn: "animate__animated animate__fadeIn",
+  animateZoomIn: "animate__animated animate__zoomIn",
+  animatePulse: "animate__animated animate__pulse",
+  imageFallback: "image-fallback",
+  imageLoaded: "image-loaded",
+  imageError: "image-error",
+  imageLoading: "image-loading",
+  playing: "playing",
+});
+
+export const THEMES = Object.freeze({
+  DARK: "dark",
+  MEDIUM: "dim",
+  LIGHT: "light",
+});
+
+export const ICONS = Object.freeze({
+  dark: '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 116.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>',
+  medium: '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2L13 9h7l-5.5 4 2 7L10 16l-6.5 4 2-7L1 9h7l2-7z"/></svg>',
+  light: '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd" /></svg>',
+  play: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M424.4 214.7L72.4 6.6C43.8-10.3 0 6.1 0 47.9V464c0 37.5 40.7 60.1 72.4 41.3l352-208c31.4-18.5 31.5-64.1 0-82.6z"/></svg>',
+  pause: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M144 479H48c-26.5 0-48-21.5-48-48V79c0-26.5 21.5-48 48-48h96c26.5 0 48 21.5 48 48v352c0 26.5-21.5 48-48 48zm192-48V79c0-26.5-21.5-48-48-48h-96c-26.5 0-48 21.5-48 48v352c0 26.5 21.5 48 48 48h96c26.5 0 48-21.5 48-48z"/></svg>',
+  next: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M361 215C375.3 223.8 384 239.3 384 256C384 272.7 375.3 288.2 361 296.1L73.03 472.1C58.21 482 39.66 482.4 24.52 473.9C9.377 465.4 0 449.4 0 432V80C0 62.64 9.377 46.63 24.52 38.13C39.66 29.64 58.21 29.99 73.03 39.04L361 215z"/></svg>',
+  prev: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>',
+  shuffle: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg>',
+  repeat: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg>',
+  heart: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>',
+  close: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>',
+  rewind: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M361 215C375.3 223.8 384 239.3 384 256C384 272.7 375.3 288.2 361 296.1L73.03 472.1C58.21 482 39.66 482.4 24.52 473.9C9.377 465.4 0 449.4 0 432V80C0 62.64 9.377 46.63 24.52 38.13C39.66 29.64 58.21 29.99 73.03 39.04L361 215z"/></svg>',
+  forward: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M512 256C512 273.7 502.6 289.7 487.5 298.1L199.5 473.9C184.4 482.4 165.8 482 151 473.5C136.1 464.1 128 448.1 128 431.1V335.1L23.01 407.8C7.878 416.3-10.74 415.9-25.56 407.5C-40.41 398.1-48 383.1-48 365.1V146.9c0-17.1 8.406-33.03 23.25-41.53c14.82-8.406 33.43-8.031 48.56 .4688l104.1 72.76V79.1c0-17.1 8.406-33.03 23.25-41.53c14.82-8.406 33.43-8.031 48.56 .4688l287.1 175.9C503.4 222.3 512 238.3 512 255.1L512 256z"/></svg>',
+  queue: '<svg fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/></svg>',
+  share: '<svg fill="currentColor" viewBox="0 0 20 20"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"/></svg>',
+  more: '<svg fill="currentColor" viewBox="0 0 20 20"><path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/></svg>'  
+});
 
 export const MUSIC_PLAYER = (() => {
   const parent = "#drawer";
@@ -126,73 +151,56 @@ export const MUSIC_PLAYER = (() => {
     handle: `${parent} .musicPlayerDragHandle`,
     close: `${parent} #closeBtn`,
     curtain: `${parent} .musicPlayerCurtain`,
-    scroller: `${parent} .drawerScroller`,
-    slide: `${parent} .drawerSlide`,
-    inner: `${parent} .drawerInner`,
-    content: `${parent} .drawerContent`,
+    scroller: `${parent} .musicPlayerScroller`,
+    slide: `${parent} .musicPlayerSlide`,
+    inner: `${parent} .musicPlayerInner`,
+    content: `${parent} .musicPlayerContent`,
     activeContent: `${parent} .musicPlayerPanel.active`,
-    
-    // Tabs
     tabs: `${parent} .musicPlayerTab`,
     activeTab: `${parent} .musicPlayerTab.active`,
     tabsWrapper: `${parent} .musicPlayerTabsWrapper`,
     tabSlider: `${parent} .musicPlayerTabSlider`,
-    tabsContainer: `${parent} .tabsContainer`,
-    
-    // Now Playing
     nowPlaying: `${parent} .musicPlayerNowPlaying`,
     coverWrapper: `${parent} .musicPlayerCoverWrapper`,
     albumArtwork: `${parent} #cover`,
     coverGlow: `${parent} .musicPlayerCoverGlow`,
     separator: `${parent} .musicPlayerSeparator`,
-    
-    // Song Info
     songInfo: `${parent} .musicPlayerInfo`,
     songDetails: `${parent} .musicPlayerDetails`,
     songName: `${parent} #title`,
     artistName: `${parent} #artist`,
     albumName: `${parent} #album`,
-    
-    // Progress
     progressSection: `${parent} .musicPlayerProgressSection`,
     progressBar: `${parent} #progressBar`,
     progressBuffer: `${parent} #progressBuffer`,
     progressFill: `${parent} #progressFill`,
     progressThumb: `${parent} #progressThumb`,
     timeDisplay: `${parent} .musicPlayerTimeDisplay`,
-    currentTime: `${parent} #currentTime`,
-    totalTime: `${parent} #totalTime`,
-    
-    // Controls
+    currentTime: `${parent} #current`,
+    totalTime: `${parent} #total`,
     controls: `${parent} .musicPlayerControls`,
     play: `${parent} #playBtn`,
     previous: `${parent} #prevBtn`,
     next: `${parent} #nextBtn`,
     reWind: `${parent} #rewindBtn`,
     fastForward: `${parent} #forwardBtn`,
-    
-    // Actions
     actions: `${parent} .musicPlayerActions`,
     favoriteBtn: `${parent} #favoriteBtn`,
     queueBtn: `${parent} #queueBtn`,
     shareBtn: `${parent} #shareBtn`,
     moreBtn: `${parent} #moreBtn`,
-    
-    // Lists
     listHeader: `${parent} .musicPlayerListHeader`,
     listTitle: `${parent} .musicPlayerListTitle`,
     listCount: `${parent} .musicPlayerListCount`,
     list: `${parent} .musicPlayerList`,
     queueList: `${parent} #queueList`,
+    queueCount: `${parent} #queueCount`,
     recentList: `${parent} #recentList`,
-    
-    // Empty States
+    recentCount: `${parent} #recentCount`,
     empty: `${parent} .musicPlayerEmpty`,
     emptyIcon: `${parent} .musicPlayerEmptyIcon`,
     emptyText: `${parent} .musicPlayerEmptyText`,
     emptySubtext: `${parent} .musicPlayerEmptySubtext`,
-    
-    // List Items
     listItem: `${parent} .musicPlayerListItem`,
     listItemArt: `${parent} .musicPlayerListItemArt`,
     listItemInfo: `${parent} .musicPlayerListItemInfo`,
@@ -200,8 +208,6 @@ export const MUSIC_PLAYER = (() => {
     listItemArtist: `${parent} .musicPlayerListItemArtist`,
     listItemActions: `${parent} .musicPlayerListItemActions`,
     listItemAction: `${parent} .musicPlayerListItemAction`,
-    
-    // Classes (state modifiers)
     classes: {
       active: 'active',
       playing: 'isPlaying',
@@ -210,15 +216,11 @@ export const MUSIC_PLAYER = (() => {
       hovering: 'isHovering',
       loading: 'loading'
     },
-    
-    // Tab names
     tabs: {
       playing: 'playing',
       recent: 'recent',
       queue: 'queue'
     },
-    
-    // Animation durations
     animations: {
       backdropFadeIn: 400,
       drawerSlideUp: 500,
@@ -228,8 +230,6 @@ export const MUSIC_PLAYER = (() => {
       waveFlow: 8000,
       heartBeat: 600
     },
-    
-    // Skip times
     skipTimes: {
       rewind: -10,
       forward: 10
@@ -237,44 +237,24 @@ export const MUSIC_PLAYER = (() => {
   });
 })();
 
-// ═══════════════════════════════════════════════════════════════
-//  NAVBAR - Selector-based
-// ═══════════════════════════════════════════════════════════════
-
 export const NAVBAR = (() => {
   const parent = "#navbar";
   return Object.freeze({
     root: parent,
-    content: `${parent} .navbar-content`,
-    left: `${parent} .navbar-left`,
-    center: `${parent} .navbar-center`,
-    right: `${parent} .navbar-right`,
-    
-    // Now Playing Area
     nowPlaying: `${parent} #now-playing-area`,
-    nowPlayingDiv: `${parent} .nowPlaying`,
     albumArtwork: `${parent} .albumArtwork`,
-    songInfo: `${parent} .songInfo`,
     artistName: `${parent} .artistName`,
     songName: `${parent} .songName`,
     playIndicator: `${parent} #play-indicator`,
-    
-    // Controls
-    navControls: `${parent} .nav-controls`,
     previous: `${parent} .previous`,
     next: `${parent} .next`,
     playPause: `${parent} .playPause`,
     play: `${parent} #play-icon-navbar`,
     pause: `${parent} #pause-icon-navbar`,
-    
-    // Menu
     menuTrigger: `${parent} #menu-trigger`,
+    nextNavbar: `${parent} .next`,
   });
 })();
-
-// ═══════════════════════════════════════════════════════════════
-//  MODAL SELECTORS
-// ═══════════════════════════════════════════════════════════════
 
 export const MODALS = Object.freeze({
   modalClose: ".modal .close",
@@ -282,42 +262,26 @@ export const MODALS = Object.freeze({
   dropdownClose: "#dropdown-menu .close",
 });
 
-// ═══════════════════════════════════════════════════════════════
-//  CSS CLASSES
-// ═══════════════════════════════════════════════════════════════
-
-export const CLASSES = Object.freeze({
-  hidden: "hidden",
-  show: "show",
-  active: "active",
-  playing: "playing",
-  loading: "loading",
-  hasSong: "has-song",
-  marquee: "marquee",
-  repeatOne: "repeat-one",
-  light: "light",
-  medium: "medium",
-  searchDialogOpening: "search-dialog-opening",
-  searchDialogClosing: "search-dialog-closing",
-  animateRotate: "animate__animated animate__rotateIn",
-  animateFadeIn: "animate__animated animate__fadeIn",
-  animateZoomIn: "animate__animated animate__zoomIn",
-  animatePulse: "animate__animated animate__pulse",
-  imageFallback: "image-fallback",
-  imageLoaded: "image-loaded",
-  imageError: "image-error",
-  imageLoading: "image-loading",
+export const NOTIFICATION_TYPES = Object.freeze({
+  INFO: "info",
+  SUCCESS: "success",
+  WARNING: "warning",
+  ERROR: "error",
 });
 
-// ═══════════════════════════════════════════════════════════════
-//  CONSTANTS
-// ═══════════════════════════════════════════════════════════════
+export const TOAST_ICONS = {
+  [NOTIFICATION_TYPES.INFO]: '<svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16Zm.75-11.5a.75.75 0 10-1.5 0v.5a.75.75 0 001.5 0v-.5ZM9 9.75A.75.75 0 019.75 9h.5a.75.75 0 01.75.75v4.5a.75.75 0 01-.75.75h-.5a.75.75 0 01-.75-.75v-4.5Z"/></svg>',
+  [NOTIFICATION_TYPES.SUCCESS]: '<svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16Zm3.707-9.707a1 1 0 00-1.414-1.414L9 10.172 7.707 8.879a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4Z"/></svg>',
+  [NOTIFICATION_TYPES.WARNING]: '<svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor"><path d="M8.257 3.099c.765-1.36 2.721-1.36 3.486 0l6.518 11.592c.75 1.335-.212 3.009-1.743 3.009H3.482c-1.531 0-2.493-1.674-1.743-3.009L8.257 3.1ZM11 13a1 1 0 11-2 0 1 1 0 012 0Zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1Z"/></svg>',
+  [NOTIFICATION_TYPES.ERROR]: '<svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16ZM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22Z"/></svg>',
+};
 
-export const THEMES = Object.freeze({
-  DARK: "dark",
-  MEDIUM: "dim",
-  LIGHT: "light",
-});
+export const TOAST_STYLES = {
+  [NOTIFICATION_TYPES.INFO]: { base: "bg-blue-600/95 border-blue-500 text-white", bar: "bg-white/70" },
+  [NOTIFICATION_TYPES.SUCCESS]: { base: "bg-emerald-600/95 border-emerald-500 text-white", bar: "bg-white/70" },
+  [NOTIFICATION_TYPES.WARNING]: { base: "bg-amber-600/95 border-amber-500 text-white", bar: "bg-white/80" },
+  [NOTIFICATION_TYPES.ERROR]: { base: "bg-rose-600/95 border-rose-500 text-white", bar: "bg-white/70" },
+};
 
 export const ROUTES = Object.freeze({
   HOME: "home",
@@ -346,48 +310,8 @@ export const REPEAT_MODES = Object.freeze({
   ONE: "one",
 });
 
-export const NOTIFICATION_TYPES = Object.freeze({
-  INFO: "info",
-  SUCCESS: "success",
-  WARNING: "warning",
-  ERROR: "error",
-});
-
-export const ICONS = Object.freeze({
-  dark: '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 116.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>',
-  medium: '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2L13 9h7l-5.5 4 2 7L10 16l-6.5 4 2-7L1 9h7l2-7z"/></svg>',
-  light: '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd" /></svg>',
-  play: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M424.4 214.7L72.4 6.6C43.8-10.3 0 6.1 0 47.9V464c0 37.5 40.7 60.1 72.4 41.3l352-208c31.4-18.5 31.5-64.1 0-82.6z"/></svg>',
-  pause: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M144 479H48c-26.5 0-48-21.5-48-48V79c0-26.5 21.5-48 48-48h96c26.5 0 48 21.5 48 48v352c0 26.5-21.5 48-48 48zm192-48V79c0-26.5-21.5-48-48-48h-96c-26.5 0-48 21.5-48 48v352c0 26.5 21.5 48 48 48h96c26.5 0 48-21.5 48-48z"/></svg>',
-  next: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M361 215C375.3 223.8 384 239.3 384 256C384 272.7 375.3 288.2 361 296.1L73.03 472.1C58.21 482 39.66 482.4 24.52 473.9C9.377 465.4 0 449.4 0 432V80C0 62.64 9.377 46.63 24.52 38.13C39.66 29.64 58.21 29.99 73.03 39.04L361 215z"/></svg>',
-  prev: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>',
-  shuffle: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg>',
-  repeat: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg>',
-  heart: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>',
-  close: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>',
-  rewind: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M361 215C375.3 223.8 384 239.3 384 256C384 272.7 375.3 288.2 361 296.1L73.03 472.1C58.21 482 39.66 482.4 24.52 473.9C9.377 465.4 0 449.4 0 432V80C0 62.64 9.377 46.63 24.52 38.13C39.66 29.64 58.21 29.99 73.03 39.04L361 215z"/></svg>',
-  forward: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M512 256C512 273.7 502.6 289.7 487.5 298.1L199.5 473.9C184.4 482.4 165.8 482 151 473.5C136.1 464.1 128 448.1 128 431.1V335.1L23.01 407.8C7.878 416.3-10.74 415.9-25.56 407.5C-40.41 398.1-48 383.1-48 365.1V146.9c0-17.1 8.406-33.03 23.25-41.53c14.82-8.406 33.43-8.031 48.56 .4688l104.1 72.76V79.1c0-17.1 8.406-33.03 23.25-41.53c14.82-8.406 33.43-8.031 48.56 .4688l287.1 175.9C503.4 222.3 512 238.3 512 255.1L512 256z"/></svg>',
-  queue: '<svg fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/></svg>',
-  share: '<svg fill="currentColor" viewBox="0 0 20 20"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"/></svg>',
-  more: '<svg fill="currentColor" viewBox="0 0 20 20"><path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/></svg>'  
-});
-
-export const TOAST_ICONS = {
-  [NOTIFICATION_TYPES.INFO]: '<svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16Zm.75-11.5a.75.75 0 10-1.5 0v.5a.75.75 0 001.5 0v-.5ZM9 9.75A.75.75 0 019.75 9h.5a.75.75 0 01.75.75v4.5a.75.75 0 01-.75.75h-.5a.75.75 0 01-.75-.75v-4.5Z"/></svg>',
-  [NOTIFICATION_TYPES.SUCCESS]: '<svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16Zm3.707-9.707a1 1 0 00-1.414-1.414L9 10.172 7.707 8.879a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4Z"/></svg>',
-  [NOTIFICATION_TYPES.WARNING]: '<svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor"><path d="M8.257 3.099c.765-1.36 2.721-1.36 3.486 0l6.518 11.592c.75 1.335-.212 3.009-1.743 3.009H3.482c-1.531 0-2.493-1.674-1.743-3.009L8.257 3.1ZM11 13a1 1 0 11-2 0 1 1 0 012 0Zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1Z"/></svg>',
-  [NOTIFICATION_TYPES.ERROR]: '<svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16ZM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22Z"/></svg>',
-};
-
-export const TOAST_STYLES = {
-  [NOTIFICATION_TYPES.INFO]: { base: "bg-blue-600/95 border-blue-500 text-white", bar: "bg-white/70" },
-  [NOTIFICATION_TYPES.SUCCESS]: { base: "bg-emerald-600/95 border-emerald-500 text-white", bar: "bg-white/70" },
-  [NOTIFICATION_TYPES.WARNING]: { base: "bg-amber-600/95 border-amber-500 text-white", bar: "bg-white/80" },
-  [NOTIFICATION_TYPES.ERROR]: { base: "bg-rose-600/95 border-rose-500 text-white", bar: "bg-white/70" },
-};
-
 // ═══════════════════════════════════════════════════════════════
-//  LEGACY HELPERS (backwards compatibility)
+//  LEGACY HELPERS (backwards compatibility with existing code)
 // ═══════════════════════════════════════════════════════════════
 
 export const $ = new Proxy({}, {
