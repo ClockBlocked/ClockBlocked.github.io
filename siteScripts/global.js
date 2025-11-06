@@ -1215,7 +1215,7 @@ const notificationPlayer = {
 const musicPlayer = {
     mainPlayer: {
         open: () => {
-            const drawer = document.querySelector(PAGE.drawer);
+            const drawer = document.querySelector('#drawer');
             if (!drawer) return;
             
             // Show the popover first
@@ -1225,7 +1225,7 @@ const musicPlayer = {
             drawer.offsetHeight;
             
             appState.isPopupVisible = true;
-            musicPlayer.mainPlayer.updateTabContent(appState.currentTab || PAGE.musicPlayerTabs.playing);
+            musicPlayer.mainPlayer.updateTabContent(appState.currentTab || 'playing');
             
             if (appState.currentSong) {
                 musicPlayer.ui.updateNowPlaying();
@@ -1233,7 +1233,7 @@ const musicPlayer = {
         },
         
         close: () => {
-            const drawer = document.querySelector(PAGE.drawer);
+            const drawer = document.querySelector('#drawer');
             if (!drawer) return;
             
             // Wait for the CSS transition to complete before hiding the popover
@@ -1241,7 +1241,7 @@ const musicPlayer = {
                 drawer.removeEventListener('transitionend', handleTransitionEnd);
                 drawer.hidePopover();
                 appState.isPopupVisible = false;
-                setTimeout(() => musicPlayer.mainPlayer.switchTab(PAGE.musicPlayerTabs.playing), 50);
+                setTimeout(() => musicPlayer.mainPlayer.switchTab('playing'), 50);
                 
                 // Reset transform for next open
                 setTimeout(() => {
@@ -1258,7 +1258,7 @@ const musicPlayer = {
         },
         
         toggle: () => {
-            const drawer = document.querySelector(PAGE.drawer);
+            const drawer = document.querySelector('#drawer');
             if (!drawer) return;
             
             if (drawer.matches(':popover-open')) {
@@ -1272,12 +1272,12 @@ const musicPlayer = {
             appState.currentTab = tabName;
             
             // FIXED: Use correct selectors for tabs
-            document.querySelectorAll('.music-player__tab').forEach(tab => {
+            document.querySelectorAll('.musicPlayerTab').forEach(tab => {
                 tab.classList.toggle('active', tab.dataset.tab === tabName);
             });
             
             // FIXED: Use correct selectors for panels
-            document.querySelectorAll('.music-player__panel').forEach(content => {
+            document.querySelectorAll('.musicPlayerPanel').forEach(content => {
                 content.classList.toggle('active', content.dataset.tab === tabName);
             });
             
@@ -1285,44 +1285,44 @@ const musicPlayer = {
         },
         
         updateTabContent: (tabName) => {
-            if (tabName === PAGE.musicPlayerTabs.recent) musicPlayer.mainPlayer.updateRecentTab();
-            else if (tabName === PAGE.musicPlayerTabs.queue) musicPlayer.mainPlayer.updateQueueTab();
+            if (tabName === 'recent') musicPlayer.mainPlayer.updateRecentTab();
+            else if (tabName === 'queue') musicPlayer.mainPlayer.updateQueueTab();
         },
         
         updateQueueTab: () => {
-            const queueList = document.querySelector(PAGE.queueList);
+            const queueList = document.querySelector('#drawer #queue');
             if (!queueList) return;
             
-            const emptyState = queueList.querySelector('.music-player__empty');
+            const emptyState = queueList.querySelector('.musicPlayerEmpty');
             
             if (appState.queue.items.length === 0) {
                 if (emptyState) emptyState.style.display = 'flex';
-                const items = queueList.querySelectorAll('.music-player__list-item');
+                const items = queueList.querySelectorAll('.musicPlayerListItem');
                 items.forEach(item => item.remove());
                 return;
             }
             
             if (emptyState) emptyState.style.display = 'none';
             
-            const existingItems = queueList.querySelectorAll('.music-player__list-item');
+            const existingItems = queueList.querySelectorAll('.musicPlayerListItem');
             existingItems.forEach(item => item.remove());
             
             appState.queue.items.forEach((song, index) => {
                 const listItem = document.createElement('li');
-                listItem.className = `music-player__list-item ${index === appState.queue.currentIndex ? 'active' : ''}`;
+                listItem.className = `musicPlayerListItem ${index === appState.queue.currentIndex ? 'active' : ''}`;
                 listItem.innerHTML = `
-                    <img src="${song.cover || utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="music-player__list-item-art">
-                    <div class="music-player__list-item-info">
-                        <div class="music-player__list-item-title">${song.title}</div>
-                        <div class="music-player__list-item-artist">${song.artist}</div>
+                    <img src="${song.cover || utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="musicPlayerListItemArt">
+                    <div class="musicPlayerListItemInfo">
+                        <div class="musicPlayerListItemTitle">${song.title}</div>
+                        <div class="musicPlayerListItemArtist">${song.artist}</div>
                     </div>
-                    <div class="music-player__list-item-actions">
-                        <button class="music-player__list-item-action" data-action="play" title="Play">
+                    <div class="musicPlayerListItemActions">
+                        <button class="musicPlayerListItemAction" data-action="play" title="Play">
                             <svg viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M8 5v14l11-7z"/>
                             </svg>
                         </button>
-                        <button class="music-player__list-item-action" data-action="remove" title="Remove">
+                        <button class="musicPlayerListItemAction" data-action="remove" title="Remove">
                             <svg viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
                             </svg>
@@ -1352,46 +1352,46 @@ const musicPlayer = {
                 queueList.appendChild(listItem);
             });
             
-            const queueCount = document.querySelector(PAGE.musicPlayerQueueCount);
+            const queueCount = document.querySelector('#drawer #queueCount');
             if (queueCount) {
                 queueCount.textContent = `${appState.queue.items.length} song${appState.queue.items.length !== 1 ? 's' : ''}`;
             }
         },
         
         updateRecentTab: () => {
-            const recentList = document.querySelector(PAGE.recentList);
+            const recentList = document.querySelector('#drawer #recentList');
             if (!recentList) return;
             
-            const emptyState = recentList.querySelector('.music-player__empty');
+            const emptyState = recentList.querySelector('.musicPlayerEmpty');
             
             if (!appState.recentlyPlayed || appState.recentlyPlayed.length === 0) {
                 if (emptyState) emptyState.style.display = 'flex';
-                const items = recentList.querySelectorAll('.music-player__list-item');
+                const items = recentList.querySelectorAll('.musicPlayerListItem');
                 items.forEach(item => item.remove());
                 return;
             }
             
             if (emptyState) emptyState.style.display = 'none';
             
-            const existingItems = recentList.querySelectorAll('.music-player__list-item');
+            const existingItems = recentList.querySelectorAll('.musicPlayerListItem');
             existingItems.forEach(item => item.remove());
             
             appState.recentlyPlayed.slice(0, 20).forEach((song, index) => {
                 const listItem = document.createElement('li');
-                listItem.className = 'music-player__list-item';
+                listItem.className = 'musicPlayerListItem';
                 listItem.innerHTML = `
-                    <img src="${song.cover || utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="music-player__list-item-art">
-                    <div class="music-player__list-item-info">
-                        <div class="music-player__list-item-title">${song.title}</div>
-                        <div class="music-player__list-item-artist">${song.artist}</div>
+                    <img src="${song.cover || utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="musicPlayerListItemArt">
+                    <div class="musicPlayerListItemInfo">
+                        <div class="musicPlayerListItemTitle">${song.title}</div>
+                        <div class="musicPlayerListItemArtist">${song.artist}</div>
                     </div>
-                    <div class="music-player__list-item-actions">
-                        <button class="music-player__list-item-action" data-action="play" title="Play">
+                    <div class="musicPlayerListItemActions">
+                        <button class="musicPlayerListItemAction" data-action="play" title="Play">
                             <svg viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M8 5v14l11-7z"/>
                             </svg>
                         </button>
-                        <button class="music-player__list-item-action" data-action="queue" title="Add to Queue">
+                        <button class="musicPlayerListItemAction" data-action="queue" title="Add to Queue">
                             <svg viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
                             </svg>
@@ -1420,35 +1420,35 @@ const musicPlayer = {
                 recentList.appendChild(listItem);
             });
             
-            const recentCount = document.querySelector(PAGE.musicPlayerRecentCount);
+            const recentCount = document.querySelector('#drawer #recentCount');
             if (recentCount) {
                 recentCount.textContent = `${appState.recentlyPlayed.length} song${appState.recentlyPlayed.length !== 1 ? 's' : ''}`;
             }
         },
         
         init: () => {
-            const closeBtn = document.querySelector(PAGE.musicPlayerCloseBtn);
+            const closeBtn = document.querySelector('#drawer #closeBtn');
             if (closeBtn) {
                 closeBtn.addEventListener('click', () => musicPlayer.mainPlayer.close());
             }
             
             // FIXED: Tab event listeners with correct selector
-            document.querySelectorAll('.music-player__tab').forEach(tab => {
+            document.querySelectorAll('.musicPlayerTab').forEach(tab => {
                 tab.addEventListener('click', () => {
                     const tabName = tab.dataset.tab;
                     if (tabName) musicPlayer.mainPlayer.switchTab(tabName);
                 });
             });
             
-            const queueBtn = document.querySelector(PAGE.queueBtn);
+            const queueBtn = document.querySelector('#queueBtn');
             if (queueBtn) {
-                queueBtn.addEventListener('click', () => musicPlayer.mainPlayer.switchTab(PAGE.musicPlayerTabs.queue));
+                queueBtn.addEventListener('click', () => musicPlayer.mainPlayer.switchTab('queue'));
             }
             
             musicPlayer.mainPlayer.preventHorizontalScroll();
             musicPlayer.mainPlayer.initDrawerDrag();
             
-            const favoriteBtn = document.querySelector(PAGE.favoriteBtn);
+            const favoriteBtn = document.querySelector('#favoriteBtn');
             if (favoriteBtn) {
                 favoriteBtn.addEventListener('click', () => {
                     favoriteBtn.classList.toggle('favorited');
@@ -1748,8 +1748,8 @@ const musicPlayer = {
         },
 
         bindSeekBar: () => {
-            const bar = document.querySelector(PAGE.musicPlayerprogressBar);
-            const thumb = document.querySelector(PAGE.musicPlayerprogressThumb);
+            const bar = document.querySelector('#drawer #progressBar');
+            const thumb = document.querySelector('#drawer #progressThumb');
             if (!bar || !thumb) {
                 console.error("bindSeekBar: Could not find progress bar elements");
                 return;
@@ -1762,7 +1762,7 @@ const musicPlayer = {
                 musicPlayer.ui.wasPlayingBeforeScrub = !!appState.isPlaying;
                 if (musicPlayer.ui.wasPlayingBeforeScrub) appState.audio.pause();
                 musicPlayer.ui.seekFromEvent(e, bar);
-                bar.classList.add(PAGE.musicPlayerclasses.dragging);
+                bar.classList.add('isDragging');
                 const moveTarget = bar;
                 moveTarget.addEventListener('pointermove', onPointerMove, { passive: false });
                 moveTarget.addEventListener('pointerup', onPointerUp, { once: true });
@@ -1778,15 +1778,15 @@ const musicPlayer = {
             const onPointerUp = (e) => {
                 musicPlayer.ui.seekFromEvent(e, bar, true);
                 musicPlayer.ui.isScrubbing = false;
-                bar.classList.remove(PAGE.musicPlayerclasses.dragging, PAGE.musicPlayerclasses.hovering);
+                bar.classList.remove('isDragging', 'isHovering');
                 if (musicPlayer.ui.wasPlayingBeforeScrub) appState.audio.play();
                 bar.releasePointerCapture?.(e.pointerId ?? 1);
                 bar.removeEventListener('pointermove', onPointerMove);
             };
 
-            const onEnter = () => bar.classList.add(PAGE.musicPlayerclasses.hovering);
+            const onEnter = () => bar.classList.add('isHovering');
             const onLeave = () => { 
-                if (!musicPlayer.ui.isScrubbing) bar.classList.remove(PAGE.musicPlayerclasses.hovering); 
+                if (!musicPlayer.ui.isScrubbing) bar.classList.remove('isHovering'); 
             };
             
             bar.addEventListener('pointerdown', onPointerDown, { passive: false });
@@ -1815,9 +1815,9 @@ const musicPlayer = {
         },
 
         setProgressUI: (percent, currentTime) => {
-            const fill = document.querySelector(PAGE.musicPlayerprogressFill);
-            const thumb = document.querySelector(PAGE.musicPlayerprogressThumb);
-            const currentTimeElement = document.querySelector(PAGE.musicPlayercurrentTime);
+            const fill = document.querySelector('#drawer #progressFill');
+            const thumb = document.querySelector('#drawer #progressThumb');
+            const currentTimeElement = document.querySelector('#drawer #current');
             if (fill) fill.style.width = percent + '%';
             if (thumb) thumb.style.left = percent + '%';
             if (currentTimeElement && isFinite(currentTime)) {
@@ -1834,10 +1834,10 @@ const musicPlayer = {
             
             switch (e.key) {
                 case 'ArrowRight':
-                    timeChange = PAGE.musicPlayerskipTimes.forward;
+                    timeChange = 10;
                     break;
                 case 'ArrowLeft':
-                    timeChange = PAGE.musicPlayerskipTimes.rewind;
+                    timeChange = -10;
                     break;
                 case 'PageUp':
                     timeChange = 10;
@@ -1886,7 +1886,7 @@ const musicPlayer = {
         },
 
         updateBufferDisplay: () => {
-            const buffer = document.querySelector(PAGE.musicPlayerProgressBuffer);
+            const buffer = document.querySelector('#drawer #progressBuffer');
             if (!buffer || !appState.audio) return;
             
             if (!appState.audio.buffered || appState.audio.buffered.length === 0) {
@@ -1915,7 +1915,7 @@ const musicPlayer = {
             if (window.ui && ui.updatePlayPauseButtons) {
                 ui.updatePlayPauseButtons();
             }
-            document.querySelector(PAGE.drawer)?.classList.add(PAGE.musicPlayerclasses.playing);
+            document.querySelector('#drawer')?.classList.add('playing');
         },
 
         onPause: () => {
@@ -1923,14 +1923,14 @@ const musicPlayer = {
             if (window.ui && ui.updatePlayPauseButtons) {
                 ui.updatePlayPauseButtons();
             }
-            document.querySelector(PAGE.drawer)?.classList.remove(PAGE.musicPlayerclasses.playing);
+            document.querySelector('#drawer')?.classList.remove('playing');
         },
 
         onMetadataLoaded: () => {
             if (!appState.audio || isNaN(appState.audio.duration)) return;
             
             appState.duration = appState.audio.duration;
-            const totalTimeElement = document.querySelector(PAGE.musicPlayertotalTime);
+            const totalTimeElement = document.querySelector('#drawer #total');
             if (totalTimeElement) {
                 totalTimeElement.textContent = utils.formatTime(appState.duration);
             }
@@ -2002,32 +2002,32 @@ const musicPlayer = {
             if (!appState.currentSong) return;
             
             const coverUrl = appState.currentSong.cover || utils.getAlbumImageUrl(appState.currentSong.album);
-            const cover = document.querySelector(PAGE.musicPlayerAlbumArtwork);
+            const cover = document.querySelector('#drawer #cover');
             if (cover && coverUrl) {
                 cover.src = coverUrl;
             }
             
-            const titleEl = document.querySelector(PAGE.musicPlayerSongName);
-            const artistEl = document.querySelector(PAGE.musicPlayerArtistName);
-            const albumEl = document.querySelector(PAGE.musicPlayerAlbumName);
+            const titleEl = document.querySelector('#drawer #title');
+            const artistEl = document.querySelector('#drawer #artist');
+            const albumEl = document.querySelector('#drawer #album');
             
             if (titleEl && appState.currentSong.title) titleEl.textContent = appState.currentSong.title;
             if (artistEl && appState.currentArtist) artistEl.textContent = appState.currentArtist;
             if (albumEl && appState.currentAlbum) albumEl.textContent = appState.currentAlbum;
             
-            const playBtn = document.querySelector(PAGE.playBtn);
-            const drawer = document.querySelector(PAGE.drawer);
+            const playBtn = document.querySelector('#playBtn');
+            const drawer = document.querySelector('#drawer');
             if (playBtn) {
-                const playIcon = playBtn.querySelector('.play-icon');
-                const pauseIcon = playBtn.querySelector('.pause-icon');
+                const playIcon = playBtn.querySelector('.playIcon');
+                const pauseIcon = playBtn.querySelector('.pauseIcon');
                 if (appState.isPlaying) {
                     playIcon?.style.setProperty('display', 'none');
                     pauseIcon?.style.setProperty('display', 'block');
-                    drawer?.classList.add(PAGE.musicPlayerclasses.playing);
+                    drawer?.classList.add('playing');
                 } else {
                     playIcon?.style.setProperty('display', 'block');
                     pauseIcon?.style.setProperty('display', 'none');
-                    drawer?.classList.remove(PAGE.musicPlayerclasses.playing);
+                    drawer?.classList.remove('playing');
                 }
             }
         }
@@ -2069,7 +2069,7 @@ const app = {
     },
 
     resetUI: function() {
-        const nowPlayingArea = document.querySelector(PAGE.navbarNowPlaying);
+        const nowPlayingArea = document.querySelector('#navbar #now-playing-area');
         if (nowPlayingArea) {
             nowPlayingArea.classList.remove(PAGE.CLASSES.hasSong);
         }
@@ -2599,16 +2599,16 @@ const eventHandlers = {
   },
 
   bindControls: () => {
-    const nowPlayingTriggers = [PAGE.nowPlayingArea, QUERY(PAGE.navbarNowPlaying)].filter(Boolean);
+    const nowPlayingTriggers = [PAGE.nowPlayingArea, document.querySelector('#navbar #now-playing-area')].filter(Boolean);
     nowPlayingTriggers.forEach(el => bindClick(el, () => musicPlayer.mainPlayer.toggle()));
     
-    const navbarPlayPause = QUERY(PAGE.navbarPlayPause);
+    const navbarPlayPause = document.querySelector('#navbar .playPause');
     if (navbarPlayPause) bindClick(navbarPlayPause, () => musicPlayer.mainPlayer.toggle());
     
-    const navbarPrevious = QUERY(PAGE.navbarPrevious);
+    const navbarPrevious = document.querySelector('#navbar .previous');
     if (navbarPrevious) bindClick(navbarPrevious, () => musicPlayer.playback.previous());
     
-    const navbarNext = QUERY(PAGE.navbarNext);
+    const navbarNext = document.querySelector('#navbar .next');
     if (navbarNext) bindClick(navbarNext, () => musicPlayer.playback.next());
   },
 
@@ -2620,7 +2620,8 @@ const eventHandlers = {
     };
     
     Object.entries(menuElements).forEach(([elementId, handler]) => {
-      if (DOM[elementId]) bindClick(DOM[elementId], handler);
+      const el = PAGE[elementId];
+      if (el) bindClick(el, handler);
     });
     
     const menuActions = {
@@ -2654,19 +2655,20 @@ const eventHandlers = {
     };
     
     Object.entries(menuActions).forEach(([elementId, handler]) => {
-      if (DOM[elementId]) bindClick(DOM[elementId], handler);
+      const el = PAGE[elementId];
+      if (el) bindClick(el, handler);
     });
   },
 
   bindPopups: () => {
     const popupControlsMap = {
-      [PAGE.musicPlayerCloseBtn]: musicPlayer.mainPlayer.close,
-      [PAGE.playBtn]: musicPlayer.playback.play,
-      [PAGE.prevBtn]: musicPlayer.playback.previous,
-      [PAGE.nextBtn]: musicPlayer.playback.next,
-      [PAGE.musicPlayershuffle]: musicPlayer.playback.shuffle.toggle,
-      [PAGE.musicPlayerrepeat]: musicPlayer.playback.repeat.toggle,
-      [PAGE.favoriteBtn]: () => {
+      '#drawer .musicPlayerCloseBtn': musicPlayer.mainPlayer.close,
+      '#playBtn': musicPlayer.playback.play,
+      '#prevBtn': musicPlayer.playback.previous,
+      '#nextBtn': musicPlayer.playback.next,
+      '#shuffleBtn': musicPlayer.playback.shuffle.toggle,
+      '#repeatBtn': musicPlayer.playback.repeat.toggle,
+      '#favoriteBtn': () => {
         if (appState.currentSong) {
           appState.favorites.toggle("songs", appState.currentSong.id);
           ui.updateFavoriteButton();
@@ -2675,10 +2677,11 @@ const eventHandlers = {
     };
     
     Object.entries(popupControlsMap).forEach(([selector, handler]) => {
-      bindClickAll(QUERY_ALL(selector), handler);
+      const elements = document.querySelectorAll(selector);
+      elements.forEach(el => bindClick(el, handler));
     });
     
-    QUERY_ALL('.tab').forEach(tab => {
+    document.querySelectorAll('.musicPlayerTab').forEach(tab => {
       bindClick(tab, () => {
         const tabName = tab.dataset.tab;
         if (tabName) musicPlayer.mainPlayer.switchTab(tabName);
@@ -2687,7 +2690,7 @@ const eventHandlers = {
   },
 
   bindProgress: () => {
-    const progressBar = QUERY(PAGE.musicPlayerprogressBar);
+    const progressBar = document.querySelector('#drawer #progressBar');
     if (!progressBar) return;
     
     const handleProgressClick = (e) => {
@@ -2806,8 +2809,8 @@ const eventHandlers = {
         dropdown.close();
       }
       
-      const drawerEl = PAGE.drawer;
-      const nowPlayingEl = QUERY(PAGE.navbarNowPlaying);
+      const drawerEl = document.querySelector('#drawer');
+      const nowPlayingEl = document.querySelector('#navbar #now-playing-area');
       
       if (appState.isPopupVisible && drawerEl && !drawerEl.contains(e.target) && !nowPlayingEl?.contains(e.target)) {
         musicPlayer.mainPlayer.close();
@@ -2851,18 +2854,19 @@ const eventHandlers = {
 
   bindControlEvents: () => {
     const controlMap = {
-      musicDrawerPlayBtn: musicPlayer.playback.togglePlayPause,
-      musicDrawerPrevBtn: musicPlayer.playback.previous,
-      musicDrawerNextBtn: musicPlayer.playback.next,
-      musicDrawerRewindBtn: () => musicPlayer.playback.skip(-10),
-      musicDrawerForwardBtn: () => musicPlayer.playback.skip(10),
-      musicDrawerFavoriteBtn: () => {
+      '#playBtn': musicPlayer.playback.togglePlayPause,
+      '#prevBtn': musicPlayer.playback.previous,
+      '#nextBtn': musicPlayer.playback.next,
+      '#rewindBtn': () => musicPlayer.playback.skip(-10),
+      '#forwardBtn': () => musicPlayer.playback.skip(10),
+      '#favoriteBtn': () => {
         if (appState.currentSong) appState.favorites.toggle("songs", appState.currentSong.id);
       },
     };
     
-    Object.entries(controlMap).forEach(([elementId, handler]) => {
-      if (DOM[elementId]) bindClick(DOM[elementId], handler);
+    Object.entries(controlMap).forEach(([selector, handler]) => {
+      const el = document.querySelector(selector);
+      if (el) bindClick(el, handler);
     });
   },
 };
