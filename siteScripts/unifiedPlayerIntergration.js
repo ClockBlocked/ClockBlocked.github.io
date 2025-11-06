@@ -4,10 +4,9 @@
 import { 
     appState, 
     musicPlayer, 
-    notifications
+    notifications,
+    NOTIFICATION_TYPES
 } from './global.js';
-
-import { NOTIFICATION_TYPES } from './map.js';
 
 class UnifiedPlayerIntegration {
     constructor() {
