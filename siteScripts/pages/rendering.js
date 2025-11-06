@@ -5,6 +5,9 @@ import { render, create } from "../utilities/templates.js";
 
 import { deepLinkRouter } from "./router.js";
 
+import * as PAGE from './map.js';
+
+
 export const escapeForAttribute = function (str) {
   return str.replace(/&/g, "&amp;").replace(/'/g, "&#39;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 };
