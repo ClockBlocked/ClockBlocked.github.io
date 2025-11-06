@@ -2594,17 +2594,29 @@ const eventHandlers = {
     eventHandlers.bindDocument();
   },
 
-  bindControls: () => {
-    const idTrigger = $byId(IDS.nowPlayingArea);
-    const selTrigger = document.querySelector(NAVBAR.nowPlaying);
-    [idTrigger, selTrigger].filter(Boolean).forEach((el) => bindClick(el, () => musicPlayer.mainPlayer.toggle()));
-    const navbarPlayPause = document.querySelector(NAVBAR.playPause);
-    if (navbarPlayPause) bindClick(navbarPlayPause, () => musicPlayer.mainPlayer.toggle());
-    const navbarPrevious = document.querySelector(NAVBAR.previous);
-    if (navbarPrevious) bindClick(navbarPrevious, () => musicPlayer.playback.previous());
-    const navbarNext = document.querySelector(NAVBAR.next);
-    if (navbarNext) bindClick(navbarNext, () => musicPlayer.playback.next());
-  },
+  // from "global.js"
+
+bindControls: () => {
+  const idTrigger = $byId(IDS.nowPlayingArea);
+  const selTrigger = document.querySelector(NAVBAR.nowPlaying);
+  
+  // NowPlaying area should toggle the main music player drawer
+  [idTrigger, selTrigger].filter(Boolean).forEach((el) => 
+    bindClick(el, () => musicPlayer.mainPlayer.toggle())
+  );
+  
+  // Play/Pause button should only control playback state
+  const navbarPlayPause = document.querySelector(NAVBAR.playPause);
+  if (navbarPlayPause) {
+    bindClick(navbarPlayPause, () => musicPlayer.playback.togglePlayPause());
+  }
+  
+  const navbarPrevious = document.querySelector(NAVBAR.previous);
+  if (navbarPrevious) bindClick(navbarPrevious, () => musicPlayer.playback.previous());
+  
+  const navbarNext = document.querySelector(NAVBAR.next);
+  if (navbarNext) bindClick(navbarNext, () => musicPlayer.playback.next());
+},
 
   bindMenus: () => {
     const menuElements = {
