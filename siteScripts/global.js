@@ -2033,76 +2033,6 @@ const musicPlayer = {
 
 
 
-
-
-
-document.addEventListener('DOMContentLoaded', () => {
-    musicPlayer.mainPlayer.init();
-});
-
-window.musicPlayer = musicPlayer
-
-
-
-const app = {
-    initialize: function() {
-        window.music = music;
-
-        storage.initialize();
-        notifications.initialize();
-        
-        musicPlayer.ui.initialize();
-
-        navigation.initialize();
-        homePage.initialize();
-
-        eventHandlers.init();
-
-        app.resetUI();
-        app.syncGlobalState();
-
-        deepLinkRouter.initialize();
-        deepLinkRouter.bindPopState();
-    },
-
-    resetUI: function() {
-        const nowPlayingArea = document.querySelector(NAVBAR.nowPlaying);
-        if (nowPlayingArea) {
-            nowPlayingArea.classList.remove(CLASSES.hasSong);
-        }
-        ui.updateCounts();
-    },
-
-    syncGlobalState: function() {
-        window.appState = appState;
-        window.playerController = {
-            playSong: musicPlayer.ui.playSong,
-            toggle: musicPlayer.mainPlayer.toggle,
-            next: musicPlayer.playback.next,
-            previous: musicPlayer.playback.previous,
-            seekTo: musicPlayer.playback.seekTo,
-            skip: musicPlayer.playback.skip,
-        };
-        window.musicAppAPI = {
-            player: musicPlayer.mainPlayer,
-            controls: musicPlayer.playback,
-            musicPlayer: musicPlayer,
-            dropdown: dropdown,
-            notifications: notifications,
-            playlists: playlists,
-            utils: utils,
-            favorites: appState.favorites,
-            queue: appState.queue,
-        };
-    },
-
-    goHome: function() {
-        if (appState.router) {
-            appState.router.navigateTo(ROUTES.HOME);
-        }
-    }
-};
-
 const playlists = {
     add: (name) => {
         if (!name || !name.trim()) {
@@ -2571,6 +2501,76 @@ const playlists = {
         });
     },
 };
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    musicPlayer.mainPlayer.init();
+});
+
+window.musicPlayer = musicPlayer
+
+
+
+const app = {
+    initialize: function() {
+        window.music = music;
+
+        storage.initialize();
+        notifications.initialize();
+        
+        musicPlayer.ui.initialize();
+
+        navigation.initialize();
+        homePage.initialize();
+
+        eventHandlers.init();
+
+        app.resetUI();
+        app.syncGlobalState();
+
+        deepLinkRouter.initialize();
+        deepLinkRouter.bindPopState();
+    },
+
+    resetUI: function() {
+        const nowPlayingArea = document.querySelector(NAVBAR.nowPlaying);
+        if (nowPlayingArea) {
+            nowPlayingArea.classList.remove(CLASSES.hasSong);
+        }
+        ui.updateCounts();
+    },
+
+    syncGlobalState: function() {
+        window.appState = appState;
+        window.playerController = {
+            playSong: musicPlayer.ui.playSong,
+            toggle: musicPlayer.mainPlayer.toggle,
+            next: musicPlayer.playback.next,
+            previous: musicPlayer.playback.previous,
+            seekTo: musicPlayer.playback.seekTo,
+            skip: musicPlayer.playback.skip,
+        };
+        window.musicAppAPI = {
+            player: musicPlayer.mainPlayer,
+            controls: musicPlayer.playback,
+            musicPlayer: musicPlayer,
+            dropdown: dropdown,
+            notifications: notifications,
+            playlists: playlists,
+            utils: utils,
+            favorites: appState.favorites,
+            queue: appState.queue,
+        };
+    },
+
+    goHome: function() {
+        if (appState.router) {
+            appState.router.navigateTo(ROUTES.HOME);
+        }
+    }
+};
+
+
 
 const bindClick = (el, handler) => {
   if (!el || typeof handler !== "function") return;
