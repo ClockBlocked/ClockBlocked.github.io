@@ -7,6 +7,8 @@ import {
   notificationPlayer
 } from '../global.js';
 
+import { ROUTES, CLASSES, REPEAT_MODES } from '../map.js';
+
 export const pageUpdates = {
   breadCrumbs: (items, options = {}) => {
     const {
