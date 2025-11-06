@@ -820,11 +820,11 @@ export const views = {
                 <p class="favorites-count">${favoriteSongs.length} song${favoriteSongs.length !== 1 ? "s" : ""}</p>
                 <div class="favorites-actions">
                   <button class="play-all-btn">
-                    ${ICONS.play}
+                    ${PAGE.ICONS.play}
                     Play All
                   </button>
                   <button class="shuffle-all-btn">
-                    ${ICONS.shuffle}
+                    ${PAGE.ICONS.shuffle}
                     Shuffle
                   </button>
                 </div>
@@ -913,7 +913,7 @@ export const views = {
                             <div class="artist-image">
                                 <img src="${utils.getArtistImageUrl(artist.artist)}" alt="${artist.artist}">
                                 <button class="play-btn">
-                                    ${ICONS.play}
+                                    ${PAGE.ICONS.play}
                                 </button>
                             </div>
                             <div class="artist-info">
