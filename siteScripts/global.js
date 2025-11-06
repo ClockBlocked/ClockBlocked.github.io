@@ -1448,7 +1448,7 @@ const musicPlayer = {
             musicPlayer.mainPlayer.preventHorizontalScroll();
             musicPlayer.mainPlayer.initDrawerDrag();
             
-            const favoriteBtn = document.querySelector(PAGE.favoriteBtn);
+            const favoriteBtn = document.querySelector('#favoriteBtn');
             if (favoriteBtn) {
                 favoriteBtn.addEventListener('click', () => {
                     favoriteBtn.classList.toggle('favorited');
