@@ -775,7 +775,7 @@ export const homePage = {
       cover: utils.getAlbumImageUrl(albumName),
     });
 
-    notifications.show(`Playing album "${albumName}"`, NOTIFICATION_TYPES.SUCCESS);
+    notifications.show(`Playing album "${albumName}"`, PAGE.NOTIFICATION_TYPES.SUCCESS);
   },
 
   renderEmptyState: (message, iconType) => {
@@ -967,7 +967,7 @@ export const views = {
                     appState.queue.clear();
                     favoriteSongs.slice(1).forEach((song) => appState.queue.add(song));
                     musicPlayer.ui.playSong(favoriteSongs[0]);
-                    notifications.show("Playing all favorite songs", NOTIFICATION_TYPES.SUCCESS);
+                    notifications.show("Playing all favorite songs", PAGE.NOTIFICATION_TYPES.SUCCESS);
                 }
             });
         }
@@ -989,7 +989,7 @@ export const views = {
                     musicPlayer.ui.playSong(favoriteSongs[0]);
                     appState.shuffleMode = true;
                     ui.updateShuffleButton();
-                    notifications.show("Shuffling favorite songs", NOTIFICATION_TYPES.SUCCESS);
+                    notifications.show("Shuffling favorite songs", PAGE.NOTIFICATION_TYPES.SUCCESS);
                 }
             });
         }
