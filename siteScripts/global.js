@@ -2597,10 +2597,10 @@ const eventHandlers = {
 
   bindControls: () => {
     const nowPlayingTriggers = [DOM.nowPlayingArea, QUERY(NAVBAR.nowPlaying)].filter(Boolean);
-    nowPlayingTriggers.forEach(el => bindClick(el, () => musicPlayer.mainPlayer.togglePlayPause()));
+    nowPlayingTriggers.forEach(el => bindClick(el, () => musicPlayer.mainPlayer.toggle()));
     
     const navbarPlayPause = QUERY(NAVBAR.playPause);
-    if (navbarPlayPause) bindClick(navbarPlayPause, () => musicPlayer.playback.toggle());
+    if (navbarPlayPause) bindClick(navbarPlayPause, () => musicPlayer.playback.togglePlayPause());
     
     const navbarPrevious = QUERY(NAVBAR.previous);
     if (navbarPrevious) bindClick(navbarPrevious, () => musicPlayer.playback.previous());
