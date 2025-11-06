@@ -2561,53 +2561,6 @@ const app = {
     }
 };
 
-window.addEventListener("load", function() {
-    if (!window.appState) {
-        app.initialize();
-    }
-});
-
-window.MyTunesApp = {
-    initialize: app.initialize,
-    state: function() { return appState; },
-    api: function() { return window.musicAppAPI; },
-    goHome: app.goHome,
-};
-
-if (window.music) {
-    app.initialize();
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    musicPlayer.mainPlayer.init();
-    app.initialize();
-    eventHandlers.init();
-    
-    const progressBar = document.getElementById('progressBar');
-    if (progressBar) {
-        progressBar.addEventListener('keydown', musicPlayer.ui.handleProgressBarKeyDown);
-    }
-    
-    setTimeout(() => {
-        if (notificationPlayer.utils.isSupported()) {
-            notificationPlayer.setup();
-        }
-    }, 100);
-});
-
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        eventHandlers.init();
-    });
-} else {
-    eventHandlers.init();
-}
-
-window.musicPlayer = musicPlayer;
-window.navigation = navigation;
-window.playlists = playlists;
-window.views = views;
-
 
 
 const bindClick = (el, handler) => {
@@ -2950,6 +2903,58 @@ const eventHandlers = {
         });
     },
 };
+
+
+
+
+
+
+window.addEventListener("load", function() {
+    if (!window.appState) {
+        app.initialize();
+    }
+});
+
+window.MyTunesApp = {
+    initialize: app.initialize,
+    state: function() { return appState; },
+    api: function() { return window.musicAppAPI; },
+    goHome: app.goHome,
+};
+
+if (window.music) {
+    app.initialize();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    musicPlayer.mainPlayer.init();
+    app.initialize();
+    eventHandlers.init();
+    
+    const progressBar = document.getElementById('progressBar');
+    if (progressBar) {
+        progressBar.addEventListener('keydown', musicPlayer.ui.handleProgressBarKeyDown);
+    }
+    
+    setTimeout(() => {
+        if (notificationPlayer.utils.isSupported()) {
+            notificationPlayer.setup();
+        }
+    }, 100);
+});
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        eventHandlers.init();
+    });
+} else {
+    eventHandlers.init();
+}
+
+window.musicPlayer = musicPlayer;
+window.navigation = navigation;
+window.playlists = playlists;
+window.views = views;
 
 
 
