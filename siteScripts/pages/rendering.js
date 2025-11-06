@@ -4,7 +4,7 @@ import { render, create } from "../utilities/templates.js";
 
 import { deepLinkRouter } from "./router.js";
 
-import * as PAGE from './map.js';
+import * as PAGE from '../map.js';
 
 
 export const escapeForAttribute = function (str) {
