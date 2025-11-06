@@ -1,55 +1,31 @@
-/**
- * ═══════════════════════════════════════════════════════════════
- *  MYBEATS - UNIFIED CONSTANTS & DOM ACCESS
- *  Single source of truth for all app constants and element access
- * ═══════════════════════════════════════════════════════════════
- */
-
-// ═══════════════════════════════════════════════════════════════
-//  ELEMENT CACHE - Auto-cached DOM references
-// ═══════════════════════════════════════════════════════════════
-
 const elementCache = new Map();
 
-/**
- * Simple DOM element access with auto-caching
- * Usage: DOM.menuTrigger, DOM.playBtn, DOM.cover, etc.
- */
 export const DOM = new Proxy({}, {
-  get(target, elementId) {
-    if (elementCache.has(elementId)) {
-      return elementCache.get(elementId);
+  get(target, key) {
+    if (elementCache.has(key)) {
+      return elementCache.get(key);
     }
     
-    const element = document.getElementById(elementId);
+    const actualId = IDS[key] || key;
+    const element = document.getElementById(actualId);
     
     if (element) {
-      elementCache.set(elementId, element);
+      elementCache.set(key, element);
       return element;
     }
     
-    console.warn(`Element not found: #${elementId}`);
+    console.warn(`Element not found: #${actualId}`);
     return null;
   }
 });
 
-/**
- * Query selectors (for class-based selections)
- */
 export const QUERY = (selector) => document.querySelector(selector);
 export const QUERY_ALL = (selector) => document.querySelectorAll(selector);
 
-/**
- * Clear element cache (useful after dynamic content updates)
- */
 export function clearElementCache() {
   elementCache.clear();
   console.log('🗑️ Element cache cleared');
 }
-
-// ═══════════════════════════════════════════════════════════════
-//  LEGACY ID DEFINITIONS (kept for backwards compatibility)
-// ═══════════════════════════════════════════════════════════════
 
 export const IDS = Object.freeze({
   themeToggle: "theme-toggle",
