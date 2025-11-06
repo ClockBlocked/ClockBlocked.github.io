@@ -2602,7 +2602,7 @@ const eventHandlers = {
     const navbarPlayPause = QUERY(NAVBAR.playPause);
     if (navbarPlayPause) bindClick(navbarPlayPause, () => musicPlayer.playback.togglePlayPause());
     
-    const nowPlaying = DOM(IDS.nowPlaying);
+    const nowPlaying = DOM.nowPlaying;
     if (nowPlaying) bindClick(nowPlaying, () => musicPlayer.mainPlayer.toggle());
     
     const navbarPrevious = QUERY(NAVBAR.previous);
