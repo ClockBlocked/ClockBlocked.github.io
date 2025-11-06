@@ -7,7 +7,6 @@ import {
   notificationPlayer
 } from '../global.js';
 
-import { ROUTES, CLASSES, REPEAT_MODES } from '../map.js';
 import * as PAGE from './map.js';
 
 export const pageUpdates = {
@@ -166,7 +165,7 @@ export const ui = {
       }
 
       if (svg) {
-        svg.classList.add(CLASSES.hidden);
+        svg.classList.add(PAGE.CLASSES.hidden);
       }
     }
 
@@ -174,16 +173,16 @@ export const ui = {
 
     if (songTitle) {
       const title = appState.currentSong.title;
-      songTitle.classList.toggle(CLASSES.marquee, title.length > 25);
+      songTitle.classList.toggle(PAGE.CLASSES.marquee, title.length > 25);
       songTitle.textContent = title;
     }
 
     if (playIndicator) {
-      playIndicator.classList.toggle(CLASSES.active, appState.isPlaying);
+      playIndicator.classList.toggle(PAGE.CLASSES.active, appState.isPlaying);
     }
 
     if (nowPlayingArea) {
-      nowPlayingArea.classList.add(CLASSES.hasSong);
+      nowPlayingArea.classList.add(PAGE.CLASSES.hasSong);
     }
   },
 
@@ -221,15 +220,15 @@ export const ui = {
   updateShuffleButton: () => {
     const shuffleBtn = PAGE.shuffleBtn;
     if (shuffleBtn) {
-      shuffleBtn.classList.toggle(CLASSES.active, appState.shuffleMode);
+      shuffleBtn.classList.toggle(PAGE.CLASSES.active, appState.shuffleMode);
     }
   },
 
   updateRepeatButton: () => {
     const repeatBtn = PAGE.repeatBtn;
     if (repeatBtn) {
-      repeatBtn.classList.toggle(CLASSES.active, appState.repeatMode !== REPEAT_MODES.OFF);
-      repeatBtn.classList.toggle(CLASSES.repeatOne, appState.repeatMode === REPEAT_MODES.ONE);
+      repeatBtn.classList.toggle(PAGE.CLASSES.active, appState.repeatMode !== REPEAT_MODES.OFF);
+      repeatBtn.classList.toggle(PAGE.CLASSES.repeatOne, appState.repeatMode === REPEAT_MODES.ONE);
     }
   },
 
@@ -239,7 +238,7 @@ export const ui = {
     if (favoriteBtn) {
       const isFavorite = appState.favorites.has("songs", appState.currentSong.id);
       favoriteBtn.classList.toggle("favorited", isFavorite);
-      favoriteBtn.classList.toggle(CLASSES.active, isFavorite);
+      favoriteBtn.classList.toggle(PAGE.CLASSES.active, isFavorite);
       favoriteBtn.setAttribute("data-favorite-songs", appState.currentSong.id);
       const heartIcon = favoriteBtn.querySelector("svg");
       if (heartIcon) {
