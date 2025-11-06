@@ -1218,7 +1218,6 @@ const musicPlayer = {
     isOpen() {
       const drawer = this.drawer;
       if (!drawer) {
-        console.warn('Drawer element not found');
         return false;
       }
       return drawer.matches(':popover-open');
@@ -1227,21 +1226,17 @@ const musicPlayer = {
     open() {
       const drawer = this.drawer;
       if (!drawer) {
-        console.error('Cannot open: drawer element not found');
         return false;
       }
       
       try {
         if (!this.isOpen()) {
           drawer.showPopover();
-          console.log('✅ Music player opened');
           return true;
         } else {
-          console.log('ℹ️ Music player already open');
           return true;
         }
       } catch (error) {
-        console.error('❌ Failed to open music player:', error);
         return false;
       }
     },
@@ -1249,21 +1244,17 @@ const musicPlayer = {
     close() {
       const drawer = this.drawer;
       if (!drawer) {
-        console.error('Cannot close: drawer element not found');
         return false;
       }
       
       try {
         if (this.isOpen()) {
           drawer.hidePopover();
-          console.log('✅ Music player closed');
           return true;
         } else {
-          console.log('ℹ️ Music player already closed');
           return true;
         }
       } catch (error) {
-        console.error('❌ Failed to close music player:', error);
         return false;
       }
     },
@@ -1277,8 +1268,8 @@ const musicPlayer = {
     },
     
     switchTab(tabName) {
-      const allTabs = QUERY_ALL('.tab');
-      const allContent = QUERY_ALL('.content[data-tab]');
+      const allTabs = QUERY_ALL(MUSIC_PLAYER.tabs);
+      const allContent = QUERY_ALL('.musicPlayerPanel[data-tab]');
       
       allTabs.forEach(tab => {
         if (tab.dataset.tab === tabName) {
@@ -1295,15 +1286,12 @@ const musicPlayer = {
           content.classList.remove(CLASSES.active);
         }
       });
-      
-      console.log(`🎵 Switched to ${tabName} tab`);
     },
   },
 
   playback: {
     play() {
       if (!appState.currentSong) {
-        console.warn('No song selected to play');
         return;
       }
       
@@ -1317,10 +1305,8 @@ const musicPlayer = {
           .then(() => {
             appState.isPlaying = true;
             musicPlayer.ui.updatePlayButton();
-            console.log('▶️ Playing:', appState.currentSong.title);
           })
           .catch(error => {
-            console.error('❌ Playback failed:', error);
             musicPlayer.ui.showNotification('Playback failed', NOTIFICATION_TYPES.ERROR);
           });
       }
@@ -1331,13 +1317,11 @@ const musicPlayer = {
         appState.audio.pause();
         appState.isPlaying = false;
         musicPlayer.ui.updatePlayButton();
-        console.log('⏸️ Paused');
       }
     },
     
     togglePlayPause() {
       if (!appState.currentSong) {
-        console.warn('No song selected');
         return;
       }
       
@@ -1355,12 +1339,8 @@ const musicPlayer = {
       if (currentIndex > 0) {
         const prevSong = queue[currentIndex - 1];
         musicPlayer.loadSong(prevSong);
-        console.log('⏮️ Previous track:', prevSong.title);
       } else if (appState.audio && appState.audio.currentTime > 3) {
         appState.audio.currentTime = 0;
-        console.log('⏮️ Restarted current track');
-      } else {
-        console.log('⏮️ Already at first track');
       }
     },
     
@@ -1371,69 +1351,57 @@ const musicPlayer = {
       if (currentIndex < queue.length - 1) {
         const nextSong = queue[currentIndex + 1];
         musicPlayer.loadSong(nextSong);
-        console.log('⏭️ Next track:', nextSong.title);
       } else if (appState.repeatMode === REPEAT_MODES.ALL && queue.length > 0) {
         musicPlayer.loadSong(queue[0]);
-        console.log('🔁 Repeating queue from start');
       } else {
-        console.log('⏭️ End of queue');
         this.pause();
       }
     },
     
     skip(seconds) {
       if (!appState.audio) {
-        console.warn('No audio loaded');
         return;
       }
       
       const newTime = appState.audio.currentTime + seconds;
       appState.audio.currentTime = Math.max(0, Math.min(newTime, appState.audio.duration || 0));
-      console.log(`⏩ Skipped ${seconds > 0 ? '+' : ''}${seconds}s`);
     },
     
     seekTo(time) {
       if (!appState.audio) {
-        console.warn('No audio loaded');
         return;
       }
       
       appState.audio.currentTime = Math.max(0, Math.min(time, appState.audio.duration || 0));
-      console.log(`⏩ Seeked to ${time.toFixed(1)}s`);
     },
     
     shuffle: {
       toggle() {
         appState.isShuffle = !appState.isShuffle;
-        const shuffleBtn = QUERY(MUSIC_PLAYER.shuffle);
+        const shuffleBtn = document.getElementById('shuffleBtn');
         if (shuffleBtn) {
           shuffleBtn.classList.toggle(CLASSES.active, appState.isShuffle);
         }
         
         if (appState.isShuffle && appState.queue) {
           appState.queue = utils.shuffleArray([...appState.queue]);
-          console.log('🔀 Queue shuffled');
         }
-        
-        console.log(`🔀 Shuffle: ${appState.isShuffle ? 'ON' : 'OFF'}`);
       },
       
       all() {
         if (!window.music?.getAllSongs) {
-          console.error('Music library not available');
           return;
         }
         
         const allSongs = window.music.getAllSongs();
         if (allSongs.length === 0) {
-          console.warn('No songs available to shuffle');
           return;
         }
         
         appState.queue = utils.shuffleArray([...allSongs]);
         appState.isShuffle = true;
         
-        const shuffleBtn = QUERY(MUSIC_PLAYER.shuffle);
+        const shuffleBtn = document.getElementById('shuffleBtn');
         if (shuffleBtn) {
           shuffleBtn.classList.add(CLASSES.active);
         }
@@ -1441,8 +1409,6 @@ const musicPlayer = {
         if (appState.queue.length > 0) {
           musicPlayer.loadSong(appState.queue[0]);
         }
-        
-        console.log('🔀 Shuffled all tracks:', appState.queue.length);
       }
     },
     
@@ -1452,13 +1418,11 @@ const musicPlayer = {
         const currentIndex = modes.indexOf(appState.repeatMode);
         appState.repeatMode = modes[(currentIndex + 1) % modes.length];
         
-        const repeatBtn = QUERY(MUSIC_PLAYER.repeat);
+        const repeatBtn = document.getElementById('repeatBtn');
         if (repeatBtn) {
           repeatBtn.classList.toggle(CLASSES.repeatOne, appState.repeatMode === REPEAT_MODES.ONE);
           repeatBtn.classList.toggle(CLASSES.active, appState.repeatMode !== REPEAT_MODES.OFF);
         }
-        
-        console.log(`🔁 Repeat: ${appState.repeatMode.toUpperCase()}`);
       }
     },
   },
@@ -1538,14 +1502,12 @@ const musicPlayer = {
             position: currentTime
           });
         } catch (error) {
-          console.warn('Failed to update media session position:', error);
         }
       }
     },
     
     showNotification(message, type = NOTIFICATION_TYPES.INFO) {
       if (!window.ui?.showNotification) {
-        console.log(`[${type.toUpperCase()}] ${message}`);
         return;
       }
       
@@ -1554,7 +1516,6 @@ const musicPlayer = {
     
     updateNowPlaying(song) {
       if (!song) {
-        console.warn('Cannot update: song is null or undefined');
         return;
       }
       
@@ -1602,15 +1563,11 @@ const musicPlayer = {
       }
       
       this.updateFavoriteButton();
-      
-      console.log('🎵 Now playing updated:', song.title);
     },
     
 
 
 initialize() {
-  console.log('🎨 Initializing music player UI...');
-  
   this.updatePlayButton();
   this.updateFavoriteButton();
   
@@ -1618,8 +1575,6 @@ initialize() {
   if (progressBar) {
     this.setupProgressBar(progressBar);
   }
-  
-  console.log('✅ Music player UI initialized');
 },
 
 setupProgressBar(progressBar) {
@@ -1672,11 +1627,8 @@ setupProgressBar(progressBar) {
 
   loadSong(song) {
     if (!song) {
-      console.error('Cannot load: song is null or undefined');
       return;
     }
-    
-    console.log('🎵 Loading song:', song);
     
     appState.currentSong = song;
     this.ui.updateNowPlaying(song);
@@ -1688,7 +1640,6 @@ setupProgressBar(progressBar) {
     
     const audioUrl = song.audioUrl || song.src || song.url;
     if (!audioUrl) {
-      console.error('Cannot load: no audio URL found for song', song);
       this.ui.showNotification('No audio file found', NOTIFICATION_TYPES.ERROR);
       return;
     }
@@ -1721,7 +1672,6 @@ setupProgressBar(progressBar) {
       if (totalEl && window.utils?.formatTime) {
         totalEl.textContent = window.utils.formatTime(appState.duration);
       }
-      console.log('📊 Metadata loaded, duration:', appState.duration);
     });
     
     appState.audio.addEventListener('timeupdate', () => {
@@ -1729,8 +1679,6 @@ setupProgressBar(progressBar) {
     });
     
     appState.audio.addEventListener('ended', () => {
-      console.log('🎵 Song ended');
-      
       if (appState.repeatMode === REPEAT_MODES.ONE) {
         appState.audio.currentTime = 0;
         this.playback.play();
@@ -1760,20 +1708,16 @@ setupProgressBar(progressBar) {
     });
     
     appState.audio.addEventListener('error', (e) => {
-      console.error('❌ Audio error:', e);
       this.ui.showNotification('Failed to load audio', NOTIFICATION_TYPES.ERROR);
     });
     
     appState.audio.addEventListener('waiting', () => {
-      console.log('⏳ Buffering...');
     });
     
     appState.audio.addEventListener('canplay', () => {
-      console.log('✅ Ready to play');
     });
     
     appState.audio.addEventListener('volumechange', () => {
-      console.log('🔊 Volume changed:', appState.audio.volume);
     });
     
     appState.audio.addEventListener('progress', () => {
@@ -1822,26 +1766,20 @@ setupProgressBar(progressBar) {
         }
       });
     } catch (error) {
-      console.warn('seekto action not supported:', error);
     }
-    
-    console.log('📱 Media session updated');
   },
 
   updateQueue(songs) {
     if (!Array.isArray(songs)) {
-      console.error('Queue must be an array');
       return;
     }
     
     appState.queue = [...songs];
     this.renderQueue();
-    console.log('📋 Queue updated:', appState.queue.length, 'songs');
   },
 
   addToQueue(song) {
     if (!song) {
-      console.error('Cannot add to queue: song is null or undefined');
       return;
     }
     
@@ -1852,41 +1790,36 @@ setupProgressBar(progressBar) {
     appState.queue.push(song);
     this.renderQueue();
     this.ui.showNotification(`Added "${song.title}" to queue`, NOTIFICATION_TYPES.SUCCESS);
-    console.log('➕ Added to queue:', song.title);
   },
 
   removeFromQueue(index) {
     if (!appState.queue || index < 0 || index >= appState.queue.length) {
-      console.error('Invalid queue index:', index);
       return;
     }
     
     const removed = appState.queue.splice(index, 1)[0];
     this.renderQueue();
     this.ui.showNotification(`Removed "${removed.title}" from queue`, NOTIFICATION_TYPES.INFO);
-    console.log('➖ Removed from queue:', removed.title);
   },
 
   clearQueue() {
     appState.queue = [];
     this.renderQueue();
     this.ui.showNotification('Queue cleared', NOTIFICATION_TYPES.INFO);
-    console.log('🗑️ Queue cleared');
   },
 
   renderQueue() {
     const queueList = QUERY(MUSIC_PLAYER.queueList);
-    const queueCount = QUERY(MUSIC_PLAYER.queueCount);
+    const queueCountEl = document.getElementById('queueCount');
     
     if (!queueList) {
-      console.warn('Queue list element not found');
       return;
     }
     
     const queue = appState.queue || [];
     
-    if (queueCount) {
-      queueCount.textContent = queue.length;
+    if (queueCountEl) {
+      queueCountEl.textContent = queue.length;
     }
     
     if (queue.length === 0) {
@@ -1959,18 +1892,12 @@ setupProgressBar(progressBar) {
 
   renderRecentlyPlayed() {
     const recentList = QUERY(MUSIC_PLAYER.recentList);
-    const recentCount = QUERY(MUSIC_PLAYER.recentCount);
     
     if (!recentList) {
-      console.warn('Recent list element not found');
       return;
     }
     
     const recent = JSON.parse(localStorage.getItem(STORAGE_KEYS.RECENTLY_PLAYED) || '[]');
-    
-    if (recentCount) {
-      recentCount.textContent = recent.length;
-    }
     
     if (recent.length === 0) {
       recentList.innerHTML = `
@@ -2014,7 +1941,6 @@ setupProgressBar(progressBar) {
           const song = JSON.parse(btn.dataset.song);
           musicPlayer.loadSong(song);
         } catch (error) {
-          console.error('Failed to parse song data:', error);
         }
       });
     });
@@ -2027,7 +1953,6 @@ setupProgressBar(progressBar) {
             const song = JSON.parse(btn.dataset.song);
             musicPlayer.loadSong(song);
           } catch (error) {
-            console.error('Failed to parse song data:', error);
           }
         }
       });
@@ -2036,19 +1961,17 @@ setupProgressBar(progressBar) {
 
 
 init() {
-  console.log('🎵 Initializing music player...');
-  
   this.renderQueue();
   this.renderRecentlyPlayed();
   
-  const tabs = QUERY_ALL('.tab');
+  const tabs = QUERY_ALL(MUSIC_PLAYER.tabs);
   tabs.forEach(tab => {
     tab.addEventListener('click', () => {
       const tabName = tab.dataset.tab;
       if (tabName) {
         this.mainPlayer.switchTab(tabName);
         
-        if (tabName === 'recent') {
+        if (tabName === 'playlist') {
           this.renderRecentlyPlayed();
         } else if (tabName === 'queue') {
           this.renderQueue();
@@ -2070,8 +1993,6 @@ init() {
       this.mainPlayer.close();
     });
   }
-  
-  console.log('✅ Music player initialized');
 },
 };
 
@@ -2559,14 +2480,11 @@ const playlists = {
 
 const app = {
     initialize: function() {
-        console.log('🚀 Initializing MyBeats App...');
-        
         window.music = music;
 
         storage.initialize();
         notifications.initialize();
         
-        // Initialize music player (includes UI setup)
         musicPlayer.init();
 
         navigation.initialize();
@@ -2579,8 +2497,6 @@ const app = {
 
         deepLinkRouter.initialize();
         deepLinkRouter.bindPopState();
-        
-        console.log('✅ App initialization complete');
     },
 
     resetUI: function() {
@@ -2638,13 +2554,11 @@ const bindClickAll = (nodeList, handler) => {
 
 const eventHandlers = {
   init: () => {
-    console.log('🎮 Binding event handlers...');
     eventHandlers.bindMenus();
     eventHandlers.bindControls();
     eventHandlers.bindPopups();
     eventHandlers.bindKeyboard();
     eventHandlers.bindDocument();
-    console.log('✅ Event handlers bound');
   },
 
   bindControls: () => {
@@ -2688,7 +2602,7 @@ const eventHandlers = {
       recentlyPlayed: () => {
         dropdown.close();
         musicPlayer.mainPlayer.open();
-        setTimeout(() => musicPlayer.mainPlayer.switchTab("recent"), 50);
+        setTimeout(() => musicPlayer.mainPlayer.switchTab("playlist"), 50);
       },
       queueView: () => {
         dropdown.close();
@@ -2720,10 +2634,10 @@ const eventHandlers = {
     const nextBtn = QUERY(MUSIC_PLAYER.next);
     if (nextBtn) bindClick(nextBtn, () => musicPlayer.playback.next());
     
-    const shuffleBtn = QUERY(MUSIC_PLAYER.shuffle);
+    const shuffleBtn = document.getElementById('shuffleBtn');
     if (shuffleBtn) bindClick(shuffleBtn, () => musicPlayer.playback.shuffle.toggle());
     
-    const repeatBtn = QUERY(MUSIC_PLAYER.repeat);
+    const repeatBtn = document.getElementById('repeatBtn');
     if (repeatBtn) bindClick(repeatBtn, () => musicPlayer.playback.repeat.toggle());
     
     const favoriteBtn = QUERY(MUSIC_PLAYER.favoriteBtn);
@@ -2734,7 +2648,7 @@ const eventHandlers = {
       }
     });
     
-    QUERY_ALL('.tab').forEach(tab => {
+    QUERY_ALL(MUSIC_PLAYER.tabs).forEach(tab => {
       bindClick(tab, () => {
         const tabName = tab.dataset.tab;
         if (tabName) musicPlayer.mainPlayer.switchTab(tabName);
@@ -2859,12 +2773,7 @@ const eventHandlers = {
 };
 
 
-// ═══════════════════════════════════════════════════════════════
-//  SINGLE ENTRY POINT - Initialize app when DOM is ready
-// ═══════════════════════════════════════════════════════════════
-
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('📄 DOMContentLoaded - Starting app...');
   app.initialize();
   
   setTimeout(() => {
@@ -2874,10 +2783,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }, 100);
 });
 
-
-// ═══════════════════════════════════════════════════════════════
-//  GLOBAL API EXPORTS
-// ═══════════════════════════════════════════════════════════════
 
 window.MyTunesApp = {
   initialize: app.initialize,
