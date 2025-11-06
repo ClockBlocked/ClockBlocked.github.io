@@ -436,8 +436,9 @@ addStyles: () => {
       to { opacity: 1; transform: translateY(0); }
     }
   `;
-  document.head.appendChild(styleEl);
-},  renderRecentlyPlayed: () => {
+  document.head.appendChild(styleEl);},  
+
+renderRecentlyPlayed: () => {
     const container = $byId(IDS.recentlyPlayedSection);
     if (!container) return;
 
