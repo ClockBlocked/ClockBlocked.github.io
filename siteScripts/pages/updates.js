@@ -218,14 +218,14 @@ export const ui = {
     },
 
   updateShuffleButton: () => {
-    const shuffleBtn = $byId(IDS.shuffleBtn);
+    const shuffleBtn = PAGE.shuffleBtn;
     if (shuffleBtn) {
       shuffleBtn.classList.toggle(CLASSES.active, appState.shuffleMode);
     }
   },
 
   updateRepeatButton: () => {
-    const repeatBtn = $byId(IDS.repeatBtn);
+    const repeatBtn = PAGE.repeatBtn;
     if (repeatBtn) {
       repeatBtn.classList.toggle(CLASSES.active, appState.repeatMode !== REPEAT_MODES.OFF);
       repeatBtn.classList.toggle(CLASSES.repeatOne, appState.repeatMode === REPEAT_MODES.ONE);
@@ -234,7 +234,7 @@ export const ui = {
 
   updateFavoriteButton: () => {
     if (!appState.currentSong) return;
-    const favoriteBtn = $byId(IDS.favoriteBtn);
+    const favoriteBtn = PAGE.favoriteBtn;
     if (favoriteBtn) {
       const isFavorite = appState.favorites.has("songs", appState.currentSong.id);
       favoriteBtn.classList.toggle("favorited", isFavorite);
