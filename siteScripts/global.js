@@ -1309,17 +1309,19 @@ const musicPlayer = {
       
       if (!appState.audio) {
         appState.audio = new Audio();
+        musicPlayer.setupAudioListeners();
       }
       
       if (appState.audio.paused) {
         appState.audio.play()
           .then(() => {
             appState.isPlaying = true;
-            ui.updatePlayButton();
+            musicPlayer.ui.updatePlayButton();
             console.log('▶️ Playing:', appState.currentSong.title);
           })
           .catch(error => {
             console.error('❌ Playback failed:', error);
+            musicPlayer.ui.showNotification('Playback failed', NOTIFICATION_TYPES.ERROR);
           });
       }
     },
@@ -1328,7 +1330,7 @@ const musicPlayer = {
       if (appState.audio && !appState.audio.paused) {
         appState.audio.pause();
         appState.isPlaying = false;
-        ui.updatePlayButton();
+        musicPlayer.ui.updatePlayButton();
         console.log('⏸️ Paused');
       }
     },
@@ -1461,58 +1463,148 @@ const musicPlayer = {
     },
   },
 
-  updateNowPlaying(song) {
-    if (!song) {
-      console.warn('Cannot update: song is null or undefined');
-      return;
-    }
-    
-    const coverEl = QUERY(MUSIC_PLAYER.albumArtwork);
-    const titleEl = QUERY(MUSIC_PLAYER.songName);
-    const artistEl = QUERY(MUSIC_PLAYER.artistName);
-    const albumEl = QUERY(MUSIC_PLAYER.albumName);
-    
-    if (coverEl) {
-      coverEl.src = song.albumArt || song.cover || '';
-      coverEl.alt = `${song.album || 'Album'} cover`;
-    }
-    if (titleEl) titleEl.textContent = song.title || 'Unknown Title';
-    if (artistEl) artistEl.textContent = song.artist || 'Unknown Artist';
-    if (albumEl) albumEl.textContent = song.album || 'Unknown Album';
-    
-    const navCover = QUERY(NAVBAR.albumArtwork);
-    const navTitle = QUERY(NAVBAR.songName);
-    const navArtist = QUERY(NAVBAR.artistName);
-    
-    if (navCover) {
-      const imgTag = navCover.querySelector('img');
-      const svgTag = navCover.querySelector('svg');
+  ui: {
+    updatePlayButton() {
+      const playBtns = [
+        QUERY(MUSIC_PLAYER.play),
+        QUERY(NAVBAR.playPause)
+      ].filter(Boolean);
       
-      if (song.albumArt || song.cover) {
-        if (imgTag) {
-          imgTag.src = song.albumArt || song.cover;
-          imgTag.style.opacity = '1';
+      playBtns.forEach(btn => {
+        const playIcon = btn.querySelector('.play');
+        const pauseIcon = btn.querySelector('.pause');
+        
+        if (appState.isPlaying) {
+          if (playIcon) playIcon.classList.add(CLASSES.hidden);
+          if (pauseIcon) pauseIcon.classList.remove(CLASSES.hidden);
+        } else {
+          if (playIcon) playIcon.classList.remove(CLASSES.hidden);
+          if (pauseIcon) pauseIcon.classList.add(CLASSES.hidden);
         }
-        if (svgTag) {
-          svgTag.style.opacity = '0';
-        }
+      });
+      
+      const navbarPlayIcon = QUERY(NAVBAR.play);
+      const navbarPauseIcon = QUERY(NAVBAR.pause);
+      
+      if (appState.isPlaying) {
+        if (navbarPlayIcon) navbarPlayIcon.classList.add(CLASSES.hidden);
+        if (navbarPauseIcon) navbarPauseIcon.classList.remove(CLASSES.hidden);
       } else {
-        if (imgTag) imgTag.style.opacity = '0';
-        if (svgTag) svgTag.style.opacity = '1';
+        if (navbarPlayIcon) navbarPlayIcon.classList.remove(CLASSES.hidden);
+        if (navbarPauseIcon) navbarPauseIcon.classList.add(CLASSES.hidden);
       }
+    },
+    
+    updateFavoriteButton() {
+      const favoriteBtn = QUERY(MUSIC_PLAYER.favoriteBtn);
+      if (!favoriteBtn || !appState.currentSong) return;
+      
+      const favorites = appState.favorites?.songs || [];
+      const isFavorited = favorites.some(song => song.id === appState.currentSong.id);
+      
+      favoriteBtn.classList.toggle(MUSIC_PLAYER.classes.favorited, isFavorited);
+      favoriteBtn.setAttribute('aria-pressed', isFavorited);
+      favoriteBtn.title = isFavorited ? 'Remove from favorites' : 'Add to favorites';
+    },
+    
+    updateProgress() {
+      if (!appState.audio || !appState.duration) return;
+      
+      const currentTime = appState.audio.currentTime || 0;
+      const duration = appState.duration || 0;
+      const percent = duration > 0 ? (currentTime / duration) * 100 : 0;
+      
+      const progressFill = QUERY(MUSIC_PLAYER.progressFill);
+      const progressThumb = QUERY(MUSIC_PLAYER.progressThumb);
+      const currentTimeEl = QUERY(MUSIC_PLAYER.currentTime);
+      
+      if (progressFill) {
+        progressFill.style.width = `${percent}%`;
+      }
+      
+      if (progressThumb) {
+        progressThumb.style.left = `${percent}%`;
+      }
+      
+      if (currentTimeEl && window.utils?.formatTime) {
+        currentTimeEl.textContent = window.utils.formatTime(currentTime);
+      }
+      
+      if (window.mediaSession?.setPositionState && duration > 0) {
+        try {
+          navigator.mediaSession.setPositionState({
+            duration: duration,
+            playbackRate: appState.audio.playbackRate || 1,
+            position: currentTime
+          });
+        } catch (error) {
+          console.warn('Failed to update media session position:', error);
+        }
+      }
+    },
+    
+    showNotification(message, type = NOTIFICATION_TYPES.INFO) {
+      if (!window.ui?.showNotification) {
+        console.log(`[${type.toUpperCase()}] ${message}`);
+        return;
+      }
+      
+      window.ui.showNotification(message, type);
+    },
+    
+    updateNowPlaying(song) {
+      if (!song) {
+        console.warn('Cannot update: song is null or undefined');
+        return;
+      }
+      
+      const coverEl = QUERY(MUSIC_PLAYER.albumArtwork);
+      const titleEl = QUERY(MUSIC_PLAYER.songName);
+      const artistEl = QUERY(MUSIC_PLAYER.artistName);
+      const albumEl = QUERY(MUSIC_PLAYER.albumName);
+      
+      if (coverEl) {
+        coverEl.src = song.albumArt || song.cover || '';
+        coverEl.alt = `${song.album || 'Album'} cover`;
+      }
+      if (titleEl) titleEl.textContent = song.title || 'Unknown Title';
+      if (artistEl) artistEl.textContent = song.artist || 'Unknown Artist';
+      if (albumEl) albumEl.textContent = song.album || 'Unknown Album';
+      
+      const navCover = QUERY(NAVBAR.albumArtwork);
+      const navTitle = QUERY(NAVBAR.songName);
+      const navArtist = QUERY(NAVBAR.artistName);
+      
+      if (navCover) {
+        const imgTag = navCover.querySelector('img');
+        const svgTag = navCover.querySelector('svg');
+        
+        if (song.albumArt || song.cover) {
+          if (imgTag) {
+            imgTag.src = song.albumArt || song.cover;
+            imgTag.style.opacity = '1';
+          }
+          if (svgTag) {
+            svgTag.style.opacity = '0';
+          }
+        } else {
+          if (imgTag) imgTag.style.opacity = '0';
+          if (svgTag) svgTag.style.opacity = '1';
+        }
+      }
+      
+      if (navTitle) navTitle.textContent = song.title || 'No song playing';
+      if (navArtist) navArtist.textContent = song.artist || 'Select a song to get started';
+      
+      const navbar = QUERY(NAVBAR.root);
+      if (navbar) {
+        navbar.classList.add(CLASSES.hasSong);
+      }
+      
+      this.updateFavoriteButton();
+      
+      console.log('🎵 Now playing updated:', song.title);
     }
-    
-    if (navTitle) navTitle.textContent = song.title || 'No song playing';
-    if (navArtist) navArtist.textContent = song.artist || 'Select a song to get started';
-    
-    const navbar = QUERY(NAVBAR.root);
-    if (navbar) {
-      navbar.classList.add(CLASSES.hasSong);
-    }
-    
-    ui.updateFavoriteButton();
-    
-    console.log('🎵 Now playing updated:', song.title);
   },
 
   loadSong(song) {
@@ -1524,7 +1616,7 @@ const musicPlayer = {
     console.log('🎵 Loading song:', song);
     
     appState.currentSong = song;
-    this.updateNowPlaying(song);
+    this.ui.updateNowPlaying(song);
     
     if (!appState.audio) {
       appState.audio = new Audio();
@@ -1534,6 +1626,7 @@ const musicPlayer = {
     const audioUrl = song.audioUrl || song.src || song.url;
     if (!audioUrl) {
       console.error('Cannot load: no audio URL found for song', song);
+      this.ui.showNotification('No audio file found', NOTIFICATION_TYPES.ERROR);
       return;
     }
     
@@ -1569,9 +1662,7 @@ const musicPlayer = {
     });
     
     appState.audio.addEventListener('timeupdate', () => {
-      if (window.player?.updateProgress) {
-        window.player.updateProgress();
-      }
+      this.ui.updateProgress();
     });
     
     appState.audio.addEventListener('ended', () => {
@@ -1587,7 +1678,7 @@ const musicPlayer = {
     
     appState.audio.addEventListener('play', () => {
       appState.isPlaying = true;
-      ui.updatePlayButton();
+      this.ui.updatePlayButton();
       
       const playIndicator = QUERY(NAVBAR.playIndicator);
       if (playIndicator) {
@@ -1597,7 +1688,7 @@ const musicPlayer = {
     
     appState.audio.addEventListener('pause', () => {
       appState.isPlaying = false;
-      ui.updatePlayButton();
+      this.ui.updatePlayButton();
       
       const playIndicator = QUERY(NAVBAR.playIndicator);
       if (playIndicator) {
@@ -1607,7 +1698,7 @@ const musicPlayer = {
     
     appState.audio.addEventListener('error', (e) => {
       console.error('❌ Audio error:', e);
-      ui.showNotification('Failed to load audio', NOTIFICATION_TYPES.ERROR);
+      this.ui.showNotification('Failed to load audio', NOTIFICATION_TYPES.ERROR);
     });
     
     appState.audio.addEventListener('waiting', () => {
@@ -1616,6 +1707,24 @@ const musicPlayer = {
     
     appState.audio.addEventListener('canplay', () => {
       console.log('✅ Ready to play');
+    });
+    
+    appState.audio.addEventListener('volumechange', () => {
+      console.log('🔊 Volume changed:', appState.audio.volume);
+    });
+    
+    appState.audio.addEventListener('progress', () => {
+      if (appState.audio.buffered.length > 0) {
+        const buffered = appState.audio.buffered.end(appState.audio.buffered.length - 1);
+        const duration = appState.audio.duration;
+        if (duration > 0) {
+          const bufferPercent = (buffered / duration) * 100;
+          const progressBuffer = QUERY(MUSIC_PLAYER.progressBuffer);
+          if (progressBuffer) {
+            progressBuffer.style.width = `${bufferPercent}%`;
+          }
+        }
+      }
     });
   },
 
@@ -1627,6 +1736,11 @@ const musicPlayer = {
       artist: song.artist || 'Unknown Artist',
       album: song.album || 'Unknown Album',
       artwork: [
+        { src: song.albumArt || song.cover || '', sizes: '96x96', type: 'image/jpeg' },
+        { src: song.albumArt || song.cover || '', sizes: '128x128', type: 'image/jpeg' },
+        { src: song.albumArt || song.cover || '', sizes: '192x192', type: 'image/jpeg' },
+        { src: song.albumArt || song.cover || '', sizes: '256x256', type: 'image/jpeg' },
+        { src: song.albumArt || song.cover || '', sizes: '384x384', type: 'image/jpeg' },
         { src: song.albumArt || song.cover || '', sizes: '512x512', type: 'image/jpeg' }
       ]
     });
@@ -1637,6 +1751,16 @@ const musicPlayer = {
     navigator.mediaSession.setActionHandler('nexttrack', () => this.playback.next());
     navigator.mediaSession.setActionHandler('seekbackward', () => this.playback.skip(-10));
     navigator.mediaSession.setActionHandler('seekforward', () => this.playback.skip(10));
+    
+    try {
+      navigator.mediaSession.setActionHandler('seekto', (details) => {
+        if (details.seekTime !== null) {
+          this.playback.seekTo(details.seekTime);
+        }
+      });
+    } catch (error) {
+      console.warn('seekto action not supported:', error);
+    }
     
     console.log('📱 Media session updated');
   },
@@ -1650,6 +1774,41 @@ const musicPlayer = {
     appState.queue = [...songs];
     this.renderQueue();
     console.log('📋 Queue updated:', appState.queue.length, 'songs');
+  },
+
+  addToQueue(song) {
+    if (!song) {
+      console.error('Cannot add to queue: song is null or undefined');
+      return;
+    }
+    
+    if (!appState.queue) {
+      appState.queue = [];
+    }
+    
+    appState.queue.push(song);
+    this.renderQueue();
+    this.ui.showNotification(`Added "${song.title}" to queue`, NOTIFICATION_TYPES.SUCCESS);
+    console.log('➕ Added to queue:', song.title);
+  },
+
+  removeFromQueue(index) {
+    if (!appState.queue || index < 0 || index >= appState.queue.length) {
+      console.error('Invalid queue index:', index);
+      return;
+    }
+    
+    const removed = appState.queue.splice(index, 1)[0];
+    this.renderQueue();
+    this.ui.showNotification(`Removed "${removed.title}" from queue`, NOTIFICATION_TYPES.INFO);
+    console.log('➖ Removed from queue:', removed.title);
+  },
+
+  clearQueue() {
+    appState.queue = [];
+    this.renderQueue();
+    this.ui.showNotification('Queue cleared', NOTIFICATION_TYPES.INFO);
+    console.log('🗑️ Queue cleared');
   },
 
   renderQueue() {
@@ -1682,7 +1841,7 @@ const musicPlayer = {
     }
     
     queueList.innerHTML = queue.map((song, index) => `
-      <li class="musicPlayerListItem ${song.id === appState.currentSong?.id ? 'active' : ''}" data-song-id="${song.id}">
+      <li class="musicPlayerListItem ${song.id === appState.currentSong?.id ? 'active' : ''}" data-song-id="${song.id}" data-index="${index}">
         <div class="musicPlayerListItemArt">
           <img src="${song.albumArt || song.cover || ''}" alt="${song.album || 'Album'} cover" />
         </div>
@@ -1719,9 +1878,18 @@ const musicPlayer = {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const index = parseInt(btn.dataset.index);
-        queue.splice(index, 1);
-        appState.queue = queue;
-        this.renderQueue();
+        musicPlayer.removeFromQueue(index);
+      });
+    });
+    
+    queueList.querySelectorAll('.musicPlayerListItem').forEach(item => {
+      item.addEventListener('click', (e) => {
+        if (!e.target.closest('button')) {
+          const index = parseInt(item.dataset.index);
+          if (queue[index]) {
+            musicPlayer.loadSong(queue[index]);
+          }
+        }
       });
     });
   },
@@ -1787,6 +1955,20 @@ const musicPlayer = {
         }
       });
     });
+    
+    recentList.querySelectorAll('.musicPlayerListItem').forEach(item => {
+      item.addEventListener('click', (e) => {
+        if (!e.target.closest('button')) {
+          try {
+            const btn = item.querySelector('.play-recent');
+            const song = JSON.parse(btn.dataset.song);
+            musicPlayer.loadSong(song);
+          } catch (error) {
+            console.error('Failed to parse song data:', error);
+          }
+        }
+      });
+    });
   },
 
   init() {
@@ -1811,10 +1993,23 @@ const musicPlayer = {
       });
     });
     
+    const closeBtn = QUERY(MUSIC_PLAYER.close);
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => {
+        this.mainPlayer.close();
+      });
+    }
+    
+    const curtain = QUERY(MUSIC_PLAYER.curtain);
+    if (curtain) {
+      curtain.addEventListener('click', () => {
+        this.mainPlayer.close();
+      });
+    }
+    
     console.log('✅ Music player initialized');
   }
 };
-
 
 
 
