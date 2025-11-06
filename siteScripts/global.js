@@ -2474,9 +2474,6 @@ const playlists = {
 
 
 
-// ═══════════════════════════════════════════════════════════════
-//  SINGLE INITIALIZATION POINT - NO DUPLICATES
-// ═══════════════════════════════════════════════════════════════
 
 const app = {
     initialize: function() {
