@@ -250,10 +250,10 @@ export const ui = {
 
   updateCounts: () => {
     const counts = {
-      [IDS.favoriteSongsCount]: appState.favorites.songs.size,
-      [IDS.favoriteArtistsCount]: appState.favorites.artists.size,
-      [IDS.recentCount]: appState.recentlyPlayed.length,
-      [IDS.queueCount]: appState.queue.items.length,
+      [PAGE.favoriteSongsCount]: appState.favorites.songs.size,
+      [PAGE.favoriteArtistsCount]: appState.favorites.artists.size,
+      [PAGE.recentCount]: appState.recentlyPlayed.length,
+      [PAGE.queueCount]: appState.queue.items.length,
     };
 
     Object.entries(counts).forEach(([id, value]) => {
