@@ -1604,7 +1604,70 @@ const musicPlayer = {
       this.updateFavoriteButton();
       
       console.log('🎵 Now playing updated:', song.title);
+    },
+    
+
+
+initialize() {
+  console.log('🎨 Initializing music player UI...');
+  
+  this.updatePlayButton();
+  this.updateFavoriteButton();
+  
+  const progressBar = QUERY(MUSIC_PLAYER.progressBar);
+  if (progressBar) {
+    this.setupProgressBar(progressBar);
+  }
+  
+  console.log('✅ Music player UI initialized');
+},
+
+setupProgressBar(progressBar) {
+  let isDragging = false;
+  
+  const handleProgressClick = (e) => {
+    if (!appState.audio || !appState.duration) return;
+    
+    const rect = progressBar.getBoundingClientRect();
+    const percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    const newTime = percent * appState.duration;
+    
+    if (!isNaN(newTime) && isFinite(newTime)) {
+      musicPlayer.playback.seekTo(newTime);
     }
+  };
+  
+  const startDrag = (e) => {
+    if (!appState.currentSong) return;
+    isDragging = true;
+    progressBar.classList.add('is-dragging');
+    document.body.style.userSelect = 'none';
+    e.preventDefault();
+  };
+  
+  const onDrag = (e) => {
+    if (!isDragging || !appState.audio || !appState.duration) return;
+    
+    const rect = progressBar.getBoundingClientRect();
+    const percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    const newTime = percent * appState.duration;
+    
+    if (!isNaN(newTime) && isFinite(newTime)) {
+      musicPlayer.playback.seekTo(newTime);
+    }
+  };
+  
+  const endDrag = () => {
+    isDragging = false;
+    progressBar.classList.remove('is-dragging');
+    document.body.style.userSelect = '';
+  };
+  
+  progressBar.addEventListener('click', handleProgressClick);
+  progressBar.addEventListener('mousedown', startDrag);
+  document.addEventListener('mousemove', onDrag);
+  document.addEventListener('mouseup', endDrag);
+},
   },
 
   loadSong(song) {
@@ -1971,44 +2034,45 @@ const musicPlayer = {
     });
   },
 
-  init() {
-    console.log('🎵 Initializing music player...');
-    
-    this.renderQueue();
-    this.renderRecentlyPlayed();
-    
-    const tabs = QUERY_ALL('.tab');
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        const tabName = tab.dataset.tab;
-        if (tabName) {
-          this.mainPlayer.switchTab(tabName);
-          
-          if (tabName === 'recent') {
-            this.renderRecentlyPlayed();
-          } else if (tabName === 'queue') {
-            this.renderQueue();
-          }
+
+init() {
+  console.log('🎵 Initializing music player...');
+  
+  this.renderQueue();
+  this.renderRecentlyPlayed();
+  
+  const tabs = QUERY_ALL('.tab');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const tabName = tab.dataset.tab;
+      if (tabName) {
+        this.mainPlayer.switchTab(tabName);
+        
+        if (tabName === 'recent') {
+          this.renderRecentlyPlayed();
+        } else if (tabName === 'queue') {
+          this.renderQueue();
         }
-      });
+      }
     });
-    
-    const closeBtn = QUERY(MUSIC_PLAYER.close);
-    if (closeBtn) {
-      closeBtn.addEventListener('click', () => {
-        this.mainPlayer.close();
-      });
-    }
-    
-    const curtain = QUERY(MUSIC_PLAYER.curtain);
-    if (curtain) {
-      curtain.addEventListener('click', () => {
-        this.mainPlayer.close();
-      });
-    }
-    
-    console.log('✅ Music player initialized');
+  });
+  
+  const closeBtn = QUERY(MUSIC_PLAYER.close);
+  if (closeBtn) {
+    closeBtn.addEventListener('click', () => {
+      this.mainPlayer.close();
+    });
   }
+  
+  const curtain = QUERY(MUSIC_PLAYER.curtain);
+  if (curtain) {
+    curtain.addEventListener('click', () => {
+      this.mainPlayer.close();
+    });
+  }
+  
+  console.log('✅ Music player initialized');
+},
 };
 
 
