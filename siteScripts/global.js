@@ -1,4 +1,5 @@
-import { IDS, CLASSES, ROUTES, THEMES, STORAGE_KEYS, ICONS, AUDIO_FORMATS, REPEAT_MODES, NOTIFICATION_TYPES, $, $byId } from "./map.js";
+
+import { DOM, QUERY, QUERY_ALL, IDS, CLASSES, ROUTES, THEMES, STORAGE_KEYS, ICONS, AUDIO_FORMATS, REPEAT_MODES, NOTIFICATION_TYPES, $, $byId } from "./map.js";
 import { music } from "../modules/library.js";
 import { render, create } from "./utilities/templates.js";
 import { encodeURIComponent } from './utilities/parsers.js';
