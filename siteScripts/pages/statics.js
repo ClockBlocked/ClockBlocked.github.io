@@ -439,242 +439,229 @@ addStyles: () => {
   document.head.appendChild(styleEl);},  
 
 renderRecentlyPlayed: () => {
-    const container = $byId(IDS.recentlyPlayedSection);
-    if (!container) return;
+  const container = PAGE.recentlyPlayedSection;
+  if (!container) return;
 
-    if (!appState.recentlyPlayed || appState.recentlyPlayed.length === 0) {
-      container.innerHTML = homePage.renderEmptyState("No recently played tracks", "music-note");
-      return;
-    }
+  if (!appState.recentlyPlayed || appState.recentlyPlayed.length === 0) {
+    container.innerHTML = homePage.renderEmptyState("No recently played tracks", "music-note");
+    return;
+  }
 
-    const recentTracks = appState.recentlyPlayed.slice(0, 5);
-    container.innerHTML = render.homeSection.recentlyPlayed(recentTracks, utils);
+  const recentTracks = appState.recentlyPlayed.slice(0, 5);
+  container.innerHTML = render.homeSection.recentlyPlayed(recentTracks, utils);
 
-    // *** UPDATED SELECTOR ***
-    container.querySelectorAll(".modern-track-item").forEach((track) => {
-      track.addEventListener("click", (e) => {
-        // *** UPDATED CLASS ***
-        if (e.target.closest(".track-artist-text") || e.target.closest(".track-action-btn")) return; // Also ignore other buttons
+  container.querySelectorAll(".modern-track-item").forEach((track) => {
+    track.addEventListener("click", (e) => {
+      if (e.target.closest(".track-artist-text") || e.target.closest(".track-action-btn")) return;
 
-        try {
-          const songData = JSON.parse(track.dataset.song);
-          musicPlayer.ui.playSong(songData);
-        } catch (error) {}
-      });
+      try {
+        const songData = JSON.parse(track.dataset.song);
+        musicPlayer.ui.playSong(songData);
+      } catch (error) {}
     });
+  });
 
-    // *** UPDATED SELECTOR ***
-    container.querySelectorAll(".track-artist-text").forEach((artistEl) => {
-      artistEl.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const artistName = artistEl.dataset.artist;
-        if (appState.router) {
-          appState.router.navigateTo(PAGE.ROUTES.ARTIST, {
-            artist: artistName,
-          });
-        }
-      });
-    });
-  },
-
-  renderRandomAlbums: () => {
-    const container = $byId(IDS.randomAlbumsSection);
-    if (!container) return;
-
-    const albums = homePage.getRandomAlbums(6);
-
-    if (!albums || albums.length === 0) {
-      container.innerHTML = homePage.renderEmptyState("No albums found", "album");
-      return;
-    }
-
-    container.innerHTML = render.homeSection.randomAlbums(albums, utils);
-
-    // This section's selectors were already correct!
-    container.querySelectorAll(".album-play-btn").forEach((playBtn) => {
-      playBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const artistName = playBtn.dataset.artist;
-        const albumName = playBtn.dataset.album;
-        homePage.playAlbum(artistName, albumName);
-      });
-    });
-
-    container.querySelectorAll(".album-card").forEach((albumCard) => {
-      albumCard.addEventListener("click", (e) => {
-        if (e.target.closest(".album-play-btn") || e.target.closest(".album-artist")) return;
-
-        const artistName = albumCard.dataset.artist;
-        const albumName = albumCard.dataset.album;
-        homePage.playAlbum(artistName, albumName);
-      });
-    });
-
-    container.querySelectorAll(".album-artist").forEach((artistEl) => {
-      artistEl.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const artistName = artistEl.dataset.artist;
-        const albumCard = artistEl.closest('.album-card');
-        const albumName = albumCard ? albumCard.dataset.album : null;
-        
-        if (appState.router) {
-          appState.router.navigateTo(PAGE.ROUTES.ARTIST, {
-            artist: artistName,
-          });
-          
-          if (albumName) {
-            sessionStorage.setItem('pendingAlbumLoad', albumName);
-            
-            setTimeout(() => {
-              const storedAlbum = sessionStorage.getItem('pendingAlbumLoad');
-              if (storedAlbum === albumName) {
-                const artistData = window.music?.find((a) => a.artist === artistName);
-                if (artistData) {
-                  navigation.pages.loadArtistPage(artistData, albumName);
-                }
-                sessionStorage.removeItem('pendingAlbumLoad');
-              }
-            }, 100);
-          }
-        }
-      });
-    });
-  },
-
-  renderFavoriteArtists: () => {
-    const container = $byId(IDS.favoriteArtistsSection);
-    if (!container) return;
-
-    if (!appState.favorites.artists || appState.favorites.artists.size === 0) {
-      container.innerHTML = homePage.renderEmptyState("No favorite artists", "artist");
-      return;
-    }
-
-    const artists = Array.from(appState.favorites.artists).slice(0, 6);
-    container.innerHTML = render.homeSection.favoriteArtists(artists, utils);
-
-    // *** UPDATED SELECTOR ***
-    container.querySelectorAll(".modern-artist-card").forEach((artistEl) => {
-      artistEl.addEventListener("click", (e) => {
-        if (e.target.closest(".artist-action-btn")) return; // Ignore action buttons
-        const artistName = artistEl.dataset.artist;
-        if (appState.router) {
-          appState.router.navigateTo(PAGE.ROUTES.ARTIST, {
-            artist: artistName,
-          });
-        }
-      });
-    });
-  },
-
-  renderPlaylists: () => {
-    const container = $byId(IDS.playlistsSection);
-    if (!container) return;
-
-    let html = "";
-
-    if (!appState.playlists || appState.playlists.length === 0) {
-      html = homePage.renderEmptyState("No playlists yet", "playlist");
-    } else {
-      const displayPlaylists = appState.playlists.slice(0, 3);
-      html = render.homeSection.playlists(displayPlaylists);
-    }
-
-    html += `
-      <button class="create-playlist-btn">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
-          <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-        </svg>
-        Create Playlist
-      </button>
-    `;
-
-    container.innerHTML = html;
-
-    // *** UPDATED SELECTOR ***
-    container.querySelectorAll(".modern-playlist-card").forEach((playlistEl) => {
-      playlistEl.addEventListener("click", (e) => {
-        if (e.target.closest(".playlist-action-btn")) return; // Ignore action buttons
-        const playlistId = playlistEl.dataset.playlistId;
-        playlists.show(playlistId);
-      });
-    });
-
-    const createBtn = container.querySelector(".create-playlist-btn");
-    if (createBtn) {
-      createBtn.addEventListener("click", () => {
-        playlists.create().then(newPlaylist => { // Wait for the async create to finish
-          if (newPlaylist) {
-            setTimeout(() => homePage.renderPlaylists(), 100); // Re-render if successful
-          }
+  container.querySelectorAll(".track-artist-text").forEach((artistEl) => {
+    artistEl.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const artistName = artistEl.dataset.artist;
+      if (appState.router) {
+        appState.router.navigateTo(PAGE.ROUTES.ARTIST, {
+          artist: artistName,
         });
-      });
-    }
-  },
-
-  renderFavoriteSongs: () => {
-    const container = $byId(IDS.favoriteSongsSection);
-    if (!container) return;
-
-    if (!appState.favorites.songs || appState.favorites.songs.size === 0) {
-      container.innerHTML = homePage.renderEmptyState("No favorite songs", "heart");
-      return;
-    }
-
-    const songs = homePage.getSongsByIds(Array.from(appState.favorites.songs).slice(0, 5));
-    container.innerHTML = render.homeSection.favoriteSongs(songs, utils);
-
-    // *** UPDATED SELECTOR ***
-    container.querySelectorAll(".modern-favorite-item").forEach((track) => {
-      track.addEventListener("click", (e) => {
-        // *** UPDATED CLASSES ***
-        if (e.target.closest(".favorite-artist-text") || e.target.closest(".favorite-action-btn")) return;
-
-        try {
-          const songData = JSON.parse(track.dataset.song);
-          musicPlayer.ui.playSong(songData);
-        } catch (error) {}
-      });
+      }
     });
+  });
+},
 
-    // *** UPDATED SELECTOR ***
-    container.querySelectorAll(".favorite-artist-text").forEach((artistEl) => {
-      artistEl.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const artistName = artistEl.dataset.artist;
-        if (appState.router) {
-          appState.router.navigateTo(PAGE.ROUTES.ARTIST, {
-            artist: artistName,
-          });
+renderRandomAlbums: () => {
+  const container = PAGE.randomAlbumsSection;
+  if (!container) return;
+
+  const albums = homePage.getRandomAlbums(6);
+
+  if (!albums || albums.length === 0) {
+    container.innerHTML = homePage.renderEmptyState("No albums found", "album");
+    return;
+  }
+
+  container.innerHTML = render.homeSection.randomAlbums(albums, utils);
+
+  container.querySelectorAll(".album-play-btn").forEach((playBtn) => {
+    playBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const artistName = playBtn.dataset.artist;
+      const albumName = playBtn.dataset.album;
+      homePage.playAlbum(artistName, albumName);
+    });
+  });
+
+  container.querySelectorAll(".album-card").forEach((albumCard) => {
+    albumCard.addEventListener("click", (e) => {
+      if (e.target.closest(".album-play-btn") || e.target.closest(".album-artist")) return;
+
+      const artistName = albumCard.dataset.artist;
+      const albumName = albumCard.dataset.album;
+      homePage.playAlbum(artistName, albumName);
+    });
+  });
+
+  container.querySelectorAll(".album-artist").forEach((artistEl) => {
+    artistEl.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const artistName = artistEl.dataset.artist;
+      const albumCard = artistEl.closest('.album-card');
+      const albumName = albumCard ? albumCard.dataset.album : null;
+      
+      if (appState.router) {
+        appState.router.navigateTo(PAGE.ROUTES.ARTIST, {
+          artist: artistName,
+        });
+        
+        if (albumName) {
+          sessionStorage.setItem('pendingAlbumLoad', albumName);
+          
+          setTimeout(() => {
+            const storedAlbum = sessionStorage.getItem('pendingAlbumLoad');
+            if (storedAlbum === albumName) {
+              const artistData = window.music?.find((a) => a.artist === artistName);
+              if (artistData) {
+                navigation.pages.loadArtistPage(artistData, albumName);
+              }
+              sessionStorage.removeItem('pendingAlbumLoad');
+            }
+          }, 100);
+        }
+      }
+    });
+  });
+},
+
+renderFavoriteArtists: () => {
+  const container = PAGE.favoriteArtistsSection;
+  if (!container) return;
+
+  if (!appState.favorites.artists || appState.favorites.artists.size === 0) {
+    container.innerHTML = homePage.renderEmptyState("No favorite artists", "artist");
+    return;
+  }
+
+  const artists = Array.from(appState.favorites.artists).slice(0, 6);
+  container.innerHTML = render.homeSection.favoriteArtists(artists, utils);
+
+  container.querySelectorAll(".modern-artist-card").forEach((artistEl) => {
+    artistEl.addEventListener("click", (e) => {
+      if (e.target.closest(".artist-action-btn")) return;
+      const artistName = artistEl.dataset.artist;
+      if (appState.router) {
+        appState.router.navigateTo(PAGE.ROUTES.ARTIST, {
+          artist: artistName,
+        });
+      }
+    });
+  });
+},
+
+renderPlaylists: () => {
+  const container = PAGE.playlistsSection;
+  if (!container) return;
+
+  let html = "";
+
+  if (!appState.playlists || appState.playlists.length === 0) {
+    html = homePage.renderEmptyState("No playlists yet", "playlist");
+  } else {
+    const displayPlaylists = appState.playlists.slice(0, 3);
+    html = render.homeSection.playlists(displayPlaylists);
+  }
+
+  html += `
+    <button class="create-playlist-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+      </svg>
+      Create Playlist
+    </button>
+  `;
+
+  container.innerHTML = html;
+
+  container.querySelectorAll(".modern-playlist-card").forEach((playlistEl) => {
+    playlistEl.addEventListener("click", (e) => {
+      if (e.target.closest(".playlist-action-btn")) return;
+      const playlistId = playlistEl.dataset.playlistId;
+      playlists.show(playlistId);
+    });
+  });
+
+  const createBtn = container.querySelector(".create-playlist-btn");
+  if (createBtn) {
+    createBtn.addEventListener("click", () => {
+      playlists.create().then(newPlaylist => {
+        if (newPlaylist) {
+          setTimeout(() => homePage.renderPlaylists(), 100);
         }
       });
     });
+  }
+},
 
-    // *** UPDATED SELECTOR ***
-    container.querySelectorAll(".favorite-heart-btn").forEach((heartBtn) => {
-      heartBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const songId = heartBtn.dataset.songId;
-        appState.favorites.remove("songs", songId);
+renderFavoriteSongs: () => {
+  const container = PAGE.favoriteSongsSection;
+  if (!container) return;
 
-        // *** UPDATED CLASS ***
-        const track = heartBtn.closest(".modern-favorite-item");
-        track.style.transition = "all 0.3s ease";
-        track.style.opacity = "0";
-        track.style.transform = "translateX(-20px)";
+  if (!appState.favorites.songs || appState.favorites.songs.size === 0) {
+    container.innerHTML = homePage.renderEmptyState("No favorite songs", "heart");
+    return;
+  }
 
-        setTimeout(() => {
-          track.remove();
-          // *** UPDATED CLASS ***
-          const remaining = container.querySelectorAll(".modern-favorite-item");
-          if (remaining.length === 0) {
-            homePage.renderFavoriteSongs();
-          }
-        }, 300);
-      });
+  const songs = homePage.getSongsByIds(Array.from(appState.favorites.songs).slice(0, 5));
+  container.innerHTML = render.homeSection.favoriteSongs(songs, utils);
+
+  container.querySelectorAll(".modern-favorite-item").forEach((track) => {
+    track.addEventListener("click", (e) => {
+      if (e.target.closest(".favorite-artist-text") || e.target.closest(".favorite-action-btn")) return;
+
+      try {
+        const songData = JSON.parse(track.dataset.song);
+        musicPlayer.ui.playSong(songData);
+      } catch (error) {}
     });
-  },
+  });
 
+  container.querySelectorAll(".favorite-artist-text").forEach((artistEl) => {
+    artistEl.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const artistName = artistEl.dataset.artist;
+      if (appState.router) {
+        appState.router.navigateTo(PAGE.ROUTES.ARTIST, {
+          artist: artistName,
+        });
+      }
+    });
+  });
+
+  container.querySelectorAll(".favorite-heart-btn").forEach((heartBtn) => {
+    heartBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const songId = heartBtn.dataset.songId;
+      appState.favorites.remove("songs", songId);
+
+      const track = heartBtn.closest(".modern-favorite-item");
+      track.style.transition = "all 0.3s ease";
+      track.style.opacity = "0";
+      track.style.transform = "translateX(-20px)";
+
+      setTimeout(() => {
+        track.remove();
+        const remaining = container.querySelectorAll(".modern-favorite-item");
+        if (remaining.length === 0) {
+          homePage.renderFavoriteSongs();
+        }
+      }, 300);
+    });
+  });
+},
   bindEvents: () => {
     document.querySelectorAll("[data-view]").forEach((link) => {
       link.addEventListener("click", (e) => {
