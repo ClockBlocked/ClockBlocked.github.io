@@ -14,432 +14,430 @@ import { ui } from './updates.js';
 import { render } from '../utilities/templates.js';
 
 export const homePage = {
-  initialize: () => {
-    appState.homePageManager = {
-      renderHomePage: homePage.render,
-    };
-  },
+initialize: () => {
+  appState.homePageManager = {
+    renderHomePage: homePage.render,
+  };
+},
 
-  render: () => {
-    const dynamicContent = PAGE.dynamicContent;
-    if (!dynamicContent) return;
+render: () => {
+  const dynamicContent = PAGE.dynamicContent;
+  if (!dynamicContent) return;
 
-    dynamicContent.innerHTML = "";
-    dynamicContent.innerHTML = render.page("home_bento", { IDS: window.IDS });
+  dynamicContent.innerHTML = "";
+  dynamicContent.innerHTML = render.page("home_bento", {});
 
-    homePage.addStyles();
+  homePage.addStyles();
 
-    setTimeout(() => homePage.renderRecentlyPlayed(), 100);
-    setTimeout(() => homePage.renderRandomAlbums(), 300);
-    setTimeout(() => homePage.renderFavoriteArtists(), 500);
-    setTimeout(() => homePage.renderPlaylists(), 700);
-    setTimeout(() => homePage.renderFavoriteSongs(), 900);
+  setTimeout(() => homePage.renderRecentlyPlayed(), 100);
+  setTimeout(() => homePage.renderRandomAlbums(), 300);
+  setTimeout(() => homePage.renderFavoriteArtists(), 500);
+  setTimeout(() => homePage.renderPlaylists(), 700);
+  setTimeout(() => homePage.renderFavoriteSongs(), 900);
 
-    homePage.bindEvents();
-  },
+  homePage.bindEvents();
+},
 
-  addStyles: () => {
-    if ($byId("bento-grid-styles")) return;
+addStyles: () => {
+  if (document.getElementById("bento-grid-styles")) return;
 
-    const styleEl = document.createElement("style");
-    styleEl.id = "bento-grid-styles";
-    styleEl.textContent = `
-      .bento-grid {
-        display: grid;
-        gap: 1.5rem;
-      }
-      
-      .bento-card {
-        border-radius: 1rem;
-        padding: 1.5rem;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-      }
-      
-      .bento-card:hover {
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-      }
-      
-      .card-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      }
-      
-      .card-content {
-        min-height: 200px;
-      }
-      
-      .skeleton-loader {
-        height: 200px;
-        background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
-        background-size: 200% 100%;
-        animation: loading 1.5s infinite;
-        border-radius: 0.5rem;
-      }
-      
-      @keyframes loading {
-        0% { background-position: 200% 0; }
-        100% { background-position: -200% 0; }
-      }
-      
-      /* Updated styles from templates.js for .modern-track-item */
-      .modern-track-item, .modern-favorite-item, .modern-playlist-card {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        padding: 0.5rem;
-        border-radius: 0.5rem;
-        background: rgba(255, 255, 255, 0.05);
-        cursor: pointer;
-        transition: all 0.2s ease;
-        position: relative;
-      }
-      
-      .modern-track-item:hover, .modern-favorite-item:hover, .modern-playlist-card:hover {
-        background: rgba(255, 255, 255, 0.1);
-        transform: translateY(-2px);
-      }
+  const styleEl = document.createElement("style");
+  styleEl.id = "bento-grid-styles";
+  styleEl.textContent = `
+    .bento-grid {
+      display: grid;
+      gap: 1.5rem;
+    }
+    
+    .bento-card {
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .bento-card:hover {
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .card-content {
+      min-height: 200px;
+    }
+    
+    .skeleton-loader {
+      height: 200px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
+      background-size: 200% 100%;
+      animation: loading 1.5s infinite;
+      border-radius: 0.5rem;
+    }
+    
+    @keyframes loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    
+    /* Updated styles from templates.js for .modern-track-item */
+    .modern-track-item, .modern-favorite-item, .modern-playlist-card {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    
+    .modern-track-item:hover, .modern-favorite-item:hover, .modern-playlist-card:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
+    }
 
-      .track-artwork-container, .favorite-artwork-container, .playlist-artwork-container, .artist-artwork-container {
-        width: 40px;
-        height: 40px;
-        border-radius: 0.25rem;
-        flex-shrink: 0;
-        position: relative;
-        overflow: hidden;
-      }
+    .track-artwork-container, .favorite-artwork-container, .playlist-artwork-container, .artist-artwork-container {
+      width: 40px;
+      height: 40px;
+      border-radius: 0.25rem;
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+    }
 
-      .track-artwork, .favorite-artwork, .artist-avatar-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
+    .track-artwork, .favorite-artwork, .artist-avatar-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
 
-      .playlist-icon-wrapper {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: rgba(96, 165, 250, 0.3); /* Example color */
-      }
+    .playlist-icon-wrapper {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(96, 165, 250, 0.3); /* Example color */
+    }
 
-      .track-content, .favorite-content, .playlist-content, .artist-content {
-        flex: 1;
-        min-width: 0;
-      }
+    .track-content, .favorite-content, .playlist-content, .artist-content {
+      flex: 1;
+      min-width: 0;
+    }
 
-      .track-title-text, .favorite-title-text, .playlist-name-text, .artist-name-text {
-        font-weight: 500;
-        margin-bottom: 0.125rem;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-      
-      .track-artist-text, .favorite-artist-text, .playlist-tracks-text, .artist-label {
-        font-size: 0.875rem;
-        color: rgba(255, 255, 255, 0.7);
-        cursor: pointer;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
+    .track-title-text, .favorite-title-text, .playlist-name-text, .artist-name-text {
+      font-weight: 500;
+      margin-bottom: 0.125rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .track-artist-text, .favorite-artist-text, .playlist-tracks-text, .artist-label {
+      font-size: 0.875rem;
+      color: rgba(255, 255, 255, 0.7);
+      cursor: pointer;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
-      .track-artist-text:hover, .favorite-artist-text:hover {
-        color: rgba(255, 255, 255, 0.9);
-        text-decoration: underline;
-      }
-      
-      .album-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-        gap: 1rem;
-      }
-      
-      .album-card {
-        text-align: center;
-        cursor: pointer;
-        transition: transform 0.2s ease;
-        position: relative;
-      }
-      
-      .album-cover {
-        width: 100%;
-        aspect-ratio: 1;
-        border-radius: 0.5rem;
-        object-fit: cover;
-        margin-bottom: 0.5rem;
-        position: relative;
-      }
-      
-      .album-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.6);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        opacity: 0;
-        transition: opacity 0.2s ease;
-        border-radius: 0.5rem;
-        margin-bottom: 0.5rem;
-      }
-      
-      .album-card:hover .album-overlay {
-        opacity: 1;
-      }
-      
-      .album-play-btn {
-        width: 3rem;
-        height: 3rem;
-        background: rgba(59, 130, 246, 0.9);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        border: none;
-        cursor: pointer;
-        transition: all 0.2s ease;
-      }
-      
-      .album-play-btn:hover {
-        transform: scale(1.1);
-        background: rgba(59, 130, 246, 1);
-      }
-      
-      .album-play-btn svg {
-        width: 1.2rem;
-        height: 1.2rem;
-      }
-      
-      .album-info {
-        font-size: 0.875rem;
-      }
-      
-      .album-title {
-        font-weight: 500;
-        margin-bottom: 0.125rem;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-      
-      .album-artist {
-        color: rgba(255, 255, 255, 0.7);
-        cursor: pointer;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-      
-      .album-artist:hover {
-        color: rgba(255, 255, 255, 0.9);
-        text-decoration: underline;
-      }
-      
-      /* Style for .modern-artist-card */
-      .modern-artist-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-        gap: 1rem;
-      }
-      
-      .modern-artist-card {
-        text-align: center;
-        cursor: pointer;
-        transition: transform 0.2s ease;
-        position: relative;
-      }
-      
-      .modern-artist-card:hover {
-        transform: scale(1.05);
-      }
-      
-      .artist-avatar-image {
-        border-radius: 50%;
-        width: 100%;
-        aspect-ratio: 1;
-        object-fit: cover;
-      }
-      
-      .artist-name-text {
-        font-size: 0.875rem;
-        font-weight: 500;
-        margin-top: 0.5rem;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-      
-      .create-playlist-btn {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.75rem;
-        border-radius: 0.5rem;
-        background: rgba(59, 130, 246, 0.1);
-        border: 1px dashed rgba(59, 130, 246, 0.3);
-        color: rgb(59, 130, 246);
-        cursor: pointer;
-        transition: all 0.2s ease;
-        width: 100%;
-        margin-top: 0.5rem;
-        text-align: center;
-        justify-content: center;
-      }
-      
-      .create-playlist-btn:hover {
-        background: rgba(59, 130, 246, 0.2);
-        border-color: rgba(59, 130, 246, 0.5);
-        transform: translateY(-1px);
-      }
-      
-      .empty-state {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 100%;
-        color: rgba(255, 255, 255, 0.5);
-        font-size: 0.875rem;
-        text-align: center;
-        padding: 2rem 1rem;
-      }
-      
-      .empty-state svg {
-        margin-bottom: 1rem;
-        opacity: 0.6;
-      }
-      
-      /* --- ENHANCEMENT: Styles for Track, Playlist, and Favorite Song overlays --- */
-      .track-play-overlay, .playlist-play-overlay, .favorite-play-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(4px);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        opacity: 0;
-        transform: scale(0.95);
-        transition: opacity 0.2s ease, transform 0.2s ease;
-        border-radius: 0.25rem;
-        cursor: pointer;
-      }
-      
-      .modern-track-item:hover .track-play-overlay,
-      .modern-playlist-card:hover .playlist-play-overlay,
-      .modern-favorite-item:hover .favorite-play-overlay {
-        opacity: 1;
-        transform: scale(1);
-      }
+    .track-artist-text:hover, .favorite-artist-text:hover {
+      color: rgba(255, 255, 255, 0.9);
+      text-decoration: underline;
+    }
+    
+    .album-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 1rem;
+    }
+    
+    .album-card {
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      position: relative;
+    }
+    
+    .album-cover {
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: 0.5rem;
+      object-fit: cover;
+      margin-bottom: 0.5rem;
+      position: relative;
+    }
+    
+    .album-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      border-radius: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .album-card:hover .album-overlay {
+      opacity: 1;
+    }
+    
+    .album-play-btn {
+      width: 3rem;
+      height: 3rem;
+      background: rgba(59, 130, 246, 0.9);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .album-play-btn:hover {
+      transform: scale(1.1);
+      background: rgba(59, 130, 246, 1);
+    }
+    
+    .album-play-btn svg {
+      width: 1.2rem;
+      height: 1.2rem;
+    }
+    
+    .album-info {
+      font-size: 0.875rem;
+    }
+    
+    .album-title {
+      font-weight: 500;
+      margin-bottom: 0.125rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .album-artist {
+      color: rgba(255, 255, 255, 0.7);
+      cursor: pointer;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .album-artist:hover {
+      color: rgba(255, 255, 255, 0.9);
+      text-decoration: underline;
+    }
+    
+    /* Style for .modern-artist-card */
+    .modern-artist-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 1rem;
+    }
+    
+    .modern-artist-card {
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      position: relative;
+    }
+    
+    .modern-artist-card:hover {
+      transform: scale(1.05);
+    }
+    
+    .artist-avatar-image {
+      border-radius: 50%;
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+    }
+    
+    .artist-name-text {
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-top: 0.5rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .create-playlist-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px dashed rgba(59, 130, 246, 0.3);
+      color: rgb(59, 130, 246);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      width: 100%;
+      margin-top: 0.5rem;
+      text-align: center;
+      justify-content: center;
+    }
+    
+    .create-playlist-btn:hover {
+      background: rgba(59, 130, 246, 0.2);
+      border-color: rgba(59, 130, 246, 0.5);
+      transform: translateY(-1px);
+    }
+    
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 0.875rem;
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+    
+    .empty-state svg {
+      margin-bottom: 1rem;
+      opacity: 0.6;
+    }
+    
+    /* --- ENHANCEMENT: Styles for Track, Playlist, and Favorite Song overlays --- */
+    .track-play-overlay, .playlist-play-overlay, .favorite-play-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transform: scale(0.95);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      border-radius: 0.25rem;
+      cursor: pointer;
+    }
+    
+    .modern-track-item:hover .track-play-overlay,
+    .modern-playlist-card:hover .playlist-play-overlay,
+    .modern-favorite-item:hover .favorite-play-overlay {
+      opacity: 1;
+      transform: scale(1);
+    }
 
-      /* --- REVERT: Original styles for Artist overlay --- */
-      .artist-play-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.6); /* Original background */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        opacity: 0;
-        transition: opacity 0.2s ease; /* Original transition */
-        border-radius: 50%;
-        cursor: pointer;
-      }
+    /* --- REVERT: Original styles for Artist overlay --- */
+    .artist-play-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6); /* Original background */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.2s ease; /* Original transition */
+      border-radius: 50%;
+      cursor: pointer;
+    }
 
-      .modern-artist-card:hover .artist-play-overlay {
-        opacity: 1;
-      }
-      /* --- END REVERT --- */
+    .modern-artist-card:hover .artist-play-overlay {
+      opacity: 1;
+    }
+    /* --- END REVERT --- */
 
 
-      .artist-artwork-container {
-        border-radius: 50%;
-      }
+    .artist-artwork-container {
+      border-radius: 50%;
+    }
 
-      /* --- ENHANCEMENT: New styles for Track, Playlist, and Favorite Song buttons --- */
-      .track-play-btn, .playlist-play-btn, .favorite-play-btn {
-        width: 2.5rem; /* 40px */
-        height: 2.5rem; /* 40px */
-        background: rgba(59, 130, 246, 0.9); /* Blue */
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        border: none;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        transform: scale(1);
-      }
+    /* --- ENHANCEMENT: New styles for Track, Playlist, and Favorite Song buttons --- */
+    .track-play-btn, .playlist-play-btn, .favorite-play-btn {
+      width: 2.5rem; /* 40px */
+      height: 2.5rem; /* 40px */
+      background: rgba(59, 130, 246, 0.9); /* Blue */
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      transform: scale(1);
+    }
 
-      .track-play-btn:hover, .playlist-play-btn:hover, .favorite-play-btn:hover {
-        transform: scale(1.1);
-        background: rgba(59, 130, 246, 1);
-      }
+    .track-play-btn:hover, .playlist-play-btn:hover, .favorite-play-btn:hover {
+      transform: scale(1.1);
+      background: rgba(59, 130, 246, 1);
+    }
 
-      .track-play-btn svg, .playlist-play-btn svg, .favorite-play-btn svg {
-        width: 1.125rem; /* 18px */
-        height: 1.125rem; /* 18px */
-        margin-left: 2px; /* Optical centering */
-      }
-      
-      /* --- REVERT: Original styles for Artist play button --- */
-      .artist-play-btn {
-        color: white;
-        border: none;
-        background: none;
-        cursor: pointer;
-        padding: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 2.5rem; /* 40px */
-        height: 2.5rem; /* 40px */
-        transition: transform 0.2s ease;
-      }
-      
-      .artist-play-btn svg {
-         width: 1.5rem; /* 24px */
-         height: 1.5rem; /* 24px */
-      }
-      
-      .artist-play-btn:hover {
-        transform: scale(1.1);
-      }
-      /* --- END REVERT --- */
-      
-      .animate-fade-in {
-        animation: fadeIn 0.3s ease-in;
-      }
-      
-      @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-    `;
-    document.head.appendChild(styleEl);
-  },
-
-  renderRecentlyPlayed: () => {
+    .track-play-btn svg, .playlist-play-btn svg, .favorite-play-btn svg {
+      width: 1.125rem; /* 18px */
+      height: 1.125rem; /* 18px */
+      margin-left: 2px; /* Optical centering */
+    }
+    
+    /* --- REVERT: Original styles for Artist play button --- */
+    .artist-play-btn {
+      color: white;
+      border: none;
+      background: none;
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.5rem; /* 40px */
+      height: 2.5rem; /* 40px */
+      transition: transform 0.2s ease;
+    }
+    
+    .artist-play-btn svg {
+       width: 1.5rem; /* 24px */
+       height: 1.5rem; /* 24px */
+    }
+    
+    .artist-play-btn:hover {
+      transform: scale(1.1);
+    }
+    /* --- END REVERT --- */
+    
+    .animate-fade-in {
+      animation: fadeIn 0.3s ease-in;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  `;
+  document.head.appendChild(styleEl);
+},  renderRecentlyPlayed: () => {
     const container = $byId(IDS.recentlyPlayedSection);
     if (!container) return;
 
