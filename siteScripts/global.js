@@ -1445,9 +1445,6 @@ const musicPlayer = {
                 queueBtn.addEventListener('click', () => musicPlayer.mainPlayer.switchTab('queue'));
             }
             
-            musicPlayer.mainPlayer.preventHorizontalScroll();
-            musicPlayer.mainPlayer.initDrawerDrag();
-            
             const favoriteBtn = document.querySelector('#favoriteBtn');
             if (favoriteBtn) {
                 favoriteBtn.addEventListener('click', () => {
