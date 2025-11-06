@@ -81,13 +81,13 @@ export const pageUpdates = {
           if (item.onClick) { item.onClick(); return; }
           if (appState.router) {
             if (item.route) {
-              if (item.route === ROUTES.HOME) appState.router.navigateTo(ROUTES.HOME);
-              else if (item.route === ROUTES.ARTIST && item.artist) appState.router.navigateTo(ROUTES.ARTIST, { artist: item.artist });
-              else if (item.route === ROUTES.ALL_ARTISTS) appState.router.navigateTo(ROUTES.ALL_ARTISTS);
+              if (item.route === PAGE.ROUTES.HOME) appState.router.navigateTo(PAGE.ROUTES.HOME);
+              else if (item.route === PAGE.ROUTES.ARTIST && item.artist) appState.router.navigateTo(PAGE.ROUTES.ARTIST, { artist: item.artist });
+              else if (item.route === PAGE.ROUTES.ALL_ARTISTS) appState.router.navigateTo(PAGE.ROUTES.ALL_ARTISTS);
             } else {
-              if (item.text === "Home" || item.isHome) appState.router.navigateTo(ROUTES.HOME);
-              else if (item.artist) appState.router.navigateTo(ROUTES.ARTIST, { artist: item.artist });
-              else if (item.text === "All Artists") appState.router.navigateTo(ROUTES.ALL_ARTISTS);
+              if (item.text === "Home" || item.isHome) appState.router.navigateTo(PAGE.ROUTES.HOME);
+              else if (item.artist) appState.router.navigateTo(PAGE.ROUTES.ARTIST, { artist: item.artist });
+              else if (item.text === "All Artists") appState.router.navigateTo(PAGE.ROUTES.ALL_ARTISTS);
             }
           }
         });
