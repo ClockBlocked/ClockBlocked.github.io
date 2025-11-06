@@ -2080,7 +2080,7 @@ init() {
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    musicPlayer.mainPlayer.init();
+    musicPlayer.init();
 });
 
 window.musicPlayer = musicPlayer
