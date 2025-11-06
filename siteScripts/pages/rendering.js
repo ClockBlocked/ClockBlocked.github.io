@@ -910,17 +910,17 @@ export const navigation = {
         case "favorite":
           const wasFavorite = appState.favorites.toggle("songs", songData.id);
           const message = wasFavorite ? 'Added "' + songData.title + '" to your favorite music' : 'Removed "' + songData.title + '" from your favorite music';
-          notifications.show(message, wasFavorite ? NOTIFICATION_TYPES.SUCCESS : NOTIFICATION_TYPES.INFO);
+          notifications.show(message, wasFavorite ? PAGE.NOTIFICATION_TYPES.SUCCESS : PAGE.NOTIFICATION_TYPES.INFO);
           break;
 
         case "play-next":
           appState.queue.add(songData, 0);
-          notifications.show('"' + songData.title + '" will play next', NOTIFICATION_TYPES.SUCCESS);
+          notifications.show('"' + songData.title + '" will play next', PAGE.NOTIFICATION_TYPES.SUCCESS);
           break;
 
         case "add-queue":
           appState.queue.add(songData);
-          notifications.show('Added "' + songData.title + '" to queue', NOTIFICATION_TYPES.SUCCESS);
+          notifications.show('Added "' + songData.title + '" to queue', PAGE.NOTIFICATION_TYPES.SUCCESS);
           break;
 
         case "add-playlist":
@@ -933,13 +933,13 @@ export const navigation = {
             const playlistId = playlistContainer.dataset.playlistId;
             if (playlists.removeSong(playlistId, songData.id)) {
               playlists.show(playlistId);
-              notifications.show('Removed "' + songData.title + '" from playlist', NOTIFICATION_TYPES.INFO);
+              notifications.show('Removed "' + songData.title + '" from playlist', PAGE.NOTIFICATION_TYPES.INFO);
             }
           }
           break;
 
         case "download":
-          notifications.show("Download feature coming soon", NOTIFICATION_TYPES.INFO);
+          notifications.show("Download feature coming soon", PAGE.NOTIFICATION_TYPES.INFO);
           break;
 
         case "share":
@@ -1123,13 +1123,13 @@ export const navigation = {
         navigator.clipboard
           .writeText(shareUrl)
           .then(function () {
-            notifications.show("Song link copied to clipboard!", NOTIFICATION_TYPES.SUCCESS);
+            notifications.show("Song link copied to clipboard!", PAGE.NOTIFICATION_TYPES.SUCCESS);
           })
           .catch(function () {
-            notifications.show("Share feature not available", NOTIFICATION_TYPES.WARNING);
+            notifications.show("Share feature not available", PAGE.NOTIFICATION_TYPES.WARNING);
           });
       } else {
-        notifications.show("Share feature not available", NOTIFICATION_TYPES.WARNING);
+        notifications.show("Share feature not available", PAGE.NOTIFICATION_TYPES.WARNING);
       }
     },
   },
