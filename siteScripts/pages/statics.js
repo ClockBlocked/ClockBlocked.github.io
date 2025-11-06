@@ -9,7 +9,7 @@ import {
   overlays,
 } from '../global.js';
 
-import { ROUTES, NOTIFICATION_TYPES } from '../map.js';
+import * as PAGE from '../map.js';
 import { ui } from './updates.js';
 import { render } from '../utilities/templates.js';
 
@@ -470,7 +470,7 @@ export const homePage = {
         e.stopPropagation();
         const artistName = artistEl.dataset.artist;
         if (appState.router) {
-          appState.router.navigateTo(ROUTES.ARTIST, {
+          appState.router.navigateTo(PAGE.ROUTES.ARTIST, {
             artist: artistName,
           });
         }
@@ -519,7 +519,7 @@ export const homePage = {
         const albumName = albumCard ? albumCard.dataset.album : null;
         
         if (appState.router) {
-          appState.router.navigateTo(ROUTES.ARTIST, {
+          appState.router.navigateTo(PAGE.ROUTES.ARTIST, {
             artist: artistName,
           });
           
@@ -560,7 +560,7 @@ export const homePage = {
         if (e.target.closest(".artist-action-btn")) return; // Ignore action buttons
         const artistName = artistEl.dataset.artist;
         if (appState.router) {
-          appState.router.navigateTo(ROUTES.ARTIST, {
+          appState.router.navigateTo(PAGE.ROUTES.ARTIST, {
             artist: artistName,
           });
         }
@@ -644,7 +644,7 @@ export const homePage = {
         e.stopPropagation();
         const artistName = artistEl.dataset.artist;
         if (appState.router) {
-          appState.router.navigateTo(ROUTES.ARTIST, {
+          appState.router.navigateTo(PAGE.ROUTES.ARTIST, {
             artist: artistName,
           });
         }
@@ -931,7 +931,7 @@ export const views = {
                     if (!e.target.closest('.play-btn')) {
                         const artistName = item.getAttribute('data-artist');
                         if (appState.router) {
-                            appState.router.navigateTo(ROUTES.ARTIST, { artist: artistName });
+                            appState.router.navigateTo(PAGE.ROUTES.ARTIST, { artist: artistName });
                         }
                     }
                 });
@@ -1012,7 +1012,7 @@ export const views = {
                 const artistName = artistEl.dataset.artist;
                 if (appState.router) {
                     overlays.close('playlist-viewer');
-                    appState.router.navigateTo(ROUTES.ARTIST, { artist: artistName });
+                    appState.router.navigateTo(PAGE.ROUTES.ARTIST, { artist: artistName });
                 }
             });
         });
