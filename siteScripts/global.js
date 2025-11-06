@@ -2079,72 +2079,7 @@ init() {
 
 
 
-document.addEventListener('DOMContentLoaded', () => {
-    musicPlayer.init();
-});
 
-window.musicPlayer = musicPlayer
-
-
-
-const app = {
-    initialize: function() {
-        window.music = music;
-
-        storage.initialize();
-        notifications.initialize();
-        
-        musicPlayer.ui.initialize();
-
-        navigation.initialize();
-        homePage.initialize();
-
-        eventHandlers.init();
-
-        app.resetUI();
-        app.syncGlobalState();
-
-        deepLinkRouter.initialize();
-        deepLinkRouter.bindPopState();
-    },
-
-    resetUI: function() {
-        const nowPlayingArea = document.querySelector(NAVBAR.nowPlaying);
-        if (nowPlayingArea) {
-            nowPlayingArea.classList.remove(CLASSES.hasSong);
-        }
-        ui.updateCounts();
-    },
-
-    syncGlobalState: function() {
-        window.appState = appState;
-        window.playerController = {
-            playSong: musicPlayer.ui.playSong,
-            toggle: musicPlayer.mainPlayer.toggle,
-            next: musicPlayer.playback.next,
-            previous: musicPlayer.playback.previous,
-            seekTo: musicPlayer.playback.seekTo,
-            skip: musicPlayer.playback.skip,
-        };
-        window.musicAppAPI = {
-            player: musicPlayer.mainPlayer,
-            controls: musicPlayer.playback,
-            musicPlayer: musicPlayer,
-            dropdown: dropdown,
-            notifications: notifications,
-            playlists: playlists,
-            utils: utils,
-            favorites: appState.favorites,
-            queue: appState.queue,
-        };
-    },
-
-    goHome: function() {
-        if (appState.router) {
-            appState.router.navigateTo(ROUTES.HOME);
-        }
-    }
-};
 
 const playlists = {
     add: (name) => {
@@ -2615,6 +2550,79 @@ const playlists = {
     },
 };
 
+
+
+
+// ═══════════════════════════════════════════════════════════════
+//  SINGLE INITIALIZATION POINT - NO DUPLICATES
+// ═══════════════════════════════════════════════════════════════
+
+const app = {
+    initialize: function() {
+        console.log('🚀 Initializing MyBeats App...');
+        
+        window.music = music;
+
+        storage.initialize();
+        notifications.initialize();
+        
+        // Initialize music player (includes UI setup)
+        musicPlayer.init();
+
+        navigation.initialize();
+        homePage.initialize();
+
+        eventHandlers.init();
+
+        app.resetUI();
+        app.syncGlobalState();
+
+        deepLinkRouter.initialize();
+        deepLinkRouter.bindPopState();
+        
+        console.log('✅ App initialization complete');
+    },
+
+    resetUI: function() {
+        const nowPlayingArea = document.querySelector(NAVBAR.nowPlaying);
+        if (nowPlayingArea) {
+            nowPlayingArea.classList.remove(CLASSES.hasSong);
+        }
+        ui.updateCounts();
+    },
+
+    syncGlobalState: function() {
+        window.appState = appState;
+        window.playerController = {
+            playSong: musicPlayer.loadSong.bind(musicPlayer),
+            toggle: musicPlayer.mainPlayer.toggle.bind(musicPlayer.mainPlayer),
+            next: musicPlayer.playback.next.bind(musicPlayer.playback),
+            previous: musicPlayer.playback.previous.bind(musicPlayer.playback),
+            seekTo: musicPlayer.playback.seekTo.bind(musicPlayer.playback),
+            skip: musicPlayer.playback.skip.bind(musicPlayer.playback),
+        };
+        window.musicAppAPI = {
+            player: musicPlayer.mainPlayer,
+            controls: musicPlayer.playback,
+            musicPlayer: musicPlayer,
+            dropdown: dropdown,
+            notifications: notifications,
+            playlists: playlists,
+            utils: utils,
+            favorites: appState.favorites,
+            queue: appState.queue,
+        };
+        window.musicPlayer = musicPlayer;
+    },
+
+    goHome: function() {
+        if (appState.router) {
+            appState.router.navigateTo(ROUTES.HOME);
+        }
+    }
+};
+
+
 const bindClick = (el, handler) => {
   if (!el || typeof handler !== "function") return;
   const fn = (e) => { e.stopPropagation(); handler(); };
@@ -2630,12 +2638,13 @@ const bindClickAll = (nodeList, handler) => {
 
 const eventHandlers = {
   init: () => {
+    console.log('🎮 Binding event handlers...');
     eventHandlers.bindMenus();
     eventHandlers.bindControls();
     eventHandlers.bindPopups();
-    eventHandlers.bindProgress();
     eventHandlers.bindKeyboard();
     eventHandlers.bindDocument();
+    console.log('✅ Event handlers bound');
   },
 
   bindControls: () => {
@@ -2690,7 +2699,7 @@ const eventHandlers = {
         dropdown.close();
         playlists.create();
       },
-      shuffleAll: musicPlayer.playback.shuffle.all,
+      shuffleAll: musicPlayer.playback.shuffle.all.bind(musicPlayer.playback.shuffle),
     };
     
     Object.entries(menuActions).forEach(([elementId, handler]) => {
@@ -2699,23 +2708,30 @@ const eventHandlers = {
   },
 
   bindPopups: () => {
-    const popupControlsMap = {
-      [MUSIC_PLAYER.close]: musicPlayer.mainPlayer.close,
-      [MUSIC_PLAYER.play]: musicPlayer.playback.play,
-      [MUSIC_PLAYER.previous]: musicPlayer.playback.previous,
-      [MUSIC_PLAYER.next]: musicPlayer.playback.next,
-      [MUSIC_PLAYER.shuffle]: musicPlayer.playback.shuffle.toggle,
-      [MUSIC_PLAYER.repeat]: musicPlayer.playback.repeat.toggle,
-      [MUSIC_PLAYER.favoriteBtn]: () => {
-        if (appState.currentSong) {
-          appState.favorites.toggle("songs", appState.currentSong.id);
-          ui.updateFavoriteButton();
-        }
-      },
-    };
+    const closeBtn = QUERY(MUSIC_PLAYER.close);
+    if (closeBtn) bindClick(closeBtn, () => musicPlayer.mainPlayer.close());
     
-    Object.entries(popupControlsMap).forEach(([selector, handler]) => {
-      bindClickAll(QUERY_ALL(selector), handler);
+    const playBtn = QUERY(MUSIC_PLAYER.play);
+    if (playBtn) bindClick(playBtn, () => musicPlayer.playback.togglePlayPause());
+    
+    const prevBtn = QUERY(MUSIC_PLAYER.previous);
+    if (prevBtn) bindClick(prevBtn, () => musicPlayer.playback.previous());
+    
+    const nextBtn = QUERY(MUSIC_PLAYER.next);
+    if (nextBtn) bindClick(nextBtn, () => musicPlayer.playback.next());
+    
+    const shuffleBtn = QUERY(MUSIC_PLAYER.shuffle);
+    if (shuffleBtn) bindClick(shuffleBtn, () => musicPlayer.playback.shuffle.toggle());
+    
+    const repeatBtn = QUERY(MUSIC_PLAYER.repeat);
+    if (repeatBtn) bindClick(repeatBtn, () => musicPlayer.playback.repeat.toggle());
+    
+    const favoriteBtn = QUERY(MUSIC_PLAYER.favoriteBtn);
+    if (favoriteBtn) bindClick(favoriteBtn, () => {
+      if (appState.currentSong) {
+        appState.favorites.toggle("songs", appState.currentSong.id);
+        musicPlayer.ui.updateFavoriteButton();
+      }
     });
     
     QUERY_ALL('.tab').forEach(tab => {
@@ -2724,54 +2740,6 @@ const eventHandlers = {
         if (tabName) musicPlayer.mainPlayer.switchTab(tabName);
       });
     });
-  },
-
-  bindProgress: () => {
-    const progressBar = QUERY(MUSIC_PLAYER.progressBar);
-    if (!progressBar) return;
-    
-    const handleProgressClick = (e) => {
-      if (!appState.currentSong || !appState.audio || !appState.duration) return;
-      const rect = progressBar.getBoundingClientRect();
-      const percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-      const newTime = percent * appState.duration;
-      if (!isNaN(newTime) && isFinite(newTime)) musicPlayer.playback.seekTo(newTime);
-    };
-    
-    const startDrag = (e) => {
-      if (!appState.currentSong) return;
-      progressBar._dragging = true;
-      document.body.style.userSelect = "none";
-      e.preventDefault();
-    };
-    
-    const onDrag = (e) => {
-      if (!progressBar._dragging || !appState.currentSong || !appState.audio || !appState.duration) return;
-      const rect = progressBar.getBoundingClientRect();
-      const percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-      const newTime = percent * appState.duration;
-      if (!isNaN(newTime) && isFinite(newTime)) musicPlayer.playback.seekTo(newTime);
-    };
-    
-    const endDrag = () => {
-      progressBar._dragging = false;
-      document.body.style.userSelect = "";
-    };
-    
-    if (progressBar._clickHandler) progressBar.removeEventListener("click", progressBar._clickHandler);
-    progressBar.addEventListener("click", handleProgressClick);
-    progressBar._clickHandler = handleProgressClick;
-    
-    if (progressBar._startDrag) progressBar.removeEventListener("mousedown", progressBar._startDrag);
-    if (progressBar._onDrag) document.removeEventListener("mousemove", progressBar._onDrag);
-    if (progressBar._endDrag) document.removeEventListener("mouseup", progressBar._endDrag);
-    
-    progressBar.addEventListener("mousedown", startDrag);
-    document.addEventListener("mousemove", onDrag);
-    document.addEventListener("mouseup", endDrag);
-    progressBar._startDrag = startDrag;
-    progressBar._onDrag = onDrag;
-    progressBar._endDrag = endDrag;
   },
 
   bindKeyboard: () => {
@@ -2888,69 +2856,40 @@ const eventHandlers = {
     document.addEventListener("click", documentClickHandler);
     document._docClickHandler = documentClickHandler;
   },
-
-  bindControlEvents: () => {
-    const controlMap = {
-      musicDrawerPlayBtn: musicPlayer.playback.togglePlayPause,
-      musicDrawerPrevBtn: musicPlayer.playback.previous,
-      musicDrawerNextBtn: musicPlayer.playback.next,
-      musicDrawerRewindBtn: () => musicPlayer.playback.skip(-10),
-      musicDrawerForwardBtn: () => musicPlayer.playback.skip(10),
-      musicDrawerFavoriteBtn: () => {
-        if (appState.currentSong) appState.favorites.toggle("songs", appState.currentSong.id);
-      },
-    };
-    
-    Object.entries(controlMap).forEach(([elementId, handler]) => {
-      if (DOM[elementId]) bindClick(DOM[elementId], handler);
-    });
-  },
 };
 
 
-window.addEventListener("load", function() {
-  if (!window.appState) {
-    app.initialize();
-  }
+// ═══════════════════════════════════════════════════════════════
+//  SINGLE ENTRY POINT - Initialize app when DOM is ready
+// ═══════════════════════════════════════════════════════════════
+
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('📄 DOMContentLoaded - Starting app...');
+  app.initialize();
+  
+  setTimeout(() => {
+    if (notificationPlayer.utils.isSupported()) {
+      notificationPlayer.setup();
+    }
+  }, 100);
 });
+
+
+// ═══════════════════════════════════════════════════════════════
+//  GLOBAL API EXPORTS
+// ═══════════════════════════════════════════════════════════════
 
 window.MyTunesApp = {
   initialize: app.initialize,
-  state: function() { return appState; },
-  api: function() { return window.musicAppAPI; },
+  state: () => appState,
+  api: () => window.musicAppAPI,
   goHome: app.goHome,
 };
-
-if (window.music) {
-  app.initialize();
-}
 
 window.navigation = navigation;
 window.playlists = playlists;
 window.views = views;
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    eventHandlers.init();
-  });
-} else {
-  eventHandlers.init();
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  app.initialize();
-  
-  const progressBar = document.getElementById('progressBar');
-  if (progressBar) {
-    progressBar.addEventListener('keydown', musicPlayer.ui.handleProgressBarKeyDown);
-  }
-  
-  setTimeout(() => {
-      if (notificationPlayer.utils.isSupported()) {
-          notificationPlayer.setup();
-      }
-  }, 100);
-});
 
 export {
     appState,
