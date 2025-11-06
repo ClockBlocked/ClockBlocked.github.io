@@ -9,6 +9,7 @@ import {
   overlays,
 } from '../global.js';
 
+import { ROUTES, NOTIFICATION_TYPES } from '../map.js';
 import { ui } from './updates.js';
 import { render } from '../utilities/templates.js';
 
