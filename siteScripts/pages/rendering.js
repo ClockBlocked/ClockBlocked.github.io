@@ -1,5 +1,4 @@
 import { appState, storage, notifications, musicPlayer, utils, ACTION_GRID_ITEMS, overlays } from "../global.js";
-import { ROUTES } from "../map.js";
 import { ui, pageUpdates } from "./updates.js";
 import { render, create } from "../utilities/templates.js";
 
@@ -269,7 +268,7 @@ export const navigation = {
           const match = path.match(route.pattern);
           if (match) {
             const params = {};
-            if (key === ROUTES.ARTIST) params.artist = router.decodeName(match[1]);
+            if (key === PAGE.ROUTES.ARTIST) params.artist = router.decodeName(match[1]);
             route.handler(params);
             matchedRoute = true;
             break;
@@ -281,13 +280,13 @@ export const navigation = {
       navigateTo: function (routeName, params = {}) {
         let url;
         switch (routeName) {
-          case ROUTES.HOME:
+          case PAGE.ROUTES.HOME:
             url = "/";
             break;
-          case ROUTES.ARTIST:
+          case PAGE.ROUTES.ARTIST:
             url = "/artist/" + router.encodeName(params.artist);
             break;
-          case ROUTES.ALL_ARTISTS:
+          case PAGE.ROUTES.ALL_ARTISTS:
             url = "/artists";
             break;
           default:
@@ -298,7 +297,7 @@ export const navigation = {
       },
 
       navigateToArtist: function (artistName) {
-        this.navigateTo(ROUTES.ARTIST, { artist: artistName });
+        this.navigateTo(PAGE.ROUTES.ARTIST, { artist: artistName });
       },
 
       openSearchDialog: function () {
@@ -310,11 +309,11 @@ export const navigation = {
 
     // Now define the routes using `router` variable so helpers are always accessible
     router.routes = {
-      [ROUTES.HOME]: {
+      [PAGE.ROUTES.HOME]: {
         pattern: /^\/$/,
         handler: navigation.pages.loadHomePage,
       },
-      [ROUTES.ARTIST]: {
+      [PAGE.ROUTES.ARTIST]: {
         pattern: /^\/artist\/(.+)$/,
         handler: function (params) {
           // Use router.decodeName instead of this.decodeName
@@ -326,11 +325,11 @@ export const navigation = {
           if (artistData) {
             navigation.pages.loadArtistPage(artistData);
           } else {
-            appState.router.navigateTo(ROUTES.HOME);
+            appState.router.navigateTo(PAGE.ROUTES.HOME);
           }
         },
       },
-      [ROUTES.ALL_ARTISTS]: {
+      [PAGE.ROUTES.ALL_ARTISTS]: {
         pattern: /^\/artists$/,
         handler: navigation.pages.loadAllArtistsPage,
       },
@@ -341,11 +340,11 @@ export const navigation = {
 
   isValidRoute: function (routeName, params = {}) {
     switch (routeName) {
-      case ROUTES.HOME:
-      case ROUTES.ALL_ARTISTS:
+      case PAGE.ROUTES.HOME:
+      case PAGE.ROUTES.ALL_ARTISTS:
         return true;
 
-      case ROUTES.ARTIST:
+      case PAGE.ROUTES.ARTIST:
         if (!params.artist || !window.music) return false;
         return window.music.some(function (a) {
           return a.artist === params.artist;
@@ -373,7 +372,7 @@ export const navigation = {
             [
               {
                 text: "Home",
-                route: ROUTES.HOME,
+                route: PAGE.ROUTES.HOME,
                 active: true,
                 isHome: true,
                 icon:
@@ -449,7 +448,7 @@ export const navigation = {
         [
           {
             text: "Home  ",
-            route: ROUTES.HOME,
+            route: PAGE.ROUTES.HOME,
             active: false,
             isHome: true,
             icon:
@@ -457,7 +456,7 @@ export const navigation = {
           },
           {
             text: "  Discography",
-            route: ROUTES.ARTIST,
+            route: PAGE.ROUTES.ARTIST,
             artist: artistData.artist,
             active: true,
             icon: "",
@@ -661,7 +660,7 @@ export const navigation = {
           artistsGrid.appendChild(artistCard);
 
           artistCard.querySelector(".artist-card").addEventListener("click", function () {
-            appState.router.navigateTo(ROUTES.ARTIST, { artist: artist.artist });
+            appState.router.navigateTo(PAGE.ROUTES.ARTIST, { artist: artist.artist });
           });
         });
       }
@@ -669,13 +668,13 @@ export const navigation = {
       pageUpdates.breadCrumbs([
         {
           text: "Home",
-          route: ROUTES.HOME,
+          route: PAGE.ROUTES.HOME,
           active: false,
           isHome: true,
         },
         {
           text: "All Artists",
-          route: ROUTES.ALL_ARTISTS,
+          route: PAGE.ROUTES.ALL_ARTISTS,
           active: true,
         },
       ]);
