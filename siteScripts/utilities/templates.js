@@ -228,7 +228,7 @@ case "enhancedArtist":
 
     <!-- Albums Section -->
     <section class="fragments albums">
-      <div id="${PAGE.albumsContainer}"></div>
+      <div id="${window.albumsContainer}"></div>
     </section>
   </div>
 
@@ -452,7 +452,7 @@ case "enhancedArtist":
                 <h2 class="card-title">Recently Played</h2>
                 <a href="#" class="card-link" data-view="recent">View All</a>
               </div>
-              <div id="${data.PAGE.recentlyPlayedSection}" class="card-content">
+              <div id="${data.window.recentlyPlayedSection}" class="card-content">
                 <div class="skeleton-loader"></div>
               </div>
             </div>
@@ -462,7 +462,7 @@ case "enhancedArtist":
                 <h2 class="card-title">Discover Albums</h2>
                 <a href="#" class="card-link" data-view="albums">Explore More</a>
               </div>
-              <div id="${data.PAGE.randomAlbumsSection}" class="card-content">
+              <div id="${data.window.randomAlbumsSection}" class="card-content">
                 <div class="skeleton-loader"></div>
               </div>
             </div>
@@ -472,7 +472,7 @@ case "enhancedArtist":
                 <h2 class="card-title">Favorite Artists</h2>
                 <a href="#" class="card-link" data-view="favorite-artists">View All</a>
               </div>
-              <div id="${data.PAGE.favoriteArtistsSection}" class="card-content">
+              <div id="${data.window.favoriteArtistsSection}" class="card-content">
                 <div class="skeleton-loader"></div>
               </div>
             </div>
@@ -482,7 +482,7 @@ case "enhancedArtist":
                 <h2 class="card-title">Your Playlists</h2>
                 <a href="#" class="card-link" data-view="playlists">View All</a>
               </div>
-              <div id="${data.PAGE.playlistsSection}" class="card-content">
+              <div id="${data.window.playlistsSection}" class="card-content">
                 <div class="skeleton-loader"></div>
               </div>
             </div>
@@ -492,7 +492,7 @@ case "enhancedArtist":
                 <h2 class="card-title">Favorite Songs</h2>
                 <a href="#" class="card-link" data-view="favorite-songs">View All</a>
               </div>
-              <div id="${data.PAGE.favoriteSongsSection}" class="card-content">
+              <div id="${data.window.favoriteSongsSection}" class="card-content">
                 <div class="skeleton-loader"></div>
               </div>
             </div>
