@@ -21,7 +21,7 @@ export const homePage = {
   },
 
   render: () => {
-    const dynamicContent = $byId(IDS.dynamicContent);
+    const dynamicContent = PAGE.dynamicContent;
     if (!dynamicContent) return;
 
     dynamicContent.innerHTML = "";
