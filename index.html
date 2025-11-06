@@ -2160,10 +2160,8 @@ MyBeats:  Stream & share your favorite music for free.
 
 
 
-
-
 <style>
-.music-player {
+.musicPlayer {
   position: fixed; bottom: -3rem;
   inset: 0;
   background: transparent;
@@ -2178,12 +2176,12 @@ MyBeats:  Stream & share your favorite music for free.
               opacity 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.music-player:popover-open {
+.musicPlayer:popover-open {
   transform: translateY(0);
   opacity: 1;
 }
 
-.music-player::backdrop {
+.musicPlayer::backdrop {
   background: rgba(0, 0, 0, 0.35);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
@@ -2191,11 +2189,11 @@ MyBeats:  Stream & share your favorite music for free.
   transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.music-player:popover-open::backdrop {
+.musicPlayer:popover-open::backdrop {
   opacity: 1;
 }
 
-.music-player__scroller {
+.musicPlayerScroller {
   width: 100%;
   height: 100%;
   overflow-y: auto;
@@ -2204,7 +2202,7 @@ MyBeats:  Stream & share your favorite music for free.
   -webkit-overflow-scrolling: touch;
 }
 
-.music-player__slide {
+.musicPlayerSlide {
   min-height: 100vh;
   scroll-snap-align: start;
   display: flex;
@@ -2213,7 +2211,7 @@ MyBeats:  Stream & share your favorite music for free.
   padding: 1rem;
 }
 
-.music-player__curtain {
+.musicPlayerCurtain {
   position: fixed;
   inset: 0;
   background: transparent;
@@ -2222,7 +2220,7 @@ MyBeats:  Stream & share your favorite music for free.
   z-index: 1;
 }
 
-.music-player__inner {
+.musicPlayerInner {
   position: relative;
   background-color: #2D333B;
   border: 1.5px solid #444C56;
@@ -2240,7 +2238,7 @@ MyBeats:  Stream & share your favorite music for free.
   flex-direction: column;
 }
 
-.music-player__drag-area {
+.musicPlayerDragArea {
   display: flex;
   justify-content: center;
   padding: 16px 0 8px;
@@ -2253,7 +2251,7 @@ MyBeats:  Stream & share your favorite music for free.
   right: 0;
 }
 
-.music-player__drag-handle {
+.musicPlayerDragHandle {
   width: 48px;
   height: 5px;
   background: rgba(255, 255, 255, 0.3);
@@ -2264,17 +2262,17 @@ MyBeats:  Stream & share your favorite music for free.
   position: relative;
 }
 
-.music-player__drag-handle:active { 
+.musicPlayerDragHandle:active { 
   cursor: grabbing; 
   transform: scaleX(1.2); 
 }
 
-.music-player__drag-handle:hover { 
+.musicPlayerDragHandle:hover { 
   background: rgba(255, 255, 255, 0.5); 
   width: 64px; 
 }
 
-.music-player__close-btn {
+.musicPlayerCloseBtn {
   position: absolute;
   top: -15%;
   right: 5%;
@@ -2292,18 +2290,18 @@ MyBeats:  Stream & share your favorite music for free.
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.music-player__close-btn:hover { 
+.musicPlayerCloseBtn:hover { 
   background: rgba(255, 255, 255, 0.2); 
   transform: rotate(90deg) scale(1.1); 
 }
 
-.music-player__close-btn svg { 
+.musicPlayerCloseBtn svg { 
   width: 15px; 
   height: 15px; 
   color: #fff; 
 }
 
-.music-player__now-playing {
+.musicPlayerNowPlaying {
   position: relative;
   width: 100%;
   height: 40vh;
@@ -2315,7 +2313,7 @@ MyBeats:  Stream & share your favorite music for free.
   flex-shrink: 0;
 }
 
-.music-player__cover-wrapper {
+.musicPlayerCoverWrapper {
   position: relative;
   width: 100%;
   height: 100%;
@@ -2326,11 +2324,10 @@ MyBeats:  Stream & share your favorite music for free.
   overflow: hidden;
   border-radius: 0 0 12px 12px;
   flex-shrink: 0;
-  
   border-bottom: none !important;
 }
 
-.music-player__cover {
+.musicPlayerCover {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -2342,7 +2339,7 @@ MyBeats:  Stream & share your favorite music for free.
   background: #1a1f24;
 }
 
-.music-player__cover-glow {
+.musicPlayerCoverGlow {
   position: absolute;
   inset: 0;
   background: radial-gradient(ellipse at center, rgba(139, 92, 246, 0.3) 0%, rgba(59, 130, 246, 0.2) 30%, transparent 70%);
@@ -2351,7 +2348,7 @@ MyBeats:  Stream & share your favorite music for free.
   z-index: 1;
 }
 
-.music-player__separator {
+.musicPlayerSeparator {
   position: absolute;
   bottom: -38px;
   left: 0;
@@ -2363,13 +2360,13 @@ MyBeats:  Stream & share your favorite music for free.
   pointer-events: none;
 }
 
-.music-player__separator svg { 
+.musicPlayerSeparator svg { 
   width: 100%; 
   height: 100%; 
   display: block; 
 }
 
-.music-player__separator-top {
+.musicPlayerSeparatorTop {
   position: absolute;
   top: -38px;
   left: 0;
@@ -2382,13 +2379,13 @@ MyBeats:  Stream & share your favorite music for free.
   transform: rotate(180deg);
 }
 
-.music-player__separator-top svg { 
+.musicPlayerSeparatorTop svg { 
   width: 100%; 
   height: 100%; 
   display: block;
 }
 
-.music-player__tabs {
+.musicPlayerTabs {
   position: relative;
   width: 100%;
   padding: 1rem;
@@ -2397,14 +2394,14 @@ MyBeats:  Stream & share your favorite music for free.
   margin-top: auto;
 }
 
-.music-player__tabs-wrapper {
+.musicPlayerTabsWrapper {
   display: flex;
   gap: 8px;
   position: relative;
   padding: 6px;
 }
 
-.music-player__tab {
+.musicPlayerTab {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -2421,16 +2418,16 @@ MyBeats:  Stream & share your favorite music for free.
   color: rgba(255, 255, 255, 0.5);
 }
 
-.music-player__tab:hover { 
+.musicPlayerTab:hover { 
   color: rgba(255, 255, 255, 0.8); 
   background: rgba(255, 255, 255, 0.05); 
 }
 
-.music-player__tab.active { 
+.musicPlayerTab.active { 
   color: #fff; 
 }
 
-.music-player__tab-icon {
+.musicPlayerTabIcon {
   width: 24px;
   height: 24px;
   display: flex;
@@ -2439,11 +2436,11 @@ MyBeats:  Stream & share your favorite music for free.
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.music-player__tab.active .music-player__tab-icon { 
+.musicPlayerTab.active .musicPlayerTabIcon { 
   transform: scale(1.15); 
 }
 
-.music-player__tab-label {
+.musicPlayerTabLabel {
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
@@ -2451,7 +2448,7 @@ MyBeats:  Stream & share your favorite music for free.
   white-space: nowrap;
 }
 
-.music-player__tab-slider {
+.musicPlayerTabSlider {
   position: absolute;
   top: 6px;
   bottom: 6px;
@@ -2464,15 +2461,15 @@ MyBeats:  Stream & share your favorite music for free.
   pointer-events: none;
 }
 
-.music-player__tab:nth-child(2).active ~ .music-player__tab-slider { 
+.musicPlayerTab:nth-child(2).active ~ .musicPlayerTabSlider { 
   transform: translateX(calc(100% + 8px)); 
 }
 
-.music-player__tab:nth-child(3).active ~ .music-player__tab-slider { 
+.musicPlayerTab:nth-child(3).active ~ .musicPlayerTabSlider { 
   transform: translateX(calc(200% + 16px)); 
 }
 
-.music-player__content { 
+.musicPlayerContent { 
   position: relative; 
   height: auto; 
   flex: 1;
@@ -2481,19 +2478,19 @@ MyBeats:  Stream & share your favorite music for free.
   overflow: hidden;
 }
 
-.music-player__panel {
+.musicPlayerPanel {
   display: none;
   animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   flex: 1;
   overflow-y: auto;
 }
 
-.music-player__panel.active { 
+.musicPlayerPanel.active { 
   display: flex; 
   flex-direction: column;
 }
 
-.music-player__main {
+.musicPlayerMain {
   padding: 0 0.5rem 0.45rem;
   display: flex;
   flex-direction: column;
@@ -2501,7 +2498,7 @@ MyBeats:  Stream & share your favorite music for free.
   flex: 1;
 }
 
-.music-player__info {
+.musicPlayerInfo {
   padding: 20px;
   display: flex;
   align-items: center;
@@ -2509,12 +2506,12 @@ MyBeats:  Stream & share your favorite music for free.
   transition: all 0.3s ease;
 }
 
-.music-player__details { 
+.musicPlayerDetails { 
   flex: 1; 
   min-width: 0; 
 }
 
-.music-player__title {
+.musicPlayerTitle {
   font-size: 18px;
   font-weight: 700;
   color: #fff;
@@ -2526,7 +2523,7 @@ MyBeats:  Stream & share your favorite music for free.
   text-align: center;
 }
 
-.music-player__artist {
+.musicPlayerArtist {
   font-size: 14px;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.7);
@@ -2536,7 +2533,7 @@ MyBeats:  Stream & share your favorite music for free.
   white-space: nowrap;
 }
 
-.music-player__album {
+.musicPlayerAlbum {
   font-size: 12px;
   font-weight: 400;
   color: rgba(255, 255, 255, 0.5);
@@ -2547,7 +2544,7 @@ MyBeats:  Stream & share your favorite music for free.
   letter-spacing: 1.35px;
 }
 
-.music-player__favorite-btn {
+.musicPlayerFavoriteBtn {
   width: 20px;
   height: 20px;
   border-radius: 50%;
@@ -2561,41 +2558,41 @@ MyBeats:  Stream & share your favorite music for free.
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.music-player__favorite-btn:hover { 
+.musicPlayerFavoriteBtn:hover { 
   background: rgba(239, 68, 68, 0.2); 
   border-color: #ef4444; 
   transform: scale(1.1); 
 }
 
-.music-player__favorite-btn.favorited { 
+.musicPlayerFavoriteBtn.favorited { 
   background: rgba(239, 68, 68, 0.3); 
   border-color: #ef4444; 
 }
 
-.music-player__favorite-btn svg {
+.musicPlayerFavoriteBtn svg {
   width: 15px;
   height: 15px;
   color: rgba(255, 255, 255, 0.6);
   transition: all 0.3s ease;
 }
 
-.music-player__favorite-btn:hover svg, 
-.music-player__favorite-btn.favorited svg { 
+.musicPlayerFavoriteBtn:hover svg, 
+.musicPlayerFavoriteBtn.favorited svg { 
   color: #ef4444; 
   fill: #ef4444; 
 }
 
-.music-player__favorite-btn.favorited svg { 
+.musicPlayerFavoriteBtn.favorited svg { 
   animation: heartBeat 0.6s ease; 
 }
 
-.music-player__progress-section { 
+.musicPlayerProgressSection { 
   display: flex; 
   flex-direction: column; 
   gap: 12px; 
 }
 
-.music-player__progress-bar {
+.musicPlayerProgressBar {
   position: relative;
   width: 100%;
   height: 6px;
@@ -2606,16 +2603,16 @@ MyBeats:  Stream & share your favorite music for free.
   transition: height 0.2s ease;
 }
 
-.music-player__progress-bar:hover {
+.musicPlayerProgressBar:hover {
   height: 8px;
 }
 
-.music-player__progress-bar:hover .music-player__progress-thumb { 
+.musicPlayerProgressBar:hover .musicPlayerProgressThumb { 
   opacity: 1; 
   transform: translate(-50%, -50%) scale(1); 
 }
 
-.music-player__progress-buffer {
+.musicPlayerProgressBuffer {
   position: absolute;
   top: 0;
   left: 0;
@@ -2625,7 +2622,7 @@ MyBeats:  Stream & share your favorite music for free.
   transition: width 0.3s ease;
 }
 
-.music-player__progress-fill {
+.musicPlayerProgressFill {
   position: absolute;
   top: 0;
   left: 0;
@@ -2636,7 +2633,7 @@ MyBeats:  Stream & share your favorite music for free.
   position: relative;
 }
 
-.music-player__progress-thumb {
+.musicPlayerProgressThumb {
   position: absolute;
   top: 50%;
   left: 100%;
@@ -2650,28 +2647,28 @@ MyBeats:  Stream & share your favorite music for free.
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.music-player__progress-bar.is-dragging .music-player__progress-thumb,
-.music-player__progress-bar.is-hovering .music-player__progress-thumb {
+.musicPlayerProgressBar.isDragging .musicPlayerProgressThumb,
+.musicPlayerProgressBar.isHovering .musicPlayerProgressThumb {
   opacity: 1;
   transform: translate(-50%, -50%) scale(1);
 }
 
-.music-player__time-display {
+.musicPlayerTimeDisplay {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 4px;
 }
 
-.music-player__current-time,
-.music-player__total-time {
+.musicPlayerCurrentTime,
+.musicPlayerTotalTime {
   font-size: 12px;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.6);
   font-variant-numeric: tabular-nums;
 }
 
-.music-player__controls {
+.musicPlayerControls {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2679,7 +2676,7 @@ MyBeats:  Stream & share your favorite music for free.
   padding: 8px 0;
 }
 
-.music-player__control-btn {
+.musicPlayerControlBtn {
   width: 52px;
   height: 52px;
   border-radius: 50%;
@@ -2694,7 +2691,7 @@ MyBeats:  Stream & share your favorite music for free.
   overflow: hidden;
 }
 
-.music-player__control-btn::before {
+.musicPlayerControlBtn::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -2703,72 +2700,72 @@ MyBeats:  Stream & share your favorite music for free.
   transition: opacity 0.3s ease;
 }
 
-.music-player__control-btn:hover::before { 
+.musicPlayerControlBtn:hover::before { 
   opacity: 1; 
 }
 
-.music-player__control-btn:hover { 
+.musicPlayerControlBtn:hover { 
   background: rgba(255, 255, 255, 0.15); 
   transform: translateY(-2px); 
 }
 
-.music-player__control-btn:active { 
+.musicPlayerControlBtn:active { 
   transform: translateY(0) scale(0.95); 
 }
 
-.music-player__control-btn svg { 
+.musicPlayerControlBtn svg { 
   width: 24px; 
   height: 24px; 
   color: #fff; 
   z-index: 1; 
 }
 
-.music-player__control-btn--secondary {
+.musicPlayerControlBtn.secondary {
   width: 48px;
   height: 48px;
 }
 
-.music-player__control-btn--secondary svg { 
+.musicPlayerControlBtn.secondary svg { 
   width: 22px; 
   height: 22px; 
 }
 
-.music-player__control-btn--primary {
+.musicPlayerControlBtn.primary {
   width: 68px;
   height: 68px;
   background: linear-gradient(135deg, #8b5cf6, #3b82f6);
   box-shadow: 0 8px 24px rgba(139, 92, 246, 0.4), 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
-.music-player__control-btn--primary:hover {
+.musicPlayerControlBtn.primary:hover {
   background: linear-gradient(135deg, #9d6dff, #4c93ff);
   box-shadow: 0 12px 32px rgba(139, 92, 246, 0.5), 0 6px 16px rgba(59, 130, 246, 0.4);
   transform: translateY(-4px) scale(1.05);
 }
 
-.music-player__control-btn--primary svg { 
+.musicPlayerControlBtn.primary svg { 
   width: 28px; 
   height: 28px; 
 }
 
-.music-player__control-btn--primary .pause-icon { 
+.musicPlayerControlBtn.primary .pauseIcon { 
   display: none; 
 }
 
-.music-player.is-playing .music-player__control-btn--primary .play-icon { 
+.musicPlayer.isPlaying .musicPlayerControlBtn.primary .playIcon { 
   display: none; 
 }
 
-.music-player.is-playing .music-player__control-btn--primary .pause-icon { 
+.musicPlayer.isPlaying .musicPlayerControlBtn.primary .pauseIcon { 
   display: block; 
 }
 
-.music-player__control-btn--rewind,
-.music-player__control-btn--forward { 
+.musicPlayerControlBtn.rewind,
+.musicPlayerControlBtn.forward { 
   position: relative; 
 }
 
-.music-player__skip-label {
+.musicPlayerSkipLabel {
   position: absolute;
   bottom: 8px;
   font-size: 9px;
@@ -2776,7 +2773,7 @@ MyBeats:  Stream & share your favorite music for free.
   color: #fff;
 }
 
-.music-player__actions {
+.musicPlayerActions {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2785,7 +2782,7 @@ MyBeats:  Stream & share your favorite music for free.
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.music-player__action-btn {
+.musicPlayerActionBtn {
   width: 44px;
   height: 44px;
   border-radius: 50%;
@@ -2798,23 +2795,23 @@ MyBeats:  Stream & share your favorite music for free.
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.music-player__action-btn:hover {
+.musicPlayerActionBtn:hover {
   background: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.3);
   transform: translateY(-2px);
 }
 
-.music-player__action-btn svg {
+.musicPlayerActionBtn svg {
   width: 20px;
   height: 20px;
   color: rgba(255, 255, 255, 0.7);
 }
 
-.music-player__action-btn:hover svg { 
+.musicPlayerActionBtn:hover svg { 
   color: #fff; 
 }
 
-.music-player__list-header {
+.musicPlayerListHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -2822,14 +2819,14 @@ MyBeats:  Stream & share your favorite music for free.
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.music-player__list-title {
+.musicPlayerListTitle {
   font-size: 20px;
   font-weight: 700;
   color: #fff;
   margin: 0;
 }
 
-.music-player__list-count {
+.musicPlayerListCount {
   font-size: 13px;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.5);
@@ -2838,7 +2835,7 @@ MyBeats:  Stream & share your favorite music for free.
   border-radius: 999px;
 }
 
-.music-player__list {
+.musicPlayerList {
   list-style: none;
   padding: 0;
   margin: 0;
@@ -2847,25 +2844,25 @@ MyBeats:  Stream & share your favorite music for free.
   padding: 16px 24px 40px;
 }
 
-.music-player__list::-webkit-scrollbar { 
+.musicPlayerList::-webkit-scrollbar { 
   width: 6px; 
 }
 
-.music-player__list::-webkit-scrollbar-track { 
+.musicPlayerList::-webkit-scrollbar-track { 
   background: rgba(255, 255, 255, 0.05); 
   border-radius: 999px; 
 }
 
-.music-player__list::-webkit-scrollbar-thumb { 
+.musicPlayerList::-webkit-scrollbar-thumb { 
   background: rgba(255, 255, 255, 0.2); 
   border-radius: 999px; 
 }
 
-.music-player__list::-webkit-scrollbar-thumb:hover { 
+.musicPlayerList::-webkit-scrollbar-thumb:hover { 
   background: rgba(255, 255, 255, 0.3); 
 }
 
-.music-player__empty {
+.musicPlayerEmpty {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2874,31 +2871,31 @@ MyBeats:  Stream & share your favorite music for free.
   text-align: center;
 }
 
-.music-player__empty-icon {
+.musicPlayerEmptyIcon {
   width: 80px;
   height: 80px;
   margin-bottom: 20px;
   color: rgba(255, 255, 255, 0.2);
 }
 
-.music-player__empty-icon svg { 
+.musicPlayerEmptyIcon svg { 
   width: 100%; 
   height: 100%; 
 }
 
-.music-player__empty-text {
+.musicPlayerEmptyText {
   font-size: 18px;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.7);
   margin-bottom: 8px;
 }
 
-.music-player__empty-subtext {
+.musicPlayerEmptySubtext {
   font-size: 14px;
   color: rgba(255, 255, 255, 0.4);
 }
 
-.music-player__list-item {
+.musicPlayerListItem {
   display: flex;
   align-items: center;
   gap: 16px;
@@ -2909,20 +2906,20 @@ MyBeats:  Stream & share your favorite music for free.
   margin-bottom: 8px;
 }
 
-.music-player__list-item:hover {
+.musicPlayerListItem:hover {
   background: rgba(255, 255, 255, 0.05);
 }
 
-.music-player__list-item:hover .music-player__list-item-actions { 
+.musicPlayerListItem:hover .musicPlayerListItemActions { 
   opacity: 1; 
 }
 
-.music-player__list-item.active { 
+.musicPlayerListItem.active { 
   background: rgba(139, 92, 246, 0.15); 
   border-left: 3px solid #8b5cf6; 
 }
 
-.music-player__list-item-art {
+.musicPlayerListItemArt {
   width: 48px;
   height: 48px;
   border-radius: 8px;
@@ -2930,12 +2927,12 @@ MyBeats:  Stream & share your favorite music for free.
   flex-shrink: 0;
 }
 
-.music-player__list-item-info { 
+.musicPlayerListItemInfo { 
   flex: 1; 
   min-width: 0; 
 }
 
-.music-player__list-item-title {
+.musicPlayerListItemTitle {
   font-size: 15px;
   font-weight: 600;
   color: #fff;
@@ -2945,7 +2942,7 @@ MyBeats:  Stream & share your favorite music for free.
   white-space: nowrap;
 }
 
-.music-player__list-item-artist {
+.musicPlayerListItemArtist {
   font-size: 13px;
   color: rgba(255, 255, 255, 0.6);
   margin: 0;
@@ -2954,14 +2951,14 @@ MyBeats:  Stream & share your favorite music for free.
   white-space: nowrap;
 }
 
-.music-player__list-item-actions {
+.musicPlayerListItemActions {
   display: flex;
   gap: 8px;
   opacity: 0;
   transition: opacity 0.2s ease;
 }
 
-.music-player__list-item-action {
+.musicPlayerListItemAction {
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -2974,73 +2971,73 @@ MyBeats:  Stream & share your favorite music for free.
   transition: all 0.2s ease;
 }
 
-.music-player__list-item-action:hover { 
+.musicPlayerListItemAction:hover { 
   background: rgba(255, 255, 255, 0.2); 
   transform: scale(1.1); 
 }
 
-.music-player__list-item-action svg { 
+.musicPlayerListItemAction svg { 
   width: 18px; 
   height: 18px; 
   color: rgba(255, 255, 255, 0.7); 
 }
 
 @media (max-width: 480px) {
-  .music-player__inner { 
+  .musicPlayerInner { 
     width: 100%; 
     border-radius: 20px 20px 0 0; 
     height: 90svh;
   }
-  .music-player__cover-wrapper { 
+  .musicPlayerCoverWrapper { 
     padding: 32px 20px 48px; 
   }
-  .music-player__info { 
+  .musicPlayerInfo { 
     padding: 16px; 
   }
-  .music-player__title { 
+  .musicPlayerTitle { 
     font-size: 16px; 
   }
-  .music-player__artist { 
+  .musicPlayerArtist { 
     font-size: 13px; 
   }
-  .music-player__controls { 
+  .musicPlayerControls { 
     gap: 8px; 
   }
-  .music-player__control-btn--primary { 
+  .musicPlayerControlBtn.primary { 
     width: 60px; 
     height: 60px; 
   }
-  .music-player__control-btn--secondary { 
+  .musicPlayerControlBtn.secondary { 
     width: 44px; 
     height: 44px; 
   }
-  .music-player__tab-label { 
+  .musicPlayerTabLabel { 
     font-size: 10px; 
   }
 }
 
 @media (min-width: 768px) {
-  .music-player__inner { 
+  .musicPlayerInner { 
     margin-top: 5vh; 
     min-height: 95vh; 
     border-radius: 24px; 
     max-width: 500px;
   }
-  .music-player__now-playing { 
+  .musicPlayerNowPlaying { 
     height: 45vh; 
     min-height: 380px; 
   }
 }
 
-.music-player.loading .music-player__cover {
+.musicPlayer.loading .musicPlayerCover {
   animation: shimmer 2s infinite linear;
   background: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.05) 100%);
   background-size: 1000px 100%;
 }
 
-.music-player__control-btn:focus,
-.music-player__action-btn:focus,
-.music-player__tab:focus {
+.musicPlayerControlBtn:focus,
+.musicPlayerActionBtn:focus,
+.musicPlayerTab:focus {
   outline: 2px solid rgba(139, 92, 246, 0.6);
   outline-offset: 2px;
 }
@@ -3053,7 +3050,7 @@ MyBeats:  Stream & share your favorite music for free.
   }
 }
 
-.custom-shape-divider-bottom-1762040716 {
+.customShapeDivider {
     position: absolute;
     bottom: -2px;
     left: -2px; right: -2px;
@@ -3062,7 +3059,7 @@ MyBeats:  Stream & share your favorite music for free.
     line-height: 0;
 }
 
-.custom-shape-divider-bottom-1762040716 svg {
+.customShapeDivider svg {
     position: relative;
     display: block;
     width: calc(105% + 2.3px);
@@ -3071,12 +3068,12 @@ MyBeats:  Stream & share your favorite music for free.
     pointer-events: none;
 }
 
-.custom-shape-divider-bottom-1762040716 .shape-fill {
+.customShapeDivider .shapeFill {
     fill: #2D333B;
 }
 
 @media (max-width: 767px) {
-    .custom-shape-divider-bottom-1762040716 svg {
+    .customShapeDivider svg {
         width: calc(216% + 1.3px);
         height: 75px;
     }
@@ -3117,242 +3114,229 @@ MyBeats:  Stream & share your favorite music for free.
   }
 }
 </style>
-<aside class="music-player" popover="manual" id="drawer">
-  <div class="music-player__scroller">
-    <div class="music-player__slide">
-      <button popovertargetaction="hide" popovertarget="drawer" class="music-player__curtain" tabindex="-1"></button>
+<aside class="musicPlayer" popover="manual" id="drawer">
+  <div class="musicPlayerScroller">
+    <div class="musicPlayerSlide">
+      <button popovertargetaction="hide" popovertarget="drawer" class="musicPlayerCurtain" tabindex="-1"></button>
 
-      <div class="music-player__inner">
-        <div class="music-player__drag-area">
-          <button autofocus class="music-player__drag-handle" popovertargetaction="hide" popovertarget="drawer">
+      <div class="musicPlayerInner">
+        <div class="musicPlayerDragArea">
+          <button autofocus class="musicPlayerDragHandle" popovertargetaction="hide" popovertarget="drawer">
             <span></span>
           </button>
         </div>
 
-        <button class="music-player__close-btn" id="closeBtn">
+        <button class="musicPlayerCloseBtn" id="closeBtn">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
         </button>
 
-        <!-- Album Cover Section -->
-        <div class="music-player__now-playing">
-          <div class="music-player__cover-wrapper">
-            <div class="custom-shape-divider-bottom-1762040716">
+        <div class="musicPlayerNowPlaying">
+          <div class="musicPlayerCoverWrapper">
+            <div class="customShapeDivider">
               <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
                 <path
                   d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"
-                  class="shape-fill"
+                  class="shapeFill"
                 ></path>
               </svg>
             </div>
 
-            <img src="https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/stable/global/content/images/albumCovers/placeholder.png" alt="Album Cover" class="music-player__cover" id="cover" />
+            <img src="https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/stable/global/content/images/albumCovers/placeholder.png" alt="Album Cover" class="musicPlayerCover" id="cover" />
 
-            <div class="music-player__cover-glow"></div>
+            <div class="musicPlayerCoverGlow"></div>
           </div>
         </div>
 
-        <!-- Tab Content -->
-        <div class="music-player__content">
-          <!-- Now Playing -->
-          <div class="music-player__panel active" data-tab="playing">
-            <div class="music-player__main">
-              <!-- Song Info -->
-              <div class="music-player__info">
-                <div class="music-player__details">
-                  <h3 id="title" class="music-player__title"></h3>
-                  <p id="artist" class="music-player__artist"></p>
-                  <p id="album" class="music-player__album"></p>
+        <div class="musicPlayerContent">
+          <div class="musicPlayerPanel active" data-tab="playing">
+            <div class="musicPlayerMain">
+              <div class="musicPlayerInfo">
+                <div class="musicPlayerDetails">
+                  <h3 id="title" class="musicPlayerTitle"></h3>
+                  <p id="artist" class="musicPlayerArtist"></p>
+                  <p id="album" class="musicPlayerAlbum"></p>
                 </div>
 
-                <!-- Favorite Button -->
-                <button class="music-player__favorite-btn" id="favoriteBtn" title="Add to Favorites">
+                <button class="musicPlayerFavoriteBtn" id="favoriteBtn" title="Add to Favorites">
                   <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                   </svg>
                 </button>
               </div>
 
-              <!-- Progress Section -->
-              <div class="music-player__progress-section" id="progressSection">
-                <div class="music-player__progress-bar" id="progressBar" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Seek">
-                  <div class="music-player__progress-buffer" id="progressBuffer"></div>
-                  <div class="music-player__progress-fill" id="progressFill">
-                    <div class="music-player__progress-thumb" id="progressThumb"></div>
+              <div class="musicPlayerProgressSection" id="progressSection">
+                <div class="musicPlayerProgressBar" id="progressBar" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Seek">
+                  <div class="musicPlayerProgressBuffer" id="progressBuffer"></div>
+                  <div class="musicPlayerProgressFill" id="progressFill">
+                    <div class="musicPlayerProgressThumb" id="progressThumb"></div>
                   </div>
                 </div>
 
-                <div class="music-player__time-display">
-                  <span id="current" class="music-player__current-time">0:00</span>
-                  <span id="total" class="music-player__total-time">0:00</span>
+                <div class="musicPlayerTimeDisplay">
+                  <span id="current" class="musicPlayerCurrentTime">0:00</span>
+                  <span id="total" class="musicPlayerTotalTime">0:00</span>
                 </div>
               </div>
 
-              <!-- Playback Controls -->
-              <div class="music-player__controls">
-                <button class="music-player__control-btn music-player__control-btn--secondary" id="prevBtn" title="Previous">
+              <div class="musicPlayerControls">
+                <button class="musicPlayerControlBtn secondary" id="prevBtn" title="Previous">
                   <svg viewBox="0 0 24 24" fill="currentColor">
                     <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
                   </svg>
                 </button>
 
-                <button class="music-player__control-btn music-player__control-btn--rewind" id="rewindBtn" title="Rewind 10s">
+                <button class="musicPlayerControlBtn rewind" id="rewindBtn" title="Rewind 10s">
                   <svg viewBox="0 0 24 24" fill="currentColor">
                     <path
                       d="M11.99 5V1l-5 5 5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6h-2c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8zm-1.1 11h-.85v-3.26l-1.01.31v-.69l1.77-.63h.09V16zm4.28-1.76c0 .32-.03.6-.1.82s-.17.42-.29.57-.28.26-.45.33-.37.1-.59.10-.41-.03-.59-.1-.33-.18-.46-.33-.23-.34-.3-.57-.11-.5-.11-.82v-.74c0-.32.03-.6.1-.82s.17-.42.29-.57.28-.26.45-.33.37-.1.59-.10.41.03.59.1.33.18.46.33.23.34.3.57.11.5.11.82v.74zm-.85-.86c0-.19-.01-.35-.04-.48s-.07-.23-.12-.31-.11-.14-.19-.17-.16-.05-.25-.05-.18.02-.25.05-.14.09-.19.17-.09.18-.12.31-.04.29-.04.48v.97c0 .19.01.35.04.48s.07.24.12.32.11.14.19.17.16.05.25.05.18-.02.25-.05.14-.09.19-.17.09-.19.12-.32.04-.29.04-.48v-.97z"
                     />
                   </svg>
-                  <span class="music-player__skip-label">10</span>
+                  <span class="musicPlayerSkipLabel">10</span>
                 </button>
 
-                <button class="music-player__control-btn music-player__control-btn--primary" id="playBtn" title="Play/Pause">
-                  <span class="play-icon">
+                <button class="musicPlayerControlBtn primary" id="playBtn" title="Play/Pause">
+                  <span class="playIcon">
                     <svg viewBox="0 0 24 24" fill="currentColor">
                       <path d="M8 5v14l11-7z" />
                     </svg>
                   </span>
-                  <span class="pause-icon">
+                  <span class="pauseIcon">
                     <svg viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+                      <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
                     </svg>
                   </span>
                 </button>
 
-                <button class="music-player__control-btn music-player__control-btn--forward" id="forwardBtn" title="Forward 10s">
+                <button class="musicPlayerControlBtn forward" id="forwardBtn" title="Forward 10s">
                   <svg viewBox="0 0 24 24" fill="currentColor">
                     <path
-                      d="M18 13c0 3.31-2.69 6-6 6s-6-2.69-6-6 2.69-6 6-6v4l5-5-5-5v4c-4.42 0-8 3.58-8 8s3.58 8 8 8 8-3.58 8-8h-2zm-7.46 2.22v-.68l-1.01-.31v3.26h.85v-2.11l1.01.31v.69l-1.77.63h-.09zM13 14.25c0 .32.03.6.1.82s.17.42.29.57.28.26.45.33.37.1.59.1.41-.03.59-.1.33-.18.46-.33.23-.34.3-.57.11-.5.11-.82v-.74c0-.32-.03-.6-.1-.82s-.17-.42-.29-.57-.28-.26-.45-.33-.37-.1-.59-.1-.41.03-.59.1-.33.18-.46.33-.23.34-.3.57-.11.5-.11.82v.74zm.85-.86v-.97c0-.19.01-.35.04-.48s.07-.23.12-.31.11-.14.19-.17.16-.05.25-.05.18.02.25.05.14.09.19.17.09.18.12.31.04.29.04.48v.97c0 .19-.01.35-.04.48s-.07.24-.12.32-.11.14-.19.17-.16.05-.25.05-.18-.02-.25-.05-.14-.09-.19-.17-.09-.19-.12-.32-.04-.29-.04-.48z"
+                      d="M12 5V1l7 6-7 6V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8zm-1.1 11h-.85v-3.26l-1.01.31v-.69l1.77-.63h.09V16zm4.28-1.76c0 .32-.03.6-.1.82s-.17.42-.29.57-.28.26-.45.33-.37.1-.59.10-.41-.03-.59-.1-.33-.18-.46-.33-.23-.34-.3-.57-.11-.5-.11-.82v-.74c0-.32.03-.6.1-.82s.17-.42.29-.57.28-.26.45-.33.37-.1.59-.10.41.03.59.1.33.18.46.33.23.34.3.57.11.5.11.82v.74zm-.85-.86c0-.19-.01-.35-.04-.48s-.07-.23-.12-.31-.11-.14-.19-.17-.16-.05-.25-.05-.18.02-.25.05-.14.09-.19.17-.09.18-.12.31-.04.29-.04.48v.97c0 .19.01.35.04.48s.07.24.12.32.11.14.19.17.16.05.25.05.18-.02.25-.05.14-.09.19-.17.09-.19.12-.32.04-.29.04-.48v-.97z"
                     />
                   </svg>
-                  <span class="music-player__skip-label">10</span>
+                  <span class="musicPlayerSkipLabel">10</span>
                 </button>
 
-                <button class="music-player__control-btn music-player__control-btn--secondary" id="nextBtn" title="Next">
+                <button class="musicPlayerControlBtn secondary" id="nextBtn" title="Next">
                   <svg viewBox="0 0 24 24" fill="currentColor">
                     <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
                   </svg>
                 </button>
               </div>
 
-              <!-- Secondary Actions -->
-              <div class="music-player__actions">
-                <button class="music-player__action-btn" id="queueBtn" title="View Queue">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z" />
-                  </svg>
-                </button>
-
-                <button class="music-player__action-btn" id="shareBtn" title="Share">
+              <div class="musicPlayerActions">
+                <button class="musicPlayerActionBtn" id="shuffleBtn" title="Shuffle">
                   <svg viewBox="0 0 24 24" fill="currentColor">
                     <path
-                      d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"
+                      d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"
                     />
                   </svg>
                 </button>
 
-                <button class="music-player__action-btn" id="moreBtn" title="More Options">
+                <button class="musicPlayerActionBtn" id="repeatBtn" title="Repeat">
                   <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
+                    <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z" />
+                  </svg>
+                </button>
+
+                <button class="musicPlayerActionBtn" id="volumeBtn" title="Volume">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                      d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"
+                    />
+                  </svg>
+                </button>
+
+                <button class="musicPlayerActionBtn" id="playlistBtn" title="Playlist">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M4 10h12v2H4zm0-4h12v2H4zm0-4h12v2H4zm16 8H4v2h16z" />
                   </svg>
                 </button>
               </div>
             </div>
           </div>
 
-          <!-- Queue Tab -->
-          <div class="music-player__panel" data-tab="queue">
-            <div class="music-player__list-header">
-              <h3 class="music-player__list-title">Up Next</h3>
-              <span class="music-player__list-count" id="queueCount">0 songs</span>
+          <div class="musicPlayerPanel" data-tab="playlist">
+            <div class="musicPlayerListHeader">
+              <h3 class="musicPlayerListTitle">Playlist</h3>
+              <span class="musicPlayerListCount" id="playlistCount">0 songs</span>
             </div>
-            <ul id="queueList" class="music-player__list">
-              <div class="music-player__empty">
-                <div class="music-player__empty-icon">
-                  <svg fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z" />
-                  </svg>
-                </div>
-                <div class="music-player__empty-text">Queue is empty</div>
-                <div class="music-player__empty-subtext">Songs you add will appear here</div>
-              </div>
-            </ul>
-          </div>
 
-          <!-- Recent Tab -->
-          <div class="music-player__panel" data-tab="recent">
-            <div class="music-player__list-header">
-              <h3 class="music-player__list-title">Recently Played</h3>
-              <span class="music-player__list-count" id="recentCount">0 songs</span>
-            </div>
-            <ul id="recentList" class="music-player__list">
-              <div class="music-player__empty">
-                <div class="music-player__empty-icon">
-                  <svg fill="currentColor" viewBox="0 0 24 24">
+            <ul class="musicPlayerList" id="playlist">
+              <li class="musicPlayerEmpty">
+                <div class="musicPlayerEmptyIcon">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
                     <path
-                      d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"
+                      d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"
                     />
                   </svg>
                 </div>
-                <div class="music-player__empty-text">No recently played songs</div>
-                <div class="music-player__empty-subtext">Start playing music to see your history</div>
-              </div>
+                <p class="musicPlayerEmptyText">No songs in playlist</p>
+                <p class="musicPlayerEmptySubtext">Add some songs to get started</p>
+              </li>
             </ul>
           </div>
-          
-          
-<!------- Tab Navigation -------->
-      <div class="music-player__tabs">
-        <div class="music-player__tabs-wrapper">
-          <button class="music-player__tab active" data-tab="playing">
-            <span class="music-player__tab-icon">
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" />
-              </svg>
-            </span>
-            <span class="music-player__tab-label">Now Playing</span>
-          </button>
-          <button class="music-player__tab" data-tab="recent">
-            <span class="music-player__tab-icon">
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path
-                  d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"
-                />
-              </svg>
-            </span>
-            <span class="music-player__tab-label">Recent</span>
-          </button>
-          <button class="music-player__tab" data-tab="queue">
-            <span class="music-player__tab-icon">
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z" />
-              </svg>
-            </span>
-            <span class="music-player__tab-label">Queue</span>
-          </button>
-          <div class="music-player__tab-slider"></div>
+
+          <div class="musicPlayerPanel" data-tab="queue">
+            <div class="musicPlayerListHeader">
+              <h3 class="musicPlayerListTitle">Queue</h3>
+              <span class="musicPlayerListCount" id="queueCount">0 songs</span>
+            </div>
+
+            <ul class="musicPlayerList" id="queue">
+              <li class="musicPlayerEmpty">
+                <div class="musicPlayerEmptyIcon">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                      d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8 12.5v-9l6 4.5-6 4.5z"
+                    />
+                  </svg>
+                </div>
+                <p class="musicPlayerEmptyText">Queue is empty</p>
+                <p class="musicPlayerEmptySubtext">Play some music to see your queue</p>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="musicPlayerTabs">
+          <div class="musicPlayerTabsWrapper">
+            <button class="musicPlayerTab active" data-tab="playing">
+              <div class="musicPlayerTabIcon">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
+                </svg>
+              </div>
+              <span class="musicPlayerTabLabel">Now Playing</span>
+            </button>
+
+            <button class="musicPlayerTab" data-tab="playlist">
+              <div class="musicPlayerTabIcon">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M4 10h12v2H4zm0-4h12v2H4zm0-4h12v2H4zm16 8H4v2h16z" />
+                </svg>
+              </div>
+              <span class="musicPlayerTabLabel">Playlist</span>
+            </button>
+
+            <button class="musicPlayerTab" data-tab="queue">
+              <div class="musicPlayerTabIcon">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8 12.5v-9l6 4.5-6 4.5z" />
+                </svg>
+              </div>
+              <span class="musicPlayerTabLabel">Queue</span>
+            </button>
+
+            <div class="musicPlayerTabSlider"></div>
+          </div>
         </div>
       </div>
- <!------- END OF MUSIC PLAYER NAV ---------------------------->
-          
-          
-        </div>
-
-
-
-
-        <!-- C L O S I N G S -->
-      </div><!-- End of Inner -->
-
-
- 
- 
-      
-      
-    </div><!-- End of Slide -->
-  </div><!-- End of Scroller -->
-</aside><!-- End of Wrapper -->
+    </div>
+  </div>
+</aside>
 
 
 
