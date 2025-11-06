@@ -7,7 +7,7 @@ import {
   notificationPlayer
 } from '../global.js';
 
-import * as PAGE from './map.js';
+import * as PAGE from '../map.js';
 
 export const pageUpdates = {
   breadCrumbs: (items, options = {}) => {
