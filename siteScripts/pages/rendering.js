@@ -697,11 +697,11 @@ export const navigation = {
       if (followButton) {
         const isFavorite = appState.favorites.has("artists", artistData.artist);
         followButton.textContent = isFavorite ? "Unfavorite" : "Favorite";
-        followButton.classList.toggle(CLASSES.active, isFavorite);
+        followButton.classList.toggle(PAGE.CLASSES.active, isFavorite);
         followButton.addEventListener("click", function () {
           const wasFavorite = appState.favorites.toggle("artists", artistData.artist);
           followButton.textContent = wasFavorite ? "Unfavorite" : "Favorite";
-          followButton.classList.toggle(CLASSES.active, wasFavorite);
+          followButton.classList.toggle(PAGE.CLASSES.active, wasFavorite);
         });
       }
 
@@ -769,11 +769,11 @@ export const navigation = {
             genreBtn.textContent = genre;
 
             genreBtn.addEventListener("click", function () {
-              genreBtn.classList.toggle(CLASSES.active);
+              genreBtn.classList.toggle(PAGE.CLASSES.active);
               genreBtn.classList.toggle("bg-accent-primary");
               genreBtn.classList.toggle("text-white");
 
-              const activeFilters = Array.from(genreFilters.querySelectorAll("." + CLASSES.active)).map(function (btn) {
+              const activeFilters = Array.from(genreFilters.querySelectorAll("." + PAGE.CLASSES.active)).map(function (btn) {
                 return btn.textContent.toLowerCase();
               });
 
