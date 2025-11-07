@@ -7,8 +7,6 @@ import {
   notificationPlayer
 } from '../global.js';
 
-import * as PAGE from '../map.js';
-
 export const pageUpdates = {
   breadCrumbs: (items, options = {}) => {
     const {
@@ -81,13 +79,13 @@ export const pageUpdates = {
           if (item.onClick) { item.onClick(); return; }
           if (appState.router) {
             if (item.route) {
-              if (item.route === PAGE.ROUTES.HOME) appState.router.navigateTo(PAGE.ROUTES.HOME);
-              else if (item.route === PAGE.ROUTES.ARTIST && item.artist) appState.router.navigateTo(PAGE.ROUTES.ARTIST, { artist: item.artist });
-              else if (item.route === PAGE.ROUTES.ALL_ARTISTS) appState.router.navigateTo(PAGE.ROUTES.ALL_ARTISTS);
+              if (item.route === ROUTES.HOME) appState.router.navigateTo(ROUTES.HOME);
+              else if (item.route === ROUTES.ARTIST && item.artist) appState.router.navigateTo(ROUTES.ARTIST, { artist: item.artist });
+              else if (item.route === ROUTES.ALL_ARTISTS) appState.router.navigateTo(ROUTES.ALL_ARTISTS);
             } else {
-              if (item.text === "Home" || item.isHome) appState.router.navigateTo(PAGE.ROUTES.HOME);
-              else if (item.artist) appState.router.navigateTo(PAGE.ROUTES.ARTIST, { artist: item.artist });
-              else if (item.text === "All Artists") appState.router.navigateTo(PAGE.ROUTES.ALL_ARTISTS);
+              if (item.text === "Home" || item.isHome) appState.router.navigateTo(ROUTES.HOME);
+              else if (item.artist) appState.router.navigateTo(ROUTES.ARTIST, { artist: item.artist });
+              else if (item.text === "All Artists") appState.router.navigateTo(ROUTES.ALL_ARTISTS);
             }
           }
         });
@@ -165,7 +163,7 @@ export const ui = {
       }
 
       if (svg) {
-        svg.classList.add(PAGE.CLASSES.hidden);
+        svg.classList.add(CLASSES.hidden);
       }
     }
 
@@ -173,16 +171,16 @@ export const ui = {
 
     if (songTitle) {
       const title = appState.currentSong.title;
-      songTitle.classList.toggle(PAGE.CLASSES.marquee, title.length > 25);
+      songTitle.classList.toggle(CLASSES.marquee, title.length > 25);
       songTitle.textContent = title;
     }
 
     if (playIndicator) {
-      playIndicator.classList.toggle(PAGE.CLASSES.active, appState.isPlaying);
+      playIndicator.classList.toggle(CLASSES.active, appState.isPlaying);
     }
 
     if (nowPlayingArea) {
-      nowPlayingArea.classList.add(PAGE.CLASSES.hasSong);
+      nowPlayingArea.classList.add(CLASSES.hasSong);
     }
   },
 
@@ -218,27 +216,27 @@ export const ui = {
     },
 
   updateShuffleButton: () => {
-    const shuffleBtn = PAGE.shuffleBtn;
+    const shuffleBtn = $byId(IDS.shuffleBtn);
     if (shuffleBtn) {
-      shuffleBtn.classList.toggle(PAGE.CLASSES.active, appState.shuffleMode);
+      shuffleBtn.classList.toggle(CLASSES.active, appState.shuffleMode);
     }
   },
 
   updateRepeatButton: () => {
-    const repeatBtn = PAGE.repeatBtn;
+    const repeatBtn = $byId(IDS.repeatBtn);
     if (repeatBtn) {
-      repeatBtn.classList.toggle(PAGE.CLASSES.active, appState.repeatMode !== REPEAT_MODES.OFF);
-      repeatBtn.classList.toggle(PAGE.CLASSES.repeatOne, appState.repeatMode === REPEAT_MODES.ONE);
+      repeatBtn.classList.toggle(CLASSES.active, appState.repeatMode !== REPEAT_MODES.OFF);
+      repeatBtn.classList.toggle(CLASSES.repeatOne, appState.repeatMode === REPEAT_MODES.ONE);
     }
   },
 
   updateFavoriteButton: () => {
     if (!appState.currentSong) return;
-    const favoriteBtn = PAGE.favoriteBtn;
+    const favoriteBtn = $byId(IDS.favoriteBtn);
     if (favoriteBtn) {
       const isFavorite = appState.favorites.has("songs", appState.currentSong.id);
       favoriteBtn.classList.toggle("favorited", isFavorite);
-      favoriteBtn.classList.toggle(PAGE.CLASSES.active, isFavorite);
+      favoriteBtn.classList.toggle(CLASSES.active, isFavorite);
       favoriteBtn.setAttribute("data-favorite-songs", appState.currentSong.id);
       const heartIcon = favoriteBtn.querySelector("svg");
       if (heartIcon) {
@@ -250,10 +248,10 @@ export const ui = {
 
   updateCounts: () => {
     const counts = {
-      [PAGE.favoriteSongsCount]: appState.favorites.songs.size,
-      [PAGE.favoriteArtistsCount]: appState.favorites.artists.size,
-      [PAGE.recentCount]: appState.recentlyPlayed.length,
-      [PAGE.queueCount]: appState.queue.items.length,
+      [IDS.favoriteSongsCount]: appState.favorites.songs.size,
+      [IDS.favoriteArtistsCount]: appState.favorites.artists.size,
+      [IDS.recentCount]: appState.recentlyPlayed.length,
+      [IDS.queueCount]: appState.queue.items.length,
     };
 
     Object.entries(counts).forEach(([id, value]) => {
