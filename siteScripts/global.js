@@ -1626,60 +1626,60 @@ const musicPlayer = {
             }
         },
 
-        playSong: async (songData) => {
-            if (!songData) return;
-            musicPlayer.ui.initialize();
-            
-            if (window.ui && ui.setLoadingState) {
-                ui.setLoadingState(true);
+playSong: async (songData) => {
+    if (!songData) return;
+    musicPlayer.ui.initialize();
+    
+    if (window.ui && ui.setLoadingState) {
+        ui.setLoadingState(true);
+    }
+    
+    if (appState.currentSong) {
+        musicPlayer.ui.addToRecentlyPlayed(appState.currentSong);
+    }
+    
+    appState.currentSong = songData;
+    appState.currentArtist = songData.artist;
+    appState.currentAlbum = songData.album;
+    
+    if (window.ui) {
+        if (ui.updateNowPlaying) ui.updateNowPlaying();
+        if (ui.updateNavbar) ui.updateNavbar();
+        if (ui.updateMusicPlayer) ui.updateMusicPlayer();
+        if (ui.updateCounts) ui.updateCounts();
+    }
+    
+    const success = await musicPlayer.ui.loadAudioFile(songData);
+    if (success) {
+        if (window.notificationPlayer && notificationPlayer.metadata) {
+            notificationPlayer.metadata.update(songData);
+        }
+        if (window.notificationPlayer && notificationPlayer.events) {
+            notificationPlayer.events.bind();
+        }
+        setTimeout(() => { 
+            // Rebind music player controls after song loads
+            if (window.clickables && clickables.musicPlayer) {
+                clickables.musicPlayer();
             }
-            
-            if (appState.currentSong) {
-                musicPlayer.ui.addToRecentlyPlayed(appState.currentSong);
-            }
-            
-            appState.currentSong = songData;
-            appState.currentArtist = songData.artist;
-            appState.currentAlbum = songData.album;
-            
-            if (window.ui) {
-                if (ui.updateNowPlaying) ui.updateNowPlaying();
-                if (ui.updateNavbar) ui.updateNavbar();
-                if (ui.updateMusicPlayer) ui.updateMusicPlayer();
-                if (ui.updateCounts) ui.updateCounts();
-            }
-            
-            const success = await musicPlayer.ui.loadAudioFile(songData);
-            if (success) {
-                if (window.notificationPlayer && notificationPlayer.metadata) {
-                    notificationPlayer.metadata.update(songData);
-                }
-                if (window.notificationPlayer && notificationPlayer.events) {
-                    notificationPlayer.events.bind();
-                }
-                setTimeout(() => { 
-                    if (window.eventHandlers && eventHandlers.bindControlEvents) {
-                        eventHandlers.bindControlEvents(); 
-                    }
-                    musicPlayer.ui.bindSeekBar(); 
-                }, 100);
-                musicPlayer.playback.dispatchPlayerStateChange();
-            } else {
-                appState.isPlaying = false;
-                if (window.ui && ui.updatePlayPauseButtons) {
-                    ui.updatePlayPauseButtons();
-                }
-                if (window.notificationPlayer && notificationPlayer.playbackState) {
-                    notificationPlayer.playbackState.onPause();
-                }
-                musicPlayer.playback.dispatchPlayerStateChange();
-            }
-            
-            if (window.ui && ui.setLoadingState) {
-                ui.setLoadingState(false);
-            }
-        },
-
+            musicPlayer.ui.bindSeekBar(); 
+        }, 100);
+        musicPlayer.playback.dispatchPlayerStateChange();
+    } else {
+        appState.isPlaying = false;
+        if (window.ui && ui.updatePlayPauseButtons) {
+            ui.updatePlayPauseButtons();
+        }
+        if (window.notificationPlayer && notificationPlayer.playbackState) {
+            notificationPlayer.playbackState.onPause();
+        }
+        musicPlayer.playback.dispatchPlayerStateChange();
+    }
+    
+    if (window.ui && ui.setLoadingState) {
+        ui.setLoadingState(false);
+    }
+},
         loadAudioFile: async (songData) => {
             if (!songData || !songData.title) {
                 return false;
@@ -2038,7 +2038,7 @@ const app = {
         navigation.initialize();
         homePage.initialize();
 
-        eventHandlers.init();
+ //       eventHandlers.init();
 
         app.resetUI();
         app.syncGlobalState();
@@ -3503,10 +3503,10 @@ window.views = views;
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
-    eventHandlers.init();
+ //   eventHandlers.init();
   });
 } else {
-  eventHandlers.init();
+//  eventHandlers.init();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -3534,7 +3534,7 @@ export {
     playlists,
     notifications,
     utils,
-    eventHandlers,
+//    eventHandlers,
     app,
     pageLoader,
     navigation,
