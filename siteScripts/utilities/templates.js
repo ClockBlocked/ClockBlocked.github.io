@@ -5,8 +5,6 @@
 import { getAlbumImageUrl } from './parsers.js';
 import { escapeForAttribute } from '../pages/rendering.js';
 
-import * as PAGE from '../map.js';
-
 
 
 
@@ -228,7 +226,7 @@ case "enhancedArtist":
 
     <!-- Albums Section -->
     <section class="fragments albums">
-      <div id="${window.albumsContainer}"></div>
+      <div id="${IDS.albumsContainer}"></div>
     </section>
   </div>
 
@@ -444,60 +442,60 @@ case "enhancedArtist":
           </div>
           <div id="artists-grid" class="artists-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 px-4 sm:px-6"></div>
         `;
-case "home_bento":
-  return `
-<div class="bento-grid">
-  <div class="bento-card" data-loader="true">
-    <div class="card-header">
-      <h2 class="card-title">Recently Played</h2>
-      <a href="#" class="card-link" data-view="recent">View All</a>
-    </div>
-    <div id="recently-played-section" class="card-content">
-      <div class="skeleton-loader"></div>
-    </div>
-  </div>
-  
-  <div class="bento-card bento-span-2" data-loader="true">
-    <div class="card-header">
-      <h2 class="card-title">Discover Albums</h2>
-      <a href="#" class="card-link" data-view="albums">Explore More</a>
-    </div>
-    <div id="random-albums-section" class="card-content">
-      <div class="skeleton-loader"></div>
-    </div>
-  </div>
-  
-  <div class="bento-card" data-loader="true">
-    <div class="card-header">
-      <h2 class="card-title">Favorite Artists</h2>
-      <a href="#" class="card-link" data-view="favorite-artists">View All</a>
-    </div>
-    <div id="favorite-artists-section" class="card-content">
-      <div class="skeleton-loader"></div>
-    </div>
-  </div>
-  
-  <div class="bento-card" data-loader="true">
-    <div class="card-header">
-      <h2 class="card-title">Your Playlists</h2>
-      <a href="#" class="card-link" data-view="playlists">View All</a>
-    </div>
-    <div id="playlists-section" class="card-content">
-      <div class="skeleton-loader"></div>
-    </div>
-  </div>
-  
-  <div class="bento-card" data-loader="true">
-    <div class="card-header">
-      <h2 class="card-title">Favorite Songs</h2>
-      <a href="#" class="card-link" data-view="favorite-songs">View All</a>
-    </div>
-    <div id="favorite-songs-section" class="card-content">
-      <div class="skeleton-loader"></div>
-    </div>
-  </div>
-</div>
-`;
+      case "home_bento":
+        return `
+        <div class="bento-grid">
+            <div class="bento-card" data-loader="true">
+              <div class="card-header">
+                <h2 class="card-title">Recently Played</h2>
+                <a href="#" class="card-link" data-view="recent">View All</a>
+              </div>
+              <div id="${data.IDS.recentlyPlayedSection}" class="card-content">
+                <div class="skeleton-loader"></div>
+              </div>
+            </div>
+            
+            <div class="bento-card bento-span-2" data-loader="true">
+              <div class="card-header">
+                <h2 class="card-title">Discover Albums</h2>
+                <a href="#" class="card-link" data-view="albums">Explore More</a>
+              </div>
+              <div id="${data.IDS.randomAlbumsSection}" class="card-content">
+                <div class="skeleton-loader"></div>
+              </div>
+            </div>
+            
+            <div class="bento-card" data-loader="true">
+              <div class="card-header">
+                <h2 class="card-title">Favorite Artists</h2>
+                <a href="#" class="card-link" data-view="favorite-artists">View All</a>
+              </div>
+              <div id="${data.IDS.favoriteArtistsSection}" class="card-content">
+                <div class="skeleton-loader"></div>
+              </div>
+            </div>
+            
+            <div class="bento-card" data-loader="true">
+              <div class="card-header">
+                <h2 class="card-title">Your Playlists</h2>
+                <a href="#" class="card-link" data-view="playlists">View All</a>
+              </div>
+              <div id="${data.IDS.playlistsSection}" class="card-content">
+                <div class="skeleton-loader"></div>
+              </div>
+            </div>
+            
+            <div class="bento-card" data-loader="true">
+              <div class="card-header">
+                <h2 class="card-title">Favorite Songs</h2>
+                <a href="#" class="card-link" data-view="favorite-songs">View All</a>
+              </div>
+              <div id="${data.IDS.favoriteSongsSection}" class="card-content">
+                <div class="skeleton-loader"></div>
+              </div>
+            </div>
+          </div>
+        `;
         
       default:
         return "";
