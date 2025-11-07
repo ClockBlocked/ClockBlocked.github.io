@@ -2578,30 +2578,100 @@ const eventHandlers = {
   },
 
   bindControls: () => {
-    // ONLY "now-playing-area" opens the music player
-    const nowPlayingArea = QUERY(NAVBAR.nowPlaying);
+    // ONLY "now-playing-area" opens the music player - using the correct selector
+    const nowPlayingArea = document.getElementById('now-playing-area');
     if (nowPlayingArea) {
-      bindClick(nowPlayingArea, () => musicPlayer.mainPlayer.toggle());
+      // Remove any existing listener first
+      if (nowPlayingArea._musicPlayerToggle) {
+        nowPlayingArea.removeEventListener('click', nowPlayingArea._musicPlayerToggle);
+      }
+      
+      const toggleHandler = (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        console.log('Now Playing Area clicked - toggling music player');
+        musicPlayer.mainPlayer.toggle();
+      };
+      
+      nowPlayingArea.addEventListener('click', toggleHandler);
+      nowPlayingArea._musicPlayerToggle = toggleHandler;
+    } else {
+      console.warn('now-playing-area element not found');
     }
     
     // ONLY navbar playPause button triggers togglePlayPause
     const navbarPlayPause = QUERY(NAVBAR.playPause);
     if (navbarPlayPause) {
-      bindClick(navbarPlayPause, () => musicPlayer.playback.togglePlayPause());
+      if (navbarPlayPause._playPauseToggle) {
+        navbarPlayPause.removeEventListener('click', navbarPlayPause._playPauseToggle);
+      }
+      
+      const playPauseHandler = (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        console.log('Play/Pause button clicked');
+        musicPlayer.playback.togglePlayPause();
+      };
+      
+      navbarPlayPause.addEventListener('click', playPauseHandler);
+      navbarPlayPause._playPauseToggle = playPauseHandler;
+    } else {
+      console.warn('playPause button not found');
     }
     
     const navbarPrevious = QUERY(NAVBAR.previous);
-    if (navbarPrevious) bindClick(navbarPrevious, () => musicPlayer.playback.previous());
+    if (navbarPrevious) {
+      if (navbarPrevious._prevHandler) {
+        navbarPrevious.removeEventListener('click', navbarPrevious._prevHandler);
+      }
+      
+      const prevHandler = (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        musicPlayer.playback.previous();
+      };
+      
+      navbarPrevious.addEventListener('click', prevHandler);
+      navbarPrevious._prevHandler = prevHandler;
+    }
     
     const navbarNext = QUERY(NAVBAR.next);
-    if (navbarNext) bindClick(navbarNext, () => musicPlayer.playback.next());
+    if (navbarNext) {
+      if (navbarNext._nextHandler) {
+        navbarNext.removeEventListener('click', navbarNext._nextHandler);
+      }
+      
+      const nextHandler = (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        musicPlayer.playback.next();
+      };
+      
+      navbarNext.addEventListener('click', nextHandler);
+      navbarNext._nextHandler = nextHandler;
+    }
   },
 
   bindMenus: () => {
     // ONLY "menu-trigger" opens the dropdown menu
-    const menuTrigger = DOM.menuTrigger;
+    const menuTrigger = document.getElementById('menu-trigger');
     if (menuTrigger) {
-      bindClick(menuTrigger, dropdown.toggle);
+      // Remove any existing listener first
+      if (menuTrigger._dropdownToggle) {
+        menuTrigger.removeEventListener('click', menuTrigger._dropdownToggle);
+      }
+      
+      const toggleHandler = (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        console.log('Menu trigger clicked - toggling dropdown');
+        dropdown.toggle(e);
+      };
+      
+      menuTrigger.addEventListener('click', toggleHandler);
+      menuTrigger._dropdownToggle = toggleHandler;
+    } else {
+      console.warn('menu-trigger element not found');
     }
     
     const menuElements = {
@@ -2790,16 +2860,22 @@ const eventHandlers = {
     
     const documentClickHandler = (e) => {
       const dropdownMenu = DOM.dropdownMenu;
-      const menuTrigger = DOM.menuTrigger;
+      const menuTrigger = document.getElementById('menu-trigger');
       
+      // Close dropdown if clicking outside of it and not on the trigger
       if (dropdownMenu && !dropdownMenu.contains(e.target) && !menuTrigger?.contains(e.target)) {
         dropdown.close();
       }
       
       const drawerEl = DOM.drawer;
-      const nowPlayingEl = QUERY(NAVBAR.nowPlaying);
+      const nowPlayingEl = document.getElementById('now-playing-area');
       
-      if (appState.isPopupVisible && drawerEl && !drawerEl.contains(e.target) && !nowPlayingEl?.contains(e.target)) {
+      // Close music player ONLY if clicking outside of both the drawer AND the now-playing-area
+      if (appState.isPopupVisible && 
+          drawerEl && 
+          !drawerEl.contains(e.target) && 
+          nowPlayingEl &&
+          !nowPlayingEl.contains(e.target)) {
         musicPlayer.mainPlayer.close();
       }
       
