@@ -1284,32 +1284,32 @@ const musicPlayer = {
             
             if (appState.queue.items.length === 0) {
                 if (emptyState) emptyState.style.display = 'flex';
-                const items = queueList.querySelectorAll('.music-player__list-item');
+                const items = queueList.querySelectorAll('.songList .small .item');
                 items.forEach(item => item.remove());
                 return;
             }
             
             if (emptyState) emptyState.style.display = 'none';
             
-            const existingItems = queueList.querySelectorAll('.music-player__list-item');
+            const existingItems = queueList.querySelectorAll('.songList .small .item');
             existingItems.forEach(item => item.remove());
             
             appState.queue.items.forEach((song, index) => {
                 const listItem = document.createElement('li');
-                listItem.className = `music-player__list-item ${index === appState.queue.currentIndex ? 'active' : ''}`;
+                listItem.classList = `songList .small .item ${index === appState.queue.currentIndex ? 'active' : ''}`;
                 listItem.innerHTML = `
                     <img src="${song.cover || utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="music-player__list-item-art">
-                    <div class="music-player__list-item-info">
-                        <div class="music-player__list-item-title">${song.title}</div>
-                        <div class="music-player__list-item-artist">${song.artist}</div>
+                    <div class="metadata">
+                        <div class="title">${song.title}</div>
+                        <div class="artist">${song.artist}</div>
                     </div>
-                    <div class="music-player__list-item-actions">
-                        <button class="music-player__list-item-action" data-action="play" title="Play">
+                    <div class="playback">
+                        <button class="set" data-action="play" data-tooltip="Play Now" data-tooltip-placement="top">
                             <svg viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M8 5v14l11-7z"/>
                             </svg>
                         </button>
-                        <button class="music-player__list-item-action" data-action="remove" title="Remove">
+                        <button class="set" data-action="remove" data-tooltip="Delete" data-tooltip-placement="top">
                             <svg viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
                             </svg>
@@ -1353,32 +1353,32 @@ const musicPlayer = {
             
             if (!appState.recentlyPlayed || appState.recentlyPlayed.length === 0) {
                 if (emptyState) emptyState.style.display = 'flex';
-                const items = recentList.querySelectorAll('.music-player__list-item');
+                const items = recentList.querySelectorAll('.songList .small .item');
                 items.forEach(item => item.remove());
                 return;
             }
             
             if (emptyState) emptyState.style.display = 'none';
             
-            const existingItems = recentList.querySelectorAll('.music-player__list-item');
+            const existingItems = recentList.querySelectorAll('.songList .small .item');
             existingItems.forEach(item => item.remove());
             
             appState.recentlyPlayed.slice(0, 20).forEach((song, index) => {
                 const listItem = document.createElement('li');
-                listItem.className = 'music-player__list-item';
+                listItem.classList = 'songList .small .item';
                 listItem.innerHTML = `
                     <img src="${song.cover || utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="music-player__list-item-art">
-                    <div class="music-player__list-item-info">
-                        <div class="music-player__list-item-title">${song.title}</div>
-                        <div class="music-player__list-item-artist">${song.artist}</div>
+                    <div class="metadata">
+                        <div class="title">${song.title}</div>
+                        <div class="artist">${song.artist}</div>
                     </div>
-                    <div class="music-player__list-item-actions">
-                        <button class="music-player__list-item-action" data-action="play" title="Play">
+                    <div class="playback">
+                        <button class="set" data-action="play" data-tooltip="Play Now" data-tooltip-placement="top">
                             <svg viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M8 5v14l11-7z"/>
                             </svg>
                         </button>
-                        <button class="music-player__list-item-action" data-action="queue" title="Add to Queue">
+                        <button class="set" data-action="queue" data-tooltip="Add to Queue" data-tooltip-placement="top">
                             <svg viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
                             </svg>
