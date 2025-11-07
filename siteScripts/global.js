@@ -1,5 +1,4 @@
-
-// import { DOM, QUERY, QUERY_ALL, IDS, CLASSES, ROUTES, THEMES, STORAGE_KEYS, ICONS, PAGE.AUDIO_FORMATS, REPEAT_MODES, NOTIFICATION_TYPES, $, $byId } from "./map.js";
+import { DOM, QUERY, QUERY_ALL, IDS, CLASSES, ROUTES, THEMES, STORAGE_KEYS, ICONS, AUDIO_FORMATS, REPEAT_MODES, NOTIFICATION_TYPES, $, $byId } from "./map.js";
 import { music } from "../modules/library.js";
 import { render, create } from "./utilities/templates.js";
 import { encodeURIComponent } from './utilities/parsers.js';
@@ -8,23 +7,20 @@ import { pageLoader, navigation } from './pages/rendering.js';
 import { ui, pageUpdates } from './pages/updates.js';
 import { deepLinkRouter } from './pages/router.js';
 
-import * as PAGE from './map.js';
-
-
 const ACTION_GRID_ITEMS = [
   { id: 'play-next', icon: 'M9 5l7 7-7 7M15 5v14', label: 'Play Next' },
   { id: 'add-queue', icon: 'M12 6v6m0 0v6m0-6h6m-6 0H6', label: 'Add to Queue' },
   { id: 'add-playlist', icon: 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012 2v2M7 7h10', label: 'Add to Playlist' },
-  { id: 'share', icon: 'M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z', label: 'Share' },
+  { id: 'share', icon: 'M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z', label: 'Share' },
   { id: 'download', icon: 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4', label: 'Download' },
   { id: 'view-artist', icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z', label: 'View Artist' }
 ];
 
 const TOAST_ICONS = {
-  [PAGE.NOTIFICATION_TYPES.SUCCESS]: '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>',
-  [PAGE.NOTIFICATION_TYPES.ERROR]: '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>',
-  [PAGE.NOTIFICATION_TYPES.WARNING]: '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.742-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>',
-  [PAGE.NOTIFICATION_TYPES.INFO]: '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>'
+  [NOTIFICATION_TYPES.SUCCESS]: '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg>',
+  [NOTIFICATION_TYPES.ERROR]: '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"/></svg>',
+  [NOTIFICATION_TYPES.WARNING]: '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"/></svg>',
+  [NOTIFICATION_TYPES.INFO]: '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"/></svg>',
 };
 
 const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
@@ -39,7 +35,7 @@ const appState = {
   recentlyPlayed: [],
   isDragging: false,
   shuffleMode: false,
-  repeatMode: PAGE.REPEAT_MODES.OFF,
+  repeatMode: REPEAT_MODES.OFF,
   seekTooltip: null,
   currentIndex: 0,
   playlists: [],
@@ -62,7 +58,7 @@ const appState = {
       appState.favorites.save(type);
       appState.favorites.updateIcon(type, id, true);
       const itemName = type === "songs" ? "song" : type.slice(0, -1);
-      notifications.show(`Added ${itemName} to favorites`, PAGE.NOTIFICATION_TYPES.SUCCESS);
+      notifications.show(`Added ${itemName} to favorites`, NOTIFICATION_TYPES.SUCCESS);
     },
 
     remove: function(type, id) {
@@ -70,7 +66,7 @@ const appState = {
       appState.favorites.save(type);
       appState.favorites.updateIcon(type, id, false);
       const itemName = type === "songs" ? "song" : type.slice(0, -1);
-      notifications.show(`Removed ${itemName} from favorites`, PAGE.NOTIFICATION_TYPES.INFO);
+      notifications.show(`Removed ${itemName} from favorites`, NOTIFICATION_TYPES.INFO);
     },
 
     toggle: function(type, id) {
@@ -88,9 +84,9 @@ const appState = {
     },
 
     save: function(type) {
-      const key = type === "songs" ? PAGE.STORAGE_KEYS.FAVORITE_SONGS : 
-                 type === "artists" ? PAGE.STORAGE_KEYS.FAVORITE_ARTISTS : 
-                 PAGE.STORAGE_KEYS.FAVORITE_ALBUMS;
+      const key = type === "songs" ? STORAGE_KEYS.FAVORITE_SONGS : 
+                 type === "artists" ? STORAGE_KEYS.FAVORITE_ARTISTS : 
+                 STORAGE_KEYS.FAVORITE_ALBUMS;
       storage.save(key, Array.from(appState.favorites[type]));
     },
 
@@ -98,7 +94,7 @@ const appState = {
       const icons = document.querySelectorAll(`[data-favorite-${type}="${id}"]`);
       icons.forEach((icon) => {
         icon.classList.toggle("favorited", isFavorite);
-        icon.classList.toggle(PAGE.CLASSES.active, isFavorite);
+        icon.classList.toggle(CLASSES.active, isFavorite);
         icon.setAttribute("aria-pressed", isFavorite);
         if (type === "songs") {
           const heartIcon = icon.querySelector("svg");
@@ -123,7 +119,7 @@ const appState = {
       } else {
         appState.queue.items.push(song);
       }
-      storage.save(PAGE.STORAGE_KEYS.QUEUE, appState.queue.items);
+      storage.save(STORAGE_KEYS.QUEUE, appState.queue.items);
       ui.updateCounts();
       notifications.show(`Added "${song.title}" to queue`);
     },
@@ -131,7 +127,7 @@ const appState = {
     remove: function(index) {
       if (index >= 0 && index < appState.queue.items.length) {
         const removed = appState.queue.items.splice(index, 1)[0];
-        storage.save(PAGE.STORAGE_KEYS.QUEUE, appState.queue.items);
+        storage.save(STORAGE_KEYS.QUEUE, appState.queue.items);
         ui.updateCounts();
         return removed;
       }
@@ -140,7 +136,7 @@ const appState = {
 
     clear: function() {
       appState.queue.items = [];
-      storage.save(PAGE.STORAGE_KEYS.QUEUE, appState.queue.items);
+      storage.save(STORAGE_KEYS.QUEUE, appState.queue.items);
       ui.updateCounts();
     },
 
@@ -204,27 +200,27 @@ const utils = {
 
   loadImageWithFallback: (imgElement, primaryUrl, fallbackUrl, type = "image") => {
     if (!imgElement) return;
-    imgElement.classList.add(PAGE.CLASSES.imageLoading);
+    imgElement.classList.add(CLASSES.imageLoading);
 
     const testImage = new Image();
     testImage.onload = () => {
       imgElement.src = primaryUrl;
-      imgElement.classList.remove(PAGE.CLASSES.imageLoading, PAGE.CLASSES.imageError);
-      imgElement.classList.add(PAGE.CLASSES.imageLoaded);
+      imgElement.classList.remove(CLASSES.imageLoading, CLASSES.imageError);
+      imgElement.classList.add(CLASSES.imageLoaded);
     };
 
     testImage.onerror = () => {
       const fallbackImage = new Image();
       fallbackImage.onload = () => {
         imgElement.src = fallbackUrl;
-        imgElement.classList.remove(PAGE.CLASSES.imageLoading);
-        imgElement.classList.add(PAGE.CLASSES.imageLoaded);
+        imgElement.classList.remove(CLASSES.imageLoading);
+        imgElement.classList.add(CLASSES.imageLoaded);
       };
 
       fallbackImage.onerror = () => {
         imgElement.src = utils.generatePlaceholder(type);
-        imgElement.classList.remove(PAGE.CLASSES.imageLoading);
-        imgElement.classList.add(PAGE.CLASSES.imageFallback);
+        imgElement.classList.remove(CLASSES.imageLoading);
+        imgElement.classList.add(CLASSES.imageFallback);
       };
 
       fallbackImage.src = fallbackUrl;
@@ -300,9 +296,9 @@ const storage = {
 
   initialize: () => {
     const favoriteTypes = [
-      { type: "songs", key: PAGE.STORAGE_KEYS.FAVORITE_SONGS },
-      { type: "artists", key: PAGE.STORAGE_KEYS.FAVORITE_ARTISTS },
-      { type: "albums", key: PAGE.STORAGE_KEYS.FAVORITE_ALBUMS }
+      { type: "songs", key: STORAGE_KEYS.FAVORITE_SONGS },
+      { type: "artists", key: STORAGE_KEYS.FAVORITE_ARTISTS },
+      { type: "albums", key: STORAGE_KEYS.FAVORITE_ALBUMS }
     ];
 
     favoriteTypes.forEach(({ type, key }) => {
@@ -313,9 +309,9 @@ const storage = {
     });
 
     const dataLoaders = {
-      [PAGE.STORAGE_KEYS.RECENTLY_PLAYED]: (data) => (appState.recentlyPlayed = data || []),
-      [PAGE.STORAGE_KEYS.PLAYLISTS]: (data) => (appState.playlists = data || []),
-      [PAGE.STORAGE_KEYS.QUEUE]: (data) => (appState.queue.items = data || [])
+      [STORAGE_KEYS.RECENTLY_PLAYED]: (data) => (appState.recentlyPlayed = data || []),
+      [STORAGE_KEYS.PLAYLISTS]: (data) => (appState.playlists = data || []),
+      [STORAGE_KEYS.QUEUE]: (data) => (appState.queue.items = data || [])
     };
 
     Object.entries(dataLoaders).forEach(([key, loader]) => {
@@ -329,12 +325,12 @@ const dropdown = {
   toggle: (e) => {
     e?.preventDefault();
     e?.stopPropagation();
-    const menu = PAGE.dropdownMenu;
-    const trigger = PAGE.menuTrigger;
+    const menu = $byId(IDS.dropdownMenu);
+    const trigger = $byId(IDS.menuTrigger);
 
     if (!menu || !trigger) return;
 
-    const isVisible = menu.classList.contains(PAGE.CLASSES.show);
+    const isVisible = menu.classList.contains(CLASSES.show);
     if (isVisible) {
       dropdown.close();
     } else {
@@ -345,27 +341,27 @@ const dropdown = {
   open: (e) => {
     e?.preventDefault();
     e?.stopPropagation();
-    const menu = PAGE.dropdownMenu;
-    const trigger = PAGE.menuTrigger;
+    const menu = $byId(IDS.dropdownMenu);
+    const trigger = $byId(IDS.menuTrigger);
 
     if (!menu || !trigger) return;
 
     ui.updateCounts();
-    menu.classList.add(PAGE.CLASSES.show);
-    trigger.classList.add(PAGE.CLASSES.active);
+    menu.classList.add(CLASSES.show);
+    trigger.classList.add(CLASSES.active);
     musicPlayer.mainPlayer.close();
   },
 
   close: (e) => {
     e?.preventDefault();
     e?.stopPropagation();
-    const menu = PAGE.dropdownMenu;
-    const trigger = PAGE.menuTrigger;
+    const menu = $byId(IDS.dropdownMenu);
+    const trigger = $byId(IDS.menuTrigger);
 
     if (!menu || !trigger) return;
 
-    menu.classList.remove(PAGE.CLASSES.show);
-    trigger.classList.remove(PAGE.CLASSES.active);
+    menu.classList.remove(CLASSES.show);
+    trigger.classList.remove(CLASSES.active);
   }
 };
 
@@ -482,8 +478,6 @@ const overlays = {
         const modal = document.getElementById(id);
         const input = modal.querySelector(".input");
         
-//      setTimeout(() => input.focus(), 100);
-        
         const handleCancel = () => {
           overlays.close(id);
           setTimeout(() => resolve(null), 250);
@@ -564,12 +558,12 @@ const notifications = {
     if (!existing) document.body.appendChild(this.container);
   },
 
-  show(message, type = PAGE.NOTIFICATION_TYPES.INFO, undoCallback = null, options = {}) {
+  show(message, type = NOTIFICATION_TYPES.INFO, undoCallback = null, options = {}) {
     this.initialize();
 
     const duration = Number.isFinite(options.duration) ? Math.max(1200, options.duration) : 5000;
     const title = options.title || null;
-    const iconHtml = options.iconHtml || PAGE.TOAST_ICONS[type] || PAGE.TOAST_ICONS[PAGE.NOTIFICATION_TYPES.INFO];
+    const iconHtml = options.iconHtml || TOAST_ICONS[type] || TOAST_ICONS[NOTIFICATION_TYPES.INFO];
 
     const toastHtml = render.notification({
       type,
@@ -1215,17 +1209,15 @@ const notificationPlayer = {
 const musicPlayer = {
     mainPlayer: {
         open: () => {
-            const drawer = document.querySelector('#drawer');
+            const drawer = document.querySelector(MUSIC_PLAYER.root);
             if (!drawer) return;
             
-            // Show the popover first
             drawer.showPopover();
             
-            // Force a reflow to ensure the transition works
             drawer.offsetHeight;
             
             appState.isPopupVisible = true;
-            musicPlayer.mainPlayer.updateTabContent(appState.currentTab || 'playing');
+            musicPlayer.mainPlayer.updateTabContent(appState.currentTab || MUSIC_PLAYER.tabs.playing);
             
             if (appState.currentSong) {
                 musicPlayer.ui.updateNowPlaying();
@@ -1233,17 +1225,15 @@ const musicPlayer = {
         },
         
         close: () => {
-            const drawer = document.querySelector('#drawer');
+            const drawer = document.querySelector(MUSIC_PLAYER.root);
             if (!drawer) return;
             
-            // Wait for the CSS transition to complete before hiding the popover
             const handleTransitionEnd = () => {
                 drawer.removeEventListener('transitionend', handleTransitionEnd);
                 drawer.hidePopover();
                 appState.isPopupVisible = false;
-                setTimeout(() => musicPlayer.mainPlayer.switchTab('playing'), 50);
+                setTimeout(() => musicPlayer.mainPlayer.switchTab(MUSIC_PLAYER.tabs.playing), 50);
                 
-                // Reset transform for next open
                 setTimeout(() => {
                     drawer.style.transform = 'translateY(100%)';
                     drawer.style.opacity = '0';
@@ -1252,13 +1242,12 @@ const musicPlayer = {
             
             drawer.addEventListener('transitionend', handleTransitionEnd, { once: true });
             
-            // Trigger the closing transition
             drawer.style.transform = 'translateY(100%)';
             drawer.style.opacity = '0';
         },
         
         toggle: () => {
-            const drawer = document.querySelector('#drawer');
+            const drawer = document.querySelector(MUSIC_PLAYER.root);
             if (!drawer) return;
             
             if (drawer.matches(':popover-open')) {
@@ -1271,13 +1260,11 @@ const musicPlayer = {
         switchTab: (tabName) => {
             appState.currentTab = tabName;
             
-            // FIXED: Use correct selectors for tabs
-            document.querySelectorAll('.musicPlayerTab').forEach(tab => {
+            document.querySelectorAll('.music-player__tab').forEach(tab => {
                 tab.classList.toggle('active', tab.dataset.tab === tabName);
             });
             
-            // FIXED: Use correct selectors for panels
-            document.querySelectorAll('.musicPlayerPanel').forEach(content => {
+            document.querySelectorAll('.music-player__panel').forEach(content => {
                 content.classList.toggle('active', content.dataset.tab === tabName);
             });
             
@@ -1285,44 +1272,44 @@ const musicPlayer = {
         },
         
         updateTabContent: (tabName) => {
-            if (tabName === 'recent') musicPlayer.mainPlayer.updateRecentTab();
-            else if (tabName === 'queue') musicPlayer.mainPlayer.updateQueueTab();
+            if (tabName === MUSIC_PLAYER.tabs.recent) musicPlayer.mainPlayer.updateRecentTab();
+            else if (tabName === MUSIC_PLAYER.tabs.queue) musicPlayer.mainPlayer.updateQueueTab();
         },
         
         updateQueueTab: () => {
-            const queueList = document.querySelector('#drawer #queue');
+            const queueList = document.querySelector(MUSIC_PLAYER.queueList);
             if (!queueList) return;
             
-            const emptyState = queueList.querySelector('.musicPlayerEmpty');
+            const emptyState = queueList.querySelector('.music-player__empty');
             
             if (appState.queue.items.length === 0) {
                 if (emptyState) emptyState.style.display = 'flex';
-                const items = queueList.querySelectorAll('.musicPlayerListItem');
+                const items = queueList.querySelectorAll('.music-player__list-item');
                 items.forEach(item => item.remove());
                 return;
             }
             
             if (emptyState) emptyState.style.display = 'none';
             
-            const existingItems = queueList.querySelectorAll('.musicPlayerListItem');
+            const existingItems = queueList.querySelectorAll('.music-player__list-item');
             existingItems.forEach(item => item.remove());
             
             appState.queue.items.forEach((song, index) => {
                 const listItem = document.createElement('li');
-                listItem.className = `musicPlayerListItem ${index === appState.queue.currentIndex ? 'active' : ''}`;
+                listItem.className = `music-player__list-item ${index === appState.queue.currentIndex ? 'active' : ''}`;
                 listItem.innerHTML = `
-                    <img src="${song.cover || utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="musicPlayerListItemArt">
-                    <div class="musicPlayerListItemInfo">
-                        <div class="musicPlayerListItemTitle">${song.title}</div>
-                        <div class="musicPlayerListItemArtist">${song.artist}</div>
+                    <img src="${song.cover || utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="music-player__list-item-art">
+                    <div class="music-player__list-item-info">
+                        <div class="music-player__list-item-title">${song.title}</div>
+                        <div class="music-player__list-item-artist">${song.artist}</div>
                     </div>
-                    <div class="musicPlayerListItemActions">
-                        <button class="musicPlayerListItemAction" data-action="play" title="Play">
+                    <div class="music-player__list-item-actions">
+                        <button class="music-player__list-item-action" data-action="play" title="Play">
                             <svg viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M8 5v14l11-7z"/>
                             </svg>
                         </button>
-                        <button class="musicPlayerListItemAction" data-action="remove" title="Remove">
+                        <button class="music-player__list-item-action" data-action="remove" title="Remove">
                             <svg viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
                             </svg>
@@ -1352,46 +1339,46 @@ const musicPlayer = {
                 queueList.appendChild(listItem);
             });
             
-            const queueCount = document.querySelector('#drawer #queueCount');
+            const queueCount = document.querySelector(MUSIC_PLAYER.queueCount);
             if (queueCount) {
                 queueCount.textContent = `${appState.queue.items.length} song${appState.queue.items.length !== 1 ? 's' : ''}`;
             }
         },
         
         updateRecentTab: () => {
-            const recentList = document.querySelector('#drawer #recentList');
+            const recentList = document.querySelector(MUSIC_PLAYER.recentList);
             if (!recentList) return;
             
-            const emptyState = recentList.querySelector('.musicPlayerEmpty');
+            const emptyState = recentList.querySelector('.music-player__empty');
             
             if (!appState.recentlyPlayed || appState.recentlyPlayed.length === 0) {
                 if (emptyState) emptyState.style.display = 'flex';
-                const items = recentList.querySelectorAll('.musicPlayerListItem');
+                const items = recentList.querySelectorAll('.music-player__list-item');
                 items.forEach(item => item.remove());
                 return;
             }
             
             if (emptyState) emptyState.style.display = 'none';
             
-            const existingItems = recentList.querySelectorAll('.musicPlayerListItem');
+            const existingItems = recentList.querySelectorAll('.music-player__list-item');
             existingItems.forEach(item => item.remove());
             
             appState.recentlyPlayed.slice(0, 20).forEach((song, index) => {
                 const listItem = document.createElement('li');
-                listItem.className = 'musicPlayerListItem';
+                listItem.className = 'music-player__list-item';
                 listItem.innerHTML = `
-                    <img src="${song.cover || utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="musicPlayerListItemArt">
-                    <div class="musicPlayerListItemInfo">
-                        <div class="musicPlayerListItemTitle">${song.title}</div>
-                        <div class="musicPlayerListItemArtist">${song.artist}</div>
+                    <img src="${song.cover || utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="music-player__list-item-art">
+                    <div class="music-player__list-item-info">
+                        <div class="music-player__list-item-title">${song.title}</div>
+                        <div class="music-player__list-item-artist">${song.artist}</div>
                     </div>
-                    <div class="musicPlayerListItemActions">
-                        <button class="musicPlayerListItemAction" data-action="play" title="Play">
+                    <div class="music-player__list-item-actions">
+                        <button class="music-player__list-item-action" data-action="play" title="Play">
                             <svg viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M8 5v14l11-7z"/>
                             </svg>
                         </button>
-                        <button class="musicPlayerListItemAction" data-action="queue" title="Add to Queue">
+                        <button class="music-player__list-item-action" data-action="queue" title="Add to Queue">
                             <svg viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
                             </svg>
@@ -1420,32 +1407,34 @@ const musicPlayer = {
                 recentList.appendChild(listItem);
             });
             
-            const recentCount = document.querySelector('#drawer #recentCount');
+            const recentCount = document.querySelector(MUSIC_PLAYER.recentCount);
             if (recentCount) {
                 recentCount.textContent = `${appState.recentlyPlayed.length} song${appState.recentlyPlayed.length !== 1 ? 's' : ''}`;
             }
         },
         
         init: () => {
-            const closeBtn = document.querySelector('#drawer #closeBtn');
+            const closeBtn = document.querySelector(MUSIC_PLAYER.close);
             if (closeBtn) {
                 closeBtn.addEventListener('click', () => musicPlayer.mainPlayer.close());
             }
             
-            // FIXED: Tab event listeners with correct selector
-            document.querySelectorAll('.musicPlayerTab').forEach(tab => {
+            document.querySelectorAll('.music-player__tab').forEach(tab => {
                 tab.addEventListener('click', () => {
                     const tabName = tab.dataset.tab;
                     if (tabName) musicPlayer.mainPlayer.switchTab(tabName);
                 });
             });
             
-            const queueBtn = document.querySelector('#queueBtn');
+            const queueBtn = document.querySelector(MUSIC_PLAYER.queueBtn);
             if (queueBtn) {
-                queueBtn.addEventListener('click', () => musicPlayer.mainPlayer.switchTab('queue'));
+                queueBtn.addEventListener('click', () => musicPlayer.mainPlayer.switchTab(MUSIC_PLAYER.tabs.queue));
             }
             
-            const favoriteBtn = document.querySelector('#favoriteBtn');
+            musicPlayer.mainPlayer.preventHorizontalScroll();
+            musicPlayer.mainPlayer.initDrawerDrag();
+            
+            const favoriteBtn = document.querySelector(MUSIC_PLAYER.favoriteBtn);
             if (favoriteBtn) {
                 favoriteBtn.addEventListener('click', () => {
                     favoriteBtn.classList.toggle('favorited');
@@ -1565,9 +1554,9 @@ const musicPlayer = {
                         });
                     });
                 });
-                if (allSongs.length === 0) {
+                if (allSongs.length ==== 0) {
                     if (window.notifications) {
-                        notifications.show("No songs found", PAGE.NOTIFICATION_TYPES?.WARNING);
+                        notifications.show("No songs found", window.NOTIFICATION_TYPES?.WARNING);
                     }
                     return;
                 }
@@ -1590,18 +1579,18 @@ const musicPlayer = {
 
         repeat: {
             toggle: () => {
-                if (appState.repeatMode === PAGE.REPEAT_MODES?.OFF) {
-                    appState.repeatMode = PAGE.REPEAT_MODES?.ALL;
-                } else if (appState.repeatMode === PAGE.REPEAT_MODES?.ALL) {
-                    appState.repeatMode = PAGE.REPEAT_MODES?.ONE;
+                if (appState.repeatMode === window.REPEAT_MODES?.OFF) {
+                    appState.repeatMode = window.REPEAT_MODES?.ALL;
+                } else if (appState.repeatMode === window.REPEAT_MODES?.ALL) {
+                    appState.repeatMode = window.REPEAT_MODES?.ONE;
                 } else {
-                    appState.repeatMode = PAGE.REPEAT_MODES?.OFF;
+                    appState.repeatMode = window.REPEAT_MODES?.OFF;
                 }
                 if (window.ui && ui.updateRepeatButton) {
                     ui.updateRepeatButton();
                 }
-                const modeText = appState.repeatMode === PAGE.REPEAT_MODES?.OFF ? "disabled" : 
-                                appState.repeatMode === PAGE.REPEAT_MODES?.ALL ? "all songs" : "current song";
+                const modeText = appState.repeatMode === window.REPEAT_MODES?.OFF ? "disabled" : 
+                                appState.repeatMode === window.REPEAT_MODES?.ALL ? "all songs" : "current song";
                 if (window.notifications) {
                     notifications.show(`Repeat ${modeText}`);
                 }
@@ -1705,7 +1694,7 @@ const musicPlayer = {
                 return false;
             }
 
-            for (const format of PAGE.AUDIO_FORMATS || ['mp3', 'ogg', 'wav']) {
+            for (const format of window.AUDIO_FORMATS || ['mp3', 'ogg', 'wav']) {
                 try {
                     const audioUrl = `https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/Finalfinal/global/content/audio/${songFileName}.${format}`;
                     
@@ -1745,8 +1734,8 @@ const musicPlayer = {
         },
 
         bindSeekBar: () => {
-            const bar = document.querySelector('#drawer #progressBar');
-            const thumb = document.querySelector('#drawer #progressThumb');
+            const bar = document.querySelector(MUSIC_PLAYER.progressBar);
+            const thumb = document.querySelector(MUSIC_PLAYER.progressThumb);
             if (!bar || !thumb) {
                 console.error("bindSeekBar: Could not find progress bar elements");
                 return;
@@ -1759,7 +1748,7 @@ const musicPlayer = {
                 musicPlayer.ui.wasPlayingBeforeScrub = !!appState.isPlaying;
                 if (musicPlayer.ui.wasPlayingBeforeScrub) appState.audio.pause();
                 musicPlayer.ui.seekFromEvent(e, bar);
-                bar.classList.add('isDragging');
+                bar.classList.add(MUSIC_PLAYER.classes.dragging);
                 const moveTarget = bar;
                 moveTarget.addEventListener('pointermove', onPointerMove, { passive: false });
                 moveTarget.addEventListener('pointerup', onPointerUp, { once: true });
@@ -1775,15 +1764,15 @@ const musicPlayer = {
             const onPointerUp = (e) => {
                 musicPlayer.ui.seekFromEvent(e, bar, true);
                 musicPlayer.ui.isScrubbing = false;
-                bar.classList.remove('isDragging', 'isHovering');
+                bar.classList.remove(MUSIC_PLAYER.classes.dragging, MUSIC_PLAYER.classes.hovering);
                 if (musicPlayer.ui.wasPlayingBeforeScrub) appState.audio.play();
                 bar.releasePointerCapture?.(e.pointerId ?? 1);
                 bar.removeEventListener('pointermove', onPointerMove);
             };
 
-            const onEnter = () => bar.classList.add('isHovering');
+            const onEnter = () => bar.classList.add(MUSIC_PLAYER.classes.hovering);
             const onLeave = () => { 
-                if (!musicPlayer.ui.isScrubbing) bar.classList.remove('isHovering'); 
+                if (!musicPlayer.ui.isScrubbing) bar.classList.remove(MUSIC_PLAYER.classes.hovering); 
             };
             
             bar.addEventListener('pointerdown', onPointerDown, { passive: false });
@@ -1812,9 +1801,9 @@ const musicPlayer = {
         },
 
         setProgressUI: (percent, currentTime) => {
-            const fill = document.querySelector('#drawer #progressFill');
-            const thumb = document.querySelector('#drawer #progressThumb');
-            const currentTimeElement = document.querySelector('#drawer #current');
+            const fill = document.querySelector(MUSIC_PLAYER.progressFill);
+            const thumb = document.querySelector(MUSIC_PLAYER.progressThumb);
+            const currentTimeElement = document.querySelector(MUSIC_PLAYER.currentTime);
             if (fill) fill.style.width = percent + '%';
             if (thumb) thumb.style.left = percent + '%';
             if (currentTimeElement && isFinite(currentTime)) {
@@ -1831,10 +1820,10 @@ const musicPlayer = {
             
             switch (e.key) {
                 case 'ArrowRight':
-                    timeChange = 10;
+                    timeChange = MUSIC_PLAYER.skipTimes.forward;
                     break;
                 case 'ArrowLeft':
-                    timeChange = -10;
+                    timeChange = MUSIC_PLAYER.skipTimes.rewind;
                     break;
                 case 'PageUp':
                     timeChange = 10;
@@ -1883,7 +1872,7 @@ const musicPlayer = {
         },
 
         updateBufferDisplay: () => {
-            const buffer = document.querySelector('#drawer #progressBuffer');
+            const buffer = document.querySelector(MUSIC_PLAYER.progressBuffer);
             if (!buffer || !appState.audio) return;
             
             if (!appState.audio.buffered || appState.audio.buffered.length === 0) {
@@ -1912,7 +1901,7 @@ const musicPlayer = {
             if (window.ui && ui.updatePlayPauseButtons) {
                 ui.updatePlayPauseButtons();
             }
-            document.querySelector('#drawer')?.classList.add('playing');
+            document.querySelector(MUSIC_PLAYER.root)?.classList.add(MUSIC_PLAYER.classes.playing);
         },
 
         onPause: () => {
@@ -1920,14 +1909,14 @@ const musicPlayer = {
             if (window.ui && ui.updatePlayPauseButtons) {
                 ui.updatePlayPauseButtons();
             }
-            document.querySelector('#drawer')?.classList.remove('playing');
+            document.querySelector(MUSIC_PLAYER.root)?.classList.remove(MUSIC_PLAYER.classes.playing);
         },
 
         onMetadataLoaded: () => {
             if (!appState.audio || isNaN(appState.audio.duration)) return;
             
             appState.duration = appState.audio.duration;
-            const totalTimeElement = document.querySelector('#drawer #total');
+            const totalTimeElement = document.querySelector(MUSIC_PLAYER.totalTime);
             if (totalTimeElement) {
                 totalTimeElement.textContent = utils.formatTime(appState.duration);
             }
@@ -1941,7 +1930,7 @@ const musicPlayer = {
         },
 
         onEnded: () => {
-            if (appState.repeatMode === PAGE.REPEAT_MODES?.ONE) { 
+            if (appState.repeatMode === window.REPEAT_MODES?.ONE) { 
                 appState.audio.currentTime = 0; 
                 appState.audio.play(); 
                 return; 
@@ -1955,8 +1944,8 @@ const musicPlayer = {
             if (appState.recentlyPlayed.length > 50) {
                 appState.recentlyPlayed = appState.recentlyPlayed.slice(0, 50);
             }
-            if (window.storage && PAGE.STORAGE_KEYS) {
-                storage.save(PAGE.STORAGE_KEYS.RECENTLY_PLAYED, appState.recentlyPlayed.slice(0, 20));
+            if (window.storage && window.STORAGE_KEYS) {
+                storage.save(STORAGE_KEYS.RECENTLY_PLAYED, appState.recentlyPlayed.slice(0, 20));
             }
         },
 
@@ -1969,7 +1958,7 @@ const musicPlayer = {
             const nextIndex = appState.shuffleMode ? 
                 Math.floor(Math.random() * album.songs.length) : 
                 (currentIndex + 1) % album.songs.length;
-            if (nextIndex !== currentIndex || appState.repeatMode === PAGE.REPEAT_MODES?.ALL) {
+            if (nextIndex !== currentIndex || appState.repeatMode === window.REPEAT_MODES?.ALL) {
                 return { 
                     ...album.songs[nextIndex], 
                     artist: artist.artist, 
@@ -1999,50 +1988,43 @@ const musicPlayer = {
             if (!appState.currentSong) return;
             
             const coverUrl = appState.currentSong.cover || utils.getAlbumImageUrl(appState.currentSong.album);
-            const cover = document.querySelector('#drawer #cover');
+            const cover = document.querySelector(MUSIC_PLAYER.albumArtwork);
             if (cover && coverUrl) {
                 cover.src = coverUrl;
             }
             
-            const titleEl = document.querySelector('#drawer #title');
-            const artistEl = document.querySelector('#drawer #artist');
-            const albumEl = document.querySelector('#drawer #album');
+            const titleEl = document.querySelector(MUSIC_PLAYER.songName);
+            const artistEl = document.querySelector(MUSIC_PLAYER.artistName);
+            const albumEl = document.querySelector(MUSIC_PLAYER.albumName);
             
             if (titleEl && appState.currentSong.title) titleEl.textContent = appState.currentSong.title;
             if (artistEl && appState.currentArtist) artistEl.textContent = appState.currentArtist;
             if (albumEl && appState.currentAlbum) albumEl.textContent = appState.currentAlbum;
             
-            const playBtn = document.querySelector('#playBtn');
-            const drawer = document.querySelector('#drawer');
+            const playBtn = document.querySelector(MUSIC_PLAYER.play);
+            const drawer = document.querySelector(MUSIC_PLAYER.root);
             if (playBtn) {
-                const playIcon = playBtn.querySelector('.playIcon');
-                const pauseIcon = playBtn.querySelector('.pauseIcon');
+                const playIcon = playBtn.querySelector('.play-icon');
+                const pauseIcon = playBtn.querySelector('.pause-icon');
                 if (appState.isPlaying) {
                     playIcon?.style.setProperty('display', 'none');
                     pauseIcon?.style.setProperty('display', 'block');
-                    drawer?.classList.add('playing');
+                    drawer?.classList.add(MUSIC_PLAYER.classes.playing);
                 } else {
                     playIcon?.style.setProperty('display', 'block');
                     pauseIcon?.style.setProperty('display', 'none');
-                    drawer?.classList.remove('playing');
+                    drawer?.classList.remove(MUSIC_PLAYER.classes.playing);
                 }
             }
         }
     },
 };
 
-
-
-
-
-
 document.addEventListener('DOMContentLoaded', () => {
     musicPlayer.mainPlayer.init();
 });
 
 window.musicPlayer = musicPlayer
-
-
 
 const app = {
     initialize: function() {
@@ -2066,9 +2048,9 @@ const app = {
     },
 
     resetUI: function() {
-        const nowPlayingArea = document.querySelector('#navbar #now-playing-area');
+        const nowPlayingArea = document.querySelector(NAVBAR.nowPlaying);
         if (nowPlayingArea) {
-            nowPlayingArea.classList.remove(PAGE.CLASSES.hasSong);
+            nowPlayingArea.classList.remove(CLASSES.hasSong);
         }
         ui.updateCounts();
     },
@@ -2098,7 +2080,7 @@ const app = {
 
     goHome: function() {
         if (appState.router) {
-            appState.router.navigateTo(PAGE.ROUTES.HOME);
+            appState.router.navigateTo(ROUTES.HOME);
         }
     }
 };
@@ -2106,7 +2088,7 @@ const app = {
 const playlists = {
     add: (name) => {
         if (!name || !name.trim()) {
-            notifications.show("Please enter a playlist name", PAGE.NOTIFICATION_TYPES.WARNING);
+            notifications.show("Please enter a playlist name", NOTIFICATION_TYPES.WARNING);
             return null;
         }
 
@@ -2120,33 +2102,33 @@ const playlists = {
         };
 
         appState.playlists.push(playlist);
-        storage.save(PAGE.STORAGE_KEYS.PLAYLISTS, appState.playlists);
+        storage.save(STORAGE_KEYS.PLAYLISTS, appState.playlists);
 
         if (typeof homePage?.renderPlaylists === "function") {
             homePage.renderPlaylists();
         }
 
-        notifications.show(`Created playlist "${playlist.name}"`, PAGE.NOTIFICATION_TYPES.SUCCESS);
+        notifications.show(`Created playlist "${playlist.name}"`, NOTIFICATION_TYPES.SUCCESS);
         return playlist;
     },
 
     addSong: (playlistId, song) => {
         const playlist = appState.playlists.find((p) => p.id === playlistId);
         if (!playlist) {
-            notifications.show("Playlist not found", PAGE.NOTIFICATION_TYPES.ERROR);
+            notifications.show("Playlist not found", NOTIFICATION_TYPES.ERROR);
             return false;
         }
 
         const exists = playlist.songs.some((s) => s.id === song.id);
         if (exists) {
-            notifications.show("Song already in playlist", PAGE.NOTIFICATION_TYPES.WARNING);
+            notifications.show("Song already in playlist", NOTIFICATION_TYPES.WARNING);
             return false;
         }
 
         playlist.songs.push(song);
-        storage.save(PAGE.STORAGE_KEYS.PLAYLISTS, appState.playlists);
+        storage.save(STORAGE_KEYS.PLAYLISTS, appState.playlists);
 
-        notifications.show(`Added "${song.title}" to "${playlist.name}"`, PAGE.NOTIFICATION_TYPES.SUCCESS);
+        notifications.show(`Added "${song.title}" to "${playlist.name}"`, NOTIFICATION_TYPES.SUCCESS);
         return true;
     },
 
@@ -2158,8 +2140,8 @@ const playlists = {
         playlist.songs = playlist.songs.filter((s) => s.id !== songId);
 
         if (playlist.songs.length < initialLength) {
-            storage.save(PAGE.STORAGE_KEYS.PLAYLISTS, appState.playlists);
-            notifications.show("Song removed from playlist", PAGE.NOTIFICATION_TYPES.INFO);
+            storage.save(STORAGE_KEYS.PLAYLISTS, appState.playlists);
+            notifications.show("Song removed from playlist", NOTIFICATION_TYPES.INFO);
             return true;
         }
 
@@ -2169,7 +2151,7 @@ const playlists = {
     play: (playlistId) => {
         const playlist = appState.playlists.find((p) => p.id === playlistId);
         if (!playlist || playlist.songs.length === 0) {
-            notifications.show("Playlist is empty", PAGE.NOTIFICATION_TYPES.WARNING);
+            notifications.show("Playlist is empty", NOTIFICATION_TYPES.WARNING);
             return;
         }
 
@@ -2177,7 +2159,7 @@ const playlists = {
         playlist.songs.slice(1).forEach((song) => appState.queue.add(song));
         musicPlayer.ui.playSong(playlist.songs[0]);
 
-        notifications.show(`Playing playlist "${playlist.name}"`, PAGE.NOTIFICATION_TYPES.SUCCESS);
+        notifications.show(`Playing playlist "${playlist.name}"`, NOTIFICATION_TYPES.SUCCESS);
     },
 
     remove: async (playlistId) => {
@@ -2196,8 +2178,8 @@ const playlists = {
         
         const playlistName = playlist.name;
         appState.playlists = appState.playlists.filter((p) => p.id !== playlistId);
-        storage.save(PAGE.STORAGE_KEYS.PLAYLISTS, appState.playlists);
-        notifications.show(`Deleted playlist "${playlistName}"`, PAGE.NOTIFICATION_TYPES.INFO);
+        storage.save(STORAGE_KEYS.PLAYLISTS, appState.playlists);
+        notifications.show(`Deleted playlist "${playlistName}"`, NOTIFICATION_TYPES.INFO);
         
         return true;
     },
@@ -2255,7 +2237,7 @@ const playlists = {
                       </div>
                       <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button class="play-playlist-btn w-10 h-10 bg-accent-primary rounded-full flex items-center justify-center hover:scale-110 transition-transform" data-playlist-id="${playlist.id}">
-                          ${PAGE.ICONS.play}
+                          ${ICONS.play}
                         </button>
                       </div>
                     </div>
@@ -2268,7 +2250,7 @@ const playlists = {
                         </button>
                         <button class="delete-playlist-btn px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors" data-playlist-id="${playlist.id}">
                           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
-                            <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 013.878.512.75.75 0 11-.256 1.478l-.209-.035-1.005 13.07a3 3 0 01-2.991 2.77H8.084a3 3 0 01-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 01-.256-1.478A48.567 48.567 0 017.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 013.369 0c1.603.051 2.815 1.387 2.815 2.951zm-6.136-1.452a51.196 51.196 0 013.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 00-6 0v-.113c0-.794.609-1.428 1.364-1.452zm-.355 5.945a.75.75 0 10-1.5.058l.347 9a.75.75 0 101.499-.058l-.346-9zm5.48.058a.75.75 0 10-1.498-.058l-.347 9a.75.75 0 001.5.058l.345-9z" clip-rule="evenodd" />
+                            <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 013.878.512.75.75 0 11-.256 1.478l-.209-.035-1.005 13.07a3 3 0 01-2.991 2.77H8.084a3 3 0 01-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 01-.256-1.478A48.567 48.567 0 017.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 013.369 0c1.603.051 2.815 1.387 2.815 2.951zm-6.136-1.452a51.196 51.196 0 013.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 00-6 0v-.113c0-.794.609-1.428 1.364-1.452zm-.355 5.945a.75.75 0 10-1.5.058l.347 9a.75.75 0 101.499-.058l-.346-9zm5.48.058a.75.75 0 10-1.498-.058l-.347 9a.75.75 0 001.5.058l.345-9z" clip-rule="evenodd"/>
                           </svg>
                         </button>
                       </div>
@@ -2289,14 +2271,14 @@ const playlists = {
     show: (playlistId) => {
         const playlist = appState.playlists.find((p) => p.id === playlistId);
         if (!playlist) {
-            notifications.show("Playlist not found", PAGE.NOTIFICATION_TYPES.ERROR);
+            notifications.show("Playlist not found", NOTIFICATION_TYPES.ERROR);
             return;
         }
 
         pageLoader.start({ message: "Loading playlist..." });
 
         setTimeout(() => {
-            const dynamicContent = PAGE.dynamicContent;
+            const dynamicContent = $byId(IDS.dynamicContent);
             if (!dynamicContent) return;
 
             dynamicContent.innerHTML = `
@@ -2315,7 +2297,7 @@ const playlists = {
                         <button class="play-playlist-btn bg-accent-primary text-white px-8 py-3 rounded-full hover:bg-accent-secondary transition-colors flex items-center gap-2" data-playlist-id="${playlist.id}" ${
             playlist.songs.length === 0 ? "disabled" : ""
           }>
-                          ${PAGE.ICONS.play}
+                          ${ICONS.play}
                           Play
                         </button>
                         <button class="edit-playlist-btn bg-gray-600 text-white px-6 py-3 rounded-full hover:bg-gray-500 transition-colors" data-playlist-id="${playlist.id}">
@@ -2354,13 +2336,13 @@ const playlists = {
                       ${playlist.songs
                         .map(
                           (song, index) => `
-                        <div class="song-row grid grid-cols-12 gap-4 items-center px-4 py-3 rounded-lg hover:bg-white/5 transition-colors cursor-pointer group" data-song='${JSON.stringify(song).replace(/"/g, "&quot;")}' data-playlist-id="${
+                        <div class="song-row grid grid-cols-12 gap-4 items-center px-4 py-3 rounded-lg hover:bg-white/5 transition-colors cursor-pointer group" data-song='${JSON.stringify(song).replace(/'/g, "&apos;")}' data-playlist-id="${
                             playlist.id
                           }" data-song-index="${index}">
                           <div class="col-span-1 text-gray-400 group-hover:hidden">${index + 1}</div>
                           <div class="col-span-1 hidden group-hover:block">
                             <button class="play-song-btn w-8 h-8 bg-accent-primary rounded-full flex items-center justify-center hover:scale-110 transition-transform">
-                              ${PAGE.ICONS.play}
+                              ${ICONS.play}
                             </button>
                           </div>
                           <div class="col-span-5 flex items-center gap-3">
@@ -2407,7 +2389,7 @@ const playlists = {
         }, 200);
     },
 
-    bindEvents: (root = PAGE.dynamicContent) => {
+    bindEvents: (root = $byId(IDS.dynamicContent)) => {
         const dynamicContent = root;
         if (!dynamicContent) return;
 
@@ -2456,7 +2438,7 @@ const playlists = {
     },
 
     bindViewEvents: (playlist) => {
-        const dynamicContent = PAGE.dynamicContent;
+        const dynamicContent = $byId(IDS.dynamicContent);
         if (!dynamicContent) return;
 
         const playBtn = dynamicContent.querySelector(".play-playlist-btn");
@@ -2480,9 +2462,9 @@ const playlists = {
                 
                 if (newName && newName.trim() && newName.trim() !== playlist.name) {
                     playlist.name = newName.trim();
-                    storage.save(PAGE.STORAGE_KEYS.PLAYLISTS, appState.playlists);
+                    storage.save(STORAGE_KEYS.PLAYLISTS, appState.playlists);
                     playlists.show(playlist.id);
-                    notifications.show("Playlist renamed successfully", PAGE.NOTIFICATION_TYPES.SUCCESS);
+                    notifications.show("Playlist renamed successfully", NOTIFICATION_TYPES.SUCCESS);
                 }
             });
         }
@@ -2492,7 +2474,7 @@ const playlists = {
             deleteBtn.addEventListener("click", async () => {
                 if (await playlists.remove(playlist.id)) {
                     if (appState.router) {
-                        appState.router.navigateTo(PAGE.ROUTES.HOME);
+                        appState.router.navigateTo(ROUTES.HOME);
                     }
                 }
             });
@@ -2502,7 +2484,7 @@ const playlists = {
         if (browseBtn) {
             browseBtn.addEventListener("click", () => {
                 if (appState.router) {
-                    appState.router.navigateTo(PAGE.ROUTES.HOME);
+                    appState.router.navigateTo(ROUTES.HOME);
                 }
             });
         }
@@ -2534,7 +2516,7 @@ const playlists = {
                 e.stopPropagation();
                 const artistName = artistEl.dataset.artist;
                 if (appState.router) {
-                    appState.router.navigateTo(PAGE.ROUTES.ARTIST, {
+                    appState.router.navigateTo(ROUTES.ARTIST, {
                         artist: artistName,
                     });
                 }
@@ -2596,29 +2578,39 @@ const eventHandlers = {
   },
 
   bindControls: () => {
-    const nowPlayingTriggers = [PAGE.nowPlayingArea, document.querySelector('#navbar #now-playing-area')].filter(Boolean);
-    nowPlayingTriggers.forEach(el => bindClick(el, () => musicPlayer.mainPlayer.toggle()));
+    // ONLY "now-playing-area" opens the music player
+    const nowPlayingArea = QUERY(NAVBAR.nowPlaying);
+    if (nowPlayingArea) {
+      bindClick(nowPlayingArea, () => musicPlayer.mainPlayer.toggle());
+    }
     
-    const navbarPlayPause = document.querySelector('#navbar .playPause');
-    if (navbarPlayPause) bindClick(navbarPlayPause, () => musicPlayer.mainPlayer.toggle());
+    // ONLY navbar playPause button triggers togglePlayPause
+    const navbarPlayPause = QUERY(NAVBAR.playPause);
+    if (navbarPlayPause) {
+      bindClick(navbarPlayPause, () => musicPlayer.playback.togglePlayPause());
+    }
     
-    const navbarPrevious = document.querySelector('#navbar .previous');
+    const navbarPrevious = QUERY(NAVBAR.previous);
     if (navbarPrevious) bindClick(navbarPrevious, () => musicPlayer.playback.previous());
     
-    const navbarNext = document.querySelector('#navbar .next');
+    const navbarNext = QUERY(NAVBAR.next);
     if (navbarNext) bindClick(navbarNext, () => musicPlayer.playback.next());
   },
 
   bindMenus: () => {
+    // ONLY "menu-trigger" opens the dropdown menu
+    const menuTrigger = DOM.menuTrigger;
+    if (menuTrigger) {
+      bindClick(menuTrigger, dropdown.toggle);
+    }
+    
     const menuElements = {
-      menuTrigger: dropdown.toggle,
       dropdownClose: dropdown.close,
       willHideMenu: dropdown.close,
     };
     
     Object.entries(menuElements).forEach(([elementId, handler]) => {
-      const el = PAGE[elementId];
-      if (el) bindClick(el, handler);
+      if (DOM[elementId]) bindClick(DOM[elementId], handler);
     });
     
     const menuActions = {
@@ -2652,20 +2644,19 @@ const eventHandlers = {
     };
     
     Object.entries(menuActions).forEach(([elementId, handler]) => {
-      const el = PAGE[elementId];
-      if (el) bindClick(el, handler);
+      if (DOM[elementId]) bindClick(DOM[elementId], handler);
     });
   },
 
   bindPopups: () => {
     const popupControlsMap = {
-      '#drawer .musicPlayerCloseBtn': musicPlayer.mainPlayer.close,
-      '#playBtn': musicPlayer.playback.play,
-      '#prevBtn': musicPlayer.playback.previous,
-      '#nextBtn': musicPlayer.playback.next,
-      '#shuffleBtn': musicPlayer.playback.shuffle.toggle,
-      '#repeatBtn': musicPlayer.playback.repeat.toggle,
-      '#favoriteBtn': () => {
+      [MUSIC_PLAYER.close]: musicPlayer.mainPlayer.close,
+      [MUSIC_PLAYER.play]: musicPlayer.playback.togglePlayPause,
+      [MUSIC_PLAYER.previous]: musicPlayer.playback.previous,
+      [MUSIC_PLAYER.next]: musicPlayer.playback.next,
+      [MUSIC_PLAYER.shuffle]: musicPlayer.playback.shuffle.toggle,
+      [MUSIC_PLAYER.repeat]: musicPlayer.playback.repeat.toggle,
+      [MUSIC_PLAYER.favoriteBtn]: () => {
         if (appState.currentSong) {
           appState.favorites.toggle("songs", appState.currentSong.id);
           ui.updateFavoriteButton();
@@ -2674,11 +2665,10 @@ const eventHandlers = {
     };
     
     Object.entries(popupControlsMap).forEach(([selector, handler]) => {
-      const elements = document.querySelectorAll(selector);
-      elements.forEach(el => bindClick(el, handler));
+      bindClickAll(QUERY_ALL(selector), handler);
     });
     
-    document.querySelectorAll('.musicPlayerTab').forEach(tab => {
+    QUERY_ALL('.tab').forEach(tab => {
       bindClick(tab, () => {
         const tabName = tab.dataset.tab;
         if (tabName) musicPlayer.mainPlayer.switchTab(tabName);
@@ -2687,7 +2677,7 @@ const eventHandlers = {
   },
 
   bindProgress: () => {
-    const progressBar = document.querySelector('#drawer #progressBar');
+    const progressBar = QUERY(MUSIC_PLAYER.progressBar);
     if (!progressBar) return;
     
     const handleProgressClick = (e) => {
@@ -2743,7 +2733,7 @@ const eventHandlers = {
       const shortcuts = {
         " ": (e) => {
           e.preventDefault();
-          musicPlayer.mainPlayer.toggle();
+          musicPlayer.playback.togglePlayPause();
         },
         ArrowLeft: (e) => {
           if (e.ctrlKey || e.metaKey) {
@@ -2799,15 +2789,15 @@ const eventHandlers = {
     if (document._docClickHandler) document.removeEventListener("click", document._docClickHandler);
     
     const documentClickHandler = (e) => {
-      const dropdownMenu = PAGE.dropdownMenu;
-      const menuTrigger = PAGE.menuTrigger;
+      const dropdownMenu = DOM.dropdownMenu;
+      const menuTrigger = DOM.menuTrigger;
       
       if (dropdownMenu && !dropdownMenu.contains(e.target) && !menuTrigger?.contains(e.target)) {
         dropdown.close();
       }
       
-      const drawerEl = document.querySelector('#drawer');
-      const nowPlayingEl = document.querySelector('#navbar #now-playing-area');
+      const drawerEl = DOM.drawer;
+      const nowPlayingEl = QUERY(NAVBAR.nowPlaying);
       
       if (appState.isPopupVisible && drawerEl && !drawerEl.contains(e.target) && !nowPlayingEl?.contains(e.target)) {
         musicPlayer.mainPlayer.close();
@@ -2821,16 +2811,16 @@ const eventHandlers = {
         
         if (appState.router) {
           const navHandlers = {
-            [PAGE.ROUTES.HOME]: () => appState.router.navigateTo(PAGE.ROUTES.HOME),
-            [PAGE.ROUTES.ALL_ARTISTS]: () => appState.router.navigateTo(PAGE.ROUTES.ALL_ARTISTS),
-            [PAGE.ROUTES.ARTIST]: () => {
+            [ROUTES.HOME]: () => appState.router.navigateTo(ROUTES.HOME),
+            [ROUTES.ALL_ARTISTS]: () => appState.router.navigateTo(ROUTES.ALL_ARTISTS),
+            [ROUTES.ARTIST]: () => {
               const artistName = navItem.dataset.artist;
-              if (artistName) appState.router.navigateTo(PAGE.ROUTES.ARTIST, { artist: artistName });
+              if (artistName) appState.router.navigateTo(ROUTES.ARTIST, { artist: artistName });
             },
-            [PAGE.ROUTES.ALBUM]: () => {
+            [ROUTES.ALBUM]: () => {
               const artist = navItem.dataset.artist;
               const album = navItem.dataset.album;
-              if (artist && album) appState.router.navigateTo(PAGE.ROUTES.ALBUM, { artist, album });
+              if (artist && album) appState.router.navigateTo(ROUTES.ALBUM, { artist, album });
             },
           };
           
@@ -2838,7 +2828,7 @@ const eventHandlers = {
         }
       }
       
-      if (e.target.closest("#" + PAGE.globalSearchTrigger)) {
+      if (e.target.closest("#" + IDS.globalSearchTrigger)) {
         e.preventDefault();
         dropdown.close();
         if (appState.router) appState.router.openSearchDialog();
@@ -2851,19 +2841,18 @@ const eventHandlers = {
 
   bindControlEvents: () => {
     const controlMap = {
-      '#playBtn': musicPlayer.playback.togglePlayPause,
-      '#prevBtn': musicPlayer.playback.previous,
-      '#nextBtn': musicPlayer.playback.next,
-      '#rewindBtn': () => musicPlayer.playback.skip(-10),
-      '#forwardBtn': () => musicPlayer.playback.skip(10),
-      '#favoriteBtn': () => {
+      musicDrawerPlayBtn: musicPlayer.playback.togglePlayPause,
+      musicDrawerPrevBtn: musicPlayer.playback.previous,
+      musicDrawerNextBtn: musicPlayer.playback.next,
+      musicDrawerRewindBtn: () => musicPlayer.playback.skip(-10),
+      musicDrawerForwardBtn: () => musicPlayer.playback.skip(10),
+      musicDrawerFavoriteBtn: () => {
         if (appState.currentSong) appState.favorites.toggle("songs", appState.currentSong.id);
       },
     };
     
-    Object.entries(controlMap).forEach(([selector, handler]) => {
-      const el = document.querySelector(selector);
-      if (el) bindClick(el, handler);
+    Object.entries(controlMap).forEach(([elementId, handler]) => {
+      if (DOM[elementId]) bindClick(DOM[elementId], handler);
     });
   },
 };
