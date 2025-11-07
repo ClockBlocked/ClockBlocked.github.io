@@ -2567,7 +2567,6 @@ const bindClickAll = (nodeList, handler) => {
   nodeList.forEach((el) => bindClick(el, handler));
 };
 
-/**
 const clickables = {
   // ═══════════════════════════════════════════════════════════════
   // ELEMENT REFERENCES - Cached for performance
@@ -3459,80 +3458,20 @@ const clickables = {
     clickables.init();
   }
 };
-**/
-
-const overlayManager = {
-    triggerSelector: '[data-overlay-trigger]',
-    closeSelector:   '[data-overlay-close]',
-
-    triggers: [],
-    closers:  [],
-
-    init: function() {
-        this.triggers = document.querySelectorAll(this.triggerSelector);
-        this.closers = document.querySelectorAll(this.closeSelector);
-
-        if (this.triggers.length > 0) {
-            this.triggers.forEach(trigger => {
-                trigger.addEventListener('click', this.handleTriggerClick.bind(this));
-            });
-        }
-
-        if (this.closers.length > 0) {
-            this.closers.forEach(closer => {
-                closer.addEventListener('click', this.handleCloseClick.bind(this));
-            });
-        }
-
-        document.addEventListener('keydown', this.handleEscKey.bind(this));
-    },
-
-    handleTriggerClick: function(e) {
-        e.preventDefault();
-        const targetId = e.currentTarget.dataset.overlayTrigger;
-
-        if (targetId && typeof overlays !== 'undefined') {
-            overlays.open(targetId);
-        } else {
-            console.error(`overlayManager: Could not find targetId or 'overlays' utility is not loaded. Target: ${targetId}`);
-        }
-    },
-
-    handleCloseClick: function(e) {
-        e.preventDefault();
-        const targetId = e.currentTarget.dataset.overlayClose;
-
-        if (targetId && typeof overlays !== 'undefined') {
-            overlays.close(targetId);
-        } else {
-            console.error(`overlayManager: Could not find targetId or 'overlays' utility is not loaded. Target: ${targetId}`);
-        }
-    },
-
-    handleEscKey: function(e) {
-        if (e.key === "Escape") {
-            if (typeof overlays !== 'undefined' && typeof overlays.closeAll === 'function') {
-                overlays.closeAll();
-            } else {
-                console.warn("overlayManager: 'Escape' key pressed but overlays.closeAll() is not defined.");
-            }
-        }
-    }
-};
 
 // ═══════════════════════════════════════════════════════════════
 // AUTO-INITIALIZE ON DOM READY
 // ═══════════════════════════════════════════════════════════════
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
-    overlayManager.init();
+    clickables.init();
   });
 } else {
-  overlayManager.init();
+  clickables.init();
 }
 
 // Export to window for global access
-// window.clickables = clickables;
+window.clickables = clickables;
 
 
 
