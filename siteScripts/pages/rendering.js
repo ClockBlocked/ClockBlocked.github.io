@@ -1,11 +1,9 @@
 import { appState, storage, notifications, musicPlayer, utils, ACTION_GRID_ITEMS, overlays } from "../global.js";
+
 import { ui, pageUpdates } from "./updates.js";
 import { render, create } from "../utilities/templates.js";
 
 import { deepLinkRouter } from "./router.js";
-
-import * as PAGE from '../map.js';
-
 
 export const escapeForAttribute = function (str) {
   return str.replace(/&/g, "&amp;").replace(/'/g, "&#39;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -268,7 +266,7 @@ export const navigation = {
           const match = path.match(route.pattern);
           if (match) {
             const params = {};
-            if (key === PAGE.ROUTES.ARTIST) params.artist = router.decodeName(match[1]);
+            if (key === ROUTES.ARTIST) params.artist = router.decodeName(match[1]);
             route.handler(params);
             matchedRoute = true;
             break;
@@ -280,13 +278,13 @@ export const navigation = {
       navigateTo: function (routeName, params = {}) {
         let url;
         switch (routeName) {
-          case PAGE.ROUTES.HOME:
+          case ROUTES.HOME:
             url = "/";
             break;
-          case PAGE.ROUTES.ARTIST:
+          case ROUTES.ARTIST:
             url = "/artist/" + router.encodeName(params.artist);
             break;
-          case PAGE.ROUTES.ALL_ARTISTS:
+          case ROUTES.ALL_ARTISTS:
             url = "/artists";
             break;
           default:
@@ -297,7 +295,7 @@ export const navigation = {
       },
 
       navigateToArtist: function (artistName) {
-        this.navigateTo(PAGE.ROUTES.ARTIST, { artist: artistName });
+        this.navigateTo(ROUTES.ARTIST, { artist: artistName });
       },
 
       openSearchDialog: function () {
@@ -309,11 +307,11 @@ export const navigation = {
 
     // Now define the routes using `router` variable so helpers are always accessible
     router.routes = {
-      [PAGE.ROUTES.HOME]: {
+      [ROUTES.HOME]: {
         pattern: /^\/$/,
         handler: navigation.pages.loadHomePage,
       },
-      [PAGE.ROUTES.ARTIST]: {
+      [ROUTES.ARTIST]: {
         pattern: /^\/artist\/(.+)$/,
         handler: function (params) {
           // Use router.decodeName instead of this.decodeName
@@ -325,11 +323,11 @@ export const navigation = {
           if (artistData) {
             navigation.pages.loadArtistPage(artistData);
           } else {
-            appState.router.navigateTo(PAGE.ROUTES.HOME);
+            appState.router.navigateTo(ROUTES.HOME);
           }
         },
       },
-      [PAGE.ROUTES.ALL_ARTISTS]: {
+      [ROUTES.ALL_ARTISTS]: {
         pattern: /^\/artists$/,
         handler: navigation.pages.loadAllArtistsPage,
       },
@@ -340,11 +338,11 @@ export const navigation = {
 
   isValidRoute: function (routeName, params = {}) {
     switch (routeName) {
-      case PAGE.ROUTES.HOME:
-      case PAGE.ROUTES.ALL_ARTISTS:
+      case ROUTES.HOME:
+      case ROUTES.ALL_ARTISTS:
         return true;
 
-      case PAGE.ROUTES.ARTIST:
+      case ROUTES.ARTIST:
         if (!params.artist || !window.music) return false;
         return window.music.some(function (a) {
           return a.artist === params.artist;
@@ -360,7 +358,7 @@ export const navigation = {
       pageLoader.start({ message: "Loading Music..." });
 
       if (appState.homePageManager) {
-        const dynamicContent = PAGE.dynamicContent;
+        const dynamicContent = $byId(IDS.dynamicContent);
         if (dynamicContent) {
           dynamicContent.innerHTML = "";
         }
@@ -372,7 +370,7 @@ export const navigation = {
             [
               {
                 text: "Home",
-                route: PAGE.ROUTES.HOME,
+                route: ROUTES.HOME,
                 active: true,
                 isHome: true,
                 icon:
@@ -399,7 +397,7 @@ export const navigation = {
     loadArtistPage: function (artistData, targetAlbumName = null) {
       pageLoader.start({ message: "Finding Artist..." });
 
-      const dynamicContent = PAGE.dynamicContent;
+      const dynamicContent = $byId(IDS.dynamicContent);
       if (!dynamicContent) return;
 
       dynamicContent.innerHTML = "";
@@ -414,7 +412,7 @@ export const navigation = {
     loadAllArtistsPage: function () {
       pageLoader.start({ message: "Loading library..." });
 
-      const dynamicContent = PAGE.dynamicContent;
+      const dynamicContent = $byId(IDS.dynamicContent);
       if (!dynamicContent || !window.music) return;
 
       dynamicContent.innerHTML = "";
@@ -431,7 +429,7 @@ export const navigation = {
 
   rendering: {
     renderArtistPage: function (artistData, targetAlbumName = null) {
-      const dynamicContent = PAGE.dynamicContent;
+      const dynamicContent = $byId(IDS.dynamicContent);
       if (!dynamicContent) return;
 
       dynamicContent.innerHTML = render.artist("enhancedArtist", {
@@ -448,7 +446,7 @@ export const navigation = {
         [
           {
             text: "Home  ",
-            route: PAGE.ROUTES.HOME,
+            route: ROUTES.HOME,
             active: false,
             isHome: true,
             icon:
@@ -456,7 +454,7 @@ export const navigation = {
           },
           {
             text: "  Discography",
-            route: PAGE.ROUTES.ARTIST,
+            route: ROUTES.ARTIST,
             artist: artistData.artist,
             active: true,
             icon: "",
@@ -471,7 +469,7 @@ export const navigation = {
     },
 
     setupAlbumsSection: function (artistData, targetAlbumName = null) {
-      const albumsContainer = PAGE.albumsContainer;
+      const albumsContainer = $byId(IDS.albumsContainer);
       if (!albumsContainer || !artistData.albums.length) return;
 
       albumsContainer.innerHTML = render.album("section", { albums: artistData.albums });
@@ -637,12 +635,12 @@ export const navigation = {
     },
 
     renderAllArtistsPage: function () {
-      const dynamicContent = PAGE.dynamicContent;
+      const dynamicContent = $byId(IDS.dynamicContent);
       if (!dynamicContent || !window.music) return;
 
       dynamicContent.innerHTML = render.page("allArtists");
 
-      const artistsGrid = PAGE.artistsGrid;
+      const artistsGrid = $byId(IDS.artistsGrid);
       if (artistsGrid) {
         window.music.forEach(function (artist, index) {
           const artistCard = document.createElement("div");
@@ -660,7 +658,7 @@ export const navigation = {
           artistsGrid.appendChild(artistCard);
 
           artistCard.querySelector(".artist-card").addEventListener("click", function () {
-            appState.router.navigateTo(PAGE.ROUTES.ARTIST, { artist: artist.artist });
+            appState.router.navigateTo(ROUTES.ARTIST, { artist: artist.artist });
           });
         });
       }
@@ -668,13 +666,13 @@ export const navigation = {
       pageUpdates.breadCrumbs([
         {
           text: "Home",
-          route: PAGE.ROUTES.HOME,
+          route: ROUTES.HOME,
           active: false,
           isHome: true,
         },
         {
           text: "All Artists",
-          route: PAGE.ROUTES.ALL_ARTISTS,
+          route: ROUTES.ALL_ARTISTS,
           active: true,
         },
       ]);
@@ -696,11 +694,11 @@ export const navigation = {
       if (followButton) {
         const isFavorite = appState.favorites.has("artists", artistData.artist);
         followButton.textContent = isFavorite ? "Unfavorite" : "Favorite";
-        followButton.classList.toggle(PAGE.CLASSES.active, isFavorite);
+        followButton.classList.toggle(CLASSES.active, isFavorite);
         followButton.addEventListener("click", function () {
           const wasFavorite = appState.favorites.toggle("artists", artistData.artist);
           followButton.textContent = wasFavorite ? "Unfavorite" : "Favorite";
-          followButton.classList.toggle(PAGE.CLASSES.active, wasFavorite);
+          followButton.classList.toggle(CLASSES.active, wasFavorite);
         });
       }
 
@@ -739,7 +737,7 @@ export const navigation = {
     },
 
     bindAllArtistsEvents: function () {
-      const artistSearch = PAGE.artistSearch;
+      const artistSearch = $byId(IDS.artistSearch);
       if (artistSearch) {
         artistSearch.addEventListener("input", function (e) {
           const query = e.target.value.toLowerCase().trim();
@@ -752,7 +750,7 @@ export const navigation = {
         });
       }
 
-      const genreFilters = PAGE.genreFilters;
+      const genreFilters = $byId(IDS.genreFilters);
       if (genreFilters && window.music) {
         const genres = new Set();
         window.music.forEach(function (artist) {
@@ -768,11 +766,11 @@ export const navigation = {
             genreBtn.textContent = genre;
 
             genreBtn.addEventListener("click", function () {
-              genreBtn.classList.toggle(PAGE.CLASSES.active);
+              genreBtn.classList.toggle(CLASSES.active);
               genreBtn.classList.toggle("bg-accent-primary");
               genreBtn.classList.toggle("text-white");
 
-              const activeFilters = Array.from(genreFilters.querySelectorAll("." + PAGE.CLASSES.active)).map(function (btn) {
+              const activeFilters = Array.from(genreFilters.querySelectorAll("." + CLASSES.active)).map(function (btn) {
                 return btn.textContent.toLowerCase();
               });
 
@@ -910,17 +908,17 @@ export const navigation = {
         case "favorite":
           const wasFavorite = appState.favorites.toggle("songs", songData.id);
           const message = wasFavorite ? 'Added "' + songData.title + '" to your favorite music' : 'Removed "' + songData.title + '" from your favorite music';
-          notifications.show(message, wasFavorite ? PAGE.NOTIFICATION_TYPES.SUCCESS : PAGE.NOTIFICATION_TYPES.INFO);
+          notifications.show(message, wasFavorite ? NOTIFICATION_TYPES.SUCCESS : NOTIFICATION_TYPES.INFO);
           break;
 
         case "play-next":
           appState.queue.add(songData, 0);
-          notifications.show('"' + songData.title + '" will play next', PAGE.NOTIFICATION_TYPES.SUCCESS);
+          notifications.show('"' + songData.title + '" will play next', NOTIFICATION_TYPES.SUCCESS);
           break;
 
         case "add-queue":
           appState.queue.add(songData);
-          notifications.show('Added "' + songData.title + '" to queue', PAGE.NOTIFICATION_TYPES.SUCCESS);
+          notifications.show('Added "' + songData.title + '" to queue', NOTIFICATION_TYPES.SUCCESS);
           break;
 
         case "add-playlist":
@@ -933,13 +931,13 @@ export const navigation = {
             const playlistId = playlistContainer.dataset.playlistId;
             if (playlists.removeSong(playlistId, songData.id)) {
               playlists.show(playlistId);
-              notifications.show('Removed "' + songData.title + '" from playlist', PAGE.NOTIFICATION_TYPES.INFO);
+              notifications.show('Removed "' + songData.title + '" from playlist', NOTIFICATION_TYPES.INFO);
             }
           }
           break;
 
         case "download":
-          notifications.show("Download feature coming soon", PAGE.NOTIFICATION_TYPES.INFO);
+          notifications.show("Download feature coming soon", NOTIFICATION_TYPES.INFO);
           break;
 
         case "share":
@@ -1123,13 +1121,13 @@ export const navigation = {
         navigator.clipboard
           .writeText(shareUrl)
           .then(function () {
-            notifications.show("Song link copied to clipboard!", PAGE.NOTIFICATION_TYPES.SUCCESS);
+            notifications.show("Song link copied to clipboard!", NOTIFICATION_TYPES.SUCCESS);
           })
           .catch(function () {
-            notifications.show("Share feature not available", PAGE.NOTIFICATION_TYPES.WARNING);
+            notifications.show("Share feature not available", NOTIFICATION_TYPES.WARNING);
           });
       } else {
-        notifications.show("Share feature not available", PAGE.NOTIFICATION_TYPES.WARNING);
+        notifications.show("Share feature not available", NOTIFICATION_TYPES.WARNING);
       }
     },
   },
