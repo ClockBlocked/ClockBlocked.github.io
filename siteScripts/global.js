@@ -1206,6 +1206,39 @@ const notificationPlayer = {
   }
 };
 
+
+const MUSIC_PLAYER = {
+    root: '.player',
+    close: '.player .closeBtn',
+    albumArtwork: '.player .cover',
+    songName: '.player .title',
+    artistName: '.player .artist',
+    albumName: '.player .album',
+    play: '.player .controlBtn.primary',
+    progressBar: '.player .progressBar',
+    progressFill: '.player .progressFill',
+    progressBuffer: '.player .progressBuffer',
+    progressThumb: '.player .progressThumb',
+    currentTime: '.player .currentTime',
+    totalTime: '.player .totalTime',
+    favoriteBtn: '.player .favoriteBtn',
+    queueBtn: '.player .actionBtn#playlistBtn',
+    queueList: '.player .list#queue',
+    queueCount: '.player .listCount#queueCount',
+    recentList: '.player .list#playlist',
+    recentCount: '.player .listCount#playlistCount',
+    skipTimes: { forward: 10, rewind: -10 },
+    classes: { 
+        playing: 'isPlaying', 
+        dragging: 'isDragging', 
+        hovering: 'isHovering' 
+    },
+    tabs: { 
+        playing: 'playing', 
+        recent: 'playlist', 
+        queue: 'queue' 
+    }
+};
 const musicPlayer = {
     mainPlayer: {
         open: () => {
