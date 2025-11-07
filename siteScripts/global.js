@@ -1260,11 +1260,11 @@ const musicPlayer = {
         switchTab: (tabName) => {
             appState.currentTab = tabName;
             
-            document.querySelectorAll('.music-player__tab').forEach(tab => {
+            document.querySelectorAll('.musicPlayerTab').forEach(tab => {
                 tab.classList.toggle('active', tab.dataset.tab === tabName);
             });
             
-            document.querySelectorAll('.music-player__panel').forEach(content => {
+            document.querySelectorAll('.musicPlayerPanel').forEach(content => {
                 content.classList.toggle('active', content.dataset.tab === tabName);
             });
             
@@ -1280,7 +1280,7 @@ const musicPlayer = {
             const queueList = document.querySelector(MUSIC_PLAYER.queueList);
             if (!queueList) return;
             
-            const emptyState = queueList.querySelector('.music-player__empty');
+            const emptyState = queueList.querySelector('.musicPlayerEmpty');
             
             if (appState.queue.items.length === 0) {
                 if (emptyState) emptyState.style.display = 'flex';
