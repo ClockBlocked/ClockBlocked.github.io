@@ -2140,8 +2140,37 @@ MyBeats:  Stream & share your favorite music for free.
 
 
 <style>
-aside {
-  transition: all 0.65s ease-in-out;
+/* iOS Dropdown */
+.dropdown-menu {
+  opacity: 0;
+  transform: scale(0.9) translateY(-10px);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+}
+
+.dropdown-menu.open {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  pointer-events: all;
+}
+
+/* iOS Bottom Sheet */
+.musicPlayer {
+  transform: translateY(100%);
+  transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.musicPlayer.open {
+  transform: translateY(0);
+}
+
+/* Drag handle animation */
+.musicPlayerDragHandle span {
+  transition: transform 0.3s ease;
+}
+
+.musicPlayer.open .musicPlayerDragHandle span {
+  transform: scale(1.2);
 }
 .musicPlayer {
   position: fixed; bottom: -3rem;
