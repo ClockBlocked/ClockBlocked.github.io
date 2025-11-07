@@ -1705,7 +1705,7 @@ const musicPlayer = {
                 return false;
             }
 
-            for (const format of window.PAGE.AUDIO_FORMATS || ['mp3', 'ogg', 'wav']) {
+            for (const format of PAGE.AUDIO_FORMATS || ['mp3', 'ogg', 'wav']) {
                 try {
                     const audioUrl = `https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/Finalfinal/global/content/audio/${songFileName}.${format}`;
                     
