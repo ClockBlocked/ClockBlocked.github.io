@@ -2589,14 +2589,14 @@ const eventHandlers = {
       const toggleHandler = (e) => {
         e.stopPropagation();
         e.preventDefault();
-        console.log('Now Playing Area clicked - toggling music player');
+
         musicPlayer.mainPlayer.toggle();
       };
       
       nowPlayingArea.addEventListener('click', toggleHandler);
       nowPlayingArea._musicPlayerToggle = toggleHandler;
     } else {
-      console.warn('now-playing-area element not found');
+      // Error Message
     }
     
     // ONLY navbar playPause button triggers togglePlayPause
@@ -2609,14 +2609,14 @@ const eventHandlers = {
       const playPauseHandler = (e) => {
         e.stopPropagation();
         e.preventDefault();
-        console.log('Play/Pause button clicked');
+
         musicPlayer.playback.togglePlayPause();
       };
       
       navbarPlayPause.addEventListener('click', playPauseHandler);
       navbarPlayPause._playPauseToggle = playPauseHandler;
     } else {
-      console.warn('playPause button not found');
+      // Error Message
     }
     
     const navbarPrevious = QUERY(NAVBAR.previous);
@@ -2664,14 +2664,14 @@ const eventHandlers = {
       const toggleHandler = (e) => {
         e.stopPropagation();
         e.preventDefault();
-        console.log('Menu trigger clicked - toggling dropdown');
+
         dropdown.toggle(e);
       };
       
       menuTrigger.addEventListener('click', toggleHandler);
       menuTrigger._dropdownToggle = toggleHandler;
     } else {
-      console.warn('menu-trigger element not found');
+      // Error Message
     }
     
     const menuElements = {
