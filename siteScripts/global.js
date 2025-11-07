@@ -27,7 +27,7 @@ const TOAST_ICONS = {
   [PAGE.NOTIFICATION_TYPES.INFO]: '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>'
 };
 
-const prefersReducedMotion = PAGE.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
+const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
 
 const appState = {
   audio: null,
@@ -252,7 +252,7 @@ const utils = {
 
   getSimilarArtists: (artistName, { limit = 12, includeSelf = false } = {}) => {
     const lib = Array.isArray(typeof music !== 'undefined' ? music : null) ? music : 
-                (Array.isArray(PAGE.music) ? PAGE.music : []);
+                (Array.isArray(window.music) ? window.music : []);
     if (!Array.isArray(lib) || !lib.length) return [];
     const artist = lib.find(a => a.artist === artistName);
     if (!artist || !Array.isArray(artist.similar)) return [];
@@ -1465,7 +1465,7 @@ const musicPlayer = {
                 currentTime: appState.audio?.currentTime ?? 0,
                 totalTime: appState.audio?.duration ?? 0
             };
-            PAGE.dispatchEvent(new CustomEvent('playerstatechange', { detail }));
+            window.dispatchEvent(new CustomEvent('playerstatechange', { detail }));
         },
         
         togglePlayPause: () => {
@@ -1523,7 +1523,7 @@ const musicPlayer = {
             const safeTime = Math.max(0, Math.min(appState.duration || 0, time));
             appState.audio.currentTime = safeTime;
             musicPlayer.ui.updateProgress();
-            if (PAGE.notificationPlayer && notificationPlayer.positionState) {
+            if (window.notificationPlayer && notificationPlayer.positionState) {
                 notificationPlayer.positionState.update();
             }
         },
@@ -1537,23 +1537,23 @@ const musicPlayer = {
         shuffle: {
             toggle: () => {
                 appState.shuffleMode = !appState.shuffleMode;
-                if (PAGE.ui && ui.updateShuffleButton) {
+                if (window.ui && ui.updateShuffleButton) {
                     ui.updateShuffleButton();
                 }
-                if (PAGE.notifications) {
+                if (window.notifications) {
                     notifications.show(`Shuffle ${appState.shuffleMode ? "enabled" : "disabled"}`);
                 }
             },
 
             all: () => {
-                if (!PAGE.music || PAGE.music.length === 0) {
-                    if (PAGE.notifications) {
-                        notifications.show("No music library found", PAGE.NOTIFICATION_TYPES?.WARNING);
+                if (!window.music || window.music.length === 0) {
+                    if (window.notifications) {
+                        notifications.show("No music library found", window.NOTIFICATION_TYPES?.WARNING);
                     }
                     return;
                 }
                 const allSongs = [];
-                PAGE.music.forEach((artist) => {
+                window.music.forEach((artist) => {
                     artist.albums.forEach((album) => {
                         album.songs.forEach((song) => {
                             allSongs.push({
@@ -1566,7 +1566,7 @@ const musicPlayer = {
                     });
                 });
                 if (allSongs.length === 0) {
-                    if (PAGE.notifications) {
+                    if (window.notifications) {
                         notifications.show("No songs found", PAGE.NOTIFICATION_TYPES?.WARNING);
                     }
                     return;
@@ -1579,10 +1579,10 @@ const musicPlayer = {
                 allSongs.slice(1).forEach((song) => appState.queue.add(song));
                 musicPlayer.ui.playSong(allSongs[0]);
                 appState.shuffleMode = true;
-                if (PAGE.ui && ui.updateShuffleButton) {
+                if (window.ui && ui.updateShuffleButton) {
                     ui.updateShuffleButton();
                 }
-                if (PAGE.notifications) {
+                if (window.notifications) {
                     notifications.show("Playing all songs shuffled");
                 }
             },
@@ -1597,12 +1597,12 @@ const musicPlayer = {
                 } else {
                     appState.repeatMode = PAGE.REPEAT_MODES?.OFF;
                 }
-                if (PAGE.ui && ui.updateRepeatButton) {
+                if (window.ui && ui.updateRepeatButton) {
                     ui.updateRepeatButton();
                 }
                 const modeText = appState.repeatMode === PAGE.REPEAT_MODES?.OFF ? "disabled" : 
                                 appState.repeatMode === PAGE.REPEAT_MODES?.ALL ? "all songs" : "current song";
-                if (PAGE.notifications) {
+                if (window.notifications) {
                     notifications.show(`Repeat ${modeText}`);
                 }
             },
@@ -1632,7 +1632,7 @@ const musicPlayer = {
             );
             
             musicPlayer.ui.bindSeekBar();
-            if (PAGE.notificationPlayer) {
+            if (window.notificationPlayer) {
                 notificationPlayer.setup();
             }
         },
@@ -1641,7 +1641,7 @@ const musicPlayer = {
             if (!songData) return;
             musicPlayer.ui.initialize();
             
-            if (PAGE.ui && ui.setLoadingState) {
+            if (window.ui && ui.setLoadingState) {
                 ui.setLoadingState(true);
             }
             
@@ -1653,7 +1653,7 @@ const musicPlayer = {
             appState.currentArtist = songData.artist;
             appState.currentAlbum = songData.album;
             
-            if (PAGE.ui) {
+            if (window.ui) {
                 if (ui.updateNowPlaying) ui.updateNowPlaying();
                 if (ui.updateNavbar) ui.updateNavbar();
                 if (ui.updateMusicPlayer) ui.updateMusicPlayer();
@@ -1662,14 +1662,14 @@ const musicPlayer = {
             
             const success = await musicPlayer.ui.loadAudioFile(songData);
             if (success) {
-                if (PAGE.notificationPlayer && notificationPlayer.metadata) {
+                if (window.notificationPlayer && notificationPlayer.metadata) {
                     notificationPlayer.metadata.update(songData);
                 }
-                if (PAGE.notificationPlayer && notificationPlayer.events) {
+                if (window.notificationPlayer && notificationPlayer.events) {
                     notificationPlayer.events.bind();
                 }
                 setTimeout(() => { 
-                    if (PAGE.eventHandlers && eventHandlers.bindControlEvents) {
+                    if (window.eventHandlers && eventHandlers.bindControlEvents) {
                         eventHandlers.bindControlEvents(); 
                     }
                     musicPlayer.ui.bindSeekBar(); 
@@ -1677,16 +1677,16 @@ const musicPlayer = {
                 musicPlayer.playback.dispatchPlayerStateChange();
             } else {
                 appState.isPlaying = false;
-                if (PAGE.ui && ui.updatePlayPauseButtons) {
+                if (window.ui && ui.updatePlayPauseButtons) {
                     ui.updatePlayPauseButtons();
                 }
-                if (PAGE.notificationPlayer && notificationPlayer.playbackState) {
+                if (window.notificationPlayer && notificationPlayer.playbackState) {
                     notificationPlayer.playbackState.onPause();
                 }
                 musicPlayer.playback.dispatchPlayerStateChange();
             }
             
-            if (PAGE.ui && ui.setLoadingState) {
+            if (window.ui && ui.setLoadingState) {
                 ui.setLoadingState(false);
             }
         },
@@ -1763,7 +1763,7 @@ const musicPlayer = {
                 const moveTarget = bar;
                 moveTarget.addEventListener('pointermove', onPointerMove, { passive: false });
                 moveTarget.addEventListener('pointerup', onPointerUp, { once: true });
-                PAGE.addEventListener('pointercancel', onPointerUp, { once: true });
+                window.addEventListener('pointercancel', onPointerUp, { once: true });
             };
 
             const onPointerMove = (e) => {
@@ -1804,7 +1804,7 @@ const musicPlayer = {
             if (finalize) {
                 if (isFinite(time)) {
                     appState.audio.currentTime = time;
-                    if (PAGE.notificationPlayer && notificationPlayer.positionState) {
+                    if (window.notificationPlayer && notificationPlayer.positionState) {
                         notificationPlayer.positionState.update();
                     }
                 }
@@ -1844,14 +1844,14 @@ const musicPlayer = {
                     break;
                 case 'Home':
                     audio.currentTime = 0;
-                    if (PAGE.notificationPlayer && notificationPlayer.positionState) {
+                    if (window.notificationPlayer && notificationPlayer.positionState) {
                         notificationPlayer.positionState.update();
                     }
                     e.preventDefault();
                     return;
                 case 'End':
                     audio.currentTime = duration;
-                    if (PAGE.notificationPlayer && notificationPlayer.positionState) {
+                    if (window.notificationPlayer && notificationPlayer.positionState) {
                         notificationPlayer.positionState.update();
                     }
                     e.preventDefault();
@@ -1863,7 +1863,7 @@ const musicPlayer = {
             if (timeChange !== 0) {
                 const newTime = Math.max(0, Math.min(duration, audio.currentTime + timeChange));
                 audio.currentTime = newTime;
-                if (PAGE.notificationPlayer && notificationPlayer.positionState) {
+                if (window.notificationPlayer && notificationPlayer.positionState) {
                     notificationPlayer.positionState.update();
                 }
                 e.preventDefault();
@@ -1909,7 +1909,7 @@ const musicPlayer = {
 
         onPlay: () => {
             appState.isPlaying = true;
-            if (PAGE.ui && ui.updatePlayPauseButtons) {
+            if (window.ui && ui.updatePlayPauseButtons) {
                 ui.updatePlayPauseButtons();
             }
             document.querySelector('#drawer')?.classList.add('playing');
@@ -1917,7 +1917,7 @@ const musicPlayer = {
 
         onPause: () => {
             appState.isPlaying = false;
-            if (PAGE.ui && ui.updatePlayPauseButtons) {
+            if (window.ui && ui.updatePlayPauseButtons) {
                 ui.updatePlayPauseButtons();
             }
             document.querySelector('#drawer')?.classList.remove('playing');
@@ -1955,14 +1955,14 @@ const musicPlayer = {
             if (appState.recentlyPlayed.length > 50) {
                 appState.recentlyPlayed = appState.recentlyPlayed.slice(0, 50);
             }
-            if (PAGE.storage && PAGE.STORAGE_KEYS) {
+            if (window.storage && PAGE.STORAGE_KEYS) {
                 storage.save(PAGE.STORAGE_KEYS.RECENTLY_PLAYED, appState.recentlyPlayed.slice(0, 20));
             }
         },
 
         getNextInAlbum: () => {
-            if (!appState.currentSong || !PAGE.music) return null;
-            const artist = PAGE.music.find((a) => a.artist === appState.currentArtist);
+            if (!appState.currentSong || !window.music) return null;
+            const artist = window.music.find((a) => a.artist === appState.currentArtist);
             const album = artist?.albums.find((al) => al.album === appState.currentAlbum);
             if (!album) return null;
             const currentIndex = album.songs.findIndex((s) => s.title === appState.currentSong.title);
@@ -1981,8 +1981,8 @@ const musicPlayer = {
         },
 
         getPreviousInAlbum: () => {
-            if (!appState.currentSong || !PAGE.music) return null;
-            const artist = PAGE.music.find((a) => a.artist === appState.currentArtist);
+            if (!appState.currentSong || !window.music) return null;
+            const artist = window.music.find((a) => a.artist === appState.currentArtist);
             const album = artist?.albums.find((al) => al.album === appState.currentAlbum);
             if (!album) return null;
             const currentIndex = album.songs.findIndex((s) => s.title === appState.currentSong.title);
@@ -2040,13 +2040,13 @@ document.addEventListener('DOMContentLoaded', () => {
     musicPlayer.mainPlayer.init();
 });
 
-PAGE.musicPlayer = musicPlayer
+window.musicPlayer = musicPlayer
 
 
 
 const app = {
     initialize: function() {
-        PAGE.music = music;
+        window.music = music;
 
         storage.initialize();
         notifications.initialize();
@@ -2074,8 +2074,8 @@ const app = {
     },
 
     syncGlobalState: function() {
-        PAGE.appState = appState;
-        PAGE.playerController = {
+        window.appState = appState;
+        window.playerController = {
             playSong: musicPlayer.ui.playSong,
             toggle: musicPlayer.mainPlayer.toggle,
             next: musicPlayer.playback.next,
@@ -2083,7 +2083,7 @@ const app = {
             seekTo: musicPlayer.playback.seekTo,
             skip: musicPlayer.playback.skip,
         };
-        PAGE.musicAppAPI = {
+        window.musicAppAPI = {
             player: musicPlayer.mainPlayer,
             controls: musicPlayer.playback,
             musicPlayer: musicPlayer,
@@ -2869,26 +2869,26 @@ const eventHandlers = {
 };
 
 
-PAGE.addEventListener("load", function() {
-  if (!PAGE.appState) {
+window.addEventListener("load", function() {
+  if (!window.appState) {
     app.initialize();
   }
 });
 
-PAGE.MyTunesApp = {
+window.MyTunesApp = {
   initialize: app.initialize,
   state: function() { return appState; },
-  api: function() { return PAGE.musicAppAPI; },
+  api: function() { return window.musicAppAPI; },
   goHome: app.goHome,
 };
 
-if (PAGE.music) {
+if (window.music) {
   app.initialize();
 }
 
-PAGE.navigation = navigation;
-PAGE.playlists = playlists;
-PAGE.views = views;
+window.navigation = navigation;
+window.playlists = playlists;
+window.views = views;
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
