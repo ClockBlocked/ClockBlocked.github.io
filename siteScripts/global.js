@@ -1554,7 +1554,7 @@ const musicPlayer = {
                         });
                     });
                 });
-                if (allSongs.length ==== 0) {
+                if (allSongs.length === 0) {
                     if (window.notifications) {
                         notifications.show("No songs found", window.NOTIFICATION_TYPES?.WARNING);
                     }
