@@ -1,164 +1,125 @@
 /**
  * ═══════════════════════════════════════════════════════════════
- *  MYBEATS - DOM ELEMENT REFERENCES
- *  Individual DOM element variables for direct access
+ *  MYBEATS - UNIFIED CONSTANTS & DOM ACCESS
+ *  Single source of truth for all app constants and element access
  * ═══════════════════════════════════════════════════════════════
  */
 
 // ═══════════════════════════════════════════════════════════════
-//  DIRECT DOM ELEMENT REFERENCES
+//  ELEMENT CACHE - Auto-cached DOM references
 // ═══════════════════════════════════════════════════════════════
 
-// Theme & UI Elements
-export const themeToggle = document.getElementById("theme-toggle");
-export const globalSearchTrigger = document.getElementById("global-search-trigger");
-export const searchDialog = document.getElementById("search-dialog");
-export const globalSearchForm = document.getElementById("global-search-form");
-export const globalSearchInput = document.getElementById("global-search-input");
-export const recentSearchesList = document.getElementById("recent-searches-list");
-export const popoverPortal = document.getElementById("popover-portal");
-export const willHideMenu = document.getElementById("will-hide-menu");
-export const menuTrigger = document.getElementById("menu-trigger");
-export const dropdownMenu = document.getElementById("dropdown-menu");
-export const dropdownClose = document.getElementById("dropdown-close");
+const elementCache = new Map();
 
-// Favorites & Library
-export const favoriteSongs = document.getElementById("favorite-songs");
-export const favoriteArtists = document.getElementById("favorite-artists");
-export const createPlaylist = document.getElementById("create-playlist");
-export const favoriteSongsCount = document.getElementById("favorite-songs-count");
-export const favoriteArtistsCount = document.getElementById("favorite-artists-count");
-export const recentlyPlayed = document.getElementById("recently-played");
-export const queueView = document.getElementById("queue-view");
-export const recentCount = document.getElementById("recent-count");
-export const queueCount = document.getElementById("queue-count");
+/**
+ * Simple DOM element access with auto-caching
+ * Usage: DOM.menuTrigger, DOM.playBtn, DOM.cover, etc.
+ */
+export const DOM = new Proxy({}, {
+  get(target, elementId) {
+    if (elementCache.has(elementId)) {
+      return elementCache.get(elementId);
+    }
+    
+    const element = document.getElementById(elementId);
+    
+    if (element) {
+      elementCache.set(elementId, element);
+      return element;
+    }
+    
+    console.warn(`Element not found: #${elementId}`);
+    return null;
+  }
+});
 
-// Sections
-export const recentlyPlayedSection = document.getElementById("recently-played-section");
-export const randomAlbumsSection = document.getElementById("random-albums-section");
-export const favoriteArtistsSection = document.getElementById("favorite-artists-section");
-export const playlistsSection = document.getElementById("playlists-section");
-export const favoriteSongsSection = document.getElementById("favorite-songs-section");
+/**
+ * Query selectors (for class-based selections)
+ */
+export const QUERY = (selector) => document.querySelector(selector);
+export const QUERY_ALL = (selector) => document.querySelectorAll(selector);
 
-// Search & Actions
-export const searchMusic = document.getElementById("search-music");
-export const shuffleAll = document.getElementById("shuffle-all");
-export const appSettings = document.getElementById("app-settings");
-export const aboutApp = document.getElementById("about-app");
-
-// Content & Dynamic Elements
-export const dynamicContent = document.getElementById("dynamic-content");
-export const contentLoading = document.getElementById("content-loading");
-export const albumsContainer = document.getElementById("albumWrapper");
-export const artistsGrid = document.getElementById("artists-grid");
-export const artistSearch = document.getElementById("artist-search");
-export const genreFilters = document.getElementById("genre-filters");
-export const seekTooltip = document.getElementById("seek-tooltip");
-
-// Music Player Elements
-export const drawer = document.getElementById("drawer");
-export const drawerHandle = document.getElementById("drawerHandle");
-export const musicPlayer = document.getElementById("musicPlayer");
-export const albumCover = document.getElementById("albumCover");
-export const songTitle = document.getElementById("songTitle");
-export const artistName = document.getElementById("artistName");
-export const albumName = document.getElementById("albumName");
-export const playBtn = document.getElementById("playBtn");
-export const prevBtn = document.getElementById("prevBtn");
-export const nextBtn = document.getElementById("nextBtn");
-export const rewindBtn = document.getElementById("rewindBtn");
-export const forwardBtn = document.getElementById("forwardBtn");
-export const shuffleBtn = document.getElementById("shuffleBtn");
-export const repeatBtn = document.getElementById("repeatBtn");
-export const favoriteBtn = document.getElementById("favoriteBtn");
-export const queueBtn = document.getElementById("queueBtn");
-export const shareBtn = document.getElementById("shareBtn");
-export const moreBtn = document.getElementById("moreBtn");
-export const progressBar = document.getElementById("progressBar");
-export const progressFill = document.getElementById("progressFill");
-export const progressThumb = document.getElementById("progressThumb");
-export const currentTime = document.getElementById("currentTime");
-export const totalTime = document.getElementById("totalTime");
-export const queueList = document.getElementById("queueList");
-export const recentList = document.getElementById("recentList");
-
-// Navbar Elements
-export const playPauseNavbar = document.getElementById("play-pause-navbar");
-export const prevBtnNavbar = document.getElementById("prev-btn-navbar");
-export const nextBtnNavbar = document.getElementById("next-btn-navbar");
-export const playIconNavbar = document.getElementById("play-icon-navbar");
-export const pauseIconNavbar = document.getElementById("pause-icon-navbar");
-export const nowPlayingArea = document.getElementById("now-playing-area");
-
-// Music Player Component Elements
-export const musicPlayerDragHandle = document.querySelector("#drawer .musicPlayerDragHandle");
-export const musicPlayerCloseBtn = document.querySelector("#drawer #closeBtn");
-export const musicPlayerCurtain = document.querySelector("#drawer .musicPlayerCurtain");
-export const musicPlayerScroller = document.querySelector("#drawer .musicPlayerScroller");
-export const musicPlayerSlide = document.querySelector("#drawer .musicPlayerSlide");
-export const musicPlayerInner = document.querySelector("#drawer .musicPlayerInner");
-export const musicPlayerContent = document.querySelector("#drawer .musicPlayerContent");
-export const musicPlayerActiveContent = document.querySelector("#drawer .musicPlayerPanel.active");
-export const musicPlayerTabs = document.querySelectorAll("#drawer .musicPlayerTab");
-export const musicPlayerActiveTab = document.querySelector("#drawer .musicPlayerTab.active");
-export const musicPlayerTabsWrapper = document.querySelector("#drawer .musicPlayerTabsWrapper");
-export const musicPlayerTabSlider = document.querySelector("#drawer .musicPlayerTabSlider");
-export const musicPlayerNowPlaying = document.querySelector("#drawer .musicPlayerNowPlaying");
-export const musicPlayerCoverWrapper = document.querySelector("#drawer .musicPlayerCoverWrapper");
-export const musicPlayerAlbumArtwork = document.querySelector("#drawer #cover");
-export const musicPlayerCoverGlow = document.querySelector("#drawer .musicPlayerCoverGlow");
-export const musicPlayerSeparator = document.querySelector("#drawer .musicPlayerSeparator");
-export const musicPlayerSongInfo = document.querySelector("#drawer .musicPlayerInfo");
-export const musicPlayerSongDetails = document.querySelector("#drawer .musicPlayerDetails");
-export const musicPlayerSongName = document.querySelector("#drawer #title");
-export const musicPlayerArtistName = document.querySelector("#drawer #artist");
-export const musicPlayerAlbumName = document.querySelector("#drawer #album");
-export const musicPlayerProgressSection = document.querySelector("#drawer .musicPlayerProgressSection");
-export const musicPlayerProgressBuffer = document.querySelector("#drawer #progressBuffer");
-export const musicPlayerTimeDisplay = document.querySelector("#drawer .musicPlayerTimeDisplay");
-export const musicPlayerControls = document.querySelector("#drawer .musicPlayerControls");
-export const musicPlayerActions = document.querySelector("#drawer .musicPlayerActions");
-export const musicPlayerListHeader = document.querySelector("#drawer .musicPlayerListHeader");
-export const musicPlayerListTitle = document.querySelector("#drawer .musicPlayerListTitle");
-export const musicPlayerListCount = document.querySelector("#drawer .musicPlayerListCount");
-export const musicPlayerList = document.querySelector("#drawer .musicPlayerList");
-export const musicPlayerQueueCount = document.querySelector("#drawer #queueCount");
-export const musicPlayerRecentCount = document.querySelector("#drawer #recentCount");
-export const musicPlayerEmpty = document.querySelector("#drawer .musicPlayerEmpty");
-export const musicPlayerEmptyIcon = document.querySelector("#drawer .musicPlayerEmptyIcon");
-export const musicPlayerEmptyText = document.querySelector("#drawer .musicPlayerEmptyText");
-export const musicPlayerEmptySubtext = document.querySelector("#drawer .musicPlayerEmptySubtext");
-export const musicPlayerListItem = document.querySelector("#drawer .musicPlayerListItem");
-export const musicPlayerListItemArt = document.querySelector("#drawer .musicPlayerListItemArt");
-export const musicPlayerListItemInfo = document.querySelector("#drawer .musicPlayerListItemInfo");
-export const musicPlayerListItemTitle = document.querySelector("#drawer .musicPlayerListItemTitle");
-export const musicPlayerListItemArtist = document.querySelector("#drawer .musicPlayerListItemArtist");
-export const musicPlayerListItemActions = document.querySelector("#drawer .musicPlayerListItemActions");
-export const musicPlayerListItemAction = document.querySelector("#drawer .musicPlayerListItemAction");
-
-// Navbar Component Elements
-export const navbarRoot = document.getElementById("navbar");
-export const navbarNowPlaying = document.querySelector("#navbar #now-playing-area");
-export const navbarAlbumArtwork = document.querySelector("#navbar .albumArtwork");
-export const navbarArtistName = document.querySelector("#navbar .artistName");
-export const navbarSongName = document.querySelector("#navbar .songName");
-export const navbarPlayIndicator = document.querySelector("#navbar #play-indicator");
-export const navbarPrevious = document.querySelector("#navbar .previous");
-export const navbarNext = document.querySelector("#navbar .next");
-export const navbarPlayPause = document.querySelector("#navbar .playPause");
-export const navbarPlay = document.querySelector("#navbar #play-icon-navbar");
-export const navbarPause = document.querySelector("#navbar #pause-icon-navbar");
-export const navbarMenuTrigger = document.querySelector("#navbar #menu-trigger");
-export const navbarNextNavbar = document.querySelector("#navbar .next");
-
-// Modal Elements
-export const modalClose = document.querySelector(".modal .close");
-export const dialogClose = document.querySelector("#search-dialog .close");
-export const dropdownCloseModal = document.querySelector("#dropdown-menu .close");
+/**
+ * Clear element cache (useful after dynamic content updates)
+ */
+export function clearElementCache() {
+  elementCache.clear();
+  console.log('🗑️ Element cache cleared');
+}
 
 // ═══════════════════════════════════════════════════════════════
-//  CONSTANTS (unchanged)
+//  LEGACY ID DEFINITIONS (kept for backwards compatibility)
 // ═══════════════════════════════════════════════════════════════
+
+export const IDS = Object.freeze({
+  themeToggle: "theme-toggle",
+  globalSearchTrigger: "global-search-trigger",
+  searchDialog: "search-dialog",
+  globalSearchForm: "global-search-form",
+  globalSearchInput: "global-search-input",
+  recentSearchesList: "recent-searches-list",
+  popoverPortal: "popover-portal",
+  willHideMenu: "will-hide-menu",
+  menuTrigger: "menu-trigger",
+  dropdownMenu: "dropdown-menu",
+  dropdownClose: "dropdown-close",
+  favoriteSongs: "favorite-songs",
+  favoriteArtists: "favorite-artists",
+  createPlaylist: "create-playlist",
+  favoriteSongsCount: "favorite-songs-count",
+  favoriteArtistsCount: "favorite-artists-count",
+  recentlyPlayed: "recently-played",
+  queueView: "queue-view",
+  recentCount: "recent-count",
+  queueCount: "queue-count",
+  recentlyPlayedSection: "recently-played-section",
+  randomAlbumsSection: "random-albums-section",
+  favoriteArtistsSection: "favorite-artists-section",
+  playlistsSection: "playlists-section",
+  favoriteSongsSection: "favorite-songs-section",
+  searchMusic: "search-music",
+  shuffleAll: "shuffle-all",
+  appSettings: "app-settings",
+  aboutApp: "about-app",
+  dynamicContent: "dynamic-content",
+  contentLoading: "content-loading",
+  albumsContainer: "albumWrapper",
+  artistsGrid: "artists-grid",
+  artistSearch: "artist-search",
+  genreFilters: "genre-filters",
+  seekTooltip: "seek-tooltip",
+  drawer: "drawer",
+  drawerHandle: "drawerHandle",
+  musicPlayer: "musicPlayer",
+  albumCover: "albumCover", 
+  songTitle: "songTitle",
+  artistName: "artistName",
+  albumName: "albumName",
+  playBtn: "playBtn",
+  prevBtn: "prevBtn", 
+  nextBtn: "nextBtn",
+  rewindBtn: "rewindBtn",
+  forwardBtn: "forwardBtn",
+  shuffleBtn: "shuffleBtn",
+  repeatBtn: "repeatBtn",
+  favoriteBtn: "favoriteBtn",
+  queueBtn: "queueBtn",
+  shareBtn: "shareBtn",
+  moreBtn: "moreBtn",
+  progressBar: "progressBar",
+  progressFill: "progressFill", 
+  progressThumb: "progressThumb",
+  currentTime: "currentTime",
+  totalTime: "totalTime",
+  queueList: "queueList",
+  recentList: "recentList",
+  playPauseNavbar: "play-pause-navbar",
+  prevBtnNavbar: "prev-btn-navbar",
+  nextBtnNavbar: "next-btn-navbar",
+  playIconNavbar: "play-icon-navbar",
+  pauseIconNavbar: "pause-icon-navbar",
+  nowPlayingArea: "now-playing-area",
+});
 
 export const CLASSES = Object.freeze({
   hidden: "hidden",
@@ -205,6 +166,124 @@ export const ICONS = Object.freeze({
   queue: '<svg fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/></svg>',
   share: '<svg fill="currentColor" viewBox="0 0 20 20"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"/></svg>',
   more: '<svg fill="currentColor" viewBox="0 0 20 20"><path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/></svg>'  
+});
+
+export const MUSIC_PLAYER = (() => {
+  const parent = "#drawer";
+  return Object.freeze({
+    root: parent,
+    handle: `${parent} .musicPlayerDragHandle`,
+    close: `${parent} #closeBtn`,
+    curtain: `${parent} .musicPlayerCurtain`,
+    scroller: `${parent} .musicPlayerScroller`,
+    slide: `${parent} .musicPlayerSlide`,
+    inner: `${parent} .musicPlayerInner`,
+    content: `${parent} .musicPlayerContent`,
+    activeContent: `${parent} .musicPlayerPanel.active`,
+    tabs: `${parent} .musicPlayerTab`,
+    activeTab: `${parent} .musicPlayerTab.active`,
+    tabsWrapper: `${parent} .musicPlayerTabsWrapper`,
+    tabSlider: `${parent} .musicPlayerTabSlider`,
+    nowPlaying: `${parent} .musicPlayerNowPlaying`,
+    coverWrapper: `${parent} .musicPlayerCoverWrapper`,
+    albumArtwork: `${parent} #cover`,
+    coverGlow: `${parent} .musicPlayerCoverGlow`,
+    separator: `${parent} .musicPlayerSeparator`,
+    songInfo: `${parent} .musicPlayerInfo`,
+    songDetails: `${parent} .musicPlayerDetails`,
+    songName: `${parent} #title`,
+    artistName: `${parent} #artist`,
+    albumName: `${parent} #album`,
+    progressSection: `${parent} .musicPlayerProgressSection`,
+    progressBar: `${parent} #progressBar`,
+    progressBuffer: `${parent} #progressBuffer`,
+    progressFill: `${parent} #progressFill`,
+    progressThumb: `${parent} #progressThumb`,
+    timeDisplay: `${parent} .musicPlayerTimeDisplay`,
+    currentTime: `${parent} #current`,
+    totalTime: `${parent} #total`,
+    controls: `${parent} .musicPlayerControls`,
+    play: `${parent} #playBtn`,
+    previous: `${parent} #prevBtn`,
+    next: `${parent} #nextBtn`,
+    reWind: `${parent} #rewindBtn`,
+    fastForward: `${parent} #forwardBtn`,
+    actions: `${parent} .musicPlayerActions`,
+    favoriteBtn: `${parent} #favoriteBtn`,
+    queueBtn: `${parent} #queueBtn`,
+    shareBtn: `${parent} #shareBtn`,
+    moreBtn: `${parent} #moreBtn`,
+    listHeader: `${parent} .musicPlayerListHeader`,
+    listTitle: `${parent} .musicPlayerListTitle`,
+    listCount: `${parent} .musicPlayerListCount`,
+    list: `${parent} .musicPlayerList`,
+    queueList: `${parent} #queueList`,
+    queueCount: `${parent} #queueCount`,
+    recentList: `${parent} #recentList`,
+    recentCount: `${parent} #recentCount`,
+    empty: `${parent} .musicPlayerEmpty`,
+    emptyIcon: `${parent} .musicPlayerEmptyIcon`,
+    emptyText: `${parent} .musicPlayerEmptyText`,
+    emptySubtext: `${parent} .musicPlayerEmptySubtext`,
+    listItem: `${parent} .musicPlayerListItem`,
+    listItemArt: `${parent} .musicPlayerListItemArt`,
+    listItemInfo: `${parent} .musicPlayerListItemInfo`,
+    listItemTitle: `${parent} .musicPlayerListItemTitle`,
+    listItemArtist: `${parent} .musicPlayerListItemArtist`,
+    listItemActions: `${parent} .musicPlayerListItemActions`,
+    listItemAction: `${parent} .musicPlayerListItemAction`,
+    classes: {
+      active: 'active',
+      playing: 'isPlaying',
+      favorited: 'favorited',
+      dragging: 'isDragging',
+      hovering: 'isHovering',
+      loading: 'loading'
+    },
+    tabs: {
+      playing: 'playing',
+      recent: 'recent',
+      queue: 'queue'
+    },
+    animations: {
+      backdropFadeIn: 400,
+      drawerSlideUp: 500,
+      fadeIn: 400,
+      glowPulse: 4000,
+      albumFloat: 6000,
+      waveFlow: 8000,
+      heartBeat: 600
+    },
+    skipTimes: {
+      rewind: -10,
+      forward: 10
+    }
+  });
+})();
+
+export const NAVBAR = (() => {
+  const parent = "#navbar";
+  return Object.freeze({
+    root: parent,
+    nowPlaying: `${parent} #now-playing-area`,
+    albumArtwork: `${parent} .albumArtwork`,
+    artistName: `${parent} .artistName`,
+    songName: `${parent} .songName`,
+    playIndicator: `${parent} #play-indicator`,
+    previous: `${parent} .previous`,
+    next: `${parent} .next`,
+    playPause: `${parent} .playPause`,
+    play: `${parent} #play-icon-navbar`,
+    pause: `${parent} #pause-icon-navbar`,
+    menuTrigger: `${parent} #menu-trigger`,
+    nextNavbar: `${parent} .next`,
+  });
+})();
+
+export const MODALS = Object.freeze({
+  modalClose: ".modal .close",
+  dialogClose: "#search-dialog .close",
+  dropdownClose: "#dropdown-menu .close",
 });
 
 export const NOTIFICATION_TYPES = Object.freeze({
@@ -256,8 +335,15 @@ export const REPEAT_MODES = Object.freeze({
 });
 
 // ═══════════════════════════════════════════════════════════════
-//  HELPER FUNCTIONS
+//  LEGACY HELPERS (backwards compatibility with existing code)
 // ═══════════════════════════════════════════════════════════════
+
+export const $ = new Proxy({}, {
+  get(_, key) {
+    const id = IDS[key];
+    return () => (id ? document.getElementById(id) : null);
+  },
+});
 
 export function $byId(id) {
   return document.getElementById(id);
@@ -301,79 +387,17 @@ export const injectIcons = () => {
 // ═══════════════════════════════════════════════════════════════
 
 if (typeof window !== 'undefined') {
-  // Export all individual element variables
-  window.themeToggle = themeToggle;
-  window.globalSearchTrigger = globalSearchTrigger;
-  window.searchDialog = searchDialog;
-  window.globalSearchForm = globalSearchForm;
-  window.globalSearchInput = globalSearchInput;
-  window.recentSearchesList = recentSearchesList;
-  window.popoverPortal = popoverPortal;
-  window.willHideMenu = willHideMenu;
-  window.menuTrigger = menuTrigger;
-  window.dropdownMenu = dropdownMenu;
-  window.dropdownClose = dropdownClose;
-  window.favoriteSongs = favoriteSongs;
-  window.favoriteArtists = favoriteArtists;
-  window.createPlaylist = createPlaylist;
-  window.favoriteSongsCount = favoriteSongsCount;
-  window.favoriteArtistsCount = favoriteArtistsCount;
-  window.recentlyPlayed = recentlyPlayed;
-  window.queueView = queueView;
-  window.recentCount = recentCount;
-  window.queueCount = queueCount;
-  window.recentlyPlayedSection = recentlyPlayedSection;
-  window.randomAlbumsSection = randomAlbumsSection;
-  window.favoriteArtistsSection = favoriteArtistsSection;
-  window.playlistsSection = playlistsSection;
-  window.favoriteSongsSection = favoriteSongsSection;
-  window.searchMusic = searchMusic;
-  window.shuffleAll = shuffleAll;
-  window.appSettings = appSettings;
-  window.aboutApp = aboutApp;
-  window.dynamicContent = dynamicContent;
-  window.contentLoading = contentLoading;
-  window.albumsContainer = albumsContainer;
-  window.artistsGrid = artistsGrid;
-  window.artistSearch = artistSearch;
-  window.genreFilters = genreFilters;
-  window.seekTooltip = seekTooltip;
-  window.drawer = drawer;
-  window.drawerHandle = drawerHandle;
-  window.musicPlayer = musicPlayer;
-  window.albumCover = albumCover;
-  window.songTitle = songTitle;
-  window.artistName = artistName;
-  window.albumName = albumName;
-  window.playBtn = playBtn;
-  window.prevBtn = prevBtn;
-  window.nextBtn = nextBtn;
-  window.rewindBtn = rewindBtn;
-  window.forwardBtn = forwardBtn;
-  window.shuffleBtn = shuffleBtn;
-  window.repeatBtn = repeatBtn;
-  window.favoriteBtn = favoriteBtn;
-  window.queueBtn = queueBtn;
-  window.shareBtn = shareBtn;
-  window.moreBtn = moreBtn;
-  window.progressBar = progressBar;
-  window.progressFill = progressFill;
-  window.progressThumb = progressThumb;
-  window.currentTime = currentTime;
-  window.totalTime = totalTime;
-  window.queueList = queueList;
-  window.recentList = recentList;
-  window.playPauseNavbar = playPauseNavbar;
-  window.prevBtnNavbar = prevBtnNavbar;
-  window.nextBtnNavbar = nextBtnNavbar;
-  window.playIconNavbar = playIconNavbar;
-  window.pauseIconNavbar = pauseIconNavbar;
-  window.nowPlayingArea = nowPlayingArea;
-
-  // Export constants
+  window.DOM = DOM;
+  window.QUERY = QUERY;
+  window.QUERY_ALL = QUERY_ALL;
+  window.clearElementCache = clearElementCache;
+  window.IDS = IDS;
   window.CLASSES = CLASSES;
-  window.THEMES = THEMES;
+  window.MUSIC_PLAYER = MUSIC_PLAYER;
+  window.NAVBAR = NAVBAR;
+  window.MODALS = MODALS;
   window.ROUTES = ROUTES;
+  window.THEMES = THEMES;
   window.STORAGE_KEYS = STORAGE_KEYS;
   window.ICONS = ICONS;
   window.AUDIO_FORMATS = AUDIO_FORMATS;
@@ -381,8 +405,7 @@ if (typeof window !== 'undefined') {
   window.NOTIFICATION_TYPES = NOTIFICATION_TYPES;
   window.TOAST_ICONS = TOAST_ICONS;
   window.TOAST_STYLES = TOAST_STYLES;
-  
-  // Export helper functions
+  window.$ = $;
   window.$byId = $byId;
   window.$bySelector = $bySelector;
   window.$allBySelector = $allBySelector;
