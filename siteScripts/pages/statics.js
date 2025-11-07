@@ -25,7 +25,13 @@ render: () => {
   if (!dynamicContent) return;
 
   dynamicContent.innerHTML = "";
-  dynamicContent.innerHTML = render.page("home_bento", {});
+  dynamicContent.innerHTML = render.page("home_bento", {
+  recentlyPlayedSection: window.recentlyPlayedSection,
+  randomAlbumsSection: window.randomAlbumsSection,
+  favoriteArtistsSection: window.favoriteArtistsSection,
+  playlistsSection: window.playlistsSection,
+  favoriteSongsSection: window.favoriteSongsSection
+});
 
   homePage.addStyles();
 
