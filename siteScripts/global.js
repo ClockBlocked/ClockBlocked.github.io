@@ -1207,17 +1207,50 @@ const notificationPlayer = {
 };
 
 
+const MUSIC_PLAYER = {
+    root: '.player',
+    close: '.player .closeBtn',
+    albumArtwork: '.player .cover',
+    songName: '.player .title',
+    artistName: '.player .artist',
+    albumName: '.player .album',
+    play: '.player .controlBtn.primary',
+    progressBar: '.player .progressBar',
+    progressFill: '.player .progressFill',
+    progressBuffer: '.player .progressBuffer',
+    progressThumb: '.player .progressThumb',
+    currentTime: '.player .currentTime',
+    totalTime: '.player .totalTime',
+    favoriteBtn: '.player .favoriteBtn',
+    queueBtn: '.player .actionBtn#playlistBtn',
+    queueList: '.player .list#queue',
+    queueCount: '.player .listCount#queueCount',
+    recentList: '.player .list#playlist',
+    recentCount: '.player .listCount#playlistCount',
+    skipTimes: { forward: 10, rewind: -10 },
+    classes: { 
+        playing: 'isPlaying', 
+        dragging: 'isDragging', 
+        hovering: 'isHovering' 
+    },
+    tabs: { 
+        playing: 'playing', 
+        recent: 'playlist', 
+        queue: 'queue' 
+    }
+};
+
 const musicPlayer = {
     mainPlayer: {
         open: () => {
-            const drawer = document.querySelector('.player');
+            const drawer = document.querySelector(MUSIC_PLAYER.root);
             if (!drawer) return;
             
             drawer.showPopover();
             drawer.offsetHeight;
             
             appState.isPopupVisible = true;
-            musicPlayer.mainPlayer.updateTabContent(appState.currentTab || 'playing');
+            musicPlayer.mainPlayer.updateTabContent(appState.currentTab || MUSIC_PLAYER.tabs.playing);
             
             if (appState.currentSong) {
                 musicPlayer.ui.updateNowPlaying();
@@ -1225,14 +1258,14 @@ const musicPlayer = {
         },
         
         close: () => {
-            const drawer = document.querySelector('.player');
+            const drawer = document.querySelector(MUSIC_PLAYER.root);
             if (!drawer) return;
             
             const handleTransitionEnd = () => {
                 drawer.removeEventListener('transitionend', handleTransitionEnd);
                 drawer.hidePopover();
                 appState.isPopupVisible = false;
-                setTimeout(() => musicPlayer.mainPlayer.switchTab('playing'), 50);
+                setTimeout(() => musicPlayer.mainPlayer.switchTab(MUSIC_PLAYER.tabs.playing), 50);
                 
                 setTimeout(() => {
                     drawer.style.transform = 'translateY(100%)';
@@ -1247,7 +1280,7 @@ const musicPlayer = {
         },
         
         toggle: () => {
-            const drawer = document.querySelector('.player');
+            const drawer = document.querySelector(MUSIC_PLAYER.root);
             if (!drawer) return;
             
             if (drawer.matches(':popover-open')) {
@@ -1272,12 +1305,12 @@ const musicPlayer = {
         },
         
         updateTabContent: (tabName) => {
-            if (tabName === 'playlist') musicPlayer.mainPlayer.updateRecentTab();
-            else if (tabName === 'queue') musicPlayer.mainPlayer.updateQueueTab();
+            if (tabName === MUSIC_PLAYER.tabs.recent) musicPlayer.mainPlayer.updateRecentTab();
+            else if (tabName === MUSIC_PLAYER.tabs.queue) musicPlayer.mainPlayer.updateQueueTab();
         },
         
         updateQueueTab: () => {
-            const queueList = document.querySelector('.player .list#queue');
+            const queueList = document.querySelector(MUSIC_PLAYER.queueList);
             if (!queueList) return;
             
             const emptyState = queueList.querySelector('.player .empty');
@@ -1339,14 +1372,14 @@ const musicPlayer = {
                 queueList.appendChild(listItem);
             });
             
-            const queueCount = document.querySelector('.player .listCount#queueCount');
+            const queueCount = document.querySelector(MUSIC_PLAYER.queueCount);
             if (queueCount) {
                 queueCount.textContent = `${appState.queue.items.length} song${appState.queue.items.length !== 1 ? 's' : ''}`;
             }
         },
         
         updateRecentTab: () => {
-            const recentList = document.querySelector('.player .list#playlist');
+            const recentList = document.querySelector(MUSIC_PLAYER.recentList);
             if (!recentList) return;
             
             const emptyState = recentList.querySelector('.player .empty');
@@ -1407,14 +1440,14 @@ const musicPlayer = {
                 recentList.appendChild(listItem);
             });
             
-            const recentCount = document.querySelector('.player .listCount#playlistCount');
+            const recentCount = document.querySelector(MUSIC_PLAYER.recentCount);
             if (recentCount) {
                 recentCount.textContent = `${appState.recentlyPlayed.length} song${appState.recentlyPlayed.length !== 1 ? 's' : ''}`;
             }
         },
         
         init: () => {
-            const closeBtn = document.querySelector('.player .closeBtn');
+            const closeBtn = document.querySelector(MUSIC_PLAYER.close);
             if (closeBtn) {
                 closeBtn.addEventListener('click', () => musicPlayer.mainPlayer.close());
             }
@@ -1426,75 +1459,103 @@ const musicPlayer = {
                 });
             });
             
-            const queueBtn = document.querySelector('.player .actionBtn#playlistBtn');
+            const queueBtn = document.querySelector(MUSIC_PLAYER.queueBtn);
             if (queueBtn) {
-                queueBtn.addEventListener('click', () => musicPlayer.mainPlayer.switchTab('queue'));
+                queueBtn.addEventListener('click', () => musicPlayer.mainPlayer.switchTab(MUSIC_PLAYER.tabs.queue));
             }
             
             musicPlayer.mainPlayer.preventHorizontalScroll();
             musicPlayer.mainPlayer.initDrawerDrag();
             
-            const favoriteBtn = document.querySelector('.player .favoriteBtn');
+            const favoriteBtn = document.querySelector(MUSIC_PLAYER.favoriteBtn);
             if (favoriteBtn) {
                 favoriteBtn.addEventListener('click', () => {
                     favoriteBtn.classList.toggle('favorited');
                 });
             }
         },
-        
+
         preventHorizontalScroll: () => {
             const scroller = document.querySelector('.player .scroller');
             if (!scroller) return;
             
-            let startX, scrollLeft;
+            let startX = 0;
+            let scrollLeft = 0;
             
             scroller.addEventListener('touchstart', (e) => {
-                startX = e.touches[0].pageX;
+                startX = e.touches[0].pageX - scroller.offsetLeft;
                 scrollLeft = scroller.scrollLeft;
-            }, { passive: false });
+            });
             
             scroller.addEventListener('touchmove', (e) => {
                 if (!startX) return;
-                
-                const x = e.touches[0].pageX;
+                const x = e.touches[0].pageX - scroller.offsetLeft;
                 const walk = (x - startX) * 2;
-                
-                if (Math.abs(walk) > 10) {
+                if (Math.abs(walk) > 5) {
+                                    e.preventDefault();
+                    scroller.scrollLeft = scrollLeft;
+                }
+            });
+
+            scroller.addEventListener('touchend', () => {
+                startX = 0;
+                scrollLeft = 0;
+            });
+
+            scroller.addEventListener('wheel', (e) => {
+                if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
                     e.preventDefault();
                 }
-            }, { passive: false });
+            });
         },
-        
+
         initDrawerDrag: () => {
-            const dragHandle = document.querySelector('.player .dragHandle');
-            const drawer = document.querySelector('.player');
-            
-            if (!dragHandle || !drawer) return;
-            
-            let startY, startTime;
-            
+            const drawer = document.querySelector(MUSIC_PLAYER.root);
+            if (!drawer) return;
+
+            const handle = drawer.querySelector('.dragHandle');
+            if (!handle) return;
+
+            let dragging = false;
+            let startY = 0;
+            let lastTranslate = 0;
+
             const onPointerDown = (e) => {
-                startY = e.clientY || e.touches[0].clientY;
-                startTime = Date.now();
-                document.addEventListener('pointermove', onPointerMove, { passive: false });
-                document.addEventListener('pointerup', onPointerUp, { once: true });
+                dragging = true;
+                startY = e.clientY ?? (e.touches && e.touches[0].clientY) ?? 0;
+                drawer.style.transition = 'none';
+                window.addEventListener('pointermove', onPointerMove, { passive: false });
+                window.addEventListener('pointerup', onPointerUp, { once: true });
+                window.addEventListener('touchmove', onPointerMove, { passive: false });
+                window.addEventListener('touchend', onPointerUp, { once: true });
             };
-            
+
             const onPointerMove = (e) => {
-                const currentY = e.clientY || e.touches[0].clientY;
-                const deltaY = currentY - startY;
-                
-                if (deltaY > 50) {
-                    musicPlayer.mainPlayer.close();
-                    document.removeEventListener('pointermove', onPointerMove);
-                }
+                if (!dragging) return;
+                const y = e.clientY ?? (e.touches && e.touches[0].clientY) ?? 0;
+                const delta = Math.max(0, y - startY);
+                lastTranslate = delta;
+                drawer.style.transform = `translateY(${delta}px)`;
+                drawer.style.opacity = `${Math.max(0, 1 - delta / 400)}`;
+                e.preventDefault();
             };
-            
+
             const onPointerUp = () => {
-                document.removeEventListener('pointermove', onPointerMove);
+                dragging = false;
+                drawer.style.transition = '';
+                window.removeEventListener('pointermove', onPointerMove);
+                window.removeEventListener('touchmove', onPointerMove);
+                if (lastTranslate > 120) {
+                    musicPlayer.mainPlayer.close();
+                } else {
+                    drawer.style.transform = '';
+                    drawer.style.opacity = '';
+                }
+                lastTranslate = 0;
             };
-            
-            dragHandle.addEventListener('pointerdown', onPointerDown, { passive: false });
+
+            handle.addEventListener('pointerdown', onPointerDown);
+            handle.addEventListener('touchstart', onPointerDown, { passive: false });
         }
     },
 
@@ -1511,7 +1572,7 @@ const musicPlayer = {
             };
             window.dispatchEvent(new CustomEvent('playerstatechange', { detail }));
         },
-        
+
         togglePlayPause: () => {
             if (!appState.audio) return;
             if (appState.isPlaying) {
@@ -1520,7 +1581,7 @@ const musicPlayer = {
                 musicPlayer.playback.play();
             }
         },
-        
+
         play: () => {
             if (!appState.currentSong || !appState.audio) return;
             appState.audio.play().catch((err) => {
@@ -1589,7 +1650,7 @@ const musicPlayer = {
                 }
             },
 
-            all:() => {
+            all: () => {
                 if (!window.music || window.music.length === 0) {
                     if (window.notifications) {
                         notifications.show("No music library found", window.NOTIFICATION_TYPES?.WARNING);
@@ -1629,7 +1690,7 @@ const musicPlayer = {
                 if (window.notifications) {
                     notifications.show("Playing all songs shuffled");
                 }
-            },
+            }
         },
 
         repeat: {
@@ -1649,8 +1710,8 @@ const musicPlayer = {
                 if (window.notifications) {
                     notifications.show(`Repeat ${modeText}`);
                 }
-            },
-        },
+            }
+        }
     },
 
     ui: {
@@ -1660,7 +1721,6 @@ const musicPlayer = {
 
         initialize: () => {
             if (appState.audio) return;
-            
             appState.audio = new Audio();
             const events = {
                 timeupdate: musicPlayer.ui.updateProgress,
@@ -1668,13 +1728,11 @@ const musicPlayer = {
                 loadedmetadata: musicPlayer.ui.onMetadataLoaded,
                 play: musicPlayer.ui.onPlay,
                 pause: musicPlayer.ui.onPause,
-                error: musicPlayer.ui.onError,
+                error: musicPlayer.ui.onError
             };
-            
-            Object.entries(events).forEach(([event, handler]) => 
+            Object.entries(events).forEach(([event, handler]) =>
                 appState.audio.addEventListener(event, handler)
             );
-            
             musicPlayer.ui.bindSeekBar();
             if (window.notificationPlayer) {
                 notificationPlayer.setup();
@@ -1684,26 +1742,21 @@ const musicPlayer = {
         playSong: async (songData) => {
             if (!songData) return;
             musicPlayer.ui.initialize();
-            
             if (window.ui && ui.setLoadingState) {
                 ui.setLoadingState(true);
             }
-            
             if (appState.currentSong) {
                 musicPlayer.ui.addToRecentlyPlayed(appState.currentSong);
             }
-            
             appState.currentSong = songData;
             appState.currentArtist = songData.artist;
             appState.currentAlbum = songData.album;
-            
             if (window.ui) {
                 if (ui.updateNowPlaying) ui.updateNowPlaying();
                 if (ui.updateNavbar) ui.updateNavbar();
                 if (ui.updateMusicPlayer) ui.updateMusicPlayer();
                 if (ui.updateCounts) ui.updateCounts();
             }
-            
             const success = await musicPlayer.ui.loadAudioFile(songData);
             if (success) {
                 if (window.notificationPlayer && notificationPlayer.metadata) {
@@ -1712,11 +1765,11 @@ const musicPlayer = {
                 if (window.notificationPlayer && notificationPlayer.events) {
                     notificationPlayer.events.bind();
                 }
-                setTimeout(() => { 
+                setTimeout(() => {
                     if (window.clickables && clickables.musicPlayer) {
                         clickables.musicPlayer();
                     }
-                    musicPlayer.ui.bindSeekBar(); 
+                    musicPlayer.ui.bindSeekBar();
                 }, 100);
                 musicPlayer.playback.dispatchPlayerStateChange();
             } else {
@@ -1729,7 +1782,6 @@ const musicPlayer = {
                 }
                 musicPlayer.playback.dispatchPlayerStateChange();
             }
-            
             if (window.ui && ui.setLoadingState) {
                 ui.setLoadingState(false);
             }
@@ -1739,63 +1791,51 @@ const musicPlayer = {
             if (!songData || !songData.title) {
                 return false;
             }
-            
             const songFileName = songData.title
                 .toLowerCase()
                 .replace(/\s+/g, "")
                 .replace(/[^\w]/g, "");
-            
             if (!songFileName) {
                 return false;
             }
-
             for (const format of window.AUDIO_FORMATS || ['mp3', 'ogg', 'wav']) {
                 try {
                     const audioUrl = `https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/Finalfinal/global/content/audio/${songFileName}.${format}`;
-                    
                     appState.audio.src = audioUrl;
                     appState.audio.preload = "auto";
-                    
                     await new Promise((resolve, reject) => {
                         const loadHandler = () => {
                             appState.audio.removeEventListener("canplaythrough", loadHandler);
                             appState.audio.removeEventListener("error", errorHandler);
                             resolve();
                         };
-                        
                         const errorHandler = (e) => {
                             appState.audio.removeEventListener("canplaythrough", loadHandler);
                             appState.audio.removeEventListener("error", errorHandler);
                             reject(e);
                         };
-                        
                         appState.audio.addEventListener("canplaythrough", loadHandler, { once: true });
                         appState.audio.addEventListener("error", errorHandler, { once: true });
-                        
                         if (appState.audio.readyState >= 3) {
                             loadHandler();
                         }
                     });
-                    
                     await appState.audio.play();
                     return true;
-                    
                 } catch (error) {
                     continue;
                 }
             }
-            
             return false;
         },
 
         bindSeekBar: () => {
-            const bar = document.querySelector('.player .progressBar');
-            const thumb = document.querySelector('.player .progressThumb');
+            const bar = document.querySelector(MUSIC_PLAYER.progressBar);
+            const thumb = document.querySelector(MUSIC_PLAYER.progressThumb);
             if (!bar || !thumb) {
                 console.error("bindSeekBar: Could not find progress bar elements");
                 return;
             }
-
             const onPointerDown = (e) => {
                 e.preventDefault();
                 bar.setPointerCapture?.(e.pointerId ?? 1);
@@ -1803,37 +1843,32 @@ const musicPlayer = {
                 musicPlayer.ui.wasPlayingBeforeScrub = !!appState.isPlaying;
                 if (musicPlayer.ui.wasPlayingBeforeScrub) appState.audio.pause();
                 musicPlayer.ui.seekFromEvent(e, bar);
-                bar.classList.add('isDragging');
+                bar.classList.add(MUSIC_PLAYER.classes.dragging);
                 const moveTarget = bar;
                 moveTarget.addEventListener('pointermove', onPointerMove, { passive: false });
                 moveTarget.addEventListener('pointerup', onPointerUp, { once: true });
                 window.addEventListener('pointercancel', onPointerUp, { once: true });
             };
-
             const onPointerMove = (e) => {
                 if (!musicPlayer.ui.isScrubbing) return;
                 e.preventDefault();
                 musicPlayer.ui.seekFromEvent(e, bar);
             };
-
             const onPointerUp = (e) => {
                 musicPlayer.ui.seekFromEvent(e, bar, true);
                 musicPlayer.ui.isScrubbing = false;
-                bar.classList.remove('isDragging', 'isHovering');
+                bar.classList.remove(MUSIC_PLAYER.classes.dragging, MUSIC_PLAYER.classes.hovering);
                 if (musicPlayer.ui.wasPlayingBeforeScrub) appState.audio.play();
                 bar.releasePointerCapture?.(e.pointerId ?? 1);
                 bar.removeEventListener('pointermove', onPointerMove);
             };
-
-            const onEnter = () => bar.classList.add('isHovering');
-            const onLeave = () => { 
-                if (!musicPlayer.ui.isScrubbing) bar.classList.remove('isHovering'); 
+            const onEnter = () => bar.classList.add(MUSIC_PLAYER.classes.hovering);
+            const onLeave = () => {
+                if (!musicPlayer.ui.isScrubbing) bar.classList.remove(MUSIC_PLAYER.classes.hovering);
             };
-            
             bar.addEventListener('pointerdown', onPointerDown, { passive: false });
             bar.addEventListener('pointerenter', onEnter);
             bar.addEventListener('pointerleave', onLeave);
-            
             bar.addEventListener('keydown', musicPlayer.ui.handleProgressBarKeyDown);
         },
 
@@ -1856,9 +1891,9 @@ const musicPlayer = {
         },
 
         setProgressUI: (percent, currentTime) => {
-            const fill = document.querySelector('.player .progressFill');
-            const thumb = document.querySelector('.player .progressThumb');
-            const currentTimeElement = document.querySelector('.player .currentTime');
+            const fill = document.querySelector(MUSIC_PLAYER.progressFill);
+            const thumb = document.querySelector(MUSIC_PLAYER.progressThumb);
+            const currentTimeElement = document.querySelector(MUSIC_PLAYER.currentTime);
             if (fill) fill.style.width = percent + '%';
             if (thumb) thumb.style.left = percent + '%';
             if (currentTimeElement && isFinite(currentTime)) {
@@ -1869,16 +1904,14 @@ const musicPlayer = {
         handleProgressBarKeyDown: (e) => {
             const audio = appState.audio;
             if (!audio || !audio.duration) return;
-            
             const duration = audio.duration;
             let timeChange = 0;
-            
             switch (e.key) {
                 case 'ArrowRight':
-                    timeChange = 10;
+                    timeChange = MUSIC_PLAYER.skipTimes.forward;
                     break;
                 case 'ArrowLeft':
-                    timeChange = -10;
+                    timeChange = MUSIC_PLAYER.skipTimes.rewind;
                     break;
                 case 'PageUp':
                     timeChange = 10;
@@ -1903,7 +1936,6 @@ const musicPlayer = {
                 default:
                     return;
             }
-            
             if (timeChange !== 0) {
                 const newTime = Math.max(0, Math.min(duration, audio.currentTime + timeChange));
                 audio.currentTime = newTime;
@@ -1916,37 +1948,31 @@ const musicPlayer = {
 
         updateProgress: () => {
             if (!appState.audio || musicPlayer.ui.isScrubbing) return;
-            
             const duration = appState.duration || appState.audio.duration || 0;
             const currentTime = appState.audio.currentTime || 0;
             const percent = duration > 0 ? (currentTime / duration) * 100 : 0;
-            
             musicPlayer.ui.setProgressUI(percent, currentTime);
             musicPlayer.ui.updateBufferDisplay();
             musicPlayer.playback.dispatchPlayerStateChange();
         },
 
         updateBufferDisplay: () => {
-            const buffer = document.querySelector('.player .progressBuffer');
+            const buffer = document.querySelector(MUSIC_PLAYER.progressBuffer);
             if (!buffer || !appState.audio) return;
-            
             if (!appState.audio.buffered || appState.audio.buffered.length === 0) {
                 buffer.style.width = '0%';
                 return;
             }
-            
             const duration = appState.audio.duration || 0;
             if (duration === 0) {
                 buffer.style.width = '0%';
                 return;
             }
-            
             let bufferedEnd = 0;
             for (let i = 0; i < appState.audio.buffered.length; i++) {
                 const end = appState.audio.buffered.end(i);
                 if (end > bufferedEnd) bufferedEnd = end;
             }
-            
             const bufferProgress = Math.min(1, bufferedEnd / duration);
             buffer.style.width = (bufferProgress * 100).toFixed(2) + '%';
         },
@@ -1956,7 +1982,7 @@ const musicPlayer = {
             if (window.ui && ui.updatePlayPauseButtons) {
                 ui.updatePlayPauseButtons();
             }
-            document.querySelector('.player')?.classList.add('isPlaying');
+            document.querySelector(MUSIC_PLAYER.root)?.classList.add(MUSIC_PLAYER.classes.playing);
         },
 
         onPause: () => {
@@ -1964,18 +1990,16 @@ const musicPlayer = {
             if (window.ui && ui.updatePlayPauseButtons) {
                 ui.updatePlayPauseButtons();
             }
-            document.querySelector('.player')?.classList.remove('isPlaying');
+            document.querySelector(MUSIC_PLAYER.root)?.classList.remove(MUSIC_PLAYER.classes.playing);
         },
 
         onMetadataLoaded: () => {
             if (!appState.audio || isNaN(appState.audio.duration)) return;
-            
             appState.duration = appState.audio.duration;
-            const totalTimeElement = document.querySelector('.player .totalTime');
+            const totalTimeElement = document.querySelector(MUSIC_PLAYER.totalTime);
             if (totalTimeElement) {
                 totalTimeElement.textContent = utils.formatTime(appState.duration);
             }
-            
             musicPlayer.ui.updateProgress();
             musicPlayer.ui.updateBufferDisplay();
         },
@@ -1985,10 +2009,10 @@ const musicPlayer = {
         },
 
         onEnded: () => {
-            if (appState.repeatMode === window.REPEAT_MODES?.ONE) { 
-                appState.audio.currentTime = 0; 
-                appState.audio.play(); 
-                return; 
+            if (appState.repeatMode === window.REPEAT_MODES?.ONE) {
+                appState.audio.currentTime = 0;
+                appState.audio.play();
+                return;
             }
             musicPlayer.playback.next();
         },
@@ -2010,15 +2034,15 @@ const musicPlayer = {
             const album = artist?.albums.find((al) => al.album === appState.currentAlbum);
             if (!album) return null;
             const currentIndex = album.songs.findIndex((s) => s.title === appState.currentSong.title);
-            const nextIndex = appState.shuffleMode ? 
-                Math.floor(Math.random() * album.songs.length) : 
+            const nextIndex = appState.shuffleMode ?
+                Math.floor(Math.random() * album.songs.length) :
                 (currentIndex + 1) % album.songs.length;
             if (nextIndex !== currentIndex || appState.repeatMode === window.REPEAT_MODES?.ALL) {
-                return { 
-                    ...album.songs[nextIndex], 
-                    artist: artist.artist, 
-                    album: album.album, 
-                    cover: utils.getAlbumImageUrl(album.album) 
+                return {
+                    ...album.songs[nextIndex],
+                    artist: artist.artist,
+                    album: album.album,
+                    cover: utils.getAlbumImageUrl(album.album)
                 };
             }
             return null;
@@ -2031,48 +2055,44 @@ const musicPlayer = {
             if (!album) return null;
             const currentIndex = album.songs.findIndex((s) => s.title === appState.currentSong.title);
             const prevIndex = (currentIndex - 1 + album.songs.length) % album.songs.length;
-            return { 
-                ...album.songs[prevIndex], 
-                artist: artist.artist, 
-                album: album.album, 
-                cover: utils.getAlbumImageUrl(album.album) 
+            return {
+                ...album.songs[prevIndex],
+                artist: artist.artist,
+                album: album.album,
+                cover: utils.getAlbumImageUrl(album.album)
             };
         },
 
         updateNowPlaying: () => {
             if (!appState.currentSong) return;
-            
             const coverUrl = appState.currentSong.cover || utils.getAlbumImageUrl(appState.currentSong.album);
-            const cover = document.querySelector('.player .cover');
+            const cover = document.querySelector(MUSIC_PLAYER.albumArtwork);
             if (cover && coverUrl) {
                 cover.src = coverUrl;
             }
-            
-            const titleEl = document.querySelector('.player .title');
-            const artistEl = document.querySelector('.player .artist');
-            const albumEl = document.querySelector('.player .album');
-            
+            const titleEl = document.querySelector(MUSIC_PLAYER.songName);
+            const artistEl = document.querySelector(MUSIC_PLAYER.artistName);
+            const albumEl = document.querySelector(MUSIC_PLAYER.albumName);
             if (titleEl && appState.currentSong.title) titleEl.textContent = appState.currentSong.title;
             if (artistEl && appState.currentArtist) artistEl.textContent = appState.currentArtist;
             if (albumEl && appState.currentAlbum) albumEl.textContent = appState.currentAlbum;
-            
-            const playBtn = document.querySelector('.player .controlBtn.primary');
-            const drawer = document.querySelector('.player');
+            const playBtn = document.querySelector(MUSIC_PLAYER.play);
+            const drawer = document.querySelector(MUSIC_PLAYER.root);
             if (playBtn) {
                 const playIcon = playBtn.querySelector('.playIcon');
                 const pauseIcon = playBtn.querySelector('.pauseIcon');
                 if (appState.isPlaying) {
                     playIcon?.style.setProperty('display', 'none');
                     pauseIcon?.style.setProperty('display', 'block');
-                    drawer?.classList.add('isPlaying');
+                    drawer?.classList.add(MUSIC_PLAYER.classes.playing);
                 } else {
                     playIcon?.style.setProperty('display', 'block');
                     pauseIcon?.style.setProperty('display', 'none');
-                    drawer?.classList.remove('isPlaying');
+                    drawer?.classList.remove(MUSIC_PLAYER.classes.playing);
                 }
             }
         }
-    },
+    }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
