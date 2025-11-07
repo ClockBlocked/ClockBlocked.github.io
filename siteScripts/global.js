@@ -1590,18 +1590,18 @@ const musicPlayer = {
 
         repeat: {
             toggle: () => {
-                if (appState.repeatMode === window.REPEAT_MODES?.OFF) {
-                    appState.repeatMode = window.REPEAT_MODES?.ALL;
-                } else if (appState.repeatMode === window.REPEAT_MODES?.ALL) {
-                    appState.repeatMode = window.REPEAT_MODES?.ONE;
+                if (appState.repeatMode === PAGE.REPEAT_MODES?.OFF) {
+                    appState.repeatMode = PAGE.REPEAT_MODES?.ALL;
+                } else if (appState.repeatMode === PAGE.REPEAT_MODES?.ALL) {
+                    appState.repeatMode = PAGE.REPEAT_MODES?.ONE;
                 } else {
-                    appState.repeatMode = window.REPEAT_MODES?.OFF;
+                    appState.repeatMode = PAGE.REPEAT_MODES?.OFF;
                 }
                 if (window.ui && ui.updateRepeatButton) {
                     ui.updateRepeatButton();
                 }
-                const modeText = appState.repeatMode === window.REPEAT_MODES?.OFF ? "disabled" : 
-                                appState.repeatMode === window.REPEAT_MODES?.ALL ? "all songs" : "current song";
+                const modeText = appState.repeatMode === PAGE.REPEAT_MODES?.OFF ? "disabled" : 
+                                appState.repeatMode === PAGE.REPEAT_MODES?.ALL ? "all songs" : "current song";
                 if (window.notifications) {
                     notifications.show(`Repeat ${modeText}`);
                 }
@@ -1941,7 +1941,7 @@ const musicPlayer = {
         },
 
         onEnded: () => {
-            if (appState.repeatMode === window.REPEAT_MODES?.ONE) { 
+            if (appState.repeatMode === PAGE.REPEAT_MODES?.ONE) { 
                 appState.audio.currentTime = 0; 
                 appState.audio.play(); 
                 return; 
@@ -1969,7 +1969,7 @@ const musicPlayer = {
             const nextIndex = appState.shuffleMode ? 
                 Math.floor(Math.random() * album.songs.length) : 
                 (currentIndex + 1) % album.songs.length;
-            if (nextIndex !== currentIndex || appState.repeatMode === window.REPEAT_MODES?.ALL) {
+            if (nextIndex !== currentIndex || appState.repeatMode === PAGE.REPEAT_MODES?.ALL) {
                 return { 
                     ...album.songs[nextIndex], 
                     artist: artist.artist, 
