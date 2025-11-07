@@ -3923,11 +3923,72 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 </script>
 
+<!---
 <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
     
 <script>
 eruda.init();
 </script>
+--->
+
+
+<script>
+  // 1. ADVANCED CONDITIONAL LOADING
+  // Only load vConsole if the URL contains '?debug=true'
+  // Example: https://yourwebsite.com/?debug=true
+  if (window.location.href.indexOf('debug=true') > -1) {
+
+    // Load the vConsole script dynamically from CDN
+    var script = document.createElement('script');
+    script.src = "https://unpkg.com/vconsole@latest/dist/vconsole.min.js";
+    script.onload = function() {
+
+      // 2. MAXED-OUT CONFIGURATION
+      window.vConsole = new VConsole({
+        theme: 'dark', // Professional dark mode
+        maxLogNumber: 5000, // Holds way more logs than default
+        disableLogScrolling: true, // Prevents auto-scroll annoying you while reading old logs
+        onReady: function() {
+          console.log('vConsole is fully armed and operational.');
+        }
+      });
+
+      // 3. CUSTOM "ADVANCED" PLUGIN
+      // This adds a custom tab to vConsole for specific data you might want to track later
+      var myPlugin = new VConsole.VConsolePlugin('my_advanced_tab', 'My Stats');
+
+      // What happens when you click your new custom tab
+      myPlugin.on('renderTab', function(callback) {
+        var html = '<div>';
+        html += '<p style="color:#00c4ff;"><strong>User Agent:</strong> ' + navigator.userAgent + '</p>';
+        html += '<p style="color:#00c4ff;"><strong>Screen Size:</strong> ' + window.innerWidth + 'x' + window.innerHeight + '</p>';
+        html += '<p style="color:#00c4ff;"><strong>Time Loaded:</strong> ' + new Date().toLocaleTimeString() + '</p>';
+        html += '</div>';
+        callback(html);
+      });
+
+      // Add an extra tool button to the bottom bar
+      myPlugin.on('addTool', function(callback) {
+        var button = {
+          name: 'Reload',
+          global: false,
+          onClick: function(event) {
+            window.location.reload();
+          }
+        };
+        callback([button]);
+      });
+
+      // Register the new powerful plugin
+      window.vConsole.addPlugin(myPlugin);
+    };
+
+    document.body.appendChild(script);
+  }
+</script>
+
+
+
 </body>
 </html>
 
