@@ -3029,7 +3029,9 @@ MyBeats:  Stream & share your favorite music for free.
   width: calc(105% + 2.3px);
   height: 75px;
   z-index: 99;
-  pointer-events: none;
+  pointer-events: auto;
+  
+  stroke-width: 5px; stroke: crimson;
 }
 .customShapeDivider .shapeFill {
   fill: #2D333B;
@@ -3094,7 +3096,11 @@ MyBeats:  Stream & share your favorite music for free.
           <div class="coverWrapper">
             <div class="customShapeDivider">
               <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
-                <path d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z" class="shapeFill"></path>
+                 <path
+                  d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"
+                  class="shape-fill"
+                ></path>
+
               </svg>
             </div>
             <img src="https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/stable/global/content/images/albumCovers/placeholder.png" alt="Album Cover" class="cover" id="cover" />
@@ -3837,69 +3843,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 </script>
 
-<!---
+
 <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
     
 <script>
 eruda.init();
 </script>
---->
 
-
-<script>
-  // 1. ADVANCED CONDITIONAL LOADING
-  // Only load vConsole if the URL contains '?debug=true'
-  // Example: https://yourwebsite.com/?debug=true
-  if (window.location.href.indexOf('debug=true') > -1) {
-
-    // Load the vConsole script dynamically from CDN
-    var script = document.createElement('script');
-    script.src = "https://unpkg.com/vconsole@latest/dist/vconsole.min.js";
-    script.onload = function() {
-
-      // 2. MAXED-OUT CONFIGURATION
-      window.vConsole = new VConsole({
-        theme: 'dark', // Professional dark mode
-        maxLogNumber: 5000, // Holds way more logs than default
-        disableLogScrolling: true, // Prevents auto-scroll annoying you while reading old logs
-        onReady: function() {
-          console.log('vConsole is fully armed and operational.');
-        }
-      });
-
-      // 3. CUSTOM "ADVANCED" PLUGIN
-      // This adds a custom tab to vConsole for specific data you might want to track later
-      var myPlugin = new VConsole.VConsolePlugin('my_advanced_tab', 'My Stats');
-
-      // What happens when you click your new custom tab
-      myPlugin.on('renderTab', function(callback) {
-        var html = '<div>';
-        html += '<p style="color:#00c4ff;"><strong>User Agent:</strong> ' + navigator.userAgent + '</p>';
-        html += '<p style="color:#00c4ff;"><strong>Screen Size:</strong> ' + window.innerWidth + 'x' + window.innerHeight + '</p>';
-        html += '<p style="color:#00c4ff;"><strong>Time Loaded:</strong> ' + new Date().toLocaleTimeString() + '</p>';
-        html += '</div>';
-        callback(html);
-      });
-
-      // Add an extra tool button to the bottom bar
-      myPlugin.on('addTool', function(callback) {
-        var button = {
-          name: 'Reload',
-          global: false,
-          onClick: function(event) {
-            window.location.reload();
-          }
-        };
-        callback([button]);
-      });
-
-      // Register the new powerful plugin
-      window.vConsole.addPlugin(myPlugin);
-    };
-
-    document.body.appendChild(script);
-  }
-</script>
 
 
 
