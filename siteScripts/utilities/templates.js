@@ -444,7 +444,7 @@ case "enhancedArtist":
           </div>
           <div id="artists-grid" class="artists-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 px-4 sm:px-6"></div>
         `;
- case "home_bento":
+case "home_bento":
   return `
 <div class="bento-grid">
   <div class="bento-card" data-loader="true">
@@ -452,7 +452,7 @@ case "enhancedArtist":
       <h2 class="card-title">Recently Played</h2>
       <a href="#" class="card-link" data-view="recent">View All</a>
     </div>
-    <div id="${window.recentlyPlayedSection?.id || 'recently-played-section'}" class="card-content">
+    <div id="recently-played-section" class="card-content">
       <div class="skeleton-loader"></div>
     </div>
   </div>
@@ -462,7 +462,7 @@ case "enhancedArtist":
       <h2 class="card-title">Discover Albums</h2>
       <a href="#" class="card-link" data-view="albums">Explore More</a>
     </div>
-    <div id="${window.randomAlbumsSection?.id || 'random-albums-section'}" class="card-content">
+    <div id="random-albums-section" class="card-content">
       <div class="skeleton-loader"></div>
     </div>
   </div>
@@ -472,7 +472,7 @@ case "enhancedArtist":
       <h2 class="card-title">Favorite Artists</h2>
       <a href="#" class="card-link" data-view="favorite-artists">View All</a>
     </div>
-    <div id="${window.favoriteArtistsSection?.id || 'favorite-artists-section'}" class="card-content">
+    <div id="favorite-artists-section" class="card-content">
       <div class="skeleton-loader"></div>
     </div>
   </div>
@@ -482,7 +482,7 @@ case "enhancedArtist":
       <h2 class="card-title">Your Playlists</h2>
       <a href="#" class="card-link" data-view="playlists">View All</a>
     </div>
-    <div id="${window.playlistsSection?.id || 'playlists-section'}" class="card-content">
+    <div id="playlists-section" class="card-content">
       <div class="skeleton-loader"></div>
     </div>
   </div>
@@ -492,7 +492,7 @@ case "enhancedArtist":
       <h2 class="card-title">Favorite Songs</h2>
       <a href="#" class="card-link" data-view="favorite-songs">View All</a>
     </div>
-    <div id="${window.favoriteSongsSection?.id || 'favorite-songs-section'}" class="card-content">
+    <div id="favorite-songs-section" class="card-content">
       <div class="skeleton-loader"></div>
     </div>
   </div>
