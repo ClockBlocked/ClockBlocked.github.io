@@ -3389,7 +3389,237 @@ MyBeats:  Stream & share your favorite music for free.
 
 
 
+<script>
+const clickables = {
+    // Elements
+    elements: {
+        drawer: document.getElementById('drawer'),
+        dropdownMenu: document.getElementById('dropdown-menu'),
+        menuTrigger: document.getElementById('menu-trigger'),
+        nowPlayingArea: document.getElementById('now-playing-area'),
+        dropdownClose: document.getElementById('dropdown-close'),
+        closeBtn: document.getElementById('closeBtn')
+    },
 
+    // State management
+    state: {
+        isDrawerOpen: false,
+        isDropdownOpen: false
+    },
+
+    // Initialize all event listeners
+    init() {
+        this.bindEvents();
+        this.bindOutsideClicks();
+        console.log('Clickables initialized');
+    },
+
+    // Bind all event listeners
+    bindEvents() {
+        const { menuTrigger, nowPlayingArea, dropdownClose, closeBtn } = this.elements;
+
+        // Menu trigger click
+        if (menuTrigger) {
+            menuTrigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.toggleDropdown();
+            });
+        }
+
+        // Now playing area click
+        if (nowPlayingArea) {
+            nowPlayingArea.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.toggleDrawer();
+            });
+        }
+
+        // Dropdown close button
+        if (dropdownClose) {
+            dropdownClose.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.closeDropdown();
+            });
+        }
+
+        // Drawer close button
+        if (closeBtn) {
+            closeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.closeDrawer();
+            });
+        }
+
+        // Escape key support
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (this.state.isDropdownOpen) {
+                    this.closeDropdown();
+                }
+                if (this.state.isDrawerOpen) {
+                    this.closeDrawer();
+                }
+            }
+        });
+    },
+
+    // Handle outside clicks to close menus
+    bindOutsideClicks() {
+        document.addEventListener('click', (e) => {
+            const { drawer, dropdownMenu } = this.elements;
+            
+            // Close dropdown if clicked outside
+            if (this.state.isDropdownOpen && dropdownMenu && !dropdownMenu.contains(e.target)) {
+                this.closeDropdown();
+            }
+            
+            // Close drawer if clicked on overlay (the curtain element)
+            if (this.state.isDrawerOpen && drawer) {
+                const curtain = drawer.querySelector('.musicPlayerCurtain');
+                if (curtain && e.target === curtain) {
+                    this.closeDrawer();
+                }
+            }
+        });
+    },
+
+    // Toggle dropdown menu
+    toggleDropdown() {
+        if (this.state.isDropdownOpen) {
+            this.closeDropdown();
+        } else {
+            this.openDropdown();
+        }
+    },
+
+    // Open dropdown menu
+    openDropdown() {
+        const { dropdownMenu } = this.elements;
+        if (!dropdownMenu) return;
+
+        // Close drawer if open
+        if (this.state.isDrawerOpen) {
+            this.closeDrawer();
+        }
+
+        dropdownMenu.classList.add('active', 'open');
+        dropdownMenu.style.display = 'block';
+        this.state.isDropdownOpen = true;
+
+        // Add body class to prevent scrolling if needed
+        document.body.classList.add('dropdown-open');
+        
+        console.log('Dropdown opened');
+    },
+
+    // Close dropdown menu
+    closeDropdown() {
+        const { dropdownMenu } = this.elements;
+        if (!dropdownMenu) return;
+
+        dropdownMenu.classList.remove('active', 'open');
+        dropdownMenu.style.display = 'none';
+        this.state.isDropdownOpen = false;
+
+        // Remove body class
+        document.body.classList.remove('dropdown-open');
+        
+        console.log('Dropdown closed');
+    },
+
+    // Toggle music player drawer
+    toggleDrawer() {
+        if (this.state.isDrawerOpen) {
+            this.closeDrawer();
+        } else {
+            this.openDrawer();
+        }
+    },
+
+    // Open music player drawer
+    openDrawer() {
+        const { drawer } = this.elements;
+        if (!drawer) return;
+
+        // Close dropdown if open
+        if (this.state.isDropdownOpen) {
+            this.closeDropdown();
+        }
+
+        // Use the Popover API if available, otherwise fallback to classes
+        if (drawer.showPopover) {
+            drawer.showPopover();
+        } else {
+            drawer.classList.add('active', 'open');
+            drawer.style.display = 'block';
+        }
+        
+        this.state.isDrawerOpen = true;
+
+        // Add body class to prevent scrolling if needed
+        document.body.classList.add('drawer-open');
+        
+        console.log('Drawer opened');
+    },
+
+    // Close music player drawer
+    closeDrawer() {
+        const { drawer } = this.elements;
+        if (!drawer) return;
+
+        // Use the Popover API if available, otherwise fallback to classes
+        if (drawer.hidePopover) {
+            drawer.hidePopover();
+        } else {
+            drawer.classList.remove('active', 'open');
+            drawer.style.display = 'none';
+        }
+        
+        this.state.isDrawerOpen = false;
+
+        // Remove body class
+        document.body.classList.remove('drawer-open');
+        
+        console.log('Drawer closed');
+    },
+
+    // Public methods for external control
+    openMusicPlayer() {
+        this.openDrawer();
+    },
+
+    closeMusicPlayer() {
+        this.closeDrawer();
+    },
+
+    openMenu() {
+        this.openDropdown();
+    },
+
+    closeMenu() {
+        this.closeDropdown();
+    },
+
+    // Get current state
+    getState() {
+        return { ...this.state };
+    },
+
+    // Destroy all event listeners (cleanup)
+    destroy() {
+        // Remove event listeners would go here if we stored references
+        console.log('Clickables destroyed');
+    }
+};
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    clickables.init();
+});
+
+// Make available globally
+window.clickables = clickables;
+</script>
 
 
 
