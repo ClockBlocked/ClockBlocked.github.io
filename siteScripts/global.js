@@ -1241,101 +1241,43 @@ const MUSIC_PLAYER = {
 };
 const musicPlayer = {
     mainPlayer: {
-        isDragging: false,
-        // Configuration for the scroll-collapse effect
-        SCROLL_THRESHOLD: 150, // How many pixels to scroll before fully collapsed
-
         open: () => {
-            const drawer = document.getElementById("drawer");
+            const drawer = document.querySelector(MUSIC_PLAYER.root);
             if (!drawer) return;
             drawer.showPopover();
-            // Small delay to ensure CSS transitions catch the open state
-            requestAnimationFrame(() => drawer.classList.add("open"));
+            drawer.offsetHeight;
+            appState.isPopupVisible = true;
+            musicPlayer.mainPlayer.updateTabContent(appState.currentTab || MUSIC_PLAYER.tabs.playing);
+            if (appState.currentSong) {
+                musicPlayer.ui.updateNowPlaying();
+            }
         },
-
         close: () => {
-            const drawer = document.getElementById("drawer");
+            const drawer = document.querySelector(MUSIC_PLAYER.root);
             if (!drawer) return;
-
-            // 1. Animate out
-            drawer.classList.remove("open");
-            drawer.classList.add("closing");
-
-            // 2. Wait for animation to finish before strictly hiding from DOM
-            drawer.addEventListener('transitionend', function handler(e) {
-                if (e.target !== drawer) return; // Ignore child transitions
+            const handleTransitionEnd = () => {
+                drawer.removeEventListener('transitionend', handleTransitionEnd);
                 drawer.hidePopover();
-                drawer.classList.remove("closing");
-                drawer.removeEventListener('transitionend', handler);
-            }, { once: true });
+                appState.isPopupVisible = false;
+                setTimeout(() => musicPlayer.mainPlayer.switchTab(MUSIC_PLAYER.tabs.playing), 50);
+                setTimeout(() => {
+                    drawer.style.transform = 'translateY(100%)';
+                    drawer.style.opacity = '0';
+                }, 10);
+            };
+            drawer.addEventListener('transitionend', handleTransitionEnd, { once: true });
+            drawer.style.transform = 'translateY(100%)';
+            drawer.style.opacity = '0';
         },
-
         toggle: () => {
-            const drawer = document.getElementById("drawer");
-            if (drawer?.matches(':popover-open')) {
+            const drawer = document.querySelector(MUSIC_PLAYER.root);
+            if (!drawer) return;
+            if (drawer.matches(':popover-open')) {
                 musicPlayer.mainPlayer.close();
             } else {
                 musicPlayer.mainPlayer.open();
             }
         },
-
-        // Scrolls to specific sections within the unified view
-        scrollToSection: (sectionId) => {
-            const scroller = document.getElementById("mainScroller");
-            const section = document.getElementById(sectionId);
-            if (scroller && section) {
-                // Offset by a bit to account for the sticky header
-                const headerHeight = 80; // Approx collapsed header height
-                const targetTop = section.offsetTop - headerHeight;
-                scroller.scrollTo({ top: Math.max(0, targetTop), behavior: 'smooth' });
-            }
-            // Update active tab visually
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelector(`[data-section="${sectionId}"]`)?.classList.add('active');
-        },
-
-        initScrollWatcher: () => {
-            const scroller = document.getElementById("mainScroller");
-            const header = document.getElementById("collapsibleHeader");
-            if (!scroller || !header) return;
-
-            let ticking = false;
-            scroller.addEventListener("scroll", () => {
-                if (!ticking) {
-                    window.requestAnimationFrame(() => {
-                        const scrollTop = scroller.scrollTop;
-                        // Calculate collapse progress (0.0 to 1.0)
-                        let progress = Math.min(scrollTop / musicPlayer.mainPlayer.SCROLL_THRESHOLD, 1);
-                        progress = Math.max(progress, 0);
-
-                        // Set CSS variable for ultra-smooth CSS-based scaling
-                        header.style.setProperty('--collapse-progress', progress);
-
-                        // Toggle class for final states if needed
-                        header.classList.toggle('is-collapsed', progress >= 1);
-                        header.classList.toggle('is-scrolling', scrollTop > 0);
-
-                        ticking = false;
-                    });
-                    ticking = true;
-                }
-            }, { passive: true });
-        },
-
-        init: () => {
-            // Bind Close Button
-            document.getElementById("closeBtn")?.addEventListener("click", musicPlayer.mainPlayer.close());
-
-            // Bind Unified Tabs (they now just scroll to sections)
-            document.querySelectorAll('.tab[data-section]').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    musicPlayer.mainPlayer.scrollToSection(tab.dataset.section);
-                });
-            });
-
-            // Initialize the scroll watcher for the header effect
-            musicPlayer.mainPlayer.initScrollWatcher();
-        }
         switchTab: (tabName) => {
             appState.currentTab = tabName;
             document.querySelectorAll('.player .tab').forEach(tab => {
@@ -1467,7 +1409,91 @@ const musicPlayer = {
                 recentCount.textContent = `${appState.recentlyPlayed.length} song${appState.recentlyPlayed.length !== 1 ? 's' : ''}`;
             }
         },
-  
+        init: () => {
+            const closeBtn = document.querySelector(MUSIC_PLAYER.close);
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => musicPlayer.mainPlayer.close());
+            }
+            document.querySelectorAll('.player .tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabName = tab.dataset.tab;
+                    if (tabName) musicPlayer.mainPlayer.switchTab(tabName);
+                });
+            });
+            const queueBtn = document.querySelector(MUSIC_PLAYER.queueBtn);
+            if (queueBtn) {
+                queueBtn.addEventListener('click', () => musicPlayer.mainPlayer.switchTab(MUSIC_PLAYER.tabs.queue));
+            }
+            musicPlayer.mainPlayer.preventHorizontalScroll();
+            musicPlayer.mainPlayer.initDrawerDrag();
+            const favoriteBtn = document.querySelector(MUSIC_PLAYER.favoriteBtn);
+            if (favoriteBtn) {
+                favoriteBtn.addEventListener('click', () => {
+                    favoriteBtn.classList.toggle('favorited');
+                });
+            }
+            const scrollEl = document.querySelector('.player .scrollableContent');
+            const coverEl = document.querySelector('.player .cover');
+            const compactHeader = document.getElementById('compactHeader');
+            const compactCover = document.getElementById('compactCover');
+            const compactTitle = document.getElementById('compactTitle');
+            const compactArtist = document.getElementById('compactArtist');
+            const contentCard = document.querySelector('.player .contentCard');
+            let coverRect = null;
+            let targetLeft = 16;
+            let targetTop = 12;
+            let targetSize = 56;
+            function recalc() {
+                if (!coverEl) return;
+                coverRect = coverEl.getBoundingClientRect();
+            }
+            function onScroll() {
+                if (!scrollEl || !coverEl || !compactHeader) return;
+                const s = scrollEl.scrollTop;
+                const start = 20;
+                const end = 180;
+                let t = (s - start) / (end - start);
+                t = Math.max(0, Math.min(1, t));
+                if (!coverRect) recalc();
+                const cRect = coverRect;
+                const parentRect = document.querySelector('.player .inner').getBoundingClientRect();
+                const initLeft = cRect.left - parentRect.left;
+                const initTop = cRect.top - parentRect.top;
+                const deltaX = targetLeft - initLeft;
+                const deltaY = targetTop - initTop;
+                const scaleTarget = targetSize / cRect.width;
+                const scale = 1 - (1 - scaleTarget) * t;
+                const translateX = deltaX * t;
+                const translateY = deltaY * t - s * t * 0.06;
+                coverEl.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+                compactHeader.style.opacity = `${t}`;
+                compactHeader.style.pointerEvents = t > 0.5 ? 'auto' : 'none';
+                if (t > 0.99) {
+                    contentCard.classList.add('collapsed');
+                } else {
+                    contentCard.classList.remove('collapsed');
+                }
+            }
+            if (scrollEl) {
+                scrollEl.addEventListener('scroll', onScroll, { passive: true });
+                window.addEventListener('resize', () => {
+                    recalc();
+                    onScroll();
+                });
+                document.getElementById('cover')?.addEventListener('load', () => {
+                    recalc();
+                    onScroll();
+                });
+                recalc();
+                onScroll();
+            }
+            const compactClickArea = document.getElementById('compactHeader');
+            if (compactClickArea) {
+                compactClickArea.addEventListener('click', () => {
+                    document.querySelector('.player .scroller')?.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
+        },
         preventHorizontalScroll: () => {
             const scroller = document.querySelector('.player .scroller');
             if (!scroller) return;
