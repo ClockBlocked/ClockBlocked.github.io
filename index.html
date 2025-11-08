@@ -2139,159 +2139,6 @@ MyBeats:  Stream & share your favorite music for free.
 
 
 <style>
-/* ENHANCED ANIMATIONS & SCROLL LAYOUT */
-
-/* 1. Smooth Drawer Entry/Exit */
-.player {
-    transition:
-        transform 0.5s cubic-bezier(0.32, 0.72, 0, 1),
-        opacity 0.5s cubic-bezier(0.32, 0.72, 0, 1),
-        overlay 0.5s allow-discrete,
-        display 0.5s allow-discrete;
-    opacity: 0;
-    transform: translateY(100%);
-}
-
-.player:popover-open {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* Explicit closing state for JS to use before hiding */
-.player.closing {
-    opacity: 0;
-    transform: translateY(20px) scale(0.98);
-}
-
-@starting-style {
-    .player:popover-open {
-        opacity: 0;
-        transform: translateY(100%);
-    }
-}
-
-/* 2. Main Scroller Layout */
-.player .inner {
-    overflow: hidden; /* Important: inner doesn't scroll, mainScroller does */
-    display: flex;
-    flex-direction: column;
-}
-
-.unified-scroller {
-    flex: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
-    scroll-behavior: smooth; /* For tab clicks */
-    -webkit-overflow-scrolling: touch;
-    position: relative;
-    padding-bottom: 20px;
-}
-
-/* 3. COLLAPSIBLE HEADER (The Magic Part) */
-.collapsible-header {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    /* Use CSS var from JS to determine background opacity */
-    background-color: rgba(45, 51, 59, var(--collapse-progress, 0));
-    backdrop-filter: blur(calc(var(--collapse-progress, 0) * 20px));
-    border-bottom: 1px solid rgba(255, 255, 255, calc(var(--collapse-progress, 0) * 0.1));
-    padding: 1rem;
-    transition: background-color 0.1s linear; /* quick response to scroll */
-    will-change: transform, background-color;
-}
-
-.header-content-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    /* Interpolate gap based on scroll progress */
-    gap: calc(24px * (1 - var(--collapse-progress, 0)));
-}
-
-/* When fully collapsed, switch to row layout */
-.collapsible-header.is-collapsed .header-content-wrapper {
-    flex-direction: row;
-    justify-content: flex-start;
-    gap: 12px;
-}
-
-.artwork-shrink-container {
-    position: relative;
-    /* Smoothly scale size from 250px down to 48px based on scroll progress */
-    width: calc(250px - (202px * var(--collapse-progress, 0)));
-    height: calc(250px - (202px * var(--collapse-progress, 0)));
-    min-width: 48px;
-    min-height: 48px;
-    flex-shrink: 0;
-    will-change: width, height;
-    transition: all 0.1s linear; /* Keep tight sync with scroll */
-}
-
-.artwork-shrink-container .cover {
-    width: 100%;
-    height: 100%;
-    border-radius: calc(12px * var(--collapse-progress, 0) + 1px); /* Rounder when small */
-    box-shadow: 0 8px 24px rgba(0,0,0, 0.3);
-}
-
-/* Fade out glow as we collapse */
-.artwork-shrink-container .coverGlow {
-    opacity: calc(0.6 * (1 - var(--collapse-progress, 0)));
-}
-
-.info-shrink-container {
-    text-align: center;
-    flex: 1;
-    min-width: 0; /* Allow text truncation */
-    /* Interpolate padding/margin */
-    transform: translateY(calc(-20px * var(--collapse-progress, 0)));
-}
-
-.collapsible-header.is-collapsed .info-shrink-container {
-    text-align: left;
-    transform: none;
-}
-
-.info-shrink-container .title {
-    /* Scale font size smoothly */
-    font-size: calc(22px - (6px * var(--collapse-progress, 0)));
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.info-shrink-container .artist {
-     /* Fade out slightly when collapsing, or keep it */
-     font-size: 14px;
-     opacity: 0.7;
-}
-
-.info-shrink-container .album {
-    /* Smoothly fade out album name as we scroll */
-    opacity: calc(0.5 * (1 - var(--collapse-progress, 0)));
-    height: auto;
-    /* Hide completely when near full collapse to save space */
-    max-height: calc(20px * (1 - var(--collapse-progress, 0)));
-    overflow: hidden;
-}
-
-/* 4. Content Sections */
-.scroll-body {
-    padding: 0 1rem;
-}
-
-.player-controls-container {
-    margin-top: 20px;
-    padding-bottom: 40px;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-}
-
-.list-section {
-    padding-top: 30px;
-    scroll-margin-top: 80px; /* For smooth scrolling to land below header */
-}
-
 /* iOS Dropdown */
 .dropdownMenu {
   opacity: 0;
@@ -3282,101 +3129,227 @@ MyBeats:  Stream & share your favorite music for free.
 </style>
 
 <aside class="player" popover="manual" id="drawer">
-    <button popovertargetaction="hide" popovertarget="drawer" class="curtain" tabindex="-1" aria-label="Close"></button>
+  <div class="scroller">
+    <div class="slide">
+      <button popovertargetaction="hide" popovertarget="drawer" class="curtain" tabindex="-1" data-overlay-close="drawer"></button>
 
-    <div class="inner">
+      <div class="inner">
         <div class="dragArea">
-             <button class="dragHandle" aria-label="Drag to close"></button>
+          <button autofocus class="dragHandle" popovertargetaction="hide" popovertarget="drawer">
+            <span></span>
+          </button>
         </div>
 
-        <button class="closeBtn" id="closeBtn" aria-label="Close">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        <button class="closeBtn" id="closeBtn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
         </button>
 
-        <div class="unified-scroller" id="mainScroller">
-
-            <div class="collapsible-header" id="collapsibleHeader">
-                <div class="header-content-wrapper">
-                    <div class="artwork-shrink-container">
-                        <img id="cover" src="" alt="Album Cover" class="cover" />
-                        <div class="coverGlow"></div>
-                    </div>
-
-                    <div class="info-shrink-container">
-                         <h3 id="title" class="title">Select a Song</h3>
-                         <p id="artist" class="artist">Artist</p>
-                         <p id="album" class="album">Album</p>
-                    </div>
-                </div>
+        <div class="nowPlaying">
+          <div class="coverWrapper">
+            <div class="customShapeDivider">
+              <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path
+                  d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"
+                  class="shapeFill"
+                ></path>
+              </svg>
             </div>
 
-            <div class="scroll-body">
-                <div class="player-controls-container" id="controlsSection">
-                     <div class="progressSection" id="progressSection">
-                        <div class="progressBar" id="progressBar" role="slider" aria-label="Seek">
-                            <div class="progressBuffer" id="progressBuffer"></div>
-                            <div class="progressFill" id="progressFill"><div class="progressThumb" id="progressThumb"></div></div>
-                        </div>
-                        <div class="timeDisplay">
-                            <span id="current" class="currentTime">0:00</span>
-                            <span id="total" class="totalTime">0:00</span>
-                        </div>
-                    </div>
+            <img src="https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/stable/global/content/images/albumCovers/placeholder.png" alt="Album Cover" class="cover" id="cover" />
 
-                    <div class="controls">
-                        <button class="controlBtn secondary" id="prevBtn" title="Previous"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
-                        <button class="controlBtn primary" id="playBtn" title="Play/Pause">
-                            <span class="playIcon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
-                            <span class="pauseIcon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg></span>
-                        </button>
-                        <button class="controlBtn secondary" id="nextBtn" title="Next"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg></button>
-                    </div>
-
-                    <div class="actions">
-                        <button class="actionBtn" id="favoriteBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></button>
-                        <button class="actionBtn" id="shuffleBtn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg></button>
-                        <button class="actionBtn" id="repeatBtn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg></button>
-                    </div>
-                </div>
-
-                <div class="unified-lists">
-                    <div class="list-section" id="queueSection">
-                        <div class="listHeader">
-                            <h3 class="listTitle">Up Next</h3>
-                            <span class="listCount" id="queueCount">0</span>
-                        </div>
-                        <ul class="list songList" id="queueList">
-                            <li class="empty"><p class="emptyText">Queue is empty</p></li>
-                        </ul>
-                    </div>
-
-                     <div class="list-section" id="playlistSection">
-                        <div class="listHeader">
-                            <h3 class="listTitle">Playlist</h3>
-                             <span class="listCount" id="playlistCount">0</span>
-                        </div>
-                        <ul class="list songList" id="playlistList">
-                             <li class="empty"><p class="emptyText">No playlist active</p></li>
-                        </ul>
-                    </div>
-                </div>
-            </div> </div> <div class="tabs">
-             <div class="tabsWrapper">
-                <button class="tab active" data-section="controlsSection">
-                    <div class="tabIcon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg></div>
-                    <span class="tabLabel">Playing</span>
-                </button>
-                <button class="tab" data-section="queueSection">
-                    <div class="tabIcon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8 12.5v-9l6 4.5-6 4.5z"/></svg></div>
-                     <span class="tabLabel">Queue</span>
-                </button>
-                <button class="tab" data-section="playlistSection">
-                     <div class="tabIcon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 10h12v2H4zm0-4h12v2H4zm0-4h12v2H4zm16 8H4v2h16z"/></svg></div>
-                    <span class="tabLabel">Playlist</span>
-                </button>
-                 </div>
+            <div class="coverGlow"></div>
+          </div>
         </div>
+
+        <div class="content">
+          <div class="panel active" data-tab="playing">
+            <div class="main">
+              <div class="info">
+                <div class="details">
+                  <h3 id="title" class="title"></h3>
+                  <p id="artist" class="artist"></p>
+                  <p id="album" class="album"></p>
+                </div>
+
+                <button class="favoriteBtn" id="favoriteBtn" title="Add to Favorites">
+                  <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                  </svg>
+                </button>
+              </div>
+
+              <div class="progressSection" id="progressSection">
+                <div class="progressBar" id="progressBar" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Seek">
+                  <div class="progressBuffer" id="progressBuffer"></div>
+                  <div class="progressFill" id="progressFill">
+                    <div class="progressThumb" id="progressThumb"></div>
+                  </div>
+                </div>
+
+                <div class="timeDisplay">
+                  <span id="current" class="currentTime">0:00</span>
+                  <span id="total" class="totalTime">0:00</span>
+                </div>
+              </div>
+
+              <div class="controls">
+                <button class="controlBtn secondary" id="prevBtn" title="Previous">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
+                  </svg>
+                </button>
+
+                <button class="controlBtn rewind" id="rewindBtn" title="Rewind 10s">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                      d="M11.99 5V1l-5 5 5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6h-2c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8zm-1.1 11h-.85v-3.26l-1.01.31v-.69l1.77-.63h.09V16zm4.28-1.76c0 .32-.03.6-.1.82s-.17.42-.29.57-.28.26-.45.33-.37.1-.59.1-.41-.03-.59-.1-.33-.18-.46-.33-.23-.34-.3-.57-.11-.5-.11-.82v-.74c0-.32.03-.6.1-.82s.17-.42.29-.57.28-.26.45-.33.37-.1.59-.1.41.03.59.1.33.18.46.33.23.34.3.57.11.5.11.82v.74zm-.85-.86c0-.19-.01-.35-.04-.48s-.07-.23-.12-.31-.11-.14-.19-.17-.16-.05-.25-.05-.18.02-.25.05-.14.09-.19.17-.09.18-.12.31-.04.29-.04.48v.97c0 .19.01.35.04.48s.07.24.12.32.11.14.19.17.16.05.25.05.18-.02.25-.05.14-.09.19-.17.09-.19.12-.32.04-.29.04-.48v-.97z"
+                    />
+                  </svg>
+                  <span class="skipLabel">10</span>
+                </button>
+
+                <button class="controlBtn primary" id="playBtn" title="Play/Pause">
+                  <span class="playIcon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                  </span>
+                  <span class="pauseIcon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                    </svg>
+                  </span>
+                </button>
+
+                <button class="controlBtn forward" id="forwardBtn" title="Forward 10s">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                      d="M12 5V1l7 6-7 6V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8zm-1.1 11h-.85v-3.26l-1.01.31v-.69l1.77-.63h.09V16zm4.28-1.76c0 .32-.03.6-.1.82s-.17.42-.29.57-.28.26-.45.33-.37.1-.59.1-.41-.03-.59-.1-.33-.18-.46-.33-.23-.34-.3-.57-.11-.5-.11-.82v-.74c0-.32.03-.6.1-.82s.17-.42.29-.57.28-.26.45-.33.37-.1.59-.1.41.03.59.1.33.18.46.33.23.34.3.57.11.5.11.82v.74zm-.85-.86c0-.19-.01-.35-.04-.48s-.07-.23-.12-.31-.11-.14-.19-.17-.16-.05-.25-.05-.18.02-.25.05-.14.09-.19.17-.09.18-.12.31-.04.29-.04.48v.97c0 .19.01.35.04.48s.07.24.12.32.11.14.19.17.16.05.25.05.18-.02.25-.05.14-.09.19-.17.09-.19.12-.32.04-.29.04-.48v-.97z"
+                    />
+                  </svg>
+                  <span class="skipLabel">10</span>
+                </button>
+
+                <button class="controlBtn secondary" id="nextBtn" title="Next">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
+                  </svg>
+                </button>
+              </div>
+
+              <div class="actions">
+                <button class="actionBtn" id="shuffleBtn" title="Shuffle">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                      d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"
+                    />
+                  </svg>
+                </button>
+
+                <button class="actionBtn" id="repeatBtn" title="Repeat">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z" />
+                  </svg>
+                </button>
+
+                <button class="actionBtn" id="volumeBtn" title="Volume">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                      d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"
+                    />
+                  </svg>
+                </button>
+
+                <button class="actionBtn" id="playlistBtn" title="Playlist">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M4 10h12v2H4zm0-4h12v2H4zm0-4h12v2H4zm16 8H4v2h16z" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel" data-tab="playlist">
+            <div class="listHeader">
+              <h3 class="listTitle">Playlist</h3>
+              <span class="listCount" id="playlistCount">0 songs</span>
+            </div>
+
+            <ul class="list" id="playlist">
+              <li class="empty">
+                <div class="emptyIcon">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                      d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"
+                    />
+                  </svg>
+                </div>
+                <p class="emptyText">No songs in playlist</p>
+                <p class="emptySubtext">Add some songs to get started</p>
+              </li>
+            </ul>
+          </div>
+
+          <div class="panel" data-tab="queue">
+            <div class="listHeader">
+              <h3 class="listTitle">Queue</h3>
+              <span class="listCount" id="queueCount">0 songs</span>
+            </div>
+
+            <ul class="list" id="queue">
+              <li class="empty">
+                <div class="emptyIcon">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                      d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8 12.5v-9l6 4.5-6 4.5z"
+                    />
+                  </svg>
+                </div>
+                <p class="emptyText">Queue is empty</p>
+                <p class="emptySubtext">Play some music to see your queue</p>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <div class="tabsWrapper">
+            <button class="tab active" data-tab="playing">
+              <div class="tabIcon">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
+                </svg>
+              </div>
+              <span class="tabLabel">Now Playing</span>
+            </button>
+
+            <button class="tab" data-tab="playlist">
+              <div class="tabIcon">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M4 10h12v2H4zm0-4h12v2H4zm0-4h12v2H4zm16 8H4v2h16z" />
+                </svg>
+              </div>
+              <span class="tabLabel">Playlist</span>
+            </button>
+
+            <button class="tab" data-tab="queue">
+              <div class="tabIcon">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8 12.5v-9l6 4.5-6 4.5z" />
+                </svg>
+              </div>
+              <span class="tabLabel">Queue</span>
+            </button>
+
+            <div class="tabSlider"></div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </aside>
 
 
