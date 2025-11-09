@@ -2374,17 +2374,6 @@ const clickables = {
             drawerClose._closeHandler = closeHandler;
         }
         
-        const curtain = QUERY(`${MUSIC_PLAYER.root} .curtain`);
-        if (curtain) {
-            clickables.removeListener(curtain, '_curtainHandler');
-            const curtainHandler = (e) => {
-                e.stopPropagation();
-                musicPlayer.mainPlayer.close();
-            };
-            curtain.addEventListener('click', curtainHandler);
-            curtain._curtainHandler = curtainHandler;
-        }
-        
         if (drawerPlay) {
             clickables.removeListener(drawerPlay, '_drawerPlayHandler');
             const drawerPlayHandler = (e) => {
@@ -2552,7 +2541,6 @@ const clickables = {
         clickables.removeListener(curtain, '_curtainHandler');
         const curtainHandler = (e) => {
             e.stopPropagation();
-            console.log('🎭 Curtain clicked - closing player');
             musicPlayer.mainPlayer.close();
         };
         curtain.addEventListener('click', curtainHandler);
