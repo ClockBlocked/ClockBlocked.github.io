@@ -3257,7 +3257,6 @@ B E L O W
   pointer-events: none;
   transition: opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0.55s, z-index 0s linear 0.55s;
 }
-
 .player.open {
   visibility: visible;
   opacity: 1;
@@ -3265,7 +3264,6 @@ B E L O W
   pointer-events: auto;
   transition: opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0s, z-index 0s linear 0s;
 }
-
 .player.closing {
   transition: opacity 0.45s cubic-bezier(0.4, 0, 0.6, 1), visibility 0s linear 0.45s, z-index 0s linear 0.45s;
 }
@@ -3279,7 +3277,6 @@ B E L O W
 .player.isPlaying .controlBtn.primary .playIcon {
   display: none;
 }
-
 .player.isPlaying .controlBtn.primary .pauseIcon {
   display: block;
 }
@@ -3296,14 +3293,12 @@ B E L O W
   transition: background 0.55s cubic-bezier(0.4, 0, 0.2, 1), backdrop-filter 0.55s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: none;
 }
-
 .player.open::before {
   background: rgba(0, 0, 0, 0.35);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
   pointer-events: auto;
 }
-
 .player.closing::before {
   background: rgba(0, 0, 0, 0);
   backdrop-filter: blur(0px);
@@ -3334,11 +3329,9 @@ B E L O W
   position: relative;
   z-index: 10;
 }
-
 .player.open .scroller {
   transform: translateY(0);
 }
-
 .player.closing .scroller {
   transform: translateY(100%);
   transition: transform 0.45s cubic-bezier(0.4, 0, 0.6, 1);
@@ -3370,13 +3363,11 @@ B E L O W
   opacity: 0;
   transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .player.open .inner {
   transform: translateY(0);
   opacity: 1;
   transition-delay: 0.05s;
 }
-
 .player.closing .inner {
   transform: translateY(20px);
   opacity: 0;
@@ -3401,7 +3392,6 @@ B E L O W
   transform: translateY(-10px);
   transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .player.open .dragArea {
   opacity: 1;
   transform: translateY(0);
@@ -3419,12 +3409,10 @@ B E L O W
   transform: translateX(50%);
   
 }
-
 .player .dragHandle:active {
   cursor: grabbing;
   transform: scaleX(1.2);
 }
-
 .player .dragHandle:hover {
   background: rgba(255, 255, 255, 0.5);
   width: 64px;
@@ -3453,18 +3441,15 @@ B E L O W
   transform: scale(0.8);
   transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .player.open .closeBtn {
   opacity: 1;
   transform: scale(1);
   transition-delay: 0.2s;
 }
-
 .player .closeBtn:hover {
   background: rgba(255, 255, 255, 0.2);
   transform: rotate(90deg) scale(1.1);
 }
-
 .player .closeBtn svg {
   width: 15px;
   height: 15px;
@@ -3494,7 +3479,6 @@ B E L O W
   transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 50;
 }
-
 .player.open .dotIndicators {
   opacity: 1;
   transform: translateY(0);
@@ -3514,7 +3498,6 @@ B E L O W
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   flex-shrink: 0;
 }
-
 .player .dotIndicator:hover {
   background: rgba(255, 255, 255, 0.5);
   transform: scale(1.3);
@@ -3527,7 +3510,6 @@ B E L O W
   height: 12px;
   box-shadow: 0 0 12px rgba(139, 92, 246, 0.6);
 }
-
 .player .dotIndicator.active:hover {
   transform: scale(1.2);
 }
@@ -3556,7 +3538,6 @@ B E L O W
   border: 1px solid rgba(255, 255, 255, 0.1);
   z-index: 100;
 }
-
 .player .dotIndicator .dotLabel::after {
   content: "";
   position: absolute;
@@ -3579,7 +3560,6 @@ B E L O W
   border-color: rgba(255, 255, 255, 0.2);
   color: #fff;
 }
-
 .player .dotIndicator.active .dotLabel::after {
   border-top-color: #3b82f6;
 }
@@ -3607,7 +3587,6 @@ B E L O W
   transform: translateY(20px);
   transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .player.open .nowPlaying {
   opacity: 1;
   transform: translateY(0);
@@ -3629,7 +3608,6 @@ B E L O W
   flex-shrink: 0;
   border-bottom: none !important;
 }
-
 .player .cover {
   width: 100%;
   height: 100%;
@@ -3641,7 +3619,6 @@ B E L O W
   min-height: 200px;
   background: #1a1f24;
 }
-
 .player .coverGlow {
   position: absolute;
   inset: 0;
@@ -3664,7 +3641,6 @@ B E L O W
   overflow: visible;
   pointer-events: none;
 }
-
 .player .separator svg {
   width: 100%;
   height: 100%;
@@ -3683,7 +3659,6 @@ B E L O W
   pointer-events: none;
   transform: rotate(180deg);
 }
-
 .player .separatorTop svg {
   width: 100%;
   height: 100%;
@@ -3700,7 +3675,6 @@ B E L O W
   line-height: 0;
   height: auto;
 }
-
 .customShapeDivider svg {
   position: relative;
   display: block;
@@ -3709,7 +3683,6 @@ B E L O W
   z-index: 99;
   pointer-events: none;
 }
-
 .customShapeDivider .shapeFill {
   fill: #2d333b;
 }
@@ -3786,18 +3759,15 @@ B E L O W
   flex-shrink: 0;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .player .favoriteBtn:hover {
   background: rgba(239, 68, 68, 0.2);
   border-color: #ef4444;
   transform: scale(1.1);
 }
-
 .player .favoriteBtn.favorited {
   background: rgba(239, 68, 68, 0.3);
   border-color: #ef4444;
 }
-
 .player .favoriteBtn svg {
   width: 15px;
   height: 15px;
@@ -3842,11 +3812,9 @@ B E L O W
   overflow: visible;
   transition: height 0.2s ease;
 }
-
 .player .progressBar:hover {
   height: 8px;
 }
-
 .player .progressBar:hover .progressThumb {
   opacity: 1;
   transform: translate(-50%, -50%) scale(1);
@@ -3926,7 +3894,6 @@ B E L O W
   gap: 12px;
   padding: 8px 0;
 }
-
 .player .controlBtn {
   width: 52px;
   height: 52px;
@@ -3941,7 +3908,6 @@ B E L O W
   position: relative;
   overflow: hidden;
 }
-
 .player .controlBtn::before {
   content: "";
   position: absolute;
@@ -3950,20 +3916,16 @@ B E L O W
   opacity: 0;
   transition: opacity 0.3s ease;
 }
-
 .player .controlBtn:hover::before {
   opacity: 1;
 }
-
 .player .controlBtn:hover {
   background: rgba(255, 255, 255, 0.15);
   transform: translateY(-2px);
 }
-
 .player .controlBtn:active {
   transform: translateY(0) scale(0.95);
 }
-
 .player .controlBtn svg {
   width: 24px;
   height: 24px;
@@ -3975,7 +3937,6 @@ B E L O W
   width: 48px;
   height: 48px;
 }
-
 .player .controlBtn.secondary svg {
   width: 22px;
   height: 22px;
@@ -3987,7 +3948,6 @@ B E L O W
   background: linear-gradient(135deg, #8b5cf6, #3b82f6);
   box-shadow: 0 8px 24px rgba(139, 92, 246, 0.4), 0 4px 12px rgba(59, 130, 246, 0.3);
 }
-
 .player .controlBtn.primary:hover {
   background: linear-gradient(135deg, #9d6dff, #4c93ff);
   box-shadow: 0 12px 32px rgba(139, 92, 246, 0.5), 0 6px 16px rgba(59, 130, 246, 0.4);
@@ -3998,7 +3958,6 @@ B E L O W
   width: 28px;
   height: 28px;
 }
-
 .player .controlBtn.primary .pauseIcon {
   display: none;
 }
@@ -4039,19 +3998,16 @@ B E L O W
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .player .actionBtn:hover {
   background: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.3);
   transform: translateY(-2px);
 }
-
 .player .actionBtn svg {
   width: 20px;
   height: 20px;
   color: rgba(255, 255, 255, 0.7);
 }
-
 .player .actionBtn:hover svg {
   color: #fff;
 }
@@ -4072,7 +4028,6 @@ B E L O W
   flex: 1;
   overflow-y: auto;
 }
-
 .player.open .content {
   opacity: 1;
   transform: translateY(0);
@@ -4085,7 +4040,6 @@ B E L O W
   flex: 1;
   overflow-y: auto;
 }
-
 .player .panel.active {
   display: flex;
   flex-direction: column;
@@ -4146,17 +4100,14 @@ B E L O W
 .player .list::-webkit-scrollbar {
   width: 6px;
 }
-
 .player .list::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.05);
   border-radius: 999px;
 }
-
 .player .list::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.2);
   border-radius: 999px;
 }
-
 .player .list::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.3);
 }
@@ -4171,26 +4122,22 @@ B E L O W
   padding: 60px 20px;
   text-align: center;
 }
-
 .player .emptyIcon {
   width: 80px;
   height: 80px;
   margin-bottom: 20px;
   color: rgba(255, 255, 255, 0.2);
 }
-
 .player .emptyIcon svg {
   width: 100%;
   height: 100%;
 }
-
 .player .emptyText {
   font-size: 18px;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.7);
   margin-bottom: 8px;
 }
-
 .player .emptySubtext {
   font-size: 14px;
   color: rgba(255, 255, 255, 0.4);
@@ -4215,15 +4162,12 @@ B E L O W
   transition: all 0.2s ease;
   margin-bottom: 8px;
 }
-
 .songList .item:hover {
   background: rgba(255, 255, 255, 0.05);
 }
-
 .songList .item:hover .playBack {
   opacity: 1;
 }
-
 .songList .item.active {
   background: rgba(139, 92, 246, 0.15);
   border-left: 3px solid #8b5cf6;
@@ -4282,12 +4226,10 @@ B E L O W
   cursor: pointer;
   transition: all 0.2s ease;
 }
-
 .songList .set:hover {
   background: rgba(255, 255, 255, 0.2);
   transform: scale(1.1);
 }
-
 .songList .set svg {
   width: 18px;
   height: 18px;
@@ -4413,7 +4355,6 @@ B E L O W
     transform: translateY(0);
   }
 }
-
 @keyframes heartBeat {
   0%,
   100% {
@@ -4429,7 +4370,6 @@ B E L O W
     transform: scale(1.1);
   }
 }
-
 @keyframes shimmer {
   0% {
     background-position: -1000px 0;
@@ -4438,7 +4378,6 @@ B E L O W
     background-position: 1000px 0;
   }
 }
-
 </style>
 <aside class="player" id="music-player">
   <div class="scroller musicPlayerScroller">
