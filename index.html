@@ -3396,7 +3396,7 @@ B E L O W
   padding: 12px 0 8px;
   position: relative;
   z-index: 100;
-  background: transparent;
+  background: transparent; overflow: visible;
   opacity: 0;
   transform: translateY(-10px);
   transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -3416,7 +3416,7 @@ B E L O W
   border: none;
   cursor: grab;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
+  position: absolute; top: -2rem; left: 50%; right: 50%;
 }
 
 .player .dragHandle:active {
@@ -3427,6 +3427,7 @@ B E L O W
 .player .dragHandle:hover {
   background: rgba(255, 255, 255, 0.5);
   width: 64px;
+  transition: all 0.65s ease;
 }
 
 
