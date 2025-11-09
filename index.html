@@ -1,2944 +1,905 @@
+
 <!DOCTYPE html>
-<html
-  lang="en"
-  data-theme="dim">
-
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-<title id="dynamicTitle">
-MyBeats:  Stream & share your favorite music for free.
-</title>
-
-<meta name="description" content="Stream & share your favourite music for free." />
-<meta name="keywords" content="music, player, web, audio, streaming, playlist, songs, albums, artists, videos, sharing, media, radio, pop, hiphop, country, dance, party, dubstep, alternative, rock, free, forever" />
-<meta name="author" content="ClockBlocked" />
-<meta name="theme-color" id="theme-color" content="#4A535D" />
-<link rel="manifest" href="./system/manifest.json" />
-
-<meta property="og:title" content="MyBeats™ - Stream & Share Music" />
-<meta property="og:description" content="A sleek and modern web-based music player." />
-<meta property="og:image" content="thumbnail.jpg" />
-<meta property="og:url" content="https://clockblocked.github.io/" />
-<meta property="og:type" content="website" />
-
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="MyBeats™ - Stream & Share Music" />
-<meta name="twitter:description" content="A sleek and modern web-based music player." />
-<meta name="twitter:image" content="thumbnail.jpg" />
-
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<link rel="apple-touch-icon" href="apple-touch-icon.png" />
-
-<link rel="icon" href="favicon.ico" type="image/x-icon" />
-<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
-
-<link rel="stylesheet" href="./overlays.css" />
-<link rel="stylesheet" href="./extra.css" />
-<link rel="stylesheet" href="./dynamicOverlays.css" />
-
-<link rel="stylesheet" href="./stylingSheets/main.css" />
-<link rel="stylesheet" href="./stylingSheets/pages/core.css" />
-<link rel="stylesheet" href="./stylingSheets/components/breadCrumbs.css" />
-<link rel="stylesheet" href="./stylingSheets/components/navbarPlayer.css" />
-<link rel="stylesheet" href="./stylingSheets/components/musicPlayer.css" />
-
-<link rel="stylesheet" href="./stylingSheets/components/lists.css" />
-<link rel="stylesheet" href="./stylingSheets/components/playlists.css" />
-<link rel="stylesheet" href="./stylingSheets/pages/home.css" />
-<link rel="stylesheet" href="./stylingSheets/pages/artist.css" />
-<link rel="stylesheet" href="./stylingSheets/global/animatedly.css" />
-<link rel="stylesheet" href="./stylingSheets/global/fonts.css" />
-<link rel="stylesheet" href="./stylingSheets/global/svg.css" />
-
-<!-- Unified responsive stylesheets -->
-<link rel="stylesheet" href="./stylingSheets/unified-player.css" />
-<link rel="stylesheet" href="./stylingSheets/responsive-layout.css" />
-<link rel="stylesheet" href="./stylingSheets/inline-styles.css" />
-<link rel="stylesheet" href="./stylingSheets/tailwind-conversion.css" />
-
-<!-- Responsive stylesheets -->
-<link 
-    rel="stylesheet" 
-    media="screen and (min-width: 768px) and (max-width: 1024px)" 
-    href="./stylingSheets/responsive/tablet.css"
->
-
-<link 
-    rel="stylesheet" 
-    media="screen and (min-width: 1024px)" 
-    href="./stylingSheets/responsive/desktop.css"
->
-
-<!-- L I B R A R I E S ------------->
-<link
-  rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/preline@2.0.3/dist/preline.min.css" />
-  
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-  
-<link
-  rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" />
-
-<!-- A N A L Y T I C S ------------->
-<script
-  async src="https://www.googletagmanager.com/gtag/js?id=G-P0KCT8TSPW">
-</script>
-
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag() {
-    dataLayer.push(arguments);
-  }
-  gtag("js", new Date());
-  gtag("config", "G-P0KCT8TSPW");
-</script>
-
-
-<style>
-/* ==================== */
-/*    ROOT VARIABLES    */
-/* ==================== */
-:root {
-  --bg-main: #2a313c;
-  --bg-body: #1c222b;
-  --bg-sections: #212830;
-  --bgCode: #0e1116;
-  --border-other: #2a313c;
-  --border-main: #434a55;
-  --color-header-bg: #161b22;
-  --color-border: #434a55;
-  --color-border-secondary: #30363d;
-  --color-text-primary: #c9d1d9;
-  --color-text-secondary: #8b949e;
-  --color-link: #58a6ff;
-  --color-btn-primary-bg: #238636;
-  --color-btn-primary-hover: #2ea043;
-  --color-btn-primary-text: #ffffff;
-  --color-repo-bg: #161b22;
-  --color-nav-item-active: #ffffff;
-  --color-nav-item: #8b949e;
-  --color-tag-bg: rgba(56, 139, 253, 0.15);
-  --color-tag-text: #58a6ff;
-
-  --color-nav-item: #9ca3af;
-  --color-nav-item-active: #f3f4f6;
-  --nav-bg: #1f2937;
-  --nav-hover-bg: rgba(55, 65, 81, 0.6);
-  --nav-active-bg: #1f2328;
-  --nav-border: #374151;
-  --nav-accent: #3b82f6;
-
-  --darkest: rgb(33, 34, 36);
-  --darker: rgb(45, 51, 59);
-  --dark: rgb(52, 59, 68);
-  --lightest: rgb(191, 193, 196);
-  --lighter: rgb(152, 155, 160);
-  --light: rgb(113, 117, 122);
-
-  /* Brand Colors */
-  --red: #f85149;
-  --blue: #58a6ff;
-  --green: #56d364;
-  --purple: #bc8cff;
-  --yellow: #e3b341;
-
-  /* Functional Colors */
-  --success: #3fb950;
-  --warning: #d29922;
-  --error: #f85149;
-  --info: #58a6ff;
-
-  /* Spacing */
-  --space-xs: 4px;
-  --space-sm: 8px;
-  --space-md: 16px;
-  --space-lg: 24px;
-  --space-xl: 32px;
-
-  /* Border Radius */
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 12px;
-  --radius-round: 50%;
-
-  /* Shadows */
-  --shadow-sm: 0 2px 10px rgba(1, 4, 9, 0.5);
-  --shadow-md: 0 5px 15px rgba(1, 4, 9, 0.5);
-  --shadow-lg: 0 10px 30px rgba(1, 4, 9, 0.8);
-
-  /* Transitions */
-  --transition-fast: 0.2s;
-  --transition-normal: 0.3s;
-  --transition-slow: 0.4s;
-
-  /* Z-index */
-  --z-content: 1;
-  --z-overlay: 9;
-  --z-sidebar: 101;
-  --z-header: 100;
-  --z-modal: 1000;
-  --z-loading: 1001;
-
-  /* Font Families */
-  --font-text: "WF Visual Sans Text", sans-serif;
-  --font-headings: "WF Visual Sans", sans-serif;
-  --font-mono: Inconsolata, monospace;
-
-  /* Font Sizes */
-  --text-xs: 0.75rem;
-  --text-sm: 0.875rem;
-  --text-md: 1rem;
-  --text-lg: 1.125rem;
-  --text-xl: 1.25rem;
-  --text-2xl: 1.5rem;
-  --text-3xl: 1.875rem;
-
-  /* Heading Sizes */
-  --h1: 2.5rem;
-  --h2: 3rem;
-  --h3: 1.75rem;
-  --h4: 1.5rem;
-
-  /* Font Weights */
-  --weight-light: 300;
-  --weight-normal: 400;
-  --weight-medium: 500;
-  --weight-semibold: 600;
-  --weight-bold: 700;
-}
-
-:root {
-  --bg-primary: #22272e;
-  --bg-secondary: #2d333b;
-  --bg-tertiary: #373e47;
-  --bg-hover: #444c56;
-  --border-primary: #444c56;
-  --border-secondary: #373e47;
-  --text-primary: #adbac7;
-  --text-secondary: #768390;
-  --text-tertiary: #636e7b;
-  --text-link: #539bf5;
-  --text-link-hover: #6cb6ff;
-  --accent-blue: #539bf5;
-  --accent-green: #57ab5a;
-  --accent-red: #e5534b;
-  --accent-yellow: #c69026;
-  --accent-purple: #b083f0;
-  --btn-bg: #373e47;
-  --btn-hover: #444c56;
-  --btn-border: #444c56;
-  --input-bg: #2d333b;
-  --input-border: #444c56;
-  --shadow: rgba(0, 0, 0, 0.3);
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2000;
-  opacity: 0;
-  visibility: hidden;
-  transition:
-    opacity 0.3s,
-    visibility 0.3s;
-}
-.modal-overlay.active {
-  opacity: 1;
-  visibility: visible;
-}
-
-.modal {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-primary);
-  border-radius: 12px;
-  width: 480px;
-  max-width: 90%;
-  box-shadow: 0 8px 24px var(--shadow);
-  transform: translateY(-20px);
-  transition: transform 0.3s;
-}
-.modal-overlay.active .modal {
-  transform: translateY(0);
-}
-
-.modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 24px;
-  border-bottom: 1px solid var(--border-secondary);
-}
-.modal-header h3 {
-  font-size: 16px;
-  font-weight: 600;
-}
-
-.modal-close {
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  font-size: 24px;
-  cursor: pointer;
-  padding: 0;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 6px;
-  transition: all 0.2s;
-}
-.modal-close:hover {
-  background: var(--bg-hover);
-  color: var(--text-primary);
-}
-
-.modal-body {
-  padding: 24px;
-}
-
-.modal-footer {
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
-  padding: 16px 24px;
-  border-top: 1px solid var(--border-secondary);
-}
-
-.status-emoji-picker {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 16px;
-  flex-wrap: wrap;
-}
-
-.emoji-btn {
-  width: 40px;
-  height: 40px;
-  border: 1px solid var(--border-primary);
-  background: var(--bg-tertiary);
-  border-radius: 6px;
-  font-size: 20px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.emoji-btn:hover {
-  background: var(--bg-hover);
-  transform: scale(1.1);
-}
-
-.status-input {
-  width: 100%;
-  background: var(--input-bg);
-  border: 1px solid var(--input-border);
-  border-radius: 6px;
-  padding: 8px 12px;
-  color: var(--text-primary);
-  font-size: 14px;
-  margin-bottom: 16px;
-}
-.status-options label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--text-secondary);
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.btn-primary,
-.btn-secondary {
-  padding: 6px 16px;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  border: none;
-}
-
-.btn-primary {
-  background: var(--accent-green);
-  color: white;
-}
-.btn-primary:hover {
-  background: #6bc074;
-}
-
-.btn-secondary {
-  background: var(--btn-bg);
-  color: var(--text-primary);
-  border: 1px solid var(--btn-border);
-}
-.btn-secondary:hover {
-  background: var(--btn-hover);
-}
-
-
-
-
-
-
-
-
-/* ===========================================
-   UNIFIED MUSIC PLAYER CSS
-   Works with existing design system - NO OVERRIDES
-   =========================================== */
-
-/* Base responsive utility classes */
-.mobile-only {
-    display: block;
-}
-
-.desktop-tablet-only {
-    display: none;
-}
-
-@media (min-width: 768px) {
-    .mobile-only {
-        display: none;
-    }
-    
-    .desktop-tablet-only {
-        display: block;
-    }
-}
-
-/* Unified Triggers for Desktop/Tablet - uses your existing variables */
-.unified-triggers {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: var(--z-nav);
-    display: flex;
-    gap: 12px;
-}
-.unified-trigger {
-    width: 48px;
-    height: 48px;
-    border-radius: var(--radius-lg);
-    background: var(--background-500);
-    border: 1px solid var(--border-200);
-    color: var(--text-200);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    box-shadow: var(--shadow-md);
-}
-.unified-trigger:hover {
-    background: var(--background-600);
-    border-color: var(--border-accent);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
-    color: var(--text-100);
-}
-.unified-trigger:active {
-    transform: translateY(0);
-}
-.unified-trigger svg {
-    width: 20px;
-    height: 20px;
-}
-
-/* Tablet/Desktop responsive adjustments for existing drawer */
-@media (min-width: 768px) and (max-width: 1023px) {
-    /* Tablet: Centered modal-style drawer */
-    .drawer {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-    }
-    
-    .drawerScroller {
-        height: auto;
-        max-height: 80vh;
-        width: 100%;
-        max-width: 600px;
-        overflow-y: auto;
-        scroll-snap-type: none;
-    }
-    
-    .drawerSlide {
-        width: 100%;
-        min-height: auto;
-        height: auto;
-        flex: none;
-    }
-    
-    .drawerAnchors {
-        display: none;
-    }
-    
-    .drawerContent {
-        min-height: auto;
-        border-radius: var(--radius-xl);
-        max-height: 80vh;
-        overflow-y: auto;
-        position: relative;
-        translate: 0 0;
-        transition: none;
-    }
-    
-    .drawerCurtain {
-        display: block;
-    }
-}
-
-/* Desktop responsive adjustments */
-@media (min-width: 1024px) {
-    /* Desktop: Larger centered modal */
-    .drawer {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 40px;
-    }
-    
-    .drawerScroller {
-        height: auto;
-        max-height: 85vh;
-        width: 100%;
-        max-width: 700px;
-        overflow-y: auto;
-        scroll-snap-type: none;
-    }
-    
-    .drawerSlide {
-        width: 100%;
-        min-height: auto;
-        height: auto;
-        flex: none;
-    }
-    
-    .drawerAnchors {
-        display: none;
-    }
-    
-    .drawerContent {
-        min-height: auto;
-        border-radius: var(--radius-xl);
-        max-height: 85vh;
-        overflow-y: auto;
-        position: relative;
-        translate: 0 0;
-        transition: none;
-    }
-    
-    .drawerCurtain {
-        display: block;
-    }
-    
-    /* Desktop bento grid embedding support */
-    .drawer.bento-embedded {
-        position: relative;
-        display: block;
-        inset: unset;
-        z-index: auto;
-        padding: 0;
-        pointer-events: auto;
-        height: 100%;
-    }
-    
-    .drawer.bento-embedded .drawerScroller {
-        height: 100%;
-        max-height: none;
-        overflow: visible;
-        scroll-snap-type: none;
-    }
-    
-    .drawer.bento-embedded .drawerSlide {
-        height: 100%;
-        min-height: auto;
-    }
-    
-    .drawer.bento-embedded .drawerContent {
-        border-radius: var(--radius-lg);
-        min-height: 100%;
-        max-height: none;
-        position: static;
-        box-shadow: none;
-        border: none;
-    }
-    
-    .drawer.bento-embedded .drawerCurtain,
-    .drawer.bento-embedded .mpNav {
-        display: none;
-    }
-    
-    .drawer.bento-embedded .drawerAnchors {
-        display: none;
-    }
-}
-
-/* Fix tablet popover behavior - prevent immediate closing */
-@media (min-width: 768px) {
-    .drawer::backdrop {
-        background: rgba(0, 0, 0, 0.5);
-        backdrop-filter: var(--blur-md);
-    }
-    
-    .drawer:not(:popover-open) {
-        display: none;
-    }
-    
-    .drawer:popover-open {
-        display: flex;
-    }
-    
-    /* Same rules for music-drawer class */
-    .music-drawer:not(:popover-open) {
-        display: none;
-    }
-    
-    .music-drawer:popover-open {
-        display: flex;
-    }
-    
-    /* Ensure drawer content doesn't trigger backdrop clicks */
-    .drawer .drawerContent {
-        pointer-events: auto;
-        position: relative;
-        z-index: 10;
-    }
-    
-    /* Make sure curtain only covers empty areas */
-    .drawer .drawerCurtain {
-        pointer-events: auto;
-        z-index: 1;
-    }
-}
-
-/* Animation fixes for tablet/desktop */
-@media (min-width: 768px) {
-    .drawer:popover-open,
-    .music-drawer:popover-open {
-        animation: fadeIn 0.3s ease;
-    }
-    
-    .drawer.closing,
-    .music-drawer.closing {
-        animation: fadeOut 0.3s ease;
-    }
-    
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-    
-    @keyframes fadeOut {
-        from { opacity: 1; }
-        to { opacity: 0; }
-    }
-}
-
-
-/** GET RID OF THESE ALL THE WAY DOWN TO WHERE IT SAYS "END" **/
-/* Bento card integration styles */
-.bento-card.music-player-card {
-    overflow: hidden;
-    position: relative;
-}
-
-.bento-card.music-player-card .card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: var(--space-md);
-    border-bottom: 1px solid var(--border-200);
-}
-
-.bento-card.music-player-card .card-title {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--text-100);
-    margin: 0;
-}
-
-.bento-card.music-player-card .card-actions {
-    display: flex;
-    gap: var(--space-sm);
-}
-
-.bento-card.music-player-card .expand-player-btn,
-.bento-card.music-player-card .minimize-player-btn {
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--background-400);
-    border: 1px solid var(--border-200);
-    border-radius: var(--radius-sm);
-    color: var(--text-300);
-    cursor: pointer;
-    transition: all var(--transition-fast);
-}
-
-.bento-card.music-player-card .expand-player-btn:hover,
-.bento-card.music-player-card .minimize-player-btn:hover {
-    background: var(--background-500);
-    color: var(--text-100);
-    border-color: var(--border-accent);
-}
-/** END **/
-
-
-/* Playing state indicator for unified triggers */
-.unified-trigger.playing {
-    background: var(--accent-primary);
-    color: var(--text-on-accent);
-    border-color: var(--accent-primary);
-}
-.unified-trigger.playing::after {
-    content: '';
-    position: absolute;
-    top: -2px;
-    right: -2px;
-    width: 8px;
-    height: 8px;
-    background: var(--accent-success);
-    border-radius: 50%;
-    border: 2px solid var(--background-canvas);
-}
-
-/* Focus states using your existing variables */
-.unified-trigger:focus-visible {
-    outline: 2px solid var(--accent-primary);
-    outline-offset: 2px;
-}
-
-
-
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-    .unified-trigger,
-    .drawer,
-    .drawerContent {
-        transition: none;
-        animation: none;
-    }
-}
-
-/* High contrast support */
-@media (prefers-contrast: high) {
-    .unified-trigger {
-        border-width: 2px;
-    }
-    
-    .drawer .drawerContent {
-        border-width: 2px;
-    }
-}
-
-
-/* ===========================================
-   RESPONSIVE LAYOUT CSS
-   Works with existing navbar styles - NO OVERRIDES
-   =========================================== */
-
-/* Base Layout - respects existing pageWrapper */
-#mainArea {
-    transition: padding-top var(--transition-smooth);
-}
-
-/* Mobile Layout (Default) - preserves existing navbar styles */
-@media (max-width: 767px) {
-    /* Your existing navbar styles from navbarPlayer.css are preserved */
-    
-    /* Hide desktop/tablet triggers */
-    .unified-triggers {
-        display: none;
-    }
-    
-    /* Dropdown menu positioning for mobile - respects existing variables */
-    .dropdown-menu {
-        position: fixed;
-        bottom: calc(45px + 1rem + 16px); /* Based on your navbar height + bottom + padding */
-        left: 4vw; /* Matches your navbar width calculation */
-        right: 4vw;
-        max-height: 70vh;
-        transform: translateY(100%);
-        transition: transform var(--transition-smooth);
-        z-index: calc(var(--z-player) + 1);
-    }
-    
-    .dropdown-menu.show {
-        transform: translateY(0);
-    }
-}
-
-/* Tablet Layout */
-@media (min-width: 768px) and (max-width: 1023px) {
-    /* Hide navbar on tablet */
-    #navbar {
-        display: none !important;
-    }
-    
-    /* Show unified triggers */
-    .unified-triggers {
-        display: flex;
-    }
-    
-    /* Adjust main area padding */
-    #mainArea {
-        padding-bottom: var(--space-xl);
-    }
-    
-    /* Dropdown menu positioning for tablet */
-    .dropdown-menu {
-        position: fixed;
-        top: 80px;
-        right: 20px;
-        left: auto;
-        bottom: auto;
-        width: 320px;
-        max-height: calc(100vh - 120px);
-        box-shadow: var(--shadow-xl);
-        transform: translateY(-10px) scale(0.95);
-        opacity: 0;
-        transition: all var(--transition-smooth);
-        pointer-events: none;
-        z-index: calc(var(--z-player) + 1);
-    }
-    
-    .dropdown-menu.show {
-        transform: translateY(0) scale(1);
-        opacity: 1;
-        pointer-events: auto;
-    }
-}
-
-/* Desktop Layout */
-@media (min-width: 1024px) {
-    /* Hide navbar on desktop */
-    #navbar {
-        display: none !important;
-    }
-    
-    /* Show unified triggers */
-    .unified-triggers {
-        display: flex;
-        top: var(--space-xl);
-        right: var(--space-xl);
-        gap: var(--space-md);
-    }
-    
-    /* Adjust main area padding */
-    #mainArea {
-        padding-bottom: var(--space-2xl);
-        padding-top: var(--space-md);
-    }
-    
-    /* Dropdown menu positioning for desktop */
-    .dropdown-menu {
-        position: fixed;
-        top: 80px;
-        right: var(--space-xl);
-        left: auto;
-        bottom: auto;
-        width: 360px;
-        max-height: calc(100vh - 120px);
-        box-shadow: var(--shadow-2xl);
-        transform: translateY(-10px) scale(0.95);
-        opacity: 0;
-        transition: all var(--transition-smooth);
-        pointer-events: none;
-        z-index: calc(var(--z-player) + 1);
-    }
-    
-    .dropdown-menu.show {
-        transform: translateY(0) scale(1);
-        opacity: 1;
-        pointer-events: auto;
-    }
-    
-    /* Desktop Bento Grid Layout - respects existing bento-grid class */
-    .bento-grid {
-        gap: var(--space-xl);
-        padding: var(--space-xl);
-    }
-    
-    /* Desktop music player bento integration */
-    .drawer.bento-embedded .content {
-        padding: var(--space-md);
-    }
-    
-    .drawer.bento-embedded .tabsContainer {
-        padding: var(--space-md) var(--space-md) 0;
-    }
-    
-    .drawer.bento-embedded .cover {
-        width: 160px;
-        max-width: 160px;
-        margin-bottom: var(--space-md);
-    }
-    
-    .drawer.bento-embedded .info .title {
-        font-size: 1.125rem;
-        margin-bottom: var(--space-sm);
-    }
-    
-    .drawer.bento-embedded .info .artist {
-        font-size: 0.875rem;
-        margin-bottom: var(--space-xs);
-    }
-    
-    .drawer.bento-embedded .info .album {
-        font-size: 0.75rem;
-        margin-bottom: var(--space-lg);
-    }
-    
-    .drawer.bento-embedded .controls {
-        gap: var(--space-sm);
-        margin-bottom: var(--space-md);
-    }
-    
-    .drawer.bento-embedded .controls .btn {
-        width: 36px;
-        height: 36px;
-    }
-    
-    .drawer.bento-embedded .controls .btn.primary {
-        width: 48px;
-        height: 48px;
-    }
-    
-    .drawer.bento-embedded .actions {
-        gap: var(--space-lg);
-    }
-    
-    .drawer.bento-embedded .actions .action {
-        width: 32px;
-        height: 32px;
-    }
-}
-
-/* Ultra-wide Desktop Layout */
-@media (min-width: 1440px) {
-    .unified-triggers {
-        top: var(--space-2xl);
-        right: var(--space-2xl);
-        gap: 18px;
-    }
-    
-    .unified-trigger {
-        width: 52px;
-        height: 52px;
-    }
-    
-    .dropdown-menu {
-        top: 96px;
-        right: var(--space-2xl);
-        width: 380px;
-    }
-}
-
-/* Landscape Mobile Layout */
-@media (max-width: 767px) and (orientation: landscape) {
-    .dropdown-menu {
-        bottom: calc(45px + 16px); /* Your navbar height + spacing */
-        max-height: 60vh;
-    }
-}
-
-/* Focus Management - respects existing variables */
-.dropdown-menu:not(.show) {
-    visibility: hidden;
-}
-
-.dropdown-menu.show {
-    visibility: visible;
-}
-
-/* Accessibility Improvements */
-.unified-trigger:focus-visible {
-    outline: 3px solid var(--accent-primary);
-    outline-offset: 2px;
-}
-
-/* Preserve existing scroll behavior */
-@media (prefers-reduced-motion: reduce) {
-    .dropdown-menu,
-    .unified-trigger {
-        transition: none;
-        animation: none;
-    }
-}
-
-/* CRITICAL FIX: Prevent popover from closing immediately on tablet/desktop */
-@media (min-width: 768px) {
-    /* Ensure the drawer stays open when clicked inside */
-    .drawer:popover-open,
-    .music-drawer:popover-open {
-        position: fixed;
-        display: flex;
-        inset: 0;
-        z-index: var(--z-player);
-    }
-    
-    /* Prevent backdrop clicks from immediately closing */
-    .drawer::backdrop,
-    .music-drawer::backdrop {
-        position: fixed;
-        inset: 0;
-        pointer-events: auto;
-        background: rgba(0, 0, 0, 0.5);
-        backdrop-filter: var(--blur-md);
-    }
-}
-
-/* Device-specific classes for JavaScript */
-.device-mobile .desktop-tablet-only {
-    display: none !important;
-}
-
-.device-tablet .mobile-only,
-.device-desktop .mobile-only {
-    display: none !important;
-}
-
-.device-tablet .desktop-tablet-only,
-.device-desktop .desktop-tablet-only {
-    display: flex !important;
-}
-
-
-
-/** KEEP THESE GROUPED **/
-/* R E C E N T L Y  P L A Y E D */
-.recent-tracks {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-}
-
-.modern-track-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-md);
-  padding: var(--space-md);
-  background: var(--background-400);
-  border: 1px solid var(--border-200);
-  border-radius: var(--radius-lg);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  position: relative;
-  overflow: hidden;
-}
-.modern-track-item::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-  opacity: 0;
-  transition: opacity var(--transition-fast);
-}
-.modern-track-item:hover {
-  background: var(--background-500);
-  border-color: var(--border-accent);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
-}
-.modern-track-item:hover::before {
-  opacity: 0.05;
-}
-
-.track-artwork-container {
-  position: relative;
-  flex-shrink: 0;
-}
-.track-artwork {
-  width: 56px;
-  height: 56px;
-  border-radius: var(--radius-md);
-  object-fit: cover;
-  box-shadow: var(--shadow-sm);
-  transition: all var(--transition-fast);
-}
-
-.track-play-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.6);
-  border-radius: var(--radius-md);
-  opacity: 0;
-  transition: all var(--transition-fast);
-  backdrop-filter: blur(4px);
-}
-.modern-track-item:hover .track-play-overlay {
-  opacity: 1;
-}
-
-.track-play-btn {
-  width: 32px;
-  height: 32px;
-  background: var(--accent-primary);
-  border: none;
-  border-radius: 50%;
-  color: var(--text-on-accent);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all var(--transition-fast);
-  box-shadow: var(--shadow-md);
-}
-.track-play-btn:hover {
-  background: var(--accent-primary-hover);
-  transform: scale(1.1);
-  box-shadow: var(--shadow-lg);
-}
-
-.track-content {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.track-main-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.track-title-text {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--text-100);
-  margin-bottom: var(--space-xs);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: 1.3;
-}
-
-.track-artist-text {
-  font-size: 0.85rem;
-  color: var(--text-300);
-  cursor: pointer;
-  transition: color var(--transition-fast);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.track-artist-text:hover {
-  color: var(--accent-primary);
-  text-decoration: underline;
-}
-
-.track-meta {
-  margin-right: var(--space-md);
-}
-
-.track-duration {
-  font-size: 0.8rem;
-  color: var(--text-400);
-  font-variant-numeric: tabular-nums;
-}
-
-.track-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  opacity: 0;
-  transition: opacity var(--transition-fast);
-}
-
-.modern-track-item:hover .track-actions {
-  opacity: 1;
-}
-
-.track-action-btn {
-  width: 36px;
-  height: 36px;
-  background: transparent;
-  border: none;
-  border-radius: var(--radius-sm);
-  color: var(--text-300);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all var(--transition-fast);
-}
-.track-action-btn:hover {
-  background: var(--background-600);
-  color: var(--text-100);
-  transform: scale(1.05);
-}
-
-.track-favorite-btn:hover {
-  color: var(--accent-danger);
-}
-.track-favorite-btn.active {
-  color: var(--accent-danger);
-}
-.track-favorite-btn.active svg {
-  fill: currentColor;
-}
-
-
-
-/** KEEP THESE GROUPED **/
-/** P L A Y L I S T S **/
-.playlists-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-}
-
-.modern-playlist-card {
-  display: flex;
-  align-items: center;
-  gap: var(--space-md);
-  padding: var(--space-md);
-  background: var(--background-400);
-  border: 1px solid var(--border-200);
-  border-radius: var(--radius-lg);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  position: relative;
-  overflow: hidden;
-}
-.modern-playlist-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
-  opacity: 0;
-  transition: opacity var(--transition-fast);
-}
-.modern-playlist-card:hover {
-  background: var(--background-500);
-  border-color: var(--border-accent);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
-}
-.modern-playlist-card:hover::before {
-  opacity: 0.05;
-}
-
-.playlist-artwork-container {
-  position: relative;
-  flex-shrink: 0;
-}
-
-.playlist-icon-wrapper {
-  width: 56px;
-  height: 56px;
-  background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-on-accent);
-  box-shadow: var(--shadow-sm);
-  transition: all var(--transition-fast);
-}
-
-.playlist-play-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.6);
-  border-radius: var(--radius-md);
-  opacity: 0;
-  transition: all var(--transition-fast);
-  backdrop-filter: blur(4px);
-}
-.modern-playlist-card:hover .playlist-play-overlay {
-  opacity: 1;
-}
-
-.playlist-play-btn {
-  width: 32px;
-  height: 32px;
-  background: var(--accent-primary);
-  border: none;
-  border-radius: 50%;
-  color: var(--text-on-accent);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all var(--transition-fast);
-  box-shadow: var(--shadow-md);
-}
-.playlist-play-btn:hover {
-  background: var(--accent-primary-hover);
-  transform: scale(1.1);
-  box-shadow: var(--shadow-lg);
-}
-
-.playlist-content {
-  flex: 1;
-  min-width: 0;
-}
-
-.playlist-main-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.playlist-name-text {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--text-100);
-  margin-bottom: var(--space-xs);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: 1.3;
-}
-
-.playlist-tracks-text {
-  font-size: 0.85rem;
-  color: var(--text-300);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.playlist-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  opacity: 0;
-  transition: opacity var(--transition-fast);
-}
-.modern-playlist-card:hover .playlist-actions {
-  opacity: 1;
-}
-
-.playlist-action-btn {
-  width: 36px;
-  height: 36px;
-  background: transparent;
-  border: none;
-  border-radius: var(--radius-sm);
-  color: var(--text-300);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all var(--transition-fast);
-}
-.playlist-action-btn:hover {
-  background: var(--background-600);
-  color: var(--text-100);
-  transform: scale(1.05);
-}
-
-
-
-/** KEEP THESE GROUPED **/
-/** F A V O R I T E   A RT I S T S **/
-.modern-artist-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: var(--space-lg);
-}
-
-.modern-artist-card {
-  background: var(--background-400);
-  border: 1px solid var(--border-200);
-  border-radius: var(--radius-xl);
-  padding: var(--space-lg);
-  cursor: pointer;
-  transition: all var(--transition-base);
-  position: relative;
-  overflow: hidden;
-  text-align: center;
-}
-.modern-artist-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-  opacity: 0;
-  transition: opacity var(--transition-base);
-}
-.modern-artist-card:hover {
-  background: var(--background-500);
-  border-color: var(--border-accent);
-  transform: translateY(-8px);
-  box-shadow: var(--shadow-xl);
-}
-.modern-artist-card:hover::before {
-  opacity: 0.05;
-}
-
-.artist-artwork-container {
-  position: relative;
-  margin-bottom: var(--space-lg);
-}
-
-.artist-avatar-image {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin: 0 auto;
-  display: block;
-  box-shadow: var(--shadow-lg);
-  transition: all var(--transition-base);
-}
-.modern-artist-card:hover .artist-avatar-image {
-  transform: scale(1.05);
-  box-shadow: var(--shadow-2xl);
-}
-
-.artist-gradient-overlay {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: linear-gradient(135deg, transparent 0%, var(--accent-primary) 100%);
-  opacity: 0;
-  transition: all var(--transition-base);
-}
-.modern-artist-card:hover .artist-gradient-overlay {
-  opacity: 0.1;
-}
-
-.artist-play-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.6);
-  border-radius: 50%;
-  opacity: 0;
-  transition: all var(--transition-base);
-  backdrop-filter: blur(4px);
-}
-.modern-artist-card:hover .artist-play-overlay {
-  opacity: 1;
-}
-
-.artist-play-btn {
-  width: 48px;
-  height: 48px;
-  background: var(--accent-primary);
-  border: none;
-  border-radius: 50%;
-  color: var(--text-on-accent);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all var(--transition-fast);
-  box-shadow: var(--shadow-lg);
-}
-.artist-play-btn:hover {
-  background: var(--accent-primary-hover);
-  transform: scale(1.1);
-  box-shadow: var(--shadow-xl);
-}
-
-.artist-content {
-  margin-bottom: var(--space-md);
-}
-
-.artist-name-text {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--text-100);
-  margin-bottom: var(--space-xs);
-  line-height: 1.3;
-}
-
-.artist-label {
-  font-size: 0.85rem;
-  color: var(--text-300);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-weight: 500;
-}
-
-.artist-actions {
-  display: flex;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity var(--transition-base);
-}
-.modern-artist-card:hover .artist-actions {
-  opacity: 1;
-}
-
-.artist-action-btn {
-  width: 36px;
-  height: 36px;
-  background: var(--background-600);
-  border: 1px solid var(--border-200);
-  border-radius: 50%;
-  color: var(--text-300);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all var(--transition-fast);
-}
-.artist-action-btn:hover {
-  background: var(--accent-primary);
-  border-color: var(--accent-primary);
-  color: var(--text-on-accent);
-  transform: scale(1.1);
-}
-.artist-follow-btn.following {
-  background: var(--accent-success);
-  border-color: var(--accent-success);
-  color: var(--text-on-accent);
-}
-
-
-
-/** KEEP THESE GROUPED **/
-/** F A V O R I T E  S O N G S **/
-.favorite-tracks {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-}
-
-.modern-favorite-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-md);
-  padding: var(--space-md);
-  background: var(--background-400);
-  border: 1px solid var(--border-200);
-  border-radius: var(--radius-lg);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  position: relative;
-  overflow: hidden;
-}
-.modern-favorite-item::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, var(--accent-danger), var(--accent-pink));
-  opacity: 0.02;
-  transition: opacity var(--transition-fast);
-}
-.modern-favorite-item:hover {
-  background: var(--background-500);
-  border-color: var(--border-accent);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
-}
-.modern-favorite-item:hover::before {
-  opacity: 0.05;
-}
-
-.favorite-artwork-container {
-  position: relative;
-  flex-shrink: 0;
-}
-
-.favorite-artwork {
-  width: 56px;
-  height: 56px;
-  border-radius: var(--radius-md);
-  object-fit: cover;
-  box-shadow: var(--shadow-sm);
-  transition: all var(--transition-fast);
-}
-
-.favorite-play-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.6);
-  border-radius: var(--radius-md);
-  opacity: 0;
-  transition: all var(--transition-fast);
-  backdrop-filter: blur(4px);
-}
-.modern-favorite-item:hover .favorite-play-overlay {
-  opacity: 1;
-}
-
-.favorite-play-btn {
-  width: 32px;
-  height: 32px;
-  background: var(--accent-primary);
-  border: none;
-  border-radius: 50%;
-  color: var(--text-on-accent);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all var(--transition-fast);
-  box-shadow: var(--shadow-md);
-}
-.favorite-play-btn:hover {
-  background: var(--accent-primary-hover);
-  transform: scale(1.1);
-  box-shadow: var(--shadow-lg);
-}
-
-.favorite-content {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.favorite-main-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.favorite-title-text {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--text-100);
-  margin-bottom: var(--space-xs);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: 1.3;
-}
-
-.favorite-artist-text {
-  font-size: 0.85rem;
-  color: var(--text-300);
-  cursor: pointer;
-  transition: color var(--transition-fast);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.favorite-artist-text:hover {
-  color: var(--accent-primary);
-  text-decoration: underline;
-}
-
-.favorite-meta {
-  margin-right: var(--space-md);
-}
-
-.favorite-duration {
-  font-size: 0.8rem;
-  color: var(--text-400);
-  font-variant-numeric: tabular-nums;
-}
-
-.favorite-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  opacity: 0;
-  transition: opacity var(--transition-fast);
-}
-.modern-favorite-item:hover .favorite-actions {
-  opacity: 1;
-}
-
-.favorite-action-btn {
-  width: 36px;
-  height: 36px;
-  background: transparent;
-  border: none;
-  border-radius: var(--radius-sm);
-  color: var(--text-300);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all var(--transition-fast);
-}
-.favorite-action-btn:hover {
-  background: var(--background-600);
-  color: var(--text-100);
-  transform: scale(1.05);
-}
-
-.favorite-heart-btn {
-  color: var(--accent-danger);
-  opacity: 1;
-}
-.favorite-heart-btn:hover {
-  color: var(--accent-danger-hover);
-  background: rgba(239, 68, 68, 0.1);
-}
-.favorite-heart-btn.active svg {
-  fill: currentColor;
-}
-
-
-
-
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .modern-artist-grid {
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: var(--space-md);
-  }
-  
-  .modern-artist-card {
-    padding: var(--space-md);
-  }
-  
-  .artist-avatar-image {
-    width: 80px;
-    height: 80px;
-  }
-  
-  .artist-play-btn {
-    width: 36px;
-    height: 36px;
-  }
-  
-  .modern-track-item,
-  .modern-playlist-card,
-  .modern-favorite-item {
-    padding: var(--space-sm) var(--space-md);
-  }
-  
-  .track-artwork,
-  .favorite-artwork {
-    width: 48px;
-    height: 48px;
-  }
-  
-  .playlist-icon-wrapper {
-    width: 48px;
-    height: 48px;
-  }
-  
-  .track-actions,
-  .playlist-actions,
-  .favorite-actions {
-    opacity: 1; /* Always visible on mobile */
-  }
-}
-
-@media (max-width: 480px) {
-  .modern-artist-grid {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: var(--space-sm);
-  }
-  
-  .track-content,
-  .favorite-content {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-xs);
-  }
-  
-  .track-meta,
-  .favorite-meta {
-    margin-right: 0;
-    align-self: flex-end;
-  }
-}
-
-/* Animation delays preserved from original */
-.modern-track-item:nth-child(1),
-.modern-playlist-card:nth-child(1),
-.modern-artist-card:nth-child(1),
-.modern-favorite-item:nth-child(1) { animation-delay: 0.1s; }
-
-.modern-track-item:nth-child(2),
-.modern-playlist-card:nth-child(2),
-.modern-artist-card:nth-child(2),
-.modern-favorite-item:nth-child(2) { animation-delay: 0.2s; }
-
-.modern-track-item:nth-child(3),
-.modern-playlist-card:nth-child(3),
-.modern-artist-card:nth-child(3),
-.modern-favorite-item:nth-child(3) { animation-delay: 0.3s; }
-
-.modern-track-item:nth-child(4),
-.modern-playlist-card:nth-child(4),
-.modern-artist-card:nth-child(4),
-.modern-favorite-item:nth-child(4) { animation-delay: 0.4s; }
-
-.modern-track-item:nth-child(5),
-.modern-playlist-card:nth-child(5),
-.modern-artist-card:nth-child(5),
-.modern-favorite-item:nth-child(5) { animation-delay: 0.5s; }
-
-.modern-track-item:nth-child(6),
-.modern-playlist-card:nth-child(6),
-.modern-artist-card:nth-child(6),
-.modern-favorite-item:nth-child(6) { animation-delay: 0.6s; }
-</style>
-
-
-
-</head>
-<body>
-
-<!-- Main Page Wrapper ---------------------------------------->
-<div id="pageWrapper" data-label="Outermost container for the whole page">
-
-<!-- Toast container -->
-<div id="toast-portal"></div>
-
-<!-- Theme Toggle Component -->
-<div class="theme-toggle-container">
-    <div class="theme-trigger">
-      <svg width="24" height="24" viewBox="0 0 24 24">
-        <path fill="currentColor" d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121z"/>
-      </svg>
-    </div>
-    <div class="theme-options">
-      <button data-theme="light" aria-label="Light theme">
-        <svg width="20" height="20" viewBox="0 0 24 24">
-          <path fill="currentColor" d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121z"/>
-        </svg>
-      </button>
-      <button data-theme="dim" aria-label="Dim theme">
-        <svg width="20" height="20" viewBox="0 0 24 24">
-          <path fill="currentColor" d="M9.822 2.238a9 9 0 0 0 11.94 11.94C20.768 18.654 16.775 22 12 22 6.477 22 2 17.523 2 12c0-4.775 3.346-8.768 7.822-9.762zm8.342.053L19 2.5v1l-.836.209a2 2 0 0 0-1.455 1.455L16.5 6h-1l-.209-.836a2 2 0 0 0-1.455-1.455L13 3.5v-1l.836-.209A2 2 0 0 0 15.291.836L15.5 0h1l.209.836a2 2 0 0 0 1.455 1.455zm5 5L24 7.5v1l-.836.209a2 2 0 0 0-1.455 1.455L21.5 11h-1l-.209-.836a2 2 0 0 0-1.455-1.455L18 8.5v-1l.836-.209a2 2 0 0 0 1.455-1.455L20.5 5h1l.209.836a2 2 0 0 0 1.455 1.455z"/>
-        </svg>
-      </button>
-      <button data-theme="dark" aria-label="Dark theme">
-        <svg width="20" height="20" viewBox="0 0 24 24">
-          <path fill="currentColor" d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1-8.313-12.454z"/>
-        </svg>
-      </button>
-    </div>
-</div>
-
-<!-- Unified Menu & Player Triggers for Tablet/Desktop -->
-<div class="unified-triggers desktop-tablet-only">
-    <button class="unified-trigger menu-trigger" id="unified-menu-trigger" title="Menu" data-label="Unified Menu Trigger">
-        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
-        </svg>
-    </button>
-    
-    <button class="unified-trigger player-trigger" id="unified-player-trigger" title="Music Player" data-label="Unified Player Trigger">
-        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.369 4.369 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z" />
-        </svg>
-    </button>
-</div>
-
-
-
-
-<!-- Navigation Bar (Mobile Only) -->
-<nav id="navbar" class="glass-effect mobile-only">
-    <div class="navbar-content" data-label="All elements within navbar container">
-
-        <!--- L E F T --->
-        <div class="navbar-left" data-label="Left container">
-            <button class="menu-trigger" id="menu-trigger" title="Menu" data-toggle-menu="toggle">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
-                </svg>
-            </button>
+<html lang="en" data-theme="dim">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title id="dynamicTitle">MyBeats: Stream & share your favorite music for free.</title>
+
+    <meta name="description" content="Stream & share your favourite music for free." />
+    <meta name="keywords" content="music, player, web, audio, streaming, playlist, songs, albums, artists, videos, sharing, media, radio, pop, hiphop, country, dance, party, dubstep, alternative, rock, free, forever" />
+    <meta name="author" content="ClockBlocked" />
+    <meta name="theme-color" id="theme-color" content="#4A535D" />
+    <link rel="manifest" href="./system/manifest.json" />
+
+    <meta property="og:title" content="MyBeats™ - Stream & Share Music" />
+    <meta property="og:description" content="A sleek and modern web-based music player." />
+    <meta property="og:image" content="thumbnail.jpg" />
+    <meta property="og:url" content="https://clockblocked.github.io/" />
+    <meta property="og:type" content="website" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="MyBeats™ - Stream & Share Music" />
+    <meta name="twitter:description" content="A sleek and modern web-based music player." />
+    <meta name="twitter:image" content="thumbnail.jpg" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+
+
+
+
+
+    <link rel="stylesheet" href="./overlays.css" />
+    <link rel="stylesheet" href="./extra.css" />
+    <link rel="stylesheet" href="./dynamicOverlays.css" />
+
+    <link rel="stylesheet" href="./stylingSheets/main.css" />
+
+    <link rel="stylesheet" href="./stylingSheets/pages/core.css" />
+
+    <link rel="stylesheet" href="./stylingSheets/components/breadCrumbs.css" />
+    <link rel="stylesheet" href="./stylingSheets/components/navbarPlayer.css" />
+    <link rel="stylesheet" href="./stylingSheets/components/musicPlayer.css" />
+    <link rel="stylesheet" href="./stylingSheets/components/lists.css" />
+    <link rel="stylesheet" href="./stylingSheets/components/playlists.css" />
+
+    <link rel="stylesheet" href="./stylingSheets/pages/home.css" />
+    <link rel="stylesheet" href="./stylingSheets/pages/artist.css" />
+
+    <link rel="stylesheet" href="./stylingSheets/global/animatedly.css" />
+    <link rel="stylesheet" href="./stylingSheets/global/fonts.css" />
+    <link rel="stylesheet" href="./stylingSheets/global/svg.css" />
+
+    <link rel="stylesheet" href="./stylingSheets/unified-player.css" />
+    <link rel="stylesheet" href="./stylingSheets/responsive-layout.css" />
+    <link rel="stylesheet" href="./stylingSheets/inline-styles.css" />
+    <link rel="stylesheet" href="./stylingSheets/tailwind-conversion.css" />
+
+    <link rel="stylesheet" media="screen and (min-width: 768px) and (max-width: 1024px)" href="./stylingSheets/responsive/tablet.css" />
+    <link rel="stylesheet" media="screen and (min-width: 1024px)" href="./stylingSheets/responsive/desktop.css" />
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/preline@2.0.3/dist/preline.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" />
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-P0KCT8TSPW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-P0KCT8TSPW");
+    </script>
+  </head>
+  <body>
+    <div id="pageWrapper">
+      <div id="toast-portal"></div>
+      <div class="theme-toggle-container">
+        <div class="theme-trigger">
+          <svg width="24" height="24" viewBox="0 0 24 24">
+            <path
+              fill="currentColor"
+              d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121z"
+            />
+          </svg>
         </div>
-
-        <!--- C E N T E R --->
-        <div class="navbar-center" id="now-playing-area">
-            <div class="nowPlaying" data-label="Opens the Music Player Drawer when clicked">
-
-                <div class="albumArtwork flex items-center justify-center relative">
-                    <svg class="w-6 h-6 text-white transition-opacity duration-500 ease-in-out" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.369 4.369 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z" />
-                    </svg>
-                    
-                    <img src="" alt="Album Cover" class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 ease-in-out" />
-                </div>
-
-                <div class="songInfo">
-                    <div class="songName truncate">No song playing</div>
-                    <div class="artistName truncate">Select a song to get started</div>
-                </div>
-
-                <div class="play-indicator" id="play-indicator"></div>
-            </div>
-        </div>
-        
-        <!--- R I G H T --->
-        <div class="navbar-right">
-            <div class="nav-controls">
-                <button class="previous nav-control-btn" title="Previous Track">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M8.445 14.832A1 1 0 0010 14v-2.798l5.445 3.63A1 1 0 0017 14V6a1 1 0 00-1.555-.832L10 8.798V6a1 1 0 00-1.555-.832l-6 4a1 1 0 000 1.664l6 4z" />
-                    </svg>
-                </button>
-
-                <button class="playPause nav-control-btn play-pause" title="Play/Pause">
-                    <svg id="play-icon-navbar" class="play w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                    </svg>
-                    <svg id="pause-icon-navbar" class="pause w-6 h-6 hidden" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
-                    </svg>
-                </button>
-
-                <button class="next nav-control-btn" title="Next Track">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798L4.555 5.168z" />
-                    </svg>
-                </button>
-            </div>
-        </div>
-    </div>
-</nav>
-
-
-<!-- Drop-Down Menu ----------------------------------------->
-<div class="dropdown-menu" id="dropdown-menu">
-    <div class="dropdown-header">
-        <h3 class="dropdown-title">Music Library</h3>
-        <button class="dropdown-close" id="dropdown-close">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+        <div class="theme-options">
+          <button data-theme="light" aria-label="Light theme">
+            <svg width="20" height="20" viewBox="0 0 24 24">
+              <path
+                fill="currentColor"
+                d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121z"
+              />
             </svg>
+          </button>
+          <button data-theme="dim" aria-label="Dim theme">
+            <svg width="20" height="20" viewBox="0 0 24 24">
+              <path
+                fill="currentColor"
+                d="M9.822 2.238a9 9 0 0 0 11.94 11.94C20.768 18.654 16.775 22 12 22 6.477 22 2 17.523 2 12c0-4.775 3.346-8.768 7.822-9.762zm8.342.053L19 2.5v1l-.836.209a2 2 0 0 0-1.455 1.455L16.5 6h-1l-.209-.836a2 2 0 0 0-1.455-1.455L13 3.5v-1l.836-.209A2 2 0 0 0 15.291.836L15.5 0h1l.209.836a2 2 0 0 0 1.455 1.455zm5 5L24 7.5v1l-.836.209a2 2 0 0 0-1.455 1.455L21.5 11h-1l-.209-.836a2 2 0 0 0-1.455-1.455L18 8.5v-1l.836-.209a2 2 0 0 0 1.455-1.455L20.5 5h1l.209.836a2 2 0 0 0 1.455 1.455z"
+              />
+            </svg>
+          </button>
+          <button data-theme="dark" aria-label="Dark theme">
+            <svg width="20" height="20" viewBox="0 0 24 24">
+              <path fill="currentColor" d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1-8.313-12.454z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="unified-triggers desktop-tablet-only">
+        <button class="unified-trigger menu-trigger" id="unified-menu-trigger" title="Menu">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
+          </svg>
         </button>
-    </div>
-
-    <div class="dropdown-section">
-        <h4 class="section-title">
+        <button class="unified-trigger player-trigger" id="unified-player-trigger" title="Music Player">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.369 4.369 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z" />
+          </svg>
+        </button>
+      </div>
+      <nav id="navbar" class="glass-effect mobile-only">
+        <div class="navbar-content">
+          <div class="navbar-left">
+            <button class="menu-trigger" id="menu-trigger" title="Menu" data-toggle-menu="toggle">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
+              </svg>
+            </button>
+          </div>
+          <div class="navbar-center" id="now-playing-area">
+            <div class="nowPlaying">
+              <div class="albumArtwork flex items-center justify-center relative">
+                <svg class="w-6 h-6 text-white transition-opacity duration-500 ease-in-out" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.369 4.369 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z" />
+                </svg>
+                <img src="" alt="Album Cover" class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 ease-in-out" />
+              </div>
+              <div class="songInfo">
+                <div class="songName truncate">No song playing</div>
+                <div class="artistName truncate">Select a song to get started</div>
+              </div>
+              <div class="play-indicator" id="play-indicator"></div>
+            </div>
+          </div>
+          <div class="navbar-right">
+            <div class="nav-controls">
+              <button class="previous nav-control-btn" title="Previous Track">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M8.445 14.832A1 1 0 0010 14v-2.798l5.445 3.63A1 1 0 0017 14V6a1 1 0 00-1.555-.832L10 8.798V6a1 1 0 00-1.555-.832l-6 4a1 1 0 000 1.664l6 4z" />
+                </svg>
+              </button>
+              <button class="playPause nav-control-btn play-pause" title="Play/Pause">
+                <svg id="play-icon-navbar" class="play w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                </svg>
+                <svg id="pause-icon-navbar" class="pause w-6 h-6 hidden" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                </svg>
+              </button>
+              <button class="next nav-control-btn" title="Next Track">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798L4.555 5.168z" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <div class="dropdown-menu" id="dropdown-menu">
+        <div class="dropdown-header">
+          <h3 class="dropdown-title">Music Library</h3>
+          <button class="dropdown-close" id="dropdown-close">
             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
+              <path
+                fill-rule="evenodd"
+                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </button>
+        </div>
+        <div class="dropdown-section">
+          <h4 class="section-title">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
             </svg>
             Search
-        </h4>
-
-        <div class="dropdown-item" id="favorite-songs">
+          </h4>
+          <div class="dropdown-item" id="favorite-songs">
             <div class="dropdown-item-icon">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
             </div>
             <div class="dropdown-item-content">
-                <div class="dropdown-item-title">
-                    Find Songs, Albums, Artists</div>
-                <div class="dropdown-item-subtitle">Your liked tracks</div>
+              <div class="dropdown-item-title">Find Songs, Albums, Artists</div>
+              <div class="dropdown-item-subtitle">Your liked tracks</div>
             </div>
             <div class="dropdown-item-badge" id="favorite-songs-count">New!</div>
-        </div>
-
-        <!-- Search Trigger Button -->
-        <button id="searchTrigger" class="search-trigger-btn flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-300 backdrop-blur-sm">
+          </div>
+          <button id="searchTrigger" class="search-trigger-btn flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-300 backdrop-blur-sm">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
             <span class="text-sm">Search</span>
             <kbd class="hidden md:inline-block px-2 py-1 text-xs rounded bg-white/10">⌘K</kbd>
-        </button>
-    </div>
-
-    <div class="dropdown-section">
-        <h4 class="section-title">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
-            </svg>
-            Favorites
-        </h4>
-
-        <div class="dropdown-item" id="favorite-songs">
-            <div class="dropdown-item-icon">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-            </div>
-            <div class="dropdown-item-content">
-                <div class="dropdown-item-title">Favorite Songs</div>
-                <div class="dropdown-item-subtitle">Your liked tracks</div>
-            </div>
-            <div class="dropdown-item-badge" id="favorite-songs-count">0</div>
-        </div>
-
-        <div class="dropdown-item" id="favorite-artists">
-            <div class="dropdown-item-icon">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9 12a3 3 0 00-3-3H2a1 1 0 100 2h4a1 1 0 011 1v.5a1 1 0 102 0V12zm3-8a3 3 0 100 6 3 3 0 000-6zm-1 4a1 1 0 11-2 0 1 1 0 012 0z" />
-                </svg>
-            </div>
-            <div class="dropdown-item-content">
-                <div class="dropdown-item-title">Favorite Artists</div>
-                <div class="dropdown-item-subtitle">Artists you follow</div>
-            </div>
-            <div class="dropdown-item-badge" id="favorite-artists-count">0</div>
-        </div>
-    </div>
-
-    <div class="dropdown-section">
-        <h4 class="section-title">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
-            </svg>
-            Library
-        </h4>
-
-        <div class="dropdown-item" id="recently-played">
-            <div class="dropdown-item-icon">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
-                </svg>
-            </div>
-            <div class="dropdown-item-content">
-                <div class="dropdown-item-title">Recent Plays</div>
-                <div class="dropdown-item-subtitle">Recently played songs</div>
-            </div>
-            <div class="dropdown-item-badge" id="recent-count">0</div>
-        </div>
-
-        <div class="dropdown-item" id="queue-view">
-            <div class="dropdown-item-icon">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" />
-                </svg>
-            </div>
-            <div class="dropdown-item-content">
-                <div class="dropdown-item-title">Up Next</div>
-                <div class="dropdown-item-subtitle">Songs in queue</div>
-            </div>
-            <div class="dropdown-item-badge" id="queue-count">0</div>
-        </div>
-    </div>
-
-    <div class="dropdown-section">
-        <h4 class="section-title">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
-            </svg>
-            Playlists
-        </h4>
-
-        <div class="dropdown-item" id="create-playlist">
-            <div class="dropdown-item-icon">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-                </svg>
-            </div>
-            <div class="dropdown-item-content">
-                <div class="dropdown-item-title">Create Playlist</div>
-                <div class="dropdown-item-subtitle">Make a new playlist</div>
-            </div>
-        </div>
-
-        <div id="playlists-list">
-            <div class="empty-state" id="playlists-empty">
-                <div class="empty-state-icon">
-                    <svg class="w-full h-full" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
-                    </svg>
-                </div>
-                <div class="empty-state-text">
-                    No playlists yet.<br />
-                    Create your first playlist!
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="dropdown-section">
-        <h4 class="section-title">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
-            </svg>
-            Actions
-        </h4>
-
-        <div class="dropdown-item" id="shuffle-all">
-            <div class="dropdown-item-icon">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
-                </svg>
-            </div>
-            <div class="dropdown-item-content">
-                <div class="dropdown-item-title">Shuffle All</div>
-                <div class="dropdown-item-subtitle">Play all songs randomly</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="dropdown-section">
-        <h4 class="section-title">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
-            </svg>
-            Settings
-        </h4>
-
-        <div class="dropdown-item" id="app-settings">
-            <div class="dropdown-item-icon">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                </svg>
-            </div>
-            <div class="dropdown-item-content">
-                <div class="dropdown-item-title">Preferences</div>
-                <div class="dropdown-item-subtitle">App settings & options</div>
-            </div>
-        </div>
-
-        <div class="dropdown-item" id="about-app">
-            <div class="dropdown-item-icon">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-                </svg>
-            </div>
-            <div class="dropdown-item-content">
-                <div class="dropdown-item-title">About</div>
-                <div class="dropdown-item-subtitle">Version & information</div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<!-- M U S I C - - - P L A Y E R -->
-<aside class="player" id="music-player">
-  <div class="scroller musicPlayerScroller">
-    <div class="slide musicPlayerSlide">
-      <button class="curtain musicPlayerCurtain" tabindex="-1" data-overlay-close="music-player"></button>
-
-      <div class="inner musicPlayerInner">
-        <div class="dragArea">
-          <button autofocus class="dragHandle musicPlayerDragHandle">
-            <span></span>
           </button>
         </div>
-
-        <button class="closeBtn" id="music-player-close">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
-
-        <div class="nowPlaying musicPlayerNowPlaying">
-          <div class="coverWrapper musicPlayerCoverWrapper">
-            <div class="customShapeDivider">
-              <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
-                <path
-                  d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"
-                  class="shapeFill"
-                ></path>
+        <div class="dropdown-section">
+          <h4 class="section-title">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
+            </svg>
+            Favorites
+          </h4>
+          <div class="dropdown-item" id="favorite-songs">
+            <div class="dropdown-item-icon">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-
-            <img src="https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/stable/global/content/images/albumCovers/placeholder.png" alt="Album Cover" class="cover" id="music-player-cover" />
-
-            <div class="coverGlow musicPlayerCoverGlow"></div>
+            <div class="dropdown-item-content">
+              <div class="dropdown-item-title">Favorite Songs</div>
+              <div class="dropdown-item-subtitle">Your liked tracks</div>
+            </div>
+            <div class="dropdown-item-badge" id="favorite-songs-count">0</div>
+          </div>
+          <div class="dropdown-item" id="favorite-artists">
+            <div class="dropdown-item-icon">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9 12a3 3 0 00-3-3H2a1 1 0 100 2h4a1 1 0 011 1v.5a1 1 0 102 0V12zm3-8a3 3 0 100 6 3 3 0 000-6zm-1 4a1 1 0 11-2 0 1 1 0 012 0z" />
+              </svg>
+            </div>
+            <div class="dropdown-item-content">
+              <div class="dropdown-item-title">Favorite Artists</div>
+              <div class="dropdown-item-subtitle">Artists you follow</div>
+            </div>
+            <div class="dropdown-item-badge" id="favorite-artists-count">0</div>
           </div>
         </div>
-
-        <div class="content musicPlayerContent">
-          <div class="panel musicPlayerPanel active" data-tab="playing">
-            <div class="main">
-              <div class="info musicPlayerInfo">
-                <div class="details musicPlayerDetails">
-                  <h3 id="music-player-title" class="title"></h3>
-                  <p id="music-player-artist" class="artist"></p>
-                  <p id="music-player-album" class="album"></p>
-                </div>
-
-                <button class="favoriteBtn" id="music-player-favorite" title="Add to Favorites">
-                  <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                  </svg>
+        <div class="dropdown-section">
+          <h4 class="section-title">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+            </svg>
+            Library
+          </h4>
+          <div class="dropdown-item" id="recently-played">
+            <div class="dropdown-item-icon">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <div class="dropdown-item-content">
+              <div class="dropdown-item-title">Recent Plays</div>
+              <div class="dropdown-item-subtitle">Recently played songs</div>
+            </div>
+            <div class="dropdown-item-badge" id="recent-count">0</div>
+          </div>
+          <div class="dropdown-item" id="queue-view">
+            <div class="dropdown-item-icon">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" />
+              </svg>
+            </div>
+            <div class="dropdown-item-content">
+              <div class="dropdown-item-title">Up Next</div>
+              <div class="dropdown-item-subtitle">Songs in queue</div>
+            </div>
+            <div class="dropdown-item-badge" id="queue-count">0</div>
+          </div>
+        </div>
+        <div class="dropdown-section">
+          <h4 class="section-title">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+            </svg>
+            Playlists
+          </h4>
+          <div class="dropdown-item" id="create-playlist">
+            <div class="dropdown-item-icon">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <div class="dropdown-item-content">
+              <div class="dropdown-item-title">Create Playlist</div>
+              <div class="dropdown-item-subtitle">Make a new playlist</div>
+            </div>
+          </div>
+          <div id="playlists-list">
+            <div class="empty-state" id="playlists-empty">
+              <div class="empty-state-icon">
+                <svg class="w-full h-full" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+                </svg>
+              </div>
+              <div class="empty-state-text">
+                No playlists yet.<br />
+                Create your first playlist!
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="dropdown-section">
+          <h4 class="section-title">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
+            </svg>
+            Actions
+          </h4>
+          <div class="dropdown-item" id="shuffle-all">
+            <div class="dropdown-item-icon">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fill-rule="evenodd"
+                  d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </div>
+            <div class="dropdown-item-content">
+              <div class="dropdown-item-title">Shuffle All</div>
+              <div class="dropdown-item-subtitle">Play all songs randomly</div>
+            </div>
+          </div>
+        </div>
+        <div class="dropdown-section">
+          <h4 class="section-title">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fill-rule="evenodd"
+                d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            Settings
+          </h4>
+          <div class="dropdown-item" id="app-settings">
+            <div class="dropdown-item-icon">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fill-rule="evenodd"
+                  d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </div>
+            <div class="dropdown-item-content">
+              <div class="dropdown-item-title">Preferences</div>
+              <div class="dropdown-item-subtitle">App settings & options</div>
+            </div>
+          </div>
+          <div class="dropdown-item" id="about-app">
+            <div class="dropdown-item-icon">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <div class="dropdown-item-content">
+              <div class="dropdown-item-title">About</div>
+              <div class="dropdown-item-subtitle">Version & information</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <aside class="player" id="music-player">
+        <div class="scroller musicPlayerScroller">
+          <div class="slide musicPlayerSlide">
+            <button class="curtain musicPlayerCurtain" tabindex="-1" data-overlay-close="music-player"></button>
+            <div class="inner musicPlayerInner">
+              <div class="dragArea">
+                <button autofocus class="dragHandle musicPlayerDragHandle">
+                  <span></span>
                 </button>
               </div>
-
-              <div class="progressSection musicPlayerProgressSection" id="music-player-progress-section">
-                <div class="progressBar" id="music-player-progress-bar" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Seek">
-                  <div class="progressBuffer" id="musicPlayerProgressBuffer"></div>
-                  <div class="progressFill" id="music-player-progress-fill">
-                    <div class="progressThumb" id="music-player-progress-thumb"></div>
+              <button class="closeBtn" id="music-player-close">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+              <div class="nowPlaying musicPlayerNowPlaying">
+                <div class="coverWrapper musicPlayerCoverWrapper">
+                  <div class="customShapeDivider">
+                    <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                      <path
+                        d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"
+                        class="shapeFill"
+                      ></path>
+                    </svg>
+                  </div>
+                  <img src="https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/stable/global/content/images/albumCovers/placeholder.png" alt="Album Cover" class="cover" id="music-player-cover" />
+                  <div class="coverGlow musicPlayerCoverGlow"></div>
+                </div>
+              </div>
+              <div class="content musicPlayerContent">
+                <div class="panel musicPlayerPanel active" data-tab="playing">
+                  <div class="main">
+                    <div class="info musicPlayerInfo">
+                      <div class="details musicPlayerDetails">
+                        <h3 id="music-player-title" class="title"></h3>
+                        <p id="music-player-artist" class="artist"></p>
+                        <p id="music-player-album" class="album"></p>
+                      </div>
+                      <button class="favoriteBtn" id="music-player-favorite" title="Add to Favorites">
+                        <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
+                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                        </svg>
+                      </button>
+                    </div>
+                    <div class="progressSection musicPlayerProgressSection" id="music-player-progress-section">
+                      <div class="progressBar" id="music-player-progress-bar" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Seek">
+                        <div class="progressBuffer" id="musicPlayerProgressBuffer"></div>
+                        <div class="progressFill" id="music-player-progress-fill">
+                          <div class="progressThumb" id="music-player-progress-thumb"></div>
+                        </div>
+                      </div>
+                      <div class="timeDisplay musicPlayerTimeDisplay">
+                        <span id="music-player-current-time" class="currentTime">0:00</span>
+                        <span id="music-player-total-time" class="totalTime">0:00</span>
+                      </div>
+                    </div>
+                    <div class="controls musicPlayerControls">
+                      <button class="controlBtn secondary" id="music-player-prev" title="Previous">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
+                        </svg>
+                      </button>
+                      <button class="controlBtn rewind" id="music-player-rewind" title="Rewind 10s">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                          <path
+                            d="M11.99 5V1l-5 5 5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6h-2c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8zm-1.1 11h-.85v-3.26l-1.01.31v-.69l1.77-.63h.09V16zm4.28-1.76c0 .32-.03.6-.1.82s-.17.42-.29.57-.28.26-.45.33-.37.1-.59.1-.41-.03-.59-.1-.33-.18-.46-.33-.23-.34-.3-.57-.11-.5-.11-.82v-.74c0-.32.03-.6.1-.82s.17-.42.29-.57.28-.26.45-.33.37-.1.59-.1.41.03.59.1.33.18.46.33.23.34.3.57.11.5.11.82v.74zm-.85-.86c0-.19-.01-.35-.04-.48s-.07-.23-.12-.31-.11-.14-.19-.17-.16-.05-.25-.05-.18.02-.25.05-.14.09-.19.17-.09.18-.12.31-.04.29-.04.48v.97c0 .19.01.35.04.48s.07.24.12.32.11.14.19.17.16.05.25.05.18-.02.25-.05.14-.09.19-.17.09-.19.12-.32.04-.29.04-.48v-.97z"
+                          />
+                        </svg>
+                        <span class="skipLabel">10</span>
+                      </button>
+                      <button class="controlBtn primary" id="music-player-play" title="Play/Pause">
+                        <span class="playIcon">
+                          <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M8 5v14l11-7z" />
+                          </svg>
+                        </span>
+                        <span class="pauseIcon">
+                          <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                          </svg>
+                        </span>
+                      </button>
+                      <button class="controlBtn forward" id="music-player-forward" title="Forward 10s">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                          <path
+                            d="M12 5V1l7 6-7 6V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8zm-1.1 11h-.85v-3.26l-1.01.31v-.69l1.77-.63h.09V16zm4.28-1.76c0 .32-.03.6-.1.82s-.17.42-.29.57-.28.26-.45.33-.37.1-.59.1-.41-.03-.59-.1-.33-.18-.46-.33-.23-.34-.3-.57-.11-.5-.11-.82v-.74c0-.32.03-.6.1-.82s.17-.42.29-.57.28-.26.45-.33.37-.1.59-.1.41.03.59.1.33.18.46.33.23.34.3.57.11.5.11.82v.74zm-.85-.86c0-.19-.01-.35-.04-.48s-.07-.23-.12-.31-.11-.14-.19-.17-.16-.05-.25-.05-.18.02-.25.05-.14.09-.19.17-.09.18-.12.31-.04.29-.04.48v.97c0 .19.01.35.04.48s.07.24.12.32.11.14.19.17.16.05.25.05.18-.02.25-.05.14-.09.19-.17.09-.19.12-.32.04-.29.04-.48v-.97z"
+                          />
+                        </svg>
+                        <span class="skipLabel">10</span>
+                      </button>
+                      <button class="controlBtn secondary" id="music-player-next" title="Next">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
+                        </svg>
+                      </button>
+                    </div>
+                    <div class="actions musicPlayerActions">
+                      <button class="actionBtn" id="music-player-shuffle" title="Shuffle">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z" />
+                        </svg>
+                      </button>
+                      <button class="actionBtn" id="music-player-repeat" title="Repeat">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z" />
+                        </svg>
+                      </button>
+                      <button class="actionBtn" id="volumeBtn" title="Volume">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
+                        </svg>
+                      </button>
+                      <button class="actionBtn" id="music-player-queue" title="Queue">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M4 10h12v2H4zm0-4h12v2H4zm0-4h12v2H4zm16 8H4v2h16z" />
+                        </svg>
+                      </button>
+                    </div>
                   </div>
                 </div>
-
-                <div class="timeDisplay musicPlayerTimeDisplay">
-                  <span id="music-player-current-time" class="currentTime">0:00</span>
-                  <span id="music-player-total-time" class="totalTime">0:00</span>
+                <div class="panel musicPlayerPanel" data-tab="playlist">
+                  <div class="listHeader musicPlayerListHeader">
+                    <h3 class="listTitle musicPlayerListTitle">Recently Played</h3>
+                    <span class="listCount musicPlayerListCount" id="recent-count">0 songs</span>
+                  </div>
+                  <ul class="list musicPlayerList" id="music-player-recent-list">
+                    <li class="empty musicPlayerEmpty">
+                      <div class="emptyIcon musicPlayerEmptyIcon">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
+                        </svg>
+                      </div>
+                      <p class="emptyText musicPlayerEmptyText">No recent songs</p>
+                      <p class="emptySubtext musicPlayerEmptySubtext">Play some music to see your history</p>
+                    </li>
+                  </ul>
+                </div>
+                <div class="panel musicPlayerPanel" data-tab="queue">
+                  <div class="listHeader musicPlayerListHeader">
+                    <h3 class="listTitle musicPlayerListTitle">Queue</h3>
+                    <span class="listCount musicPlayerListCount" id="queue-count">0 songs</span>
+                  </div>
+                  <ul class="list musicPlayerList" id="music-player-queue-list">
+                    <li class="empty musicPlayerEmpty">
+                      <div class="emptyIcon musicPlayerEmptyIcon">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8 12.5v-9l6 4.5-6 4.5z" />
+                        </svg>
+                      </div>
+                      <p class="emptyText musicPlayerEmptyText">Queue is empty</p>
+                      <p class="emptySubtext musicPlayerEmptySubtext">Add songs to your queue</p>
+                    </li>
+                  </ul>
                 </div>
               </div>
-
-              <div class="controls musicPlayerControls">
-                <button class="controlBtn secondary" id="music-player-prev" title="Previous">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
-                  </svg>
+              <div class="dotIndicators">
+                <button class="dotIndicator active" data-tab="playing" aria-label="Now Playing">
+                  <span class="dotLabel">Now Playing</span>
                 </button>
-
-                <button class="controlBtn rewind" id="music-player-rewind" title="Rewind 10s">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path
-                      d="M11.99 5V1l-5 5 5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6h-2c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8zm-1.1 11h-.85v-3.26l-1.01.31v-.69l1.77-.63h.09V16zm4.28-1.76c0 .32-.03.6-.1.82s-.17.42-.29.57-.28.26-.45.33-.37.1-.59.1-.41-.03-.59-.1-.33-.18-.46-.33-.23-.34-.3-.57-.11-.5-.11-.82v-.74c0-.32.03-.6.1-.82s.17-.42.29-.57.28-.26.45-.33.37-.1.59-.1.41.03.59.1.33.18.46.33.23.34.3.57.11.5.11.82v.74zm-.85-.86c0-.19-.01-.35-.04-.48s-.07-.23-.12-.31-.11-.14-.19-.17-.16-.05-.25-.05-.18.02-.25.05-.14.09-.19.17-.09.18-.12.31-.04.29-.04.48v.97c0 .19.01.35.04.48s.07.24.12.32.11.14.19.17.16.05.25.05.18-.02.25-.05.14-.09.19-.17.09-.19.12-.32.04-.29.04-.48v-.97z"
-                    />
-                  </svg>
-                  <span class="skipLabel">10</span>
+                <button class="dotIndicator" data-tab="playlist" aria-label="Recently Played">
+                  <span class="dotLabel">Recent</span>
                 </button>
-
-                <button class="controlBtn primary" id="music-player-play" title="Play/Pause">
-                  <span class="playIcon">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
-                  </span>
-                  <span class="pauseIcon">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-                    </svg>
-                  </span>
-                </button>
-
-                <button class="controlBtn forward" id="music-player-forward" title="Forward 10s">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path
-                      d="M12 5V1l7 6-7 6V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8zm-1.1 11h-.85v-3.26l-1.01.31v-.69l1.77-.63h.09V16zm4.28-1.76c0 .32-.03.6-.1.82s-.17.42-.29.57-.28.26-.45.33-.37.1-.59.1-.41-.03-.59-.1-.33-.18-.46-.33-.23-.34-.3-.57-.11-.5-.11-.82v-.74c0-.32.03-.6.1-.82s.17-.42.29-.57.28-.26.45-.33.37-.1.59-.1.41.03.59.1.33.18.46.33.23.34.3.57.11.5.11.82v.74zm-.85-.86c0-.19-.01-.35-.04-.48s-.07-.23-.12-.31-.11-.14-.19-.17-.16-.05-.25-.05-.18.02-.25.05-.14.09-.19.17-.09.18-.12.31-.04.29-.04.48v.97c0 .19.01.35.04.48s.07.24.12.32.11.14.19.17.16.05.25.05.18-.02.25-.05.14-.09.19-.17.09-.19.12-.32.04-.29.04-.48v-.97z"
-                    />
-                  </svg>
-                  <span class="skipLabel">10</span>
-                </button>
-
-                <button class="controlBtn secondary" id="music-player-next" title="Next">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
-                  </svg>
-                </button>
-              </div>
-
-              <div class="actions musicPlayerActions">
-                <button class="actionBtn" id="music-player-shuffle" title="Shuffle">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path
-                      d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"
-                    />
-                  </svg>
-                </button>
-
-                <button class="actionBtn" id="music-player-repeat" title="Repeat">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z" />
-                  </svg>
-                </button>
-
-                <button class="actionBtn" id="volumeBtn" title="Volume">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path
-                      d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"
-                    />
-                  </svg>
-                </button>
-
-                <button class="actionBtn" id="music-player-queue" title="Queue">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M4 10h12v2H4zm0-4h12v2H4zm0-4h12v2H4zm16 8H4v2h16z" />
-                  </svg>
+                <button class="dotIndicator" data-tab="queue" aria-label="Queue">
+                  <span class="dotLabel">Queue</span>
                 </button>
               </div>
             </div>
-          </div>
-
-          <div class="panel musicPlayerPanel" data-tab="playlist">
-            <div class="listHeader musicPlayerListHeader">
-              <h3 class="listTitle musicPlayerListTitle">Recently Played</h3>
-              <span class="listCount musicPlayerListCount" id="recent-count">0 songs</span>
-            </div>
-
-            <ul class="list musicPlayerList" id="music-player-recent-list">
-              <li class="empty musicPlayerEmpty">
-                <div class="emptyIcon musicPlayerEmptyIcon">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path
-                      d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"
-                    />
-                  </svg>
-                </div>
-                <p class="emptyText musicPlayerEmptyText">No recent songs</p>
-                <p class="emptySubtext musicPlayerEmptySubtext">Play some music to see your history</p>
-              </li>
-            </ul>
-          </div>
-
-          <div class="panel musicPlayerPanel" data-tab="queue">
-            <div class="listHeader musicPlayerListHeader">
-              <h3 class="listTitle musicPlayerListTitle">Queue</h3>
-              <span class="listCount musicPlayerListCount" id="queue-count">0 songs</span>
-            </div>
-
-            <ul class="list musicPlayerList" id="music-player-queue-list">
-              <li class="empty musicPlayerEmpty">
-                <div class="emptyIcon musicPlayerEmptyIcon">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path
-                      d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8 12.5v-9l6 4.5-6 4.5z"
-                    />
-                  </svg>
-                </div>
-                <p class="emptyText musicPlayerEmptyText">Queue is empty</p>
-                <p class="emptySubtext musicPlayerEmptySubtext">Add songs to your queue</p>
-              </li>
-            </ul>
           </div>
         </div>
-
-
-        
-<!-- DOT INDICATORS -->
-<div class="dotIndicators">
-  <button class="dotIndicator active" data-tab="playing" aria-label="Now Playing">
-    <span class="dotLabel">Now Playing</span>
-  </button>
-  
-  <button class="dotIndicator" data-tab="playlist" aria-label="Recently Played">
-    <span class="dotLabel">Recent</span>
-  </button>
-  
-  <button class="dotIndicator" data-tab="queue" aria-label="Queue">
-    <span class="dotLabel">Queue</span>
-  </button>
-</div>
-
-
-
-
-
-<!---        <div class="tabs musicPlayerTabs">
-          <div class="tabsWrapper musicPlayerTabsWrapper">
-            <button class="tab musicPlayerTab active" data-tab="playing">
-              <div class="tabIcon">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
-                </svg>
-              </div>
-              <span class="tabLabel">Now Playing</span>
-            </button>
-
-            <button class="tab musicPlayerTab" data-tab="playlist">
-              <div class="tabIcon">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M4 10h12v2H4zm0-4h12v2H4zm0-4h12v2H4zm16 8H4v2h16z" />
-                </svg>
-              </div>
-              <span class="tabLabel">Recent</span>
-            </button>
-
-            <button class="tab musicPlayerTab" data-tab="queue">
-              <div class="tabIcon">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8 12.5v-9l6 4.5-6 4.5z" />
-                </svg>
-              </div>
-              <span class="tabLabel">Queue</span>
-            </button>
-
-            <div class="tabSlider musicPlayerTabSlider"></div>
-          </div>
-        </div>
----->
-      </div>
-    </div>
-  </div>
-</aside>
-
-
-<!-- M A I N - - - A R E A  -->
-<div id="mainArea">
-    <main id="main-container" class="content-container max-w-6xl mx-auto pb-24">
-        <div id="contentWrapper" class="relative">
-
+      </aside>
+      <div id="mainArea">
+        <main id="main-container" class="content-container max-w-6xl mx-auto pb-24">
+          <div id="contentWrapper" class="relative">
             <nav aria-label="Breadcrumb" class="breadcrumb-wrapper breadcrumb-fade-in">
-                <ol class="breadcrumb-list">
-                    <li class="breadcrumb-item">
-                        <a href="#" class="breadcrumb-link">
-                            <svg class="breadcrumb-home-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                            </svg>
-                            <span>Dashboard</span>
-                        </a>
-                    </li>
-
-                    <li class="breadcrumb-chevron">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
-                        </svg>
-                    </li>
-
-                    <li class="breadcrumb-item">
-                        <a href="#" class="breadcrumb-link">
-                            <span>Projects</span>
-                        </a>
-                    </li>
-
-                    <li class="breadcrumb-chevron">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
-                        </svg>
-                    </li>
-
-                    <li class="breadcrumb-item">
-                        <a href="#" class="breadcrumb-link">
-                            <span>Web Development</span>
-                        </a>
-                    </li>
-
-                    <li class="breadcrumb-chevron">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
-                        </svg>
-    </li>
-
-                    <li class="breadcrumb-item active" aria-current="page">
-                        <span class="breadcrumb-link">
-                            <span>E-Commerce Platform</span>
-                        </span>
-                    </li>
-                </ol>
+              <ol class="breadcrumb-list">
+                <li class="breadcrumb-item">
+                  <a href="#" class="breadcrumb-link">
+                    <svg class="breadcrumb-home-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                    <span>Dashboard</span>
+                  </a>
+                </li>
+                <li class="breadcrumb-chevron">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
+                  </svg>
+                </li>
+                <li class="breadcrumb-item">
+                  <a href="#" class="breadcrumb-link">
+                    <span>Projects</span>
+                  </a>
+                </li>
+                <li class="breadcrumb-chevron">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
+                  </svg>
+                </li>
+                <li class="breadcrumb-item">
+                  <a href="#" class="breadcrumb-link">
+                    <span>Web Development</span>
+                  </a>
+                </li>
+                <li class="breadcrumb-chevron">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
+                  </svg>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                  <span class="breadcrumb-link">
+                    <span>E-Commerce Platform</span>
+                  </span>
+                </li>
+              </ol>
             </nav>
-
             <div id="dynamic-content">
-                <div id="featured-artists" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 px-4"></div>
+              <div id="featured-artists" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 px-4"></div>
             </div>
-            
-        </div>
-    </main>
-</div>
-
-
-
-
-
-
-<script>
-const clickables = {
-    // Elements
-    elements: {
-        drawer: document.getElementById('drawer'),
-        dropdownMenu: document.getElementById('dropdown-menu'),
-        menuTrigger: document.getElementById('menu-trigger'),
-        nowPlayingArea: document.getElementById('now-playing-area'),
-        dropdownClose: document.getElementById('dropdown-close'),
-        closeBtn: document.getElementById('closeBtn')
-    },
-
-    // State management
-    state: {
-        isDrawerOpen: false,
-        isDropdownOpen: false
-    },
-
-    // Initialize all event listeners
-    init() {
-        this.bindEvents();
-        this.bindOutsideClicks();
-        console.log('Clickables initialized');
-    },
-
-    // Bind all event listeners
-    bindEvents() {
-        const { menuTrigger, nowPlayingArea, dropdownClose, closeBtn } = this.elements;
-
-        // Menu trigger click
-        if (menuTrigger) {
-            menuTrigger.addEventListener('click', (e) => {
+          </div>
+        </main>
+      </div>
+      <script>
+        const clickables = {
+          elements: {
+            drawer: document.getElementById("drawer"),
+            dropdownMenu: document.getElementById("dropdown-menu"),
+            menuTrigger: document.getElementById("menu-trigger"),
+            nowPlayingArea: document.getElementById("now-playing-area"),
+            dropdownClose: document.getElementById("dropdown-close"),
+            closeBtn: document.getElementById("closeBtn"),
+          },
+          state: {
+            isDrawerOpen: false,
+            isDropdownOpen: false,
+          },
+          init() {
+            this.bindEvents();
+            this.bindOutsideClicks();
+            console.log("Clickables initialized");
+          },
+          bindEvents() {
+            const { menuTrigger, nowPlayingArea, dropdownClose, closeBtn } = this.elements;
+            if (menuTrigger) {
+              menuTrigger.addEventListener("click", (e) => {
                 e.stopPropagation();
                 this.toggleDropdown();
-            });
-        }
-
-        // Now playing area click
-        if (nowPlayingArea) {
-            nowPlayingArea.addEventListener('click', (e) => {
+              });
+            }
+            if (nowPlayingArea) {
+              nowPlayingArea.addEventListener("click", (e) => {
                 e.stopPropagation();
                 this.toggleDrawer();
-            });
-        }
-
-        // Dropdown close button
-        if (dropdownClose) {
-            dropdownClose.addEventListener('click', (e) => {
+              });
+            }
+            if (dropdownClose) {
+              dropdownClose.addEventListener("click", (e) => {
                 e.stopPropagation();
                 this.closeDropdown();
-            });
-        }
-
-        // Drawer close button
-        if (closeBtn) {
-            closeBtn.addEventListener('click', (e) => {
+              });
+            }
+            if (closeBtn) {
+              closeBtn.addEventListener("click", (e) => {
                 e.stopPropagation();
                 this.closeDrawer();
-            });
-        }
-
-        // Escape key support
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
+              });
+            }
+            document.addEventListener("keydown", (e) => {
+              if (e.key === "Escape") {
                 if (this.state.isDropdownOpen) {
-                    this.closeDropdown();
+                  this.closeDropdown();
                 }
                 if (this.state.isDrawerOpen) {
-                    this.closeDrawer();
+                  this.closeDrawer();
                 }
-            }
-        });
-    },
-
-    // Handle outside clicks to close menus
-    bindOutsideClicks() {
-        document.addEventListener('click', (e) => {
-            const { drawer, dropdownMenu } = this.elements;
-            
-            // Close dropdown if clicked outside
-            if (this.state.isDropdownOpen && dropdownMenu && !dropdownMenu.contains(e.target)) {
+              }
+            });
+          },
+          bindOutsideClicks() {
+            document.addEventListener("click", (e) => {
+              const { drawer, dropdownMenu } = this.elements;
+              if (this.state.isDropdownOpen && dropdownMenu && !dropdownMenu.contains(e.target)) {
                 this.closeDropdown();
-            }
-            
-            // Close drawer if clicked on overlay (the curtain element)
-            if (this.state.isDrawerOpen && drawer) {
-                const curtain = drawer.querySelector('.musicPlayerCurtain');
+              }
+              if (this.state.isDrawerOpen && drawer) {
+                const curtain = drawer.querySelector(".musicPlayerCurtain");
                 if (curtain && e.target === curtain) {
-                    this.closeDrawer();
+                  this.closeDrawer();
                 }
-            }
-        });
-    },
-
-    // Toggle dropdown menu
-    toggleDropdown() {
-        if (this.state.isDropdownOpen) {
-            this.closeDropdown();
-        } else {
-            this.openDropdown();
-        }
-    },
-
-    // Open dropdown menu
-    openDropdown() {
-        const { dropdownMenu } = this.elements;
-        if (!dropdownMenu) return;
-
-        // Close drawer if open
-        if (this.state.isDrawerOpen) {
-            this.closeDrawer();
-        }
-
-        dropdownMenu.classList.add('active', 'open');
-        dropdownMenu.style.display = 'block';
-        this.state.isDropdownOpen = true;
-
-        // Add body class to prevent scrolling if needed
-        document.body.classList.add('dropdown-open');
-        
-        console.log('Dropdown opened');
-    },
-
-    // Close dropdown menu
-    closeDropdown() {
-        const { dropdownMenu } = this.elements;
-        if (!dropdownMenu) return;
-
-        dropdownMenu.classList.remove('active', 'open');
-        dropdownMenu.style.display = 'none';
-        this.state.isDropdownOpen = false;
-
-        // Remove body class
-        document.body.classList.remove('dropdown-open');
-        
-        console.log('Dropdown closed');
-    },
-
-    // Toggle music player drawer
-    toggleDrawer() {
-        if (this.state.isDrawerOpen) {
-            this.closeDrawer();
-        } else {
-            this.openDrawer();
-        }
-    },
-
-    // Open music player drawer
-    openDrawer() {
-        const { drawer } = this.elements;
-        if (!drawer) return;
-
-        // Close dropdown if open
-        if (this.state.isDropdownOpen) {
-            this.closeDropdown();
-        }
-
-        // Use the Popover API if available, otherwise fallback to classes
-        if (drawer.showPopover) {
-            drawer.showPopover();
-        } else {
-            drawer.classList.add('active', 'open');
-            drawer.style.display = 'block';
-        }
-        
-        this.state.isDrawerOpen = true;
-
-        // Add body class to prevent scrolling if needed
-        document.body.classList.add('drawer-open');
-        
-        console.log('Drawer opened');
-    },
-
-    // Close music player drawer
-    closeDrawer() {
-        const { drawer } = this.elements;
-        if (!drawer) return;
-
-        // Use the Popover API if available, otherwise fallback to classes
-        if (drawer.hidePopover) {
-            drawer.hidePopover();
-        } else {
-            drawer.classList.remove('active', 'open');
-            drawer.style.display = 'none';
-        }
-        
-        this.state.isDrawerOpen = false;
-
-        // Remove body class
-        document.body.classList.remove('drawer-open');
-        
-        console.log('Drawer closed');
-    },
-
-    // Public methods for external control
-    openMusicPlayer() {
-        this.openDrawer();
-    },
-
-    closeMusicPlayer() {
-        this.closeDrawer();
-    },
-
-    openMenu() {
-        this.openDropdown();
-    },
-
-    closeMenu() {
-        this.closeDropdown();
-    },
-
-    // Get current state
-    getState() {
-        return { ...this.state };
-    },
-
-    // Destroy all event listeners (cleanup)
-    destroy() {
-        // Remove event listeners would go here if we stored references
-        console.log('Clickables destroyed');
-    }
-};
-
-// Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    clickables.init();
-});
-
-// Make available globally
-window.clickables = clickables;
-</script>
-
-
-
-
-<!--------   O V E R LA Y S   -------------------->
-<!-- Popover Portal -->
-<div id="popover-portal" class="popover-portal">
-<!-- PopOvers Injected Here -->
-</div>
-
-<!-- PWA Install Banner -->
-<div id="pwa-install-banner" class="fixed bottom-0 end-0 z-60 sm:max-w-sm w-full mx-auto p-6 opacity-0 pointer-events-none transition-all duration-300">
-    <div class="p-4 bg-white border border-gray-200 rounded-xl shadow-2xs dark:bg-neutral-900 dark:border-neutral-800 flex gap-x-4">
-        <svg class="shrink-0 w-8 h-auto" width="72" height="63" viewBox="0 0 72 63" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M15.5174 56.1528C16.2903 57.6825 16.929 61.4559 14.8118 60.9459C13.5013 60.5381 11.4445 57.6213 12.493 56.1528C12.661 55.8468 13.2189 55.2757 14.106 55.4389" stroke="currentColor" class="dark:stroke-neutral-200" stroke-width="2" stroke-linecap="round"/>
-            <path d="M15.5173 49.6263L14.0262 48.5579C13.5346 48.2056 12.8477 48.3707 12.658 48.945C12.3456 49.8907 12.1258 51.1463 12.462 52.2324C12.5336 52.4636 12.7127 52.6466 12.9449 52.7146C13.8342 52.9751 15.2568 52.9048 15.8197 51.054" stroke="currentColor" class="dark:stroke-neutral-200" stroke-width="2" stroke-linecap="round"/>
-            <ellipse cx="51.2061" cy="22.3973" rx="3.02446" ry="3.05945" fill="currentColor" class="text-gray-800 dark:fill-neutral-200"/>
-        </svg>
-        <div class="grow">
-            <p class="text-sm text-gray-800 dark:text-neutral-200">
-                Open in the app, or 
-                <a id="pwa-download-link" class="inline-flex items-center gap-x-1.5 text-blue-600 decoration-2 hover:underline font-medium dark:text-blue-500" href="#">
-                    Install App
-                </a>
-            </p>
-        </div>
-        <div>
-            <button id="pwa-dismiss" type="button" class="p-2 inline-flex items-center gap-x-2 text-sm font-semibold rounded-full border border-transparent text-gray-500 hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700">
-                <span class="sr-only">Dismiss</span>
-                <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
-            </button>
-        </div>
-    </div>
-</div>
-
-<!-- Search Modal -->
-<div id="searchModal" class="search-modal-overlay hidden fixed inset-0 z-[9999] opacity-0 transition-opacity duration-300">
-    <!-- Backdrop with blur -->
-    <div class="search-backdrop absolute inset-0 bg-black/60 backdrop-blur-xl"></div>
-    
-    <!-- Search Container -->
-    <div class="search-container relative flex items-start justify-center min-h-screen p-4 pt-[15vh]">
-        <div class="search-content w-full max-w-3xl transform scale-95 opacity-0 transition-all duration-300">
-            
-            <!-- Search Input Area -->
-            <div class="search-input-wrapper relative bg-gradient-to-br from-gray-900/95 to-gray-800/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/10 overflow-hidden">
-                
-                <!-- Search Bar -->
-                <div class="flex items-center gap-4 px-6 py-5 border-b border-white/10">
-                    <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                    </svg>
-                    
-                    <input 
-                        type="text" 
-                        id="searchInput" 
-                        placeholder="Search songs, artists, albums..." 
-                        class="flex-1 bg-transparent text-white text-lg placeholder-gray-400 outline-none"
-                        autocomplete="off"
-                        spellcheck="false"
-                    />
-                    
-                    <!-- Clear Button -->
-                    <button id="clearSearch" class="clear-btn hidden text-gray-400 hover:text-white transition-colors p-2 rounded-full hover:bg-white/10">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-                        </svg>
-                    </button>
-                    
-                    <!-- Close Button -->
-                    <button id="closeSearch" class="text-gray-400 hover:text-white transition-colors">
-                        <span class="text-sm font-medium">ESC</span>
-                    </button>
-                </div>
-                
-                <!-- Search Results / Content Area -->
-                <div id="searchResults" class="search-results max-h-[60vh] overflow-y-auto custom-scrollbar">
-                    
-                    <!-- Recent Searches (Default View) -->
-                    <div id="recentSearches" class="recent-searches p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Recent Searches</h3>
-                            <button id="clearRecentBtn" class="text-xs text-gray-500 hover:text-white transition-colors">Clear All</button>
-                        </div>
-                        
-                        <div id="recentSearchList" class="space-y-2">
-                            <!-- Recent search items will be inserted here -->
-                        </div>
-                        
-                        <div id="recentSearchesEmpty" class="hidden text-center py-12 text-gray-500">
-                            <svg class="w-16 h-16 mx-auto mb-4 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                            </svg>
-                            <p>No recent searches</p>
-                            <p class="text-sm mt-2">Start searching to see your history</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Search Results Content -->
-                    <div id="searchResultsContent" class="hidden">
-                        <!-- Categories -->
-                        <div id="songsResults" class="search-category hidden">
-                            <div class="px-6 py-4 border-b border-white/5">
-                                <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Songs</h3>
-                            </div>
-                            <div id="songsList" class="divide-y divide-white/5"></div>
-                        </div>
-                        
-                        <div id="artistsResults" class="search-category hidden">
-                            <div class="px-6 py-4 border-b border-white/5">
-                                <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Artists</h3>
-                            </div>
-                            <div id="artistsList" class="divide-y divide-white/5"></div>
-                        </div>
-                        
-                        <div id="albumsResults" class="search-category hidden">
-                            <div class="px-6 py-4 border-b border-white/5">
-                                <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Albums</h3>
-                            </div>
-                            <div id="albumsList" class="grid grid-cols-2 gap-4 p-6"></div>
-                        </div>
-                        
-                        <!-- No Results -->
-                        <div id="noResults" class="hidden text-center py-16 px-6">
-                            <svg class="w-20 h-20 mx-auto mb-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                            <h3 class="text-xl font-semibold text-gray-300 mb-2">No results found</h3>
-                            <p class="text-gray-500">Try adjusting your search terms</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Loading State -->
-                    <div id="searchLoading" class="hidden py-16 text-center">
-                        <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-700 border-t-accent-primary"></div>
-                    </div>
-                    
-                </div>
-                
-                <!-- Quick Filters (Optional) -->
-                <div class="px-6 py-3 border-t border-white/10 bg-black/20 flex gap-2 overflow-x-auto custom-scrollbar">
-                    <button class="filter-chip active" data-filter="all">All</button>
-                    <button class="filter-chip" data-filter="songs">Songs</button>
-                    <button class="filter-chip" data-filter="artists">Artists</button>
-                    <button class="filter-chip" data-filter="albums">Albums</button>
-                </div>
-                
-            </div>
-            
-            <!-- Search Tips -->
-            <div class="mt-4 px-4 text-center text-xs text-gray-500">
-                <span class="inline-flex items-center gap-4">
-                    <span>↑↓ to navigate</span>
-                    <span>↵ to select</span>
-                    <span>ESC to close</span>
-                </span>
-            </div>
-            
-        </div>
-    </div>
-</div>
-
-</div><!-- W R A P P E R -->
-
-<!-- L I B R A R I E S -->
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/preline@2.0.3/dist/preline.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy.umd.min.js"></script>
-
-<script type="module" src="./siteScripts/map.js">
-</script>
-
-<!-- ToolTips - PopOvers -->
-<script type="module" src="./siteScripts/utilities/overlays.js"></script>
-
-<!-- Music Library -->
-<script type="module" src="./modules/library.js"></script>
-<script type="module" src="./siteScripts/utilities/search.js"></script>
-
-<!-- Initialization modules --
-<script type="module" src="./siteScripts/init.js"></script>
----
-<script type="module" src="./siteScripts/unifiedPlayerController.js"></script>
-<script type="module" src="./siteScripts/unifiedPlayerIntergration.js"></script>
--->
-<!-- Unified Player Controller Script --
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    // Unified menu triggers (works for both mobile navbar and desktop/tablet triggers)
-    const mobileMenuTrigger = document.getElementById('menu-trigger');
-    const unifiedMenuTrigger = document.getElementById('unified-menu-trigger');
-    const dropdownMenu = document.getElementById('dropdown-menu');
-    const dropdownClose = document.getElementById('dropdown-close');
-    
-    // Menu trigger handlers
-    function toggleMenu() {
-        dropdownMenu.classList.toggle('show');
-    }
-    
-    function closeMenu() {
-        dropdownMenu.classList.remove('show');
-    }
-    
-    // Bind mobile menu trigger
-    if (mobileMenuTrigger && dropdownMenu) {
-        mobileMenuTrigger.addEventListener('click', toggleMenu);
-    }
-    
-    // Bind unified menu trigger (desktop/tablet)
-    if (unifiedMenuTrigger && dropdownMenu) {
-        unifiedMenuTrigger.addEventListener('click', toggleMenu);
-    }
-    
-    // Close button
-    if (dropdownClose && dropdownMenu) {
-        dropdownClose.addEventListener('click', closeMenu);
-    }
-    
-    // Close on clicking outside
-    if (dropdownMenu) {
-        dropdownMenu.addEventListener('click', (e) => {
-            if (e.target === dropdownMenu) {
-                closeMenu();
-            }
-        });
-    }
-    
-    // Unified player triggers
-    const mobilePlayerTrigger = document.getElementById('now-playing-area');
-    const unifiedPlayerTrigger = document.getElementById('unified-player-trigger');
-    const drawer = document.getElementById('drawer');
-    
-    function togglePlayer() {
-        if (drawer) {
-            if (drawer.matches(':popover-open')) {
-                drawer.hidePopover();
+              }
+            });
+          },
+          toggleDropdown() {
+            if (this.state.isDropdownOpen) {
+              this.closeDropdown();
             } else {
-                drawer.showPopover();
+              this.openDropdown();
             }
-        }
-    }
-    
-    // Bind mobile player trigger (navbar center)
-    if (mobilePlayerTrigger) {
-        mobilePlayerTrigger.addEventListener('click', togglePlayer);
-    }
-    
-    // Bind unified player trigger (desktop/tablet)
-    if (unifiedPlayerTrigger) {
-        unifiedPlayerTrigger.addEventListener('click', togglePlayer);
-    }
-});
-</script>
---->
-<!-- Global Initialize -->
-<script type="module">
-    import { music } from './modules/library.js';
-    import { app } from './siteScripts/global.js';
-    
-    window.music = music;
-    
-    document.addEventListener('DOMContentLoaded', async () => {
-        console.log('📄 DOMContentLoaded - Starting app...');
+          },
+          openDropdown() {
+            const { dropdownMenu } = this.elements;
+            if (!dropdownMenu) return;
+            if (this.state.isDrawerOpen) {
+              this.closeDrawer();
+            }
+            dropdownMenu.classList.add("active", "open");
+            dropdownMenu.style.display = "block";
+            this.state.isDropdownOpen = true;
+            document.body.classList.add("dropdown-open");
+            console.log("Dropdown opened");
+          },
+          closeDropdown() {
+            const { dropdownMenu } = this.elements;
+            if (!dropdownMenu) return;
+            dropdownMenu.classList.remove("active", "open");
+            dropdownMenu.style.display = "none";
+            this.state.isDropdownOpen = false;
+            document.body.classList.remove("dropdown-open");
+            console.log("Dropdown closed");
+          },
+          toggleDrawer() {
+            if (this.state.isDrawerOpen) {
+              this.closeDrawer();
+            } else {
+              this.openDrawer();
+            }
+          },
+          openDrawer() {
+            const { drawer } = this.elements;
+            if (!drawer) return;
+            if (this.state.isDropdownOpen) {
+              this.closeDropdown();
+            }
+            if (drawer.showPopover) {
+              drawer.showPopover();
+            } else {
+              drawer.classList.add("active", "open");
+              drawer.style.display = "block";
+            }
+            this.state.isDrawerOpen = true;
+            document.body.classList.add("drawer-open");
+            console.log("Drawer opened");
+          },
+          closeDrawer() {
+            const { drawer } = this.elements;
+            if (!drawer) return;
+            if (drawer.hidePopover) {
+              drawer.hidePopover();
+            } else {
+              drawer.classList.remove("active", "open");
+              drawer.style.display = "none";
+            }
+            this.state.isDrawerOpen = false;
+            document.body.classList.remove("drawer-open");
+            console.log("Drawer closed");
+          },
+          openMusicPlayer() {
+            this.openDrawer();
+          },
+          closeMusicPlayer() {
+            this.closeDrawer();
+          },
+          openMenu() {
+            this.openDropdown();
+          },
+          closeMenu() {
+            this.closeDropdown();
+          },
+          getState() {
+            return { ...this.state };
+          },
+          destroy() {
+            console.log("Clickables destroyed");
+          },
+        };
+        document.addEventListener("DOMContentLoaded", () => {
+          clickables.init();
+        });
+        window.clickables = clickables;
+      </script>
+      <div id="popover-portal" class="popover-portal"></div>
+      <div id="pwa-install-banner" class="fixed bottom-0 end-0 z-60 sm:max-w-sm w-full mx-auto p-6 opacity-0 pointer-events-none transition-all duration-300">
+        <div class="p-4 bg-white border border-gray-200 rounded-xl shadow-2xs dark:bg-neutral-900 dark:border-neutral-800 flex gap-x-4">
+          <svg class="shrink-0 w-8 h-auto" width="72" height="63" viewBox="0 0 72 63" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M15.5174 56.1528C16.2903 57.6825 16.929 61.4559 14.8118 60.9459C13.5013 60.5381 11.4445 57.6213 12.493 56.1528C12.661 55.8468 13.2189 55.2757 14.106 55.4389"
+              stroke="currentColor"
+              class="dark:stroke-neutral-200"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+            <path
+              d="M15.5173 49.6263L14.0262 48.5579C13.5346 48.2056 12.8477 48.3707 12.658 48.945C12.3456 49.8907 12.1258 51.1463 12.462 52.2324C12.5336 52.4636 12.7127 52.6466 12.9449 52.7146C13.8342 52.9751 15.2568 52.9048 15.8197 51.054"
+              stroke="currentColor"
+              class="dark:stroke-neutral-200"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+            <ellipse cx="51.2061" cy="22.3973" rx="3.02446" ry="3.05945" fill="currentColor" class="text-gray-800 dark:fill-neutral-200" />
+          </svg>
+          <div class="grow">
+            <p class="text-sm text-gray-800 dark:text-neutral-200">
+              Open in the app, or
+              <a id="pwa-download-link" class="inline-flex items-center gap-x-1.5 text-blue-600 decoration-2 hover:underline font-medium dark:text-blue-500" href="#">
+                Install App
+              </a>
+            </p>
+          </div>
+          <div>
+            <button
+              id="pwa-dismiss"
+              type="button"
+              class="p-2 inline-flex items-center gap-x-2 text-sm font-semibold rounded-full border border-transparent text-gray-500 hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+            >
+              <span class="sr-only">Dismiss</span>
+              <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 6 6 18"></path>
+                <path d="m6 6 12 12"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div id="searchModal" class="search-modal-overlay hidden fixed inset-0 z-[9999] opacity-0 transition-opacity duration-300">
+        <div class="search-backdrop absolute inset-0 bg-black/60 backdrop-blur-xl"></div>
+        <div class="search-container relative flex items-start justify-center min-h-screen p-4 pt-[15vh]">
+          <div class="search-content w-full max-w-3xl transform scale-95 opacity-0 transition-all duration-300">
+            <div class="search-input-wrapper relative bg-gradient-to-br from-gray-900/95 to-gray-800/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/10 overflow-hidden">
+              <div class="flex items-center gap-4 px-6 py-5 border-b border-white/10">
+                <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input type="text" id="searchInput" placeholder="Search songs, artists, albums..." class="flex-1 bg-transparent text-white text-lg placeholder-gray-400 outline-none" autocomplete="off" spellcheck="false" />
+                <button id="clearSearch" class="clear-btn hidden text-gray-400 hover:text-white transition-colors p-2 rounded-full hover:bg-white/10">
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </button>
+                <button id="closeSearch" class="text-gray-400 hover:text-white transition-colors">
+                  <span class="text-sm font-medium">ESC</span>
+                </button>
+              </div>
+              <div id="searchResults" class="search-results max-h-[60vh] overflow-y-auto custom-scrollbar">
+                <div id="recentSearches" class="recent-searches p-6">
+                  <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Recent Searches</h3>
+                    <button id="clearRecentBtn" class="text-xs text-gray-500 hover:text-white transition-colors">Clear All</button>
+                  </div>
+                  <div id="recentSearchList" class="space-y-2"></div>
+                  <div id="recentSearchesEmpty" class="hidden text-center py-12 text-gray-500">
+                    <svg class="w-16 h-16 mx-auto mb-4 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <p>No recent searches</p>
+                    <p class="text-sm mt-2">Start searching to see your history</p>
+                  </div>
+                </div>
+                <div id="searchResultsContent" class="hidden">
+                  <div id="songsResults" class="search-category hidden">
+                    <div class="px-6 py-4 border-b border-white/5">
+                      <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Songs</h3>
+                    </div>
+                    <div id="songsList" class="divide-y divide-white/5"></div>
+                  </div>
+                  <div id="artistsResults" class="search-category hidden">
+                    <div class="px-6 py-4 border-b border-white/5">
+                      <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Artists</h3>
+                    </div>
+                    <div id="artistsList" class="divide-y divide-white/5"></div>
+                  </div>
+                  <div id="albumsResults" class="search-category hidden">
+                    <div class="px-6 py-4 border-b border-white/5">
+                      <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Albums</h3>
+                    </div>
+                    <div id="albumsList" class="grid grid-cols-2 gap-4 p-6"></div>
+                  </div>
+                  <div id="noResults" class="hidden text-center py-16 px-6">
+                    <svg class="w-20 h-20 mx-auto mb-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <h3 class="text-xl font-semibold text-gray-300 mb-2">No results found</h3>
+                    <p class="text-gray-500">Try adjusting your search terms</p>
+                  </div>
+                </div>
+                <div id="searchLoading" class="hidden py-16 text-center">
+                  <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-700 border-t-accent-primary"></div>
+                </div>
+              </div>
+              <div class="px-6 py-3 border-t border-white/10 bg-black/20 flex gap-2 overflow-x-auto custom-scrollbar">
+                <button class="filter-chip active" data-filter="all">All</button>
+                <button class="filter-chip" data-filter="songs">Songs</button>
+                <button class="filter-chip" data-filter="artists">Artists</button>
+                <button class="filter-chip" data-filter="albums">Albums</button>
+              </div>
+            </div>
+            <div class="mt-4 px-4 text-center text-xs text-gray-500">
+              <span class="inline-flex items-center gap-4">
+                <span>↑↓ to navigate</span>
+                <span>↵ to select</span>
+                <span>ESC to close</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/preline@2.0.3/dist/preline.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy.umd.min.js"></script>
+    <script type="module" src="./siteScripts/map.js"></script>
+    <script type="module" src="./siteScripts/utilities/overlays.js"></script>
+    <script type="module" src="./modules/library.js"></script>
+    <script type="module" src="./siteScripts/utilities/search.js"></script>
+    <script type="module">
+      import { music } from "./modules/library.js";
+      import { app } from "./siteScripts/global.js";
+      window.music = music;
+      document.addEventListener("DOMContentLoaded", async () => {
+        console.log("📄 DOMContentLoaded - Starting app...");
         await app.initialize();
-    });
-</script>
-
-<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-    
-<script>
-eruda.init();
-</script>
-</body>
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+    <script>
+      eruda.init();
+    </script>
+  </body>
 </html>
-
-
-
