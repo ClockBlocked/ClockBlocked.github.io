@@ -1222,24 +1222,23 @@ const musicPlayer = {
     appState.isPopupVisible = true;
     musicPlayer.mainPlayer.updateTabContent(appState.currentTab || MUSIC_PLAYER.tabs.playing);
 },
-
         close: () => {
-            const drawer = QUERY(MUSIC_PLAYER.root);
-            if (!drawer) return;
-            const handleTransitionEnd = () => {
-                drawer.removeEventListener('transitionend', handleTransitionEnd);
-                drawer.hidePopover();
-                appState.isPopupVisible = false;
-                setTimeout(() => musicPlayer.mainPlayer.switchTab(MUSIC_PLAYER.tabs.playing), 50);
-                setTimeout(() => {
-                    drawer.style.transform = 'translateY(100%)';
-                    drawer.style.opacity = '0';
-                }, 10);
-            };
-            drawer.addEventListener('transitionend', handleTransitionEnd, { once: true });
-            drawer.style.transform = 'translateY(100%)';
-            drawer.style.opacity = '0';
-        },
+    const drawer = QUERY(MUSIC_PLAYER.root);
+    if (!drawer) return;
+    
+    // Add closing class for exit animation
+    drawer.classList.add('closing');
+    
+    // Wait for animation to complete
+    setTimeout(() => {
+        drawer.hidePopover();
+        drawer.classList.remove('closing');
+        appState.isPopupVisible = false;
+        
+        // Reset to playing tab
+        setTimeout(() => musicPlayer.mainPlayer.switchTab(MUSIC_PLAYER.tabs.playing), 50);
+    }, 300); // Match the animation duration
+},
         toggle: () => {
             const drawer = QUERY(MUSIC_PLAYER.root);
             if (!drawer) return;
