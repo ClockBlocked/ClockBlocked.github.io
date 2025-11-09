@@ -2153,7 +2153,151 @@ MyBeats:  Stream & share your favorite music for free.
   pointer-events: all;
 }
 
-/* iOS Bottom Sheet */
+
+
+.player {
+  position: fixed; 
+  bottom: -3rem;
+  inset: 0;
+  background: transparent;
+  border: none;
+  padding: 1rem;
+  margin: 0;
+  z-index: 9999;
+  overflow: hidden;
+  transform: translateY(100%);
+  opacity: 0;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+              opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.player:popover-open {
+  transform: translateY(0);
+  opacity: 1;
+}
+.player::backdrop {
+  background: rgba(0, 0, 0, 0);
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  transition: background 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              backdrop-filter 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.player:popover-open::backdrop {
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.player .inner {
+  position: relative;
+  background-color: #2D333B;
+  border: 1.5px solid #444C56;
+  border-radius: 12px;
+  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.25);
+  color: #ADBAC7;
+  width: 90svw;
+  justify-content: flex-start;
+  height: 85svh;
+  z-index: 10;
+  overflow: hidden; 
+  overflow-y: auto;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  transform: scale(0.95) translateY(20px);
+  opacity: 0;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+              opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.player:popover-open .inner {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+  transition-delay: 0.05s;
+}
+
+.player .dragArea {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.player:popover-open .dragArea {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.1s;
+}
+
+.player .closeBtn {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.player:popover-open .closeBtn {
+  opacity: 1;
+  transform: scale(1);
+  transition-delay: 0.15s;
+}
+
+.player .nowPlaying {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.player:popover-open .nowPlaying {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.2s;
+}
+
+.player .content {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.player:popover-open .content {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.25s;
+}
+
+.player .tabs {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.player:popover-open .tabs {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.3s;
+}
+
+.player.closing {
+  transform: translateY(100%);
+  opacity: 0;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.6, 1),
+              opacity 0.2s cubic-bezier(0.4, 0, 0.6, 1);
+}
+.player.closing::backdrop {
+  background: rgba(0, 0, 0, 0);
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+}
+.player.closing .inner {
+  transform: scale(0.95) translateY(20px);
+  opacity: 0;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.6, 1),
+              opacity 0.2s cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+
+
+
+
+
+/**
 .player {
   transform: translateY(100%);
   transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
@@ -2162,8 +2306,8 @@ MyBeats:  Stream & share your favorite music for free.
 .player.open {
   transform: translateY(0);
 }
+**/
 
-/* Drag handle animation */
 .player .dragHandle span {
   transition: transform 0.3s ease;
 }
@@ -2172,6 +2316,8 @@ MyBeats:  Stream & share your favorite music for free.
   transform: scale(1.2);
 }
 
+
+/**
 .player {
   position: fixed; 
   bottom: -3rem;
@@ -2204,6 +2350,10 @@ MyBeats:  Stream & share your favorite music for free.
 .player:popover-open::backdrop {
   opacity: 1;
 }
+**/
+
+
+
 
 .player .scroller {
   width: 100%;
