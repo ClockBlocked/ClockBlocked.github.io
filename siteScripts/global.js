@@ -1,4 +1,4 @@
-import { DOM, QUERY, QUERY_ALL, IDS, CLASSES, ROUTES, THEMES, STORAGE_KEYS, ICONS, AUDIO_FORMATS, REPEAT_MODES, NOTIFICATION_TYPES, $, $byId } from "./map.js";
+import { DOM, QUERY, QUERY_ALL, IDS, CLASSES, ROUTES, THEMES, STORAGE_KEYS, ICONS, AUDIO_FORMATS, REPEAT_MODES, NOTIFICATION_TYPES, MUSIC_PLAYER, NAVBAR, $, $byId } from "./map.js";
 import { music } from "../modules/library.js";
 import { render, create } from "./utilities/templates.js";
 import { encodeURIComponent } from './utilities/parsers.js';
@@ -1206,43 +1206,10 @@ const notificationPlayer = {
   }
 };
 
-
-const MUSIC_PLAYER = {
-    root: '.player',
-    close: '.player .closeBtn',
-    albumArtwork: '.player .cover',
-    songName: '.player .title',
-    artistName: '.player .artist',
-    albumName: '.player .album',
-    play: '.player .controlBtn.primary',
-    progressBar: '.player .progressBar',
-    progressFill: '.player .progressFill',
-    progressBuffer: '.player .progressBuffer',
-    progressThumb: '.player .progressThumb',
-    currentTime: '.player .currentTime',
-    totalTime: '.player .totalTime',
-    favoriteBtn: '.player .favoriteBtn',
-    queueBtn: '.player .actionBtn#playlistBtn',
-    queueList: '.player .list#queue',
-    queueCount: '.player .listCount#queueCount',
-    recentList: '.player .list#playlist',
-    recentCount: '.player .listCount#playlistCount',
-    skipTimes: { forward: 10, rewind: -10 },
-    classes: { 
-        playing: 'isPlaying', 
-        dragging: 'isDragging', 
-        hovering: 'isHovering' 
-    },
-    tabs: { 
-        playing: 'playing', 
-        recent: 'playlist', 
-        queue: 'queue' 
-    }
-};
 const musicPlayer = {
     mainPlayer: {
         open: () => {
-            const drawer = document.querySelector(MUSIC_PLAYER.root);
+            const drawer = QUERY(MUSIC_PLAYER.root);
             if (!drawer) return;
             drawer.showPopover();
             drawer.offsetHeight;
@@ -1253,7 +1220,7 @@ const musicPlayer = {
             }
         },
         close: () => {
-            const drawer = document.querySelector(MUSIC_PLAYER.root);
+            const drawer = QUERY(MUSIC_PLAYER.root);
             if (!drawer) return;
             const handleTransitionEnd = () => {
                 drawer.removeEventListener('transitionend', handleTransitionEnd);
@@ -1270,7 +1237,7 @@ const musicPlayer = {
             drawer.style.opacity = '0';
         },
         toggle: () => {
-            const drawer = document.querySelector(MUSIC_PLAYER.root);
+            const drawer = QUERY(MUSIC_PLAYER.root);
             if (!drawer) return;
             if (drawer.matches(':popover-open')) {
                 musicPlayer.mainPlayer.close();
@@ -1280,10 +1247,10 @@ const musicPlayer = {
         },
         switchTab: (tabName) => {
             appState.currentTab = tabName;
-            document.querySelectorAll('.player .tab').forEach(tab => {
+            QUERY_ALL(`${MUSIC_PLAYER.root} .tab`).forEach(tab => {
                 tab.classList.toggle('active', tab.dataset.tab === tabName);
             });
-            document.querySelectorAll('.player .panel').forEach(content => {
+            QUERY_ALL(`${MUSIC_PLAYER.root} .panel`).forEach(content => {
                 content.classList.toggle('active', content.dataset.tab === tabName);
             });
             musicPlayer.mainPlayer.updateTabContent(tabName);
@@ -1293,9 +1260,9 @@ const musicPlayer = {
             else if (tabName === MUSIC_PLAYER.tabs.queue) musicPlayer.mainPlayer.updateQueueTab();
         },
         updateQueueTab: () => {
-            const queueList = document.querySelector(MUSIC_PLAYER.queueList);
+            const queueList = QUERY(MUSIC_PLAYER.queueList);
             if (!queueList) return;
-            const emptyState = queueList.querySelector('.player .empty');
+            const emptyState = queueList.querySelector(`${MUSIC_PLAYER.root} .empty`);
             if (appState.queue.items.length === 0) {
                 if (emptyState) emptyState.style.display = 'flex';
                 const items = queueList.querySelectorAll('.songList .item');
@@ -1346,15 +1313,15 @@ const musicPlayer = {
                 listItem.addEventListener('click', () => appState.queue.playAt(index));
                 queueList.appendChild(listItem);
             });
-            const queueCount = document.querySelector(MUSIC_PLAYER.queueCount);
+            const queueCount = QUERY(MUSIC_PLAYER.queueCount);
             if (queueCount) {
                 queueCount.textContent = `${appState.queue.items.length} song${appState.queue.items.length !== 1 ? 's' : ''}`;
             }
         },
         updateRecentTab: () => {
-            const recentList = document.querySelector(MUSIC_PLAYER.recentList);
+            const recentList = QUERY(MUSIC_PLAYER.recentList);
             if (!recentList) return;
-            const emptyState = recentList.querySelector('.player .empty');
+            const emptyState = recentList.querySelector(`${MUSIC_PLAYER.root} .empty`);
             if (!appState.recentlyPlayed || appState.recentlyPlayed.length === 0) {
                 if (emptyState) emptyState.style.display = 'flex';
                 const items = recentList.querySelectorAll('.songList .item');
@@ -1404,41 +1371,41 @@ const musicPlayer = {
                 listItem.addEventListener('click', () => musicPlayer.ui.playSong(song));
                 recentList.appendChild(listItem);
             });
-            const recentCount = document.querySelector(MUSIC_PLAYER.recentCount);
+            const recentCount = QUERY(MUSIC_PLAYER.recentCount);
             if (recentCount) {
                 recentCount.textContent = `${appState.recentlyPlayed.length} song${appState.recentlyPlayed.length !== 1 ? 's' : ''}`;
             }
         },
         init: () => {
-            const closeBtn = document.querySelector(MUSIC_PLAYER.close);
+            const closeBtn = QUERY(MUSIC_PLAYER.close);
             if (closeBtn) {
                 closeBtn.addEventListener('click', () => musicPlayer.mainPlayer.close());
             }
-            document.querySelectorAll('.player .tab').forEach(tab => {
+            QUERY_ALL(`${MUSIC_PLAYER.root} .tab`).forEach(tab => {
                 tab.addEventListener('click', () => {
                     const tabName = tab.dataset.tab;
                     if (tabName) musicPlayer.mainPlayer.switchTab(tabName);
                 });
             });
-            const queueBtn = document.querySelector(MUSIC_PLAYER.queueBtn);
+            const queueBtn = QUERY(MUSIC_PLAYER.queueBtn);
             if (queueBtn) {
                 queueBtn.addEventListener('click', () => musicPlayer.mainPlayer.switchTab(MUSIC_PLAYER.tabs.queue));
             }
             musicPlayer.mainPlayer.preventHorizontalScroll();
             musicPlayer.mainPlayer.initDrawerDrag();
-            const favoriteBtn = document.querySelector(MUSIC_PLAYER.favoriteBtn);
+            const favoriteBtn = QUERY(MUSIC_PLAYER.favoriteBtn);
             if (favoriteBtn) {
                 favoriteBtn.addEventListener('click', () => {
                     favoriteBtn.classList.toggle('favorited');
                 });
             }
-            const scrollEl = document.querySelector('.player .scrollableContent');
-            const coverEl = document.querySelector('.player .cover');
+            const scrollEl = QUERY(`${MUSIC_PLAYER.root} .scrollableContent`);
+            const coverEl = QUERY(MUSIC_PLAYER.albumArtwork);
             const compactHeader = document.getElementById('compactHeader');
             const compactCover = document.getElementById('compactCover');
             const compactTitle = document.getElementById('compactTitle');
             const compactArtist = document.getElementById('compactArtist');
-            const contentCard = document.querySelector('.player .contentCard');
+            const contentCard = QUERY(`${MUSIC_PLAYER.root} .contentCard`);
             let coverRect = null;
             let targetLeft = 16;
             let targetTop = 12;
@@ -1456,7 +1423,7 @@ const musicPlayer = {
                 t = Math.max(0, Math.min(1, t));
                 if (!coverRect) recalc();
                 const cRect = coverRect;
-                const parentRect = document.querySelector('.player .inner').getBoundingClientRect();
+                const parentRect = QUERY(`${MUSIC_PLAYER.root} .inner`).getBoundingClientRect();
                 const initLeft = cRect.left - parentRect.left;
                 const initTop = cRect.top - parentRect.top;
                 const deltaX = targetLeft - initLeft;
@@ -1480,7 +1447,7 @@ const musicPlayer = {
                     recalc();
                     onScroll();
                 });
-                document.getElementById('cover')?.addEventListener('load', () => {
+                $byId('music-player-cover')?.addEventListener('load', () => {
                     recalc();
                     onScroll();
                 });
@@ -1490,12 +1457,12 @@ const musicPlayer = {
             const compactClickArea = document.getElementById('compactHeader');
             if (compactClickArea) {
                 compactClickArea.addEventListener('click', () => {
-                    document.querySelector('.player .scroller')?.scrollTo({ top: 0, behavior: 'smooth' });
+                    QUERY(`${MUSIC_PLAYER.root} .scroller`)?.scrollTo({ top: 0, behavior: 'smooth' });
                 });
             }
         },
         preventHorizontalScroll: () => {
-            const scroller = document.querySelector('.player .scroller');
+            const scroller = QUERY(MUSIC_PLAYER.scroller);
             if (!scroller) return;
             let startX = 0;
             let scrollLeft = 0;
@@ -1523,7 +1490,7 @@ const musicPlayer = {
             });
         },
         initDrawerDrag: () => {
-            const drawer = document.querySelector(MUSIC_PLAYER.root);
+            const drawer = QUERY(MUSIC_PLAYER.root);
             if (!drawer) return;
             const handle = drawer.querySelector('.dragHandle');
             if (!handle) return;
@@ -1820,8 +1787,8 @@ const musicPlayer = {
             return false;
         },
         bindSeekBar: () => {
-            const bar = document.querySelector(MUSIC_PLAYER.progressBar);
-            const thumb = document.querySelector(MUSIC_PLAYER.progressThumb);
+            const bar = QUERY(MUSIC_PLAYER.progressBar);
+            const thumb = QUERY(MUSIC_PLAYER.progressThumb);
             if (!bar || !thumb) {
                 console.error("bindSeekBar: Could not find progress bar elements");
                 return;
@@ -1879,9 +1846,9 @@ const musicPlayer = {
             }
         },
         setProgressUI: (percent, currentTime) => {
-            const fill = document.querySelector(MUSIC_PLAYER.progressFill);
-            const thumb = document.querySelector(MUSIC_PLAYER.progressThumb);
-            const currentTimeElement = document.querySelector(MUSIC_PLAYER.currentTime);
+            const fill = QUERY(MUSIC_PLAYER.progressFill);
+            const thumb = QUERY(MUSIC_PLAYER.progressThumb);
+            const currentTimeElement = QUERY(MUSIC_PLAYER.currentTime);
             if (fill) fill.style.width = percent + '%';
             if (thumb) thumb.style.left = percent + '%';
             if (currentTimeElement && isFinite(currentTime)) {
@@ -1942,7 +1909,7 @@ const musicPlayer = {
             musicPlayer.playback.dispatchPlayerStateChange();
         },
         updateBufferDisplay: () => {
-            const buffer = document.querySelector(MUSIC_PLAYER.progressBuffer);
+            const buffer = QUERY(MUSIC_PLAYER.progressBuffer);
             if (!buffer || !appState.audio) return;
             if (!appState.audio.buffered || appState.audio.buffered.length === 0) {
                 buffer.style.width = '0%';
@@ -1966,19 +1933,19 @@ const musicPlayer = {
             if (window.ui && ui.updatePlayPauseButtons) {
                 ui.updatePlayPauseButtons();
             }
-            document.querySelector(MUSIC_PLAYER.root)?.classList.add(MUSIC_PLAYER.classes.playing);
+            QUERY(MUSIC_PLAYER.root)?.classList.add(MUSIC_PLAYER.classes.playing);
         },
         onPause: () => {
             appState.isPlaying = false;
             if (window.ui && ui.updatePlayPauseButtons) {
                 ui.updatePlayPauseButtons();
             }
-            document.querySelector(MUSIC_PLAYER.root)?.classList.remove(MUSIC_PLAYER.classes.playing);
+            QUERY(MUSIC_PLAYER.root)?.classList.remove(MUSIC_PLAYER.classes.playing);
         },
         onMetadataLoaded: () => {
             if (!appState.audio || isNaN(appState.audio.duration)) return;
             appState.duration = appState.audio.duration;
-            const totalTimeElement = document.querySelector(MUSIC_PLAYER.totalTime);
+            const totalTimeElement = QUERY(MUSIC_PLAYER.totalTime);
             if (totalTimeElement) {
                 totalTimeElement.textContent = utils.formatTime(appState.duration);
             }
@@ -2040,13 +2007,13 @@ const musicPlayer = {
         updateNowPlaying: () => {
             if (!appState.currentSong) return;
             const coverUrl = appState.currentSong.cover || utils.getAlbumImageUrl(appState.currentSong.album);
-            const cover = document.querySelector(MUSIC_PLAYER.albumArtwork);
+            const cover = QUERY(MUSIC_PLAYER.albumArtwork);
             if (cover && coverUrl) {
                 cover.src = coverUrl;
             }
-            const titleEl = document.querySelector(MUSIC_PLAYER.songName);
-            const artistEl = document.querySelector(MUSIC_PLAYER.artistName);
-            const albumEl = document.querySelector(MUSIC_PLAYER.albumName);
+            const titleEl = QUERY(MUSIC_PLAYER.songName);
+            const artistEl = QUERY(MUSIC_PLAYER.artistName);
+            const albumEl = QUERY(MUSIC_PLAYER.albumName);
             if (titleEl && appState.currentSong.title) titleEl.textContent = appState.currentSong.title;
             if (artistEl && appState.currentArtist) artistEl.textContent = appState.currentArtist;
             if (albumEl && appState.currentAlbum) albumEl.textContent = appState.currentAlbum;
@@ -2056,8 +2023,8 @@ const musicPlayer = {
             if (compactCover && coverUrl) compactCover.src = coverUrl;
             if (compactTitle && appState.currentSong.title) compactTitle.textContent = appState.currentSong.title;
             if (compactArtist && appState.currentArtist) compactArtist.textContent = appState.currentArtist;
-            const playBtn = document.querySelector(MUSIC_PLAYER.play);
-            const drawer = document.querySelector(MUSIC_PLAYER.root);
+            const playBtn = QUERY(MUSIC_PLAYER.play);
+            const drawer = QUERY(MUSIC_PLAYER.root);
             if (playBtn) {
                 const playIcon = playBtn.querySelector('.playIcon');
                 const pauseIcon = playBtn.querySelector('.pauseIcon');
@@ -2074,13 +2041,12 @@ const musicPlayer = {
         }
     }
 };
+
 document.addEventListener('DOMContentLoaded', () => {
     musicPlayer.mainPlayer.init();
 });
 
 window.musicPlayer = musicPlayer;
-
-
 
 const app = {
     initialize: function() {
@@ -2094,8 +2060,6 @@ const app = {
         navigation.initialize();
         homePage.initialize();
 
- //       eventHandlers.init();
-
         app.resetUI();
         app.syncGlobalState();
 
@@ -2104,7 +2068,7 @@ const app = {
     },
 
     resetUI: function() {
-        const nowPlayingArea = document.querySelector(NAVBAR.nowPlaying);
+        const nowPlayingArea = QUERY(NAVBAR.nowPlaying);
         if (nowPlayingArea) {
             nowPlayingArea.classList.remove(CLASSES.hasSong);
         }
@@ -2610,947 +2574,726 @@ const playlists = {
     },
 };
 
-const bindClick = (el, handler) => {
-  if (!el || typeof handler !== "function") return;
-  const fn = (e) => { e.stopPropagation(); handler(); };
-  if (el._clickHandler) el.removeEventListener("click", el._clickHandler);
-  el.addEventListener("click", fn);
-  el._clickHandler = fn;
-};
-
-const bindClickAll = (nodeList, handler) => {
-  if (!nodeList) return;
-  nodeList.forEach((el) => bindClick(el, handler));
-};
-
 const clickables = {
-  // ═══════════════════════════════════════════════════════════════
-  // ELEMENT REFERENCES - Cached for performance
-  // ═══════════════════════════════════════════════════════════════
-  elements: {
-    // Navigation Bar Elements
-    menuBtn: null,
-    musicPlayerBtn: null,
-    navbarPlayPause: null,
-    navbarPrevious: null,
-    navbarNext: null,
-    
-    // Music Player Drawer Elements
-    drawer: null,
-    drawerClose: null,
-    drawerPlay: null,
-    drawerPrevious: null,
-    drawerNext: null,
-    drawerShuffle: null,
-    drawerRepeat: null,
-    drawerFavorite: null,
-    drawerQueue: null,
-    drawerRewind: null,
-    drawerForward: null,
-    progressBar: null,
-    
-    // Dropdown Menu Elements
-    dropdownMenu: null,
-    dropdownClose: null,
-    favoriteSongs: null,
-    favoriteArtists: null,
-    favoriteAlbums: null,
-    recentlyPlayed: null,
-    queueView: null,
-    createPlaylist: null,
-    shuffleAll: null,
-    
-    // Music Player Tabs
-    tabs: null,
-    
-    // Search Elements
-    searchTrigger: null,
-    searchDialog: null,
-  },
+    elements: {
+        menuBtn: null,
+        musicPlayerBtn: null,
+        navbarPlayPause: null,
+        navbarPrevious: null,
+        navbarNext: null,
+        drawer: null,
+        drawerClose: null,
+        drawerPlay: null,
+        drawerPrevious: null,
+        drawerNext: null,
+        drawerShuffle: null,
+        drawerRepeat: null,
+        drawerFavorite: null,
+        drawerQueue: null,
+        drawerRewind: null,
+        drawerForward: null,
+        progressBar: null,
+        dropdownMenu: null,
+        dropdownClose: null,
+        favoriteSongs: null,
+        favoriteArtists: null,
+        favoriteAlbums: null,
+        recentlyPlayed: null,
+        queueView: null,
+        createPlaylist: null,
+        shuffleAll: null,
+        tabs: null,
+        searchTrigger: null,
+        searchDialog: null,
+    },
 
-  // ═══════════════════════════════════════════════════════════════
-  // INITIALIZATION - Cache all element references
-  // ═══════════════════════════════════════════════════════════════
-  init: () => {
-    // Navigation Bar
-    clickables.elements.menuBtn = document.getElementById('menu-trigger');
-    clickables.elements.musicPlayerBtn = document.getElementById('now-playing-area');
-    clickables.elements.navbarPlayPause = document.querySelector('#navbar .playPause');
-    clickables.elements.navbarPrevious = document.querySelector('#navbar .previous');
-    clickables.elements.navbarNext = document.querySelector('#navbar .next');
-    
-    // Music Player Drawer
-    clickables.elements.drawer = document.getElementById('drawer');
-    clickables.elements.drawerClose = document.querySelector('#drawer #closeBtn');
-    clickables.elements.drawerPlay = document.querySelector('#drawer #playBtn');
-    clickables.elements.drawerPrevious = document.querySelector('#drawer #prevBtn');
-    clickables.elements.drawerNext = document.querySelector('#drawer #nextBtn');
-    clickables.elements.drawerShuffle = document.querySelector('#drawer #shuffleBtn');
-    clickables.elements.drawerRepeat = document.querySelector('#drawer #repeatBtn');
-    clickables.elements.drawerFavorite = document.querySelector('#drawer #favoriteBtn');
-    clickables.elements.drawerQueue = document.querySelector('#drawer #queueBtn');
-    clickables.elements.drawerRewind = document.querySelector('#drawer #rewindBtn');
-    clickables.elements.drawerForward = document.querySelector('#drawer #forwardBtn');
-    clickables.elements.progressBar = document.querySelector('#drawer #progressBar');
-    
-    // Dropdown Menu
-    clickables.elements.dropdownMenu = document.getElementById('dropdown-menu');
-    clickables.elements.dropdownClose = document.querySelector('#dropdown-menu .close');
-    clickables.elements.favoriteSongs = document.getElementById('favorite-songs');
-    clickables.elements.favoriteArtists = document.getElementById('favorite-artists');
-    clickables.elements.favoriteAlbums = document.getElementById('favorite-albums');
-    clickables.elements.recentlyPlayed = document.getElementById('recently-played');
-    clickables.elements.queueView = document.getElementById('queue-view');
-    clickables.elements.createPlaylist = document.getElementById('create-playlist');
-    clickables.elements.shuffleAll = document.getElementById('shuffle-all');
-    
-    // Music Player Tabs
-    clickables.elements.tabs = document.querySelectorAll('#drawer .tab');
-    
-    // Search
-    clickables.elements.searchTrigger = document.getElementById('global-search-trigger');
-    clickables.elements.searchDialog = document.getElementById('search-dialog');
-    
-    // Bind all event handlers
-    clickables.navBar();
-    clickables.musicPlayer();
-    clickables.dropDownMenu();
-    clickables.others();
-    clickables.keyboard();
-    clickables.document();
-    
-    console.log('✅ Clickables initialized and all event handlers bound');
-  },
+    init: () => {
+        clickables.elements.menuBtn = $byId(IDS.menuTrigger);
+        clickables.elements.musicPlayerBtn = $byId(IDS.musicPlayerTrigger);
+        clickables.elements.navbarPlayPause = QUERY(NAVBAR.playPause);
+        clickables.elements.navbarPrevious = QUERY(NAVBAR.previous);
+        clickables.elements.navbarNext = QUERY(NAVBAR.next);
+        
+        clickables.elements.drawer = $byId(IDS.musicPlayer);
+        clickables.elements.drawerClose = QUERY(MUSIC_PLAYER.close);
+        clickables.elements.drawerPlay = QUERY(MUSIC_PLAYER.play);
+        clickables.elements.drawerPrevious = QUERY(MUSIC_PLAYER.previous);
+        clickables.elements.drawerNext = QUERY(MUSIC_PLAYER.next);
+        clickables.elements.drawerShuffle = QUERY(MUSIC_PLAYER.shuffleBtn);
+        clickables.elements.drawerRepeat = QUERY(MUSIC_PLAYER.repeatBtn);
+        clickables.elements.drawerFavorite = QUERY(MUSIC_PLAYER.favoriteBtn);
+        clickables.elements.drawerQueue = QUERY(MUSIC_PLAYER.queueBtn);
+        clickables.elements.drawerRewind = QUERY(MUSIC_PLAYER.reWind);
+        clickables.elements.drawerForward = QUERY(MUSIC_PLAYER.fastForward);
+        clickables.elements.progressBar = QUERY(MUSIC_PLAYER.progressBar);
+        
+        clickables.elements.dropdownMenu = $byId(IDS.dropdownMenu);
+        clickables.elements.dropdownClose = $byId(IDS.dropdownClose);
+        clickables.elements.favoriteSongs = $byId(IDS.favoriteSongs);
+        clickables.elements.favoriteArtists = $byId(IDS.favoriteArtists);
+        clickables.elements.recentlyPlayed = $byId(IDS.recentlyPlayed);
+        clickables.elements.queueView = $byId(IDS.queueView);
+        clickables.elements.createPlaylist = $byId(IDS.createPlaylist);
+        clickables.elements.shuffleAll = $byId(IDS.shuffleAll);
+        
+        clickables.elements.tabs = QUERY_ALL(`${MUSIC_PLAYER.root} .tab`);
+        
+        clickables.elements.searchTrigger = $byId(IDS.searchTrigger);
+        clickables.elements.searchDialog = $byId(IDS.searchDialog);
+        
+        clickables.navBar();
+        clickables.musicPlayer();
+        clickables.dropDownMenu();
+        clickables.others();
+        clickables.keyboard();
+        clickables.document();
+        
+        console.log('✅ Clickables initialized and all event handlers bound');
+    },
 
-  // ═══════════════════════════════════════════════════════════════
-  // NAVIGATION BAR HANDLERS
-  // ═══════════════════════════════════════════════════════════════
-  navBar: () => {
-    const { menuBtn, musicPlayerBtn, navbarPlayPause, navbarPrevious, navbarNext } = clickables.elements;
-    
-    // Menu Trigger - ONLY this element opens the dropdown menu
-    if (menuBtn) {
-      clickables.removeListener(menuBtn, '_menuToggle');
-      const menuToggleHandler = (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        console.log('🔽 Menu trigger clicked');
+    navBar: () => {
+        const { menuBtn, musicPlayerBtn, navbarPlayPause, navbarPrevious, navbarNext } = clickables.elements;
         
-        if (typeof dropdown !== 'undefined' && dropdown.toggle) {
-          dropdown.toggle(e);
+        if (menuBtn) {
+            clickables.removeListener(menuBtn, '_menuToggle');
+            const menuToggleHandler = (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                console.log('🔽 Menu trigger clicked');
+                
+                if (typeof dropdown !== 'undefined' && dropdown.toggle) {
+                    dropdown.toggle(e);
+                } else {
+                    console.error('dropdown.toggle not available');
+                }
+            };
+            menuBtn.addEventListener('click', menuToggleHandler);
+            menuBtn._menuToggle = menuToggleHandler;
+            console.log('✅ Menu trigger bound');
         } else {
-          console.error('dropdown.toggle not available');
+            console.warn('⚠️ menu-trigger element not found');
         }
-      };
-      menuBtn.addEventListener('click', menuToggleHandler);
-      menuBtn._menuToggle = menuToggleHandler;
-      console.log('✅ Menu trigger bound');
-    } else {
-      console.warn('⚠️ menu-trigger element not found');
-    }
-    
-    // Music Player Trigger - ONLY this element opens the music player
-    if (musicPlayerBtn) {
-      clickables.removeListener(musicPlayerBtn, '_musicPlayerToggle');
-      const musicPlayerToggleHandler = (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        console.log('🎵 Music player trigger clicked');
         
-        if (typeof musicPlayer !== 'undefined' && musicPlayer.mainPlayer && musicPlayer.mainPlayer.toggle) {
-          musicPlayer.mainPlayer.toggle();
+        if (musicPlayerBtn) {
+            clickables.removeListener(musicPlayerBtn, '_musicPlayerToggle');
+            const musicPlayerToggleHandler = (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                console.log('🎵 Music player trigger clicked');
+                
+                if (typeof musicPlayer !== 'undefined' && musicPlayer.mainPlayer && musicPlayer.mainPlayer.toggle) {
+                    musicPlayer.mainPlayer.toggle();
+                } else {
+                    console.error('musicPlayer.mainPlayer.toggle not available');
+                }
+            };
+            musicPlayerBtn.addEventListener('click', musicPlayerToggleHandler);
+            musicPlayerBtn._musicPlayerToggle = musicPlayerToggleHandler;
+            console.log('✅ Music player trigger bound');
         } else {
-          console.error('musicPlayer.mainPlayer.toggle not available');
+            console.warn('⚠️ now-playing-area element not found');
         }
-      };
-      musicPlayerBtn.addEventListener('click', musicPlayerToggleHandler);
-      musicPlayerBtn._musicPlayerToggle = musicPlayerToggleHandler;
-      console.log('✅ Music player trigger bound');
-    } else {
-      console.warn('⚠️ now-playing-area element not found');
-    }
-    
-    // Play/Pause Button - Toggles playback (does NOT open music player)
-    if (navbarPlayPause) {
-      clickables.removeListener(navbarPlayPause, '_playPauseToggle');
-      const playPauseHandler = (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        console.log('⏯️ Play/Pause clicked');
         
-        if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.togglePlayPause) {
-          musicPlayer.playback.togglePlayPause();
+        if (navbarPlayPause) {
+            clickables.removeListener(navbarPlayPause, '_playPauseToggle');
+            const playPauseHandler = (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                console.log('⏯️ Play/Pause clicked');
+                
+                if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.togglePlayPause) {
+                    musicPlayer.playback.togglePlayPause();
+                } else {
+                    console.error('musicPlayer.playback.togglePlayPause not available');
+                }
+            };
+            navbarPlayPause.addEventListener('click', playPauseHandler);
+            navbarPlayPause._playPauseToggle = playPauseHandler;
+            console.log('✅ Navbar play/pause bound');
         } else {
-          console.error('musicPlayer.playback.togglePlayPause not available');
+            console.warn('⚠️ navbar playPause element not found');
         }
-      };
-      navbarPlayPause.addEventListener('click', playPauseHandler);
-      navbarPlayPause._playPauseToggle = playPauseHandler;
-      console.log('✅ Navbar play/pause bound');
-    } else {
-      console.warn('⚠️ navbar playPause element not found');
-    }
-    
-    // Previous Button
-    if (navbarPrevious) {
-      clickables.removeListener(navbarPrevious, '_previousHandler');
-      const previousHandler = (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        console.log('⏮️ Previous clicked');
         
-        if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.previous) {
-          musicPlayer.playback.previous();
+        if (navbarPrevious) {
+            clickables.removeListener(navbarPrevious, '_previousHandler');
+            const previousHandler = (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                console.log('⏮️ Previous clicked');
+                
+                if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.previous) {
+                    musicPlayer.playback.previous();
+                } else {
+                    console.error('musicPlayer.playback.previous not available');
+                }
+            };
+            navbarPrevious.addEventListener('click', previousHandler);
+            navbarPrevious._previousHandler = previousHandler;
+            console.log('✅ Navbar previous bound');
         } else {
-          console.error('musicPlayer.playback.previous not available');
+            console.warn('⚠️ navbar previous element not found');
         }
-      };
-      navbarPrevious.addEventListener('click', previousHandler);
-      navbarPrevious._previousHandler = previousHandler;
-      console.log('✅ Navbar previous bound');
-    } else {
-      console.warn('⚠️ navbar previous element not found');
-    }
-    
-    // Next Button
-    if (navbarNext) {
-      clickables.removeListener(navbarNext, '_nextHandler');
-      const nextHandler = (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        console.log('⏭️ Next clicked');
         
-        if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.next) {
-          musicPlayer.playback.next();
+        if (navbarNext) {
+            clickables.removeListener(navbarNext, '_nextHandler');
+            const nextHandler = (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                console.log('⏭️ Next clicked');
+                
+                if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.next) {
+                    musicPlayer.playback.next();
+                } else {
+                    console.error('musicPlayer.playback.next not available');
+                }
+            };
+            navbarNext.addEventListener('click', nextHandler);
+            navbarNext._nextHandler = nextHandler;
+            console.log('✅ Navbar next bound');
         } else {
-          console.error('musicPlayer.playback.next not available');
+            console.warn('⚠️ navbar next element not found');
         }
-      };
-      navbarNext.addEventListener('click', nextHandler);
-      navbarNext._nextHandler = nextHandler;
-      console.log('✅ Navbar next bound');
-    } else {
-      console.warn('⚠️ navbar next element not found');
-    }
-  },
+    },
 
-  // ═══════════════════════════════════════════════════════════════
-  // MUSIC PLAYER DRAWER HANDLERS
-  // ═══════════════════════════════════════════════════════════════
-  musicPlayer: () => {
-    const {
-      drawerClose,
-      drawerPlay,
-      drawerPrevious,
-      drawerNext,
-      drawerShuffle,
-      drawerRepeat,
-      drawerFavorite,
-      drawerQueue,
-      drawerRewind,
-      drawerForward,
-      progressBar,
-      tabs
-    } = clickables.elements;
-    
-    // Close Button
-    if (drawerClose) {
-      clickables.removeListener(drawerClose, '_closeHandler');
-      const closeHandler = (e) => {
-        e.stopPropagation();
-        console.log('✖️ Drawer close clicked');
+    musicPlayer: () => {
+        const {
+            drawerClose,
+            drawerPlay,
+            drawerPrevious,
+            drawerNext,
+            drawerShuffle,
+            drawerRepeat,
+            drawerFavorite,
+            drawerQueue,
+            drawerRewind,
+            drawerForward,
+            progressBar,
+            tabs
+        } = clickables.elements;
         
-        if (typeof musicPlayer !== 'undefined' && musicPlayer.mainPlayer && musicPlayer.mainPlayer.close) {
-          musicPlayer.mainPlayer.close();
+        if (drawerClose) {
+            clickables.removeListener(drawerClose, '_closeHandler');
+            const closeHandler = (e) => {
+                e.stopPropagation();
+                console.log('✖️ Drawer close clicked');
+                
+                if (typeof musicPlayer !== 'undefined' && musicPlayer.mainPlayer && musicPlayer.mainPlayer.close) {
+                    musicPlayer.mainPlayer.close();
+                }
+            };
+            drawerClose.addEventListener('click', closeHandler);
+            drawerClose._closeHandler = closeHandler;
         }
-      };
-      drawerClose.addEventListener('click', closeHandler);
-      drawerClose._closeHandler = closeHandler;
-    }
-    
-    // Play/Pause Button (in drawer)
-    if (drawerPlay) {
-      clickables.removeListener(drawerPlay, '_drawerPlayHandler');
-      const drawerPlayHandler = (e) => {
-        e.stopPropagation();
-        console.log('⏯️ Drawer play/pause clicked');
         
-        if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.togglePlayPause) {
-          musicPlayer.playback.togglePlayPause();
+        if (drawerPlay) {
+            clickables.removeListener(drawerPlay, '_drawerPlayHandler');
+            const drawerPlayHandler = (e) => {
+                e.stopPropagation();
+                console.log('⏯️ Drawer play/pause clicked');
+                
+                if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.togglePlayPause) {
+                    musicPlayer.playback.togglePlayPause();
+                }
+            };
+            drawerPlay.addEventListener('click', drawerPlayHandler);
+            drawerPlay._drawerPlayHandler = drawerPlayHandler;
         }
-      };
-      drawerPlay.addEventListener('click', drawerPlayHandler);
-      drawerPlay._drawerPlayHandler = drawerPlayHandler;
-    }
-    
-    // Previous Button (in drawer)
-    if (drawerPrevious) {
-      clickables.removeListener(drawerPrevious, '_drawerPreviousHandler');
-      const drawerPreviousHandler = (e) => {
-        e.stopPropagation();
-        console.log('⏮️ Drawer previous clicked');
         
-        if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.previous) {
-          musicPlayer.playback.previous();
+        if (drawerPrevious) {
+            clickables.removeListener(drawerPrevious, '_drawerPreviousHandler');
+            const drawerPreviousHandler = (e) => {
+                e.stopPropagation();
+                console.log('⏮️ Drawer previous clicked');
+                
+                if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.previous) {
+                    musicPlayer.playback.previous();
+                }
+            };
+            drawerPrevious.addEventListener('click', drawerPreviousHandler);
+            drawerPrevious._drawerPreviousHandler = drawerPreviousHandler;
         }
-      };
-      drawerPrevious.addEventListener('click', drawerPreviousHandler);
-      drawerPrevious._drawerPreviousHandler = drawerPreviousHandler;
-    }
-    
-    // Next Button (in drawer)
-    if (drawerNext) {
-      clickables.removeListener(drawerNext, '_drawerNextHandler');
-      const drawerNextHandler = (e) => {
-        e.stopPropagation();
-        console.log('⏭️ Drawer next clicked');
         
-        if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.next) {
-          musicPlayer.playback.next();
+        if (drawerNext) {
+            clickables.removeListener(drawerNext, '_drawerNextHandler');
+            const drawerNextHandler = (e) => {
+                e.stopPropagation();
+                console.log('⏭️ Drawer next clicked');
+                
+                if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.next) {
+                    musicPlayer.playback.next();
+                }
+            };
+            drawerNext.addEventListener('click', drawerNextHandler);
+            drawerNext._drawerNextHandler = drawerNextHandler;
         }
-      };
-      drawerNext.addEventListener('click', drawerNextHandler);
-      drawerNext._drawerNextHandler = drawerNextHandler;
-    }
-    
-    // Shuffle Button
-    if (drawerShuffle) {
-      clickables.removeListener(drawerShuffle, '_shuffleHandler');
-      const shuffleHandler = (e) => {
-        e.stopPropagation();
-        console.log('🔀 Shuffle clicked');
         
-        if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.shuffle && musicPlayer.playback.shuffle.toggle) {
-          musicPlayer.playback.shuffle.toggle();
+        if (drawerShuffle) {
+            clickables.removeListener(drawerShuffle, '_shuffleHandler');
+            const shuffleHandler = (e) => {
+                e.stopPropagation();
+                console.log('🔀 Shuffle clicked');
+                
+                if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.shuffle && musicPlayer.playback.shuffle.toggle) {
+                    musicPlayer.playback.shuffle.toggle();
+                }
+            };
+            drawerShuffle.addEventListener('click', shuffleHandler);
+            drawerShuffle._shuffleHandler = shuffleHandler;
         }
-      };
-      drawerShuffle.addEventListener('click', shuffleHandler);
-      drawerShuffle._shuffleHandler = shuffleHandler;
-    }
-    
-    // Repeat Button
-    if (drawerRepeat) {
-      clickables.removeListener(drawerRepeat, '_repeatHandler');
-      const repeatHandler = (e) => {
-        e.stopPropagation();
-        console.log('🔁 Repeat clicked');
         
-        if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.repeat && musicPlayer.playback.repeat.toggle) {
-          musicPlayer.playback.repeat.toggle();
+        if (drawerRepeat) {
+            clickables.removeListener(drawerRepeat, '_repeatHandler');
+            const repeatHandler = (e) => {
+                e.stopPropagation();
+                console.log('🔁 Repeat clicked');
+                
+                if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.repeat && musicPlayer.playback.repeat.toggle) {
+                    musicPlayer.playback.repeat.toggle();
+                }
+            };
+            drawerRepeat.addEventListener('click', repeatHandler);
+            drawerRepeat._repeatHandler = repeatHandler;
         }
-      };
-      drawerRepeat.addEventListener('click', repeatHandler);
-      drawerRepeat._repeatHandler = repeatHandler;
-    }
-    
-    // Favorite Button
-    if (drawerFavorite) {
-      clickables.removeListener(drawerFavorite, '_favoriteHandler');
-      const favoriteHandler = (e) => {
-        e.stopPropagation();
-        console.log('❤️ Favorite clicked');
         
-        if (typeof appState !== 'undefined' && appState.currentSong && appState.favorites) {
-          appState.favorites.toggle('songs', appState.currentSong.id);
-          if (typeof ui !== 'undefined' && ui.updateFavoriteButton) {
-            ui.updateFavoriteButton();
-          }
+        if (drawerFavorite) {
+            clickables.removeListener(drawerFavorite, '_favoriteHandler');
+            const favoriteHandler = (e) => {
+                e.stopPropagation();
+                console.log('❤️ Favorite clicked');
+                
+                if (typeof appState !== 'undefined' && appState.currentSong && appState.favorites) {
+                    appState.favorites.toggle('songs', appState.currentSong.id);
+                    if (typeof ui !== 'undefined' && ui.updateFavoriteButton) {
+                        ui.updateFavoriteButton();
+                    }
+                }
+            };
+            drawerFavorite.addEventListener('click', favoriteHandler);
+            drawerFavorite._favoriteHandler = favoriteHandler;
         }
-      };
-      drawerFavorite.addEventListener('click', favoriteHandler);
-      drawerFavorite._favoriteHandler = favoriteHandler;
-    }
-    
-    // Queue Button
-    if (drawerQueue) {
-      clickables.removeListener(drawerQueue, '_queueHandler');
-      const queueHandler = (e) => {
-        e.stopPropagation();
-        console.log('📋 Queue clicked');
         
-        if (typeof musicPlayer !== 'undefined' && musicPlayer.mainPlayer && musicPlayer.mainPlayer.switchTab) {
-          musicPlayer.mainPlayer.switchTab('queue');
+        if (drawerQueue) {
+            clickables.removeListener(drawerQueue, '_queueHandler');
+            const queueHandler = (e) => {
+                e.stopPropagation();
+                console.log('📋 Queue clicked');
+                
+                if (typeof musicPlayer !== 'undefined' && musicPlayer.mainPlayer && musicPlayer.mainPlayer.switchTab) {
+                    musicPlayer.mainPlayer.switchTab('queue');
+                }
+            };
+            drawerQueue.addEventListener('click', queueHandler);
+            drawerQueue._queueHandler = queueHandler;
         }
-      };
-      drawerQueue.addEventListener('click', queueHandler);
-      drawerQueue._queueHandler = queueHandler;
-    }
-    
-    // Rewind Button (skip backwards 10s)
-    if (drawerRewind) {
-      clickables.removeListener(drawerRewind, '_rewindHandler');
-      const rewindHandler = (e) => {
-        e.stopPropagation();
-        console.log('⏪ Rewind clicked');
         
-        if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.skip) {
-          musicPlayer.playback.skip(-10);
+        if (drawerRewind) {
+            clickables.removeListener(drawerRewind, '_rewindHandler');
+            const rewindHandler = (e) => {
+                e.stopPropagation();
+                console.log('⏪ Rewind clicked');
+                
+                if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.skip) {
+                    musicPlayer.playback.skip(-10);
+                }
+            };
+            drawerRewind.addEventListener('click', rewindHandler);
+            drawerRewind._rewindHandler = rewindHandler;
         }
-      };
-      drawerRewind.addEventListener('click', rewindHandler);
-      drawerRewind._rewindHandler = rewindHandler;
-    }
-    
-    // Forward Button (skip forward 10s)
-    if (drawerForward) {
-      clickables.removeListener(drawerForward, '_forwardHandler');
-      const forwardHandler = (e) => {
-        e.stopPropagation();
-        console.log('⏩ Forward clicked');
         
-        if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.skip) {
-          musicPlayer.playback.skip(10);
+        if (drawerForward) {
+            clickables.removeListener(drawerForward, '_forwardHandler');
+            const forwardHandler = (e) => {
+                e.stopPropagation();
+                console.log('⏩ Forward clicked');
+                
+                if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.skip) {
+                    musicPlayer.playback.skip(10);
+                }
+            };
+            drawerForward.addEventListener('click', forwardHandler);
+            drawerForward._forwardHandler = forwardHandler;
         }
-      };
-      drawerForward.addEventListener('click', forwardHandler);
-      drawerForward._forwardHandler = forwardHandler;
-    }
-    
-    // Progress Bar
-    if (progressBar) {
-      clickables.bindProgressBar(progressBar);
-    }
-    
-    // Tabs
-    if (tabs && tabs.length > 0) {
-      tabs.forEach(tab => {
-        clickables.removeListener(tab, '_tabHandler');
-        const tabHandler = (e) => {
-          e.stopPropagation();
-          const tabName = tab.dataset.tab;
-          console.log(`📑 Tab clicked: ${tabName}`);
-          
-          if (tabName && typeof musicPlayer !== 'undefined' && musicPlayer.mainPlayer && musicPlayer.mainPlayer.switchTab) {
-            musicPlayer.mainPlayer.switchTab(tabName);
-          }
+        
+        if (progressBar) {
+            musicPlayer.ui.bindSeekBar();
+        }
+        
+        if (tabs && tabs.length > 0) {
+            tabs.forEach(tab => {
+                clickables.removeListener(tab, '_tabHandler');
+                const tabHandler = (e) => {
+                    e.stopPropagation();
+                    const tabName = tab.dataset.tab;
+                    console.log(`📑 Tab clicked: ${tabName}`);
+                    
+                    if (tabName && typeof musicPlayer !== 'undefined' && musicPlayer.mainPlayer && musicPlayer.mainPlayer.switchTab) {
+                        musicPlayer.mainPlayer.switchTab(tabName);
+                    }
+                };
+                tab.addEventListener('click', tabHandler);
+                tab._tabHandler = tabHandler;
+            });
+        }
+        
+        console.log('✅ Music player drawer handlers bound');
+    },
+
+    dropDownMenu: () => {
+        const {
+            dropdownClose,
+            favoriteSongs,
+            favoriteArtists,
+            favoriteAlbums,
+            recentlyPlayed,
+            queueView,
+            createPlaylist,
+            shuffleAll
+        } = clickables.elements;
+        
+        if (dropdownClose) {
+            clickables.removeListener(dropdownClose, '_dropdownCloseHandler');
+            const dropdownCloseHandler = (e) => {
+                e.stopPropagation();
+                console.log('✖️ Dropdown close clicked');
+                
+                if (typeof dropdown !== 'undefined' && dropdown.close) {
+                    dropdown.close();
+                }
+            };
+            dropdownClose.addEventListener('click', dropdownCloseHandler);
+            dropdownClose._dropdownCloseHandler = dropdownCloseHandler;
+        }
+        
+        if (favoriteSongs) {
+            clickables.removeListener(favoriteSongs, '_favoriteSongsHandler');
+            const favoriteSongsHandler = (e) => {
+                e.stopPropagation();
+                console.log('❤️ Favorite songs clicked');
+                
+                if (typeof dropdown !== 'undefined' && dropdown.close) {
+                    dropdown.close();
+                }
+                if (typeof views !== 'undefined' && views.showFavoriteSongs) {
+                    views.showFavoriteSongs();
+                }
+            };
+            favoriteSongs.addEventListener('click', favoriteSongsHandler);
+            favoriteSongs._favoriteSongsHandler = favoriteSongsHandler;
+        }
+        
+        if (favoriteArtists) {
+            clickables.removeListener(favoriteArtists, '_favoriteArtistsHandler');
+            const favoriteArtistsHandler = (e) => {
+                e.stopPropagation();
+                console.log('👨‍🎤 Favorite artists clicked');
+                
+                if (typeof dropdown !== 'undefined' && dropdown.close) {
+                    dropdown.close();
+                }
+                if (typeof views !== 'undefined' && views.showFavoriteArtists) {
+                    views.showFavoriteArtists();
+                }
+            };
+            favoriteArtists.addEventListener('click', favoriteArtistsHandler);
+            favoriteArtists._favoriteArtistsHandler = favoriteArtistsHandler;
+        }
+        
+        if (recentlyPlayed) {
+            clickables.removeListener(recentlyPlayed, '_recentlyPlayedHandler');
+            const recentlyPlayedHandler = (e) => {
+                e.stopPropagation();
+                console.log('🕒 Recently played clicked');
+                
+                if (typeof dropdown !== 'undefined' && dropdown.close) {
+                    dropdown.close();
+                }
+                if (typeof musicPlayer !== 'undefined' && musicPlayer.mainPlayer) {
+                    musicPlayer.mainPlayer.open();
+                    setTimeout(() => {
+                        if (musicPlayer.mainPlayer.switchTab) {
+                            musicPlayer.mainPlayer.switchTab('recent');
+                        }
+                    }, 50);
+                }
+            };
+            recentlyPlayed.addEventListener('click', recentlyPlayedHandler);
+            recentlyPlayed._recentlyPlayedHandler = recentlyPlayedHandler;
+        }
+        
+        if (queueView) {
+            clickables.removeListener(queueView, '_queueViewHandler');
+            const queueViewHandler = (e) => {
+                e.stopPropagation();
+                console.log('📋 Queue view clicked');
+                
+                if (typeof dropdown !== 'undefined' && dropdown.close) {
+                    dropdown.close();
+                }
+                if (typeof musicPlayer !== 'undefined' && musicPlayer.mainPlayer) {
+                    musicPlayer.mainPlayer.open();
+                    setTimeout(() => {
+                        if (musicPlayer.mainPlayer.switchTab) {
+                            musicPlayer.mainPlayer.switchTab('queue');
+                        }
+                    }, 50);
+                }
+            };
+            queueView.addEventListener('click', queueViewHandler);
+            queueView._queueViewHandler = queueViewHandler;
+        }
+        
+        if (createPlaylist) {
+            clickables.removeListener(createPlaylist, '_createPlaylistHandler');
+            const createPlaylistHandler = (e) => {
+                e.stopPropagation();
+                console.log('➕ Create playlist clicked');
+                
+                if (typeof dropdown !== 'undefined' && dropdown.close) {
+                    dropdown.close();
+                }
+                if (typeof playlists !== 'undefined' && playlists.create) {
+                    playlists.create();
+                }
+            };
+            createPlaylist.addEventListener('click', createPlaylistHandler);
+            createPlaylist._createPlaylistHandler = createPlaylistHandler;
+        }
+        
+        if (shuffleAll) {
+            clickables.removeListener(shuffleAll, '_shuffleAllHandler');
+            const shuffleAllHandler = (e) => {
+                e.stopPropagation();
+                console.log('🔀 Shuffle all clicked');
+                
+                if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.shuffle && musicPlayer.playback.shuffle.all) {
+                    musicPlayer.playback.shuffle.all();
+                }
+            };
+            shuffleAll.addEventListener('click', shuffleAllHandler);
+            shuffleAll._shuffleAllHandler = shuffleAllHandler;
+        }
+        
+        console.log('✅ Dropdown menu handlers bound');
+    },
+
+    others: () => {
+        const { searchTrigger } = clickables.elements;
+        
+        if (searchTrigger) {
+            clickables.removeListener(searchTrigger, '_searchHandler');
+            const searchHandler = (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                console.log('🔍 Search clicked');
+                
+                if (typeof dropdown !== 'undefined' && dropdown.close) {
+                    dropdown.close();
+                }
+                if (typeof appState !== 'undefined' && appState.router && appState.router.openSearchDialog) {
+                    appState.router.openSearchDialog();
+                }
+            };
+            searchTrigger.addEventListener('click', searchHandler);
+            searchTrigger._searchHandler = searchHandler;
+        }
+        
+        console.log('✅ Other handlers bound');
+    },
+
+    keyboard: () => {
+        if (document._keyboardHandler) {
+            document.removeEventListener('keydown', document._keyboardHandler);
+        }
+        
+        const keyboardHandler = (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            
+            const shortcuts = {
+                ' ': (e) => {
+                    e.preventDefault();
+                    console.log('⌨️ Spacebar pressed - toggle play/pause');
+                    if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.togglePlayPause) {
+                        musicPlayer.playback.togglePlayPause();
+                    }
+                },
+                'ArrowLeft': (e) => {
+                    if (e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
+                        console.log('⌨️ Ctrl+Left - previous track');
+                        if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.previous) {
+                            musicPlayer.playback.previous();
+                        }
+                    }
+                },
+                'ArrowRight': (e) => {
+                    if (e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
+                        console.log('⌨️ Ctrl+Right - next track');
+                        if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.next) {
+                            musicPlayer.playback.next();
+                        }
+                    }
+                },
+                'KeyN': (e) => {
+                    if (e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
+                        console.log('⌨️ Ctrl+N - open music player');
+                        if (typeof musicPlayer !== 'undefined' && musicPlayer.mainPlayer && musicPlayer.mainPlayer.open) {
+                            musicPlayer.mainPlayer.open();
+                        }
+                    }
+                },
+                'KeyM': (e) => {
+                    if (e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
+                        console.log('⌨️ Ctrl+M - toggle menu');
+                        if (typeof dropdown !== 'undefined' && dropdown.toggle) {
+                            dropdown.toggle();
+                        }
+                    }
+                },
+                'KeyS': (e) => {
+                    if (e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
+                        console.log('⌨️ Ctrl+S - toggle shuffle');
+                        if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.shuffle && musicPlayer.playback.shuffle.toggle) {
+                            musicPlayer.playback.shuffle.toggle();
+                        }
+                    }
+                },
+                'KeyR': (e) => {
+                    if (e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
+                        console.log('⌨️ Ctrl+R - toggle repeat');
+                        if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.repeat && musicPlayer.playback.repeat.toggle) {
+                            musicPlayer.playback.repeat.toggle();
+                        }
+                    }
+                },
+                'Escape': () => {
+                    console.log('⌨️ Escape - close overlays');
+                    if (typeof musicPlayer !== 'undefined' && musicPlayer.mainPlayer && musicPlayer.mainPlayer.close) {
+                        musicPlayer.mainPlayer.close();
+                    }
+                    if (typeof dropdown !== 'undefined' && dropdown.close) {
+                        dropdown.close();
+                    }
+                }
+            };
+            
+            const handler = shortcuts[e.code] || shortcuts[e.key];
+            if (handler) handler(e);
         };
-        tab.addEventListener('click', tabHandler);
-        tab._tabHandler = tabHandler;
-      });
-    }
-    
-    console.log('✅ Music player drawer handlers bound');
-  },
+        
+        document.addEventListener('keydown', keyboardHandler);
+        document._keyboardHandler = keyboardHandler;
+        
+        console.log('✅ Keyboard shortcuts bound');
+    },
 
-  // ═══════════════════════════════════════════════════════════════
-  // DROPDOWN MENU HANDLERS
-  // ═══════════════════════════════════════════════════════════════
-  dropDownMenu: () => {
-    const {
-      dropdownClose,
-      favoriteSongs,
-      favoriteArtists,
-      favoriteAlbums,
-      recentlyPlayed,
-      queueView,
-      createPlaylist,
-      shuffleAll
-    } = clickables.elements;
-    
-    // Close Button
-    if (dropdownClose) {
-      clickables.removeListener(dropdownClose, '_dropdownCloseHandler');
-      const dropdownCloseHandler = (e) => {
-        e.stopPropagation();
-        console.log('✖️ Dropdown close clicked');
+    document: () => {
+        if (document._documentClickHandler) {
+            document.removeEventListener('click', document._documentClickHandler);
+        }
         
-        if (typeof dropdown !== 'undefined' && dropdown.close) {
-          dropdown.close();
-        }
-      };
-      dropdownClose.addEventListener('click', dropdownCloseHandler);
-      dropdownClose._dropdownCloseHandler = dropdownCloseHandler;
-    }
-    
-    // Favorite Songs
-    if (favoriteSongs) {
-      clickables.removeListener(favoriteSongs, '_favoriteSongsHandler');
-      const favoriteSongsHandler = (e) => {
-        e.stopPropagation();
-        console.log('❤️ Favorite songs clicked');
-        
-        if (typeof dropdown !== 'undefined' && dropdown.close) {
-          dropdown.close();
-        }
-        if (typeof views !== 'undefined' && views.showFavoriteSongs) {
-          views.showFavoriteSongs();
-        }
-      };
-      favoriteSongs.addEventListener('click', favoriteSongsHandler);
-      favoriteSongs._favoriteSongsHandler = favoriteSongsHandler;
-    }
-    
-    // Favorite Artists
-    if (favoriteArtists) {
-      clickables.removeListener(favoriteArtists, '_favoriteArtistsHandler');
-      const favoriteArtistsHandler = (e) => {
-        e.stopPropagation();
-        console.log('👨‍🎤 Favorite artists clicked');
-        
-        if (typeof dropdown !== 'undefined' && dropdown.close) {
-          dropdown.close();
-        }
-        if (typeof views !== 'undefined' && views.showFavoriteArtists) {
-          views.showFavoriteArtists();
-        }
-      };
-      favoriteArtists.addEventListener('click', favoriteArtistsHandler);
-      favoriteArtists._favoriteArtistsHandler = favoriteArtistsHandler;
-    }
-    
-    // Favorite Albums
-    if (favoriteAlbums) {
-      clickables.removeListener(favoriteAlbums, '_favoriteAlbumsHandler');
-      const favoriteAlbumsHandler = (e) => {
-        e.stopPropagation();
-        console.log('💿 Favorite albums clicked');
-        
-        if (typeof dropdown !== 'undefined' && dropdown.close) {
-          dropdown.close();
-        }
-        if (typeof views !== 'undefined' && views.showFavoriteAlbums) {
-          views.showFavoriteAlbums();
-        }
-      };
-      favoriteAlbums.addEventListener('click', favoriteAlbumsHandler);
-      favoriteAlbums._favoriteAlbumsHandler = favoriteAlbumsHandler;
-    }
-    
-    // Recently Played
-    if (recentlyPlayed) {
-      clickables.removeListener(recentlyPlayed, '_recentlyPlayedHandler');
-      const recentlyPlayedHandler = (e) => {
-        e.stopPropagation();
-        console.log('🕒 Recently played clicked');
-        
-        if (typeof dropdown !== 'undefined' && dropdown.close) {
-          dropdown.close();
-        }
-        if (typeof musicPlayer !== 'undefined' && musicPlayer.mainPlayer) {
-          musicPlayer.mainPlayer.open();
-          setTimeout(() => {
-            if (musicPlayer.mainPlayer.switchTab) {
-              musicPlayer.mainPlayer.switchTab('recent');
+        const documentClickHandler = (e) => {
+            const { dropdownMenu, menuBtn, drawer, musicPlayerBtn } = clickables.elements;
+            
+            if (dropdownMenu && !dropdownMenu.contains(e.target) && menuBtn && !menuBtn.contains(e.target)) {
+                if (typeof dropdown !== 'undefined' && dropdown.close) {
+                    dropdown.close();
+                }
             }
-          }, 50);
-        }
-      };
-      recentlyPlayed.addEventListener('click', recentlyPlayedHandler);
-      recentlyPlayed._recentlyPlayedHandler = recentlyPlayedHandler;
-    }
-    
-    // Queue View
-    if (queueView) {
-      clickables.removeListener(queueView, '_queueViewHandler');
-      const queueViewHandler = (e) => {
-        e.stopPropagation();
-        console.log('📋 Queue view clicked');
-        
-        if (typeof dropdown !== 'undefined' && dropdown.close) {
-          dropdown.close();
-        }
-        if (typeof musicPlayer !== 'undefined' && musicPlayer.mainPlayer) {
-          musicPlayer.mainPlayer.open();
-          setTimeout(() => {
-            if (musicPlayer.mainPlayer.switchTab) {
-              musicPlayer.mainPlayer.switchTab('queue');
+            
+            if (typeof appState !== 'undefined' && appState.isPopupVisible) {
+                if (drawer && !drawer.contains(e.target) && musicPlayerBtn && !musicPlayerBtn.contains(e.target)) {
+                    if (typeof musicPlayer !== 'undefined' && musicPlayer.mainPlayer && musicPlayer.mainPlayer.close) {
+                        musicPlayer.mainPlayer.close();
+                    }
+                }
             }
-          }, 50);
-        }
-      };
-      queueView.addEventListener('click', queueViewHandler);
-      queueView._queueViewHandler = queueViewHandler;
-    }
-    
-    // Create Playlist
-    if (createPlaylist) {
-      clickables.removeListener(createPlaylist, '_createPlaylistHandler');
-      const createPlaylistHandler = (e) => {
-        e.stopPropagation();
-        console.log('➕ Create playlist clicked');
+            
+            const navItem = e.target.closest('[data-nav]');
+            if (navItem) {
+                e.preventDefault();
+                const navType = navItem.dataset.nav;
+                
+                if (typeof dropdown !== 'undefined' && dropdown.close) {
+                    dropdown.close();
+                }
+                
+                if (typeof appState !== 'undefined' && appState.router) {
+                    const router = appState.router;
+                    
+                    switch (navType) {
+                        case 'home':
+                            if (router.navigateTo) router.navigateTo('home');
+                            break;
+                        case 'allArtists':
+                            if (router.navigateTo) router.navigateTo('allArtists');
+                            break;
+                        case 'artist':
+                            const artistName = navItem.dataset.artist;
+                            if (artistName && router.navigateTo) {
+                                router.navigateTo('artist', { artist: artistName });
+                            }
+                            break;
+                        case 'album':
+                            const artist = navItem.dataset.artist;
+                            const album = navItem.dataset.album;
+                            if (artist && album && router.navigateTo) {
+                                router.navigateTo('album', { artist, album });
+                            }
+                            break;
+                    }
+                }
+            }
+        };
         
-        if (typeof dropdown !== 'undefined' && dropdown.close) {
-          dropdown.close();
-        }
-        if (typeof playlists !== 'undefined' && playlists.create) {
-          playlists.create();
-        }
-      };
-      createPlaylist.addEventListener('click', createPlaylistHandler);
-      createPlaylist._createPlaylistHandler = createPlaylistHandler;
-    }
-    
-    // Shuffle All
-    if (shuffleAll) {
-      clickables.removeListener(shuffleAll, '_shuffleAllHandler');
-      const shuffleAllHandler = (e) => {
-        e.stopPropagation();
-        console.log('🔀 Shuffle all clicked');
+        document.addEventListener('click', documentClickHandler);
+        document._documentClickHandler = documentClickHandler;
         
-        if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.shuffle && musicPlayer.playback.shuffle.all) {
-          musicPlayer.playback.shuffle.all();
-        }
-      };
-      shuffleAll.addEventListener('click', shuffleAllHandler);
-      shuffleAll._shuffleAllHandler = shuffleAllHandler;
-    }
-    
-    console.log('✅ Dropdown menu handlers bound');
-  },
+        console.log('✅ Document click handler bound');
+    },
 
-  // ═══════════════════════════════════════════════════════════════
-  // OTHER HANDLERS (Search, Navigation, etc.)
-  // ═══════════════════════════════════════════════════════════════
-  others: () => {
-    const { searchTrigger } = clickables.elements;
-    
-    // Search Trigger
-    if (searchTrigger) {
-      clickables.removeListener(searchTrigger, '_searchHandler');
-      const searchHandler = (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        console.log('🔍 Search clicked');
-        
-        if (typeof dropdown !== 'undefined' && dropdown.close) {
-          dropdown.close();
+    removeListener: (element, handlerProp) => {
+        if (element && element[handlerProp]) {
+            element.removeEventListener('click', element[handlerProp]);
+            delete element[handlerProp];
         }
-        if (typeof appState !== 'undefined' && appState.router && appState.router.openSearchDialog) {
-          appState.router.openSearchDialog();
-        }
-      };
-      searchTrigger.addEventListener('click', searchHandler);
-      searchTrigger._searchHandler = searchHandler;
+    },
+
+    reinit: () => {
+        console.log('🔄 Reinitializing clickables...');
+        clickables.init();
     }
-    
-    console.log('✅ Other handlers bound');
-  },
-
-  // ═══════════════════════════════════════════════════════════════
-  // PROGRESS BAR HANDLER
-  // ═══════════════════════════════════════════════════════════════
-  bindProgressBar: (progressBar) => {
-    if (!progressBar) return;
-    
-    let isScrubbing = false;
-    let wasPlayingBeforeScrub = false;
-    
-    const onPointerDown = (e) => {
-      e.preventDefault();
-      progressBar.setPointerCapture?.(e.pointerId ?? 1);
-      isScrubbing = true;
-      
-      if (typeof appState !== 'undefined' && appState.isPlaying && appState.audio) {
-        wasPlayingBeforeScrub = true;
-        appState.audio.pause();
-      }
-      
-      clickables.seekFromEvent(e, progressBar);
-      progressBar.classList.add('isDragging');
-      
-      progressBar.addEventListener('pointermove', onPointerMove, { passive: false });
-      progressBar.addEventListener('pointerup', onPointerUp, { once: true });
-      window.addEventListener('pointercancel', onPointerUp, { once: true });
-    };
-    
-    const onPointerMove = (e) => {
-      if (!isScrubbing) return;
-      e.preventDefault();
-      clickables.seekFromEvent(e, progressBar);
-    };
-    
-    const onPointerUp = (e) => {
-      clickables.seekFromEvent(e, progressBar, true);
-      isScrubbing = false;
-      progressBar.classList.remove('isDragging', 'isHovering');
-      
-      if (wasPlayingBeforeScrub && typeof appState !== 'undefined' && appState.audio) {
-        appState.audio.play();
-        wasPlayingBeforeScrub = false;
-      }
-      
-      progressBar.releasePointerCapture?.(e.pointerId ?? 1);
-      progressBar.removeEventListener('pointermove', onPointerMove);
-    };
-    
-    const onEnter = () => progressBar.classList.add('isHovering');
-    const onLeave = () => {
-      if (!isScrubbing) progressBar.classList.remove('isHovering');
-    };
-    
-    clickables.removeListener(progressBar, '_pointerDown');
-    clickables.removeListener(progressBar, '_pointerEnter');
-    clickables.removeListener(progressBar, '_pointerLeave');
-    
-    progressBar.addEventListener('pointerdown', onPointerDown, { passive: false });
-    progressBar.addEventListener('pointerenter', onEnter);
-    progressBar.addEventListener('pointerleave', onLeave);
-    
-    progressBar._pointerDown = onPointerDown;
-    progressBar._pointerEnter = onEnter;
-    progressBar._pointerLeave = onLeave;
-    
-    console.log('✅ Progress bar bound');
-  },
-
-  // ═══════════════════════════════════════════════════════════════
-  // SEEK FROM EVENT (Progress Bar Helper)
-  // ═══════════════════════════════════════════════════════════════
-  seekFromEvent: (e, bar, finalize = false) => {
-    const rect = bar.getBoundingClientRect();
-    const x = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
-    let pct = ((x - rect.left) / rect.width) * 100;
-    
-    if (!isFinite(pct)) pct = 0;
-    pct = Math.max(0, Math.min(100, pct));
-    
-    if (typeof appState !== 'undefined' && appState.audio) {
-      const duration = appState.duration || appState.audio.duration || 0;
-      const time = duration * (pct / 100);
-      
-      // Update UI
-      const fill = document.querySelector('#drawer #progressFill');
-      const thumb = document.querySelector('#drawer #progressThumb');
-      const currentTimeElement = document.querySelector('#drawer #current');
-      
-      if (fill) fill.style.width = pct + '%';
-      if (thumb) thumb.style.left = pct + '%';
-      
-      if (currentTimeElement && isFinite(time) && typeof utils !== 'undefined' && utils.formatTime) {
-        currentTimeElement.textContent = utils.formatTime(time);
-      }
-      
-      if (finalize && isFinite(time)) {
-        appState.audio.currentTime = time;
-        
-        if (typeof notificationPlayer !== 'undefined' && notificationPlayer.positionState && notificationPlayer.positionState.update) {
-          notificationPlayer.positionState.update();
-        }
-      }
-    }
-  },
-
-  // ═══════════════════════════════════════════════════════════════
-  // KEYBOARD SHORTCUTS
-  // ═══════════════════════════════════════════════════════════════
-  keyboard: () => {
-    if (document._keyboardHandler) {
-      document.removeEventListener('keydown', document._keyboardHandler);
-    }
-    
-    const keyboardHandler = (e) => {
-      // Don't trigger shortcuts when typing in inputs
-      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-      
-      const shortcuts = {
-        ' ': (e) => {
-          e.preventDefault();
-          console.log('⌨️ Spacebar pressed - toggle play/pause');
-          if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.togglePlayPause) {
-            musicPlayer.playback.togglePlayPause();
-          }
-        },
-        'ArrowLeft': (e) => {
-          if (e.ctrlKey || e.metaKey) {
-            e.preventDefault();
-            console.log('⌨️ Ctrl+Left - previous track');
-            if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.previous) {
-              musicPlayer.playback.previous();
-            }
-          }
-        },
-        'ArrowRight': (e) => {
-          if (e.ctrlKey || e.metaKey) {
-            e.preventDefault();
-            console.log('⌨️ Ctrl+Right - next track');
-            if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.next) {
-              musicPlayer.playback.next();
-            }
-          }
-        },
-        'KeyN': (e) => {
-          if (e.ctrlKey || e.metaKey) {
-            e.preventDefault();
-            console.log('⌨️ Ctrl+N - open music player');
-            if (typeof musicPlayer !== 'undefined' && musicPlayer.mainPlayer && musicPlayer.mainPlayer.open) {
-              musicPlayer.mainPlayer.open();
-            }
-          }
-        },
-        'KeyM': (e) => {
-          if (e.ctrlKey || e.metaKey) {
-            e.preventDefault();
-            console.log('⌨️ Ctrl+M - toggle menu');
-            if (typeof dropdown !== 'undefined' && dropdown.toggle) {
-              dropdown.toggle();
-            }
-          }
-        },
-        'KeyS': (e) => {
-          if (e.ctrlKey || e.metaKey) {
-            e.preventDefault();
-            console.log('⌨️ Ctrl+S - toggle shuffle');
-            if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.shuffle && musicPlayer.playback.shuffle.toggle) {
-              musicPlayer.playback.shuffle.toggle();
-            }
-          }
-        },
-        'KeyR': (e) => {
-          if (e.ctrlKey || e.metaKey) {
-            e.preventDefault();
-            console.log('⌨️ Ctrl+R - toggle repeat');
-            if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.repeat && musicPlayer.playback.repeat.toggle) {
-              musicPlayer.playback.repeat.toggle();
-            }
-          }
-        },
-        'Escape': () => {
-          console.log('⌨️ Escape - close overlays');
-          if (typeof musicPlayer !== 'undefined' && musicPlayer.mainPlayer && musicPlayer.mainPlayer.close) {
-            musicPlayer.mainPlayer.close();
-          }
-          if (typeof dropdown !== 'undefined' && dropdown.close) {
-            dropdown.close();
-          }
-        }
-      };
-      
-      const handler = shortcuts[e.code] || shortcuts[e.key];
-      if (handler) handler(e);
-    };
-    
-    document.addEventListener('keydown', keyboardHandler);
-    document._keyboardHandler = keyboardHandler;
-    
-    console.log('✅ Keyboard shortcuts bound');
-  },
-
-  // ═══════════════════════════════════════════════════════════════
-  // DOCUMENT CLICK HANDLER (Close on outside click)
-  // ═══════════════════════════════════════════════════════════════
-  document: () => {
-    if (document._documentClickHandler) {
-      document.removeEventListener('click', document._documentClickHandler);
-    }
-    
-    const documentClickHandler = (e) => {
-      const { dropdownMenu, menuBtn, drawer, musicPlayerBtn } = clickables.elements;
-      
-      // Close dropdown if clicking outside of it and not on the trigger
-      if (dropdownMenu && !dropdownMenu.contains(e.target) && menuBtn && !menuBtn.contains(e.target)) {
-        if (typeof dropdown !== 'undefined' && dropdown.close) {
-          dropdown.close();
-        }
-      }
-      
-      // Close music player ONLY if clicking outside of both the drawer AND the trigger
-      if (typeof appState !== 'undefined' && appState.isPopupVisible) {
-        if (drawer && !drawer.contains(e.target) && musicPlayerBtn && !musicPlayerBtn.contains(e.target)) {
-          if (typeof musicPlayer !== 'undefined' && musicPlayer.mainPlayer && musicPlayer.mainPlayer.close) {
-            musicPlayer.mainPlayer.close();
-          }
-        }
-      }
-      
-      // Handle navigation clicks
-      const navItem = e.target.closest('[data-nav]');
-      if (navItem) {
-        e.preventDefault();
-        const navType = navItem.dataset.nav;
-        
-        if (typeof dropdown !== 'undefined' && dropdown.close) {
-          dropdown.close();
-        }
-        
-        if (typeof appState !== 'undefined' && appState.router) {
-          const router = appState.router;
-          
-          switch (navType) {
-            case 'home':
-              if (router.navigateTo) router.navigateTo('home');
-              break;
-            case 'allArtists':
-              if (router.navigateTo) router.navigateTo('allArtists');
-              break;
-            case 'artist':
-              const artistName = navItem.dataset.artist;
-              if (artistName && router.navigateTo) {
-                router.navigateTo('artist', { artist: artistName });
-              }
-              break;
-            case 'album':
-              const artist = navItem.dataset.artist;
-              const album = navItem.dataset.album;
-              if (artist && album && router.navigateTo) {
-                router.navigateTo('album', { artist, album });
-              }
-              break;
-          }
-        }
-      }
-    };
-    
-    document.addEventListener('click', documentClickHandler);
-    document._documentClickHandler = documentClickHandler;
-    
-    console.log('✅ Document click handler bound');
-  },
-
-  // ═══════════════════════════════════════════════════════════════
-  // UTILITY: Remove Event Listener
-  // ═══════════════════════════════════════════════════════════════
-  removeListener: (element, handlerProp) => {
-    if (element && element[handlerProp]) {
-      element.removeEventListener('click', element[handlerProp]);
-      delete element[handlerProp];
-    }
-  },
-
-  // ═══════════════════════════════════════════════════════════════
-  // REINITIALIZE (Call this after DOM updates)
-  // ═══════════════════════════════════════════════════════════════
-  reinit: () => {
-    console.log('🔄 Reinitializing clickables...');
-    clickables.init();
-  }
 };
 
-// ═══════════════════════════════════════════════════════════════
-// AUTO-INITIALIZE ON DOM READY
-// ═══════════════════════════════════════════════════════════════
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    clickables.init();
-  });
+    document.addEventListener('DOMContentLoaded', () => {
+        clickables.init();
+    });
 } else {
-  clickables.init();
+    clickables.init();
 }
 
-// Export to window for global access
 window.clickables = clickables;
 
-
-
-
-
-
-
-
 window.addEventListener("load", function() {
-  if (!window.appState) {
-    app.initialize();
-  }
+    if (!window.appState) {
+        app.initialize();
+    }
 });
 
 window.MyTunesApp = {
-  initialize: app.initialize,
-  state: function() { return appState; },
-  api: function() { return window.musicAppAPI; },
-  goHome: app.goHome,
+    initialize: app.initialize,
+    state: function() { return appState; },
+    api: function() { return window.musicAppAPI; },
+    goHome: app.goHome,
 };
 
 if (window.music) {
-  app.initialize();
+    app.initialize();
 }
 
 window.navigation = navigation;
@@ -3558,26 +3301,26 @@ window.playlists = playlists;
 window.views = views;
 
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
- //   eventHandlers.init();
-  });
+    document.addEventListener('DOMContentLoaded', () => {
+        clickables.init();
+    });
 } else {
-//  eventHandlers.init();
+    clickables.init();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  app.initialize();
-  
-  const progressBar = document.getElementById('progressBar');
-  if (progressBar) {
-    progressBar.addEventListener('keydown', musicPlayer.ui.handleProgressBarKeyDown);
-  }
-  
-  setTimeout(() => {
-      if (notificationPlayer.utils.isSupported()) {
-          notificationPlayer.setup();
-      }
-  }, 100);
+    app.initialize();
+    
+    const progressBar = $byId(IDS.musicPlayerProgressBar);
+    if (progressBar) {
+        progressBar.addEventListener('keydown', musicPlayer.ui.handleProgressBarKeyDown);
+    }
+    
+    setTimeout(() => {
+        if (notificationPlayer.utils.isSupported()) {
+            notificationPlayer.setup();
+        }
+    }, 100);
 });
 
 export {
@@ -3590,7 +3333,6 @@ export {
     playlists,
     notifications,
     utils,
-//    eventHandlers,
     app,
     pageLoader,
     navigation,
