@@ -2236,6 +2236,18 @@ MyBeats:  Stream & share your favorite music for free.
   z-index: 1;
 }
 
+
+
+
+/**
+*
+B E L O W
+
+1st - When the Music Player is CLOSED 
+2nd - When the Music Player is OPEN
+*
+**/
+
 .player .inner {
   position: relative;
   background-color: #2D333B;
@@ -2257,21 +2269,18 @@ MyBeats:  Stream & share your favorite music for free.
   transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1),
               opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .player.open .inner {
   transform: scale(1) translateY(0);
   opacity: 1;
   transition-delay: 0.05s;
 }
 
-/* Staggered animations for content */
 .player .dragArea {
   opacity: 0;
   transform: translateY(-10px);
   transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
               transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .player.open .dragArea {
   opacity: 1;
   transform: translateY(0);
@@ -2284,7 +2293,6 @@ MyBeats:  Stream & share your favorite music for free.
   transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
               transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .player.open .closeBtn {
   opacity: 1;
   transform: scale(1);
@@ -2297,7 +2305,6 @@ MyBeats:  Stream & share your favorite music for free.
   transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
               transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .player.open .nowPlaying {
   opacity: 1;
   transform: translateY(0);
@@ -2310,7 +2317,6 @@ MyBeats:  Stream & share your favorite music for free.
   transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
               transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .player.open .content {
   opacity: 1;
   transform: translateY(0);
@@ -2323,20 +2329,18 @@ MyBeats:  Stream & share your favorite music for free.
   transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
               transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .player.open .tabs {
   opacity: 1;
   transform: translateY(0);
   transition-delay: 0.35s;
 }
 
-/* Closing animation */
+
 .player.closing {
   transition: opacity 0.45s cubic-bezier(0.4, 0, 0.6, 1),
               visibility 0s linear 0.45s,
               z-index 0s linear 0.45s;
 }
-
 .player.closing::before {
   background: rgba(0, 0, 0, 0);
   backdrop-filter: blur(0px);
@@ -2344,12 +2348,10 @@ MyBeats:  Stream & share your favorite music for free.
   transition: background 0.45s cubic-bezier(0.4, 0, 0.6, 1),
               backdrop-filter 0.45s cubic-bezier(0.4, 0, 0.6, 1);
 }
-
 .player.closing .scroller {
   transform: translateY(100%);
   transition: transform 0.45s cubic-bezier(0.4, 0, 0.6, 1);
 }
-
 .player.closing .inner {
   transform: scale(0.9) translateY(30px);
   opacity: 0;
@@ -2367,12 +2369,10 @@ MyBeats:  Stream & share your favorite music for free.
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
 }
-
 .player .dragHandle:active { 
   cursor: grabbing; 
   transform: scaleX(1.2); 
 }
-
 .player .dragHandle:hover { 
   background: rgba(255, 255, 255, 0.5); 
   width: 64px; 
@@ -2395,19 +2395,17 @@ MyBeats:  Stream & share your favorite music for free.
   z-index: 1000;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .player .closeBtn:hover { 
   background: rgba(255, 255, 255, 0.2); 
   transform: rotate(90deg) scale(1.1); 
 }
-
 .player .closeBtn svg { 
   width: 15px; 
   height: 15px; 
   color: #fff; 
 }
 
-/* Rest of your player styles remain the same */
+
 .player .dragArea {
   display: flex;
   justify-content: center;
@@ -2421,328 +2419,18 @@ MyBeats:  Stream & share your favorite music for free.
   right: 0;
 }
 
-/* Continue with all your existing .player styles... */
-/* (Keep all the other .player styles you already have) */
 
 
-
-
-
-
-
-
-/**
-
-.player {
-  position: fixed; 
-  bottom: -3rem;
-  inset: 0;
-  background: transparent;
-  border: none;
-  padding: 1rem;
-  margin: 0;
-  z-index: 9999;
-  overflow: hidden;
-  transform: translateY(100%);
-  opacity: 0;
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
-              opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.player:popover-open {
-  transform: translateY(0);
-  opacity: 1;
-  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
-              opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.player::backdrop {
-  background: rgba(0, 0, 0, 0);
-  backdrop-filter: blur(0px);
-  -webkit-backdrop-filter: blur(0px);
-  transition: background 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-              backdrop-filter 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.player:popover-open::backdrop {
-  background: rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
-}
-
-.player .inner {
-  position: relative;
-  background-color: #2D333B;
-  border: 1.5px solid #444C56;
-  border-radius: 12px;
-  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.25);
-  color: #ADBAC7;
-  width: 90svw;
-  justify-content: flex-start;
-  height: 85svh;
-  z-index: 10;
-  overflow: hidden; 
-  overflow-y: auto;
-  margin: auto;
-  display: flex;
-  flex-direction: column;
-  transform: scale(0.95) translateY(20px);
-  opacity: 0;
-  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
-              opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.player:popover-open .inner {
-  transform: scale(1) translateY(0);
-  opacity: 1;
-  transition-delay: 0.05s;
-}
-
-.player .dragArea {
-  opacity: 0;
-  transform: translateY(-10px);
-  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-              transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.player:popover-open .dragArea {
-  opacity: 1;
-  transform: translateY(0);
-  transition-delay: 0.1s;
-}
-
-.player .closeBtn {
-  opacity: 0;
-  transform: scale(0.8);
-  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-              transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.player:popover-open .closeBtn {
-  opacity: 1;
-  transform: scale(1);
-  transition-delay: 0.15s;
-}
-
-.player .nowPlaying {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-              transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.player:popover-open .nowPlaying {
-  opacity: 1;
-  transform: translateY(0);
-  transition-delay: 0.2s;
-}
-
-.player .content {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-              transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.player:popover-open .content {
-  opacity: 1;
-  transform: translateY(0);
-  transition-delay: 0.25s;
-}
-
-.player .tabs {
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-              transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.player:popover-open .tabs {
-  opacity: 1;
-  transform: translateY(0);
-  transition-delay: 0.3s;
-}
-
-.player.closing {
-  transform: translateY(100%);
-  opacity: 0;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.6, 1),
-              opacity 0.2s cubic-bezier(0.4, 0, 0.6, 1);
-}
-.player.closing::backdrop {
-  background: rgba(0, 0, 0, 0);
-  backdrop-filter: blur(0px);
-  -webkit-backdrop-filter: blur(0px);
-}
-.player.closing .inner {
-  transform: scale(0.95) translateY(20px);
-  opacity: 0;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.6, 1),
-              opacity 0.2s cubic-bezier(0.4, 0, 0.6, 1);
-}
-**/
-
-
-
-
-
-/**
-.player {
-  transform: translateY(100%);
-  transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-.player.open {
-  transform: translateY(0);
-}
-**/
 
 .player .dragHandle span {
   transition: transform 0.3s ease;
 }
-
 .player.open .dragHandle span {
   transform: scale(1.2);
 }
 
 
-/**
-.player {
-  position: fixed; 
-  bottom: -3rem;
-  inset: 0;
-  background: transparent;
-  border: none;
-  padding: 1rem;
-  margin: 0;
-  z-index: 9999;
-  overflow: hidden;
-  transform: translateY(100%);
-  opacity: 0;
-  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), 
-              opacity 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
 
-.player:popover-open {
-  transform: translateY(0);
-  opacity: 1;
-}
-
-.player::backdrop {
-  background: rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
-  opacity: 0;
-  transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.player:popover-open::backdrop {
-  opacity: 1;
-}
-**/
-
-
-
-/**
-.player .scroller {
-  width: 100%;
-  height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
-  scroll-snap-type: y mandatory;
-  -webkit-overflow-scrolling: touch;
-}
-
-.player .slide {
-  min-height: 100vh;
-  scroll-snap-align: start;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  padding: 1rem;
-}
-
-.player .curtain {
-  position: fixed;
-  inset: 0;
-  background: transparent;
-  border: none;
-  cursor: default;
-  z-index: 1;
-}
-
-.player .inner {
-  position: relative;
-  background-color: #2D333B;
-  border: 1.5px solid #444C56;
-  border-radius: 12px;
-  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.25);
-  color: #ADBAC7;
-  width: 90svw;
-  justify-content: flex-start;
-  height: 85svh;
-  z-index: 10;
-  overflow: hidden; 
-  overflow-y: auto;
-  margin: auto;
-  display: flex;
-  flex-direction: column;
-}
-
-.player .dragArea {
-  display: flex;
-  justify-content: center;
-  padding: 16px 0 8px;
-  position: sticky;
-  z-index: 100;
-  background: transparent;
-  position: absolute; 
-  top: -15%; 
-  left: 0; 
-  right: 0;
-}
-
-.player .dragHandle {
-  width: 48px;
-  height: 5px;
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 999px;
-  border: none;
-  cursor: grab;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-}
-
-.player .dragHandle:active { 
-  cursor: grabbing; 
-  transform: scaleX(1.2); 
-}
-
-.player .dragHandle:hover { 
-  background: rgba(255, 255, 255, 0.5); 
-  width: 64px; 
-}
-
-.player .closeBtn {
-  position: absolute;
-  top: -15%;
-  right: 5%;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 1000;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.player .closeBtn:hover { 
-  background: rgba(255, 255, 255, 0.2); 
-  transform: rotate(90deg) scale(1.1); 
-}
-
-.player .closeBtn svg { 
-  width: 15px; 
-  height: 15px; 
-  color: #fff; 
-}
-**/
 .player .nowPlaying {
   position: relative;
   width: 100%;
@@ -2986,6 +2674,8 @@ MyBeats:  Stream & share your favorite music for free.
   letter-spacing: 1.35px;
 }
 
+
+
 .player .favoriteBtn {
   width: 20px;
   height: 20px;
@@ -2999,41 +2689,37 @@ MyBeats:  Stream & share your favorite music for free.
   flex-shrink: 0;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .player .favoriteBtn:hover { 
   background: rgba(239, 68, 68, 0.2); 
   border-color: #ef4444; 
   transform: scale(1.1); 
 }
-
 .player .favoriteBtn.favorited { 
   background: rgba(239, 68, 68, 0.3); 
   border-color: #ef4444; 
 }
-
 .player .favoriteBtn svg {
   width: 15px;
   height: 15px;
   color: rgba(255, 255, 255, 0.6);
   transition: all 0.3s ease;
 }
-
 .player .favoriteBtn:hover svg, 
 .player .favoriteBtn.favorited svg { 
   color: #ef4444; 
   fill: #ef4444; 
 }
-
 .player .favoriteBtn.favorited svg { 
   animation: heartBeat 0.6s ease; 
 }
 
+
+/**  P L A Y B A C K  **/
 .player .progressSection { 
   display: flex; 
   flex-direction: column; 
   gap: 12px; 
 }
-
 .player .progressBar {
   position: relative;
   width: 100%;
@@ -3048,7 +2734,6 @@ MyBeats:  Stream & share your favorite music for free.
 .player .progressBar:hover {
   height: 8px;
 }
-
 .player .progressBar:hover .progressThumb { 
   opacity: 1; 
   transform: translate(-50%, -50%) scale(1); 
@@ -3063,7 +2748,6 @@ MyBeats:  Stream & share your favorite music for free.
   border-radius: 999px;
   transition: width 0.3s ease;
 }
-
 .player .progressFill {
   position: absolute;
   top: 0;
@@ -3074,7 +2758,6 @@ MyBeats:  Stream & share your favorite music for free.
   transition: width 0.1s linear;
   position: relative;
 }
-
 .player .progressThumb {
   position: absolute;
   top: 50%;
@@ -3088,7 +2771,6 @@ MyBeats:  Stream & share your favorite music for free.
   opacity: 0;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .player .progressBar.isDragging .progressThumb,
 .player .progressBar.isHovering .progressThumb {
   opacity: 1;
@@ -3110,6 +2792,8 @@ MyBeats:  Stream & share your favorite music for free.
   font-variant-numeric: tabular-nums;
 }
 
+
+
 .player .controls {
   display: flex;
   align-items: center;
@@ -3117,7 +2801,6 @@ MyBeats:  Stream & share your favorite music for free.
   gap: 12px;
   padding: 8px 0;
 }
-
 .player .controlBtn {
   width: 52px;
   height: 52px;
@@ -3132,7 +2815,6 @@ MyBeats:  Stream & share your favorite music for free.
   position: relative;
   overflow: hidden;
 }
-
 .player .controlBtn::before {
   content: '';
   position: absolute;
@@ -3141,32 +2823,26 @@ MyBeats:  Stream & share your favorite music for free.
   opacity: 0;
   transition: opacity 0.3s ease;
 }
-
 .player .controlBtn:hover::before { 
   opacity: 1; 
 }
-
 .player .controlBtn:hover { 
   background: rgba(255, 255, 255, 0.15); 
   transform: translateY(-2px); 
 }
-
 .player .controlBtn:active { 
   transform: translateY(0) scale(0.95); 
 }
-
 .player .controlBtn svg { 
   width: 24px; 
   height: 24px; 
   color: #fff; 
   z-index: 1; 
 }
-
 .player .controlBtn.secondary {
   width: 48px;
   height: 48px;
 }
-
 .player .controlBtn.secondary svg { 
   width: 22px; 
   height: 22px; 
@@ -3178,13 +2854,11 @@ MyBeats:  Stream & share your favorite music for free.
   background: linear-gradient(135deg, #8b5cf6, #3b82f6);
   box-shadow: 0 8px 24px rgba(139, 92, 246, 0.4), 0 4px 12px rgba(59, 130, 246, 0.3);
 }
-
 .player .controlBtn.primary:hover {
   background: linear-gradient(135deg, #9d6dff, #4c93ff);
   box-shadow: 0 12px 32px rgba(139, 92, 246, 0.5), 0 6px 16px rgba(59, 130, 246, 0.4);
   transform: translateY(-4px) scale(1.05);
 }
-
 .player .controlBtn.primary svg { 
   width: 28px; 
   height: 28px; 
@@ -3193,11 +2867,9 @@ MyBeats:  Stream & share your favorite music for free.
 .player .controlBtn.primary .pauseIcon { 
   display: none; 
 }
-
 .player.isPlaying .controlBtn.primary .playIcon { 
   display: none; 
 }
-
 .player.isPlaying .controlBtn.primary .pauseIcon { 
   display: block; 
 }
@@ -3236,22 +2908,21 @@ MyBeats:  Stream & share your favorite music for free.
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .player .actionBtn:hover {
   background: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.3);
   transform: translateY(-2px);
 }
-
 .player .actionBtn svg {
   width: 20px;
   height: 20px;
   color: rgba(255, 255, 255, 0.7);
 }
-
 .player .actionBtn:hover svg { 
   color: #fff; 
 }
+
+
 
 .player .listHeader {
   display: flex;
@@ -3260,14 +2931,12 @@ MyBeats:  Stream & share your favorite music for free.
   padding: 0 24px 16px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
-
 .player .listTitle {
   font-size: 20px;
   font-weight: 700;
   color: #fff;
   margin: 0;
 }
-
 .player .listCount {
   font-size: 13px;
   font-weight: 600;
@@ -3285,24 +2954,22 @@ MyBeats:  Stream & share your favorite music for free.
   overflow-y: auto;
   padding: 16px 24px 40px;
 }
-
 .player .list::-webkit-scrollbar { 
   width: 6px; 
 }
-
 .player .list::-webkit-scrollbar-track { 
   background: rgba(255, 255, 255, 0.05); 
   border-radius: 999px; 
 }
-
 .player .list::-webkit-scrollbar-thumb { 
   background: rgba(255, 255, 255, 0.2); 
   border-radius: 999px; 
 }
-
 .player .list::-webkit-scrollbar-thumb:hover { 
   background: rgba(255, 255, 255, 0.3); 
 }
+
+
 
 .player .empty {
   display: flex;
@@ -3319,7 +2986,6 @@ MyBeats:  Stream & share your favorite music for free.
   margin-bottom: 20px;
   color: rgba(255, 255, 255, 0.2);
 }
-
 .player .emptyIcon svg { 
   width: 100%; 
   height: 100%; 
@@ -3337,6 +3003,8 @@ MyBeats:  Stream & share your favorite music for free.
   color: rgba(255, 255, 255, 0.4);
 }
 
+
+
 .songList .item {
   display: flex;
   align-items: center;
@@ -3347,19 +3015,18 @@ MyBeats:  Stream & share your favorite music for free.
   transition: all 0.2s ease;
   margin-bottom: 8px;
 }
-
 .songList .item:hover {
   background: rgba(255, 255, 255, 0.05);
 }
-
 .songList .item:hover .playBack { 
   opacity: 1; 
 }
-
 .songList .item.active { 
   background: rgba(139, 92, 246, 0.15); 
   border-left: 3px solid #8b5cf6; 
 }
+
+
 
 .songList .itemArt {
   width: 48px;
@@ -3400,6 +3067,8 @@ MyBeats:  Stream & share your favorite music for free.
   transition: opacity 0.2s ease;
 }
 
+
+
 .songList .set {
   width: 36px;
   height: 36px;
@@ -3412,12 +3081,10 @@ MyBeats:  Stream & share your favorite music for free.
   cursor: pointer;
   transition: all 0.2s ease;
 }
-
 .songList .set:hover { 
   background: rgba(255, 255, 255, 0.2); 
   transform: scale(1.1); 
 }
-
 .songList .set svg { 
   width: 18px; 
   height: 18px; 
@@ -3501,7 +3168,6 @@ MyBeats:  Stream & share your favorite music for free.
     overflow: hidden;
     line-height: 0;
 }
-
 .customShapeDivider svg {
     position: relative;
     display: block;
@@ -3510,7 +3176,6 @@ MyBeats:  Stream & share your favorite music for free.
     z-index: 99;
     pointer-events: none;
 }
-
 .customShapeDivider .shapeFill {
     fill: #2D333B;
 }
@@ -3522,6 +3187,9 @@ MyBeats:  Stream & share your favorite music for free.
     }
 }
 
+
+
+/**  A N I M A T I O N S  **/
 @keyframes fadeIn {
   from { 
     opacity: 0; 
@@ -3532,7 +3200,6 @@ MyBeats:  Stream & share your favorite music for free.
     transform: translateY(0); 
   }
 }
-
 @keyframes heartBeat {
   0%, 100% { 
     transform: scale(1); 
@@ -3547,7 +3214,6 @@ MyBeats:  Stream & share your favorite music for free.
     transform: scale(1.1); 
   }
 }
-
 @keyframes shimmer {
   0% { 
     background-position: -1000px 0; 
