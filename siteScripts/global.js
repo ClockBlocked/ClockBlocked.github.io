@@ -517,13 +517,13 @@ const overlays = {
     unified(title, content) {
       const wrappedContent = `
         <div class="modal-content">
-          <div class="modal-header">
+          <div class='header'>
             <div>
               <h2 class="modal-title">${title}</h2>
             </div>
             <button class="close-btn" data-close aria-label="Close">&times;</button>
           </div>
-          <div class="modal-body">
+          <div class='body'>
             ${content}
           </div>
         </div>
@@ -1506,7 +1506,7 @@ const musicPlayer = {
                     recalc();
                     onScroll();
                 });
-                $byId('music-player-cover')?.addEventListener('load', () => {
+                $byId('musicPlayerCover')?.addEventListener('load', () => {
                     recalc();
                     onScroll();
                 });
