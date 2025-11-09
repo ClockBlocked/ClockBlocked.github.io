@@ -1208,17 +1208,21 @@ const notificationPlayer = {
 
 const musicPlayer = {
     mainPlayer: {
-        open: () => {
-            const drawer = QUERY(MUSIC_PLAYER.root);
-            if (!drawer) return;
-            drawer.showPopover();
-            drawer.offsetHeight;
-            appState.isPopupVisible = true;
-            musicPlayer.mainPlayer.updateTabContent(appState.currentTab || MUSIC_PLAYER.tabs.playing);
-            if (appState.currentSong) {
-                musicPlayer.ui.updateNowPlaying();
-            }
-        },
+      open: () => {
+    const drawer = QUERY(MUSIC_PLAYER.root);
+    if (!drawer) return;
+    
+    // Update UI BEFORE opening
+    if (appState.currentSong) {
+        musicPlayer.ui.updateNowPlaying();
+    }
+    
+    drawer.showPopover();
+    drawer.offsetHeight;
+    appState.isPopupVisible = true;
+    musicPlayer.mainPlayer.updateTabContent(appState.currentTab || MUSIC_PLAYER.tabs.playing);
+},
+
         close: () => {
             const drawer = QUERY(MUSIC_PLAYER.root);
             if (!drawer) return;
@@ -1530,7 +1534,21 @@ const musicPlayer = {
             };
             handle.addEventListener('pointerdown', onPointerDown);
             handle.addEventListener('touchstart', onPointerDown, { passive: false });
-        }
+        },
+        initialize: () => {
+        // Listen for player state changes
+        window.addEventListener('playerstatechange', (event) => {
+            console.log('Player state changed:', event.detail);
+            
+            // Update UI whenever player state changes
+            if (event.detail.song) {
+                musicPlayer.ui.updateNowPlaying();
+                musicPlayer.ui.updateNavbar();
+            }
+        });
+        
+        console.log('✅ Music player state listener initialized');
+    }
     },
     playback: {
         dispatchPlayerStateChange: () => {
@@ -1699,52 +1717,56 @@ const musicPlayer = {
             }
         },
         playSong: async (songData) => {
-            if (!songData) return;
-            musicPlayer.ui.initialize();
-            if (window.ui && ui.setLoadingState) {
-                ui.setLoadingState(true);
+    if (!songData) return;
+    musicPlayer.ui.initialize();
+    if (window.ui && ui.setLoadingState) {
+        ui.setLoadingState(true);
+    }
+    if (appState.currentSong) {
+        musicPlayer.ui.addToRecentlyPlayed(appState.currentSong);
+    }
+    appState.currentSong = songData;
+    appState.currentArtist = songData.artist;
+    appState.currentAlbum = songData.album;
+    
+    // UPDATE NAVBAR IMMEDIATELY
+    musicPlayer.ui.updateNavbar();
+    
+    // UPDATE MUSIC PLAYER IMMEDIATELY
+    musicPlayer.ui.updateNowPlaying();
+    
+    if (window.ui) {
+        if (ui.updateCounts) ui.updateCounts();
+    }
+    const success = await musicPlayer.ui.loadAudioFile(songData);
+    if (success) {
+        if (window.notificationPlayer && notificationPlayer.metadata) {
+            notificationPlayer.metadata.update(songData);
+        }
+        if (window.notificationPlayer && notificationPlayer.events) {
+            notificationPlayer.events.bind();
+        }
+        setTimeout(() => {
+            if (window.clickables && clickables.musicPlayer) {
+                clickables.musicPlayer();
             }
-            if (appState.currentSong) {
-                musicPlayer.ui.addToRecentlyPlayed(appState.currentSong);
-            }
-            appState.currentSong = songData;
-            appState.currentArtist = songData.artist;
-            appState.currentAlbum = songData.album;
-            if (window.ui) {
-                if (ui.updateNowPlaying) ui.updateNowPlaying();
-                if (ui.updateNavbar) ui.updateNavbar();
-                if (ui.updateMusicPlayer) ui.updateMusicPlayer();
-                if (ui.updateCounts) ui.updateCounts();
-            }
-            const success = await musicPlayer.ui.loadAudioFile(songData);
-            if (success) {
-                if (window.notificationPlayer && notificationPlayer.metadata) {
-                    notificationPlayer.metadata.update(songData);
-                }
-                if (window.notificationPlayer && notificationPlayer.events) {
-                    notificationPlayer.events.bind();
-                }
-                setTimeout(() => {
-                    if (window.clickables && clickables.musicPlayer) {
-                        clickables.musicPlayer();
-                    }
-                    musicPlayer.ui.bindSeekBar();
-                }, 100);
-                musicPlayer.playback.dispatchPlayerStateChange();
-            } else {
-                appState.isPlaying = false;
-                if (window.ui && ui.updatePlayPauseButtons) {
-                    ui.updatePlayPauseButtons();
-                }
-                if (window.notificationPlayer && notificationPlayer.playbackState) {
-                    notificationPlayer.playbackState.onPause();
-                }
-                musicPlayer.playback.dispatchPlayerStateChange();
-            }
-            if (window.ui && ui.setLoadingState) {
-                ui.setLoadingState(false);
-            }
-        },
+            musicPlayer.ui.bindSeekBar();
+        }, 100);
+        musicPlayer.playback.dispatchPlayerStateChange();
+    } else {
+        appState.isPlaying = false;
+        if (window.ui && ui.updatePlayPauseButtons) {
+            ui.updatePlayPauseButtons();
+        }
+        if (window.notificationPlayer && notificationPlayer.playbackState) {
+            notificationPlayer.playbackState.onPause();
+        }
+        musicPlayer.playback.dispatchPlayerStateChange();
+    }
+    if (window.ui && ui.setLoadingState) {
+        ui.setLoadingState(false);
+    }
+},
         loadAudioFile: async (songData) => {
             if (!songData || !songData.title) {
                 return false;
@@ -1929,19 +1951,67 @@ const musicPlayer = {
             buffer.style.width = (bufferProgress * 100).toFixed(2) + '%';
         },
         onPlay: () => {
-            appState.isPlaying = true;
-            if (window.ui && ui.updatePlayPauseButtons) {
-                ui.updatePlayPauseButtons();
-            }
-            QUERY(MUSIC_PLAYER.root)?.classList.add(MUSIC_PLAYER.classes.playing);
-        },
-        onPause: () => {
-            appState.isPlaying = false;
-            if (window.ui && ui.updatePlayPauseButtons) {
-                ui.updatePlayPauseButtons();
-            }
-            QUERY(MUSIC_PLAYER.root)?.classList.remove(MUSIC_PLAYER.classes.playing);
-        },
+    appState.isPlaying = true;
+    if (window.ui && ui.updatePlayPauseButtons) {
+        ui.updatePlayPauseButtons();
+    }
+    QUERY(MUSIC_PLAYER.root)?.classList.add(MUSIC_PLAYER.classes.playing);
+    
+    // Update play/pause buttons in music player
+    const playBtn = QUERY(MUSIC_PLAYER.play);
+    if (playBtn) {
+        const playIcon = playBtn.querySelector('.playIcon');
+        const pauseIcon = playBtn.querySelector('.pauseIcon');
+        playIcon?.style.setProperty('display', 'none');
+        pauseIcon?.style.setProperty('display', 'block');
+    }
+    
+    // Update navbar play indicator
+    const navbarPlayIndicator = QUERY(`${NAVBAR.nowPlaying} #play-indicator`);
+    if (navbarPlayIndicator) {
+        navbarPlayIndicator.classList.add('playing');
+    }
+    
+    // Update navbar play/pause button
+    const navbarPlayBtn = QUERY(NAVBAR.playPause);
+    if (navbarPlayBtn) {
+        const navbarPlayIcon = QUERY(NAVBAR.play);
+        const navbarPauseIcon = QUERY(NAVBAR.pause);
+        navbarPlayIcon?.classList.add('hidden');
+        navbarPauseIcon?.classList.remove('hidden');
+    }
+},
+onPause: () => {
+    appState.isPlaying = false;
+    if (window.ui && ui.updatePlayPauseButtons) {
+        ui.updatePlayPauseButtons();
+    }
+    QUERY(MUSIC_PLAYER.root)?.classList.remove(MUSIC_PLAYER.classes.playing);
+    
+    // Update play/pause buttons in music player
+    const playBtn = QUERY(MUSIC_PLAYER.play);
+    if (playBtn) {
+        const playIcon = playBtn.querySelector('.playIcon');
+        const pauseIcon = playBtn.querySelector('.pauseIcon');
+        playIcon?.style.setProperty('display', 'block');
+        pauseIcon?.style.setProperty('display', 'none');
+    }
+    
+    // Update navbar play indicator
+    const navbarPlayIndicator = QUERY(`${NAVBAR.nowPlaying} #play-indicator`);
+    if (navbarPlayIndicator) {
+        navbarPlayIndicator.classList.remove('playing');
+    }
+    
+    // Update navbar play/pause button
+    const navbarPlayBtn = QUERY(NAVBAR.playPause);
+    if (navbarPlayBtn) {
+        const navbarPlayIcon = QUERY(NAVBAR.play);
+        const navbarPauseIcon = QUERY(NAVBAR.pause);
+        navbarPlayIcon?.classList.remove('hidden');
+        navbarPauseIcon?.classList.add('hidden');
+    }
+},
         onMetadataLoaded: () => {
             if (!appState.audio || isNaN(appState.audio.duration)) return;
             appState.duration = appState.audio.duration;
@@ -2005,45 +2075,113 @@ const musicPlayer = {
             };
         },
         updateNowPlaying: () => {
-            if (!appState.currentSong) return;
-            const coverUrl = appState.currentSong.cover || utils.getAlbumImageUrl(appState.currentSong.album);
-            const cover = QUERY(MUSIC_PLAYER.albumArtwork);
-            if (cover && coverUrl) {
-                cover.src = coverUrl;
-            }
-            const titleEl = QUERY(MUSIC_PLAYER.songName);
-            const artistEl = QUERY(MUSIC_PLAYER.artistName);
-            const albumEl = QUERY(MUSIC_PLAYER.albumName);
-            if (titleEl && appState.currentSong.title) titleEl.textContent = appState.currentSong.title;
-            if (artistEl && appState.currentArtist) artistEl.textContent = appState.currentArtist;
-            if (albumEl && appState.currentAlbum) albumEl.textContent = appState.currentAlbum;
-            const compactCover = document.getElementById('compactCover');
-            const compactTitle = document.getElementById('compactTitle');
-            const compactArtist = document.getElementById('compactArtist');
-            if (compactCover && coverUrl) compactCover.src = coverUrl;
-            if (compactTitle && appState.currentSong.title) compactTitle.textContent = appState.currentSong.title;
-            if (compactArtist && appState.currentArtist) compactArtist.textContent = appState.currentArtist;
-            const playBtn = QUERY(MUSIC_PLAYER.play);
-            const drawer = QUERY(MUSIC_PLAYER.root);
-            if (playBtn) {
-                const playIcon = playBtn.querySelector('.playIcon');
-                const pauseIcon = playBtn.querySelector('.pauseIcon');
-                if (appState.isPlaying) {
-                    playIcon?.style.setProperty('display', 'none');
-                    pauseIcon?.style.setProperty('display', 'block');
-                    drawer?.classList.add(MUSIC_PLAYER.classes.playing);
-                } else {
-                    playIcon?.style.setProperty('display', 'block');
-                    pauseIcon?.style.setProperty('display', 'none');
-                    drawer?.classList.remove(MUSIC_PLAYER.classes.playing);
-                }
-            }
+    if (!appState.currentSong) return;
+    
+    const coverUrl = appState.currentSong.cover || utils.getAlbumImageUrl(appState.currentSong.album);
+    
+    // Update music player cover
+    const cover = QUERY(MUSIC_PLAYER.albumArtwork);
+    if (cover && coverUrl) {
+        cover.src = coverUrl;
+        console.log('✅ Music player cover updated');
+    }
+    
+    // Update music player song info
+    const titleEl = QUERY(MUSIC_PLAYER.songName);
+    const artistEl = QUERY(MUSIC_PLAYER.artistName);
+    const albumEl = QUERY(MUSIC_PLAYER.albumName);
+    
+    if (titleEl && appState.currentSong.title) {
+        titleEl.textContent = appState.currentSong.title;
+        console.log('✅ Music player title updated:', appState.currentSong.title);
+    }
+    if (artistEl && appState.currentArtist) {
+        artistEl.textContent = appState.currentArtist;
+        console.log('✅ Music player artist updated:', appState.currentArtist);
+    }
+    if (albumEl && appState.currentAlbum) {
+        albumEl.textContent = appState.currentAlbum;
+        console.log('✅ Music player album updated:', appState.currentAlbum);
+    }
+    
+    // Update compact header (if it exists)
+    const compactCover = document.getElementById('compactCover');
+    const compactTitle = document.getElementById('compactTitle');
+    const compactArtist = document.getElementById('compactArtist');
+    if (compactCover && coverUrl) compactCover.src = coverUrl;
+    if (compactTitle && appState.currentSong.title) compactTitle.textContent = appState.currentSong.title;
+    if (compactArtist && appState.currentArtist) compactArtist.textContent = appState.currentArtist;
+    
+    // Update play/pause button state
+    const playBtn = QUERY(MUSIC_PLAYER.play);
+    const drawer = QUERY(MUSIC_PLAYER.root);
+    if (playBtn) {
+        const playIcon = playBtn.querySelector('.playIcon');
+        const pauseIcon = playBtn.querySelector('.pauseIcon');
+        if (appState.isPlaying) {
+            playIcon?.style.setProperty('display', 'none');
+            pauseIcon?.style.setProperty('display', 'block');
+            drawer?.classList.add(MUSIC_PLAYER.classes.playing);
+        } else {
+            playIcon?.style.setProperty('display', 'block');
+            pauseIcon?.style.setProperty('display', 'none');
+            drawer?.classList.remove(MUSIC_PLAYER.classes.playing);
         }
+    }
+    
+    // Update navbar as well
+    musicPlayer.ui.updateNavbar();
+    
+    console.log('✅ Now Playing UI fully updated');
+},
+        updateNavbar: () => {
+    if (!appState.currentSong) return;
+    
+    // Get navbar elements using NAVBAR constant from map.js
+    const navbarNowPlaying = QUERY(NAVBAR.nowPlaying);
+    const navbarAlbumArt = QUERY(`${NAVBAR.nowPlaying} .albumArtwork img`);
+    const navbarSongName = QUERY(`${NAVBAR.nowPlaying} .songName`);
+    const navbarArtistName = QUERY(`${NAVBAR.nowPlaying} .artistName`);
+    
+    if (!navbarNowPlaying) {
+        console.warn('Navbar now playing area not found');
+        return;
+    }
+    
+    // Add has-song class to enable display
+    navbarNowPlaying.classList.add(CLASSES.hasSong);
+    
+    // Update album artwork
+    const coverUrl = appState.currentSong.cover || utils.getAlbumImageUrl(appState.currentSong.album);
+    if (navbarAlbumArt) {
+        navbarAlbumArt.src = coverUrl;
+        navbarAlbumArt.style.opacity = '1';
+        
+        // Hide the SVG placeholder
+        const svgPlaceholder = QUERY(`${NAVBAR.nowPlaying} .albumArtwork svg`);
+        if (svgPlaceholder) {
+            svgPlaceholder.style.opacity = '0';
+        }
+    }
+    
+    // Update song name
+    if (navbarSongName && appState.currentSong.title) {
+        navbarSongName.textContent = appState.currentSong.title;
+    }
+    
+    // Update artist name
+    if (navbarArtistName && appState.currentArtist) {
+        navbarArtistName.textContent = appState.currentArtist;
+    }
+    
+    console.log('✅ Navbar updated with song:', appState.currentSong.title);
+},
     }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
     musicPlayer.mainPlayer.init();
+    musicPlayer.mainPlayer.initialize();
 });
 
 window.musicPlayer = musicPlayer;
@@ -3338,3 +3476,5 @@ export {
     navigation,
     ACTION_GRID_ITEMS
 };
+
+
