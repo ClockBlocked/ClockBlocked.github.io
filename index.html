@@ -3128,27 +3128,27 @@ MyBeats:  Stream & share your favorite music for free.
 }
 </style>
 
-<aside class="player" popover="manual" id="drawer">
-  <div class="scroller">
-    <div class="slide">
-      <button popovertargetaction="hide" popovertarget="drawer" class="curtain" tabindex="-1" data-overlay-close="drawer"></button>
+<aside class="player" popover="manual" id="music-player">
+  <div class="scroller musicPlayerScroller">
+    <div class="slide musicPlayerSlide">
+      <button popovertargetaction="hide" popovertarget="music-player" class="curtain musicPlayerCurtain" tabindex="-1" data-overlay-close="music-player"></button>
 
-      <div class="inner">
+      <div class="inner musicPlayerInner">
         <div class="dragArea">
-          <button autofocus class="dragHandle" popovertargetaction="hide" popovertarget="drawer">
+          <button autofocus class="dragHandle musicPlayerDragHandle" popovertargetaction="hide" popovertarget="music-player">
             <span></span>
           </button>
         </div>
 
-        <button class="closeBtn" id="closeBtn">
+        <button class="closeBtn" id="music-player-close">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
         </button>
 
-        <div class="nowPlaying">
-          <div class="coverWrapper">
+        <div class="nowPlaying musicPlayerNowPlaying">
+          <div class="coverWrapper musicPlayerCoverWrapper">
             <div class="customShapeDivider">
               <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
                 <path
@@ -3158,51 +3158,51 @@ MyBeats:  Stream & share your favorite music for free.
               </svg>
             </div>
 
-            <img src="https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/stable/global/content/images/albumCovers/placeholder.png" alt="Album Cover" class="cover" id="cover" />
+            <img src="https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/stable/global/content/images/albumCovers/placeholder.png" alt="Album Cover" class="cover" id="music-player-cover" />
 
-            <div class="coverGlow"></div>
+            <div class="coverGlow musicPlayerCoverGlow"></div>
           </div>
         </div>
 
-        <div class="content">
-          <div class="panel active" data-tab="playing">
+        <div class="content musicPlayerContent">
+          <div class="panel musicPlayerPanel active" data-tab="playing">
             <div class="main">
-              <div class="info">
-                <div class="details">
-                  <h3 id="title" class="title"></h3>
-                  <p id="artist" class="artist"></p>
-                  <p id="album" class="album"></p>
+              <div class="info musicPlayerInfo">
+                <div class="details musicPlayerDetails">
+                  <h3 id="music-player-title" class="title"></h3>
+                  <p id="music-player-artist" class="artist"></p>
+                  <p id="music-player-album" class="album"></p>
                 </div>
 
-                <button class="favoriteBtn" id="favoriteBtn" title="Add to Favorites">
+                <button class="favoriteBtn" id="music-player-favorite" title="Add to Favorites">
                   <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                   </svg>
                 </button>
               </div>
 
-              <div class="progressSection" id="progressSection">
-                <div class="progressBar" id="progressBar" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Seek">
-                  <div class="progressBuffer" id="progressBuffer"></div>
-                  <div class="progressFill" id="progressFill">
-                    <div class="progressThumb" id="progressThumb"></div>
+              <div class="progressSection musicPlayerProgressSection" id="music-player-progress-section">
+                <div class="progressBar" id="music-player-progress-bar" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Seek">
+                  <div class="progressBuffer" id="musicPlayerProgressBuffer"></div>
+                  <div class="progressFill" id="music-player-progress-fill">
+                    <div class="progressThumb" id="music-player-progress-thumb"></div>
                   </div>
                 </div>
 
-                <div class="timeDisplay">
-                  <span id="current" class="currentTime">0:00</span>
-                  <span id="total" class="totalTime">0:00</span>
+                <div class="timeDisplay musicPlayerTimeDisplay">
+                  <span id="music-player-current-time" class="currentTime">0:00</span>
+                  <span id="music-player-total-time" class="totalTime">0:00</span>
                 </div>
               </div>
 
-              <div class="controls">
-                <button class="controlBtn secondary" id="prevBtn" title="Previous">
+              <div class="controls musicPlayerControls">
+                <button class="controlBtn secondary" id="music-player-prev" title="Previous">
                   <svg viewBox="0 0 24 24" fill="currentColor">
                     <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
                   </svg>
                 </button>
 
-                <button class="controlBtn rewind" id="rewindBtn" title="Rewind 10s">
+                <button class="controlBtn rewind" id="music-player-rewind" title="Rewind 10s">
                   <svg viewBox="0 0 24 24" fill="currentColor">
                     <path
                       d="M11.99 5V1l-5 5 5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6h-2c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8zm-1.1 11h-.85v-3.26l-1.01.31v-.69l1.77-.63h.09V16zm4.28-1.76c0 .32-.03.6-.1.82s-.17.42-.29.57-.28.26-.45.33-.37.1-.59.1-.41-.03-.59-.1-.33-.18-.46-.33-.23-.34-.3-.57-.11-.5-.11-.82v-.74c0-.32.03-.6.1-.82s.17-.42.29-.57.28-.26.45-.33.37-.1.59-.1.41.03.59.1.33.18.46.33.23.34.3.57.11.5.11.82v.74zm-.85-.86c0-.19-.01-.35-.04-.48s-.07-.23-.12-.31-.11-.14-.19-.17-.16-.05-.25-.05-.18.02-.25.05-.14.09-.19.17-.09.18-.12.31-.04.29-.04.48v.97c0 .19.01.35.04.48s.07.24.12.32.11.14.19.17.16.05.25.05.18-.02.25-.05.14-.09.19-.17.09-.19.12-.32.04-.29.04-.48v-.97z"
@@ -3211,7 +3211,7 @@ MyBeats:  Stream & share your favorite music for free.
                   <span class="skipLabel">10</span>
                 </button>
 
-                <button class="controlBtn primary" id="playBtn" title="Play/Pause">
+                <button class="controlBtn primary" id="music-player-play" title="Play/Pause">
                   <span class="playIcon">
                     <svg viewBox="0 0 24 24" fill="currentColor">
                       <path d="M8 5v14l11-7z" />
@@ -3224,7 +3224,7 @@ MyBeats:  Stream & share your favorite music for free.
                   </span>
                 </button>
 
-                <button class="controlBtn forward" id="forwardBtn" title="Forward 10s">
+                <button class="controlBtn forward" id="music-player-forward" title="Forward 10s">
                   <svg viewBox="0 0 24 24" fill="currentColor">
                     <path
                       d="M12 5V1l7 6-7 6V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8zm-1.1 11h-.85v-3.26l-1.01.31v-.69l1.77-.63h.09V16zm4.28-1.76c0 .32-.03.6-.1.82s-.17.42-.29.57-.28.26-.45.33-.37.1-.59.1-.41-.03-.59-.1-.33-.18-.46-.33-.23-.34-.3-.57-.11-.5-.11-.82v-.74c0-.32.03-.6.1-.82s.17-.42.29-.57.28-.26.45-.33.37-.1.59-.1.41.03.59.1.33.18.46.33.23.34.3.57.11.5.11.82v.74zm-.85-.86c0-.19-.01-.35-.04-.48s-.07-.23-.12-.31-.11-.14-.19-.17-.16-.05-.25-.05-.18.02-.25.05-.14.09-.19.17-.09.18-.12.31-.04.29-.04.48v.97c0 .19.01.35.04.48s.07.24.12.32.11.14.19.17.16.05.25.05.18-.02.25-.05.14-.09.19-.17.09-.19.12-.32.04-.29.04-.48v-.97z"
@@ -3233,15 +3233,15 @@ MyBeats:  Stream & share your favorite music for free.
                   <span class="skipLabel">10</span>
                 </button>
 
-                <button class="controlBtn secondary" id="nextBtn" title="Next">
+                <button class="controlBtn secondary" id="music-player-next" title="Next">
                   <svg viewBox="0 0 24 24" fill="currentColor">
                     <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
                   </svg>
                 </button>
               </div>
 
-              <div class="actions">
-                <button class="actionBtn" id="shuffleBtn" title="Shuffle">
+              <div class="actions musicPlayerActions">
+                <button class="actionBtn" id="music-player-shuffle" title="Shuffle">
                   <svg viewBox="0 0 24 24" fill="currentColor">
                     <path
                       d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"
@@ -3249,7 +3249,7 @@ MyBeats:  Stream & share your favorite music for free.
                   </svg>
                 </button>
 
-                <button class="actionBtn" id="repeatBtn" title="Repeat">
+                <button class="actionBtn" id="music-player-repeat" title="Repeat">
                   <svg viewBox="0 0 24 24" fill="currentColor">
                     <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z" />
                   </svg>
@@ -3263,7 +3263,7 @@ MyBeats:  Stream & share your favorite music for free.
                   </svg>
                 </button>
 
-                <button class="actionBtn" id="playlistBtn" title="Playlist">
+                <button class="actionBtn" id="music-player-queue" title="Queue">
                   <svg viewBox="0 0 24 24" fill="currentColor">
                     <path d="M4 10h12v2H4zm0-4h12v2H4zm0-4h12v2H4zm16 8H4v2h16z" />
                   </svg>
@@ -3272,52 +3272,52 @@ MyBeats:  Stream & share your favorite music for free.
             </div>
           </div>
 
-          <div class="panel" data-tab="playlist">
-            <div class="listHeader">
-              <h3 class="listTitle">Playlist</h3>
-              <span class="listCount" id="playlistCount">0 songs</span>
+          <div class="panel musicPlayerPanel" data-tab="playlist">
+            <div class="listHeader musicPlayerListHeader">
+              <h3 class="listTitle musicPlayerListTitle">Recently Played</h3>
+              <span class="listCount musicPlayerListCount" id="recent-count">0 songs</span>
             </div>
 
-            <ul class="list" id="playlist">
-              <li class="empty">
-                <div class="emptyIcon">
+            <ul class="list musicPlayerList" id="music-player-recent-list">
+              <li class="empty musicPlayerEmpty">
+                <div class="emptyIcon musicPlayerEmptyIcon">
                   <svg viewBox="0 0 24 24" fill="currentColor">
                     <path
                       d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"
                     />
                   </svg>
                 </div>
-                <p class="emptyText">No songs in playlist</p>
-                <p class="emptySubtext">Add some songs to get started</p>
+                <p class="emptyText musicPlayerEmptyText">No recent songs</p>
+                <p class="emptySubtext musicPlayerEmptySubtext">Play some music to see your history</p>
               </li>
             </ul>
           </div>
 
-          <div class="panel" data-tab="queue">
-            <div class="listHeader">
-              <h3 class="listTitle">Queue</h3>
-              <span class="listCount" id="queueCount">0 songs</span>
+          <div class="panel musicPlayerPanel" data-tab="queue">
+            <div class="listHeader musicPlayerListHeader">
+              <h3 class="listTitle musicPlayerListTitle">Queue</h3>
+              <span class="listCount musicPlayerListCount" id="queue-count">0 songs</span>
             </div>
 
-            <ul class="list" id="queue">
-              <li class="empty">
-                <div class="emptyIcon">
+            <ul class="list musicPlayerList" id="music-player-queue-list">
+              <li class="empty musicPlayerEmpty">
+                <div class="emptyIcon musicPlayerEmptyIcon">
                   <svg viewBox="0 0 24 24" fill="currentColor">
                     <path
                       d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8 12.5v-9l6 4.5-6 4.5z"
                     />
                   </svg>
                 </div>
-                <p class="emptyText">Queue is empty</p>
-                <p class="emptySubtext">Play some music to see your queue</p>
+                <p class="emptyText musicPlayerEmptyText">Queue is empty</p>
+                <p class="emptySubtext musicPlayerEmptySubtext">Add songs to your queue</p>
               </li>
             </ul>
           </div>
         </div>
 
-        <div class="tabs">
-          <div class="tabsWrapper">
-            <button class="tab active" data-tab="playing">
+        <div class="tabs musicPlayerTabs">
+          <div class="tabsWrapper musicPlayerTabsWrapper">
+            <button class="tab musicPlayerTab active" data-tab="playing">
               <div class="tabIcon">
                 <svg viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
@@ -3326,16 +3326,16 @@ MyBeats:  Stream & share your favorite music for free.
               <span class="tabLabel">Now Playing</span>
             </button>
 
-            <button class="tab" data-tab="playlist">
+            <button class="tab musicPlayerTab" data-tab="playlist">
               <div class="tabIcon">
                 <svg viewBox="0 0 24 24" fill="currentColor">
                   <path d="M4 10h12v2H4zm0-4h12v2H4zm0-4h12v2H4zm16 8H4v2h16z" />
                 </svg>
               </div>
-              <span class="tabLabel">Playlist</span>
+              <span class="tabLabel">Recent</span>
             </button>
 
-            <button class="tab" data-tab="queue">
+            <button class="tab musicPlayerTab" data-tab="queue">
               <div class="tabIcon">
                 <svg viewBox="0 0 24 24" fill="currentColor">
                   <path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8 12.5v-9l6 4.5-6 4.5z" />
@@ -3344,14 +3344,13 @@ MyBeats:  Stream & share your favorite music for free.
               <span class="tabLabel">Queue</span>
             </button>
 
-            <div class="tabSlider"></div>
+            <div class="tabSlider musicPlayerTabSlider"></div>
           </div>
         </div>
       </div>
     </div>
   </div>
 </aside>
-
 
 
 
