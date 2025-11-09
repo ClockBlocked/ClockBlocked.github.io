@@ -2155,6 +2155,284 @@ MyBeats:  Stream & share your favorite music for free.
 
 
 
+
+.player {
+  position: fixed; 
+  inset: 0;
+  background: transparent;
+  border: none;
+  padding: 1rem;
+  margin: 0;
+  z-index: -1;
+  overflow: hidden;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1),
+              visibility 0s linear 0.55s,
+              z-index 0s linear 0.55s;
+}
+
+.player.open {
+  visibility: visible;
+  opacity: 1;
+  z-index: 9999;
+  pointer-events: auto;
+  transition: opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1),
+              visibility 0s linear 0s,
+              z-index 0s linear 0s;
+}
+
+/* Backdrop */
+.player::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0);
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  transition: background 0.55s cubic-bezier(0.4, 0, 0.2, 1),
+              backdrop-filter 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+.player.open::before {
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  pointer-events: auto;
+}
+
+.player .scroller {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-snap-type: y mandatory;
+  -webkit-overflow-scrolling: touch;
+  transform: translateY(100%);
+  transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.player.open .scroller {
+  transform: translateY(0);
+}
+
+.player .slide {
+  min-height: 100vh;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding: 1rem;
+}
+
+.player .curtain {
+  position: fixed;
+  inset: 0;
+  background: transparent;
+  border: none;
+  cursor: default;
+  z-index: 1;
+}
+
+.player .inner {
+  position: relative;
+  background-color: #2D333B;
+  border: 1.5px solid #444C56;
+  border-radius: 12px;
+  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.25);
+  color: #ADBAC7;
+  width: 90svw;
+  justify-content: flex-start;
+  height: 85svh;
+  z-index: 10;
+  overflow: hidden; 
+  overflow-y: auto;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  transform: scale(0.9) translateY(30px);
+  opacity: 0;
+  transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1),
+              opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.player.open .inner {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+  transition-delay: 0.05s;
+}
+
+/* Staggered animations for content */
+.player .dragArea {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.player.open .dragArea {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.15s;
+}
+
+.player .closeBtn {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.player.open .closeBtn {
+  opacity: 1;
+  transform: scale(1);
+  transition-delay: 0.2s;
+}
+
+.player .nowPlaying {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.player.open .nowPlaying {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.25s;
+}
+
+.player .content {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.player.open .content {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.3s;
+}
+
+.player .tabs {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.player.open .tabs {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.35s;
+}
+
+/* Closing animation */
+.player.closing {
+  transition: opacity 0.45s cubic-bezier(0.4, 0, 0.6, 1),
+              visibility 0s linear 0.45s,
+              z-index 0s linear 0.45s;
+}
+
+.player.closing::before {
+  background: rgba(0, 0, 0, 0);
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  transition: background 0.45s cubic-bezier(0.4, 0, 0.6, 1),
+              backdrop-filter 0.45s cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+.player.closing .scroller {
+  transform: translateY(100%);
+  transition: transform 0.45s cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+.player.closing .inner {
+  transform: scale(0.9) translateY(30px);
+  opacity: 0;
+  transition: transform 0.45s cubic-bezier(0.4, 0, 0.6, 1),
+              opacity 0.35s cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+.player .dragHandle {
+  width: 48px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  border: none;
+  cursor: grab;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.player .dragHandle:active { 
+  cursor: grabbing; 
+  transform: scaleX(1.2); 
+}
+
+.player .dragHandle:hover { 
+  background: rgba(255, 255, 255, 0.5); 
+  width: 64px; 
+}
+
+.player .closeBtn {
+  position: absolute;
+  top: -15%;
+  right: 5%;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1000;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.player .closeBtn:hover { 
+  background: rgba(255, 255, 255, 0.2); 
+  transform: rotate(90deg) scale(1.1); 
+}
+
+.player .closeBtn svg { 
+  width: 15px; 
+  height: 15px; 
+  color: #fff; 
+}
+
+/* Rest of your player styles remain the same */
+.player .dragArea {
+  display: flex;
+  justify-content: center;
+  padding: 16px 0 8px;
+  position: sticky;
+  z-index: 100;
+  background: transparent;
+  position: absolute; 
+  top: -15%; 
+  left: 0; 
+  right: 0;
+}
+
+/* Continue with all your existing .player styles... */
+/* (Keep all the other .player styles you already have) */
+
+
+
+
+
+
+
+
+/**
+
 .player {
   position: fixed; 
   bottom: -3rem;
@@ -2293,7 +2571,7 @@ MyBeats:  Stream & share your favorite music for free.
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.6, 1),
               opacity 0.2s cubic-bezier(0.4, 0, 0.6, 1);
 }
-
+**/
 
 
 
@@ -2356,7 +2634,7 @@ MyBeats:  Stream & share your favorite music for free.
 
 
 
-
+/**
 .player .scroller {
   width: 100%;
   height: 100%;
@@ -2464,7 +2742,7 @@ MyBeats:  Stream & share your favorite music for free.
   height: 15px; 
   color: #fff; 
 }
-
+**/
 .player .nowPlaying {
   position: relative;
   width: 100%;
@@ -3280,14 +3558,14 @@ MyBeats:  Stream & share your favorite music for free.
 }
 </style>
 
-<aside class="player" popover="manual" id="music-player">
+<aside class="player" id="music-player">
   <div class="scroller musicPlayerScroller">
     <div class="slide musicPlayerSlide">
-      <button popovertargetaction="hide" popovertarget="music-player" class="curtain musicPlayerCurtain" tabindex="-1" data-overlay-close="music-player"></button>
+      <button class="curtain musicPlayerCurtain" tabindex="-1" data-overlay-close="music-player"></button>
 
       <div class="inner musicPlayerInner">
         <div class="dragArea">
-          <button autofocus class="dragHandle musicPlayerDragHandle" popovertargetaction="hide" popovertarget="music-player">
+          <button autofocus class="dragHandle musicPlayerDragHandle">
             <span></span>
           </button>
         </div>
