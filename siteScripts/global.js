@@ -1208,41 +1208,41 @@ const notificationPlayer = {
 
 const musicPlayer = {
     mainPlayer: {
-      open: () => {
-    const drawer = QUERY(MUSIC_PLAYER.root);
-    if (!drawer) return;
-    
-    // Update UI BEFORE opening
-    if (appState.currentSong) {
-        musicPlayer.ui.updateNowPlaying();
-    }
-    
-    drawer.showPopover();
-    drawer.offsetHeight;
-    appState.isPopupVisible = true;
-    musicPlayer.mainPlayer.updateTabContent(appState.currentTab || MUSIC_PLAYER.tabs.playing);
-},
+        open: () => {
+            const drawer = QUERY(MUSIC_PLAYER.root);
+            if (!drawer) return;
+            
+            if (appState.currentSong) {
+                musicPlayer.ui.updateNowPlaying();
+            }
+            
+            drawer.classList.remove('closing');
+            drawer.classList.add('open');
+            appState.isPopupVisible = true;
+            musicPlayer.mainPlayer.updateTabContent(appState.currentTab || MUSIC_PLAYER.tabs.playing);
+            document.body.style.overflow = 'hidden';
+        },
         close: () => {
-    const drawer = QUERY(MUSIC_PLAYER.root);
-    if (!drawer) return;
-    
-    // Add closing class for exit animation
-    drawer.classList.add('closing');
-    
-    // Wait for animation to complete
-    setTimeout(() => {
-        drawer.hidePopover();
-        drawer.classList.remove('closing');
-        appState.isPopupVisible = false;
-        
-        // Reset to playing tab
-        setTimeout(() => musicPlayer.mainPlayer.switchTab(MUSIC_PLAYER.tabs.playing), 50);
-    }, 300); // Match the animation duration
-},
+            const drawer = QUERY(MUSIC_PLAYER.root);
+            if (!drawer) return;
+            
+            drawer.classList.add('closing');
+            drawer.classList.remove('open');
+            
+            setTimeout(() => {
+                drawer.classList.remove('closing');
+                appState.isPopupVisible = false;
+                document.body.style.overflow = '';
+                setTimeout(() => musicPlayer.mainPlayer.switchTab(MUSIC_PLAYER.tabs.playing), 50);
+            }, 550);
+        },
         toggle: () => {
             const drawer = QUERY(MUSIC_PLAYER.root);
             if (!drawer) return;
-            if (drawer.matches(':popover-open')) {
+            
+            const isOpen = drawer.classList.contains('open');
+            
+            if (isOpen) {
                 musicPlayer.mainPlayer.close();
             } else {
                 musicPlayer.mainPlayer.open();
@@ -1535,19 +1535,13 @@ const musicPlayer = {
             handle.addEventListener('touchstart', onPointerDown, { passive: false });
         },
         initialize: () => {
-        // Listen for player state changes
-        window.addEventListener('playerstatechange', (event) => {
-            console.log('Player state changed:', event.detail);
-            
-            // Update UI whenever player state changes
-            if (event.detail.song) {
-                musicPlayer.ui.updateNowPlaying();
-                musicPlayer.ui.updateNavbar();
-            }
-        });
-        
-        console.log('✅ Music player state listener initialized');
-    }
+            window.addEventListener('playerstatechange', (event) => {
+                if (event.detail.song) {
+                    musicPlayer.ui.updateNowPlaying();
+                    musicPlayer.ui.updateNavbar();
+                }
+            });
+        }
     },
     playback: {
         dispatchPlayerStateChange: () => {
@@ -1716,56 +1710,53 @@ const musicPlayer = {
             }
         },
         playSong: async (songData) => {
-    if (!songData) return;
-    musicPlayer.ui.initialize();
-    if (window.ui && ui.setLoadingState) {
-        ui.setLoadingState(true);
-    }
-    if (appState.currentSong) {
-        musicPlayer.ui.addToRecentlyPlayed(appState.currentSong);
-    }
-    appState.currentSong = songData;
-    appState.currentArtist = songData.artist;
-    appState.currentAlbum = songData.album;
-    
-    // UPDATE NAVBAR IMMEDIATELY
-    musicPlayer.ui.updateNavbar();
-    
-    // UPDATE MUSIC PLAYER IMMEDIATELY
-    musicPlayer.ui.updateNowPlaying();
-    
-    if (window.ui) {
-        if (ui.updateCounts) ui.updateCounts();
-    }
-    const success = await musicPlayer.ui.loadAudioFile(songData);
-    if (success) {
-        if (window.notificationPlayer && notificationPlayer.metadata) {
-            notificationPlayer.metadata.update(songData);
-        }
-        if (window.notificationPlayer && notificationPlayer.events) {
-            notificationPlayer.events.bind();
-        }
-        setTimeout(() => {
-            if (window.clickables && clickables.musicPlayer) {
-                clickables.musicPlayer();
+            if (!songData) return;
+            musicPlayer.ui.initialize();
+            if (window.ui && ui.setLoadingState) {
+                ui.setLoadingState(true);
             }
-            musicPlayer.ui.bindSeekBar();
-        }, 100);
-        musicPlayer.playback.dispatchPlayerStateChange();
-    } else {
-        appState.isPlaying = false;
-        if (window.ui && ui.updatePlayPauseButtons) {
-            ui.updatePlayPauseButtons();
-        }
-        if (window.notificationPlayer && notificationPlayer.playbackState) {
-            notificationPlayer.playbackState.onPause();
-        }
-        musicPlayer.playback.dispatchPlayerStateChange();
-    }
-    if (window.ui && ui.setLoadingState) {
-        ui.setLoadingState(false);
-    }
-},
+            if (appState.currentSong) {
+                musicPlayer.ui.addToRecentlyPlayed(appState.currentSong);
+            }
+            appState.currentSong = songData;
+            appState.currentArtist = songData.artist;
+            appState.currentAlbum = songData.album;
+            
+            musicPlayer.ui.updateNavbar();
+            musicPlayer.ui.updateNowPlaying();
+            
+            if (window.ui) {
+                if (ui.updateCounts) ui.updateCounts();
+            }
+            const success = await musicPlayer.ui.loadAudioFile(songData);
+            if (success) {
+                if (window.notificationPlayer && notificationPlayer.metadata) {
+                    notificationPlayer.metadata.update(songData);
+                }
+                if (window.notificationPlayer && notificationPlayer.events) {
+                    notificationPlayer.events.bind();
+                }
+                setTimeout(() => {
+                    if (window.clickables && clickables.musicPlayer) {
+                        clickables.musicPlayer();
+                    }
+                    musicPlayer.ui.bindSeekBar();
+                }, 100);
+                musicPlayer.playback.dispatchPlayerStateChange();
+            } else {
+                appState.isPlaying = false;
+                if (window.ui && ui.updatePlayPauseButtons) {
+                    ui.updatePlayPauseButtons();
+                }
+                if (window.notificationPlayer && notificationPlayer.playbackState) {
+                    notificationPlayer.playbackState.onPause();
+                }
+                musicPlayer.playback.dispatchPlayerStateChange();
+            }
+            if (window.ui && ui.setLoadingState) {
+                ui.setLoadingState(false);
+            }
+        },
         loadAudioFile: async (songData) => {
             if (!songData || !songData.title) {
                 return false;
@@ -1950,67 +1941,61 @@ const musicPlayer = {
             buffer.style.width = (bufferProgress * 100).toFixed(2) + '%';
         },
         onPlay: () => {
-    appState.isPlaying = true;
-    if (window.ui && ui.updatePlayPauseButtons) {
-        ui.updatePlayPauseButtons();
-    }
-    QUERY(MUSIC_PLAYER.root)?.classList.add(MUSIC_PLAYER.classes.playing);
-    
-    // Update play/pause buttons in music player
-    const playBtn = QUERY(MUSIC_PLAYER.play);
-    if (playBtn) {
-        const playIcon = playBtn.querySelector('.playIcon');
-        const pauseIcon = playBtn.querySelector('.pauseIcon');
-        playIcon?.style.setProperty('display', 'none');
-        pauseIcon?.style.setProperty('display', 'block');
-    }
-    
-    // Update navbar play indicator
-    const navbarPlayIndicator = QUERY(`${NAVBAR.nowPlaying} #play-indicator`);
-    if (navbarPlayIndicator) {
-        navbarPlayIndicator.classList.add('playing');
-    }
-    
-    // Update navbar play/pause button
-    const navbarPlayBtn = QUERY(NAVBAR.playPause);
-    if (navbarPlayBtn) {
-        const navbarPlayIcon = QUERY(NAVBAR.play);
-        const navbarPauseIcon = QUERY(NAVBAR.pause);
-        navbarPlayIcon?.classList.add('hidden');
-        navbarPauseIcon?.classList.remove('hidden');
-    }
-},
-onPause: () => {
-    appState.isPlaying = false;
-    if (window.ui && ui.updatePlayPauseButtons) {
-        ui.updatePlayPauseButtons();
-    }
-    QUERY(MUSIC_PLAYER.root)?.classList.remove(MUSIC_PLAYER.classes.playing);
-    
-    // Update play/pause buttons in music player
-    const playBtn = QUERY(MUSIC_PLAYER.play);
-    if (playBtn) {
-        const playIcon = playBtn.querySelector('.playIcon');
-        const pauseIcon = playBtn.querySelector('.pauseIcon');
-        playIcon?.style.setProperty('display', 'block');
-        pauseIcon?.style.setProperty('display', 'none');
-    }
-    
-    // Update navbar play indicator
-    const navbarPlayIndicator = QUERY(`${NAVBAR.nowPlaying} #play-indicator`);
-    if (navbarPlayIndicator) {
-        navbarPlayIndicator.classList.remove('playing');
-    }
-    
-    // Update navbar play/pause button
-    const navbarPlayBtn = QUERY(NAVBAR.playPause);
-    if (navbarPlayBtn) {
-        const navbarPlayIcon = QUERY(NAVBAR.play);
-        const navbarPauseIcon = QUERY(NAVBAR.pause);
-        navbarPlayIcon?.classList.remove('hidden');
-        navbarPauseIcon?.classList.add('hidden');
-    }
-},
+            appState.isPlaying = true;
+            if (window.ui && ui.updatePlayPauseButtons) {
+                ui.updatePlayPauseButtons();
+            }
+            QUERY(MUSIC_PLAYER.root)?.classList.add(MUSIC_PLAYER.classes.playing);
+            
+            const playBtn = QUERY(MUSIC_PLAYER.play);
+            if (playBtn) {
+                const playIcon = playBtn.querySelector('.playIcon');
+                const pauseIcon = playBtn.querySelector('.pauseIcon');
+                playIcon?.style.setProperty('display', 'none');
+                pauseIcon?.style.setProperty('display', 'block');
+            }
+            
+            const navbarPlayIndicator = QUERY(`${NAVBAR.nowPlaying} #play-indicator`);
+            if (navbarPlayIndicator) {
+                navbarPlayIndicator.classList.add('playing');
+            }
+            
+            const navbarPlayBtn = QUERY(NAVBAR.playPause);
+            if (navbarPlayBtn) {
+                const navbarPlayIcon = QUERY(NAVBAR.play);
+                const navbarPauseIcon = QUERY(NAVBAR.pause);
+                navbarPlayIcon?.classList.add('hidden');
+                navbarPauseIcon?.classList.remove('hidden');
+            }
+        },
+        onPause: () => {
+            appState.isPlaying = false;
+            if (window.ui && ui.updatePlayPauseButtons) {
+                ui.updatePlayPauseButtons();
+            }
+            QUERY(MUSIC_PLAYER.root)?.classList.remove(MUSIC_PLAYER.classes.playing);
+            
+            const playBtn = QUERY(MUSIC_PLAYER.play);
+            if (playBtn) {
+                const playIcon = playBtn.querySelector('.playIcon');
+                const pauseIcon = playBtn.querySelector('.pauseIcon');
+                playIcon?.style.setProperty('display', 'block');
+                pauseIcon?.style.setProperty('display', 'none');
+            }
+            
+            const navbarPlayIndicator = QUERY(`${NAVBAR.nowPlaying} #play-indicator`);
+            if (navbarPlayIndicator) {
+                navbarPlayIndicator.classList.remove('playing');
+            }
+            
+            const navbarPlayBtn = QUERY(NAVBAR.playPause);
+            if (navbarPlayBtn) {
+                const navbarPlayIcon = QUERY(NAVBAR.play);
+                const navbarPauseIcon = QUERY(NAVBAR.pause);
+                navbarPlayIcon?.classList.remove('hidden');
+                navbarPauseIcon?.classList.add('hidden');
+            }
+        },
         onMetadataLoaded: () => {
             if (!appState.audio || isNaN(appState.audio.duration)) return;
             appState.duration = appState.audio.duration;
@@ -2074,107 +2059,722 @@ onPause: () => {
             };
         },
         updateNowPlaying: () => {
-    if (!appState.currentSong) return;
-    
-    const coverUrl = appState.currentSong.cover || utils.getAlbumImageUrl(appState.currentSong.album);
-    
-    // Update music player cover
-    const cover = QUERY(MUSIC_PLAYER.albumArtwork);
-    if (cover && coverUrl) {
-        cover.src = coverUrl;
-        console.log('✅ Music player cover updated');
-    }
-    
-    // Update music player song info
-    const titleEl = QUERY(MUSIC_PLAYER.songName);
-    const artistEl = QUERY(MUSIC_PLAYER.artistName);
-    const albumEl = QUERY(MUSIC_PLAYER.albumName);
-    
-    if (titleEl && appState.currentSong.title) {
-        titleEl.textContent = appState.currentSong.title;
-        console.log('✅ Music player title updated:', appState.currentSong.title);
-    }
-    if (artistEl && appState.currentArtist) {
-        artistEl.textContent = appState.currentArtist;
-        console.log('✅ Music player artist updated:', appState.currentArtist);
-    }
-    if (albumEl && appState.currentAlbum) {
-        albumEl.textContent = appState.currentAlbum;
-        console.log('✅ Music player album updated:', appState.currentAlbum);
-    }
-    
-    // Update compact header (if it exists)
-    const compactCover = document.getElementById('compactCover');
-    const compactTitle = document.getElementById('compactTitle');
-    const compactArtist = document.getElementById('compactArtist');
-    if (compactCover && coverUrl) compactCover.src = coverUrl;
-    if (compactTitle && appState.currentSong.title) compactTitle.textContent = appState.currentSong.title;
-    if (compactArtist && appState.currentArtist) compactArtist.textContent = appState.currentArtist;
-    
-    // Update play/pause button state
-    const playBtn = QUERY(MUSIC_PLAYER.play);
-    const drawer = QUERY(MUSIC_PLAYER.root);
-    if (playBtn) {
-        const playIcon = playBtn.querySelector('.playIcon');
-        const pauseIcon = playBtn.querySelector('.pauseIcon');
-        if (appState.isPlaying) {
-            playIcon?.style.setProperty('display', 'none');
-            pauseIcon?.style.setProperty('display', 'block');
-            drawer?.classList.add(MUSIC_PLAYER.classes.playing);
-        } else {
-            playIcon?.style.setProperty('display', 'block');
-            pauseIcon?.style.setProperty('display', 'none');
-            drawer?.classList.remove(MUSIC_PLAYER.classes.playing);
-        }
-    }
-    
-    // Update navbar as well
-    musicPlayer.ui.updateNavbar();
-    
-    console.log('✅ Now Playing UI fully updated');
-},
+            if (!appState.currentSong) return;
+            
+            const coverUrl = appState.currentSong.cover || utils.getAlbumImageUrl(appState.currentSong.album);
+            
+            const cover = QUERY(MUSIC_PLAYER.albumArtwork);
+            if (cover && coverUrl) {
+                cover.src = coverUrl;
+            }
+            
+            const titleEl = QUERY(MUSIC_PLAYER.songName);
+            const artistEl = QUERY(MUSIC_PLAYER.artistName);
+            const albumEl = QUERY(MUSIC_PLAYER.albumName);
+            
+            if (titleEl && appState.currentSong.title) {
+                titleEl.textContent = appState.currentSong.title;
+            }
+            if (artistEl && appState.currentArtist) {
+                artistEl.textContent = appState.currentArtist;
+            }
+            if (albumEl && appState.currentAlbum) {
+                albumEl.textContent = appState.currentAlbum;
+            }
+            
+            const compactCover = document.getElementById('compactCover');
+            const compactTitle = document.getElementById('compactTitle');
+            const compactArtist = document.getElementById('compactArtist');
+            if (compactCover && coverUrl) compactCover.src = coverUrl;
+            if (compactTitle && appState.currentSong.title) compactTitle.textContent = appState.currentSong.title;
+            if (compactArtist && appState.currentArtist) compactArtist.textContent = appState.currentArtist;
+            
+            const playBtn = QUERY(MUSIC_PLAYER.play);
+            const drawer = QUERY(MUSIC_PLAYER.root);
+            if (playBtn) {
+                const playIcon = playBtn.querySelector('.playIcon');
+                const pauseIcon = playBtn.querySelector('.pauseIcon');
+                if (appState.isPlaying) {
+                    playIcon?.style.setProperty('display', 'none');
+                    pauseIcon?.style.setProperty('display', 'block');
+                    drawer?.classList.add(MUSIC_PLAYER.classes.playing);
+                } else {
+                    playIcon?.style.setProperty('display', 'block');
+                    pauseIcon?.style.setProperty('display', 'none');
+                    drawer?.classList.remove(MUSIC_PLAYER.classes.playing);
+                }
+            }
+            
+            musicPlayer.ui.updateNavbar();
+        },
         updateNavbar: () => {
-    if (!appState.currentSong) return;
-    
-    // Get navbar elements using NAVBAR constant from map.js
-    const navbarNowPlaying = QUERY(NAVBAR.nowPlaying);
-    const navbarAlbumArt = QUERY(`${NAVBAR.nowPlaying} .albumArtwork img`);
-    const navbarSongName = QUERY(`${NAVBAR.nowPlaying} .songName`);
-    const navbarArtistName = QUERY(`${NAVBAR.nowPlaying} .artistName`);
-    
-    if (!navbarNowPlaying) {
-        console.warn('Navbar now playing area not found');
-        return;
+            if (!appState.currentSong) return;
+            
+            const navbarNowPlaying = QUERY(NAVBAR.nowPlaying);
+            const navbarAlbumArt = QUERY(`${NAVBAR.nowPlaying} .albumArtwork img`);
+            const navbarSongName = QUERY(`${NAVBAR.nowPlaying} .songName`);
+            const navbarArtistName = QUERY(`${NAVBAR.nowPlaying} .artistName`);
+            
+            if (!navbarNowPlaying) {
+                return;
+            }
+            
+            navbarNowPlaying.classList.add(CLASSES.hasSong);
+            
+            const coverUrl = appState.currentSong.cover || utils.getAlbumImageUrl(appState.currentSong.album);
+            if (navbarAlbumArt) {
+                navbarAlbumArt.src = coverUrl;
+                navbarAlbumArt.style.opacity = '1';
+                
+                const svgPlaceholder = QUERY(`${NAVBAR.nowPlaying} .albumArtwork svg`);
+                if (svgPlaceholder) {
+                    svgPlaceholder.style.opacity = '0';
+                }
+            }
+            
+            if (navbarSongName && appState.currentSong.title) {
+                navbarSongName.textContent = appState.currentSong.title;
+            }
+            
+            if (navbarArtistName && appState.currentArtist) {
+                navbarArtistName.textContent = appState.currentArtist;
+            }
+        },
     }
-    
-    // Add has-song class to enable display
-    navbarNowPlaying.classList.add(CLASSES.hasSong);
-    
-    // Update album artwork
-    const coverUrl = appState.currentSong.cover || utils.getAlbumImageUrl(appState.currentSong.album);
-    if (navbarAlbumArt) {
-        navbarAlbumArt.src = coverUrl;
-        navbarAlbumArt.style.opacity = '1';
+};
+
+const clickables = {
+    elements: {
+        menuBtn: null,
+        musicPlayerBtn: null,
+        navbarPlayPause: null,
+        navbarPrevious: null,
+        navbarNext: null,
+        drawer: null,
+        drawerClose: null,
+        drawerPlay: null,
+        drawerPrevious: null,
+        drawerNext: null,
+        drawerShuffle: null,
+        drawerRepeat: null,
+        drawerFavorite: null,
+        drawerQueue: null,
+        drawerRewind: null,
+        drawerForward: null,
+        progressBar: null,
+        dropdownMenu: null,
+        dropdownClose: null,
+        favoriteSongs: null,
+        favoriteArtists: null,
+        favoriteAlbums: null,
+        recentlyPlayed: null,
+        queueView: null,
+        createPlaylist: null,
+        shuffleAll: null,
+        tabs: null,
+        searchTrigger: null,
+        searchDialog: null,
+    },
+
+    init: () => {
+        clickables.elements.menuBtn = $byId(IDS.menuTrigger);
+        clickables.elements.musicPlayerBtn = $byId(IDS.musicPlayerTrigger);
+        clickables.elements.navbarPlayPause = QUERY(NAVBAR.playPause);
+        clickables.elements.navbarPrevious = QUERY(NAVBAR.previous);
+        clickables.elements.navbarNext = QUERY(NAVBAR.next);
         
-        // Hide the SVG placeholder
-        const svgPlaceholder = QUERY(`${NAVBAR.nowPlaying} .albumArtwork svg`);
-        if (svgPlaceholder) {
-            svgPlaceholder.style.opacity = '0';
+        clickables.elements.drawer = $byId(IDS.musicPlayer);
+        clickables.elements.drawerClose = QUERY(MUSIC_PLAYER.close);
+        clickables.elements.drawerPlay = QUERY(MUSIC_PLAYER.play);
+        clickables.elements.drawerPrevious = QUERY(MUSIC_PLAYER.previous);
+        clickables.elements.drawerNext = QUERY(MUSIC_PLAYER.next);
+        clickables.elements.drawerShuffle = QUERY(MUSIC_PLAYER.shuffleBtn);
+        clickables.elements.drawerRepeat = QUERY(MUSIC_PLAYER.repeatBtn);
+        clickables.elements.drawerFavorite = QUERY(MUSIC_PLAYER.favoriteBtn);
+        clickables.elements.drawerQueue = QUERY(MUSIC_PLAYER.queueBtn);
+        clickables.elements.drawerRewind = QUERY(MUSIC_PLAYER.reWind);
+        clickables.elements.drawerForward = QUERY(MUSIC_PLAYER.fastForward);
+        clickables.elements.progressBar = QUERY(MUSIC_PLAYER.progressBar);
+        
+        clickables.elements.dropdownMenu = $byId(IDS.dropdownMenu);
+        clickables.elements.dropdownClose = $byId(IDS.dropdownClose);
+        clickables.elements.favoriteSongs = $byId(IDS.favoriteSongs);
+        clickables.elements.favoriteArtists = $byId(IDS.favoriteArtists);
+        clickables.elements.recentlyPlayed = $byId(IDS.recentlyPlayed);
+        clickables.elements.queueView = $byId(IDS.queueView);
+        clickables.elements.createPlaylist = $byId(IDS.createPlaylist);
+        clickables.elements.shuffleAll = $byId(IDS.shuffleAll);
+        
+        clickables.elements.tabs = QUERY_ALL(`${MUSIC_PLAYER.root} .tab`);
+        
+        clickables.elements.searchTrigger = $byId(IDS.searchTrigger);
+        clickables.elements.searchDialog = $byId(IDS.searchDialog);
+        
+        clickables.navBar();
+        clickables.musicPlayer();
+        clickables.dropDownMenu();
+        clickables.others();
+        clickables.keyboard();
+        clickables.document();
+    },
+
+    navBar: () => {
+        const { menuBtn, musicPlayerBtn, navbarPlayPause, navbarPrevious, navbarNext } = clickables.elements;
+        
+        if (menuBtn) {
+            clickables.removeListener(menuBtn, '_menuToggle');
+            const menuToggleHandler = (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                
+                if (typeof dropdown !== 'undefined' && dropdown.toggle) {
+                    dropdown.toggle(e);
+                }
+            };
+            menuBtn.addEventListener('click', menuToggleHandler);
+            menuBtn._menuToggle = menuToggleHandler;
         }
-    }
-    
-    // Update song name
-    if (navbarSongName && appState.currentSong.title) {
-        navbarSongName.textContent = appState.currentSong.title;
-    }
-    
-    // Update artist name
-    if (navbarArtistName && appState.currentArtist) {
-        navbarArtistName.textContent = appState.currentArtist;
-    }
-    
-    console.log('✅ Navbar updated with song:', appState.currentSong.title);
-},
+        
+        if (musicPlayerBtn) {
+            clickables.removeListener(musicPlayerBtn, '_musicPlayerToggle');
+            const musicPlayerToggleHandler = (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                
+                if (typeof musicPlayer !== 'undefined' && musicPlayer.mainPlayer && musicPlayer.mainPlayer.toggle) {
+                    musicPlayer.mainPlayer.toggle();
+                }
+            };
+            musicPlayerBtn.addEventListener('click', musicPlayerToggleHandler);
+            musicPlayerBtn._musicPlayerToggle = musicPlayerToggleHandler;
+        }
+        
+        if (navbarPlayPause) {
+            clickables.removeListener(navbarPlayPause, '_playPauseToggle');
+            const playPauseHandler = (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                
+                if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.togglePlayPause) {
+                    musicPlayer.playback.togglePlayPause();
+                }
+            };
+            navbarPlayPause.addEventListener('click', playPauseHandler);
+            navbarPlayPause._playPauseToggle = playPauseHandler;
+        }
+        
+        if (navbarPrevious) {
+            clickables.removeListener(navbarPrevious, '_previousHandler');
+            const previousHandler = (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                
+                if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.previous) {
+                    musicPlayer.playback.previous();
+                }
+            };
+            navbarPrevious.addEventListener('click', previousHandler);
+            navbarPrevious._previousHandler = previousHandler;
+        }
+        
+        if (navbarNext) {
+            clickables.removeListener(navbarNext, '_nextHandler');
+            const nextHandler = (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                
+                if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.next) {
+                    musicPlayer.playback.next();
+                }
+            };
+            navbarNext.addEventListener('click', nextHandler);
+            navbarNext._nextHandler = nextHandler;
+        }
+    },
+
+    musicPlayer: () => {
+        const {
+            drawerClose,
+            drawerPlay,
+            drawerPrevious,
+            drawerNext,
+            drawerShuffle,
+            drawerRepeat,
+            drawerFavorite,
+            drawerQueue,
+            drawerRewind,
+            drawerForward,
+            progressBar,
+            tabs
+        } = clickables.elements;
+        
+        if (drawerClose) {
+            clickables.removeListener(drawerClose, '_closeHandler');
+            const closeHandler = (e) => {
+                e.stopPropagation();
+                musicPlayer.mainPlayer.close();
+            };
+            drawerClose.addEventListener('click', closeHandler);
+            drawerClose._closeHandler = closeHandler;
+        }
+        
+        const curtain = QUERY(`${MUSIC_PLAYER.root} .curtain`);
+        if (curtain) {
+            clickables.removeListener(curtain, '_curtainHandler');
+            const curtainHandler = (e) => {
+                e.stopPropagation();
+                musicPlayer.mainPlayer.close();
+            };
+            curtain.addEventListener('click', curtainHandler);
+            curtain._curtainHandler = curtainHandler;
+        }
+        
+        if (drawerPlay) {
+            clickables.removeListener(drawerPlay, '_drawerPlayHandler');
+            const drawerPlayHandler = (e) => {
+                e.stopPropagation();
+                
+                if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.togglePlayPause) {
+                    musicPlayer.playback.togglePlayPause();
+                }
+            };
+            drawerPlay.addEventListener('click', drawerPlayHandler);
+            drawerPlay._drawerPlayHandler = drawerPlayHandler;
+        }
+        
+        if (drawerPrevious) {
+            clickables.removeListener(drawerPrevious, '_drawerPreviousHandler');
+            const drawerPreviousHandler = (e) => {
+                e.stopPropagation();
+                
+                if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.previous) {
+                    musicPlayer.playback.previous();
+                }
+            };
+            drawerPrevious.addEventListener('click', drawerPreviousHandler);
+            drawerPrevious._drawerPreviousHandler = drawerPreviousHandler;
+        }
+        
+        if (drawerNext) {
+            clickables.removeListener(drawerNext, '_drawerNextHandler');
+            const drawerNextHandler = (e) => {
+                e.stopPropagation();
+                
+                if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.next) {
+                    musicPlayer.playback.next();
+                }
+            };
+            drawerNext.addEventListener('click', drawerNextHandler);
+            drawerNext._drawerNextHandler = drawerNextHandler;
+        }
+        
+        if (drawerShuffle) {
+            clickables.removeListener(drawerShuffle, '_shuffleHandler');
+            const shuffleHandler = (e) => {
+                e.stopPropagation();
+                
+                if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.shuffle && musicPlayer.playback.shuffle.toggle) {
+                    musicPlayer.playback.shuffle.toggle();
+                }
+            };
+            drawerShuffle.addEventListener('click', shuffleHandler);
+            drawerShuffle._shuffleHandler = shuffleHandler;
+        }
+        
+        if (drawerRepeat) {
+            clickables.removeListener(drawerRepeat, '_repeatHandler');
+            const repeatHandler = (e) => {
+                e.stopPropagation();
+                
+                if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.repeat && musicPlayer.playback.repeat.toggle) {
+                    musicPlayer.playback.repeat.toggle();
+                }
+            };
+            drawerRepeat.addEventListener('click', repeatHandler);
+            drawerRepeat._repeatHandler = repeatHandler;
+        }
+        
+        if (drawerFavorite) {
+            clickables.removeListener(drawerFavorite, '_favoriteHandler');
+            const favoriteHandler = (e) => {
+                e.stopPropagation();
+                
+                if (typeof appState !== 'undefined' && appState.currentSong && appState.favorites) {
+                    appState.favorites.toggle('songs', appState.currentSong.id);
+                    if (typeof ui !== 'undefined' && ui.updateFavoriteButton) {
+                        ui.updateFavoriteButton();
+                    }
+                }
+            };
+            drawerFavorite.addEventListener('click', favoriteHandler);
+            drawerFavorite._favoriteHandler = favoriteHandler;
+        }
+        
+        if (drawerQueue) {
+            clickables.removeListener(drawerQueue, '_queueHandler');
+            const queueHandler = (e) => {
+                e.stopPropagation();
+                
+                if (typeof musicPlayer !== 'undefined' && musicPlayer.mainPlayer && musicPlayer.mainPlayer.switchTab) {
+                    musicPlayer.mainPlayer.switchTab('queue');
+                }
+            };
+            drawerQueue.addEventListener('click', queueHandler);
+            drawerQueue._queueHandler = queueHandler;
+        }
+        
+        if (drawerRewind) {
+            clickables.removeListener(drawerRewind, '_rewindHandler');
+            const rewindHandler = (e) => {
+                e.stopPropagation();
+                
+                if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.skip) {
+                    musicPlayer.playback.skip(-10);
+                }
+            };
+            drawerRewind.addEventListener('click', rewindHandler);
+            drawerRewind._rewindHandler = rewindHandler;
+        }
+        
+        if (drawerForward) {
+            clickables.removeListener(drawerForward, '_forwardHandler');
+            const forwardHandler = (e) => {
+                e.stopPropagation();
+                
+                if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.skip) {
+                    musicPlayer.playback.skip(10);
+                }
+            };
+            drawerForward.addEventListener('click', forwardHandler);
+            drawerForward._forwardHandler = forwardHandler;
+        }
+        
+        if (progressBar) {
+            musicPlayer.ui.bindSeekBar();
+        }
+        
+        if (tabs && tabs.length > 0) {
+            tabs.forEach(tab => {
+                clickables.removeListener(tab, '_tabHandler');
+                const tabHandler = (e) => {
+                    e.stopPropagation();
+                    const tabName = tab.dataset.tab;
+                    
+                    if (tabName && typeof musicPlayer !== 'undefined' && musicPlayer.mainPlayer && musicPlayer.mainPlayer.switchTab) {
+                        musicPlayer.mainPlayer.switchTab(tabName);
+                    }
+                };
+                tab.addEventListener('click', tabHandler);
+                tab._tabHandler = tabHandler;
+            });
+        }
+    },
+
+    dropDownMenu: () => {
+        const {
+            dropdownClose,
+            favoriteSongs,
+            favoriteArtists,
+            favoriteAlbums,
+            recentlyPlayed,
+            queueView,
+            createPlaylist,
+            shuffleAll
+        } = clickables.elements;
+        
+        if (dropdownClose) {
+            clickables.removeListener(dropdownClose, '_dropdownCloseHandler');
+            const dropdownCloseHandler = (e) => {
+                e.stopPropagation();
+                
+                if (typeof dropdown !== 'undefined' && dropdown.close) {
+                    dropdown.close();
+                }
+            };
+            dropdownClose.addEventListener('click', dropdownCloseHandler);
+            dropdownClose._dropdownCloseHandler = dropdownCloseHandler;
+        }
+        
+        if (favoriteSongs) {
+            clickables.removeListener(favoriteSongs, '_favoriteSongsHandler');
+            const favoriteSongsHandler = (e) => {
+                e.stopPropagation();
+                
+                if (typeof dropdown !== 'undefined' && dropdown.close) {
+                    dropdown.close();
+                }
+                if (typeof views !== 'undefined' && views.showFavoriteSongs) {
+                    views.showFavoriteSongs();
+                }
+            };
+            favoriteSongs.addEventListener('click', favoriteSongsHandler);
+            favoriteSongs._favoriteSongsHandler = favoriteSongsHandler;
+        }
+        
+        if (favoriteArtists) {
+            clickables.removeListener(favoriteArtists, '_favoriteArtistsHandler');
+            const favoriteArtistsHandler = (e) => {
+                e.stopPropagation();
+                
+                if (typeof dropdown !== 'undefined' && dropdown.close) {
+                    dropdown.close();
+                }
+                if (typeof views !== 'undefined' && views.showFavoriteArtists) {
+                    views.showFavoriteArtists();
+                }
+            };
+            favoriteArtists.addEventListener('click', favoriteArtistsHandler);
+            favoriteArtists._favoriteArtistsHandler = favoriteArtistsHandler;
+        }
+        
+        if (recentlyPlayed) {
+            clickables.removeListener(recentlyPlayed, '_recentlyPlayedHandler');
+            const recentlyPlayedHandler = (e) => {
+                e.stopPropagation();
+                
+                if (typeof dropdown !== 'undefined' && dropdown.close) {
+                    dropdown.close();
+                }
+                if (typeof musicPlayer !== 'undefined' && musicPlayer.mainPlayer) {
+                    musicPlayer.mainPlayer.open();
+                    setTimeout(() => {
+                        if (musicPlayer.mainPlayer.switchTab) {
+                            musicPlayer.mainPlayer.switchTab('recent');
+                        }
+                    }, 50);
+                }
+            };
+            recentlyPlayed.addEventListener('click', recentlyPlayedHandler);
+            recentlyPlayed._recentlyPlayedHandler = recentlyPlayedHandler;
+        }
+        
+        if (queueView) {
+            clickables.removeListener(queueView, '_queueViewHandler');
+            const queueViewHandler = (e) => {
+                e.stopPropagation();
+                
+                if (typeof dropdown !== 'undefined' && dropdown.close) {
+                    dropdown.close();
+                }
+                if (typeof musicPlayer !== 'undefined' && musicPlayer.mainPlayer) {
+                    musicPlayer.mainPlayer.open();
+                    setTimeout(() => {
+                        if (musicPlayer.mainPlayer.switchTab) {
+                            musicPlayer.mainPlayer.switchTab('queue');
+                        }
+                    }, 50);
+                }
+            };
+            queueView.addEventListener('click', queueViewHandler);
+            queueView._queueViewHandler = queueViewHandler;
+        }
+        
+        if (createPlaylist) {
+            clickables.removeListener(createPlaylist, '_createPlaylistHandler');
+            const createPlaylistHandler = (e) => {
+                e.stopPropagation();
+                
+                if (typeof dropdown !== 'undefined' && dropdown.close) {
+                    dropdown.close();
+                }
+                if (typeof playlists !== 'undefined' && playlists.create) {
+                    playlists.create();
+                }
+            };
+            createPlaylist.addEventListener('click', createPlaylistHandler);
+            createPlaylist._createPlaylistHandler = createPlaylistHandler;
+        }
+        
+        if (shuffleAll) {
+            clickables.removeListener(shuffleAll, '_shuffleAllHandler');
+            const shuffleAllHandler = (e) => {
+                e.stopPropagation();
+                
+                if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.shuffle && musicPlayer.playback.shuffle.all) {
+                    musicPlayer.playback.shuffle.all();
+                }
+            };
+            shuffleAll.addEventListener('click', shuffleAllHandler);
+            shuffleAll._shuffleAllHandler = shuffleAllHandler;
+        }
+    },
+
+    others: () => {
+        const { searchTrigger } = clickables.elements;
+        
+        if (searchTrigger) {
+            clickables.removeListener(searchTrigger, '_searchHandler');
+            const searchHandler = (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                
+                if (typeof dropdown !== 'undefined' && dropdown.close) {
+                    dropdown.close();
+                }
+                if (typeof appState !== 'undefined' && appState.router && appState.router.openSearchDialog) {
+                    appState.router.openSearchDialog();
+                }
+            };
+            searchTrigger.addEventListener('click', searchHandler);
+            searchTrigger._searchHandler = searchHandler;
+        }
+    },
+
+    keyboard: () => {
+        if (document._keyboardHandler) {
+            document.removeEventListener('keydown', document._keyboardHandler);
+        }
+        
+        const keyboardHandler = (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            
+            const shortcuts = {
+                ' ': (e) => {
+                    e.preventDefault();
+                    if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.togglePlayPause) {
+                        musicPlayer.playback.togglePlayPause();
+                    }
+                },
+                'ArrowLeft': (e) => {
+                    if (e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
+                        if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.previous) {
+                            musicPlayer.playback.previous();
+                        }
+                    }
+                },
+                'ArrowRight': (e) => {
+                    if (e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
+                        if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.next) {
+                            musicPlayer.playback.next();
+                        }
+                    }
+                },
+                'KeyN': (e) => {
+                    if (e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
+                        if (typeof musicPlayer !== 'undefined' && musicPlayer.mainPlayer && musicPlayer.mainPlayer.open) {
+                            musicPlayer.mainPlayer.open();
+                        }
+                    }
+                },
+                'KeyM': (e) => {
+                    if (e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
+                        if (typeof dropdown !== 'undefined' && dropdown.toggle) {
+                            dropdown.toggle();
+                        }
+                    }
+                },
+                'KeyS': (e) => {
+                    if (e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
+                        if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.shuffle && musicPlayer.playback.shuffle.toggle) {
+                            musicPlayer.playback.shuffle.toggle();
+                        }
+                    }
+                },
+                'KeyR': (e) => {
+                    if (e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
+                        if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.repeat && musicPlayer.playback.repeat.toggle) {
+                            musicPlayer.playback.repeat.toggle();
+                        }
+                    }
+                },
+                'Escape': () => {
+                    const drawer = QUERY(MUSIC_PLAYER.root);
+                    if (drawer && drawer.classList.contains('open')) {
+                        musicPlayer.mainPlayer.close();
+                    }
+                    
+                    if (typeof dropdown !== 'undefined' && dropdown.close) {
+                        dropdown.close();
+                    }
+                }
+            };
+            
+            const handler = shortcuts[e.code] || shortcuts[e.key];
+            if (handler) handler(e);
+        };
+        
+        document.addEventListener('keydown', keyboardHandler);
+        document._keyboardHandler = keyboardHandler;
+    },
+
+    document: () => {
+        if (document._documentClickHandler) {
+            document.removeEventListener('click', document._documentClickHandler);
+        }
+        
+        const documentClickHandler = (e) => {
+            const { dropdownMenu, menuBtn, drawer, musicPlayerBtn } = clickables.elements;
+            
+            if (dropdownMenu && !dropdownMenu.contains(e.target) && menuBtn && !menuBtn.contains(e.target)) {
+                if (typeof dropdown !== 'undefined' && dropdown.close) {
+                    dropdown.close();
+                }
+            }
+            
+            if (typeof appState !== 'undefined' && appState.isPopupVisible) {
+                if (drawer && !drawer.contains(e.target) && musicPlayerBtn && !musicPlayerBtn.contains(e.target)) {
+                    if (typeof musicPlayer !== 'undefined' && musicPlayer.mainPlayer && musicPlayer.mainPlayer.close) {
+                        musicPlayer.mainPlayer.close();
+                    }
+                }
+            }
+            
+            const navItem = e.target.closest('[data-nav]');
+            if (navItem) {
+                e.preventDefault();
+                const navType = navItem.dataset.nav;
+                
+                if (typeof dropdown !== 'undefined' && dropdown.close) {
+                    dropdown.close();
+                }
+                
+                if (typeof appState !== 'undefined' && appState.router) {
+                    const router = appState.router;
+                    
+                    switch (navType) {
+                        case 'home':
+                            if (router.navigateTo) router.navigateTo('home');
+                            break;
+                        case 'allArtists':
+                            if (router.navigateTo) router.navigateTo('allArtists');
+                            break;
+                        case 'artist':
+                            const artistName = navItem.dataset.artist;
+                            if (artistName && router.navigateTo) {
+                                router.navigateTo('artist', { artist: artistName });
+                            }
+                            break;
+                        case 'album':
+                            const artist = navItem.dataset.artist;
+                            const album = navItem.dataset.album;
+                            if (artist && album && router.navigateTo) {
+                                router.navigateTo('album', { artist, album });
+                            }
+                            break;
+                    }
+                }
+            }
+        };
+        
+        document.addEventListener('click', documentClickHandler);
+        document._documentClickHandler = documentClickHandler;
+    },
+
+    removeListener: (element, handlerProp) => {
+        if (element && element[handlerProp]) {
+            element.removeEventListener('click', element[handlerProp]);
+            delete element[handlerProp];
+        }
+    },
+
+    reinit: () => {
+        clickables.init();
     }
 };
 
@@ -2711,700 +3311,6 @@ const playlists = {
     },
 };
 
-const clickables = {
-    elements: {
-        menuBtn: null,
-        musicPlayerBtn: null,
-        navbarPlayPause: null,
-        navbarPrevious: null,
-        navbarNext: null,
-        drawer: null,
-        drawerClose: null,
-        drawerPlay: null,
-        drawerPrevious: null,
-        drawerNext: null,
-        drawerShuffle: null,
-        drawerRepeat: null,
-        drawerFavorite: null,
-        drawerQueue: null,
-        drawerRewind: null,
-        drawerForward: null,
-        progressBar: null,
-        dropdownMenu: null,
-        dropdownClose: null,
-        favoriteSongs: null,
-        favoriteArtists: null,
-        favoriteAlbums: null,
-        recentlyPlayed: null,
-        queueView: null,
-        createPlaylist: null,
-        shuffleAll: null,
-        tabs: null,
-        searchTrigger: null,
-        searchDialog: null,
-    },
-
-    init: () => {
-        clickables.elements.menuBtn = $byId(IDS.menuTrigger);
-        clickables.elements.musicPlayerBtn = $byId(IDS.musicPlayerTrigger);
-        clickables.elements.navbarPlayPause = QUERY(NAVBAR.playPause);
-        clickables.elements.navbarPrevious = QUERY(NAVBAR.previous);
-        clickables.elements.navbarNext = QUERY(NAVBAR.next);
-        
-        clickables.elements.drawer = $byId(IDS.musicPlayer);
-        clickables.elements.drawerClose = QUERY(MUSIC_PLAYER.close);
-        clickables.elements.drawerPlay = QUERY(MUSIC_PLAYER.play);
-        clickables.elements.drawerPrevious = QUERY(MUSIC_PLAYER.previous);
-        clickables.elements.drawerNext = QUERY(MUSIC_PLAYER.next);
-        clickables.elements.drawerShuffle = QUERY(MUSIC_PLAYER.shuffleBtn);
-        clickables.elements.drawerRepeat = QUERY(MUSIC_PLAYER.repeatBtn);
-        clickables.elements.drawerFavorite = QUERY(MUSIC_PLAYER.favoriteBtn);
-        clickables.elements.drawerQueue = QUERY(MUSIC_PLAYER.queueBtn);
-        clickables.elements.drawerRewind = QUERY(MUSIC_PLAYER.reWind);
-        clickables.elements.drawerForward = QUERY(MUSIC_PLAYER.fastForward);
-        clickables.elements.progressBar = QUERY(MUSIC_PLAYER.progressBar);
-        
-        clickables.elements.dropdownMenu = $byId(IDS.dropdownMenu);
-        clickables.elements.dropdownClose = $byId(IDS.dropdownClose);
-        clickables.elements.favoriteSongs = $byId(IDS.favoriteSongs);
-        clickables.elements.favoriteArtists = $byId(IDS.favoriteArtists);
-        clickables.elements.recentlyPlayed = $byId(IDS.recentlyPlayed);
-        clickables.elements.queueView = $byId(IDS.queueView);
-        clickables.elements.createPlaylist = $byId(IDS.createPlaylist);
-        clickables.elements.shuffleAll = $byId(IDS.shuffleAll);
-        
-        clickables.elements.tabs = QUERY_ALL(`${MUSIC_PLAYER.root} .tab`);
-        
-        clickables.elements.searchTrigger = $byId(IDS.searchTrigger);
-        clickables.elements.searchDialog = $byId(IDS.searchDialog);
-        
-        clickables.navBar();
-        clickables.musicPlayer();
-        clickables.dropDownMenu();
-        clickables.others();
-        clickables.keyboard();
-        clickables.document();
-        
-        console.log('✅ Clickables initialized and all event handlers bound');
-    },
-
-    navBar: () => {
-        const { menuBtn, musicPlayerBtn, navbarPlayPause, navbarPrevious, navbarNext } = clickables.elements;
-        
-        if (menuBtn) {
-            clickables.removeListener(menuBtn, '_menuToggle');
-            const menuToggleHandler = (e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                console.log('🔽 Menu trigger clicked');
-                
-                if (typeof dropdown !== 'undefined' && dropdown.toggle) {
-                    dropdown.toggle(e);
-                } else {
-                    console.error('dropdown.toggle not available');
-                }
-            };
-            menuBtn.addEventListener('click', menuToggleHandler);
-            menuBtn._menuToggle = menuToggleHandler;
-            console.log('✅ Menu trigger bound');
-        } else {
-            console.warn('⚠️ menu-trigger element not found');
-        }
-        
-        if (musicPlayerBtn) {
-            clickables.removeListener(musicPlayerBtn, '_musicPlayerToggle');
-            const musicPlayerToggleHandler = (e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                console.log('🎵 Music player trigger clicked');
-                
-                if (typeof musicPlayer !== 'undefined' && musicPlayer.mainPlayer && musicPlayer.mainPlayer.toggle) {
-                    musicPlayer.mainPlayer.toggle();
-                } else {
-                    console.error('musicPlayer.mainPlayer.toggle not available');
-                }
-            };
-            musicPlayerBtn.addEventListener('click', musicPlayerToggleHandler);
-            musicPlayerBtn._musicPlayerToggle = musicPlayerToggleHandler;
-            console.log('✅ Music player trigger bound');
-        } else {
-            console.warn('⚠️ now-playing-area element not found');
-        }
-        
-        if (navbarPlayPause) {
-            clickables.removeListener(navbarPlayPause, '_playPauseToggle');
-            const playPauseHandler = (e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                console.log('⏯️ Play/Pause clicked');
-                
-                if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.togglePlayPause) {
-                    musicPlayer.playback.togglePlayPause();
-                } else {
-                    console.error('musicPlayer.playback.togglePlayPause not available');
-                }
-            };
-            navbarPlayPause.addEventListener('click', playPauseHandler);
-            navbarPlayPause._playPauseToggle = playPauseHandler;
-            console.log('✅ Navbar play/pause bound');
-        } else {
-            console.warn('⚠️ navbar playPause element not found');
-        }
-        
-        if (navbarPrevious) {
-            clickables.removeListener(navbarPrevious, '_previousHandler');
-            const previousHandler = (e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                console.log('⏮️ Previous clicked');
-                
-                if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.previous) {
-                    musicPlayer.playback.previous();
-                } else {
-                    console.error('musicPlayer.playback.previous not available');
-                }
-            };
-            navbarPrevious.addEventListener('click', previousHandler);
-            navbarPrevious._previousHandler = previousHandler;
-            console.log('✅ Navbar previous bound');
-        } else {
-            console.warn('⚠️ navbar previous element not found');
-        }
-        
-        if (navbarNext) {
-            clickables.removeListener(navbarNext, '_nextHandler');
-            const nextHandler = (e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                console.log('⏭️ Next clicked');
-                
-                if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.next) {
-                    musicPlayer.playback.next();
-                } else {
-                    console.error('musicPlayer.playback.next not available');
-                }
-            };
-            navbarNext.addEventListener('click', nextHandler);
-            navbarNext._nextHandler = nextHandler;
-            console.log('✅ Navbar next bound');
-        } else {
-            console.warn('⚠️ navbar next element not found');
-        }
-    },
-
-    musicPlayer: () => {
-        const {
-            drawerClose,
-            drawerPlay,
-            drawerPrevious,
-            drawerNext,
-            drawerShuffle,
-            drawerRepeat,
-            drawerFavorite,
-            drawerQueue,
-            drawerRewind,
-            drawerForward,
-            progressBar,
-            tabs
-        } = clickables.elements;
-        
-        if (drawerClose) {
-            clickables.removeListener(drawerClose, '_closeHandler');
-            const closeHandler = (e) => {
-                e.stopPropagation();
-                console.log('✖️ Drawer close clicked');
-                
-                if (typeof musicPlayer !== 'undefined' && musicPlayer.mainPlayer && musicPlayer.mainPlayer.close) {
-                    musicPlayer.mainPlayer.close();
-                }
-            };
-            drawerClose.addEventListener('click', closeHandler);
-            drawerClose._closeHandler = closeHandler;
-        }
-        
-        if (drawerPlay) {
-            clickables.removeListener(drawerPlay, '_drawerPlayHandler');
-            const drawerPlayHandler = (e) => {
-                e.stopPropagation();
-                console.log('⏯️ Drawer play/pause clicked');
-                
-                if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.togglePlayPause) {
-                    musicPlayer.playback.togglePlayPause();
-                }
-            };
-            drawerPlay.addEventListener('click', drawerPlayHandler);
-            drawerPlay._drawerPlayHandler = drawerPlayHandler;
-        }
-        
-        if (drawerPrevious) {
-            clickables.removeListener(drawerPrevious, '_drawerPreviousHandler');
-            const drawerPreviousHandler = (e) => {
-                e.stopPropagation();
-                console.log('⏮️ Drawer previous clicked');
-                
-                if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.previous) {
-                    musicPlayer.playback.previous();
-                }
-            };
-            drawerPrevious.addEventListener('click', drawerPreviousHandler);
-            drawerPrevious._drawerPreviousHandler = drawerPreviousHandler;
-        }
-        
-        if (drawerNext) {
-            clickables.removeListener(drawerNext, '_drawerNextHandler');
-            const drawerNextHandler = (e) => {
-                e.stopPropagation();
-                console.log('⏭️ Drawer next clicked');
-                
-                if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.next) {
-                    musicPlayer.playback.next();
-                }
-            };
-            drawerNext.addEventListener('click', drawerNextHandler);
-            drawerNext._drawerNextHandler = drawerNextHandler;
-        }
-        
-        if (drawerShuffle) {
-            clickables.removeListener(drawerShuffle, '_shuffleHandler');
-            const shuffleHandler = (e) => {
-                e.stopPropagation();
-                console.log('🔀 Shuffle clicked');
-                
-                if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.shuffle && musicPlayer.playback.shuffle.toggle) {
-                    musicPlayer.playback.shuffle.toggle();
-                }
-            };
-            drawerShuffle.addEventListener('click', shuffleHandler);
-            drawerShuffle._shuffleHandler = shuffleHandler;
-        }
-        
-        if (drawerRepeat) {
-            clickables.removeListener(drawerRepeat, '_repeatHandler');
-            const repeatHandler = (e) => {
-                e.stopPropagation();
-                console.log('🔁 Repeat clicked');
-                
-                if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.repeat && musicPlayer.playback.repeat.toggle) {
-                    musicPlayer.playback.repeat.toggle();
-                }
-            };
-            drawerRepeat.addEventListener('click', repeatHandler);
-            drawerRepeat._repeatHandler = repeatHandler;
-        }
-        
-        if (drawerFavorite) {
-            clickables.removeListener(drawerFavorite, '_favoriteHandler');
-            const favoriteHandler = (e) => {
-                e.stopPropagation();
-                console.log('❤️ Favorite clicked');
-                
-                if (typeof appState !== 'undefined' && appState.currentSong && appState.favorites) {
-                    appState.favorites.toggle('songs', appState.currentSong.id);
-                    if (typeof ui !== 'undefined' && ui.updateFavoriteButton) {
-                        ui.updateFavoriteButton();
-                    }
-                }
-            };
-            drawerFavorite.addEventListener('click', favoriteHandler);
-            drawerFavorite._favoriteHandler = favoriteHandler;
-        }
-        
-        if (drawerQueue) {
-            clickables.removeListener(drawerQueue, '_queueHandler');
-            const queueHandler = (e) => {
-                e.stopPropagation();
-                console.log('📋 Queue clicked');
-                
-                if (typeof musicPlayer !== 'undefined' && musicPlayer.mainPlayer && musicPlayer.mainPlayer.switchTab) {
-                    musicPlayer.mainPlayer.switchTab('queue');
-                }
-            };
-            drawerQueue.addEventListener('click', queueHandler);
-            drawerQueue._queueHandler = queueHandler;
-        }
-        
-        if (drawerRewind) {
-            clickables.removeListener(drawerRewind, '_rewindHandler');
-            const rewindHandler = (e) => {
-                e.stopPropagation();
-                console.log('⏪ Rewind clicked');
-                
-                if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.skip) {
-                    musicPlayer.playback.skip(-10);
-                }
-            };
-            drawerRewind.addEventListener('click', rewindHandler);
-            drawerRewind._rewindHandler = rewindHandler;
-        }
-        
-        if (drawerForward) {
-            clickables.removeListener(drawerForward, '_forwardHandler');
-            const forwardHandler = (e) => {
-                e.stopPropagation();
-                console.log('⏩ Forward clicked');
-                
-                if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.skip) {
-                    musicPlayer.playback.skip(10);
-                }
-            };
-            drawerForward.addEventListener('click', forwardHandler);
-            drawerForward._forwardHandler = forwardHandler;
-        }
-        
-        if (progressBar) {
-            musicPlayer.ui.bindSeekBar();
-        }
-        
-        if (tabs && tabs.length > 0) {
-            tabs.forEach(tab => {
-                clickables.removeListener(tab, '_tabHandler');
-                const tabHandler = (e) => {
-                    e.stopPropagation();
-                    const tabName = tab.dataset.tab;
-                    console.log(`📑 Tab clicked: ${tabName}`);
-                    
-                    if (tabName && typeof musicPlayer !== 'undefined' && musicPlayer.mainPlayer && musicPlayer.mainPlayer.switchTab) {
-                        musicPlayer.mainPlayer.switchTab(tabName);
-                    }
-                };
-                tab.addEventListener('click', tabHandler);
-                tab._tabHandler = tabHandler;
-            });
-        }
-        
-        console.log('✅ Music player drawer handlers bound');
-    },
-
-    dropDownMenu: () => {
-        const {
-            dropdownClose,
-            favoriteSongs,
-            favoriteArtists,
-            favoriteAlbums,
-            recentlyPlayed,
-            queueView,
-            createPlaylist,
-            shuffleAll
-        } = clickables.elements;
-        
-        if (dropdownClose) {
-            clickables.removeListener(dropdownClose, '_dropdownCloseHandler');
-            const dropdownCloseHandler = (e) => {
-                e.stopPropagation();
-                console.log('✖️ Dropdown close clicked');
-                
-                if (typeof dropdown !== 'undefined' && dropdown.close) {
-                    dropdown.close();
-                }
-            };
-            dropdownClose.addEventListener('click', dropdownCloseHandler);
-            dropdownClose._dropdownCloseHandler = dropdownCloseHandler;
-        }
-        
-        if (favoriteSongs) {
-            clickables.removeListener(favoriteSongs, '_favoriteSongsHandler');
-            const favoriteSongsHandler = (e) => {
-                e.stopPropagation();
-                console.log('❤️ Favorite songs clicked');
-                
-                if (typeof dropdown !== 'undefined' && dropdown.close) {
-                    dropdown.close();
-                }
-                if (typeof views !== 'undefined' && views.showFavoriteSongs) {
-                    views.showFavoriteSongs();
-                }
-            };
-            favoriteSongs.addEventListener('click', favoriteSongsHandler);
-            favoriteSongs._favoriteSongsHandler = favoriteSongsHandler;
-        }
-        
-        if (favoriteArtists) {
-            clickables.removeListener(favoriteArtists, '_favoriteArtistsHandler');
-            const favoriteArtistsHandler = (e) => {
-                e.stopPropagation();
-                console.log('👨‍🎤 Favorite artists clicked');
-                
-                if (typeof dropdown !== 'undefined' && dropdown.close) {
-                    dropdown.close();
-                }
-                if (typeof views !== 'undefined' && views.showFavoriteArtists) {
-                    views.showFavoriteArtists();
-                }
-            };
-            favoriteArtists.addEventListener('click', favoriteArtistsHandler);
-            favoriteArtists._favoriteArtistsHandler = favoriteArtistsHandler;
-        }
-        
-        if (recentlyPlayed) {
-            clickables.removeListener(recentlyPlayed, '_recentlyPlayedHandler');
-            const recentlyPlayedHandler = (e) => {
-                e.stopPropagation();
-                console.log('🕒 Recently played clicked');
-                
-                if (typeof dropdown !== 'undefined' && dropdown.close) {
-                    dropdown.close();
-                }
-                if (typeof musicPlayer !== 'undefined' && musicPlayer.mainPlayer) {
-                    musicPlayer.mainPlayer.open();
-                    setTimeout(() => {
-                        if (musicPlayer.mainPlayer.switchTab) {
-                            musicPlayer.mainPlayer.switchTab('recent');
-                        }
-                    }, 50);
-                }
-            };
-            recentlyPlayed.addEventListener('click', recentlyPlayedHandler);
-            recentlyPlayed._recentlyPlayedHandler = recentlyPlayedHandler;
-        }
-        
-        if (queueView) {
-            clickables.removeListener(queueView, '_queueViewHandler');
-            const queueViewHandler = (e) => {
-                e.stopPropagation();
-                console.log('📋 Queue view clicked');
-                
-                if (typeof dropdown !== 'undefined' && dropdown.close) {
-                    dropdown.close();
-                }
-                if (typeof musicPlayer !== 'undefined' && musicPlayer.mainPlayer) {
-                    musicPlayer.mainPlayer.open();
-                    setTimeout(() => {
-                        if (musicPlayer.mainPlayer.switchTab) {
-                            musicPlayer.mainPlayer.switchTab('queue');
-                        }
-                    }, 50);
-                }
-            };
-            queueView.addEventListener('click', queueViewHandler);
-            queueView._queueViewHandler = queueViewHandler;
-        }
-        
-        if (createPlaylist) {
-            clickables.removeListener(createPlaylist, '_createPlaylistHandler');
-            const createPlaylistHandler = (e) => {
-                e.stopPropagation();
-                console.log('➕ Create playlist clicked');
-                
-                if (typeof dropdown !== 'undefined' && dropdown.close) {
-                    dropdown.close();
-                }
-                if (typeof playlists !== 'undefined' && playlists.create) {
-                    playlists.create();
-                }
-            };
-            createPlaylist.addEventListener('click', createPlaylistHandler);
-            createPlaylist._createPlaylistHandler = createPlaylistHandler;
-        }
-        
-        if (shuffleAll) {
-            clickables.removeListener(shuffleAll, '_shuffleAllHandler');
-            const shuffleAllHandler = (e) => {
-                e.stopPropagation();
-                console.log('🔀 Shuffle all clicked');
-                
-                if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.shuffle && musicPlayer.playback.shuffle.all) {
-                    musicPlayer.playback.shuffle.all();
-                }
-            };
-            shuffleAll.addEventListener('click', shuffleAllHandler);
-            shuffleAll._shuffleAllHandler = shuffleAllHandler;
-        }
-        
-        console.log('✅ Dropdown menu handlers bound');
-    },
-
-    others: () => {
-        const { searchTrigger } = clickables.elements;
-        
-        if (searchTrigger) {
-            clickables.removeListener(searchTrigger, '_searchHandler');
-            const searchHandler = (e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                console.log('🔍 Search clicked');
-                
-                if (typeof dropdown !== 'undefined' && dropdown.close) {
-                    dropdown.close();
-                }
-                if (typeof appState !== 'undefined' && appState.router && appState.router.openSearchDialog) {
-                    appState.router.openSearchDialog();
-                }
-            };
-            searchTrigger.addEventListener('click', searchHandler);
-            searchTrigger._searchHandler = searchHandler;
-        }
-        
-        console.log('✅ Other handlers bound');
-    },
-
-    keyboard: () => {
-        if (document._keyboardHandler) {
-            document.removeEventListener('keydown', document._keyboardHandler);
-        }
-        
-        const keyboardHandler = (e) => {
-            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-            
-            const shortcuts = {
-                ' ': (e) => {
-                    e.preventDefault();
-                    console.log('⌨️ Spacebar pressed - toggle play/pause');
-                    if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.togglePlayPause) {
-                        musicPlayer.playback.togglePlayPause();
-                    }
-                },
-                'ArrowLeft': (e) => {
-                    if (e.ctrlKey || e.metaKey) {
-                        e.preventDefault();
-                        console.log('⌨️ Ctrl+Left - previous track');
-                        if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.previous) {
-                            musicPlayer.playback.previous();
-                        }
-                    }
-                },
-                'ArrowRight': (e) => {
-                    if (e.ctrlKey || e.metaKey) {
-                        e.preventDefault();
-                        console.log('⌨️ Ctrl+Right - next track');
-                        if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.next) {
-                            musicPlayer.playback.next();
-                        }
-                    }
-                },
-                'KeyN': (e) => {
-                    if (e.ctrlKey || e.metaKey) {
-                        e.preventDefault();
-                        console.log('⌨️ Ctrl+N - open music player');
-                        if (typeof musicPlayer !== 'undefined' && musicPlayer.mainPlayer && musicPlayer.mainPlayer.open) {
-                            musicPlayer.mainPlayer.open();
-                        }
-                    }
-                },
-                'KeyM': (e) => {
-                    if (e.ctrlKey || e.metaKey) {
-                        e.preventDefault();
-                        console.log('⌨️ Ctrl+M - toggle menu');
-                        if (typeof dropdown !== 'undefined' && dropdown.toggle) {
-                            dropdown.toggle();
-                        }
-                    }
-                },
-                'KeyS': (e) => {
-                    if (e.ctrlKey || e.metaKey) {
-                        e.preventDefault();
-                        console.log('⌨️ Ctrl+S - toggle shuffle');
-                        if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.shuffle && musicPlayer.playback.shuffle.toggle) {
-                            musicPlayer.playback.shuffle.toggle();
-                        }
-                    }
-                },
-                'KeyR': (e) => {
-                    if (e.ctrlKey || e.metaKey) {
-                        e.preventDefault();
-                        console.log('⌨️ Ctrl+R - toggle repeat');
-                        if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.repeat && musicPlayer.playback.repeat.toggle) {
-                            musicPlayer.playback.repeat.toggle();
-                        }
-                    }
-                },
-                'Escape': () => {
-                    console.log('⌨️ Escape - close overlays');
-                    if (typeof musicPlayer !== 'undefined' && musicPlayer.mainPlayer && musicPlayer.mainPlayer.close) {
-                        musicPlayer.mainPlayer.close();
-                    }
-                    if (typeof dropdown !== 'undefined' && dropdown.close) {
-                        dropdown.close();
-                    }
-                }
-            };
-            
-            const handler = shortcuts[e.code] || shortcuts[e.key];
-            if (handler) handler(e);
-        };
-        
-        document.addEventListener('keydown', keyboardHandler);
-        document._keyboardHandler = keyboardHandler;
-        
-        console.log('✅ Keyboard shortcuts bound');
-    },
-
-    document: () => {
-        if (document._documentClickHandler) {
-            document.removeEventListener('click', document._documentClickHandler);
-        }
-        
-        const documentClickHandler = (e) => {
-            const { dropdownMenu, menuBtn, drawer, musicPlayerBtn } = clickables.elements;
-            
-            if (dropdownMenu && !dropdownMenu.contains(e.target) && menuBtn && !menuBtn.contains(e.target)) {
-                if (typeof dropdown !== 'undefined' && dropdown.close) {
-                    dropdown.close();
-                }
-            }
-            
-            if (typeof appState !== 'undefined' && appState.isPopupVisible) {
-                if (drawer && !drawer.contains(e.target) && musicPlayerBtn && !musicPlayerBtn.contains(e.target)) {
-                    if (typeof musicPlayer !== 'undefined' && musicPlayer.mainPlayer && musicPlayer.mainPlayer.close) {
-                        musicPlayer.mainPlayer.close();
-                    }
-                }
-            }
-            
-            const navItem = e.target.closest('[data-nav]');
-            if (navItem) {
-                e.preventDefault();
-                const navType = navItem.dataset.nav;
-                
-                if (typeof dropdown !== 'undefined' && dropdown.close) {
-                    dropdown.close();
-                }
-                
-                if (typeof appState !== 'undefined' && appState.router) {
-                    const router = appState.router;
-                    
-                    switch (navType) {
-                        case 'home':
-                            if (router.navigateTo) router.navigateTo('home');
-                            break;
-                        case 'allArtists':
-                            if (router.navigateTo) router.navigateTo('allArtists');
-                            break;
-                        case 'artist':
-                            const artistName = navItem.dataset.artist;
-                            if (artistName && router.navigateTo) {
-                                router.navigateTo('artist', { artist: artistName });
-                            }
-                            break;
-                        case 'album':
-                            const artist = navItem.dataset.artist;
-                            const album = navItem.dataset.album;
-                            if (artist && album && router.navigateTo) {
-                                router.navigateTo('album', { artist, album });
-                            }
-                            break;
-                    }
-                }
-            }
-        };
-        
-        document.addEventListener('click', documentClickHandler);
-        document._documentClickHandler = documentClickHandler;
-        
-        console.log('✅ Document click handler bound');
-    },
-
-    removeListener: (element, handlerProp) => {
-        if (element && element[handlerProp]) {
-            element.removeEventListener('click', element[handlerProp]);
-            delete element[handlerProp];
-        }
-    },
-
-    reinit: () => {
-        console.log('🔄 Reinitializing clickables...');
-        clickables.init();
-    }
-};
 
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
