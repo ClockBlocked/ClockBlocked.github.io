@@ -2523,7 +2523,7 @@ const clickables = {
                 tab.addEventListener('click', tabHandler);
                 tab._tabHandler = tabHandler;
             });
-        },
+        }
         
     // DOT INDICATORS
     const dotIndicators = QUERY_ALL('.player .dotIndicator');
@@ -2573,10 +2573,8 @@ const clickables = {
         drawer.addEventListener('scroll', resetTimer, { passive: true });
     }
     
-    // ... rest of your musicPlayer event bindings
-};
-        
-    },
+
+},
 
     dropDownMenu: () => {
         const {
@@ -2884,8 +2882,6 @@ const clickables = {
     reinit: () => {
         clickables.init();
     },
-    
-
 };
 
 document.addEventListener('DOMContentLoaded', () => {
