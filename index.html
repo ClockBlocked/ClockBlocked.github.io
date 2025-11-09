@@ -427,7 +427,6 @@ MyBeats:  Stream & share your favorite music for free.
     display: flex;
     gap: 12px;
 }
-
 .unified-trigger {
     width: 48px;
     height: 48px;
@@ -442,7 +441,6 @@ MyBeats:  Stream & share your favorite music for free.
     transition: all var(--transition-fast);
     box-shadow: var(--shadow-md);
 }
-
 .unified-trigger:hover {
     background: var(--background-600);
     border-color: var(--border-accent);
@@ -450,11 +448,9 @@ MyBeats:  Stream & share your favorite music for free.
     box-shadow: var(--shadow-lg);
     color: var(--text-100);
 }
-
 .unified-trigger:active {
     transform: translateY(0);
 }
-
 .unified-trigger svg {
     width: 20px;
     height: 20px;
@@ -652,6 +648,8 @@ MyBeats:  Stream & share your favorite music for free.
     }
 }
 
+
+
 /* Bento card integration styles */
 .bento-card.music-player-card {
     overflow: hidden;
@@ -700,13 +698,14 @@ MyBeats:  Stream & share your favorite music for free.
     border-color: var(--border-accent);
 }
 
+
+
 /* Playing state indicator for unified triggers */
 .unified-trigger.playing {
     background: var(--accent-primary);
     color: var(--text-on-accent);
     border-color: var(--accent-primary);
 }
-
 .unified-trigger.playing::after {
     content: '';
     position: absolute;
@@ -724,6 +723,8 @@ MyBeats:  Stream & share your favorite music for free.
     outline: 2px solid var(--accent-primary);
     outline-offset: 2px;
 }
+
+
 
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
@@ -1021,12 +1022,7 @@ MyBeats:  Stream & share your favorite music for free.
 
 
 
-/* ===========================================
-   MODERN HOME COMPONENTS CSS
-   Clean, modern styling for tracks, artists, playlists
-   =========================================== */
-
-/* Modern Track Items (Recently Played) */
+/* R E C E N T L Y  P L A Y E D */
 .recent-tracks {
   display: flex;
   flex-direction: column;
@@ -1046,7 +1042,6 @@ MyBeats:  Stream & share your favorite music for free.
   position: relative;
   overflow: hidden;
 }
-
 .modern-track-item::before {
   content: '';
   position: absolute;
@@ -1055,14 +1050,12 @@ MyBeats:  Stream & share your favorite music for free.
   opacity: 0;
   transition: opacity var(--transition-fast);
 }
-
 .modern-track-item:hover {
   background: var(--background-500);
   border-color: var(--border-accent);
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
 }
-
 .modern-track-item:hover::before {
   opacity: 0.05;
 }
@@ -1071,7 +1064,6 @@ MyBeats:  Stream & share your favorite music for free.
   position: relative;
   flex-shrink: 0;
 }
-
 .track-artwork {
   width: 56px;
   height: 56px;
@@ -1093,7 +1085,6 @@ MyBeats:  Stream & share your favorite music for free.
   transition: all var(--transition-fast);
   backdrop-filter: blur(4px);
 }
-
 .modern-track-item:hover .track-play-overlay {
   opacity: 1;
 }
@@ -1112,7 +1103,6 @@ MyBeats:  Stream & share your favorite music for free.
   transition: all var(--transition-fast);
   box-shadow: var(--shadow-md);
 }
-
 .track-play-btn:hover {
   background: var(--accent-primary-hover);
   transform: scale(1.1);
@@ -1152,7 +1142,6 @@ MyBeats:  Stream & share your favorite music for free.
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
 .track-artist-text:hover {
   color: var(--accent-primary);
   text-decoration: underline;
@@ -1193,7 +1182,6 @@ MyBeats:  Stream & share your favorite music for free.
   justify-content: center;
   transition: all var(--transition-fast);
 }
-
 .track-action-btn:hover {
   background: var(--background-600);
   color: var(--text-100);
@@ -1203,16 +1191,17 @@ MyBeats:  Stream & share your favorite music for free.
 .track-favorite-btn:hover {
   color: var(--accent-danger);
 }
-
 .track-favorite-btn.active {
   color: var(--accent-danger);
 }
-
 .track-favorite-btn.active svg {
   fill: currentColor;
 }
 
-/* Modern Playlist Cards */
+
+
+
+/** P L A Y L I S T S **/
 .playlists-list {
   display: flex;
   flex-direction: column;
@@ -1232,7 +1221,6 @@ MyBeats:  Stream & share your favorite music for free.
   position: relative;
   overflow: hidden;
 }
-
 .modern-playlist-card::before {
   content: '';
   position: absolute;
@@ -1241,14 +1229,12 @@ MyBeats:  Stream & share your favorite music for free.
   opacity: 0;
   transition: opacity var(--transition-fast);
 }
-
 .modern-playlist-card:hover {
   background: var(--background-500);
   border-color: var(--border-accent);
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
 }
-
 .modern-playlist-card:hover::before {
   opacity: 0.05;
 }
@@ -1283,7 +1269,6 @@ MyBeats:  Stream & share your favorite music for free.
   transition: all var(--transition-fast);
   backdrop-filter: blur(4px);
 }
-
 .modern-playlist-card:hover .playlist-play-overlay {
   opacity: 1;
 }
@@ -1302,7 +1287,6 @@ MyBeats:  Stream & share your favorite music for free.
   transition: all var(--transition-fast);
   box-shadow: var(--shadow-md);
 }
-
 .playlist-play-btn:hover {
   background: var(--accent-primary-hover);
   transform: scale(1.1);
@@ -1345,7 +1329,6 @@ MyBeats:  Stream & share your favorite music for free.
   opacity: 0;
   transition: opacity var(--transition-fast);
 }
-
 .modern-playlist-card:hover .playlist-actions {
   opacity: 1;
 }
@@ -1363,14 +1346,16 @@ MyBeats:  Stream & share your favorite music for free.
   justify-content: center;
   transition: all var(--transition-fast);
 }
-
 .playlist-action-btn:hover {
   background: var(--background-600);
   color: var(--text-100);
   transform: scale(1.05);
 }
 
-/* Modern Artist Grid */
+
+
+
+/** F A V O R I T E   A RT I S T S **/
 .modern-artist-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -1388,7 +1373,6 @@ MyBeats:  Stream & share your favorite music for free.
   overflow: hidden;
   text-align: center;
 }
-
 .modern-artist-card::before {
   content: '';
   position: absolute;
@@ -1397,14 +1381,12 @@ MyBeats:  Stream & share your favorite music for free.
   opacity: 0;
   transition: opacity var(--transition-base);
 }
-
 .modern-artist-card:hover {
   background: var(--background-500);
   border-color: var(--border-accent);
   transform: translateY(-8px);
   box-shadow: var(--shadow-xl);
 }
-
 .modern-artist-card:hover::before {
   opacity: 0.05;
 }
@@ -1424,7 +1406,6 @@ MyBeats:  Stream & share your favorite music for free.
   box-shadow: var(--shadow-lg);
   transition: all var(--transition-base);
 }
-
 .modern-artist-card:hover .artist-avatar-image {
   transform: scale(1.05);
   box-shadow: var(--shadow-2xl);
@@ -1438,7 +1419,6 @@ MyBeats:  Stream & share your favorite music for free.
   opacity: 0;
   transition: all var(--transition-base);
 }
-
 .modern-artist-card:hover .artist-gradient-overlay {
   opacity: 0.1;
 }
@@ -1455,7 +1435,6 @@ MyBeats:  Stream & share your favorite music for free.
   transition: all var(--transition-base);
   backdrop-filter: blur(4px);
 }
-
 .modern-artist-card:hover .artist-play-overlay {
   opacity: 1;
 }
@@ -1474,7 +1453,6 @@ MyBeats:  Stream & share your favorite music for free.
   transition: all var(--transition-fast);
   box-shadow: var(--shadow-lg);
 }
-
 .artist-play-btn:hover {
   background: var(--accent-primary-hover);
   transform: scale(1.1);
@@ -1507,7 +1485,6 @@ MyBeats:  Stream & share your favorite music for free.
   opacity: 0;
   transition: opacity var(--transition-base);
 }
-
 .modern-artist-card:hover .artist-actions {
   opacity: 1;
 }
@@ -1525,21 +1502,22 @@ MyBeats:  Stream & share your favorite music for free.
   justify-content: center;
   transition: all var(--transition-fast);
 }
-
 .artist-action-btn:hover {
   background: var(--accent-primary);
   border-color: var(--accent-primary);
   color: var(--text-on-accent);
   transform: scale(1.1);
 }
-
 .artist-follow-btn.following {
   background: var(--accent-success);
   border-color: var(--accent-success);
   color: var(--text-on-accent);
 }
 
-/* Favorite Songs (same style as recent tracks but with heart active) */
+
+
+
+/** F A V O R I T E  S O N G S **/
 .favorite-tracks {
   display: flex;
   flex-direction: column;
@@ -1559,7 +1537,6 @@ MyBeats:  Stream & share your favorite music for free.
   position: relative;
   overflow: hidden;
 }
-
 .modern-favorite-item::before {
   content: '';
   position: absolute;
@@ -1568,14 +1545,12 @@ MyBeats:  Stream & share your favorite music for free.
   opacity: 0.02;
   transition: opacity var(--transition-fast);
 }
-
 .modern-favorite-item:hover {
   background: var(--background-500);
   border-color: var(--border-accent);
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
 }
-
 .modern-favorite-item:hover::before {
   opacity: 0.05;
 }
@@ -1606,7 +1581,6 @@ MyBeats:  Stream & share your favorite music for free.
   transition: all var(--transition-fast);
   backdrop-filter: blur(4px);
 }
-
 .modern-favorite-item:hover .favorite-play-overlay {
   opacity: 1;
 }
@@ -1625,7 +1599,6 @@ MyBeats:  Stream & share your favorite music for free.
   transition: all var(--transition-fast);
   box-shadow: var(--shadow-md);
 }
-
 .favorite-play-btn:hover {
   background: var(--accent-primary-hover);
   transform: scale(1.1);
@@ -1665,7 +1638,6 @@ MyBeats:  Stream & share your favorite music for free.
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
 .favorite-artist-text:hover {
   color: var(--accent-primary);
   text-decoration: underline;
@@ -1688,7 +1660,6 @@ MyBeats:  Stream & share your favorite music for free.
   opacity: 0;
   transition: opacity var(--transition-fast);
 }
-
 .modern-favorite-item:hover .favorite-actions {
   opacity: 1;
 }
@@ -1706,7 +1677,6 @@ MyBeats:  Stream & share your favorite music for free.
   justify-content: center;
   transition: all var(--transition-fast);
 }
-
 .favorite-action-btn:hover {
   background: var(--background-600);
   color: var(--text-100);
@@ -1717,15 +1687,17 @@ MyBeats:  Stream & share your favorite music for free.
   color: var(--accent-danger);
   opacity: 1;
 }
-
 .favorite-heart-btn:hover {
   color: var(--accent-danger-hover);
   background: rgba(239, 68, 68, 0.1);
 }
-
 .favorite-heart-btn.active svg {
   fill: currentColor;
 }
+
+
+
+
 
 /* Responsive Design */
 @media (max-width: 768px) {
