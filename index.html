@@ -2172,7 +2172,6 @@ MyBeats:  Stream & share your favorite music for free.
               visibility 0s linear 0.55s,
               z-index 0s linear 0.55s;
 }
-
 .player.open {
   visibility: visible;
   opacity: 1;
@@ -2183,7 +2182,7 @@ MyBeats:  Stream & share your favorite music for free.
               z-index 0s linear 0s;
 }
 
-/* Backdrop */
+/** BACKDROP **/
 .player::before {
   content: '';
   position: fixed;
@@ -2195,7 +2194,6 @@ MyBeats:  Stream & share your favorite music for free.
               backdrop-filter 0.55s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: none;
 }
-
 .player.open::before {
   background: rgba(0, 0, 0, 0.35);
   backdrop-filter: blur(5px);
@@ -2213,7 +2211,6 @@ MyBeats:  Stream & share your favorite music for free.
   transform: translateY(100%);
   transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .player.open .scroller {
   transform: translateY(0);
 }
