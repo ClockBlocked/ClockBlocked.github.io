@@ -3360,8 +3360,8 @@ B E L O W
   box-shadow: 0px -4px 24px rgba(0, 0, 0, 0.35);
   color: #adbac7;
   width: 90svw;
-  height: 70vh;
-  max-height: 70vh;
+  height: 75vh;
+  max-height: 75vh;
   z-index: 10;
   overflow: hidden;
   display: flex;
@@ -3394,7 +3394,7 @@ B E L O W
   display: flex;
   justify-content: center;
   padding: 12px 0 8px;
-  position: relative;
+  position: absolute; top: 0;
   z-index: 100;
   background: transparent; overflow: visible;
   opacity: 0;
@@ -3416,7 +3416,7 @@ B E L O W
   border: none;
   cursor: grab;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: absolute; top: -2rem; left: 50%; right: 50%;
+  position: relative;
 }
 
 .player .dragHandle:active {
