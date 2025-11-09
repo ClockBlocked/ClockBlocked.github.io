@@ -1,20 +1,5 @@
-/**
- * ═══════════════════════════════════════════════════════════════
- *  MYBEATS - UNIFIED CONSTANTS & DOM ACCESS
- *  Single source of truth for all app constants and element access
- * ═══════════════════════════════════════════════════════════════
- */
+export const elementCache = new Map();
 
-// ═══════════════════════════════════════════════════════════════
-//  ELEMENT CACHE - Auto-cached DOM references
-// ═══════════════════════════════════════════════════════════════
-
-const elementCache = new Map();
-
-/**
- * Simple DOM element access with auto-caching
- * Usage: DOM.menuTrigger, DOM.playBtn, DOM.cover, etc.
- */
 export const DOM = new Proxy({}, {
   get(target, elementId) {
     if (elementCache.has(elementId)) {
@@ -33,23 +18,13 @@ export const DOM = new Proxy({}, {
   }
 });
 
-/**
- * Query selectors (for class-based selections)
- */
 export const QUERY = (selector) => document.querySelector(selector);
 export const QUERY_ALL = (selector) => document.querySelectorAll(selector);
 
-/**
- * Clear element cache (useful after dynamic content updates)
- */
 export function clearElementCache() {
   elementCache.clear();
   console.log('🗑️ Element cache cleared');
 }
-
-// ═══════════════════════════════════════════════════════════════
-//  LEGACY ID DEFINITIONS (kept for backwards compatibility)
-// ═══════════════════════════════════════════════════════════════
 
 export const IDS = Object.freeze({
   themeToggle: "theme-toggle",
@@ -88,37 +63,38 @@ export const IDS = Object.freeze({
   artistSearch: "artist-search",
   genreFilters: "genre-filters",
   seekTooltip: "seek-tooltip",
-  drawer: "drawer",
-  drawerHandle: "drawerHandle",
-  musicPlayer: "musicPlayer",
-  albumCover: "albumCover", 
-  songTitle: "songTitle",
-  artistName: "artistName",
-  albumName: "albumName",
-  playBtn: "playBtn",
-  prevBtn: "prevBtn", 
-  nextBtn: "nextBtn",
-  rewindBtn: "rewindBtn",
-  forwardBtn: "forwardBtn",
-  shuffleBtn: "shuffleBtn",
-  repeatBtn: "repeatBtn",
-  favoriteBtn: "favoriteBtn",
-  queueBtn: "queueBtn",
-  shareBtn: "shareBtn",
-  moreBtn: "moreBtn",
-  progressBar: "progressBar",
-  progressFill: "progressFill", 
-  progressThumb: "progressThumb",
-  currentTime: "currentTime",
-  totalTime: "totalTime",
-  queueList: "queueList",
-  recentList: "recentList",
-  playPauseNavbar: "play-pause-navbar",
-  prevBtnNavbar: "prev-btn-navbar",
-  nextBtnNavbar: "next-btn-navbar",
-  playIconNavbar: "play-icon-navbar",
-  pauseIconNavbar: "pause-icon-navbar",
-  nowPlayingArea: "now-playing-area",
+  musicPlayer: "music-player",
+  musicPlayerTrigger: "now-playing-area",
+  musicPlayerClose: "music-player-close",
+  albumCover: "music-player-cover", 
+  songTitle: "music-player-title",
+  artistName: "music-player-artist",
+  albumName: "music-player-album",
+  playBtn: "music-player-play",
+  prevBtn: "music-player-prev", 
+  nextBtn: "music-player-next",
+  rewindBtn: "music-player-rewind",
+  forwardBtn: "music-player-forward",
+  shuffleBtn: "music-player-shuffle",
+  repeatBtn: "music-player-repeat",
+  favoriteBtn: "music-player-favorite",
+  queueBtn: "music-player-queue",
+  shareBtn: "music-player-share",
+  moreBtn: "music-player-more",
+  progressBar: "music-player-progress-bar",
+  progressFill: "music-player-progress-fill", 
+  progressThumb: "music-player-progress-thumb",
+  currentTime: "music-player-current-time",
+  totalTime: "music-player-total-time",
+  queueList: "music-player-queue-list",
+  recentList: "music-player-recent-list",
+  playPauseNavbar: "navbar-play-pause",
+  prevBtnNavbar: "navbar-prev",
+  nextBtnNavbar: "navbar-next",
+  playIconNavbar: "navbar-play-icon",
+  pauseIconNavbar: "navbar-pause-icon",
+  nowPlayingAreaNavbar: "now-playing-area",
+  searchTrigger: "searchTrigger",
 });
 
 export const CLASSES = Object.freeze({
@@ -141,6 +117,10 @@ export const CLASSES = Object.freeze({
   imageError: "image-error",
   imageLoading: "image-loading",
   playing: "playing",
+  isPlaying: "isPlaying",
+  isDragging: "isDragging",
+  isHovering: "isHovering",
+  favorited: "favorited",
 });
 
 export const THEMES = Object.freeze({
@@ -152,7 +132,7 @@ export const THEMES = Object.freeze({
 export const ICONS = Object.freeze({
   dark: '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 116.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>',
   medium: '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2L13 9h7l-5.5 4 2 7L10 16l-6.5 4 2-7L1 9h7l2-7z"/></svg>',
-  light: '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd" /></svg>',
+  light: '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/></svg>',
   play: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M424.4 214.7L72.4 6.6C43.8-10.3 0 6.1 0 47.9V464c0 37.5 40.7 60.1 72.4 41.3l352-208c31.4-18.5 31.5-64.1 0-82.6z"/></svg>',
   pause: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M144 479H48c-26.5 0-48-21.5-48-48V79c0-26.5 21.5-48 48-48h96c26.5 0 48 21.5 48 48v352c0 26.5-21.5 48-48 48zm192-48V79c0-26.5-21.5-48-48-48h-96c-26.5 0-48 21.5-48 48v352c0 26.5 21.5 48 48 48h96c26.5 0 48-21.5 48-48z"/></svg>',
   next: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M361 215C375.3 223.8 384 239.3 384 256C384 272.7 375.3 288.2 361 296.1L73.03 472.1C58.21 482 39.66 482.4 24.52 473.9C9.377 465.4 0 449.4 0 432V80C0 62.64 9.377 46.63 24.52 38.13C39.66 29.64 58.21 29.99 73.03 39.04L361 215z"/></svg>',
@@ -162,18 +142,19 @@ export const ICONS = Object.freeze({
   heart: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>',
   close: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>',
   rewind: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M361 215C375.3 223.8 384 239.3 384 256C384 272.7 375.3 288.2 361 296.1L73.03 472.1C58.21 482 39.66 482.4 24.52 473.9C9.377 465.4 0 449.4 0 432V80C0 62.64 9.377 46.63 24.52 38.13C39.66 29.64 58.21 29.99 73.03 39.04L361 215z"/></svg>',
-  forward: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M512 256C512 273.7 502.6 289.7 487.5 298.1L199.5 473.9C184.4 482.4 165.8 482 151 473.5C136.1 464.1 128 448.1 128 431.1V335.1L23.01 407.8C7.878 416.3-10.74 415.9-25.56 407.5C-40.41 398.1-48 383.1-48 365.1V146.9c0-17.1 8.406-33.03 23.25-41.53c14.82-8.406 33.43-8.031 48.56 .4688l104.1 72.76V79.1c0-17.1 8.406-33.03 23.25-41.53c14.82-8.406 33.43-8.031 48.56 .4688l287.1 175.9C503.4 222.3 512 238.3 512 255.1L512 256z"/></svg>',
+  forward: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M512 256C512 273.7 502.6 289.7 487.5 298.1L199.5 473.9C184.4 482.4 165.8 482 151 473.5C136.1 464.1 128 448.1 128 431.1V80.01C128 63.03 136.1 47.03 151 38.52C165.8 29.97 184.4 29.63 199.5 38.13L487.5 213.9C502.6 222.3 512 238.3 512 255.1V256z"/></svg>',
   queue: '<svg fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/></svg>',
   share: '<svg fill="currentColor" viewBox="0 0 20 20"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"/></svg>',
   more: '<svg fill="currentColor" viewBox="0 0 20 20"><path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/></svg>'  
 });
 
 export const MUSIC_PLAYER = (() => {
-  const parent = "#drawer";
+  const parent = "#music-player";
   return Object.freeze({
     root: parent,
+    trigger: "#now-playing-area",
     handle: `${parent} .musicPlayerDragHandle`,
-    close: `${parent} #closeBtn`,
+    close: `${parent} #music-player-close`,
     curtain: `${parent} .musicPlayerCurtain`,
     scroller: `${parent} .musicPlayerScroller`,
     slide: `${parent} .musicPlayerSlide`,
@@ -184,43 +165,45 @@ export const MUSIC_PLAYER = (() => {
     activeTab: `${parent} .musicPlayerTab.active`,
     tabsWrapper: `${parent} .musicPlayerTabsWrapper`,
     tabSlider: `${parent} .musicPlayerTabSlider`,
-    nowPlaying: `${parent} .musicPlayerNowPlaying`,
+    nowPlayingTab: `${parent} .musicPlayerNowPlaying`,
     coverWrapper: `${parent} .musicPlayerCoverWrapper`,
-    albumArtwork: `${parent} #cover`,
+    albumArtwork: `${parent} #music-player-cover`,
     coverGlow: `${parent} .musicPlayerCoverGlow`,
     separator: `${parent} .musicPlayerSeparator`,
     songInfo: `${parent} .musicPlayerInfo`,
     songDetails: `${parent} .musicPlayerDetails`,
-    songName: `${parent} #title`,
-    artistName: `${parent} #artist`,
-    albumName: `${parent} #album`,
+    songName: `${parent} #music-player-title`,
+    artistName: `${parent} #music-player-artist`,
+    albumName: `${parent} #music-player-album`,
     progressSection: `${parent} .musicPlayerProgressSection`,
-    progressBar: `${parent} #progressBar`,
-    progressBuffer: `${parent} #progressBuffer`,
-    progressFill: `${parent} #progressFill`,
-    progressThumb: `${parent} #progressThumb`,
+    progressBar: `${parent} #music-player-progress-bar`,
+    progressBuffer: `${parent} #musicPlayerProgressBuffer`,
+    progressFill: `${parent} #music-player-progress-fill`,
+    progressThumb: `${parent} #music-player-progress-thumb`,
     timeDisplay: `${parent} .musicPlayerTimeDisplay`,
-    currentTime: `${parent} #current`,
-    totalTime: `${parent} #total`,
+    currentTime: `${parent} #music-player-current-time`,
+    totalTime: `${parent} #music-player-total-time`,
     controls: `${parent} .musicPlayerControls`,
-    play: `${parent} #playBtn`,
-    previous: `${parent} #prevBtn`,
-    next: `${parent} #nextBtn`,
-    reWind: `${parent} #rewindBtn`,
-    fastForward: `${parent} #forwardBtn`,
+    play: `${parent} #music-player-play`,
+    previous: `${parent} #music-player-prev`,
+    next: `${parent} #music-player-next`,
+    reWind: `${parent} #music-player-rewind`,
+    fastForward: `${parent} #music-player-forward`,
     actions: `${parent} .musicPlayerActions`,
-    favoriteBtn: `${parent} #favoriteBtn`,
-    queueBtn: `${parent} #queueBtn`,
-    shareBtn: `${parent} #shareBtn`,
-    moreBtn: `${parent} #moreBtn`,
+    favoriteBtn: `${parent} #music-player-favorite`,
+    queueBtn: `${parent} #music-player-queue`,
+    shareBtn: `${parent} #music-player-share`,
+    moreBtn: `${parent} #music-player-more`,
+    shuffleBtn: `${parent} #music-player-shuffle`,
+    repeatBtn: `${parent} #music-player-repeat`,
     listHeader: `${parent} .musicPlayerListHeader`,
     listTitle: `${parent} .musicPlayerListTitle`,
     listCount: `${parent} .musicPlayerListCount`,
     list: `${parent} .musicPlayerList`,
-    queueList: `${parent} #queueList`,
-    queueCount: `${parent} #queueCount`,
-    recentList: `${parent} #recentList`,
-    recentCount: `${parent} #recentCount`,
+    queueList: `${parent} #music-player-queue-list`,
+    queueCount: `${parent} #queue-count`,
+    recentList: `${parent} #music-player-recent-list`,
+    recentCount: `${parent} #recent-count`,
     empty: `${parent} .musicPlayerEmpty`,
     emptyIcon: `${parent} .musicPlayerEmptyIcon`,
     emptyText: `${parent} .musicPlayerEmptyText`,
@@ -270,11 +253,11 @@ export const NAVBAR = (() => {
     artistName: `${parent} .artistName`,
     songName: `${parent} .songName`,
     playIndicator: `${parent} #play-indicator`,
-    previous: `${parent} .previous`,
-    next: `${parent} .next`,
-    playPause: `${parent} .playPause`,
-    play: `${parent} #play-icon-navbar`,
-    pause: `${parent} #pause-icon-navbar`,
+    previous: `${parent} #navbar-prev`,
+    next: `${parent} #navbar-next`,
+    playPause: `${parent} #navbar-play-pause`,
+    play: `${parent} #navbar-play-icon`,
+    pause: `${parent} #navbar-pause-icon`,
     menuTrigger: `${parent} #menu-trigger`,
     nextNavbar: `${parent} .next`,
   });
@@ -294,7 +277,7 @@ export const NOTIFICATION_TYPES = Object.freeze({
 });
 
 export const TOAST_ICONS = {
-  [NOTIFICATION_TYPES.INFO]: '<svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16Zm.75-11.5a.75.75 0 10-1.5 0v.5a.75.75 0 001.5 0v-.5ZM9 9.75A.75.75 0 019.75 9h.5a.75.75 0 01.75.75v4.5a.75.75 0 01-.75.75h-.5a.75.75 0 01-.75-.75v-4.5Z"/></svg>',
+  [NOTIFICATION_TYPES.INFO]: '<svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16Zm.75-11.5a.75.75 0 10-1.5 0v.5a.75.75 0 001.5 0v-.5ZM9 9.75A.75.75 0 019.75 9h.5a.75.75 0 01.75.75v4.5a.75.75 0 01-.75.75h-.5A.75.75 0 019 14.25v-4.5Z"/></svg>',
   [NOTIFICATION_TYPES.SUCCESS]: '<svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16Zm3.707-9.707a1 1 0 00-1.414-1.414L9 10.172 7.707 8.879a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4Z"/></svg>',
   [NOTIFICATION_TYPES.WARNING]: '<svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor"><path d="M8.257 3.099c.765-1.36 2.721-1.36 3.486 0l6.518 11.592c.75 1.335-.212 3.009-1.743 3.009H3.482c-1.531 0-2.493-1.674-1.743-3.009L8.257 3.1ZM11 13a1 1 0 11-2 0 1 1 0 012 0Zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1Z"/></svg>',
   [NOTIFICATION_TYPES.ERROR]: '<svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16ZM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22Z"/></svg>',
@@ -333,10 +316,6 @@ export const REPEAT_MODES = Object.freeze({
   ALL: "all",
   ONE: "one",
 });
-
-// ═══════════════════════════════════════════════════════════════
-//  LEGACY HELPERS (backwards compatibility with existing code)
-// ═══════════════════════════════════════════════════════════════
 
 export const $ = new Proxy({}, {
   get(_, key) {
@@ -381,10 +360,6 @@ export const injectIcons = () => {
     }
   });
 };
-
-// ═══════════════════════════════════════════════════════════════
-//  GLOBAL WINDOW EXPORTS
-// ═══════════════════════════════════════════════════════════════
 
 if (typeof window !== 'undefined') {
   window.DOM = DOM;
