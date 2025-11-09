@@ -1208,9 +1208,15 @@ const notificationPlayer = {
 
 const musicPlayer = {
     mainPlayer: {
+        inactivityTimer: null,
+        lastInteractionTime: null,
+      
         open: () => {
             const drawer = QUERY(MUSIC_PLAYER.root);
-            if (!drawer) return;
+            if (!drawer) {
+                console.warn('Music player drawer not found');
+                return;
+            }
             
             if (appState.currentSong) {
                 musicPlayer.ui.updateNowPlaying();
@@ -1218,13 +1224,25 @@ const musicPlayer = {
             
             drawer.classList.remove('closing');
             drawer.classList.add('open');
+            
             appState.isPopupVisible = true;
-            musicPlayer.mainPlayer.updateTabContent(appState.currentTab || MUSIC_PLAYER.tabs.playing);
+            
+            musicPlayer.mainPlayer.switchTab(MUSIC_PLAYER.tabs.playing);
+            musicPlayer.mainPlayer.updateTabContent(MUSIC_PLAYER.tabs.playing);
+            
             document.body.style.overflow = 'hidden';
+            
+            musicPlayer.mainPlayer.startInactivityTimer();
         },
+        
         close: () => {
             const drawer = QUERY(MUSIC_PLAYER.root);
-            if (!drawer) return;
+            if (!drawer) {
+                console.warn('Music player drawer not found');
+                return;
+            }
+            
+            musicPlayer.mainPlayer.stopInactivityTimer();
             
             drawer.classList.add('closing');
             drawer.classList.remove('open');
@@ -1233,9 +1251,10 @@ const musicPlayer = {
                 drawer.classList.remove('closing');
                 appState.isPopupVisible = false;
                 document.body.style.overflow = '';
-                setTimeout(() => musicPlayer.mainPlayer.switchTab(MUSIC_PLAYER.tabs.playing), 50);
+                musicPlayer.mainPlayer.switchTab(MUSIC_PLAYER.tabs.playing);
             }, 550);
         },
+        
         toggle: () => {
             const drawer = QUERY(MUSIC_PLAYER.root);
             if (!drawer) return;
@@ -1248,20 +1267,57 @@ const musicPlayer = {
                 musicPlayer.mainPlayer.open();
             }
         },
+        
         switchTab: (tabName) => {
             appState.currentTab = tabName;
-            QUERY_ALL(`${MUSIC_PLAYER.root} .tab`).forEach(tab => {
-                tab.classList.toggle('active', tab.dataset.tab === tabName);
+            
+            QUERY_ALL('.player .dotIndicator').forEach(dot => {
+                dot.classList.toggle('active', dot.dataset.tab === tabName);
             });
-            QUERY_ALL(`${MUSIC_PLAYER.root} .panel`).forEach(content => {
+            
+            QUERY_ALL('.player .panel').forEach(content => {
                 content.classList.toggle('active', content.dataset.tab === tabName);
             });
+            
             musicPlayer.mainPlayer.updateTabContent(tabName);
+            musicPlayer.mainPlayer.resetInactivityTimer();
         },
+        
+        startInactivityTimer: () => {
+            musicPlayer.mainPlayer.stopInactivityTimer();
+            
+            musicPlayer.mainPlayer.lastInteractionTime = Date.now();
+            
+            musicPlayer.mainPlayer.inactivityTimer = setTimeout(() => {
+                if (appState.currentTab !== MUSIC_PLAYER.tabs.playing) {
+                    musicPlayer.mainPlayer.switchTab(MUSIC_PLAYER.tabs.playing);
+                }
+            }, 10000);
+        },
+        
+        stopInactivityTimer: () => {
+            if (musicPlayer.mainPlayer.inactivityTimer) {
+                clearTimeout(musicPlayer.mainPlayer.inactivityTimer);
+                musicPlayer.mainPlayer.inactivityTimer = null;
+            }
+        },
+        
+        resetInactivityTimer: () => {
+            const drawer = QUERY(MUSIC_PLAYER.root);
+            if (drawer && drawer.classList.contains('open')) {
+                if (appState.currentTab !== MUSIC_PLAYER.tabs.playing) {
+                    musicPlayer.mainPlayer.startInactivityTimer();
+                }
+            }
+        },
+        
         updateTabContent: (tabName) => {
             if (tabName === MUSIC_PLAYER.tabs.recent) musicPlayer.mainPlayer.updateRecentTab();
             else if (tabName === MUSIC_PLAYER.tabs.queue) musicPlayer.mainPlayer.updateQueueTab();
         },
+        
+        
+        
         updateQueueTab: () => {
             const queueList = QUERY(MUSIC_PLAYER.queueList);
             if (!queueList) return;
@@ -2467,7 +2523,59 @@ const clickables = {
                 tab.addEventListener('click', tabHandler);
                 tab._tabHandler = tabHandler;
             });
-        }
+        },
+        
+    // DOT INDICATORS
+    const dotIndicators = QUERY_ALL('.player .dotIndicator');
+    if (dotIndicators && dotIndicators.length > 0) {
+        dotIndicators.forEach(dot => {
+            clickables.removeListener(dot, '_dotHandler');
+            const dotHandler = (e) => {
+                e.stopPropagation();
+                const tabName = dot.dataset.tab;
+                console.log(`🔘 Dot indicator clicked: ${tabName}`);
+                
+                if (tabName && typeof musicPlayer !== 'undefined' && musicPlayer.mainPlayer && musicPlayer.mainPlayer.switchTab) {
+                    musicPlayer.mainPlayer.switchTab(tabName);
+                }
+            };
+            dot.addEventListener('click', dotHandler);
+            dot._dotHandler = dotHandler;
+        });
+        
+        console.log('✅ Dot indicators bound');
+    }
+    
+    // Curtain click to close
+    const curtain = QUERY(`${MUSIC_PLAYER.root} .curtain`);
+    if (curtain) {
+        clickables.removeListener(curtain, '_curtainHandler');
+        const curtainHandler = (e) => {
+            e.stopPropagation();
+            console.log('🎭 Curtain clicked - closing player');
+            musicPlayer.mainPlayer.close();
+        };
+        curtain.addEventListener('click', curtainHandler);
+        curtain._curtainHandler = curtainHandler;
+    }
+    
+    // Listen for any user interaction to reset inactivity timer
+    const drawer = QUERY(MUSIC_PLAYER.root);
+    if (drawer) {
+        const resetTimer = () => {
+            if (appState.isPopupVisible && appState.currentTab !== MUSIC_PLAYER.tabs.playing) {
+                musicPlayer.mainPlayer.resetInactivityTimer();
+            }
+        };
+        
+        drawer.addEventListener('click', resetTimer);
+        drawer.addEventListener('touchstart', resetTimer);
+        drawer.addEventListener('scroll', resetTimer, { passive: true });
+    }
+    
+    // ... rest of your musicPlayer event bindings
+};
+        
     },
 
     dropDownMenu: () => {
@@ -2775,7 +2883,9 @@ const clickables = {
 
     reinit: () => {
         clickables.init();
-    }
+    },
+    
+
 };
 
 document.addEventListener('DOMContentLoaded', () => {
