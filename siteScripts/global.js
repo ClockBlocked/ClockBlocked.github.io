@@ -1318,124 +1318,125 @@ const musicPlayer = {
         
         
         
-        updateQueueTab: () => {
-            const queueList = QUERY(MUSIC_PLAYER.queueList);
-            if (!queueList) return;
-            const emptyState = queueList.querySelector(`${MUSIC_PLAYER.root} .empty`);
-            if (appState.queue.items.length === 0) {
-                if (emptyState) emptyState.style.display = 'flex';
-                const items = queueList.querySelectorAll('.songList .item');
-                items.forEach(item => item.remove());
-                return;
-            }
-            if (emptyState) emptyState.style.display = 'none';
-            const existingItems = queueList.querySelectorAll('.songList .item');
-            existingItems.forEach(item => item.remove());
-            appState.queue.items.forEach((song, index) => {
-                const listItem = document.createElement('li');
-                listItem.classList = `songList item ${index === appState.queue.currentIndex ? 'active' : ''}`;
-                listItem.innerHTML = `
-                    <img src="${song.cover || utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="songList itemArt">
-                    <div class="songList metadata">
-                        <div class="songList itemTitle">${song.title}</div>
-                        <div class="songList itemArtist">${song.artist}</div>
-                    </div>
-                    <div class="songList playBack">
-                        <button class="songList set" data-action="play" data-tooltip="Play Now" data-tooltip-placement="top">
-                            <svg viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M8 5v14l11-7z"/>
-                            </svg>
-                        </button>
-                        <button class="songList set" data-action="remove" data-tooltip="Delete" data-tooltip-placement="top">
-                            <svg viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-                            </svg>
-                        </button>
-                    </div>
-                `;
-                const playBtn = listItem.querySelector('[data-action="play"]');
-                if (playBtn) {
-                    playBtn.addEventListener('click', e => {
-                        e.stopPropagation();
-                        appState.queue.playAt(index);
-                    });
-                }
-                const removeBtn = listItem.querySelector('[data-action="remove"]');
-                if (removeBtn) {
-                    removeBtn.addEventListener('click', e => {
-                        e.stopPropagation();
-                        appState.queue.remove(index);
-                        musicPlayer.mainPlayer.updateQueueTab();
-                        ui.updateCounts();
-                    });
-                }
-                listItem.addEventListener('click', () => appState.queue.playAt(index));
-                queueList.appendChild(listItem);
+updateQueueTab: () => {
+    const queueList = QUERY(MUSIC_PLAYER.queueList);
+    if (!queueList) return;
+    const emptyState = queueList.querySelector('.empty');
+    if (appState.queue.items.length === 0) {
+        if (emptyState) emptyState.style.display = 'flex';
+        const items = queueList.querySelectorAll('.item');
+        items.forEach(item => item.remove());
+        return;
+    }
+    if (emptyState) emptyState.style.display = 'none';
+    const existingItems = queueList.querySelectorAll('.item');
+    existingItems.forEach(item => item.remove());
+    appState.queue.items.forEach((song, index) => {
+        const listItem = document.createElement('li');
+        listItem.dataset.map = 'song';
+        listItem.classList = `item ${index === appState.queue.currentIndex ? 'active' : ''}`;
+        listItem.innerHTML = `
+            <img src="${song.cover || utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="artwork">
+            <div class="metadata">
+                <div class="title">${song.title}</div>
+                <div class="artist">${song.artist}</div>
+            </div>
+            <div class="options">
+                <button class="option" data-action="play" data-tooltip="Play Now" data-tooltip-placement="top">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                </button>
+                <button class="option" data-action="remove" data-tooltip="Delete" data-tooltip-placement="top">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                </button>
+            </div>
+        `;
+        const playBtn = listItem.querySelector('[data-action="play"]');
+        if (playBtn) {
+            playBtn.addEventListener('click', e => {
+                e.stopPropagation();
+                appState.queue.playAt(index);
             });
-            const queueCount = QUERY(MUSIC_PLAYER.queueCount);
-            if (queueCount) {
-                queueCount.textContent = `${appState.queue.items.length} song${appState.queue.items.length !== 1 ? 's' : ''}`;
-            }
-        },
-        updateRecentTab: () => {
-            const recentList = QUERY(MUSIC_PLAYER.recentList);
-            if (!recentList) return;
-            const emptyState = recentList.querySelector(`${MUSIC_PLAYER.root} .empty`);
-            if (!appState.recentlyPlayed || appState.recentlyPlayed.length === 0) {
-                if (emptyState) emptyState.style.display = 'flex';
-                const items = recentList.querySelectorAll('.songList .item');
-                items.forEach(item => item.remove());
-                return;
-            }
-            if (emptyState) emptyState.style.display = 'none';
-            const existingItems = recentList.querySelectorAll('.songList .item');
-            existingItems.forEach(item => item.remove());
-            appState.recentlyPlayed.slice(0, 20).forEach((song, index) => {
-                const listItem = document.createElement('li');
-                listItem.classList = 'songList item';
-                listItem.innerHTML = `
-                    <img src="${song.cover || utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="songList itemArt">
-                    <div class="songList metadata">
-                        <div class="songList itemTitle">${song.title}</div>
-                        <div class="songList itemArtist">${song.artist}</div>
-                    </div>
-                    <div class="songList playBack">
-                        <button class="songList set" data-action="play" data-tooltip="Play Now" data-tooltip-placement="top">
-                            <svg viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M8 5v14l11-7z"/>
-                            </svg>
-                        </button>
-                        <button class="songList set" data-action="queue" data-tooltip="Add to Queue" data-tooltip-placement="top">
-                            <svg viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-                            </svg>
-                        </button>
-                    </div>
-                `;
-                const playBtn = listItem.querySelector('[data-action="play"]');
-                if (playBtn) {
-                    playBtn.addEventListener('click', e => {
-                        e.stopPropagation();
-                        musicPlayer.ui.playSong(song);
-                    });
-                }
-                const queueBtn = listItem.querySelector('[data-action="queue"]');
-                if (queueBtn) {
-                    queueBtn.addEventListener('click', e => {
-                        e.stopPropagation();
-                        appState.queue.add(song);
-                        notifications.show(`Added "${song.title}" to queue`);
-                    });
-                }
-                listItem.addEventListener('click', () => musicPlayer.ui.playSong(song));
-                recentList.appendChild(listItem);
+        }
+        const removeBtn = listItem.querySelector('[data-action="remove"]');
+        if (removeBtn) {
+            removeBtn.addEventListener('click', e => {
+                e.stopPropagation();
+                appState.queue.remove(index);
+                musicPlayer.mainPlayer.updateQueueTab();
+                ui.updateCounts();
             });
-            const recentCount = QUERY(MUSIC_PLAYER.recentCount);
-            if (recentCount) {
-                recentCount.textContent = `${appState.recentlyPlayed.length} song${appState.recentlyPlayed.length !== 1 ? 's' : ''}`;
-            }
-        },
-        init: () => {
+        }
+        listItem.addEventListener('click', () => appState.queue.playAt(index));
+        queueList.appendChild(listItem);
+    });
+    const queueCount = QUERY(MUSIC_PLAYER.queueCount);
+    if (queueCount) {
+        queueCount.textContent = `${appState.queue.items.length} song${appState.queue.items.length !== 1 ? 's' : ''}`;
+    }
+},
+updateRecentTab: () => {
+    const recentList = QUERY(MUSIC_PLAYER.recentList);
+    if (!recentList) return;
+    const emptyState = recentList.querySelector('.empty');
+    if (!appState.recentlyPlayed || appState.recentlyPlayed.length === 0) {
+        if (emptyState) emptyState.style.display = 'flex';
+        const items = recentList.querySelectorAll('.item');
+        items.forEach(item => item.remove());
+        return;
+    }
+    if (emptyState) emptyState.style.display = 'none';
+    const existingItems = recentList.querySelectorAll('.item');
+    existingItems.forEach(item => item.remove());
+    appState.recentlyPlayed.slice(0, 20).forEach((song, index) => {
+        const listItem = document.createElement('li');
+        listItem.dataset.map = 'song';
+        listItem.classList = 'item';
+        listItem.innerHTML = `
+            <img src="${song.cover || utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="artwork">
+            <div class="metadata">
+                <div class="title">${song.title}</div>
+                <div class="artist">${song.artist}</div>
+            </div>
+            <div class="options">
+                <button class="option" data-action="play" data-tooltip="Play Now" data-tooltip-placement="top">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                </button>
+                <button class="option" data-action="queue" data-tooltip="Add to Queue" data-tooltip-placement="top">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                    </svg>
+                </button>
+            </div>
+        `;
+        const playBtn = listItem.querySelector('[data-action="play"]');
+        if (playBtn) {
+            playBtn.addEventListener('click', e => {
+                e.stopPropagation();
+                musicPlayer.ui.playSong(song);
+            });
+        }
+        const queueBtn = listItem.querySelector('[data-action="queue"]');
+        if (queueBtn) {
+            queueBtn.addEventListener('click', e => {
+                e.stopPropagation();
+                appState.queue.add(song);
+                notifications.show(`Added "${song.title}" to queue`);
+            });
+        }
+        listItem.addEventListener('click', () => musicPlayer.ui.playSong(song));
+        recentList.appendChild(listItem);
+    });
+    const recentCount = QUERY(MUSIC_PLAYER.recentCount);
+    if (recentCount) {
+        recentCount.textContent = `${appState.recentlyPlayed.length} song${appState.recentlyPlayed.length !== 1 ? 's' : ''}`;
+    }},
+    init: () => {
             const closeBtn = QUERY(MUSIC_PLAYER.close);
             if (closeBtn) {
                 closeBtn.addEventListener('click', () => musicPlayer.mainPlayer.close());
