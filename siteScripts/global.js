@@ -1211,91 +1211,90 @@ const notificationPlayer = {
     LIST RENDERING UTILITIES
 ========================================= **/
 const listRenderer = {
-  /**
-   * Renders a list of items dynamically
-   * @param {HTMLElement} container - The UL element
-   * @param {Array} items - List of songs (or artists, albums)
-   * @param {Object} options - Config for behavior
-   */
-  renderList(container, items, options = {}) {
-    const { type = 'song', source = '', showCountEl = null, emptyText = 'No items', subtext = '', onPlay, onRemove, onQueue } = options;
-    if (!container) return;
+renderList(container, items, options = {}) {
+  const { type = 'song', source = '', showCountEl = null, emptyText = 'No items', subtext = '', onPlay, onRemove, onQueue } = options;
+  if (!container) return;
 
-    const emptyState = container.querySelector('.empty-state');
-    const listType = container.dataset.listType || source || 'unknown';
+  const emptyState = container.querySelector('.empty-state');
+  const listType = container.dataset.listType || source || 'unknown';
 
-    // Handle empty
-    if (!items || items.length === 0) {
-      if (emptyState) emptyState.hidden = false;
-      container.querySelectorAll('.list-item').forEach(li => li.remove());
-      if (showCountEl) showCountEl.textContent = '0 songs';
-      return;
+  if (!items || items.length === 0) {
+    if (emptyState) {
+      emptyState.hidden = false;
+      emptyState.querySelector('.empty-text').textContent = emptyText;
+      emptyState.querySelector('.empty-subtext').textContent = subtext;
     }
-
-    if (emptyState) emptyState.hidden = true;
     container.querySelectorAll('.list-item').forEach(li => li.remove());
+    if (showCountEl) showCountEl.textContent = '0 songs';
+    container.classList.add('empty');
+    return;
+  }
 
-    items.forEach((song, index) => {
-      const li = document.createElement('li');
-      li.className = `list-item ${song.active ? 'active' : ''}`;
-      li.dataset.map = type;
-      li.dataset.source = source;
-      li.dataset.index = index;
+  container.classList.remove('empty');
+  
+  if (emptyState) emptyState.hidden = true;
+  container.querySelectorAll('.list-item').forEach(li => li.remove());
 
-      li.innerHTML = `
-        <img src="${song.cover || utils.getAlbumImageUrl(song.album)}" 
-             alt="${song.title}" 
-             class="item-artwork">
-        <div class="item-metadata">
-          <div class="item-title">${song.title}</div>
-          <div class="item-artist">${song.artist}</div>
-        </div>
-        <div class="item-actions">
-          <button class="action-button" data-action="play" title="Play Now">
-            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-          </button>
-          ${onQueue ? `
-          <button class="action-button" data-action="queue" title="Add to Queue">
-            <svg viewBox="0 0 24 24"><path d="M14 10H2v2h12v-2zm0-4H2v2h12V6zm4 
-                     8v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zM2 
-                     16h8v-2H2v2z"/></svg>
-          </button>` : ''}
-          ${onRemove ? `
-          <button class="action-button" data-action="remove" title="Remove">
-            <svg viewBox="0 0 24 24"><path 
-              d="M19 6.41L17.59 5 12 10.59 6.41 5 
-                 5 6.41 10.59 12 5 17.59 6.41 19 
-                 12 13.41 17.59 19 19 17.59 
-                 13.41 12z"/></svg>
-          </button>` : ''}
-        </div>
-      `;
+  items.forEach((song, index) => {
+    const li = document.createElement('li');
+    li.className = `list-item ${song.active ? 'active' : ''}`;
+    li.dataset.map = type;
+    li.dataset.source = source;
+    li.dataset.index = index;
 
-      // Event listeners
-      li.addEventListener('click', () => onPlay?.(song, index));
+    li.innerHTML = `
+      <img src="${song.cover || utils.getAlbumImageUrl(song.album)}" 
+           alt="${song.title}" 
+           class="item-artwork">
+      <div class="item-metadata">
+        <div class="item-title">${song.title}</div>
+        <div class="item-artist">${song.artist}</div>
+      </div>
+      <div class="item-actions">
+        <button class="action-button" data-action="play" title="Play Now">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+        ${onQueue ? `
+        <button class="action-button" data-action="queue" title="Add to Queue">
+          <svg viewBox="0 0 24 24"><path d="M14 10H2v2h12v-2zm0-4H2v2h12V6zm4 
+                   8v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zM2 
+                   16h8v-2H2v2z"/></svg>
+        </button>` : ''}
+        ${onRemove ? `
+        <button class="action-button" data-action="remove" title="Remove">
+          <svg viewBox="0 0 24 24"><path 
+            d="M19 6.41L17.59 5 12 10.59 6.41 5 
+               5 6.41 10.59 12 5 17.59 6.41 19 
+               12 13.41 17.59 19 19 17.59 
+               13.41 12z"/></svg>
+        </button>` : ''}
+      </div>
+    `;
 
-      li.querySelector('[data-action="play"]')?.addEventListener('click', e => {
-        e.stopPropagation();
-        onPlay?.(song, index);
-      });
+    li.addEventListener('click', () => onPlay?.(song, index));
 
-      li.querySelector('[data-action="remove"]')?.addEventListener('click', e => {
-        e.stopPropagation();
-        onRemove?.(song, index);
-      });
-
-      li.querySelector('[data-action="queue"]')?.addEventListener('click', e => {
-        e.stopPropagation();
-        onQueue?.(song, index);
-      });
-
-      container.appendChild(li);
+    li.querySelector('[data-action="play"]')?.addEventListener('click', e => {
+      e.stopPropagation();
+      onPlay?.(song, index);
     });
 
-    if (showCountEl) {
-      showCountEl.textContent = `${items.length} song${items.length !== 1 ? 's' : ''}`;
-    }
+    li.querySelector('[data-action="remove"]')?.addEventListener('click', e => {
+      e.stopPropagation();
+      onRemove?.(song, index);
+    });
+
+    li.querySelector('[data-action="queue"]')?.addEventListener('click', e => {
+      e.stopPropagation();
+      onQueue?.(song, index);
+    });
+
+    container.appendChild(li);
+  });
+
+  if (showCountEl) {
+    showCountEl.textContent = `${items.length} song${items.length !== 1 ? 's' : ''}`;
   }
+}
 };
 
 
