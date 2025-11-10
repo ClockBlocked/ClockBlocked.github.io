@@ -1075,6 +1075,8 @@
   cursor: pointer;
   transition: all 0.2s ease;
   margin-bottom: 8px;
+  
+  border-bottom: var(--border-200);
 }
 
 .list-item:hover {
@@ -1124,7 +1126,7 @@
   display: flex;
   gap: 8px;
   opacity: 0;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.45s ease;
 }
 
 .list-item:hover .item-actions {
@@ -1132,8 +1134,8 @@
 }
 
 .action-button {
-  width: 36px;
-  height: 36px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.1);
   border: none;
