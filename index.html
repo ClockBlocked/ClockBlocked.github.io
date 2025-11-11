@@ -386,17 +386,30 @@
           </button>
           <div class="nowPlaying musicPlayerNowPlaying">
             <div class="coverWrapper musicPlayerCoverWrapper">
-              <div class="customShapeDivider">
-                <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
-                  <path
-                    d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"
-                    class="shapeFill"
-                  ></path>
-                </svg>
-              </div>
-              <img src="https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/stable/global/content/images/albumCovers/placeholder.png" alt="Album Cover" class="cover" id="music-player-cover" />
-              <div class="coverGlow musicPlayerCoverGlow"></div>
-            </div>
+  <div class="customShapeDivider">
+    <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+      <path d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z" class="shapeFill"></path>
+    </svg>
+  </div>
+  <img src="https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/stable/global/content/images/albumCovers/placeholder.png" alt="Album Cover" class="cover" id="music-player-cover" />
+  <div class="coverGlow musicPlayerCoverGlow"></div>
+  
+  <!-- ACTION BUTTONS OVERLAY - NEW POSITION -->
+  <div class="actions musicPlayerActions albumOverlayActions">
+    <button class="actionBtn" id="music-player-shuffle" title="Shuffle">
+      <svg viewBox="0 0 24 24" fill="currentColor">...</svg>
+    </button>
+    <button class="actionBtn" id="music-player-repeat" title="Repeat">
+      <svg viewBox="0 0 24 24" fill="currentColor">...</svg>
+    </button>
+    <button class="actionBtn" id="volumeBtn" title="Volume">
+      <svg viewBox="0 0 24 24" fill="currentColor">...</svg>
+    </button>
+    <button class="actionBtn" id="music-player-queue" title="Queue">
+      <svg viewBox="0 0 24 24" fill="currentColor">...</svg>
+    </button>
+  </div>
+</div>
           </div>
           <div class="content musicPlayerContent">
             <div class="panel musicPlayerPanel active" data-tab="playing">
@@ -465,7 +478,7 @@
                     </svg>
                   </button>
                 </div>
-                <div class="actions musicPlayerActions">
+<!--                <div class="actions musicPlayerActions">
                   <button class="actionBtn" id="music-player-shuffle" title="Shuffle">
                     <svg viewBox="0 0 24 24" fill="currentColor">
                       <path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z" />
@@ -486,7 +499,7 @@
                       <path d="M4 10h12v2H4zm0-4h12v2H4zm0-4h12v2H4zm16 8H4v2h16z" />
                     </svg>
                   </button>
-                </div>
+                </div>-->
               </div>
             </div>
             <div class="panel musicPlayerPanel" data-tab="playlist">
