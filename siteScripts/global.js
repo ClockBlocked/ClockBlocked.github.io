@@ -1925,9 +1925,9 @@ const musicPlayer = {
       buffer.style.width = (bufferProgress * 100).toFixed(2) + "%";
     },
     bindSeekBar() {
-      const bar = QUERY(MUSICPLAYER.progressBar);
-      const thumb = QUERY(MUSICPLAYER.progressThumb);
-      const fill = QUERY(MUSICPLAYER.progressFill);
+      const bar = QUERY(MUSIC_PLAYER.progressBar);
+      const thumb = QUERY(MUSIC_PLAYER.progressThumb);
+      const fill = QUERY(MUSIC_PLAYER.progressFill);
 
       if (!bar || !thumb || !fill) {
         console.error("bindSeekBar: Could not find progress bar elements");
