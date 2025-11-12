@@ -1,10 +1,4 @@
-/*
-=======================================
-          P L A Y E R   C O R E
-=======================================
-*/
-
-/** MAIN PLAYER CONTAINER **/
+/* Main player container and states */
 .player {
   position: fixed;
   bottom: 0;
@@ -20,17 +14,18 @@
   visibility: hidden;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0.55s, z-index 0s linear 0.55s;
+  transition: opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), visibility 0s linear 0.6s, z-index 0s linear 0.6s;
+  will-change: opacity, visibility, z-index;
 }
 .player.open {
   visibility: visible;
   opacity: 1;
   z-index: 9999;
   pointer-events: auto;
-  transition: opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0s, z-index 0s linear 0s;
+  transition: opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), visibility 0s linear 0s, z-index 0s linear 0s;
 }
 .player.closing {
-  transition: opacity 0.45s cubic-bezier(0.4, 0, 0.6, 1), visibility 0s linear 0.45s, z-index 0s linear 0.45s;
+  transition: opacity 0.5s cubic-bezier(0.55, 0.085, 0.68, 0.53), visibility 0s linear 0.5s, z-index 0s linear 0.5s;
 }
 
 .player.loading .cover {
@@ -46,8 +41,6 @@
   display: block;
 }
 
-
-/** BACKDROP & OVERLAY **/
 .player::before {
   content: "";
   position: fixed;
@@ -55,8 +48,9 @@
   background: rgba(0, 0, 0, 0);
   backdrop-filter: blur(0px);
   -webkit-backdrop-filter: blur(0px);
-  transition: background 0.55s cubic-bezier(0.4, 0, 0.2, 1), backdrop-filter 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), backdrop-filter 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   pointer-events: none;
+  will-change: background, backdrop-filter;
 }
 .player.open::before {
   background: rgba(0, 0, 0, 0.35);
@@ -68,7 +62,7 @@
   background: rgba(0, 0, 0, 0);
   backdrop-filter: blur(0px);
   -webkit-backdrop-filter: blur(0px);
-  transition: background 0.45s cubic-bezier(0.4, 0, 0.6, 1), backdrop-filter 0.45s cubic-bezier(0.4, 0, 0.6, 1);
+  transition: background 0.5s cubic-bezier(0.55, 0.085, 0.68, 0.53), backdrop-filter 0.5s cubic-bezier(0.55, 0.085, 0.68, 0.53);
 }
 
 .player .curtain {
@@ -80,8 +74,6 @@
   z-index: 1;
 }
 
-
-/** SCROLLER & INNER CONTAINER **/
 .player .scroller {
   width: 100%;
   height: 100%;
@@ -90,16 +82,17 @@
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   transform: translateY(100%);
-  transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   position: relative;
   z-index: 10;
+  will-change: transform;
 }
 .player.open .scroller {
   transform: translateY(0);
 }
 .player.closing .scroller {
   transform: translateY(100%);
-  transition: transform 0.45s cubic-bezier(0.4, 0, 0.6, 1);
+  transition: transform 0.5s cubic-bezier(0.55, 0.085, 0.68, 0.53);
 }
 
 .player .slide {
@@ -111,7 +104,8 @@
 }
 
 .player .inner {
-  position: relative; margin: auto;
+  position: relative;
+  margin: auto;
   background-color: #2d333b;
   border: 1.5px solid #444c56;
   border-radius: 20px 20px 0 0;
@@ -126,7 +120,8 @@
   flex-direction: column;
   transform: translateY(20px);
   opacity: 0;
-  transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform, opacity;
 }
 .player.open .inner {
   transform: translateY(0);
@@ -136,26 +131,44 @@
 .player.closing .inner {
   transform: translateY(20px);
   opacity: 0;
-  transition: transform 0.45s cubic-bezier(0.4, 0, 0.6, 1), opacity 0.35s cubic-bezier(0.4, 0, 0.6, 1);
+  transition: transform 0.5s cubic-bezier(0.55, 0.085, 0.68, 0.53), opacity 0.4s cubic-bezier(0.55, 0.085, 0.68, 0.53);
 }
 
-/*
-=======================================
-        D R A G   &   C L O S E
-=======================================
-*/
+@media (max-width: 480px) {
+  .player .inner {
+    width: 100%;
+    border-radius: 20px 20px 0 0;
+    min-height: 80vh;
+    max-height: 90vh;
+  }
+}
 
-/** DRAG HANDLE AREA **/
+@media (min-width: 768px) {
+  .player .inner {
+    max-width: 600px;
+    margin: 0 auto;
+    border-radius: 20px 20px 0 0;
+    min-height: 75vh;
+  }
+}
+
+
+
+
+/* Drag handle and close button */
 .player .dragArea {
   display: flex;
   justify-content: center;
   padding: 12px 0 8px;
-  position: absolute; top: 0;
+  position: absolute;
+  top: 0;
   z-index: 100;
-  background: transparent; overflow: visible;
+  background: transparent;
+  overflow: visible;
   opacity: 0;
   transform: translateY(-10px);
-  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: opacity, transform;
 }
 .player.open .dragArea {
   opacity: 1;
@@ -170,9 +183,9 @@
   border-radius: 999px;
   border: none;
   cursor: grab;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   transform: translateX(50%);
-  
+  will-change: transform, width, background;
 }
 .player .dragHandle:active {
   cursor: grabbing;
@@ -181,11 +194,9 @@
 .player .dragHandle:hover {
   background: rgba(255, 255, 255, 0.5);
   width: 64px;
-  transition: all 0.65s ease;
+  transition: all 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-
-/** CLOSE BUTTON **/
 .player .closeBtn {
   position: absolute;
   top: 16px;
@@ -201,10 +212,10 @@
   justify-content: center;
   cursor: pointer;
   z-index: 1000;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   opacity: 0;
   transform: scale(0.8);
-  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), background 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: opacity, transform;
 }
 .player.open .closeBtn {
   opacity: 1;
@@ -223,13 +234,8 @@
 
 
 
-/*
-=======================================
-      D O T   N A V I G A T I O N
-=======================================
-*/
 
-/** DOT INDICATORS CONTAINER **/
+/* Dot navigation indicators */
 .player .dotIndicators {
   position: relative;
   width: 100%;
@@ -241,17 +247,15 @@
   gap: 16px;
   opacity: 0;
   transform: translateY(10px);
-  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   z-index: 50;
+  will-change: opacity, transform;
 }
 .player.open .dotIndicators {
   opacity: 1;
   transform: translateY(0);
   transition-delay: 0.35s;
 }
-
-
-/** INDIVIDUAL DOTS **/
 .player .dotIndicator {
   position: relative;
   width: 10px;
@@ -260,14 +264,14 @@
   background: rgba(255, 255, 255, 0.3);
   border: 2px solid transparent;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   flex-shrink: 0;
+  will-change: transform, background;
 }
 .player .dotIndicator:hover {
   background: rgba(255, 255, 255, 0.5);
   transform: scale(1.3);
 }
-
 .player .dotIndicator.active {
   background: linear-gradient(135deg, #8b5cf6, #3b82f6);
   border-color: rgba(255, 255, 255, 0.4);
@@ -279,8 +283,6 @@
   transform: scale(1.2);
 }
 
-
-/** DOT LABELS **/
 .player .dotIndicator .dotLabel {
   position: absolute;
   bottom: calc(100% + 12px);
@@ -298,10 +300,11 @@
   pointer-events: none;
   opacity: 0;
   visibility: hidden;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.1);
   z-index: 100;
+  will-change: opacity, transform;
 }
 .player .dotIndicator .dotLabel::after {
   content: "";
@@ -331,13 +334,8 @@
 
 
 
-/*
-=======================================
-          N O W   P L A Y I N G
-=======================================
-*/
 
-/** NOW PLAYING SECTION **/
+/* Now Playing section - cover art and metadata */
 .player .nowPlaying {
   position: relative;
   width: 100%;
@@ -350,7 +348,8 @@
   flex-shrink: 0;
   opacity: 0;
   transform: translateY(20px);
-  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: opacity, transform;
 }
 .player.open .nowPlaying {
   opacity: 1;
@@ -358,8 +357,6 @@
   transition-delay: 0.25s;
 }
 
-
-/** COVER ART & GLOW **/
 .player .coverWrapper {
   position: relative;
   width: 100%;
@@ -371,7 +368,6 @@
   overflow: hidden;
   border-radius: 0 0 12px 12px;
   flex-shrink: 0;
-  border-bottom: none !important;
 }
 .player .cover {
   width: 100%;
@@ -394,7 +390,6 @@
 }
 
 
-/** SEPARATOR SHAPES **/
 .player .separator {
   position: absolute;
   bottom: -38px;
@@ -411,7 +406,6 @@
   height: 100%;
   display: block;
 }
-
 .player .separatorTop {
   position: absolute;
   top: -38px;
@@ -429,6 +423,7 @@
   height: 100%;
   display: block;
 }
+
 
 .customShapeDivider {
   position: absolute;
@@ -453,27 +448,17 @@
 }
 
 
-
-/*
-=======================================
-          M U S I C   I N F O
-=======================================
-*/
-
-/** SONG INFORMATION **/
 .player .info {
   padding: 20px;
   display: flex;
   align-items: center;
   gap: 16px;
-  transition: all 0.3s ease;
+  transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
-
 .player .details {
   flex: 1;
   min-width: 0;
 }
-
 .player .title {
   font-size: 18px;
   font-weight: 700;
@@ -485,7 +470,6 @@
   white-space: nowrap;
   text-align: center;
 }
-
 .player .artist {
   font-size: 14px;
   font-weight: 500;
@@ -496,7 +480,6 @@
   white-space: nowrap;
   text-align: center;
 }
-
 .player .album {
   font-size: 12px;
   font-weight: 400;
@@ -510,7 +493,6 @@
 }
 
 
-/** FAVORITE BUTTON **/
 .player .favoriteBtn {
   width: 20px;
   height: 20px;
@@ -522,7 +504,8 @@
   justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform, background;
 }
 .player .favoriteBtn:hover {
   background: rgba(239, 68, 68, 0.2);
@@ -533,40 +516,62 @@
   background: rgba(239, 68, 68, 0.3);
   border-color: #ef4444;
 }
+
 .player .favoriteBtn svg {
   width: 15px;
   height: 15px;
   color: rgba(255, 255, 255, 0.6);
-  transition: all 0.3s ease;
+  transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
-
 .player .favoriteBtn:hover svg,
 .player .favoriteBtn.favorited svg {
   color: #ef4444;
   fill: #ef4444;
 }
-
 .player .favoriteBtn.favorited svg {
-  animation: heartBeat 0.6s ease;
+  animation: heartBeat 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@media (max-width: 480px) {
+  .player .coverWrapper {
+    padding: 32px 20px 48px;
+  }
+
+  .player .info {
+    padding: 16px;
+  }
+
+  .player .title {
+    font-size: 16px;
+  }
+
+  .player .artist {
+    font-size: 13px;
+  }
+
+  .customShapeDivider svg {
+    width: calc(216% + 1.3px);
+    height: 75px;
+  }
+}
+
+@media (min-width: 768px) {
+  .player .nowPlaying {
+    height: 45vh;
+    min-height: 380px;
+  }
 }
 
 
 
-/*
-=======================================
-            P R O G R E S S
-=======================================
-*/
 
-/** PROGRESS SECTION **/
+/* Progress bar and time display */
 .player .progressSection {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-
-/** PROGRESS BAR **/
 .player .progressBar {
   position: relative;
   width: 100%;
@@ -575,7 +580,7 @@
   border-radius: 999px;
   cursor: pointer;
   overflow: visible;
-  transition: height 0.2s ease;
+  transition: height 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 .player .progressBar:hover {
   height: 8px;
@@ -592,9 +597,8 @@
   height: 100%;
   background: rgba(255, 255, 255, 0.2);
   border-radius: 999px;
-  transition: width 0.3s ease;
+  transition: width 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
-
 .player .progressFill {
   position: absolute;
   top: 0;
@@ -602,10 +606,9 @@
   height: 100%;
   background: linear-gradient(90deg, #8b5cf6, #3b82f6);
   border-radius: 999px;
-  transition: width 0.1s linear;
+  transition: width 0.15s linear;
   position: relative;
 }
-
 .player .progressThumb {
   position: absolute;
   top: 50%;
@@ -617,7 +620,8 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   transform: translate(-50%, -50%) scale(0);
   opacity: 0;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform, opacity;
 }
 
 .player .progressBar.isDragging .progressThumb,
@@ -626,15 +630,12 @@
   transform: translate(-50%, -50%) scale(1);
 }
 
-
-/** TIME DISPLAY **/
 .player .timeDisplay {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 4px;
 }
-
 .player .currentTime,
 .player .totalTime {
   font-size: 12px;
@@ -645,13 +646,8 @@
 
 
 
-/*
-=======================================
-            C O N T R O L S
-=======================================
-*/
 
-/** MAIN CONTROLS **/
+/* Playback controls and action buttons */
 .player .controls {
   display: flex;
   align-items: center;
@@ -669,9 +665,10 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   position: relative;
   overflow: hidden;
+  will-change: transform, background;
 }
 .player .controlBtn::before {
   content: "";
@@ -679,7 +676,7 @@
   inset: 0;
   background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 .player .controlBtn:hover::before {
   opacity: 1;
@@ -718,11 +715,11 @@
   box-shadow: 0 12px 32px rgba(139, 92, 246, 0.5), 0 6px 16px rgba(59, 130, 246, 0.4);
   transform: translateY(-4px) scale(1.05);
 }
-
 .player .controlBtn.primary svg {
   width: 28px;
   height: 28px;
 }
+
 .player .controlBtn.primary .pauseIcon {
   display: none;
 }
@@ -741,7 +738,6 @@
 }
 
 
-/** ACTION BUTTONS **/
 .player .actions {
   display: flex;
   align-items: center;
@@ -750,7 +746,6 @@
   padding: 1rem 0 0 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
-
 .player .actionBtn {
   width: 44px;
   height: 44px;
@@ -761,7 +756,8 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform, background;
 }
 .player .actionBtn:hover {
   background: rgba(255, 255, 255, 0.1);
@@ -777,21 +773,110 @@
   color: #fff;
 }
 
+.player .coverWrapper .actions.musicPlayerActions.albumOverlayActions {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  gap: 1rem;
+  z-index: 10;
+  opacity: 0.5;
+  padding: 0;
+  border: none;
+  width: auto;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.player .coverWrapper .actions.albumOverlayActions:hover {
+  opacity: 1;
+}
+
+.player .coverWrapper .albumOverlayActions .actionBtn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  margin: 0;
+  padding: 0;
+}
+.player .coverWrapper .albumOverlayActions .actionBtn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+.player .coverWrapper .albumOverlayActions .actionBtn svg {
+  width: 20px;
+  height: 20px;
+  color: rgba(255, 255, 255, 0.9);
+}
+.player .coverWrapper .albumOverlayActions .actionBtn.active {
+  background: rgba(139, 92, 246, 0.8);
+  border-color: rgba(139, 92, 246, 1);
+}
+
+.player .main > .actions.musicPlayerActions,
+.player .controls + .actions.musicPlayerActions {
+  display: none;
+}
+
+@media (max-width: 480px) {
+  .player .controls {
+    gap: 8px;
+  }
+
+  .player .controlBtn.primary {
+    width: 60px;
+    height: 60px;
+  }
+
+  .player .controlBtn.secondary {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+@media (max-width: 768px) {
+  .player .coverWrapper .albumOverlayActions {
+    left: 0.5rem;
+    gap: 0.75rem;
+  }
+
+  .player .coverWrapper .albumOverlayActions .actionBtn {
+    width: 38px;
+    height: 38px;
+  }
+
+  .player .coverWrapper .albumOverlayActions .actionBtn svg {
+    width: 18px;
+    height: 18px;
+  }
+}
 
 
-/*
-=======================================
-             C O N T E N T
-=======================================
-*/
 
-/** CONTENT AREA **/
+
+/* Content area, panels, and lists */
 .player .content {
   opacity: 0;
   transform: translateY(20px);
-  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   flex: 1;
   overflow-y: auto;
+  will-change: opacity, transform;
 }
 .player.open .content {
   opacity: 1;
@@ -807,10 +892,9 @@
   flex: 1;
 }
 
-
 .player .panel {
   display: none;
-  animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: fadeIn 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   flex: 1;
   overflow-y: auto;
 }
@@ -819,7 +903,6 @@
   flex-direction: column;
 }
 
-/** LIST HEADER **/
 .player .listHeader {
   display: flex;
   justify-content: space-between;
@@ -844,13 +927,13 @@
   border-radius: 999px;
 }
 
+
 .list {
   list-style: none;
   padding: 16px 24px 40px;
   margin: 0;
   max-height: 500px;
   overflow-y: auto;
-  /* Add flex properties for empty state */
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -871,7 +954,6 @@
   background: rgba(255, 255, 255, 0.3);
 }
 
-/* FIXED EMPTY STATE */
 .empty-state {
   display: flex;
   flex-direction: column;
@@ -880,19 +962,18 @@
   padding: 40px 20px;
   text-align: center;
   flex: 1;
-  min-height: 200px; /* Ensure minimum height for proper centering */
+  min-height: 200px;
 }
 
 .emptyIcon {
-  width: 60px; /* Reduced from 80px */
-  height: 60px; /* Reduced from 80px */
-  margin-bottom: 16px; /* Slightly reduced */
+  width: 60px;
+  height: 60px;
+  margin-bottom: 16px;
   color: rgba(255, 255, 255, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
 }
-
 .emptyIcon svg {
   width: 100%;
   margin: auto;
@@ -901,14 +982,13 @@
 }
 
 .emptyText {
-  font-size: 16px; /* Slightly reduced from 18px */
+  font-size: 16px;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.7);
   margin-bottom: 8px;
   text-align: center;
   width: 100%;
 }
-
 .emptySubtext {
   font-size: 14px;
   color: rgba(255, 255, 255, 0.4);
@@ -917,13 +997,10 @@
   line-height: 1.4;
 }
 
-/* When list is empty, make it a flex container that centers content */
 .list:has(.empty-state:not([hidden])) {
   justify-content: center;
   align-items: center;
 }
-
-/* Alternative approach for browsers that don't support :has() */
 .list.empty {
   justify-content: space-around;
   align-items: center;
@@ -936,7 +1013,7 @@
   padding: 12px 16px;
   border-radius: 12px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   margin-bottom: 8px;
   border-bottom: var(--border-200);
 }
@@ -948,7 +1025,8 @@
   border-left: 3px solid #8b5cf6;
 }
 
-/* Artwork */
+
+
 .item-artwork {
   width: 48px;
   height: 48px;
@@ -956,8 +1034,6 @@
   object-fit: cover;
   flex-shrink: 0;
 }
-
-/* Metadata */
 .item-metadata {
   flex: 1;
   min-width: 0;
@@ -983,7 +1059,7 @@
   display: flex;
   gap: 8px;
   opacity: 0;
-  transition: opacity 0.45s ease;
+  transition: opacity 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 .list-item:hover .item-actions {
   opacity: 1;
@@ -999,7 +1075,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 .action-button:hover {
   background: rgba(255, 255, 255, 0.2);
@@ -1013,93 +1089,7 @@
 
 
 
-
-
-
-
-
-
-
-/*
-=======================================
-                   L E G A C Y
-=======================================
-*/
-
-/** HIDDEN TABS **/
-.player .tabs {
-  display: none !important;
-}
-
-
-
-/*
-=======================================
-                   M E D I A
-=======================================
-*/
-
-/** MOBILE STYLES **/
-@media (max-width: 480px) {
-  .player .inner {
-    width: 100%;
-    border-radius: 20px 20px 0 0;
-    min-height: 80vh;
-    max-height: 90vh;
-  }
-  .player .coverWrapper {
-    padding: 32px 20px 48px;
-  }
-  .player .info {
-    padding: 16px;
-  }
-  .player .title {
-    font-size: 16px;
-  }
-  .player .artist {
-    font-size: 13px;
-  }
-  .player .controls {
-    gap: 8px;
-  }
-  .player .controlBtn.primary {
-    width: 60px;
-    height: 60px;
-  }
-  .player .controlBtn.secondary {
-    width: 44px;
-    height: 44px;
-  }
-
-  .customShapeDivider svg {
-    width: calc(216% + 1.3px);
-    height: 75px;
-  }
-}
-
-/** TABLET/DESKTOP STYLES **/
-@media (min-width: 768px) {
-  .player .inner {
-    max-width: 600px;
-    margin: 0 auto;
-    border-radius: 20px 20px 0 0;
-    min-height: 75vh;
-  }
-  .player .nowPlaying {
-    height: 45vh;
-    min-height: 380px;
-  }
-}
-
-
-
-/*
-=======================================
-                   A C C E S S I B I L I T Y
-=======================================
-*/
-
-/** FOCUS STATES **/
+/* Accessibility */
 .player .controlBtn:focus,
 .player .actionBtn:focus,
 .player .dotIndicator:focus {
@@ -1107,26 +1097,18 @@
   outline-offset: 2px;
 }
 
-/** REDUCED MOTION **/
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+    transition-duration: 0.01ms;
   }
 }
 
-
-
-/*
-=======================================
-                   A N I M A T I O N S
-=======================================
-*/
-
-/** KEYFRAME ANIMATIONS **/
+/* Keyframe animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -1137,6 +1119,7 @@
     transform: translateY(0);
   }
 }
+
 @keyframes heartBeat {
   0%,
   100% {
@@ -1152,111 +1135,12 @@
     transform: scale(1.1);
   }
 }
+
 @keyframes shimmer {
   0% {
     background-position: -1000px 0;
   }
   100% {
     background-position: 1000px 0;
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* Override the default .actions styling when it's inside cover wrapper */
-.player .coverWrapper .actions.musicPlayerActions.albumOverlayActions {
-  /* Reset the default action button styles */
-  position: absolute !important;
-  display: flex !important;
-  flex-direction: column !important;
-  left: 12px; /* or left: 12px for left side */
-  top: 50%;
-  transform: translateY(-50%);
-  gap: 1rem;
-  z-index: 10;
-  opacity: 0.5;
-  padding: 0 !important; /* Remove default padding */
-  border: none !important; /* Remove default border */
-  border-bottom: none !important;
-  width: auto !important;
-  justify-content: center;
-  align-items: center;
-  transition: opacity 0.3s ease;
-}
-
-.player .coverWrapper .actions.albumOverlayActions:hover {
-  opacity: 1;
-}
-
-/* Override default action button styles for overlay buttons */
-.player .coverWrapper .albumOverlayActions .actionBtn {
-  width: 42px !important;
-  height: 42px !important;
-  border-radius: 50% !important;
-  background: rgba(0, 0, 0, 0.7) !important;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  color: white;
-  display: flex !important;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  margin: 0;
-  padding: 0;
-}
-
-.player .coverWrapper .albumOverlayActions .actionBtn:hover {
-  background: rgba(255, 255, 255, 0.2) !important;
-  border-color: rgba(255, 255, 255, 0.4) !important;
-  transform: scale(1.1);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-}
-
-.player .coverWrapper .albumOverlayActions .actionBtn svg {
-  width: 20px;
-  height: 20px;
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.player .coverWrapper .albumOverlayActions .actionBtn.active {
-  background: rgba(139, 92, 246, 0.8) !important;
-  border-color: rgba(139, 92, 246, 1) !important;
-}
-
-/* Hide any OLD action buttons that appear below controls */
-.player .main > .actions.musicPlayerActions,
-.player .controls + .actions.musicPlayerActions {
-  display: none !important;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .player .coverWrapper .albumOverlayActions {
-    left: 0.5rem;
-    gap: 0.75rem;
-  }
-  
-  .player .coverWrapper .albumOverlayActions .actionBtn {
-    width: 38px !important;
-    height: 38px !important;
-  }
-  
-  .player .coverWrapper .albumOverlayActions .actionBtn svg {
-    width: 18px;
-    height: 18px;
   }
 }
