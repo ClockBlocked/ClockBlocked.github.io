@@ -1168,82 +1168,6 @@
 
 
 
-/* Action buttons overlay on album cover */
-.albumOverlayActions {
-  position: absolute;
-  right: 12px; /* Change to 'left: 12px' if you want left side */
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  z-index: 10;
-  opacity: 0.9;
-  transition: opacity 0.3s ease;
-}
-
-.albumOverlayActions:hover {
-  opacity: 1;
-}
-
-/* Style the action buttons for overlay */
-.albumOverlayActions .actionBtn {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-.albumOverlayActions .actionBtn:hover {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.4);
-  transform: scale(1.1);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-}
-
-.albumOverlayActions .actionBtn svg {
-  width: 20px;
-  height: 20px;
-}
-
-.albumOverlayActions .actionBtn.active {
-  background: rgba(var(--accent-primary-rgb, 99, 102, 241), 0.8);
-  border-color: rgba(var(--accent-primary-rgb, 99, 102, 241), 1);
-}
-
-/* Hide the old action buttons below controls if they exist */
-.musicPlayerControls + .musicPlayerActions {
-  display: none;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .albumOverlayActions {
-    right: 8px;
-    gap: 8px;
-  }
-  
-  .albumOverlayActions .actionBtn {
-    width: 38px;
-    height: 38px;
-  }
-  
-  .albumOverlayActions .actionBtn svg {
-    width: 18px;
-    height: 18px;
-  }
-}
-
-
 
 
 
@@ -1256,12 +1180,12 @@
   position: absolute !important;
   display: flex !important;
   flex-direction: column !important;
-  right: 12px; /* or left: 12px for left side */
+  left: 12px; /* or left: 12px for left side */
   top: 50%;
   transform: translateY(-50%);
-  gap: 10px;
+  gap: 1rem;
   z-index: 10;
-  opacity: 0.9;
+  opacity: 0.5;
   padding: 0 !important; /* Remove default padding */
   border: none !important; /* Remove default border */
   border-bottom: none !important;
@@ -1322,8 +1246,8 @@
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .player .coverWrapper .albumOverlayActions {
-    right: 8px;
-    gap: 8px;
+    left: 0.5rem;
+    gap: 0.75rem;
   }
   
   .player .coverWrapper .albumOverlayActions .actionBtn {
