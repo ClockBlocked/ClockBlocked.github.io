@@ -1996,10 +1996,15 @@ const musicPlayer = {
           notificationPlayer.playbackState.onPause();
         }
         musicPlayer.playback.dispatchPlayerStateChange();
-        
-        setTimeout(() => {
-          musicPlayer.playback.next();
-        }, 1000);
+//        
+//        
+// Will modify later & implement it 
+//
+//        setTimeout(() => {
+//          musicPlayer.playback.next();
+//        }, 1000);
+//
+//
       }
 
       if (window.ui && ui.setLoadingState) {
