@@ -1167,13 +1167,6 @@
 
 
 
-/* Position the cover wrapper as relative container */
-.musicPlayerCoverWrapper {
-  position: relative;
-  width: 100%;
-  max-width: 300px;
-  margin: 0 auto;
-}
 
 /* Action buttons overlay on album cover */
 .albumOverlayActions {
@@ -1256,20 +1249,6 @@
 
 
 
-/* Ensure the cover wrapper is positioned relatively */
-.player .coverWrapper.musicPlayerCoverWrapper {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 0;
-  overflow: hidden;
-  border-radius: 0 0 12px 12px;
-  flex-shrink: 0;
-  border-bottom: none !important;
-}
 
 /* Override the default .actions styling when it's inside cover wrapper */
 .player .coverWrapper .actions.musicPlayerActions.albumOverlayActions {
