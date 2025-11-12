@@ -580,14 +580,14 @@
   border-radius: 999px;
   cursor: pointer;
   overflow: visible;
-  transition: height 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: height 0.2s ease;
 }
-.player .progressBar:hover {
+.player .progressBar:hover,
+.player .progressBar.isHovering {
   height: 8px;
 }
-.player .progressBar:hover .progressThumb {
-  opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
+.player .progressBar.isDragging {
+  height: 8px;
 }
 
 .player .progressBuffer {
@@ -597,37 +597,47 @@
   height: 100%;
   background: rgba(255, 255, 255, 0.2);
   border-radius: 999px;
-  transition: width 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: width 0.3s ease;
+  pointer-events: none;
 }
 .player .progressFill {
   position: absolute;
   top: 0;
   left: 0;
   height: 100%;
+  width: 0%;
   background: linear-gradient(90deg, #8b5cf6, #3b82f6);
   border-radius: 999px;
-  transition: width 0.15s linear;
+  transition: width 0.1s linear;
   position: relative;
+  pointer-events: none;
 }
+
 .player .progressThumb {
   position: absolute;
   top: 50%;
-  left: 100%;
-  width: 16px;
-  height: 16px;
+  right: 0;
+  width: 12px;
+  height: 12px;
   background: #fff;
   border-radius: 50%;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  transform: translate(-50%, -50%) scale(0);
-  opacity: 0;
-  transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  will-change: transform, opacity;
-}
-
-.player .progressBar.isDragging .progressThumb,
-.player .progressBar.isHovering .progressThumb {
+  transform: translate(50%, -50%);
   opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+.player .progressBar:hover .progressThumb,
+.player .progressBar.isHovering .progressThumb {
+  width: 16px;
+  height: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 0 4px rgba(255, 255, 255, 0.1);
+}
+.player .progressBar.isDragging .progressThumb {
+  width: 18px;
+  height: 18px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), 0 0 0 6px rgba(255, 255, 255, 0.15);
+  cursor: grabbing;
 }
 
 .player .timeDisplay {
