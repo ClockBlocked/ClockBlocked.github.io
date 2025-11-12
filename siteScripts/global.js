@@ -1964,7 +1964,7 @@ const musicPlayer = {
         musicPlayer.ui.seekFromEvent(e, bar, true);
         musicPlayer.ui.isScrubbing = false;
 
-        bar.classList.remove(MUSICPLAYER.classes.dragging, MUSICPLAYER.classes.hovering);
+        bar.classList.remove(MUSIC_PLAYER.classes.dragging, MUSIC_PLAYER.classes.hovering);
 
         if (musicPlayer.ui.wasPlayingBeforeScrub) {
           appState.audio.play();
@@ -1975,12 +1975,12 @@ const musicPlayer = {
       };
 
       const onEnter = () => {
-        bar.classList.add(MUSICPLAYER.classes.hovering);
+        bar.classList.add(MUSIC_PLAYER.classes.hovering);
       };
 
       const onLeave = () => {
         if (!musicPlayer.ui.isScrubbing) {
-          bar.classList.remove(MUSICPLAYER.classes.hovering);
+          bar.classList.remove(MUSIC_PLAYER.classes.hovering);
         }
       };
 
@@ -2014,9 +2014,9 @@ const musicPlayer = {
       }
     },
     setProgressUI(percent, currentTime) {
-      const fill = QUERY(MUSICPLAYER.progressFill);
-      const thumb = QUERY(MUSICPLAYER.progressThumb);
-      const currentTimeElement = QUERY(MUSICPLAYER.currentTime);
+      const fill = QUERY(MUSIC_PLAYER.progressFill);
+      const thumb = QUERY(MUSIC_PLAYER.progressThumb);
+      const currentTimeElement = QUERY(MUSIC_PLAYER.currentTime);
 
       if (fill) {
         fill.style.width = `${percent}%`;
@@ -2038,7 +2038,7 @@ const musicPlayer = {
 
       musicPlayer.ui.setProgressUI(percent, currentTime);
 
-      const totalTimeElement = QUERY(MUSICPLAYER.totalTime);
+      const totalTimeElement = QUERY(MUSIC_PLAYER.totalTime);
       if (totalTimeElement) {
         totalTimeElement.textContent = utils.formatTime(duration);
       }
@@ -2053,7 +2053,7 @@ const musicPlayer = {
 
       appState.duration = audio.duration;
 
-      const totalTimeElement = QUERY(MUSICPLAYER.totalTime);
+      const totalTimeElement = QUERY(MUSIC_PLAYER.totalTime);
       if (totalTimeElement) {
         totalTimeElement.textContent = utils.formatTime(audio.duration);
       }
