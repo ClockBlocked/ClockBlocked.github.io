@@ -2019,7 +2019,7 @@ loadAudioFile: async (songData) => {
     
     if (!songFileName) return false;
     
-    for (const format of window.AUDIOFORMATS) { // ['mp3', 'ogg', 'wav']
+    for (const format of window.AUDIO_FORMATS) { // ['mp3', 'ogg', 'wav']
         try {
             const audioUrl = `https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/Final/final/global/content/audio/${songFileName}.${format}`;
             
