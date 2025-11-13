@@ -2013,10 +2013,10 @@ const musicPlayer = {
     },
     
     loadAudioFile: async (songData) => {
-      if (!songData || !songData.title) {
+      if (!songData || !songData.id) {
         return false;
       }
-      const songFileName = songData.title.toLowerCase().replace(/\s+/g, "").replace(/[^\w]/g, "");
+      const songFileName = songData.id.toLowerCase().replace(/\s+/g, "").replace(/[^\w]/g, "");
       if (!songFileName) {
         return false;
       }
