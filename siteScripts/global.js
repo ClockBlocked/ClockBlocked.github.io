@@ -2012,45 +2012,49 @@ const musicPlayer = {
       }
     },
     
-    loadAudioFile: async (songData) => {
-      if (!songData || !songData.id) {
-        return false;
-      }
-      const songFileName = songData.id.toLowerCase().replace(/\s+/g, "").replace(/[^\w]/g, "");
-      if (!songFileName) {
-        return false;
-      }
-      for (const format of window.AUDIO_FORMATS || ["mp3", "ogg", "wav"]) {
+loadAudioFile: async (songData) => {
+    if (!songData || !songData.id) return false;
+    
+    const songFileName = songData.id;
+    
+    if (!songFileName) return false;
+    
+    for (const format of window.AUDIOFORMATS) { // ['mp3', 'ogg', 'wav']
         try {
-//          const audioUrl = `https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/Finalfinal/global/content/audio/${songFileName}.${format}`;
-          const audioUrl = `https://pub-54216af4fb1549ff95a6cb5f8d63fe2d.r2.dev/${songFileName}.mp3`;
-          appState.audio.src = audioUrl;
-          appState.audio.preload = "auto";
-          await new Promise((resolve, reject) => {
-            const loadHandler = () => {
-              appState.audio.removeEventListener("canplaythrough", loadHandler);
-              appState.audio.removeEventListener("error", errorHandler);
-              resolve();
-            };
-            const errorHandler = (e) => {
-              appState.audio.removeEventListener("canplaythrough", loadHandler);
-              appState.audio.removeEventListener("error", errorHandler);
-              reject(e);
-            };
-            appState.audio.addEventListener("canplaythrough", loadHandler, { once: true });
-            appState.audio.addEventListener("error", errorHandler, { once: true });
-            if (appState.audio.readyState >= 3) {
-              loadHandler();
-            }
-          });
-          await appState.audio.play();
-          return true;
+            const audioUrl = `https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/Final/final/global/content/audio/${songFileName}.${format}`;
+            
+            appState.audio.src = audioUrl;
+            appState.audio.preload = 'auto';
+            
+            await new Promise((resolve, reject) => {
+                const loadHandler = () => {
+                    appState.audio.removeEventListener('canplaythrough', loadHandler);
+                    appState.audio.removeEventListener('error', errorHandler);
+                    resolve();
+                };
+                
+                const errorHandler = (e) => {
+                    appState.audio.removeEventListener('canplaythrough', loadHandler);
+                    appState.audio.removeEventListener('error', errorHandler);
+                    reject(e);
+                };
+                
+                appState.audio.addEventListener('canplaythrough', loadHandler, { once: true });
+                appState.audio.addEventListener('error', errorHandler, { once: true });
+                
+                if (appState.audio.readyState >= 3) {
+                    loadHandler();
+                }
+            });
+            
+            await appState.audio.play();
+            return true;
         } catch (error) {
-          continue;
+            continue;
         }
-      }
-      return false;
-    },
+    }
+    return false;
+},
 
     handleProgressBarKeyDown: (e) => {
       const audio = appState.audio;
