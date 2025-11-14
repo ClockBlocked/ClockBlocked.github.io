@@ -1122,17 +1122,6 @@
   }
 }
 
-/* Keyframe animations */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 
 @keyframes heartBeat {
   0%,
@@ -1168,57 +1157,90 @@
 
 
 
+/**
+*
+*
+*
+*
+    N E W E S T 
+*
+*
+*
+*
+**/
+
 .player .coverWrapper {
     position: relative;
     width: 100%;
     height: 40vh;
+    min-height: 280px;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: center;
     padding: 0;
     overflow: hidden;
     border-radius: 0 0 12px 12px;
     flex-shrink: 0;
-    border-bottom: none !important;
-    transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: height, transform;
+    background: #1a1f24;
+    transition: none;
+    will-change: auto;
 }
+
+.player .coverWrapper.is-collapsing {
+    transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .player .coverWrapper.collapsed {
     height: 100px;
+    min-height: 100px;
     position: sticky;
     top: 0;
     z-index: 200;
     border-radius: 0;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
-.player .coverWrapper.collapsing {
-    pointer-events: none;
+
+.player .coverImageContainer {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    transition: none;
+}
+
+.player .coverWrapper.is-collapsing .coverImageContainer {
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.player .coverWrapper.collapsed .coverImageContainer {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    width: 80px;
+    height: 80px;
+    transform: translateY(-50%);
+    inset: auto;
 }
 
 .player .cover {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center center;
     border-radius: 0;
-    box-shadow: none;
-    position: relative;
-    z-index: 2;
-    min-height: 200px;
     background: #1a1f24;
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                border-radius 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: block;
+    transition: none;
 }
+
+.player .coverWrapper.is-collapsing .cover {
+    transition: border-radius 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .player .coverWrapper.collapsed .cover {
-    width: 80px;
-    height: 80px;
     border-radius: 8px;
-    position: absolute;
-    left: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    object-fit: cover;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
@@ -1233,10 +1255,15 @@
     gap: 4px;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     max-width: calc(100% - 180px);
     z-index: 3;
+    transition: none;
 }
+
+.player .coverWrapper.is-collapsing .miniHeader {
+    transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .player .coverWrapper.collapsed .miniHeader {
     opacity: 1;
     pointer-events: auto;
@@ -1251,6 +1278,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
 .player .miniArtist {
     font-size: 13px;
     font-weight: 500;
@@ -1271,9 +1299,14 @@
     gap: 8px;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 3;
+    transition: none;
 }
+
+.player .coverWrapper.is-collapsing .miniControls {
+    transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .player .coverWrapper.collapsed .miniControls {
     opacity: 1;
     pointer-events: auto;
@@ -1290,12 +1323,14 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 .player .miniControlBtn:hover {
     background: rgba(255, 255, 255, 0.25);
     transform: scale(1.05);
 }
+
 .player .miniControlBtn svg {
     width: 18px;
     height: 18px;
@@ -1309,49 +1344,62 @@
     filter: blur(60px);
     opacity: 0.6;
     z-index: 1;
-    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+    transition: none;
 }
+
+.player .coverWrapper.is-collapsing .coverGlow {
+    transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .player .coverWrapper.collapsed .coverGlow {
     opacity: 0;
 }
 
 .player .panel {
     display: none;
-    animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-direction: column;
     flex: 1;
-    overflow-y: auto;
+    overflow: hidden;
     position: relative;
+    animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 .player .panel.active {
     display: flex;
-    flex-direction: column;
 }
 
-
+.player .listContainer {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+    overflow-anchor: none;
+}
 
 .list {
     list-style: none;
     padding: 16px 24px 40px;
     margin: 0;
-    max-height: 500px;
-    overflow-y: auto;
     display: flex;
     flex-direction: column;
-    flex: 1;
 }
 
 .list::-webkit-scrollbar {
     width: 6px;
 }
+
 .list::-webkit-scrollbar-track {
     background: rgba(255, 255, 255, 0.05);
     border-radius: 999px;
 }
+
 .list::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.2);
     border-radius: 999px;
     transition: background 0.3s ease;
 }
+
 .list::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.3);
 }
@@ -1368,6 +1416,7 @@
     position: relative;
     background: transparent;
 }
+
 .list-item:nth-child(even) {
     background: rgba(255, 255, 255, 0.02);
 }
@@ -1376,22 +1425,31 @@
     background: rgba(255, 255, 255, 0.05);
     transform: translateY(-1px);
 }
+
 .list-item.active {
     background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(59, 130, 246, 0.1));
     border-left: 3px solid #8b5cf6;
     padding-left: 13px;
 }
 
-.item-artwork {
+.item-artwork-wrapper {
     width: 48px;
     height: 48px;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.item-artwork {
+    width: 100%;
+    height: 100%;
     border-radius: 8px;
     object-fit: cover;
-    flex-shrink: 0;
+    object-position: center center;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    position: relative;
     transition: all 0.3s ease;
+    display: block;
 }
+
 .list-item:hover .item-artwork {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
@@ -1400,8 +1458,8 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 48px;
-    height: 48px;
+    width: 100%;
+    height: 100%;
     border-radius: 8px;
     background: rgba(0, 0, 0, 0.7);
     display: flex;
@@ -1411,6 +1469,7 @@
     transition: opacity 0.3s ease;
     pointer-events: none;
 }
+
 .list-item:hover .item-play-overlay {
     opacity: 1;
 }
@@ -1439,6 +1498,7 @@
     white-space: nowrap;
     transition: color 0.2s ease;
 }
+
 .list-item:hover .item-title {
     color: #8b5cf6;
 }
@@ -1460,7 +1520,6 @@
     margin-right: 8px;
 }
 
-
 .item-actions {
     display: flex;
     gap: 8px;
@@ -1468,6 +1527,7 @@
     transition: opacity 0.3s ease;
     flex-shrink: 0;
 }
+
 .list-item:hover .item-actions {
     opacity: 1;
 }
@@ -1485,6 +1545,7 @@
     cursor: pointer;
     transition: all 0.2s ease;
 }
+
 .action-button:hover {
     background: rgba(255, 255, 255, 0.2);
     transform: scale(1.1);
@@ -1496,6 +1557,7 @@
     height: 18px;
     color: rgba(255, 255, 255, 0.8);
 }
+
 .action-button:hover svg {
     color: #fff;
 }
@@ -1504,6 +1566,7 @@
     background: rgba(239, 68, 68, 0.2);
     border-color: #ef4444;
 }
+
 .action-button.favorite:hover svg {
     color: #ef4444;
 }
@@ -1512,12 +1575,11 @@
     background: rgba(239, 68, 68, 0.2);
     border-color: #ef4444;
 }
+
 .action-button.favorited svg {
     color: #ef4444;
     fill: #ef4444;
 }
-
-
 
 .empty-state {
     display: flex;
@@ -1539,6 +1601,7 @@
     align-items: center;
     justify-content: center;
 }
+
 .emptyIcon svg {
     width: 100%;
     height: 100%;
@@ -1550,6 +1613,7 @@
     color: rgba(255, 255, 255, 0.7);
     margin-bottom: 8px;
 }
+
 .emptySubtext {
     font-size: 14px;
     color: rgba(255, 255, 255, 0.4);
@@ -1567,17 +1631,18 @@
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
 }
+
 .player .dragHandle:active {
     cursor: grabbing;
     transform: scaleX(1.2);
     background: rgba(255, 255, 255, 0.5);
 }
+
 .player .dragHandle:hover {
     background: rgba(255, 255, 255, 0.5);
     width: 64px;
     transition: all 0.65s ease;
 }
-
 
 @keyframes fadeIn {
     from {
