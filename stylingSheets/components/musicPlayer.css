@@ -1168,9 +1168,6 @@
 *
 *
 **/
-
-
-
 .player .main {
     padding: 0 0.5rem 0.45rem;
     display: flex;
@@ -1220,6 +1217,8 @@
     justify-content: center;
     z-index: 2;
     transition: none;
+    
+    width: 100%;
 }
 
 .player .coverWrapper.is-collapsing .coverImageContainer {
@@ -1228,11 +1227,11 @@
 
 .player .coverWrapper.collapsed .coverImageContainer {
     position: absolute;
-    left: 16px;
+    left: 0 !important;
     top: 50%;
     width: 80px;
     height: 80px;
-    transform: translateY(-50%);
+  /**  transform: translateY(-50%);**/
     inset: auto;
 }
 
@@ -1248,12 +1247,14 @@
 }
 
 .player .coverWrapper.is-collapsing .cover {
-    transition: border-radius 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: border-radius 0.35s cubic-bezier(0.4, 0, 0.2, 1), object-fit 0.45s ease-in-out;
 }
 
 .player .coverWrapper.collapsed .cover {
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    
+    object-fit: cover;
 }
 
 .player .miniHeader {
