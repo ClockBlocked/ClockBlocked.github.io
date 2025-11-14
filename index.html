@@ -368,7 +368,10 @@
         <div class="scroller musicPlayerScroller">
           <div class="slide musicPlayerSlide">
             <button class="curtain musicPlayerCurtain" tabindex="-1" data-overlay-close="music-player"></button>
+
+<!-- Visual Drawer starts here -->
             <div class="inner musicPlayerInner">
+                <!-- Drag Handle & Close Button -->
                 <div class="dragArea">
                     <button autofocus class="dragHandle musicPlayerDragHandle">
                         <span></span>
@@ -380,6 +383,10 @@
                         <line x1="6" y1="6" x2="18" y2="18"></line>
                     </svg>
                 </button>
+                
+                <!-- TOP Half of drawer - always visible
+                                        ( Expanded & Collapsed Header State )
+                                        -->
                 <div class="nowPlaying musicPlayerNowPlaying">
                     <div class="coverWrapper musicPlayerCoverWrapper">
                         <div class="customShapeDivider">
@@ -393,7 +400,8 @@
                         <img src="https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/stable/global/content/images/albumCovers/placeholder.png" alt="Album Cover" class="cover" id="music-player-cover" />
                         <div class="coverGlow musicPlayerCoverGlow"></div>
 
-                        <!-- ACTION BUTTONS OVERLAY - NEW POSITION -->
+                        <!-- Action Buttons
+                            ( Overlaying the Album Cover ) -->
                         <div class="actions musicPlayerActions albumOverlayActions">
                             <button class="actionBtn" id="music-player-shuffle" title="Shuffle">
                                 <svg viewBox="0 0 24 24" fill="currentColor">...</svg>
@@ -410,6 +418,11 @@
                         </div>
                     </div>
                 </div>
+                
+                <!-- Area DIRECTLY BELOW the Cover Album
+                    ( Playback Controls - Now Playing Tab )
+                    ( Song Lists - Recently Played Tab & Up Next Queue Tab )
+                    -->
                 <div class="content musicPlayerContent">
                     <div class="panel musicPlayerPanel active" data-tab="playing">
                         <div class="main">
@@ -514,6 +527,8 @@
                         </ul>
                     </div>
                 </div>
+                
+                <!-- Dot Indicators for Tabs -->
                 <div class="dotIndicators">
                     <button class="dotIndicator active" data-tab="playing" aria-label="Now Playing">
                         <span class="dotLabel">Now Playing</span>
