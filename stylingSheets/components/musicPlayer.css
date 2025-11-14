@@ -1382,6 +1382,7 @@
     display: flex;
 }
 
+/**
 .panel[data-tab="playing"] {
   overflow: hidden !important;
 }
@@ -1390,7 +1391,7 @@
 .panel[data-tab="queue"] {
   overflow-y: auto !important;
 }
-
+**/
 
 
 .player .listContainer {
