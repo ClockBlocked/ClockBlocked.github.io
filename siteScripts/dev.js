@@ -1,16 +1,20 @@
 const MusicPlayerEnhanced = {
     state: {
-        currentTab: 'nowPlaying',
+        currentTab: 0,
         isCollapsed: false,
-        scrollThreshold: 100,
+        isTransitioning: false,
+        scrollThreshold: 150,
         isDragging: false,
         dragStartY: 0,
         dragDistance: 0,
-        lastScrollTop: 0
+        lastScrollTop: 0,
+        scrollTimeout: null,
+        transitionTimeout: null
     },
 
     init() {
         this.cacheDOMElements();
+        this.injectRequiredHTML();
         this.bindEvents();
         this.setupObservers();
     },
@@ -22,7 +26,36 @@ const MusicPlayerEnhanced = {
         this.panels = document.querySelectorAll('.player .panel');
         this.dotIndicators = document.querySelectorAll('.player .dotIndicator');
         this.dragHandle = document.querySelector('.player .dragHandle');
-        this.lists = document.querySelectorAll('.player .list');
+    },
+
+    injectRequiredHTML() {
+        if (!this.coverWrapper || !this.cover) return;
+
+        if (!this.cover.parentElement.classList.contains('coverImageContainer')) {
+            const imageContainer = document.createElement('div');
+            imageContainer.className = 'coverImageContainer';
+            this.cover.parentNode.insertBefore(imageContainer, this.cover);
+            imageContainer.appendChild(this.cover);
+        }
+
+        const existingGlow = this.coverWrapper.querySelector('.coverGlow');
+        if (!existingGlow) {
+            const glow = document.createElement('div');
+            glow.className = 'coverGlow';
+            this.coverWrapper.insertBefore(glow, this.coverWrapper.firstChild);
+        }
+
+        this.panels.forEach(panel => {
+            const list = panel.querySelector('.list');
+            if (list && !list.parentElement.classList.contains('listContainer')) {
+                const listContainer = document.createElement('div');
+                listContainer.className = 'listContainer';
+                list.parentNode.insertBefore(listContainer, list);
+                listContainer.appendChild(list);
+            }
+        });
+
+        this.updateMiniHeaderElements();
     },
 
     bindEvents() {
@@ -30,44 +63,53 @@ const MusicPlayerEnhanced = {
             dot.addEventListener('click', () => this.switchTab(index));
         });
 
-        this.lists.forEach(list => {
-            list.addEventListener('scroll', () => this.handleListScroll(list));
+        this.panels.forEach((panel, index) => {
+            const listContainer = panel.querySelector('.listContainer');
+            if (listContainer) {
+                listContainer.addEventListener('scroll', () => this.handleScroll(listContainer, index));
+            }
         });
 
         if (this.dragHandle) {
             this.dragHandle.addEventListener('mousedown', (e) => this.handleDragStart(e));
-            this.dragHandle.addEventListener('touchstart', (e) => this.handleDragStart(e));
+            this.dragHandle.addEventListener('touchstart', (e) => this.handleDragStart(e), { passive: false });
         }
 
         if (this.coverWrapper) {
-            this.coverWrapper.addEventListener('click', () => {
-                if (this.state.isCollapsed && this.state.currentTab !== 0) {
+            this.coverWrapper.addEventListener('click', (e) => {
+                if (this.state.isCollapsed && this.state.currentTab !== 0 && !this.state.isTransitioning) {
+                    if (e.target.closest('.miniControlBtn')) return;
                     this.expandHeader();
                 }
             });
         }
 
         document.addEventListener('mousemove', (e) => this.handleDragMove(e));
-        document.addEventListener('touchmove', (e) => this.handleDragMove(e));
+        document.addEventListener('touchmove', (e) => this.handleDragMove(e), { passive: false });
         document.addEventListener('mouseup', () => this.handleDragEnd());
         document.addEventListener('touchend', () => this.handleDragEnd());
     },
 
     setupObservers() {
-        const resizeObserver = new ResizeObserver(() => {
-            if (this.state.isCollapsed) {
-                this.updateCollapsedState();
-            }
+        const mutationObserver = new MutationObserver(() => {
+            this.addListItemInteractions();
         });
-        
-        if (this.coverWrapper) {
-            resizeObserver.observe(this.coverWrapper);
-        }
+
+        this.panels.forEach(panel => {
+            mutationObserver.observe(panel, {
+                childList: true,
+                subtree: true
+            });
+        });
+
+        this.addListItemInteractions();
     },
 
     switchTab(index) {
-        this.state.currentTab = index;
+        if (this.state.isTransitioning) return;
         
+        this.state.currentTab = index;
+
         this.dotIndicators.forEach((dot, i) => {
             if (i === index) {
                 dot.classList.add('active');
@@ -87,8 +129,10 @@ const MusicPlayerEnhanced = {
         if (index === 0) {
             this.expandHeader();
         } else {
-            const activeList = this.panels[index].querySelector('.list');
-            if (activeList && activeList.scrollTop > this.state.scrollThreshold) {
+            const activePanel = this.panels[index];
+            const listContainer = activePanel.querySelector('.listContainer');
+            
+            if (listContainer && listContainer.scrollTop > this.state.scrollThreshold) {
                 this.collapseHeader();
             } else {
                 this.expandHeader();
@@ -96,81 +140,78 @@ const MusicPlayerEnhanced = {
         }
     },
 
-    handleListScroll(list) {
-        const currentScrollTop = list.scrollTop;
-        const isScrollingDown = currentScrollTop > this.state.lastScrollTop;
-        this.state.lastScrollTop = currentScrollTop;
-
-        if (this.state.currentTab === 0) {
+    handleScroll(listContainer, tabIndex) {
+        if (this.state.isTransitioning || this.state.currentTab !== tabIndex || tabIndex === 0) {
             return;
         }
 
-        if (currentScrollTop > this.state.scrollThreshold && isScrollingDown) {
-            if (!this.state.isCollapsed) {
+        const currentScrollTop = listContainer.scrollTop;
+        const isScrollingDown = currentScrollTop > this.state.lastScrollTop;
+        const scrollDelta = Math.abs(currentScrollTop - this.state.lastScrollTop);
+        
+        this.state.lastScrollTop = currentScrollTop;
+
+        if (scrollDelta < 5) return;
+
+        clearTimeout(this.state.scrollTimeout);
+
+        this.state.scrollTimeout = setTimeout(() => {
+            if (currentScrollTop > this.state.scrollThreshold && isScrollingDown && !this.state.isCollapsed) {
                 this.collapseHeader();
-            }
-        } else if (currentScrollTop < 50) {
-            if (this.state.isCollapsed) {
+            } else if (currentScrollTop < 50 && !isScrollingDown && this.state.isCollapsed) {
                 this.expandHeader();
             }
-        }
-
-        this.applyParallaxEffect(list);
-    },
-
-    applyParallaxEffect(list) {
-        if (!this.coverWrapper || this.state.currentTab === 0) return;
-
-        const scrollTop = list.scrollTop;
-        const maxScroll = this.state.scrollThreshold;
-        const scrollPercentage = Math.min(scrollTop / maxScroll, 1);
-        
-        const scale = 1 - (scrollPercentage * 0.7);
-        const opacity = 1 - (scrollPercentage * 0.15);
-        
-        if (!this.state.isCollapsed && scrollPercentage < 1) {
-            this.cover.style.transform = `scale(${scale})`;
-            this.cover.style.opacity = opacity;
-        }
+        }, 50);
     },
 
     collapseHeader() {
-        if (this.state.isCollapsed || !this.coverWrapper) return;
+        if (this.state.isCollapsed || this.state.isTransitioning || !this.coverWrapper) return;
         
+        this.state.isTransitioning = true;
         this.state.isCollapsed = true;
-        this.coverWrapper.classList.add('collapsing');
-        
+
         requestAnimationFrame(() => {
-            this.coverWrapper.classList.add('collapsed');
+            this.coverWrapper.classList.add('is-collapsing');
             
-            setTimeout(() => {
-                this.coverWrapper.classList.remove('collapsing');
-                this.updateMiniHeader();
-            }, 400);
+            requestAnimationFrame(() => {
+                this.coverWrapper.classList.add('collapsed');
+
+                clearTimeout(this.state.transitionTimeout);
+                this.state.transitionTimeout = setTimeout(() => {
+                    this.coverWrapper.classList.remove('is-collapsing');
+                    this.state.isTransitioning = false;
+                }, 350);
+            });
         });
     },
 
     expandHeader() {
-        if (!this.state.isCollapsed || !this.coverWrapper) return;
+        if (!this.state.isCollapsed || this.state.isTransitioning || !this.coverWrapper) return;
         
+        this.state.isTransitioning = true;
         this.state.isCollapsed = false;
-        this.coverWrapper.classList.add('collapsing');
-        
+
         requestAnimationFrame(() => {
-            this.coverWrapper.classList.remove('collapsed');
-            this.cover.style.transform = '';
-            this.cover.style.opacity = '';
+            this.coverWrapper.classList.add('is-collapsing');
             
-            setTimeout(() => {
-                this.coverWrapper.classList.remove('collapsing');
-            }, 400);
+            requestAnimationFrame(() => {
+                this.coverWrapper.classList.remove('collapsed');
+
+                clearTimeout(this.state.transitionTimeout);
+                this.state.transitionTimeout = setTimeout(() => {
+                    this.coverWrapper.classList.remove('is-collapsing');
+                    this.state.isTransitioning = false;
+                }, 350);
+            });
         });
     },
 
-    updateMiniHeader() {
+    updateMiniHeaderElements() {
+        if (!this.coverWrapper) return;
+
         const titleElement = document.querySelector('.player .title');
         const artistElement = document.querySelector('.player .artist');
-        
+
         let miniHeader = this.coverWrapper.querySelector('.miniHeader');
         if (!miniHeader) {
             miniHeader = document.createElement('div');
@@ -182,8 +223,8 @@ const MusicPlayerEnhanced = {
         const artist = artistElement ? artistElement.textContent : '';
 
         miniHeader.innerHTML = `
-            <div class="miniTitle">${title}</div>
-            <div class="miniArtist">${artist}</div>
+            <div class="miniTitle">${this.escapeHTML(title)}</div>
+            <div class="miniArtist">${this.escapeHTML(artist)}</div>
         `;
 
         let miniControls = this.coverWrapper.querySelector('.miniControls');
@@ -193,31 +234,38 @@ const MusicPlayerEnhanced = {
             this.coverWrapper.appendChild(miniControls);
         }
 
-        const isPaused = !this.player.classList.contains('isPlaying');
-        const playIcon = isPaused ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-14 9V3z"/></svg>' : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>';
+        const isPaused = !this.player || !this.player.classList.contains('isPlaying');
+        const playIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-14 9V3z"/></svg>';
+        const pauseIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>';
 
         miniControls.innerHTML = `
             <button class="miniControlBtn" onclick="MusicPlayerEnhanced.togglePlayPause()">
-                ${playIcon}
+                ${isPaused ? playIcon : pauseIcon}
             </button>
         `;
+    },
+
+    escapeHTML(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
     },
 
     togglePlayPause() {
         const primaryBtn = document.querySelector('.player .controlBtn.primary');
         if (primaryBtn) {
             primaryBtn.click();
+            setTimeout(() => this.updateMiniHeaderElements(), 100);
         }
     },
 
     handleDragStart(e) {
-        if (!this.coverWrapper || this.state.currentTab === 0) return;
+        if (!this.coverWrapper || this.state.currentTab === 0 || this.state.isTransitioning) return;
         
+        e.preventDefault();
         this.state.isDragging = true;
         this.state.dragStartY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
         this.state.dragDistance = 0;
-        
-        this.coverWrapper.style.transition = 'none';
     },
 
     handleDragMove(e) {
@@ -233,23 +281,12 @@ const MusicPlayerEnhanced = {
         if (!this.state.isCollapsed && this.state.dragDistance > 0) {
             return;
         }
-        
-        const dragThreshold = 60;
-        const progress = Math.min(Math.abs(this.state.dragDistance) / dragThreshold, 1);
-        
-        if (!this.state.isCollapsed) {
-            const currentHeight = 40;
-            const targetHeight = 100;
-            const height = currentHeight - ((currentHeight - targetHeight) * progress);
-            this.coverWrapper.style.height = `${height}vh`;
-        }
     },
 
     handleDragEnd() {
         if (!this.state.isDragging || !this.coverWrapper) return;
         
         this.state.isDragging = false;
-        this.coverWrapper.style.transition = '';
         
         const dragThreshold = 60;
         
@@ -259,17 +296,9 @@ const MusicPlayerEnhanced = {
             } else if (this.state.dragDistance > 0 && this.state.isCollapsed) {
                 this.expandHeader();
             }
-        } else {
-            this.coverWrapper.style.height = '';
         }
         
         this.state.dragDistance = 0;
-    },
-
-    updateCollapsedState() {
-        if (this.state.isCollapsed) {
-            this.updateMiniHeader();
-        }
     },
 
     addListItemInteractions() {
@@ -277,31 +306,28 @@ const MusicPlayerEnhanced = {
         
         listItems.forEach(item => {
             const artwork = item.querySelector('.item-artwork');
-            if (artwork && !artwork.querySelector('.item-play-overlay')) {
+            if (!artwork) return;
+
+            let wrapper = artwork.parentElement;
+            if (!wrapper.classList.contains('item-artwork-wrapper')) {
+                wrapper = document.createElement('div');
+                wrapper.className = 'item-artwork-wrapper';
+                artwork.parentNode.insertBefore(wrapper, artwork);
+                wrapper.appendChild(artwork);
+            }
+
+            if (!wrapper.querySelector('.item-play-overlay')) {
                 const overlay = document.createElement('div');
                 overlay.className = 'item-play-overlay';
                 overlay.innerHTML = '<svg viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>';
-                artwork.parentElement.style.position = 'relative';
-                artwork.parentElement.appendChild(overlay);
+                wrapper.appendChild(overlay);
             }
         });
     }
 };
 
-
-
-
-document.addEventListener('DOMContentLoaded', () => {
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => MusicPlayerEnhanced.init());
+} else {
     MusicPlayerEnhanced.init();
-});
-
-const originalPanelObserver = new MutationObserver(() => {
-    MusicPlayerEnhanced.addListItemInteractions();
-});
-
-if (document.querySelector('.player .main')) {
-    originalPanelObserver.observe(document.querySelector('.player .main'), {
-        childList: true,
-        subtree: true
-    });
 }
