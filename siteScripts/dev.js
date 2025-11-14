@@ -61,8 +61,8 @@ const MusicPlayerEnhanced = {
         this.panels = document.querySelectorAll('.player .panel');
         
         // Tabs 
-        this.queueTab = document.querySelector('.panel[data-tab="playlist"]');
-        this.recentTab = document.querySelector('.panel[data-tab="queue"]');
+        this.recentTab = document.querySelector('.panel[data-tab="playlist"]');
+        this.queueTab = document.querySelector('.panel[data-tab="queue"]');
         
         
         // The dot indicators at bottom for switching between tabs
