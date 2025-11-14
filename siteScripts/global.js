@@ -1512,7 +1512,7 @@ const musicPlayer = {
         if (appState.currentTab !== MUSIC_PLAYER.tabs.playing) {
           musicPlayer.mainPlayer.switchTab(MUSIC_PLAYER.tabs.playing);
         }
-      }, 10000);
+      }, 30000);
     },
 
     stopInactivityTimer: () => {
