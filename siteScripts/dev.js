@@ -4,7 +4,7 @@ const MusicPlayerEnhanced = {
         isCollapsed: false,
         isTransitioning: false,
         scrollThreshold: 150,
-        isDragging: false,
+        isDraggingHeader: false,
         dragStartY: 0,
         dragDistance: 0,
         lastScrollTop: 0,
@@ -70,12 +70,10 @@ const MusicPlayerEnhanced = {
             }
         });
 
-        if (this.dragHandle) {
-            this.dragHandle.addEventListener('mousedown', (e) => this.handleDragStart(e));
-            this.dragHandle.addEventListener('touchstart', (e) => this.handleDragStart(e), { passive: false });
-        }
-
         if (this.coverWrapper) {
+            this.coverWrapper.addEventListener('mousedown', (e) => this.handleHeaderDragStart(e));
+            this.coverWrapper.addEventListener('touchstart', (e) => this.handleHeaderDragStart(e), { passive: false });
+            
             this.coverWrapper.addEventListener('click', (e) => {
                 if (this.state.isCollapsed && this.state.currentTab !== 0 && !this.state.isTransitioning) {
                     if (e.target.closest('.miniControlBtn')) return;
@@ -84,10 +82,10 @@ const MusicPlayerEnhanced = {
             });
         }
 
-        document.addEventListener('mousemove', (e) => this.handleDragMove(e));
-        document.addEventListener('touchmove', (e) => this.handleDragMove(e), { passive: false });
-        document.addEventListener('mouseup', () => this.handleDragEnd());
-        document.addEventListener('touchend', () => this.handleDragEnd());
+        document.addEventListener('mousemove', (e) => this.handleHeaderDragMove(e));
+        document.addEventListener('touchmove', (e) => this.handleHeaderDragMove(e), { passive: false });
+        document.addEventListener('mouseup', () => this.handleHeaderDragEnd());
+        document.addEventListener('touchend', () => this.handleHeaderDragEnd());
     },
 
     setupObservers() {
@@ -259,17 +257,21 @@ const MusicPlayerEnhanced = {
         }
     },
 
-    handleDragStart(e) {
+    handleHeaderDragStart(e) {
         if (!this.coverWrapper || this.state.currentTab === 0 || this.state.isTransitioning) return;
         
-        e.preventDefault();
-        this.state.isDragging = true;
+        if (e.target.closest('.miniControlBtn')) return;
+        
+        const targetElement = e.target;
+        if (!targetElement.closest('.coverWrapper')) return;
+
+        this.state.isDraggingHeader = true;
         this.state.dragStartY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
         this.state.dragDistance = 0;
     },
 
-    handleDragMove(e) {
-        if (!this.state.isDragging || !this.coverWrapper) return;
+    handleHeaderDragMove(e) {
+        if (!this.state.isDraggingHeader || !this.coverWrapper) return;
         
         const currentY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
         this.state.dragDistance = currentY - this.state.dragStartY;
@@ -283,10 +285,10 @@ const MusicPlayerEnhanced = {
         }
     },
 
-    handleDragEnd() {
-        if (!this.state.isDragging || !this.coverWrapper) return;
+    handleHeaderDragEnd() {
+        if (!this.state.isDraggingHeader || !this.coverWrapper) return;
         
-        this.state.isDragging = false;
+        this.state.isDraggingHeader = false;
         
         const dragThreshold = 60;
         

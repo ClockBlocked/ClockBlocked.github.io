@@ -1169,6 +1169,18 @@
 *
 **/
 
+
+
+.player .main {
+    padding: 0 0.5rem 0.45rem;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
+}
+
 .player .coverWrapper {
     position: relative;
     width: 100%;
@@ -1363,6 +1375,7 @@
     overflow: hidden;
     position: relative;
     animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    min-height: 0;
 }
 
 .player .panel.active {
@@ -1375,6 +1388,7 @@
     overflow-x: hidden;
     position: relative;
     overflow-anchor: none;
+    min-height: 0;
 }
 
 .list {
@@ -1383,6 +1397,7 @@
     margin: 0;
     display: flex;
     flex-direction: column;
+    min-height: 100%;
 }
 
 .list::-webkit-scrollbar {
@@ -1629,19 +1644,17 @@
     border: none;
     cursor: grab;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
+    transform: translateX(50%);
 }
 
 .player .dragHandle:active {
     cursor: grabbing;
-    transform: scaleX(1.2);
-    background: rgba(255, 255, 255, 0.5);
+    transform: scaleX(1.2) translateX(50%);
 }
 
 .player .dragHandle:hover {
     background: rgba(255, 255, 255, 0.5);
     width: 64px;
-    transition: all 0.65s ease;
 }
 
 @keyframes fadeIn {
