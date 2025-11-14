@@ -328,8 +328,54 @@ const MusicPlayerEnhanced = {
     }
 };
 
+
+
+
+
+
+
+
+
+
+////////////////////////////////////////////////////////////
+////////////////////////////  Page Loader Events ///////////
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => MusicPlayerEnhanced.init());
 } else {
     MusicPlayerEnhanced.init();
 }
+////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * 
+ *  C R E A T E D  B Y
+ * 
+ *  William Hanson 
+ * 
+ *  Chevrolay@Outlook.com
+ * 
+ *  m.me/Chevrolay
+ * 
+ */
