@@ -552,4 +552,4 @@ if (typeof window !== 'undefined') {
 }
 
 // Remove export default for browser compatibility
-// export default notifications;
+ export default notifications;
