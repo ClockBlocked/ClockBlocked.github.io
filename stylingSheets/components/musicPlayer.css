@@ -1693,7 +1693,7 @@
   height: auto !important;
 }
 
-.player .nowPlaying {
+.player .list.collapsed .nowPlaying {
   height: 0vh !important;
   transition: 0.55s ease-in-out;
 }
