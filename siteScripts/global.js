@@ -2730,31 +2730,32 @@ loadAudioFile: async (songData) => {
         musicPlayer.state.addListItemInteractions();
     },
     
-    handleScroll(listContainer, tabIndex) {
-        const tabName = this.panels[tabIndex]?.dataset.tab;
-        if (musicPlayer.state.isTransitioning || appState.currentTab !== tabName || tabName === MUSIC_PLAYER.tabs.playing) {
-            return;
-        }
-        
-        const currentScrollTop = listContainer.scrollTop;
-        const lastScroll = musicPlayer.state.lastScrollTop[tabName] || 0;
-        const isScrollingDown = currentScrollTop > lastScroll;
-        const scrollDelta = Math.abs(currentScrollTop - lastScroll);
-        
-        musicPlayer.state.lastScrollTop[tabName] = currentScrollTop;
-        
-        if (scrollDelta < 5) return;
-        
-        clearTimeout(musicPlayer.state.scrollTimeout);
-        
-        musicPlayer.state.scrollTimeout = setTimeout(() => {
-            if (currentScrollTop > musicPlayer.state.scrollThreshold && isScrollingDown && !musicPlayer.state.isCollapsed) {
-                musicPlayer.state.collapseHeader();
-            } else if (currentScrollTop < 50 && !isScrollingDown && musicPlayer.state.isCollapsed) {
-                musicPlayer.state.expandHeader();
-            }
-        }, 50);
-    },
+handleScroll(listContainer, tabIndex) {
+    const tabName = this.panels[tabIndex]?.dataset.tab;
+    if (musicPlayer.state.isTransitioning || appState.currentTab !== tabName || tabName === MUSIC_PLAYER.tabs.playing) {
+        return;
+    }
+    
+    const currentScrollTop = listContainer.scrollTop;
+    const lastScroll = musicPlayer.state.lastScrollTop[tabName] || 0;
+    const isScrollingDown = currentScrollTop > lastScroll;
+    const scrollDelta = Math.abs(currentScrollTop - lastScroll);
+    
+    musicPlayer.state.lastScrollTop[tabName] = currentScrollTop;
+    
+    if (scrollDelta < 5) return;
+    
+    clearTimeout(musicPlayer.state.scrollTimeout);
+    
+    // IMMEDIATE collapse on ANY downward scroll when expanded
+    if (isScrollingDown && !musicPlayer.state.isCollapsed && currentScrollTop > 0) {
+        musicPlayer.state.collapseHeader();
+    } 
+    // Expand when scrolled back to top
+    else if (currentScrollTop === 0 && musicPlayer.state.isCollapsed) {
+        musicPlayer.state.expandHeader();
+    }
+},
     
   updateListHeights: function() {
     const coverWrapper = this.coverWrapper;
