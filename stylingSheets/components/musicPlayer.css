@@ -1689,7 +1689,7 @@
 .player .list.is-collapsing {
   transition: height 0.55s ease-in-out;
 }
-.player .list.collapsed {
+.player .list.collapsed .list {
   height: auto !important;
 }
 
