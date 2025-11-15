@@ -1686,14 +1686,69 @@
 
 
 
-.player .list.is-collapsing {
-  transition: height 0.55s ease-in-out;
-}
-.player .list.collapsed .list {
-  height: 100% !important;
+
+
+
+/* List height transitions */
+.player .list {
+    height: 500px; /* Default height */
+    transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
 }
 
-.player .list.collapsed .nowPlaying {
-  height: 0vh !important;
-  transition: 0.55s ease-in-out;
+/* Expanded height when cover is collapsed */
+.player .coverWrapper.collapsed ~ .content .list {
+    height: calc(100vh - 200px) !important;
+    min-height: 400px;
+}
+
+/* Ensure list containers take full available space */
+.player .listContainer {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+/* Adjust panel layout for better space utilization */
+.player .panel[data-tab="playlist"],
+.player .panel[data-tab="queue"] {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+}
+
+/* Improve scrolling behavior */
+.player .list {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Handle the transition state */
+.player .coverWrapper.is-collapsing ~ .content .list {
+    transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Adjust for mobile screens */
+@media (max-width: 768px) {
+    .player .list {
+        height: 400px; /* Smaller default on mobile */
+    }
+    
+    .player .coverWrapper.collapsed ~ .content .list {
+        height: calc(100vh - 180px) !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .player .list {
+        height: 350px; /* Even smaller on very small screens */
+    }
+    
+    .player .coverWrapper.collapsed ~ .content .list {
+        height: calc(100vh - 160px) !important;
+    }
 }
