@@ -1701,13 +1701,13 @@
     transition: none;
 }
 
-.player .nowPlaying.is-collapsing {
+.player .coverWrapper.is-collapsing {
     transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
                 min-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
                 margin-bottom 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.player .nowPlaying.collapsed {
+.player .coverWrapper.collapsed {
     position: sticky;
     top: 0;
     height: 100px;
@@ -1728,13 +1728,13 @@
 }
 
 /* When collapsed, content should expand to fill available space */
-.player .nowPlaying.collapsed ~ .content {
+.player .coverWrapper.collapsed ~ .content {
     flex: 1;
     margin-top: 0; /* Reset any existing margin */
 }
 
 /* Ensure panels expand properly when header is collapsed */
-.player .nowPlaying.collapsed ~ .content .panel.active {
+.player .coverWrapper.collapsed ~ .content .panel.active {
     flex: 1;
     min-height: 0;
     display: flex;
@@ -1742,35 +1742,35 @@
 }
 
 /* Make sure list containers fill available space */
-.player .nowPlaying.collapsed ~ .content .panel[data-tab="playlist"] .listContainer,
-.player .nowPlaying.collapsed ~ .content .panel[data-tab="queue"] .listContainer {
+.player .coverWrapper.collapsed ~ .content .panel[data-tab="playlist"] .listContainer,
+.player .coverWrapper.collapsed ~ .content .panel[data-tab="queue"] .listContainer {
     flex: 1;
     min-height: 0;
     overflow-y: auto;
 }
 
-.player .nowPlaying.collapsed ~ .content .panel[data-tab="playlist"] .list,
-.player .nowPlaying.collapsed ~ .content .panel[data-tab="queue"] .list {
+.player .coverWrapper.collapsed ~ .content .panel[data-tab="playlist"] .list,
+.player .coverWrapper.collapsed ~ .content .panel[data-tab="queue"] .list {
     height: 100%;
     max-height: none; /* Remove max-height constraint */
     min-height: 300px;
 }
 
 /* Smooth transitions during collapse/expand */
-.player .nowPlaying.is-collapsing ~ .content .panel[data-tab="playlist"] .listContainer,
-.player .nowPlaying.is-collapsing ~ .content .panel[data-tab="queue"] .listContainer {
+.player .coverWrapper.is-collapsing ~ .content .panel[data-tab="playlist"] .listContainer,
+.player .coverWrapper.is-collapsing ~ .content .panel[data-tab="queue"] .listContainer {
     transition: flex 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.player .nowPlaying.is-collapsing ~ .content .panel[data-tab="playlist"] .list,
-.player .nowPlaying.is-collapsing ~ .content .panel[data-tab="queue"] .list {
+.player .coverWrapper.is-collapsing ~ .content .panel[data-tab="playlist"] .list,
+.player .coverWrapper.is-collapsing ~ .content .panel[data-tab="queue"] .list {
     transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1), 
                 max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Adjust for mobile screens */
 @media (max-width: 480px) {
-    .player .nowPlaying.collapsed {
+    .player .coverWrapper.collapsed {
         height: 90px;
         min-height: 90px;
         margin-bottom: 12px;
@@ -1778,7 +1778,14 @@
 }
 
 @media (min-width: 768px) {
-    .player .nowPlaying.collapsed {
+    .player .coverWrapper.collapsed {
         margin-bottom: 20px;
     }
+}
+
+
+
+.panel(:not)[data-tab="playing"] .nowPlaying {
+  height: 0 !important;
+  transition: height 0.55s ease-in-out;
 }
