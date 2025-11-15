@@ -1690,7 +1690,7 @@
   transition: height 0.55s ease-in-out;
 }
 .player .list.collapsed .list {
-  height: auto !important;
+  height: 100% !important;
 }
 
 .player .list.collapsed .nowPlaying {
