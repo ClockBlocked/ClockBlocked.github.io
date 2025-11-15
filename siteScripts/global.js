@@ -2749,47 +2749,65 @@ loadAudioFile: async (songData) => {
         }, 50);
     },
     
-    collapseHeader() {
-        if (musicPlayer.state.isCollapsed || musicPlayer.state.isTransitioning || !this.coverWrapper) return;
-        
-        musicPlayer.state.isTransitioning = true;
-        musicPlayer.state.isCollapsed = true;
-        
-        requestAnimationFrame(() => {
-            this.coverWrapper.classList.add('is-collapsing');
-            
-            requestAnimationFrame(() => {
-                this.coverWrapper.classList.add('collapsed');
-                
-                clearTimeout(musicPlayer.state.transitionTimeout);
-                musicPlayer.state.transitionTimeout = setTimeout(() => {
-                    this.coverWrapper.classList.remove('is-collapsing');
-                    musicPlayer.state.isTransitioning = false;
-                }, 350);
-            });
-        });
-    },
+collapseHeader() {
+    if (musicPlayer.state.isCollapsed || musicPlayer.state.isTransitioning || !this.coverWrapper) return;
     
-    expandHeader() {
-        if (!musicPlayer.state.isCollapsed || musicPlayer.state.isTransitioning || !this.coverWrapper) return;
-        
-        musicPlayer.state.isTransitioning = true;
-        musicPlayer.state.isCollapsed = false;
+    musicPlayer.state.isTransitioning = true;
+    musicPlayer.state.isCollapsed = true;
+    
+    const nowPlayingElement = QUERY('.nowPlaying');
+    
+    requestAnimationFrame(() => {
+        this.coverWrapper.classList.add('is-collapsing');
+        if (nowPlayingElement) {
+            nowPlayingElement.classList.add('is-collapsing');
+        }
         
         requestAnimationFrame(() => {
-            this.coverWrapper.classList.add('is-collapsing');
+            this.coverWrapper.classList.add('collapsed');
+            if (nowPlayingElement) {
+                nowPlayingElement.classList.add('collapsed');
+                nowPlayingElement.classList.remove('is-collapsing');
+            }
             
-            requestAnimationFrame(() => {
-                this.coverWrapper.classList.remove('collapsed');
-                
-                clearTimeout(musicPlayer.state.transitionTimeout);
-                musicPlayer.state.transitionTimeout = setTimeout(() => {
-                    this.coverWrapper.classList.remove('is-collapsing');
-                    musicPlayer.state.isTransitioning = false;
-                }, 350);
-            });
+            clearTimeout(musicPlayer.state.transitionTimeout);
+            musicPlayer.state.transitionTimeout = setTimeout(() => {
+                this.coverWrapper.classList.remove('is-collapsing');
+                musicPlayer.state.isTransitioning = false;
+            }, 550);
         });
-    },
+    });
+},
+
+expandHeader() {
+    if (!musicPlayer.state.isCollapsed || musicPlayer.state.isTransitioning || !this.coverWrapper) return;
+    
+    musicPlayer.state.isTransitioning = true;
+    musicPlayer.state.isCollapsed = false;
+    
+    const nowPlayingElement = QUERY('.nowPlaying');
+    
+    requestAnimationFrame(() => {
+        this.coverWrapper.classList.add('is-collapsing');
+        if (nowPlayingElement) {
+            nowPlayingElement.classList.add('is-collapsing');
+        }
+        
+        requestAnimationFrame(() => {
+            this.coverWrapper.classList.remove('collapsed');
+            if (nowPlayingElement) {
+                nowPlayingElement.classList.remove('collapsed');
+                nowPlayingElement.classList.remove('is-collapsing');
+            }
+            
+            clearTimeout(musicPlayer.state.transitionTimeout);
+            musicPlayer.state.transitionTimeout = setTimeout(() => {
+                this.coverWrapper.classList.remove('is-collapsing');
+                musicPlayer.state.isTransitioning = false;
+            }, 550);
+        });
+    });
+},
     
     updateMiniHeaderElements() {
         if (!this.coverWrapper) return;
