@@ -21,7 +21,7 @@ USAGE:
 
 This file injects its CSS into <head> automatically. */
 
-const notifications = (() => {
+export const notifications = (() => {
     const GROUP_WINDOW = 5000; // 5 seconds grouping window
     const MAX_HISTORY_BEFORE_UNREAD = 10;
     
@@ -552,4 +552,4 @@ if (typeof window !== 'undefined') {
 }
 
 // Remove export default for browser compatibility
- export default notifications;
+// export default notifications;
