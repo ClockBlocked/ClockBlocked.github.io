@@ -57,20 +57,19 @@
   background: rgba(0, 0, 0, 0);
   backdrop-filter: blur(0px);
   -webkit-backdrop-filter: blur(0px);
-  transition: background 0.45s cubic-bezier(0.4, 0.0, 0.6, 1),
-              backdrop-filter 2s cubic-bezier(0.4, 0.0, 0.6, 1);
+  transition: background 0.3s cubic-bezier(0.4, 0.0, 0.6, 1),
+              backdrop-filter 0.3s cubic-bezier(0.4, 0.0, 0.6, 1);
 }
 
 .playerDrawer {
   position: fixed;
   bottom: 0;
-  margin: auto;
-  height: 75vh;
+  left: 0;
+  right: 0;
+  max-height: 90vh;
   transform: translateY(100%);
   transition: transform 0.5s cubic-bezier(0.68, -0.6, 0.32, 1.6);
   will-change: transform;
-  
-  width: 90vw;
 }
 
 .player.open .playerDrawer {
@@ -163,9 +162,13 @@
   border-radius: 20px 20px 0 0;
   box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.4);
   color: #adbac7;
-  min-height: 80vh;
+  height: 75vh;
   padding-top: 28px;
   position: relative;
+  
+    
+  width: 90vw;
+  margin: auto;
 }
 
 @media (min-width: 768px) {
@@ -661,8 +664,12 @@
 
 @media (max-width: 767px) {
   .drawerContent {
-    width: 100%;
     border-radius: 20px 20px 0 0;
+  margin: auto;
+  height: 75vh;
+    
+  width: 90vw;
+  
   }
   
   .headerArtwork {
