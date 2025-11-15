@@ -1810,3 +1810,816 @@
         margin-bottom: 12px;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.player {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s cubic-bezier(0.4, 0.0, 0.2, 1),
+              visibility 0s linear 0.35s,
+              z-index 0s linear 0.35s;
+}
+
+.player.open {
+  z-index: 9999;
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity 0.35s cubic-bezier(0.4, 0.0, 0.2, 1),
+              visibility 0s linear 0s,
+              z-index 0s linear 0s;
+}
+
+.player.closing {
+  transition: opacity 0.3s cubic-bezier(0.4, 0.0, 0.6, 1),
+              visibility 0s linear 0.3s,
+              z-index 0s linear 0.3s;
+}
+
+.player.isPlaying .primaryBtn .playIcon {
+  display: none;
+}
+
+.player.isPlaying .primaryBtn .pauseIcon {
+  display: block;
+}
+
+.playerBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0);
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  transition: background 0.35s cubic-bezier(0.4, 0.0, 0.2, 1),
+              backdrop-filter 0.35s cubic-bezier(0.4, 0.0, 0.2, 1);
+  pointer-events: none;
+  will-change: backdrop-filter;
+}
+
+.player.open .playerBackdrop {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  pointer-events: auto;
+}
+
+.player.closing .playerBackdrop {
+  background: rgba(0, 0, 0, 0);
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  transition: background 0.3s cubic-bezier(0.4, 0.0, 0.6, 1),
+              backdrop-filter 0.3s cubic-bezier(0.4, 0.0, 0.6, 1);
+}
+
+.playerDrawer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  max-height: 90vh;
+  transform: translateY(100%);
+  transition: transform 0.5s cubic-bezier(0.68, -0.6, 0.32, 1.6);
+  will-change: transform;
+}
+
+.player.open .playerDrawer {
+  transform: translateY(0);
+}
+
+.player.closing .playerDrawer {
+  transform: translateY(100%);
+  transition: transform 0.4s cubic-bezier(0.4, 0.0, 0.6, 1);
+}
+
+.drawerHandle {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 0;
+  z-index: 100;
+  cursor: grab;
+  touch-action: none;
+}
+
+.drawerHandle:active {
+  cursor: grabbing;
+}
+
+.handleBar {
+  width: 36px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 100px;
+  transition: background 0.2s cubic-bezier(0.4, 0.0, 0.2, 1),
+              width 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.drawerHandle:hover .handleBar {
+  background: rgba(255, 255, 255, 0.5);
+  width: 48px;
+}
+
+.drawerCloseBtn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 50%;
+  color: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s cubic-bezier(0.4, 0.0, 0.2, 1),
+              transform 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.drawerCloseBtn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.drawerCloseBtn:active {
+  transform: scale(0.95);
+}
+
+.drawerCloseBtn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.drawerScrollContainer {
+  max-height: 90vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.drawerScrollContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.drawerContent {
+  background: #2d333b;
+  border: 1.5px solid #444c56;
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.4);
+  color: #adbac7;
+  min-height: 80vh;
+  padding-top: 28px;
+  position: relative;
+}
+
+@media (min-width: 768px) {
+  .drawerContent {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+}
+
+.playerHeader {
+  padding: 20px 24px 16px;
+  position: relative;
+}
+
+.headerArtwork {
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto 20px;
+  position: relative;
+  aspect-ratio: 1;
+}
+
+.artworkImage {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  object-fit: cover;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.artworkGlow {
+  position: absolute;
+  inset: -20px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  filter: blur(40px);
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.headerActions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  padding: 0 8px;
+}
+
+.headerActionBtn {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 50%;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s cubic-bezier(0.4, 0.0, 0.2, 1),
+              color 0.2s cubic-bezier(0.4, 0.0, 0.2, 1),
+              transform 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.headerActionBtn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.headerActionBtn:active {
+  transform: scale(0.9);
+}
+
+.headerActionBtn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.miniPlayerHeader {
+  position: absolute;
+  top: 28px;
+  left: 0;
+  right: 0;
+  height: 64px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-8px);
+  transition: opacity 0.3s cubic-bezier(0.4, 0.0, 0.2, 1),
+              transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+  will-change: opacity, transform;
+}
+
+.miniPlayerHeader.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.miniArtwork {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+}
+
+.miniArtworkImage {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.miniInfo {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.miniTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #adbac7;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.miniArtist {
+  font-size: 12px;
+  color: #768390;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.miniPlayBtn {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 50%;
+  color: #adbac7;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s cubic-bezier(0.4, 0.0, 0.2, 1),
+              transform 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.miniPlayBtn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.miniPlayBtn:active {
+  transform: scale(0.9);
+}
+
+.miniPlayBtn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.miniPauseIcon {
+  display: none;
+}
+
+.player.isPlaying .miniPlayIcon {
+  display: none;
+}
+
+.player.isPlaying .miniPauseIcon {
+  display: block;
+}
+
+.playerBody {
+  padding: 0 24px 24px;
+  position: relative;
+}
+
+.bodyPanel {
+  display: none;
+}
+
+.bodyPanel.active {
+  display: block;
+}
+
+.nowPlayingSection {
+  padding: 16px 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.trackInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.trackTitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: #adbac7;
+  margin: 0 0 8px;
+  line-height: 1.2;
+}
+
+.trackArtist {
+  font-size: 16px;
+  color: #768390;
+  margin: 0 0 4px;
+}
+
+.trackAlbum {
+  font-size: 14px;
+  color: #636e7b;
+  margin: 0;
+}
+
+.trackFavoriteBtn {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: color 0.2s cubic-bezier(0.4, 0.0, 0.2, 1),
+              transform 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.trackFavoriteBtn:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.trackFavoriteBtn:active {
+  transform: scale(0.9);
+}
+
+.trackFavoriteBtn.favorited {
+  color: #ff6b6b;
+}
+
+.trackFavoriteBtn svg {
+  width: 24px;
+  height: 24px;
+}
+
+.progressControl {
+  padding: 24px 0;
+}
+
+.progressBarContainer {
+  position: relative;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  cursor: pointer;
+  margin-bottom: 8px;
+  touch-action: none;
+}
+
+.progressBuffer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
+  pointer-events: none;
+  width: 0%;
+  transition: width 0.1s linear;
+}
+
+.progressTrack {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: #adbac7;
+  border-radius: 2px;
+  width: 0%;
+  transition: width 0.1s linear;
+}
+
+.progressKnob {
+  position: absolute;
+  top: 50%;
+  right: -6px;
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  border-radius: 50%;
+  transform: translateY(-50%) scale(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.progressBarContainer:hover .progressKnob,
+.progressBarContainer.dragging .progressKnob {
+  transform: translateY(-50%) scale(1);
+}
+
+.progressTimes {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #768390;
+}
+
+.playbackControls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 0;
+}
+
+.playbackBtn {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: #adbac7;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.2s cubic-bezier(0.4, 0.0, 0.2, 1),
+              color 0.2s cubic-bezier(0.4, 0.0, 0.2, 1),
+              transform 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.playbackBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.playbackBtn:active {
+  transform: scale(0.9);
+}
+
+.playbackBtn svg {
+  width: 24px;
+  height: 24px;
+}
+
+.primaryBtn {
+  width: 64px;
+  height: 64px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.primaryBtn:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.primaryBtn svg {
+  width: 28px;
+  height: 28px;
+}
+
+.pauseIcon {
+  display: none;
+}
+
+.skipBtn {
+  position: relative;
+}
+
+.skipLabel {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  font-size: 9px;
+  font-weight: 700;
+  color: currentColor;
+  pointer-events: none;
+}
+
+.listHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.listHeaderTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: #adbac7;
+  margin: 0;
+}
+
+.listHeaderCount {
+  font-size: 14px;
+  color: #768390;
+}
+
+.listScrollContainer {
+  max-height: 400px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  margin: 0 -24px;
+  padding: 0 24px;
+}
+
+.listScrollContainer::-webkit-scrollbar {
+  width: 6px;
+}
+
+.listScrollContainer::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.listScrollContainer::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.listScrollContainer::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.musicPlayerList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.listEmpty {
+  padding: 40px 20px;
+  text-align: center;
+  color: #768390;
+  font-size: 14px;
+}
+
+.tabIndicators {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  padding: 20px 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tabIndicator {
+  position: relative;
+  padding: 8px 0;
+  background: transparent;
+  border: none;
+  color: #768390;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: color 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.tabIndicator:hover {
+  color: #adbac7;
+}
+
+.tabIndicator.active {
+  color: #adbac7;
+}
+
+.tabIndicator.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #adbac7;
+  border-radius: 1px;
+}
+
+.tabIndicatorLabel {
+  display: block;
+}
+
+@media (max-width: 767px) {
+  .drawerContent {
+    width: 100%;
+    border-radius: 20px 20px 0 0;
+  }
+  
+  .headerArtwork {
+    max-width: 280px;
+  }
+  
+  .trackTitle {
+    font-size: 18px;
+  }
+  
+  .trackArtist {
+    font-size: 14px;
+  }
+}
+
+@media (min-width: 768px) {
+  .playerDrawer {
+    max-width: 600px;
+    left: 50%;
+    transform: translate(-50%, 100%);
+  }
+  
+  .player.open .playerDrawer {
+    transform: translate(-50%, 0);
+  }
+  
+  .player.closing .playerDrawer {
+    transform: translate(-50%, 100%);
+  }
+}
