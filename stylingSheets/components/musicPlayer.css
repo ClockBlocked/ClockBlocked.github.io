@@ -1682,3 +1682,18 @@
         transform: translateY(0);
     }
 }
+
+
+
+
+.player .list.is-collapsing {
+  transition: height 0.55s ease-in-out;
+}
+.player .list.collapsed {
+  height: auto !important;
+}
+
+.player .nowPlaying {
+  height: 0vh !important;
+  transition: 0.55s ease-in-out;
+}
