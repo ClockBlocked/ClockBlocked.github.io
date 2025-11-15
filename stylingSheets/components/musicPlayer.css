@@ -1687,7 +1687,14 @@
 
 
 
-/* Position and size .nowPlaying when collapsed */
+
+
+
+
+
+
+
+/* .nowPlaying - default expanded state */
 .player .nowPlaying {
     position: relative;
     width: 100%;
@@ -1698,26 +1705,29 @@
     flex-direction: column;
     margin-bottom: 1rem;
     flex-shrink: 0;
+    z-index: 50;
     transition: none;
 }
 
-.player .coverWrapper.is-collapsing {
+/* Transitioning state */
+.player .nowPlaying.is-collapsing {
     transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
                 min-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
                 margin-bottom 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.player .coverWrapper.collapsed {
+/* Collapsed state - shrinks and sticks to top */
+.player .nowPlaying.collapsed {
     position: sticky;
     top: 0;
     height: 100px;
     min-height: 100px;
-    margin-bottom: 16px; /* Small gap between header and lists */
+    margin-bottom: 16px;
     z-index: 100;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-/* Ensure content area doesn't get hidden behind collapsed header */
+/* Content area - must be flex container */
 .player .content {
     position: relative;
     flex: 1;
@@ -1725,69 +1735,78 @@
     flex-direction: column;
     min-height: 0;
     z-index: 1;
+    overflow: hidden;
 }
 
-/* When collapsed, content should expand to fill available space */
-.player .coverWrapper.collapsed ~ .content {
+/* Panels must fill available space */
+.player .panel {
+    display: none;
+    flex-direction: column;
     flex: 1;
-    margin-top: 0; /* Reset any existing margin */
+    position: relative;
+    min-height: 0;
+    overflow: hidden;
 }
 
-/* Ensure panels expand properly when header is collapsed */
-.player .coverWrapper.collapsed ~ .content .panel.active {
+.player .panel.active {
+    display: flex;
+}
+
+/* List container - this is KEY for filling space */
+.player .listContainer {
     flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
     min-height: 0;
     display: flex;
     flex-direction: column;
 }
 
-/* Make sure list containers fill available space */
-.player .coverWrapper.collapsed ~ .content .panel[data-tab="playlist"] .listContainer,
-.player .coverWrapper.collapsed ~ .content .panel[data-tab="queue"] .listContainer {
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
-    
-    height: 700px; flex-direction: flex-start;
-}
-
-.player .coverWrapper.collapsed ~ .content .panel[data-tab="playlist"] .list,
-.player .coverWrapper.collapsed ~ .content .panel[data-tab="queue"] .list {
-    height: 100%;
-    max-height: none; /* Remove max-height constraint */
+/* Default list height when header is EXPANDED */
+.player .panel[data-tab="playlist"] .list,
+.player .panel[data-tab="queue"] .list {
+    height: auto; /* NOT fixed! */
+    max-height: 500px; /* Constraint when expanded */
     min-height: 300px;
+    overflow-y: auto;
+    flex: 0 0 auto; /* Don't grow */
 }
 
-/* Smooth transitions during collapse/expand */
-.player .coverWrapper.is-collapsing ~ .content .panel[data-tab="playlist"] .listContainer,
-.player .coverWrapper.is-collapsing ~ .content .panel[data-tab="queue"] .listContainer {
+/* List height when header is COLLAPSED - fills all space */
+.player .nowPlaying.collapsed ~ .content .panel[data-tab="playlist"] .list,
+.player .nowPlaying.collapsed ~ .content .panel[data-tab="queue"] .list {
+    height: 100%;
+    max-height: none; /* Remove constraint! */
+    min-height: 0;
+    flex: 1; /* GROW to fill! */
+}
+
+/* List container transitions */
+.player .nowPlaying.is-collapsing ~ .content .panel[data-tab="playlist"] .listContainer,
+.player .nowPlaying.is-collapsing ~ .content .panel[data-tab="queue"] .listContainer {
     transition: flex 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.player .coverWrapper.is-collapsing ~ .content .panel[data-tab="playlist"] .list,
-.player .coverWrapper.is-collapsing ~ .content .panel[data-tab="queue"] .list {
+/* List transitions */
+.player .nowPlaying.is-collapsing ~ .content .panel[data-tab="playlist"] .list,
+.player .nowPlaying.is-collapsing ~ .content .panel[data-tab="queue"] .list {
     transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1), 
-                max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+                max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                flex 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Adjust for mobile screens */
+/* Ensure panels expand when header collapses */
+.player .nowPlaying.collapsed ~ .content .panel.active {
+    flex: 1;
+    min-height: 0;
+}
+
+/* Mobile adjustments */
 @media (max-width: 480px) {
-    .player .coverWrapper.collapsed {
+    .player .nowPlaying.collapsed {
         height: 90px;
         min-height: 90px;
         margin-bottom: 12px;
     }
-}
-
-@media (min-width: 768px) {
-    .player .coverWrapper.collapsed {
-        margin-bottom: 20px;
-    }
-}
-
-
-
-.panel:not([data-tab="playing"]) .nowPlaying {
-  height: 0 !important;
-  transition: height 0.55s ease-in-out;
 }
