@@ -2777,72 +2777,65 @@ loadAudioFile: async (songData) => {
     }
   },
   
-  collapseHeader: function() {
-    if (this.isCollapsed || this.isTransitioning || !this.coverWrapper) return;
+collapseHeader() {
+    if (musicPlayer.state.isCollapsed || musicPlayer.state.isTransitioning || !this.coverWrapper) return;
     
-    this.isTransitioning = true;
-    this.isCollapsed = true;
+    musicPlayer.state.isTransitioning = true;
+    musicPlayer.state.isCollapsed = true;
     
-    const nowPlayingElement = document.querySelector('.nowPlaying');
-    
-    requestAnimationFrame(() => {
-      this.coverWrapper.classList.add('is-collapsing');
-      if (nowPlayingElement) {
-        nowPlayingElement.classList.add('is-collapsing');
-      }
-      
-      requestAnimationFrame(() => {
-        this.coverWrapper.classList.add('collapsed');
-        if (nowPlayingElement) {
-          nowPlayingElement.classList.add('collapsed');
-          nowPlayingElement.classList.remove('is-collapsing');
-        }
-        
-        // Update list heights after collapse
-        this.updateListHeights();
-        
-        clearTimeout(this.transitionTimeout);
-        this.transitionTimeout = setTimeout(() => {
-          this.coverWrapper.classList.remove('is-collapsing');
-          this.isTransitioning = false;
-        }, 550);
-      });
-    });
-  },
-  
-  expandHeader: function() {
-    if (!this.isCollapsed || this.isTransitioning || !this.coverWrapper) return;
-    
-    this.isTransitioning = true;
-    this.isCollapsed = false;
-    
-    const nowPlayingElement = document.querySelector('.nowPlaying');
+    const nowPlayingElement = QUERY('.nowPlaying'); // ADD THIS
     
     requestAnimationFrame(() => {
-      this.coverWrapper.classList.add('is-collapsing');
-      if (nowPlayingElement) {
-        nowPlayingElement.classList.add('is-collapsing');
-      }
-      
-      requestAnimationFrame(() => {
-        this.coverWrapper.classList.remove('collapsed');
+        this.coverWrapper.classList.add('is-collapsing');
         if (nowPlayingElement) {
-          nowPlayingElement.classList.remove('collapsed');
-          nowPlayingElement.classList.remove('is-collapsing');
+            nowPlayingElement.classList.add('is-collapsing'); // ADD THIS
         }
         
-        // Update list heights after expand
-        this.updateListHeights();
-        
-        clearTimeout(this.transitionTimeout);
-        this.transitionTimeout = setTimeout(() => {
-          this.coverWrapper.classList.remove('is-collapsing');
-          this.isTransitioning = false;
-        }, 550);
-      });
+        requestAnimationFrame(() => {
+            this.coverWrapper.classList.add('collapsed');
+            if (nowPlayingElement) {
+                nowPlayingElement.classList.add('collapsed'); // ADD THIS
+                nowPlayingElement.classList.remove('is-collapsing');
+            }
+            
+            clearTimeout(musicPlayer.state.transitionTimeout);
+            musicPlayer.state.transitionTimeout = setTimeout(() => {
+                this.coverWrapper.classList.remove('is-collapsing');
+                musicPlayer.state.isTransitioning = false;
+            }, 550);
+        });
     });
-  },
+},
 
+expandHeader() {
+    if (!musicPlayer.state.isCollapsed || musicPlayer.state.isTransitioning || !this.coverWrapper) return;
+    
+    musicPlayer.state.isTransitioning = true;
+    musicPlayer.state.isCollapsed = false;
+    
+    const nowPlayingElement = QUERY('.nowPlaying'); // ADD THIS
+    
+    requestAnimationFrame(() => {
+        this.coverWrapper.classList.add('is-collapsing');
+        if (nowPlayingElement) {
+            nowPlayingElement.classList.add('is-collapsing'); // ADD THIS
+        }
+        
+        requestAnimationFrame(() => {
+            this.coverWrapper.classList.remove('collapsed');
+            if (nowPlayingElement) {
+                nowPlayingElement.classList.remove('collapsed'); // ADD THIS
+                nowPlayingElement.classList.remove('is-collapsing');
+            }
+            
+            clearTimeout(musicPlayer.state.transitionTimeout);
+            musicPlayer.state.transitionTimeout = setTimeout(() => {
+                this.coverWrapper.classList.remove('is-collapsing');
+                musicPlayer.state.isTransitioning = false;
+            }, 550);
+        });
+    });
+},
     
     updateMiniHeaderElements() {
         if (!this.coverWrapper) return;
@@ -2958,6 +2951,10 @@ loadAudioFile: async (songData) => {
         });
     }
 },
+
+
+
+
 };
 
 const clickables = {
