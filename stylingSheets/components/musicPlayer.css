@@ -1711,8 +1711,8 @@
 }
 
 /* Adjust panel layout for better space utilization */
-.player .panel[data-tab="playlist"],
-.player .panel[data-tab="queue"] {
+.player .panel.active[data-tab="playlist"],
+.player .panel.active[data-tab="queue"] {
     display: flex;
     flex-direction: column;
     flex: 1;
