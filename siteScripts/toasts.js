@@ -15,13 +15,13 @@ USAGE:
 
 1. Include this script after your map.js (so global IDs like NAVBAR exist)
 
-2. Call: NotificationSmartDock.init();
+2. Call: notifications.init();
 
-3. Optionally: NotificationSmartDock.integrateWithNotifications();
+3. Optionally: notifications.integrateWithNotifications();
 
 This file injects its CSS into <head> automatically. */
 
-const NotificationSmartDock = (() => {
+const notifications = (() => {
     const GROUP_WINDOW = 5000; // 5 seconds grouping window
     const MAX_HISTORY_BEFORE_UNREAD = 10;
     
@@ -236,7 +236,7 @@ const NotificationSmartDock = (() => {
         } else {
             // fallback to body
             document.body.appendChild(dockEl);
-            console.warn('NotificationSmartDock: #navbar not found; dock appended to body');
+            console.warn('notifications: #navbar not found; dock appended to body');
         }
         
         return dockEl;
@@ -525,16 +525,16 @@ const NotificationSmartDock = (() => {
                             title,
                             message: String(message)
                         };
-                        NotificationSmartDock.notify(payload);
+                        notifications.notify(payload);
                     } catch (err) {
-                        console.error('NotificationSmartDock: integrateWithNotifications error', err);
+                        console.error('notifications: integrateWithNotifications error', err);
                     }
                     
                     return toast;
                 };
-                console.info('NotificationSmartDock: integrated with window.notifications.show');
+                console.info('notifications: integrated with window.notifications.show');
             } else {
-                console.warn('NotificationSmartDock: window.notifications.show not found. Call NotificationSmartDock.notify(...) yourself or integrate later.');
+                console.warn('notifications: window.notifications.show not found. Call notifications.notify(...) yourself or integrate later.');
             }
         },
         
@@ -546,10 +546,10 @@ const NotificationSmartDock = (() => {
     };
 })();
 
-// Expose globally so user can call NotificationSmartDock.init() easily
+// Expose globally so user can call notifications.init() easily
 if (typeof window !== 'undefined') {
-    window.NotificationSmartDock = NotificationSmartDock;
+    window.notifications = notifications;
 }
 
 // Remove export default for browser compatibility
-// export default NotificationSmartDock;
+// export default notifications;
