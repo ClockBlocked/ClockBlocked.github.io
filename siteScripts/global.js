@@ -6,7 +6,7 @@ import { homePage, views } from './pages/statics.js';
 import { pageLoader, navigation } from './pages/rendering.js';
 import { ui, pageUpdates } from './pages/updates.js';
 import { deepLinkRouter } from './pages/router.js';
-import { notifications } from './pages/router.js';
+import { notifications } from './toasts.js';
 
 const ACTION_GRID_ITEMS = [
   { id: 'play-next', icon: 'M9 5l7 7-7 7M15 5v14', label: 'Play Next' },
