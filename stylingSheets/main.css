@@ -3408,30 +3408,6 @@ main {
 
 
 
-.loading-bar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 99999999999999999999;
-  height: 2px;
-  background: linear-gradient(90deg, crimson, #ff5f5f);
-  box-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
-  transform-origin: left;
-  transform: scaleX(0);
-  will-change: transform;
-  opacity: 0;
-  transition: opacity 0.25s ease, transform 1.2s cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-.loading-bar.active {
-  opacity: 1;
-}
-
-.loading-bar.complete {
-  animation: loading-complete 0.6s ease-out forwards;
-  transform: scaleX(1);
-}
 
 .action-btn {
   padding: 0.5rem;
