@@ -1785,7 +1785,7 @@
 
 
 
-.panel(:not)[data-tab="playing"] .nowPlaying {
+.panel:not([data-tab="playing"]) .nowPlaying {
   height: 0 !important;
   transition: height 0.55s ease-in-out;
 }
