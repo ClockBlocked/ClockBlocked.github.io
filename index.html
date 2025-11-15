@@ -365,242 +365,359 @@
         </div>
       </nav>
       <aside class="player" id="music-player" role="dialog" aria-modal="true" aria-labelledby="music-player-title">
-        <div class="playerBackdrop" data-overlay-close="music-player"></div>
-        <div class="playerDrawer">
-          <div class="drawerHandle">
-            <div class="handleBar"></div>
-          </div>
-          <button class="drawerCloseBtn" id="music-player-close" aria-label="Close player">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
-          <div class="drawerScrollContainer">
-            <div class="drawerContent">
-              <div class="playerHeader">
-                <div class="headerArtwork">
-                  <img src="https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/stable/global/content/images/albumCovers/placeholder.png" alt="Album Cover" id="music-player-cover" class="artworkImage" />
-                  <div class="artworkGlow"></div>
-                </div>
-                <div class="headerActions">
-                  <button class="headerActionBtn" id="music-player-shuffle" title="Shuffle" aria-label="Shuffle">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/>
-                    </svg>
-                  </button>
-                  <button class="headerActionBtn" id="music-player-repeat" title="Repeat" aria-label="Repeat">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/>
-                    </svg>
-                  </button>
-                  <button class="headerActionBtn" id="volumeBtn" title="Volume" aria-label="Volume">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
-                    </svg>
-                  </button>
-                  <button class="headerActionBtn" id="music-player-queue" title="Queue" aria-label="Queue">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-              <div class="miniPlayerHeader">
-                <div class="miniArtwork">
-                  <img src="https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/stable/global/content/images/albumCovers/placeholder.png" alt="" class="miniArtworkImage" />
-                </div>
-                <div class="miniInfo">
-                  <div class="miniTitle"></div>
-                  <div class="miniArtist"></div>
-                </div>
-                <button class="miniPlayBtn" aria-label="Play/Pause">
-                  <svg viewBox="0 0 24 24" fill="currentColor" class="miniPlayIcon">
-                    <path d="M8 5v14l11-7z" />
-                  </svg>
-                  <svg viewBox="0 0 24 24" fill="currentColor" class="miniPauseIcon">
-                    <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-                  </svg>
-                </button>
-              </div>
-              <div class="playerBody">
-                <div class="bodyPanel active" data-tab="playing">
-                  <div class="nowPlayingSection">
-                    <div class="trackInfo">
-                      <h3 id="music-player-title" class="trackTitle"></h3>
-                      <p id="music-player-artist" class="trackArtist"></p>
-                      <p id="music-player-album" class="trackAlbum"></p>
-                    </div>
-                    <button class="trackFavoriteBtn" id="music-player-favorite" aria-label="Add to Favorites">
-                      <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
-                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                      </svg>
-                    </button>
-                  </div>
-                  <div class="progressControl">
-                    <div class="progressBarContainer" id="music-player-progress-bar" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Seek">
-                      <div class="progressBuffer" id="musicPlayerProgressBuffer"></div>
-                      <div class="progressTrack" id="music-player-progress-fill">
-                        <div class="progressKnob" id="music-player-progress-thumb"></div>
-                      </div>
-                    </div>
-                    <div class="progressTimes">
-                      <span id="music-player-current-time" class="progressTimeElapsed">0:00</span>
-                      <span id="music-player-total-time" class="progressTimeRemaining">0:00</span>
-                    </div>
-                  </div>
-                  <div class="playbackControls">
-                    <button class="playbackBtn" id="music-player-prev" aria-label="Previous">
-                      <!-- Skip Back -->
-<svg 
-  xmlns="http://www.w3.org/2000/svg" 
-  viewBox="0 0 320 512" 
-  width="100" 
-  height="100" 
-  style="background-color: rgb(30, 41, 59); opacity: 1; transform: rotate(0deg); filter: none;">
-<path 
-  class="fa-secondary" 
-  style="fill:var(--fa-secondary-color,inherit);opacity:var(--fa-secondary-opacity,.4);" 
-  d="M65.3 256L256 411.4l0-310.7L65.3 256z"/>
-<path 
-  class="fa-primary" 
-  style="fill:var(--fa-primary-color,inherit);opacity:var(--fa-primary-opacity,1);" 
-  d="M64 80c0-8.8-7.2-16-16-16s-16 7.2-16 16l0 161.9 0 28.2L32 432c0 8.8 7.2 16 16 16s16-7.2 16-16l0-135.8L242.6 441.8c5 4 11.2 6.2 17.6 6.2c15.4 0 27.8-12.4 27.8-27.8l0-328.4C288 76.4 275.6 64 260.2 64c-6.4 0-12.6 2.2-17.6 6.2L64 215.8 64 80zm192 20.6l0 310.7L65.3 256 256 100.6z"/>
-</svg>
-                    </button>
-                    <button class="playbackBtn skipBtn" id="music-player-rewind" aria-label="Rewind 10s">
-                      <!-- Rewind 10s -->
-<svg 
-  xmlns="http://www.w3.org/2000/svg" 
-  viewBox="0 0 512 512" 
-  width="100" 
-  height="100" 
-  style="background-color: rgb(30, 41, 59); opacity: 1; transform: rotate(0deg); filter: none;">
-<path 
-  class="fa-secondary" 
-  style="fill:var(--fa-secondary-color,inherit);opacity:var(--fa-secondary-opacity,.4);" 
-  d="M37.6 256L256 97.9l0 316.2L37.6 256zM288 236.9l192-139 0 316.2-192-139 0-38.2z"/>
-<path 
-  class="fa-primary" 
-  style="fill:var(--fa-primary-color,inherit);opacity:var(--fa-primary-opacity,1);" 
-  d="M37.6 256L256 414.1l0-316.2L37.6 256zM258 64c16.6 0 30 13.5 30 30l0 103.4L464.3 69.7C469.5 66 475.6 64 482 64c16.6 0 30 13.5 30 30L512 418c0 16.6-13.4 30-30 30c-6.3 0-12.5-2-17.6-5.7L288 314.6 288 418c0 16.6-13.5 30-30 30c-6.3 0-12.5-2-17.6-5.7L9.9 275.4C3.7 270.9 0 263.7 0 256s3.7-14.9 9.9-19.4L240.3 69.7C245.5 66 251.6 64 258 64zm30 211.1l192 139 0-316.2-192 139 0 38.2z"/>
-</svg>
-                      <span class="skipLabel">10</span>
-                    </button>
-                    <button class="playbackBtn primaryBtn" id="music-player-play" aria-label="Play/Pause">
-                      <span class="playIcon">
-                        <!-- Play -->
-<svg 
-  xmlns="http://www.w3.org/2000/svg" 
-  viewBox="0 0 384 512" 
-  width="100" 
-  height="100" 
-  style="background-color: rgb(30, 41, 59); opacity: 1; transform: rotate(0deg); filter: none;">
-<path 
-  class="fa-secondary" 
-  style="fill:var(--fa-secondary-color,inherit);opacity:var(--fa-secondary-opacity,.4);" 
-  d="M32 80l0 352c0 5.8 3.1 11.1 8.2 14s11.2 2.7 16.2-.3l288-176c4.8-2.9 7.7-8.1 7.7-13.7s-2.9-10.7-7.7-13.7l-288-176c-4.9-3-11.1-3.1-16.2-.3s-8.2 8.2-8.2 14z"/>
-<path 
-  class="fa-primary" 
-  style="fill:var(--fa-primary-color,inherit);opacity:var(--fa-primary-opacity,1);" 
-  d="M56.3 66.3c-4.9-3-11.1-3.1-16.2-.3s-8.2 8.2-8.2 14l0 352c0 5.8 3.1 11.1 8.2 14s11.2 2.7 16.2-.3l288-176c4.8-2.9 7.7-8.1 7.7-13.7s-2.9-10.7-7.7-13.7l-288-176zM24.5 38.1C39.7 29.6 58.2 30 73 39L361 215c14.3 8.7 23 24.2 23 41s-8.7 32.2-23 41L73 473c-14.8 9.1-33.4 9.4-48.5 .9S0 449.4 0 432L0 80C0 62.6 9.4 46.6 24.5 38.1z"/>
-</svg>
-                      </span>
-                      <span class="pauseIcon">
-                        <!-- Pause -->
-<svg 
-  xmlns="http://www.w3.org/2000/svg" 
-  viewBox="0 0 320 512" 
-  width="100" 
-  height="100" 
-  style="background-color: rgb(30, 41, 59); opacity: 1; transform: rotate(0deg); filter: none;">
-<path 
-  class="fa-secondary" 
-  style="fill:var(--fa-secondary-color,inherit);opacity:var(--fa-secondary-opacity,.4);" 
-  d="M32 112l0 288c0 8.8 7.2 16 16 16l48 0c8.8 0 16-7.2 16-16l0-288c0-8.8-7.2-16-16-16L48 96c-8.8 0-16 7.2-16 16zm176 0l0 288c0 8.8 7.2 16 16 16l48 0c8.8 0 16-7.2 16-16l0-288c0-8.8-7.2-16-16-16l-48 0c-8.8 0-16 7.2-16 16z"/>
-<path 
-  class="fa-primary" 
-  style="fill:var(--fa-primary-color,inherit);opacity:var(--fa-primary-opacity,1);" 
-  d="M48 96c-8.8 0-16 7.2-16 16l0 288c0 8.8 7.2 16 16 16l48 0c8.8 0 16-7.2 16-16l0-288c0-8.8-7.2-16-16-16L48 96zM0 112C0 85.5 21.5 64 48 64l48 0c26.5 0 48 21.5 48 48l0 288c0 26.5-21.5 48-48 48l-48 0c-26.5 0-48-21.5-48-48L0 112zM224 96c-8.8 0-16 7.2-16 16l0 288c0 8.8 7.2 16 16 16l48 0c8.8 0 16-7.2 16-16l0-288c0-8.8-7.2-16-16-16l-48 0zm-48 16c0-26.5 21.5-48 48-48l48 0c26.5 0 48 21.5 48 48l0 288c0 26.5-21.5 48-48 48l-48 0c-26.5 0-48-21.5-48-48l0-288z"/>
-</svg>
-                      </span>
-                    </button>
-                    <button class="playbackBtn skipBtn" id="music-player-forward" aria-label="Forward 10s">
-                      <!-- Fast Foward 10s -->
-<svg 
-  xmlns="http://www.w3.org/2000/svg" 
-  viewBox="0 0 512 512" 
-  width="100" 
-  height="100" 
-  style="background-color: rgb(30, 41, 59); opacity: 1; transform: rotate(0deg); filter: none;">
-<path 
-  class="fa-secondary" 
-  style="fill:var(--fa-secondary-color,inherit);opacity:var(--fa-secondary-opacity,.4);" 
-  d="M32 97.9l0 316.2 192-139 0-38.2L32 97.9zm224 0l0 316.2L474.4 256 256 97.9z"/>
-<path 
-  class="fa-primary" 
-  style="fill:var(--fa-primary-color,inherit);opacity:var(--fa-primary-opacity,1);" 
-  d="M474.4 256L256 414.1l0-316.2L474.4 256zM254 64c-16.6 0-30 13.5-30 30l0 103.4L47.7 69.7C42.5 66 36.4 64 30 64C13.5 64 0 77.5 0 94L0 418c0 16.6 13.5 30 30 30c6.3 0 12.5-2 17.6-5.7L224 314.6 224 418c0 16.6 13.5 30 30 30c6.3 0 12.5-2 17.6-5.7L502.1 275.4c6.2-4.5 9.9-11.7 9.9-19.4s-3.7-14.9-9.9-19.4L271.7 69.7C266.5 66 260.4 64 254 64zM224 275.1L32 414.1 32 97.9l192 139 0 38.2z"/>
-</svg>
-                      <span class="skipLabel">10</span>
-                    </button>
-                    <button class="playbackBtn" id="music-player-next" aria-label="Next">
-                      <!-- Skip Next -->
-<svg 
-  xmlns="http://www.w3.org/2000/svg" 
-  viewBox="0 0 320 512" 
-  width="100" 
-  height="100" 
-  style="background-color: rgb(30, 41, 59); opacity: 1; transform: rotate(0deg); filter: none;">
-<path 
-  class="fa-secondary" 
-  style="fill:var(--fa-secondary-color,inherit);opacity:var(--fa-secondary-opacity,.4);" 
-  d="M64 100.6L254.7 256 64 411.4l0-310.7z"/>
-<path 
-  class="fa-primary" 
-  style="fill:var(--fa-primary-color,inherit);opacity:var(--fa-primary-opacity,1);" 
-  d="M256 80c0-8.8 7.2-16 16-16s16 7.2 16 16l0 161.9 0 28.2L288 432c0 8.8-7.2 16-16 16s-16-7.2-16-16l0-135.8L77.4 441.8c-5 4-11.2 6.2-17.6 6.2C44.4 448 32 435.6 32 420.2L32 91.8C32 76.4 44.4 64 59.8 64c6.4 0 12.6 2.2 17.6 6.2L256 215.8 256 80zM64 100.6l0 310.7L254.7 256 64 100.6z"/>
-</svg>
-                    </button>
-                  </div>
-                </div>
-                <div class="bodyPanel" data-tab="playlist">
-                  <div class="listHeader">
-                    <h3 class="listHeaderTitle">Recently Played</h3>
-                    <span class="listHeaderCount" id="recent-count">0 songs</span>
-                  </div>
-                  <div class="listScrollContainer">
-                    <ul class="list musicPlayerList" id="music-player-recent-list">
-                      <li class="listEmpty"></li>
-                    </ul>
-                  </div>
-                </div>
-                <div class="bodyPanel" data-tab="queue">
-                  <div class="listHeader">
-                    <h3 class="listHeaderTitle">Queue</h3>
-                    <span class="listHeaderCount" id="queue-count">0 songs</span>
-                  </div>
-                  <div class="listScrollContainer">
-                    <ul class="list musicPlayerList" id="music-player-queue-list">
-                      <li class="listEmpty"></li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-              <div class="tabIndicators">
-                <button class="tabIndicator active" data-tab="playing" aria-label="Now Playing">
-                  <span class="tabIndicatorLabel">Now Playing</span>
-                </button>
-                <button class="tabIndicator" data-tab="playlist" aria-label="Recently Played">
-                  <span class="tabIndicatorLabel">Recent</span>
-                </button>
-                <button class="tabIndicator" data-tab="queue" aria-label="Queue">
-                  <span class="tabIndicatorLabel">Queue</span>
-                </button>
-              </div>
+         <div class="playerBackdrop" data-overlay-close="music-player"></div>
+         <div class="playerDrawer">
+            <div class="drawerHandle">
+               <div class="handleBar"></div>
             </div>
-          </div>
-        </div>
+            <button class="drawerCloseBtn" id="music-player-close" aria-label="Close player">
+               <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+               >
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+               </svg>
+            </button>
+            <div class="drawerScrollContainer">
+               <div class="drawerContent">
+                  <div class="playerHeader">
+                     <div class="headerArtwork">
+                        <img
+                           src="https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/stable/global/content/images/albumCovers/placeholder.png"
+                           alt="Album Cover"
+                           id="music-player-cover"
+                           class="artworkImage"
+                        />
+                        <div class="artworkGlow"></div>
+                     </div>
+                     <div class="headerActions">
+                        <button class="headerActionBtn" id="music-player-shuffle" title="Shuffle" aria-label="Shuffle">
+                           <svg viewBox="0 0 24 24" fill="currentColor">
+                              <path
+                                 d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"
+                              />
+                           </svg>
+                        </button>
+                        <button class="headerActionBtn" id="music-player-repeat" title="Repeat" aria-label="Repeat">
+                           <svg viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z" />
+                           </svg>
+                        </button>
+                        <button class="headerActionBtn" id="volumeBtn" title="Volume" aria-label="Volume">
+                           <svg viewBox="0 0 24 24" fill="currentColor">
+                              <path
+                                 d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"
+                              />
+                           </svg>
+                        </button>
+                        <button class="headerActionBtn" id="music-player-queue" title="Queue" aria-label="Queue">
+                           <svg viewBox="0 0 24 24" fill="currentColor">
+                              <path
+                                 d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"
+                              />
+                           </svg>
+                        </button>
+                     </div>
+                  </div>
+                  <div class="miniPlayerHeader">
+                     <div class="miniArtwork">
+                        <img
+                           src="https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/stable/global/content/images/albumCovers/placeholder.png"
+                           alt=""
+                           class="miniArtworkImage"
+                        />
+                     </div>
+                     <div class="miniInfo">
+                        <div class="miniTitle"></div>
+                        <div class="miniArtist"></div>
+                     </div>
+                     <button class="miniPlayBtn" aria-label="Play/Pause">
+                        <svg viewBox="0 0 24 24" fill="currentColor" class="miniPlayIcon">
+                           <path d="M8 5v14l11-7z" />
+                        </svg>
+                        <svg viewBox="0 0 24 24" fill="currentColor" class="miniPauseIcon">
+                           <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                        </svg>
+                     </button>
+                  </div>
+                  <div class="playerBody">
+                     <div class="bodyPanel active" data-tab="playing">
+                        <div class="nowPlayingSection">
+                           <div class="trackInfo">
+                              <h3 id="music-player-title" class="trackTitle"></h3>
+                              <p id="music-player-artist" class="trackArtist"></p>
+                              <p id="music-player-album" class="trackAlbum"></p>
+                           </div>
+                           <button class="trackFavoriteBtn" id="music-player-favorite" aria-label="Add to Favorites">
+                              <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
+                                 <path
+                                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                                 ></path>
+                              </svg>
+                           </button>
+                        </div>
+                        <div class="progressControl">
+                           <div
+                              class="progressBarContainer"
+                              id="music-player-progress-bar"
+                              tabindex="0"
+                              role="slider"
+                              aria-valuemin="0"
+                              aria-valuemax="100"
+                              aria-valuenow="0"
+                              aria-label="Seek"
+                           >
+                              <div class="progressBuffer" id="musicPlayerProgressBuffer"></div>
+                              <div class="progressTrack" id="music-player-progress-fill">
+                                 <div class="progressKnob" id="music-player-progress-thumb"></div>
+                              </div>
+                           </div>
+                           <div class="progressTimes">
+                              <span id="music-player-current-time" class="progressTimeElapsed">0:00</span>
+                              <span id="music-player-total-time" class="progressTimeRemaining">0:00</span>
+                           </div>
+                        </div>
+                        <div class="playbackControls">
+                           <button class="playbackBtn" id="music-player-prev" aria-label="Previous">
+                              <!-- Skip Back -->
+                              <svg
+                                 xmlns="http://www.w3.org/2000/svg"
+                                 viewBox="0 0 320 512"
+                                 width="100"
+                                 height="100"
+                                 style="
+                                    background-color: rgb(30, 41, 59);
+                                    opacity: 1;
+                                    transform: rotate(0deg);
+                                    filter: none;
+                                 "
+                              >
+                                 <path
+                                    class="fa-secondary"
+                                    style="
+                                       fill: var(--fa-secondary-color, inherit);
+                                       opacity: var(--fa-secondary-opacity, 0.4);
+                                    "
+                                    d="M65.3 256L256 411.4l0-310.7L65.3 256z"
+                                 />
+                                 <path
+                                    class="fa-primary"
+                                    style="
+                                       fill: var(--fa-primary-color, inherit);
+                                       opacity: var(--fa-primary-opacity, 1);
+                                    "
+                                    d="M64 80c0-8.8-7.2-16-16-16s-16 7.2-16 16l0 161.9 0 28.2L32 432c0 8.8 7.2 16 16 16s16-7.2 16-16l0-135.8L242.6 441.8c5 4 11.2 6.2 17.6 6.2c15.4 0 27.8-12.4 27.8-27.8l0-328.4C288 76.4 275.6 64 260.2 64c-6.4 0-12.6 2.2-17.6 6.2L64 215.8 64 80zm192 20.6l0 310.7L65.3 256 256 100.6z"
+                                 />
+                              </svg>
+                           </button>
+                           <button class="playbackBtn skipBtn" id="music-player-rewind" aria-label="Rewind 10s">
+                              <!-- Rewind 10s -->
+                              <svg
+                                 xmlns="http://www.w3.org/2000/svg"
+                                 viewBox="0 0 512 512"
+                                 width="100"
+                                 height="100"
+                                 style="
+                                    background-color: rgb(30, 41, 59);
+                                    opacity: 1;
+                                    transform: rotate(0deg);
+                                    filter: none;
+                                 "
+                              >
+                                 <path
+                                    class="fa-secondary"
+                                    style="
+                                       fill: var(--fa-secondary-color, inherit);
+                                       opacity: var(--fa-secondary-opacity, 0.4);
+                                    "
+                                    d="M37.6 256L256 97.9l0 316.2L37.6 256zM288 236.9l192-139 0 316.2-192-139 0-38.2z"
+                                 />
+                                 <path
+                                    class="fa-primary"
+                                    style="
+                                       fill: var(--fa-primary-color, inherit);
+                                       opacity: var(--fa-primary-opacity, 1);
+                                    "
+                                    d="M37.6 256L256 414.1l0-316.2L37.6 256zM258 64c16.6 0 30 13.5 30 30l0 103.4L464.3 69.7C469.5 66 475.6 64 482 64c16.6 0 30 13.5 30 30L512 418c0 16.6-13.4 30-30 30c-6.3 0-12.5-2-17.6-5.7L288 314.6 288 418c0 16.6-13.5 30-30 30c-6.3 0-12.5-2-17.6-5.7L9.9 275.4C3.7 270.9 0 263.7 0 256s3.7-14.9 9.9-19.4L240.3 69.7C245.5 66 251.6 64 258 64zm30 211.1l192 139 0-316.2-192 139 0 38.2z"
+                                 />
+                              </svg>
+                              <span class="skipLabel">10</span>
+                           </button>
+                           <button class="playbackBtn primaryBtn" id="music-player-play" aria-label="Play/Pause">
+                              <span class="playIcon">
+                                 <!-- Play -->
+                                 <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 384 512"
+                                    width="100"
+                                    height="100"
+                                    style="
+                                       background-color: rgb(30, 41, 59);
+                                       opacity: 1;
+                                       transform: rotate(0deg);
+                                       filter: none;
+                                    "
+                                 >
+                                    <path
+                                       class="fa-secondary"
+                                       style="
+                                          fill: var(--fa-secondary-color, inherit);
+                                          opacity: var(--fa-secondary-opacity, 0.4);
+                                       "
+                                       d="M32 80l0 352c0 5.8 3.1 11.1 8.2 14s11.2 2.7 16.2-.3l288-176c4.8-2.9 7.7-8.1 7.7-13.7s-2.9-10.7-7.7-13.7l-288-176c-4.9-3-11.1-3.1-16.2-.3s-8.2 8.2-8.2 14z"
+                                    />
+                                    <path
+                                       class="fa-primary"
+                                       style="
+                                          fill: var(--fa-primary-color, inherit);
+                                          opacity: var(--fa-primary-opacity, 1);
+                                       "
+                                       d="M56.3 66.3c-4.9-3-11.1-3.1-16.2-.3s-8.2 8.2-8.2 14l0 352c0 5.8 3.1 11.1 8.2 14s11.2 2.7 16.2-.3l288-176c4.8-2.9 7.7-8.1 7.7-13.7s-2.9-10.7-7.7-13.7l-288-176zM24.5 38.1C39.7 29.6 58.2 30 73 39L361 215c14.3 8.7 23 24.2 23 41s-8.7 32.2-23 41L73 473c-14.8 9.1-33.4 9.4-48.5 .9S0 449.4 0 432L0 80C0 62.6 9.4 46.6 24.5 38.1z"
+                                    />
+                                 </svg>
+                              </span>
+                              <span class="pauseIcon">
+                                 <!-- Pause -->
+                                 <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 320 512"
+                                    width="100"
+                                    height="100"
+                                    style="
+                                       background-color: rgb(30, 41, 59);
+                                       opacity: 1;
+                                       transform: rotate(0deg);
+                                       filter: none;
+                                    "
+                                 >
+                                    <path
+                                       class="fa-secondary"
+                                       style="
+                                          fill: var(--fa-secondary-color, inherit);
+                                          opacity: var(--fa-secondary-opacity, 0.4);
+                                       "
+                                       d="M32 112l0 288c0 8.8 7.2 16 16 16l48 0c8.8 0 16-7.2 16-16l0-288c0-8.8-7.2-16-16-16L48 96c-8.8 0-16 7.2-16 16zm176 0l0 288c0 8.8 7.2 16 16 16l48 0c8.8 0 16-7.2 16-16l0-288c0-8.8-7.2-16-16-16l-48 0c-8.8 0-16 7.2-16 16z"
+                                    />
+                                    <path
+                                       class="fa-primary"
+                                       style="
+                                          fill: var(--fa-primary-color, inherit);
+                                          opacity: var(--fa-primary-opacity, 1);
+                                       "
+                                       d="M48 96c-8.8 0-16 7.2-16 16l0 288c0 8.8 7.2 16 16 16l48 0c8.8 0 16-7.2 16-16l0-288c0-8.8-7.2-16-16-16L48 96zM0 112C0 85.5 21.5 64 48 64l48 0c26.5 0 48 21.5 48 48l0 288c0 26.5-21.5 48-48 48l-48 0c-26.5 0-48-21.5-48-48L0 112zM224 96c-8.8 0-16 7.2-16 16l0 288c0 8.8 7.2 16 16 16l48 0c8.8 0 16-7.2 16-16l0-288c0-8.8-7.2-16-16-16l-48 0zm-48 16c0-26.5 21.5-48 48-48l48 0c26.5 0 48 21.5 48 48l0 288c0 26.5-21.5 48-48 48l-48 0c-26.5 0-48-21.5-48-48l0-288z"
+                                    />
+                                 </svg>
+                              </span>
+                           </button>
+                           <button class="playbackBtn skipBtn" id="music-player-forward" aria-label="Forward 10s">
+                              <!-- Fast Foward 10s -->
+                              <svg
+                                 xmlns="http://www.w3.org/2000/svg"
+                                 viewBox="0 0 512 512"
+                                 width="100"
+                                 height="100"
+                                 style="
+                                    background-color: rgb(30, 41, 59);
+                                    opacity: 1;
+                                    transform: rotate(0deg);
+                                    filter: none;
+                                 "
+                              >
+                                 <path
+                                    class="fa-secondary"
+                                    style="
+                                       fill: var(--fa-secondary-color, inherit);
+                                       opacity: var(--fa-secondary-opacity, 0.4);
+                                    "
+                                    d="M32 97.9l0 316.2 192-139 0-38.2L32 97.9zm224 0l0 316.2L474.4 256 256 97.9z"
+                                 />
+                                 <path
+                                    class="fa-primary"
+                                    style="
+                                       fill: var(--fa-primary-color, inherit);
+                                       opacity: var(--fa-primary-opacity, 1);
+                                    "
+                                    d="M474.4 256L256 414.1l0-316.2L474.4 256zM254 64c-16.6 0-30 13.5-30 30l0 103.4L47.7 69.7C42.5 66 36.4 64 30 64C13.5 64 0 77.5 0 94L0 418c0 16.6 13.5 30 30 30c6.3 0 12.5-2 17.6-5.7L224 314.6 224 418c0 16.6 13.5 30 30 30c6.3 0 12.5-2 17.6-5.7L502.1 275.4c6.2-4.5 9.9-11.7 9.9-19.4s-3.7-14.9-9.9-19.4L271.7 69.7C266.5 66 260.4 64 254 64zM224 275.1L32 414.1 32 97.9l192 139 0 38.2z"
+                                 />
+                              </svg>
+                              <span class="skipLabel">10</span>
+                           </button>
+                           <button class="playbackBtn" id="music-player-next" aria-label="Next">
+                              <!-- Skip Next -->
+                              <svg
+                                 xmlns="http://www.w3.org/2000/svg"
+                                 viewBox="0 0 320 512"
+                                 width="100"
+                                 height="100"
+                                 style="
+                                    background-color: rgb(30, 41, 59);
+                                    opacity: 1;
+                                    transform: rotate(0deg);
+                                    filter: none;
+                                 "
+                              >
+                                 <path
+                                    class="fa-secondary"
+                                    style="
+                                       fill: var(--fa-secondary-color, inherit);
+                                       opacity: var(--fa-secondary-opacity, 0.4);
+                                    "
+                                    d="M64 100.6L254.7 256 64 411.4l0-310.7z"
+                                 />
+                                 <path
+                                    class="fa-primary"
+                                    style="
+                                       fill: var(--fa-primary-color, inherit);
+                                       opacity: var(--fa-primary-opacity, 1);
+                                    "
+                                    d="M256 80c0-8.8 7.2-16 16-16s16 7.2 16 16l0 161.9 0 28.2L288 432c0 8.8-7.2 16-16 16s-16-7.2-16-16l0-135.8L77.4 441.8c-5 4-11.2 6.2-17.6 6.2C44.4 448 32 435.6 32 420.2L32 91.8C32 76.4 44.4 64 59.8 64c6.4 0 12.6 2.2 17.6 6.2L256 215.8 256 80zM64 100.6l0 310.7L254.7 256 64 100.6z"
+                                 />
+                              </svg>
+                           </button>
+                        </div>
+                     </div>
+                     <div class="bodyPanel" data-tab="playlist">
+                        <div class="listHeader">
+                           <h3 class="listHeaderTitle">Recently Played</h3>
+                           <span class="listHeaderCount" id="recent-count">0 songs</span>
+                        </div>
+                        <div class="listScrollContainer">
+                           <ul class="list musicPlayerList" id="music-player-recent-list">
+                              <li class="listEmpty"></li>
+                           </ul>
+                        </div>
+                     </div>
+                     <div class="bodyPanel" data-tab="queue">
+                        <div class="listHeader">
+                           <h3 class="listHeaderTitle">Queue</h3>
+                           <span class="listHeaderCount" id="queue-count">0 songs</span>
+                        </div>
+                        <div class="listScrollContainer">
+                           <ul class="list musicPlayerList" id="music-player-queue-list">
+                              <li class="listEmpty"></li>
+                           </ul>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="tabIndicators">
+                     <button class="tabIndicator active" data-tab="playing" aria-label="Now Playing">
+                        <span class="tabIndicatorLabel">Now Playing</span>
+                     </button>
+                     <button class="tabIndicator" data-tab="playlist" aria-label="Recently Played">
+                        <span class="tabIndicatorLabel">Recent</span>
+                     </button>
+                     <button class="tabIndicator" data-tab="queue" aria-label="Queue">
+                        <span class="tabIndicatorLabel">Queue</span>
+                     </button>
+                  </div>
+               </div>
+            </div>
+         </div>
       </aside>
 
 
