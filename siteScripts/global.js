@@ -192,7 +192,8 @@ const appState = {
           message: `Added ${itemName} to favorites`
         });
       },
-      remove: function(type, id) {
+      
+    remove: function(type, id) {
         appState.favorites[type].delete(id);
         appState.favorites.save(type);
         appState.favorites.updateIcon(type, id, false);
@@ -207,6 +208,7 @@ const appState = {
           message: `Removed ${itemName} from favorites`
         });
       },
+      
     toggle: function(type, id) {
       if (appState.favorites[type].has(id)) {
         appState.favorites.remove(type, id);
