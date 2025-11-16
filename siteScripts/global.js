@@ -2368,67 +2368,11 @@ loadAudioFile: async (songData) => {
     updateHomeBentoGrid: () => {
       const dynamicContent = $byId(IDS.dynamicContent);
       if (!dynamicContent) return;
-      
-      const bentoGrid = dynamicContent.querySelector('.bento-grid');
-      if (!bentoGrid) return;
-      
-      const recentlyPlayedSection = $byId(IDS.recentlyPlayedSection);
-      if (recentlyPlayedSection && appState.recentlyPlayed && appState.recentlyPlayed.length > 0) {
-        const recentTracksHtml = render.homeSection.recentlyPlayed(
-          appState.recentlyPlayed.slice(0, 5),
-          utils
-        );
-        recentlyPlayedSection.innerHTML = recentTracksHtml;
-        
-        musicPlayer.ui.bindHomeBentoEvents(recentlyPlayedSection);
-      }
-    },
-    
-    bindHomeBentoEvents: (container) => {
-      if (!container) return;
-      
-      container.querySelectorAll('.modern-track-item, .track-play-btn').forEach(item => {
-        item.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const songDataStr = item.closest('[data-song]')?.dataset.song;
-          if (songDataStr) {
-            try {
-              const songData = JSON.parse(songDataStr);
-              musicPlayer.ui.playSong(songData);
-            } catch (error) {
-              console.error('Error parsing song data:', error);
-            }
-          }
-        });
-      });
-      
-      container.querySelectorAll('[data-artist]').forEach(artistEl => {
-        artistEl.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const artistName = artistEl.dataset.artist;
-          if (appState.router) {
-            appState.router.navigateTo(ROUTES.ARTIST, { artist: artistName });
-          }
-        });
-      });
-      
-      container.querySelectorAll('.track-favorite-btn, .favorite-heart-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const songItem = btn.closest('[data-song]');
-          if (songItem) {
-            const songDataStr = songItem.dataset.song;
-            try {
-              const songData = JSON.parse(songDataStr);
-              appState.favorites.toggle('songs', songData.id);
-              
-              btn.classList.toggle('active', appState.favorites.has('songs', songData.id));
-            } catch (error) {
-              console.error('Error toggling favorite:', error);
-            }
-          }
-        });
-      });
+
+      const homeViewRoot = dynamicContent.querySelector('[data-view-id="home-view"]');
+      if (!homeViewRoot) return;
+
+      homePage.renderRecentlyPlayed();
     },
     
     updateRecentTab: () => {
@@ -3737,127 +3681,23 @@ const playlists = {
         playlists.bindEvents(modalEl);
     },
 
-    show: (playlistId) => {
-        const playlist = appState.playlists.find((p) => p.id === playlistId);
-        if (!playlist) {
+    show: (playlistId, options = {}) => {
+        if (!playlistId) {
             notifications.notify({ type: NOTIFICATION_TYPES.ERROR, message: "Playlist not found" });
             return;
         }
 
-        pageLoader.start({ message: "Loading playlist..." });
+        const skipRouting = options.skipRouting ?? false;
+        const currentState = window.history.state;
+        const isCurrent = currentState?.name === ROUTES.PLAYLIST && currentState?.params?.playlistId === playlistId;
 
-        setTimeout(() => {
-            const dynamicContent = $byId(IDS.dynamicContent);
-            if (!dynamicContent) return;
+        if (!skipRouting && appState.router && !isCurrent) {
+            appState.router.navigateTo(ROUTES.PLAYLIST, { playlistId });
+            return;
+        }
 
-            dynamicContent.innerHTML = `
-                <div class="playlist-page animate__animated animate__fadeIn">
-                  <div class="playlist-header mb-8 flex items-start gap-6">
-                    <div class="playlist-cover w-48 h-48 bg-gradient-to-br from-purple-500 to-blue-600 rounded-lg flex items-center justify-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" class="w-24 h-24">
-                        <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v2H3v-2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
-                      </svg>
-                    </div>
-                    <div class="playlist-info flex-1">
-                      <p class="text-sm text-gray-400 mb-2">PLAYLIST</p>
-                      <h1 class="text-4xl font-bold mb-4">${playlist.name}</h1>
-                      <p class="text-gray-400 mb-6">${playlist.songs.length} song${playlist.songs.length !== 1 ? "s" : ""} • Created ${new Date(playlist.created).toLocaleDateString()}</p>
-                      <div class="flex gap-4">
-                        <button class="play-playlist-btn bg-accent-primary text-white px-8 py-3 rounded-full hover:bg-accent-secondary transition-colors flex items-center gap-2" data-playlist-id="${playlist.id}" ${
-            playlist.songs.length === 0 ? "disabled" : ""
-          }>
-                          ${ICONS.play}
-                          Play
-                        </button>
-                        <button class="edit-playlist-btn bg-gray-600 text-white px-6 py-3 rounded-full hover:bg-gray-500 transition-colors" data-playlist-id="${playlist.id}">
-                          Edit
-                        </button>
-                        <button class="delete-playlist-btn bg-red-600 text-white px-6 py-3 rounded-full hover:bg-red-700 transition-colors" data-playlist-id="${playlist.id}">
-                          Delete
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  ${
-                    playlist.songs.length === 0
-                      ? `
-                    <div class="empty-playlist text-center py-12">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-16 h-16 mx-auto mb-4 text-gray-600">
-                        <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v2H3v-2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
-                      </svg>
-                      <h3 class="text-xl font-bold mb-2">This playlist is empty</h3>
-                      <p class="text-gray-400 mb-4">Add songs to start building your playlist</p>
-                      <button class="browse-music-btn bg-accent-primary text-white px-6 py-2 rounded-full hover:bg-accent-secondary transition-colors">
-                        Browse Music
-                      </button>
-                    </div>
-                  `
-                      : `
-                    <div class="songs-list">
-                      <div class="songs-header grid grid-cols-12 gap-4 px-4 py-2 text-sm text-gray-400 border-b border-gray-700 mb-2">
-                        <div class="col-span-1">#</div>
-                        <div class="col-span-5">Title</div>
-                        <div class="col-span-3 hidden md:block">Album</div>
-                        <div class="col-span-2 hidden md:block">Date Added</div>
-                        <div class="col-span-1">Duration</div>
-                      </div>
-                      ${playlist.songs
-                        .map(
-                          (song, index) => `
-                        <div class="song-row grid grid-cols-12 gap-4 items-center px-4 py-3 rounded-lg hover:bg-white/5 transition-colors cursor-pointer group" data-song='${JSON.stringify(song).replace(/'/g, "&apos;")}' data-playlist-id="${
-                            playlist.id
-                          }" data-song-index="${index}">
-                          <div class="col-span-1 text-gray-400 group-hover:hidden">${index + 1}</div>
-                          <div class="col-span-1 hidden group-hover:block">
-                            <button class="play-song-btn w-8 h-8 bg-accent-primary rounded-full flex items-center justify-center hover:scale-110 transition-transform">
-                              ${ICONS.play}
-                            </button>
-                          </div>
-                          <div class="col-span-5 flex items-center gap-3">
-                            <img src="${utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="w-10 h-10 rounded object-cover">
-                            <div>
-                              <div class="font-medium">${song.title}</div>
-                              <div class="text-sm text-gray-400 cursor-pointer hover:text-white transition-colors" data-artist="${song.artist}">${song.artist}</div>
-                            </div>
-                          </div>
-                          <div class="col-span-3 hidden md:block text-gray-400 text-sm">${song.album}</div>
-                          <div class="col-span-2 hidden md:block text-gray-400 text-sm">${new Date().toLocaleDateString()}</div>
-                          <div class="col-span-1 flex items-center justify-between">
-                            <span class="text-gray-400 text-sm">${song.duration || "0:00"}</span>
-                            <div class="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
-                              <button class="action-btn p-1 hover:bg-white/10 rounded transition-colors" data-action="favorite" data-song-id="${song.id}" title="Add to favorites">
-                                <svg class="w-4 h-4 ${appState.favorites.has("songs", song.id) ? "text-red-500" : ""}" fill="${appState.favorites.has("songs", song.id) ? "currentColor" : "none"}" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                                </svg>
-                              </button>
-                              <button class="action-btn p-1 hover:bg-white/10 rounded transition-colors" data-action="add-queue" title="Add to queue">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                                </svg>
-                              </button>
-                              <button class="action-btn p-1 hover:bg-white/10 rounded transition-colors" data-action="remove-from-playlist" title="Remove from playlist">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                </svg>
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      `
-                        )
-                        .join("")}
-                    </div>
-                  `
-                  }
-                </div>
-              `;
-
-            playlists.bindViewEvents(playlist);
-            pageLoader.complete();
-        }, 200);
+        navigation.pages.loadPlaylistPage(playlistId);
     },
-
     bindEvents: (root = $byId(IDS.dynamicContent)) => {
         const dynamicContent = root;
         if (!dynamicContent) return;

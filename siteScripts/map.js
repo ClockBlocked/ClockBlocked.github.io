@@ -296,6 +296,7 @@ export const ROUTES = Object.freeze({
   ALL_ARTISTS: "allArtists",
   SEARCH: "search",
   ALBUM: "album",
+  PLAYLIST: "playlist",
 });
 
 export const STORAGE_KEYS = Object.freeze({

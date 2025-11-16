@@ -84,13 +84,11 @@ export const deepLinkRouter = {
     const decodedArtist = artistName;
     const decodedAlbum = albumName;
 
-    if (window.appState?.router && window.music) {
-      const artistData = window.music.find(a => a.artist === decodedArtist);
-      if (artistData && window.navigation?.pages?.loadArtistPage) {
-        window.navigation.pages.loadArtistPage(artistData, decodedAlbum);
-      } else {
-        this.navigateToHome();
-      }
+    if (window.appState?.router) {
+      window.appState.router.navigateTo(window.ROUTES?.ALBUM || 'album', {
+        artist: decodedArtist,
+        album: decodedAlbum,
+      });
     }
   },
 
