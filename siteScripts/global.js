@@ -178,23 +178,35 @@ const appState = {
     albums: new Set(),
 
     add: function(type, id) {
-      appState.favorites[type].add(id);
-      appState.favorites.save(type);
-      appState.favorites.updateIcon(type, id, true);
-      PubSub.publish('favorites:changed', { type, id, action: 'add' });
-      const itemName = type === "songs" ? "song" : type.slice(0, -1);
-      notifications.notify({ type: NOTIFICATION_TYPES.SUCCESS, message: `Added ${itemName} to favorites` });
-    },
-
-    remove: function(type, id) {
-      appState.favorites[type].delete(id);
-      appState.favorites.save(type);
-      appState.favorites.updateIcon(type, id, false);
-      PubSub.publish('favorites:changed', { type, id, action: 'remove' });
-      const itemName = type === "songs" ? "song" : type.slice(0, -1);
-      notifications.notify({ type: NOTIFICATION_TYPES.INFO, message: `Removed ${itemName} from favorites` });
-    },
-
+        appState.favorites[type].add(id);
+        appState.favorites.save(type);
+        appState.favorites.updateIcon(type, id, true);
+        PubSub.publish('favorites:changed', {
+          type,
+          id,
+          action: 'add'
+        });
+        const itemName = type === "songs" ? "song" : type.slice(0, -1);
+        notifications.notify({
+          type: NOTIFICATION_TYPES.SUCCESS,
+          message: `Added ${itemName} to favorites`
+        });
+      },
+      remove: function(type, id) {
+        appState.favorites[type].delete(id);
+        appState.favorites.save(type);
+        appState.favorites.updateIcon(type, id, false);
+        PubSub.publish('favorites:changed', {
+          type,
+          id,
+          action: 'remove'
+        });
+        const itemName = type === "songs" ? "song" : type.slice(0, -1);
+        notifications.notify({
+          type: NOTIFICATION_TYPES.INFO,
+          message: `Removed ${itemName} from favorites`
+        });
+      },
     toggle: function(type, id) {
       if (appState.favorites[type].has(id)) {
         appState.favorites.remove(type, id);
