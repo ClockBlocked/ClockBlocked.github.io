@@ -183,7 +183,7 @@ const appState = {
       appState.favorites.updateIcon(type, id, true);
       PubSub.publish('favorites:changed', { type, id, action: 'add' });
       const itemName = type === "songs" ? "song" : type.slice(0, -1);
-      notifications.show(`Added ${itemName} to favorites`, NOTIFICATION_TYPES.SUCCESS);
+      notifications.notify({ type: NOTIFICATION_TYPES.SUCCESS, message: `Added ${itemName} to favorites` });
     },
 
     remove: function(type, id) {
@@ -192,7 +192,7 @@ const appState = {
       appState.favorites.updateIcon(type, id, false);
       PubSub.publish('favorites:changed', { type, id, action: 'remove' });
       const itemName = type === "songs" ? "song" : type.slice(0, -1);
-      notifications.show(`Removed ${itemName} from favorites`, NOTIFICATION_TYPES.INFO);
+      notifications.notify({ type: NOTIFICATION_TYPES.INFO, message: `Removed ${itemName} from favorites` });
     },
 
     toggle: function(type, id) {
@@ -248,7 +248,7 @@ const appState = {
       storage.save(STORAGE_KEYS.QUEUE, appState.queue.items);
       ui.updateCounts();
       PubSub.publish('queue:changed', { action: 'add', song, position });
-      notifications.show(`Added "${song.title}" to queue`);
+      notifications.notify({ message: `Added "${song.title}" to queue` });
     },
 
     remove: function(index) {
@@ -678,207 +678,6 @@ const overlays = {
     }
   }
 };
-
-
-// CoPilot
-// READ NE
-// OLD NOTIFICATION SYSTEM below
-/**
-const notifications = {
-  container: null,
-  items: new Set(),
-
-  initialize() {
-    if (this.container && document.body.contains(this.container)) return;
-    const existing = document.getElementById("toast-portal");
-    this.container = existing || document.createElement("div");
-    this.container.id = this.container.id || "toast-portal";
-    if (!existing) document.body.appendChild(this.container);
-  },
-
-  show(message, type = NOTIFICATION_TYPES.INFO, undoCallback = null, options = {}) {
-    this.initialize();
-
-    const duration = Number.isFinite(options.duration) ? Math.max(1200, options.duration) : 5000;
-    const title = options.title || null;
-    const iconHtml = options.iconHtml || TOAST_ICONS[type] || TOAST_ICONS[NOTIFICATION_TYPES.INFO];
-
-    const toastHtml = render.notification({
-      type,
-      iconHtml,
-      title,
-      message: this.escapeHtml(String(message)),
-    });
-    
-    const toast = create(toastHtml);
-
-    if (!prefersReducedMotion) {
-      toast.style.animation = "toast-in 200ms cubic-bezier(.2,.8,.25,1) both";
-    }
-
-    const actions = toast.querySelector('.toast-actions');
-    if (actions && typeof undoCallback === "function") {
-      const undoBtn = document.createElement("button");
-      undoBtn.type = "button";
-      undoBtn.textContent = "Undo";
-      undoBtn.addEventListener("click", () => {
-        try { undoCallback(); } catch {}
-        dismiss("undo");
-      });
-      actions.appendChild(undoBtn);
-    }
-
-    const progress = toast.querySelector('.toast-progress');
-
-    this.container.prepend(toast);
-    this.items.add(toast);
-
-    const ctrl = this.createTimerController({
-      duration,
-      onTick: (ratioRemaining) => {
-        progress.style.width = (ratioRemaining * 100).toFixed(2) + "%";
-      },
-      onEnd: () => dismiss("timeout"),
-    });
-
-    const pause = () => ctrl.pause();
-    const resume = () => ctrl.resume();
-
-    toast.addEventListener("mouseenter", pause);
-    toast.addEventListener("mouseleave", resume);
-    toast.addEventListener("touchstart", (e) => { pause(); touchStart(e); }, { passive: true });
-    toast.addEventListener("touchend", (e) => { touchEnd(e); resume(); });
-    toast.addEventListener("touchcancel", (e) => { touchEnd(e); resume(); });
-
-    let drag = null;
-    const threshold = 56;
-    const maxFade = 80;
-
-    const startDrag = (clientX) => {
-      drag = { startX: clientX, lastX: clientX };
-      toast.style.transition = "none";
-    };
-    const onDrag = (clientX) => {
-      if (!drag) return;
-      drag.lastX = clientX;
-      const dx = clientX - drag.startX;
-      toast.style.transform = `translateX(${dx}px)`;
-      const abs = Math.min(Math.abs(dx), maxFade);
-      const alpha = 1 - (abs / maxFade) * 0.85;
-      toast.style.opacity = String(Math.max(0.15, alpha));
-    };
-    const endDrag = () => {
-      if (!drag) return;
-      const dx = drag.lastX - drag.startX;
-      toast.style.transition = "transform 180ms cubic-bezier(.2,.8,.25,1), opacity 160ms linear";
-      if (Math.abs(dx) >= threshold) {
-        toast.style.animation = dx > 0 ? "toast-swipe-out-right 220ms both" : "toast-swipe-out-left 220ms both";
-        setTimeout(() => dismiss("swipe"), 200);
-      } else {
-        toast.style.transform = "translateX(0)";
-        toast.style.opacity = "1";
-      }
-      drag = null;
-    };
-
-    toast.addEventListener("pointerdown", (e) => {
-      if (e.pointerType === "mouse" && e.button !== 0) return;
-      ctrl.pause();
-      toast.setPointerCapture?.(e.pointerId);
-      startDrag(e.clientX);
-    });
-    toast.addEventListener("pointermove", (e) => {
-      if (!drag) return;
-      onDrag(e.clientX);
-    });
-    toast.addEventListener("pointerup", () => {
-      endDrag();
-      ctrl.resume();
-    });
-    toast.addEventListener("pointercancel", () => {
-      endDrag();
-      ctrl.resume();
-    });
-
-    function touchStart(e) {
-      const t = e.changedTouches?.[0];
-      if (!t) return;
-      startDrag(t.clientX);
-    }
-    function touchEnd(e) {
-      const t = e.changedTouches?.[0];
-      if (!t) return;
-      onDrag(t.clientX);
-      endDrag();
-    }
-
-    const dismiss = () => {
-      if (!this.items.has(toast)) return;
-      ctrl.stop();
-      this.items.delete(toast);
-      if (!prefersReducedMotion) {
-        toast.style.animation = "toast-out-up 180ms cubic-bezier(.2,.8,.25,1) forwards";
-        setTimeout(() => toast.remove(), 160);
-      } else {
-        toast.remove();
-      }
-    };
-
-    return toast;
-  },
-
-  createTimerController({ duration, onTick, onEnd }) {
-    let start = performance.now();
-    let remaining = duration;
-    let raf = null;
-    let running = true;
-
-    function frame(now) {
-      if (!running) return;
-      const elapsed = now - start;
-      const left = Math.max(0, remaining - elapsed);
-      const ratioRemaining = left / duration;
-      onTick?.(ratioRemaining);
-      if (left <= 0) {
-        running = false;
-        onEnd?.();
-        return;
-      }
-      raf = requestAnimationFrame(frame);
-    }
-    raf = requestAnimationFrame(frame);
-
-    return {
-      pause() {
-        if (!running) return;
-        running = false;
-        remaining -= performance.now() - start;
-        if (raf) cancelAnimationFrame(raf);
-      },
-      resume() {
-        if (running) return;
-        running = true;
-        start = performance.now();
-        raf = requestAnimationFrame(frame);
-      },
-      stop() {
-        running = false;
-        if (raf) cancelAnimationFrame(raf);
-      }
-    };
-  },
-
-  escapeHtml(s) {
-    return s
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
-  }
-};
-**/
-
 
 
 const notificationPlayer = {
@@ -1834,13 +1633,13 @@ const musicPlayer = {
           ui.updateShuffleButton();
         }
         if (window.notifications) {
-          notifications.show(`Shuffle ${appState.shuffleMode ? "enabled" : "disabled"}`);
+          notifications.notify({ message: `Shuffle ${appState.shuffleMode ? "enabled" : "disabled"}` });
         }
       },
       all: () => {
         if (!window.music || window.music.length === 0) {
           if (window.notifications) {
-            notifications.show("No music library found", window.NOTIFICATION_TYPES?.WARNING);
+            notifications.notify({ type: window.NOTIFICATION_TYPES?.WARNING, message: "No music library found" });
           }
           return;
         }
@@ -1859,7 +1658,7 @@ const musicPlayer = {
         });
         if (allSongs.length === 0) {
           if (window.notifications) {
-            notifications.show("No songs found", window.NOTIFICATION_TYPES?.WARNING);
+            notifications.notify({ type: window.NOTIFICATION_TYPES?.WARNING, message: "No songs found" });
           }
           return;
         }
@@ -1875,7 +1674,7 @@ const musicPlayer = {
           ui.updateShuffleButton();
         }
         if (window.notifications) {
-          notifications.show("Playing all songs shuffled");
+          notifications.notify({ message: "Playing all songs shuffled" });
         }
       },
     },
@@ -1893,7 +1692,7 @@ const musicPlayer = {
         }
         const modeText = appState.repeatMode === window.REPEAT_MODES?.OFF ? "disabled" : appState.repeatMode === window.REPEAT_MODES?.ALL ? "all songs" : "current song";
         if (window.notifications) {
-          notifications.show(`Repeat ${modeText}`);
+          notifications.notify({ message: `Repeat ${modeText}` });
         }
       },
     },
@@ -3689,7 +3488,7 @@ const app = {
         window.music = music;
 
         storage.initialize();
-        notifications.initialize();
+        notifications.init();
         
         musicPlayer.ui.initialize();
 
@@ -3744,7 +3543,7 @@ const app = {
 const playlists = {
     add: (name) => {
         if (!name || !name.trim()) {
-            notifications.show("Please enter a playlist name", NOTIFICATION_TYPES.WARNING);
+            notifications.notify({ type: NOTIFICATION_TYPES.WARNING, message: "Please enter a playlist name" });
             return null;
         }
 
@@ -3764,27 +3563,27 @@ const playlists = {
             homePage.renderPlaylists();
         }
 
-        notifications.show(`Created playlist "${playlist.name}"`, NOTIFICATION_TYPES.SUCCESS);
+        notifications.notify({ type: NOTIFICATION_TYPES.SUCCESS, message: `Created playlist "${playlist.name}"` });
         return playlist;
     },
 
     addSong: (playlistId, song) => {
         const playlist = appState.playlists.find((p) => p.id === playlistId);
         if (!playlist) {
-            notifications.show("Playlist not found", NOTIFICATION_TYPES.ERROR);
+            notifications.notify({ type: NOTIFICATION_TYPES.ERROR, message: "Playlist not found" });
             return false;
         }
 
         const exists = playlist.songs.some((s) => s.id === song.id);
         if (exists) {
-            notifications.show("Song already in playlist", NOTIFICATION_TYPES.WARNING);
+            notifications.notify({ type: NOTIFICATION_TYPES.WARNING, message: "Song already in playlist" });
             return false;
         }
 
         playlist.songs.push(song);
         storage.save(STORAGE_KEYS.PLAYLISTS, appState.playlists);
 
-        notifications.show(`Added "${song.title}" to "${playlist.name}"`, NOTIFICATION_TYPES.SUCCESS);
+        notifications.notify({ type: NOTIFICATION_TYPES.SUCCESS, message: `Added "${song.title}" to "${playlist.name}"` });
         return true;
     },
 
@@ -3797,7 +3596,7 @@ const playlists = {
 
         if (playlist.songs.length < initialLength) {
             storage.save(STORAGE_KEYS.PLAYLISTS, appState.playlists);
-            notifications.show("Song removed from playlist", NOTIFICATION_TYPES.INFO);
+            notifications.notify({ type: NOTIFICATION_TYPES.INFO, message: "Song removed from playlist" });
             return true;
         }
 
@@ -3807,7 +3606,7 @@ const playlists = {
     play: (playlistId) => {
         const playlist = appState.playlists.find((p) => p.id === playlistId);
         if (!playlist || playlist.songs.length === 0) {
-            notifications.show("Playlist is empty", NOTIFICATION_TYPES.WARNING);
+            notifications.notify({ type: NOTIFICATION_TYPES.WARNING, message: "Playlist is empty" });
             return;
         }
 
@@ -3815,7 +3614,7 @@ const playlists = {
         playlist.songs.slice(1).forEach((song) => appState.queue.add(song));
         musicPlayer.ui.playSong(playlist.songs[0]);
 
-        notifications.show(`Playing playlist "${playlist.name}"`, NOTIFICATION_TYPES.SUCCESS);
+        notifications.notify({ type: NOTIFICATION_TYPES.SUCCESS, message: `Playing playlist "${playlist.name}"` });
     },
 
     remove: async (playlistId) => {
@@ -3835,7 +3634,7 @@ const playlists = {
         const playlistName = playlist.name;
         appState.playlists = appState.playlists.filter((p) => p.id !== playlistId);
         storage.save(STORAGE_KEYS.PLAYLISTS, appState.playlists);
-        notifications.show(`Deleted playlist "${playlistName}"`, NOTIFICATION_TYPES.INFO);
+        notifications.notify({ type: NOTIFICATION_TYPES.INFO, message: `Deleted playlist "${playlistName}"` });
         
         return true;
     },
@@ -3927,7 +3726,7 @@ const playlists = {
     show: (playlistId) => {
         const playlist = appState.playlists.find((p) => p.id === playlistId);
         if (!playlist) {
-            notifications.show("Playlist not found", NOTIFICATION_TYPES.ERROR);
+            notifications.notify({ type: NOTIFICATION_TYPES.ERROR, message: "Playlist not found" });
             return;
         }
 
@@ -4120,7 +3919,7 @@ const playlists = {
                     playlist.name = newName.trim();
                     storage.save(STORAGE_KEYS.PLAYLISTS, appState.playlists);
                     playlists.show(playlist.id);
-                    notifications.show("Playlist renamed successfully", NOTIFICATION_TYPES.SUCCESS);
+                    notifications.notify({ type: NOTIFICATION_TYPES.SUCCESS, message: "Playlist renamed successfully" });
                 }
             });
         }
