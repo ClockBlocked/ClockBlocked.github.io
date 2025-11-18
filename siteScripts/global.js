@@ -297,56 +297,6 @@ const appState = {
     }
   }
 };
-const storage = {
-  save: (key, data) => {
-    try {
-      localStorage.setItem(key, JSON.stringify(data));
-      return true;
-    } catch (error) {
-      return false;
-    }
-  },
-
-  load: (key) => {
-    try {
-      const data = localStorage.getItem(key);
-      return data ? JSON.parse(data) : null;
-    } catch (error) {
-      return null;
-    }
-  },
-
-  initialize: () => {
-    const favoriteTypes = [
-      { type: "songs", key: STORAGE_KEYS.FAVORITE_SONGS },
-      { type: "artists", key: STORAGE_KEYS.FAVORITE_ARTISTS },
-      { type: "albums", key: STORAGE_KEYS.FAVORITE_ALBUMS }
-    ];
-
-    favoriteTypes.forEach(({ type, key }) => {
-      const data = storage.load(key);
-      if (data) {
-        appState.favorites[type] = new Set(data);
-      }
-    });
-
-    const dataLoaders = {
-      [STORAGE_KEYS.RECENTLY_PLAYED]: (data) => {
-        appState.recentlyPlayed = data || [];
-        setTimeout(() => {
-          musicPlayer.ui.updateHomeBentoGrid();
-        }, 100);
-      },
-      [STORAGE_KEYS.PLAYLISTS]: (data) => (appState.playlists = data || []),
-      [STORAGE_KEYS.QUEUE]: (data) => (appState.queue.items = data || [])
-    };
-
-    Object.entries(dataLoaders).forEach(([key, loader]) => {
-      const data = storage.load(key);
-      if (data) loader(data);
-    });
-  }
-};
 const utils = {
   getAlbumImageUrl: (albumName) => {
     if (!albumName) return utils.getDefaultAlbumImage();
@@ -462,6 +412,56 @@ const utils = {
     if (!results) return null;
     if (!results[2]) return "";
     return decodeURIComponent(results[2].replace(/\+/g, " "));
+  }
+};
+const storage = {
+  save: (key, data) => {
+    try {
+      localStorage.setItem(key, JSON.stringify(data));
+      return true;
+    } catch (error) {
+      return false;
+    }
+  },
+
+  load: (key) => {
+    try {
+      const data = localStorage.getItem(key);
+      return data ? JSON.parse(data) : null;
+    } catch (error) {
+      return null;
+    }
+  },
+
+  initialize: () => {
+    const favoriteTypes = [
+      { type: "songs", key: STORAGE_KEYS.FAVORITE_SONGS },
+      { type: "artists", key: STORAGE_KEYS.FAVORITE_ARTISTS },
+      { type: "albums", key: STORAGE_KEYS.FAVORITE_ALBUMS }
+    ];
+
+    favoriteTypes.forEach(({ type, key }) => {
+      const data = storage.load(key);
+      if (data) {
+        appState.favorites[type] = new Set(data);
+      }
+    });
+
+    const dataLoaders = {
+      [STORAGE_KEYS.RECENTLY_PLAYED]: (data) => {
+        appState.recentlyPlayed = data || [];
+        setTimeout(() => {
+          musicPlayer.ui.updateHomeBentoGrid();
+        }, 100);
+      },
+      [STORAGE_KEYS.PLAYLISTS]: (data) => (appState.playlists = data || []),
+      [STORAGE_KEYS.QUEUE]: (data) => (appState.queue.items = data || [])
+    };
+
+    Object.entries(dataLoaders).forEach(([key, loader]) => {
+      const data = storage.load(key);
+      if (data) loader(data);
+    });
   }
 };
 const dropdown = {
@@ -1025,6 +1025,471 @@ const playlists = {
 
 ////////////////////////////////////////////////////////////
 ///////////  Music Drawer & Android Media Session API //////
+const notificationPlayer = {
+  state: {
+    isInitialized: false,
+    supportedActions: new Set(),
+    currentMetadata: null,
+    positionUpdateInterval: null,
+    lastPositionUpdate: 0
+  },
+
+  metadata: {
+    generateArtworkUrl: (albumName) => {
+      if (!albumName) return utils.getDefaultAlbumImage();
+      const cleanName = albumName
+        .toLowerCase()
+        .replace(/\s+/g, '')
+        .replace(/[^\w]/g, '');
+      return `https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/copilot/fix-mobile-layout-issues/global/content/images/albumCovers/${cleanName}.png`;
+    },
+
+    createArtworkArray: (artworkUrl) => {
+      if (!artworkUrl) return [];
+      const sizes = [96, 128, 192, 256, 384, 512];
+      return sizes.map(size => ({
+        src: artworkUrl,
+        sizes: `${size}x${size}`,
+        type: 'image/png'
+      }));
+    },
+
+    update: (songData) => {
+      if (!('mediaSession' in navigator) || !songData) return;
+
+      try {
+        let artworkUrl = songData.cover;
+        if (!artworkUrl && songData.album) {
+          artworkUrl = notificationPlayer.metadata.generateArtworkUrl(songData.album);
+        }
+
+        const artwork = notificationPlayer.metadata.createArtworkArray(artworkUrl);
+
+        const metadata = new MediaMetadata({
+          title: songData.title || "Unknown Song",
+          artist: songData.artist || "Unknown Artist", 
+          album: songData.album || "Unknown Album",
+          artwork: artwork
+        });
+
+        navigator.mediaSession.metadata = metadata;
+        notificationPlayer.state.currentMetadata = metadata;
+
+        notificationPlayer.positionState.update();
+
+      } catch (error) {
+      }
+    },
+
+    clear: () => {
+      if (!('mediaSession' in navigator)) return;
+      try {
+        navigator.mediaSession.metadata = null;
+        notificationPlayer.state.currentMetadata = null;
+      } catch (error) {
+      }
+    }
+  },
+
+  positionState: {
+    update: () => {
+      if (!('mediaSession' in navigator) || !('setPositionState' in navigator.mediaSession)) {
+        return;
+      }
+
+      if (!appState.audio) return;
+
+      try {
+        const duration = appState.duration || appState.audio.duration || 0;
+        const currentTime = appState.audio.currentTime || 0;
+        const playbackRate = appState.audio.playbackRate || 1.0;
+
+        if (isFinite(duration) && duration > 0 && isFinite(currentTime) && currentTime >= 0) {
+          navigator.mediaSession.setPositionState({
+            duration: duration,
+            playbackRate: playbackRate,
+            position: Math.min(currentTime, duration)
+          });
+
+          notificationPlayer.state.lastPositionUpdate = Date.now();
+        }
+      } catch (error) {
+      }
+    },
+
+    reset: () => {
+      if (!('mediaSession' in navigator) || !('setPositionState' in navigator.mediaSession)) {
+        return;
+      }
+
+      try {
+        navigator.mediaSession.setPositionState(null);
+      } catch (error) {
+      }
+    },
+
+    startContinuousUpdate: () => {
+      notificationPlayer.positionState.stopContinuousUpdate();
+      notificationPlayer.state.positionUpdateInterval = setInterval(() => {
+        notificationPlayer.positionState.update();
+      }, 1000);
+    },
+
+    stopContinuousUpdate: () => {
+      if (notificationPlayer.state.positionUpdateInterval) {
+        clearInterval(notificationPlayer.state.positionUpdateInterval);
+        notificationPlayer.state.positionUpdateInterval = null;
+      }
+    }
+  },
+
+  playbackState: {
+    update: (state) => {
+      if (!('mediaSession' in navigator)) return;
+
+      try {
+        navigator.mediaSession.playbackState = state;
+        
+        if (state === 'playing') {
+          notificationPlayer.positionState.startContinuousUpdate();
+        } else {
+          notificationPlayer.positionState.stopContinuousUpdate();
+        }
+        
+        notificationPlayer.positionState.update();
+      } catch (error) {
+      }
+    },
+
+    onPlay: () => {
+      notificationPlayer.playbackState.update('playing');
+    },
+
+    onPause: () => {
+      notificationPlayer.playbackState.update('paused');
+    },
+
+    onStop: () => {
+      notificationPlayer.playbackState.update('none');
+      notificationPlayer.positionState.reset();
+    },
+
+    onEnded: () => {
+      notificationPlayer.playbackState.update('paused');
+      notificationPlayer.positionState.reset();
+    }
+  },
+
+  actions: {
+    play: () => {
+      try {
+        if (appState.audio && appState.audio.paused) {
+          appState.audio.play();
+        } else if (musicPlayer.playback && musicPlayer.playback.play) {
+          musicPlayer.playback.play();
+        }
+      } catch (error) {
+      }
+    },
+
+    pause: () => {
+      try {
+        if (appState.audio && !appState.audio.paused) {
+          appState.audio.pause();
+        } else if (musicPlayer.playback && musicPlayer.playback.pause) {
+          musicPlayer.playback.pause();
+        }
+      } catch (error) {
+      }
+    },
+
+    stop: () => {
+      try {
+        if (appState.audio) {
+          appState.audio.pause();
+          appState.audio.currentTime = 0;
+        }
+        notificationPlayer.playbackState.onStop();
+      } catch (error) {
+      }
+    },
+
+    previoustrack: () => {
+      try {
+        if (appState.audio && appState.audio.currentTime > 3) {
+          appState.audio.currentTime = 0;
+          notificationPlayer.positionState.update();
+        } else {
+          if (musicPlayer.playback && musicPlayer.playback.previous) {
+            musicPlayer.playback.previous();
+          }
+        }
+      } catch (error) {
+      }
+    },
+
+    nexttrack: () => {
+      try {
+        if (musicPlayer.playback && musicPlayer.playback.next) {
+          musicPlayer.playback.next();
+        }
+      } catch (error) {
+      }
+    },
+
+    seekto: (details) => {
+      try {
+        if (!appState.audio || !details || typeof details.seekTime !== 'number') return;
+
+        const seekTime = Math.max(0, Math.min(details.seekTime, appState.audio.duration || 0));
+        
+        if (details.fastSeek && 'fastSeek' in appState.audio) {
+          appState.audio.fastSeek(seekTime);
+        } else {
+          appState.audio.currentTime = seekTime;
+        }
+        
+        notificationPlayer.positionState.update();
+      } catch (error) {
+      }
+    },
+
+    seekbackward: (details) => {
+      try {
+        const skipTime = details?.seekOffset || 10;
+        if (appState.audio) {
+          const newTime = Math.max(appState.audio.currentTime - skipTime, 0);
+          appState.audio.currentTime = newTime;
+          notificationPlayer.positionState.update();
+        }
+      } catch (error) {
+      }
+    },
+
+    seekforward: (details) => {
+      try {
+        const skipTime = details?.seekOffset || 10;
+        if (appState.audio) {
+          const duration = appState.duration || appState.audio.duration || 0;
+          const newTime = Math.min(appState.audio.currentTime + skipTime, duration);
+          appState.audio.currentTime = newTime;
+          notificationPlayer.positionState.update();
+        }
+      } catch (error) {
+      }
+    }
+  },
+
+  events: {
+    bind: () => {
+      if (!appState.audio) return;
+
+      notificationPlayer.events.unbind();
+
+      const eventHandlers = notificationPlayer.events.handlers;
+      
+      appState.audio.addEventListener('loadstart', eventHandlers.onLoadStart);
+      appState.audio.addEventListener('loadedmetadata', eventHandlers.onLoadedMetadata);
+      appState.audio.addEventListener('loadeddata', eventHandlers.onLoadedData);
+      appState.audio.addEventListener('canplay', eventHandlers.onCanPlay);
+      appState.audio.addEventListener('play', eventHandlers.onPlay);
+      appState.audio.addEventListener('pause', eventHandlers.onPause);
+      appState.audio.addEventListener('ended', eventHandlers.onEnded);
+      appState.audio.addEventListener('timeupdate', eventHandlers.onTimeUpdate);
+      appState.audio.addEventListener('durationchange', eventHandlers.onDurationChange);
+      appState.audio.addEventListener('ratechange', eventHandlers.onRateChange);
+      appState.audio.addEventListener('seeked', eventHandlers.onSeeked);
+      appState.audio.addEventListener('error', eventHandlers.onError);
+    },
+
+    unbind: () => {
+      if (!appState.audio) return;
+
+      const eventHandlers = notificationPlayer.events.handlers;
+      
+      appState.audio.removeEventListener('loadstart', eventHandlers.onLoadStart);
+      appState.audio.removeEventListener('loadedmetadata', eventHandlers.onLoadedMetadata);
+      appState.audio.removeEventListener('loadeddata', eventHandlers.onLoadedData);
+      appState.audio.removeEventListener('canplay', eventHandlers.onCanPlay);
+      appState.audio.removeEventListener('play', eventHandlers.onPlay);
+      appState.audio.removeEventListener('pause', eventHandlers.onPause);
+      appState.audio.removeEventListener('ended', eventHandlers.onEnded);
+      appState.audio.removeEventListener('timeupdate', eventHandlers.onTimeUpdate);
+      appState.audio.removeEventListener('durationchange', eventHandlers.onDurationChange);
+      appState.audio.removeEventListener('ratechange', eventHandlers.onRateChange);
+      appState.audio.removeEventListener('seeked', eventHandlers.onSeeked);
+      appState.audio.removeEventListener('error', eventHandlers.onError);
+    },
+
+    handlers: {
+      onLoadStart: () => {
+        notificationPlayer.playbackState.update('none');
+      },
+
+      onLoadedMetadata: () => {
+        notificationPlayer.positionState.update();
+      },
+
+      onLoadedData: () => {
+        notificationPlayer.positionState.update();
+      },
+
+      onCanPlay: () => {
+        notificationPlayer.positionState.update();
+      },
+
+      onPlay: () => {
+        notificationPlayer.playbackState.onPlay();
+      },
+
+      onPause: () => {
+        notificationPlayer.playbackState.onPause();
+      },
+
+      onEnded: () => {
+        notificationPlayer.playbackState.onEnded();
+      },
+
+      onTimeUpdate: () => {
+        const now = Date.now();
+        if (now - notificationPlayer.state.lastPositionUpdate > 500) {
+          notificationPlayer.positionState.update();
+        }
+      },
+
+      onDurationChange: () => {
+        notificationPlayer.positionState.update();
+      },
+
+      onRateChange: () => {
+        notificationPlayer.positionState.update();
+      },
+
+      onSeeked: () => {
+        notificationPlayer.positionState.update();
+      },
+
+      onError: (error) => {
+        notificationPlayer.playbackState.update('paused');
+        notificationPlayer.positionState.stopContinuousUpdate();
+      }
+    }
+  },
+
+  setup: () => {
+    if (!('mediaSession' in navigator)) {
+      return false;
+    }
+
+    if (notificationPlayer.state.isInitialized) {
+      return true;
+    }
+
+    try {
+      navigator.mediaSession.metadata = null;
+      
+      const actionHandlers = [
+        ['play', notificationPlayer.actions.play],
+        ['pause', notificationPlayer.actions.pause],
+        ['stop', notificationPlayer.actions.stop],
+        ['previoustrack', notificationPlayer.actions.previoustrack],
+        ['nexttrack', notificationPlayer.actions.nexttrack],
+        ['seekto', notificationPlayer.actions.seekto],
+        ['seekbackward', notificationPlayer.actions.seekbackward],
+        ['seekforward', notificationPlayer.actions.seekforward]
+      ];
+
+      actionHandlers.forEach(([action, handler]) => {
+        try {
+          navigator.mediaSession.setActionHandler(action, handler);
+          notificationPlayer.state.supportedActions.add(action);
+        } catch (error) {
+        }
+      });
+
+      if (appState.audio) {
+        notificationPlayer.events.bind();
+      }
+
+      notificationPlayer.playbackState.update('none');
+
+      notificationPlayer.state.isInitialized = true;
+      
+      return true;
+
+    } catch (error) {
+      return false;
+    }
+  },
+
+  destroy: () => {
+    try {
+      notificationPlayer.positionState.stopContinuousUpdate();
+      notificationPlayer.events.unbind();
+
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = null;
+        notificationPlayer.positionState.reset();
+
+        Array.from(notificationPlayer.state.supportedActions).forEach(action => {
+          try {
+            navigator.mediaSession.setActionHandler(action, null);
+          } catch (error) {
+          }
+        });
+
+        navigator.mediaSession.playbackState = 'none';
+      }
+
+      notificationPlayer.state.isInitialized = false;
+      notificationPlayer.state.supportedActions.clear();
+      notificationPlayer.state.currentMetadata = null;
+      notificationPlayer.state.lastPositionUpdate = 0;
+
+    } catch (error) {
+    }
+  },
+
+  utils: {
+    isSupported: () => {
+      return 'mediaSession' in navigator;
+    },
+
+    isInitialized: () => {
+      return notificationPlayer.state.isInitialized;
+    },
+
+    getSupportedActions: () => {
+      return Array.from(notificationPlayer.state.supportedActions);
+    },
+
+    getCurrentMetadata: () => {
+      return notificationPlayer.state.currentMetadata;
+    },
+
+    getPlaybackInfo: () => {
+      if (!appState.audio) return null;
+
+      return {
+        currentTime: appState.audio.currentTime,
+        duration: appState.duration || appState.audio.duration,
+        playbackRate: appState.audio.playbackRate || 1.0,
+        paused: appState.audio.paused,
+        ended: appState.audio.ended,
+        volume: appState.audio.volume,
+        playbackState: navigator.mediaSession?.playbackState || 'none'
+      };
+    },
+
+    forcePositionUpdate: () => {
+      notificationPlayer.positionState.update();
+    },
+
+    rebindEvents: () => {
+      notificationPlayer.events.bind();
+    }
+  }
+};
 const musicPlayer = {
     state: {
         isDraggingHeader: false,
@@ -2322,520 +2787,11 @@ const musicPlayer = {
         }
     }
 };
-const notificationPlayer = {
-  state: {
-    isInitialized: false,
-    supportedActions: new Set(),
-    currentMetadata: null,
-    positionUpdateInterval: null,
-    lastPositionUpdate: 0
-  },
-
-  metadata: {
-    generateArtworkUrl: (albumName) => {
-      if (!albumName) return utils.getDefaultAlbumImage();
-      const cleanName = albumName
-        .toLowerCase()
-        .replace(/\s+/g, '')
-        .replace(/[^\w]/g, '');
-      return `https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/copilot/fix-mobile-layout-issues/global/content/images/albumCovers/${cleanName}.png`;
-    },
-
-    createArtworkArray: (artworkUrl) => {
-      if (!artworkUrl) return [];
-      const sizes = [96, 128, 192, 256, 384, 512];
-      return sizes.map(size => ({
-        src: artworkUrl,
-        sizes: `${size}x${size}`,
-        type: 'image/png'
-      }));
-    },
-
-    update: (songData) => {
-      if (!('mediaSession' in navigator) || !songData) return;
-
-      try {
-        let artworkUrl = songData.cover;
-        if (!artworkUrl && songData.album) {
-          artworkUrl = notificationPlayer.metadata.generateArtworkUrl(songData.album);
-        }
-
-        const artwork = notificationPlayer.metadata.createArtworkArray(artworkUrl);
-
-        const metadata = new MediaMetadata({
-          title: songData.title || "Unknown Song",
-          artist: songData.artist || "Unknown Artist", 
-          album: songData.album || "Unknown Album",
-          artwork: artwork
-        });
-
-        navigator.mediaSession.metadata = metadata;
-        notificationPlayer.state.currentMetadata = metadata;
-
-        notificationPlayer.positionState.update();
-
-      } catch (error) {
-      }
-    },
-
-    clear: () => {
-      if (!('mediaSession' in navigator)) return;
-      try {
-        navigator.mediaSession.metadata = null;
-        notificationPlayer.state.currentMetadata = null;
-      } catch (error) {
-      }
-    }
-  },
-
-  positionState: {
-    update: () => {
-      if (!('mediaSession' in navigator) || !('setPositionState' in navigator.mediaSession)) {
-        return;
-      }
-
-      if (!appState.audio) return;
-
-      try {
-        const duration = appState.duration || appState.audio.duration || 0;
-        const currentTime = appState.audio.currentTime || 0;
-        const playbackRate = appState.audio.playbackRate || 1.0;
-
-        if (isFinite(duration) && duration > 0 && isFinite(currentTime) && currentTime >= 0) {
-          navigator.mediaSession.setPositionState({
-            duration: duration,
-            playbackRate: playbackRate,
-            position: Math.min(currentTime, duration)
-          });
-
-          notificationPlayer.state.lastPositionUpdate = Date.now();
-        }
-      } catch (error) {
-      }
-    },
-
-    reset: () => {
-      if (!('mediaSession' in navigator) || !('setPositionState' in navigator.mediaSession)) {
-        return;
-      }
-
-      try {
-        navigator.mediaSession.setPositionState(null);
-      } catch (error) {
-      }
-    },
-
-    startContinuousUpdate: () => {
-      notificationPlayer.positionState.stopContinuousUpdate();
-      notificationPlayer.state.positionUpdateInterval = setInterval(() => {
-        notificationPlayer.positionState.update();
-      }, 1000);
-    },
-
-    stopContinuousUpdate: () => {
-      if (notificationPlayer.state.positionUpdateInterval) {
-        clearInterval(notificationPlayer.state.positionUpdateInterval);
-        notificationPlayer.state.positionUpdateInterval = null;
-      }
-    }
-  },
-
-  playbackState: {
-    update: (state) => {
-      if (!('mediaSession' in navigator)) return;
-
-      try {
-        navigator.mediaSession.playbackState = state;
-        
-        if (state === 'playing') {
-          notificationPlayer.positionState.startContinuousUpdate();
-        } else {
-          notificationPlayer.positionState.stopContinuousUpdate();
-        }
-        
-        notificationPlayer.positionState.update();
-      } catch (error) {
-      }
-    },
-
-    onPlay: () => {
-      notificationPlayer.playbackState.update('playing');
-    },
-
-    onPause: () => {
-      notificationPlayer.playbackState.update('paused');
-    },
-
-    onStop: () => {
-      notificationPlayer.playbackState.update('none');
-      notificationPlayer.positionState.reset();
-    },
-
-    onEnded: () => {
-      notificationPlayer.playbackState.update('paused');
-      notificationPlayer.positionState.reset();
-    }
-  },
-
-  actions: {
-    play: () => {
-      try {
-        if (appState.audio && appState.audio.paused) {
-          appState.audio.play();
-        } else if (musicPlayer.playback && musicPlayer.playback.play) {
-          musicPlayer.playback.play();
-        }
-      } catch (error) {
-      }
-    },
-
-    pause: () => {
-      try {
-        if (appState.audio && !appState.audio.paused) {
-          appState.audio.pause();
-        } else if (musicPlayer.playback && musicPlayer.playback.pause) {
-          musicPlayer.playback.pause();
-        }
-      } catch (error) {
-      }
-    },
-
-    stop: () => {
-      try {
-        if (appState.audio) {
-          appState.audio.pause();
-          appState.audio.currentTime = 0;
-        }
-        notificationPlayer.playbackState.onStop();
-      } catch (error) {
-      }
-    },
-
-    previoustrack: () => {
-      try {
-        if (appState.audio && appState.audio.currentTime > 3) {
-          appState.audio.currentTime = 0;
-          notificationPlayer.positionState.update();
-        } else {
-          if (musicPlayer.playback && musicPlayer.playback.previous) {
-            musicPlayer.playback.previous();
-          }
-        }
-      } catch (error) {
-      }
-    },
-
-    nexttrack: () => {
-      try {
-        if (musicPlayer.playback && musicPlayer.playback.next) {
-          musicPlayer.playback.next();
-        }
-      } catch (error) {
-      }
-    },
-
-    seekto: (details) => {
-      try {
-        if (!appState.audio || !details || typeof details.seekTime !== 'number') return;
-
-        const seekTime = Math.max(0, Math.min(details.seekTime, appState.audio.duration || 0));
-        
-        if (details.fastSeek && 'fastSeek' in appState.audio) {
-          appState.audio.fastSeek(seekTime);
-        } else {
-          appState.audio.currentTime = seekTime;
-        }
-        
-        notificationPlayer.positionState.update();
-      } catch (error) {
-      }
-    },
-
-    seekbackward: (details) => {
-      try {
-        const skipTime = details?.seekOffset || 10;
-        if (appState.audio) {
-          const newTime = Math.max(appState.audio.currentTime - skipTime, 0);
-          appState.audio.currentTime = newTime;
-          notificationPlayer.positionState.update();
-        }
-      } catch (error) {
-      }
-    },
-
-    seekforward: (details) => {
-      try {
-        const skipTime = details?.seekOffset || 10;
-        if (appState.audio) {
-          const duration = appState.duration || appState.audio.duration || 0;
-          const newTime = Math.min(appState.audio.currentTime + skipTime, duration);
-          appState.audio.currentTime = newTime;
-          notificationPlayer.positionState.update();
-        }
-      } catch (error) {
-      }
-    }
-  },
-
-  events: {
-    bind: () => {
-      if (!appState.audio) return;
-
-      notificationPlayer.events.unbind();
-
-      const eventHandlers = notificationPlayer.events.handlers;
-      
-      appState.audio.addEventListener('loadstart', eventHandlers.onLoadStart);
-      appState.audio.addEventListener('loadedmetadata', eventHandlers.onLoadedMetadata);
-      appState.audio.addEventListener('loadeddata', eventHandlers.onLoadedData);
-      appState.audio.addEventListener('canplay', eventHandlers.onCanPlay);
-      appState.audio.addEventListener('play', eventHandlers.onPlay);
-      appState.audio.addEventListener('pause', eventHandlers.onPause);
-      appState.audio.addEventListener('ended', eventHandlers.onEnded);
-      appState.audio.addEventListener('timeupdate', eventHandlers.onTimeUpdate);
-      appState.audio.addEventListener('durationchange', eventHandlers.onDurationChange);
-      appState.audio.addEventListener('ratechange', eventHandlers.onRateChange);
-      appState.audio.addEventListener('seeked', eventHandlers.onSeeked);
-      appState.audio.addEventListener('error', eventHandlers.onError);
-    },
-
-    unbind: () => {
-      if (!appState.audio) return;
-
-      const eventHandlers = notificationPlayer.events.handlers;
-      
-      appState.audio.removeEventListener('loadstart', eventHandlers.onLoadStart);
-      appState.audio.removeEventListener('loadedmetadata', eventHandlers.onLoadedMetadata);
-      appState.audio.removeEventListener('loadeddata', eventHandlers.onLoadedData);
-      appState.audio.removeEventListener('canplay', eventHandlers.onCanPlay);
-      appState.audio.removeEventListener('play', eventHandlers.onPlay);
-      appState.audio.removeEventListener('pause', eventHandlers.onPause);
-      appState.audio.removeEventListener('ended', eventHandlers.onEnded);
-      appState.audio.removeEventListener('timeupdate', eventHandlers.onTimeUpdate);
-      appState.audio.removeEventListener('durationchange', eventHandlers.onDurationChange);
-      appState.audio.removeEventListener('ratechange', eventHandlers.onRateChange);
-      appState.audio.removeEventListener('seeked', eventHandlers.onSeeked);
-      appState.audio.removeEventListener('error', eventHandlers.onError);
-    },
-
-    handlers: {
-      onLoadStart: () => {
-        notificationPlayer.playbackState.update('none');
-      },
-
-      onLoadedMetadata: () => {
-        notificationPlayer.positionState.update();
-      },
-
-      onLoadedData: () => {
-        notificationPlayer.positionState.update();
-      },
-
-      onCanPlay: () => {
-        notificationPlayer.positionState.update();
-      },
-
-      onPlay: () => {
-        notificationPlayer.playbackState.onPlay();
-      },
-
-      onPause: () => {
-        notificationPlayer.playbackState.onPause();
-      },
-
-      onEnded: () => {
-        notificationPlayer.playbackState.onEnded();
-      },
-
-      onTimeUpdate: () => {
-        const now = Date.now();
-        if (now - notificationPlayer.state.lastPositionUpdate > 500) {
-          notificationPlayer.positionState.update();
-        }
-      },
-
-      onDurationChange: () => {
-        notificationPlayer.positionState.update();
-      },
-
-      onRateChange: () => {
-        notificationPlayer.positionState.update();
-      },
-
-      onSeeked: () => {
-        notificationPlayer.positionState.update();
-      },
-
-      onError: (error) => {
-        notificationPlayer.playbackState.update('paused');
-        notificationPlayer.positionState.stopContinuousUpdate();
-      }
-    }
-  },
-
-  setup: () => {
-    if (!('mediaSession' in navigator)) {
-      return false;
-    }
-
-    if (notificationPlayer.state.isInitialized) {
-      return true;
-    }
-
-    try {
-      navigator.mediaSession.metadata = null;
-      
-      const actionHandlers = [
-        ['play', notificationPlayer.actions.play],
-        ['pause', notificationPlayer.actions.pause],
-        ['stop', notificationPlayer.actions.stop],
-        ['previoustrack', notificationPlayer.actions.previoustrack],
-        ['nexttrack', notificationPlayer.actions.nexttrack],
-        ['seekto', notificationPlayer.actions.seekto],
-        ['seekbackward', notificationPlayer.actions.seekbackward],
-        ['seekforward', notificationPlayer.actions.seekforward]
-      ];
-
-      actionHandlers.forEach(([action, handler]) => {
-        try {
-          navigator.mediaSession.setActionHandler(action, handler);
-          notificationPlayer.state.supportedActions.add(action);
-        } catch (error) {
-        }
-      });
-
-      if (appState.audio) {
-        notificationPlayer.events.bind();
-      }
-
-      notificationPlayer.playbackState.update('none');
-
-      notificationPlayer.state.isInitialized = true;
-      
-      return true;
-
-    } catch (error) {
-      return false;
-    }
-  },
-
-  destroy: () => {
-    try {
-      notificationPlayer.positionState.stopContinuousUpdate();
-      notificationPlayer.events.unbind();
-
-      if ('mediaSession' in navigator) {
-        navigator.mediaSession.metadata = null;
-        notificationPlayer.positionState.reset();
-
-        Array.from(notificationPlayer.state.supportedActions).forEach(action => {
-          try {
-            navigator.mediaSession.setActionHandler(action, null);
-          } catch (error) {
-          }
-        });
-
-        navigator.mediaSession.playbackState = 'none';
-      }
-
-      notificationPlayer.state.isInitialized = false;
-      notificationPlayer.state.supportedActions.clear();
-      notificationPlayer.state.currentMetadata = null;
-      notificationPlayer.state.lastPositionUpdate = 0;
-
-    } catch (error) {
-    }
-  },
-
-  utils: {
-    isSupported: () => {
-      return 'mediaSession' in navigator;
-    },
-
-    isInitialized: () => {
-      return notificationPlayer.state.isInitialized;
-    },
-
-    getSupportedActions: () => {
-      return Array.from(notificationPlayer.state.supportedActions);
-    },
-
-    getCurrentMetadata: () => {
-      return notificationPlayer.state.currentMetadata;
-    },
-
-    getPlaybackInfo: () => {
-      if (!appState.audio) return null;
-
-      return {
-        currentTime: appState.audio.currentTime,
-        duration: appState.duration || appState.audio.duration,
-        playbackRate: appState.audio.playbackRate || 1.0,
-        paused: appState.audio.paused,
-        ended: appState.audio.ended,
-        volume: appState.audio.volume,
-        playbackState: navigator.mediaSession?.playbackState || 'none'
-      };
-    },
-
-    forcePositionUpdate: () => {
-      notificationPlayer.positionState.update();
-    },
-
-    rebindEvents: () => {
-      notificationPlayer.events.bind();
-    }
-  }
-};
 
 
 
 ////////////////////////////////////////////////////////////
 //////////////////////////////  Event Listeners  ///////////
-const app = {
-    initialize() {
-        window.music = music;
-        storage.initialize();
-        notifications.init();
-        musicPlayer.init();
-        navigation.initialize();
-        homePage.initialize();
-        deepLinkRouter.initialize();
-        deepLinkRouter.bindPopState();
-        
-        this.resetUI();
-        this.syncGlobalState();
-    },
-
-    resetUI() {
-        const nowPlayingArea = QUERY(NAVBAR.nowPlaying);
-        nowPlayingArea?.classList.remove(CLASSES.hasSong);
-        ui.updateCounts();
-    },
-
-    syncGlobalState() {
-        window.appState = appState;
-        window.playerController = {
-            playSong: musicPlayer.ui.playSong,
-            toggle: musicPlayer.playback.toggle,
-            next: musicPlayer.playback.next,
-            previous: musicPlayer.playback.previous,
-            seekTo: musicPlayer.playback.seekTo,
-            skip: musicPlayer.playback.skip,
-        };
-        window.musicAppAPI = {
-            player: musicPlayer.playback,
-            controls: musicPlayer.playback,
-            musicPlayer, dropdown, notifications, playlists, utils,
-            favorites: appState.favorites,
-            queue: appState.queue,
-        };
-    },
-
-    goHome() {
-        appState.router?.navigateTo(ROUTES.HOME);
-    }
-};
 const clickables = {
     elements: {
         menuBtn: null,
@@ -3534,6 +3490,50 @@ const clickables = {
 
     reinit: () => {
         clickables.init();
+    }
+};
+const app = {
+    initialize() {
+        window.music = music;
+        storage.initialize();
+        notifications.init();
+        musicPlayer.init();
+        navigation.initialize();
+        homePage.initialize();
+        deepLinkRouter.initialize();
+        deepLinkRouter.bindPopState();
+        
+        this.resetUI();
+        this.syncGlobalState();
+    },
+
+    resetUI() {
+        const nowPlayingArea = QUERY(NAVBAR.nowPlaying);
+        nowPlayingArea?.classList.remove(CLASSES.hasSong);
+        ui.updateCounts();
+    },
+
+    syncGlobalState() {
+        window.appState = appState;
+        window.playerController = {
+            playSong: musicPlayer.ui.playSong,
+            toggle: musicPlayer.playback.toggle,
+            next: musicPlayer.playback.next,
+            previous: musicPlayer.playback.previous,
+            seekTo: musicPlayer.playback.seekTo,
+            skip: musicPlayer.playback.skip,
+        };
+        window.musicAppAPI = {
+            player: musicPlayer.playback,
+            controls: musicPlayer.playback,
+            musicPlayer, dropdown, notifications, playlists, utils,
+            favorites: appState.favorites,
+            queue: appState.queue,
+        };
+    },
+
+    goHome() {
+        appState.router?.navigateTo(ROUTES.HOME);
     }
 };
 
