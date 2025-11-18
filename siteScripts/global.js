@@ -1,12 +1,15 @@
-import { DOM, QUERY, QUERY_ALL, IDS, CLASSES, ROUTES, THEMES, STORAGE_KEYS, ICONS, AUDIO_FORMATS, REPEAT_MODES, NOTIFICATION_TYPES, MUSIC_PLAYER, NAVBAR, $, $byId } from "./map.js";
-import { music } from "../modules/library.js";
-import { render, create } from "./utilities/templates.js";
-import { encodeURIComponent } from './utilities/parsers.js';
-import { homePage, views } from './pages/statics.js';
-import { pageLoader, navigation } from './pages/rendering.js';
-import { ui, pageUpdates } from './pages/updates.js';
-import { deepLinkRouter } from './pages/router.js';
-import { notifications } from './toasts.js';
+import { 
+  DOM, QUERY, QUERY_ALL, IDS, CLASSES, ROUTES, THEMES, STORAGE_KEYS, 
+  ICONS, AUDIO_FORMATS, REPEAT_MODES, NOTIFICATION_TYPES, MUSIC_PLAYER, 
+  NAVBAR, $, $byId 
+} from './index.js';
+
+import { music } from "../../modules/library.js";
+import { render, create, encodeURIComponent } from "./utilities/index.js";
+import { homePage, views, pageLoader, navigation, ui, pageUpdates, deepLinkRouter } from "./pages/index.js";
+import { toastNotifications } from './toasts.js';
+
+
 
 const ACTION_GRID_ITEMS = [
   { id: 'play-next', icon: 'M9 5l7 7-7 7M15 5v14', label: 'Play Next' },
