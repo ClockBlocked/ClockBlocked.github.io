@@ -1939,16 +1939,16 @@ const musicPlayer = {
   bindSeekBar: () => {
     const bar = $byId(IDS.progressBar);
     const thumb = $byId(IDS.progressThumb);
-    const player = musicPlayer.ui;
+    const ui = musicPlayer.ui;
     if (!bar || !thumb) return;
 
     const onPointerDown = (e) => {
         e.preventDefault();
         bar.setPointerCapture?.(e.pointerId ?? 1);
-        player.isScrubbing = true;
-        player.wasPlayingBeforeScrub = !!appState.isPlaying;
-        if (player.wasPlayingBeforeScrub) appState.audio.pause();
-        player.seekFromEvent(e, bar);
+        ui.isScrubbing = true;
+        ui.wasPlayingBeforeScrub = !!appState.isPlaying;
+        if (ui.wasPlayingBeforeScrub) appState.audio.pause();
+        ui.seekFromEvent(e, bar);
         bar.classList.add('is-dragging');
         const moveTarget = bar;
         moveTarget.addEventListener('pointermove', onPointerMove, { passive: false });
@@ -1957,22 +1957,22 @@ const musicPlayer = {
     };
 
     const onPointerMove = (e) => {
-        if (!player.isScrubbing) return;
+        if (!ui.isScrubbing) return;
         e.preventDefault();
-        player.seekFromEvent(e, bar);
+        ui.seekFromEvent(e, bar);
     };
 
     const onPointerUp = (e) => {
-        player.seekFromEvent(e, bar, true);
-        player.isScrubbing = false;
+        ui.seekFromEvent(e, bar, true);
+        ui.isScrubbing = false;
         bar.classList.remove('is-dragging', 'is-hovering');
-        if (player.wasPlayingBeforeScrub) appState.audio.play();
+        if (ui.wasPlayingBeforeScrub) appState.audio.play();
         bar.releasePointerCapture?.(e.pointerId ?? 1);
         bar.removeEventListener('pointermove', onPointerMove);
     };
 
     const onEnter = () => bar.classList.add('is-hovering');
-    const onLeave = () => { if (!player.isScrubbing) bar.classList.remove('is-hovering'); };
+    const onLeave = () => { if (!ui.isScrubbing) bar.classList.remove('is-hovering'); };
 
     bar.addEventListener('pointerdown', onPointerDown, { passive: false });
     bar.addEventListener('pointerenter', onEnter);
