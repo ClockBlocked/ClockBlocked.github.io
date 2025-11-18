@@ -43,8 +43,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (notificationPlayer.utils.isSupported()) {
         setTimeout(() => notificationPlayer.setup(), 100);
     }
+perquisites();
 });
-
 const perquisites = () => {
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => {
@@ -80,7 +80,7 @@ const perquisites = () => {
     };
   }
 };
-perquisites();
+
 
 
 ////////////////////////////////////////////////////////////
