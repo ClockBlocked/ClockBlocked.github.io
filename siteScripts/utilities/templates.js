@@ -1,10 +1,5 @@
-
-
-
-
-import { getAlbumImageUrl } from './parsers.js';
-import { escapeForAttribute } from '../pages/rendering.js';
-
+import { getAlbumImageUrl } from './index.js';  // From utilities barrel
+import { escapeForAttribute } from '../pages/index.js';
 
 
 
