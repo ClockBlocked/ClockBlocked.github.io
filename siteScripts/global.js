@@ -7256,8 +7256,8 @@ const app = {
     initialize() {
         window.music = music;
         storage.initialize();
-        notifications.initialize();
-        musicPlayer.ui.initialize();
+        notifications.init();
+        musicPlayer.init();
         navigation.initialize();
         homePage.initialize();
         app.resetUI();
