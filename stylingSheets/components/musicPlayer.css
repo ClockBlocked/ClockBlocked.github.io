@@ -1869,7 +1869,254 @@
 
 
 
+/* 
+ * FIXED MUSIC PLAYER PROGRESS BAR STYLES
+ * This CSS works with the new JavaScript logic
+ */
 
+/* Progress section container */
+.player .progressSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+/* Progress bar container - this wraps everything */
+.progressSection .progressBarContainer {
+  position: relative;
+  width: 100%;
+  height: 6px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  touch-action: none;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  transition: height 0.2s ease;
+  overflow: visible;
+}
+
+.progressSection .progressBarContainer:hover,
+.progressSection .progressBarContainer.hovering {
+  height: 8px;
+}
+
+.progressSection .progressBarContainer.dragging {
+  height: 8px;
+  cursor: grabbing;
+}
+
+/* The actual progress bar element (for click detection) */
+.player .progressBar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: transparent;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.player .progressBar:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Buffer display (shows loading progress) */
+.player .progressBuffer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: inherit;
+  transition: width 0.3s ease;
+  pointer-events: none;
+  width: 0%;
+  z-index: 0;
+}
+
+/* Progress fill (shows current progress) */
+.player .progressFill,
+.player .progressTrack {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #8b5cf6, #3b82f6);
+  border-radius: inherit;
+  transition: width 0.1s linear;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Progress thumb (the draggable circle) */
+.player .progressThumb {
+  position: absolute;
+  top: 50%;
+  left: 0%;
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  z-index: 3;
+  cursor: grab;
+}
+
+/* Show thumb on hover */
+.progressSection .progressBarContainer:hover .progressThumb,
+.progressSection .progressBarContainer.hovering .progressThumb,
+.player .progressBar.isHovering .progressThumb {
+  opacity: 1;
+  width: 14px;
+  height: 14px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4), 0 0 0 3px rgba(255, 255, 255, 0.1);
+}
+
+/* Enhanced thumb when dragging */
+.progressSection .progressBarContainer.dragging .progressThumb,
+.player .progressBar.isDragging .progressThumb,
+.player .progressThumb.dragging {
+  opacity: 1;
+  width: 16px;
+  height: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), 0 0 0 4px rgba(255, 255, 255, 0.15);
+  cursor: grabbing;
+  transition: all 0.1s ease;
+}
+
+/* Time display */
+.player .timeDisplay {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 4px;
+  font-size: 12px;
+}
+
+.player .currentTime,
+.player .totalTime {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.5px;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .progressSection .progressBarContainer {
+    height: 8px;
+    margin-bottom: 10px;
+  }
+  
+  .progressSection .progressBarContainer:hover,
+  .progressSection .progressBarContainer.hovering,
+  .progressSection .progressBarContainer.dragging {
+    height: 10px;
+  }
+  
+  .player .progressThumb {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .progressSection .progressBarContainer:hover .progressThumb,
+  .progressSection .progressBarContainer.hovering .progressThumb,
+  .player .progressBar.isHovering .progressThumb {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .progressSection .progressBarContainer.dragging .progressThumb,
+  .player .progressBar.isDragging .progressThumb,
+  .player .progressThumb.dragging {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* Touch device optimizations */
+@media (pointer: coarse) {
+  .progressSection .progressBarContainer {
+    height: 8px;
+    padding: 8px 0;
+  }
+  
+  .player .progressBar {
+    padding: 8px 0;
+    margin: -8px 0;
+  }
+  
+  .player .progressThumb {
+    opacity: 1;
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .progressSection .progressBarContainer {
+    background: #000;
+    border: 1px solid #fff;
+  }
+  
+  .player .progressFill,
+  .player .progressTrack {
+    background: #fff;
+  }
+  
+  .player .progressThumb {
+    background: #fff;
+    border: 2px solid #000;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .player .progressThumb,
+  .player .progressFill,
+  .player .progressTrack,
+  .player .progressBuffer,
+  .progressSection .progressBarContainer {
+    transition: none;
+  }
+}
+
+/* Focus styles for accessibility */
+.player .progressBar:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.player .progressBar:focus-visible .progressThumb {
+  opacity: 1;
+  box-shadow: 0 0 0 3px #3b82f6;
+}
+
+/* Animation for smooth transitions */
+@keyframes progressPulse {
+  0%, 100% {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+  50% {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 0 0 4px rgba(59, 130, 246, 0.2);
+  }
+}
+
+.player .progressThumb:focus {
+  animation: progressPulse 2s infinite;
+}
 
 
 
