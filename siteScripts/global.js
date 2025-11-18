@@ -507,17 +507,6 @@ const dropdown = {
     trigger.classList.remove(CLASSES.active);
   }
 };
-const perquisites = () => {
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
-            clickables.init();
-            app.initialize();
-        });
-    } else {
-        clickables.init();
-        app.initialize();
-    }
-};
 
 
 ////////////////////////////////////////////////////////////
@@ -3568,6 +3557,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+const perquisites = () => {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            clickables.init();
+            app.initialize();
+        });
+    } else {
+        clickables.init();
+        app.initialize();
+    }
+};
 perquisites();
 
 export { appState, storage, notificationPlayer, musicPlayer, dropdown, overlays, playlists, notifications, utils, app, pageLoader, navigation, ACTION_GRID_ITEMS };  
