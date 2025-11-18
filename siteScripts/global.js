@@ -6310,7 +6310,74 @@ const musicPlayer = {
             this._initialized = true;
             
             this.bindSeekBar();
-        }
+        },
+        
+            updateHomeBentoGrid: () => {
+      const dynamicContent = $byId(IDS.dynamicContent);
+      if (!dynamicContent) return;
+      
+      const bentoGrid = dynamicContent.querySelector('.bento-grid');
+      if (!bentoGrid) return;
+      
+      const recentlyPlayedSection = $byId(IDS.recentlyPlayedSection);
+      if (recentlyPlayedSection && appState.recentlyPlayed && appState.recentlyPlayed.length > 0) {
+        const recentTracksHtml = render.homeSection.recentlyPlayed(
+          appState.recentlyPlayed.slice(0, 5),
+          utils
+        );
+        recentlyPlayedSection.innerHTML = recentTracksHtml;
+        
+        musicPlayer.ui.bindHomeBentoEvents(recentlyPlayedSection);
+      }
+    },
+    
+    bindHomeBentoEvents: (container) => {
+      if (!container) return;
+      
+      container.querySelectorAll('.modern-track-item, .track-play-btn').forEach(item => {
+        item.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const songDataStr = item.closest('[data-song]')?.dataset.song;
+          if (songDataStr) {
+            try {
+              const songData = JSON.parse(songDataStr);
+              musicPlayer.ui.playSong(songData);
+            } catch (error) {
+              console.error('Error parsing song data:', error);
+            }
+          }
+        });
+      });
+      
+      container.querySelectorAll('[data-artist]').forEach(artistEl => {
+        artistEl.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const artistName = artistEl.dataset.artist;
+          if (appState.router) {
+            appState.router.navigateTo(ROUTES.ARTIST, { artist: artistName });
+          }
+        });
+      });
+      
+      container.querySelectorAll('.track-favorite-btn, .favorite-heart-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const songItem = btn.closest('[data-song]');
+          if (songItem) {
+            const songDataStr = songItem.dataset.song;
+            try {
+              const songData = JSON.parse(songDataStr);
+              appState.favorites.toggle('songs', songData.id);
+              
+              btn.classList.toggle('active', appState.favorites.has('songs', songData.id));
+            } catch (error) {
+              console.error('Error toggling favorite:', error);
+            }
+          }
+        });
+      });
+    },
+
     }
 };
 
