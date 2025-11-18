@@ -2007,9 +2007,18 @@ bindSeekBar: () => {
       const fill = QUERY(MUSIC_PLAYER.progressFill);
       const thumb = QUERY(MUSIC_PLAYER.progressThumb);
       const currentTimeElement = QUERY(MUSIC_PLAYER.currentTime);
+      const bar = QUERY(MUSIC_PLAYER.progressBar);
 
       if (fill) {
         fill.style.width = `${percent}%`;
+      }
+
+      if (thumb) {
+        thumb.style.left = `${percent}%`;
+      }
+
+      if (bar) {
+        bar.setAttribute('aria-valuenow', Math.round(percent));
       }
 
       if (currentTimeElement && isFinite(currentTime)) {
