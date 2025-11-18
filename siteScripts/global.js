@@ -37,328 +37,6 @@ const PLAYER_EVENTS = {
 const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
 
 
-const perquisites = () => {
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
-            clickables.init();
-            app.initialize();
-        });
-    } else {
-        clickables.init();
-        app.initialize();
-    }
-};
-const PubSub = {
-  events: new Map(),
-
-  subscribe(event, callback) {
-    if (!this.events.has(event)) {
-      this.events.set(event, new Set());
-    }
-    this.events.get(event).add(callback);
-    return () => this.unsubscribe(event, callback);
-  },
-
-  unsubscribe(event, callback) {
-    if (this.events.has(event)) {
-      this.events.get(event).delete(callback);
-    }
-  },
-
-  publish(event, data) {
-    if (this.events.has(event)) {
-      this.events.get(event).forEach(callback => {
-        try {
-          callback(data);
-        } catch (error) {
-          console.error(`Error in ${event} subscriber:`, error);
-        }
-      });
-    }
-  },
-
-  clear(event) {
-    if (event) {
-      this.events.delete(event);
-    } else {
-      this.events.clear();
-    }
-  }
-};
-const appState = {
-  audio: null,
-  currentSong: null,
-  currentArtist: null,
-  currentAlbum: null,
-  isPlaying: false,
-  duration: 0,
-  recentlyPlayed: [],
-  isDragging: false,
-  shuffleMode: false,
-  repeatMode: REPEAT_MODES.OFF,
-  seekTooltip: null,
-  currentIndex: 0,
-  playlists: [],
-  isPopupVisible: false,
-  currentTab: "now-playing",
-  inactivityTimer: null,
-  notificationContainer: null,
-  notifications: [],
-  currentNotificationTimeout: null,
-  router: null,
-  homePageManager: null,
-
-  setState(updates) {
-    const oldState = { ...this };
-    Object.keys(updates).forEach(key => {
-      if (this[key] !== updates[key]) {
-        const oldValue = this[key];
-        this[key] = updates[key];
-        switch (key) {
-          case 'isPlaying':
-            PubSub.publish(PLAYER_EVENTS.PLAYBACK_STATE, {
-              isPlaying: this.isPlaying,
-              previousState: oldValue
-            });
-            break;
-          case 'currentSong':
-            PubSub.publish(PLAYER_EVENTS.CURRENT_SONG, {
-              currentSong: this.currentSong,
-              previousSong: oldValue
-            });
-            break;
-          case 'shuffleMode':
-            PubSub.publish(PLAYER_EVENTS.SHUFFLE_MODE, {
-              shuffleMode: this.shuffleMode,
-              previousMode: oldValue
-            });
-            break;
-          case 'repeatMode':
-            PubSub.publish(PLAYER_EVENTS.REPEAT_MODE, {
-              repeatMode: this.repeatMode,
-              previousMode: oldValue
-            });
-            break;
-          case 'duration':
-          case 'currentTime':
-            PubSub.publish(PLAYER_EVENTS.TIME_UPDATE, {
-              currentTime: this.currentTime,
-              duration: this.duration
-            });
-            break;
-        }
-      }
-    });
-    PubSub.publish(PLAYER_EVENTS.STATE_CHANGE, {
-      newState: { ...this },
-      oldState,
-      changes: updates
-    });
-  },
-
-  setPlayingState(isPlaying) {
-    this.setState({ isPlaying });
-  },
-
-  setCurrentSong(song) {
-    this.setState({ 
-      currentSong: song,
-      currentArtist: song?.artist || null,
-      currentAlbum: song?.album || null
-    });
-  },
-
-  setPlaybackTime(currentTime, duration) {
-    this.setState({ currentTime, duration });
-  },
-
-  toggleShuffle() {
-    this.setState({ shuffleMode: !this.shuffleMode });
-  },
-
-  setRepeatMode(mode) {
-    this.setState({ repeatMode: mode });
-  },
-
-  favorites: {
-    songs: new Set(),
-    artists: new Set(),
-    albums: new Set(),
-
-    add: function(type, id) {
-        appState.favorites[type].add(id);
-        appState.favorites.save(type);
-        appState.favorites.updateIcon(type, id, true);
-        PubSub.publish('favorites:changed', {
-          type,
-          id,
-          action: 'add'
-        });
-        const itemName = type === "songs" ? "song" : type.slice(0, -1);
-        notifications.notify({
-          type: NOTIFICATION_TYPES.SUCCESS,
-          message: `Added ${itemName} to favorites`
-        });
-      },
-      
-    remove: function(type, id) {
-        appState.favorites[type].delete(id);
-        appState.favorites.save(type);
-        appState.favorites.updateIcon(type, id, false);
-        PubSub.publish('favorites:changed', {
-          type,
-          id,
-          action: 'remove'
-        });
-        const itemName = type === "songs" ? "song" : type.slice(0, -1);
-        notifications.notify({
-          type: NOTIFICATION_TYPES.INFO,
-          message: `Removed ${itemName} from favorites`
-        });
-      },
-      
-    toggle: function(type, id) {
-      if (appState.favorites[type].has(id)) {
-        appState.favorites.remove(type, id);
-        return false;
-      } else {
-        appState.favorites.add(type, id);
-        return true;
-      }
-    },
-
-    has: function(type, id) {
-      return appState.favorites[type].has(id);
-    },
-
-    save: function(type) {
-      const key = type === "songs" ? STORAGE_KEYS.FAVORITE_SONGS : 
-                 type === "artists" ? STORAGE_KEYS.FAVORITE_ARTISTS : 
-                 STORAGE_KEYS.FAVORITE_ALBUMS;
-      storage.save(key, Array.from(appState.favorites[type]));
-    },
-
-    updateIcon: function(type, id, isFavorite) {
-      const icons = document.querySelectorAll(`[data-favorite-${type}="${id}"]`);
-      icons.forEach((icon) => {
-        icon.classList.toggle("favorited", isFavorite);
-        icon.classList.toggle(CLASSES.active, isFavorite);
-        icon.setAttribute("aria-pressed", isFavorite);
-        if (type === "songs") {
-          const heartIcon = icon.querySelector("svg");
-          if (heartIcon) {
-            heartIcon.style.color = isFavorite ? "#ef4444" : "";
-            heartIcon.style.fill = isFavorite ? "currentColor" : "none";
-          }
-        }
-      });
-      if (type === "songs" && appState.currentSong && appState.currentSong.id === id) {
-        ui.updateFavoriteButton();
-      }
-    }
-  },
-
-  queue: {
-    items: [],
-
-    add: function(song, position = null) {
-      if (position !== null) {
-        appState.queue.items.splice(position, 0, song);
-      } else {
-        appState.queue.items.push(song);
-      }
-      storage.save(STORAGE_KEYS.QUEUE, appState.queue.items);
-      ui.updateCounts();
-      PubSub.publish('queue:changed', { action: 'add', song, position });
-      notifications.notify({ message: `Added "${song.title}" to queue` });
-    },
-
-    remove: function(index) {
-      if (index >= 0 && index < appState.queue.items.length) {
-        const removed = appState.queue.items.splice(index, 1)[0];
-        storage.save(STORAGE_KEYS.QUEUE, appState.queue.items);
-        ui.updateCounts();
-        PubSub.publish('queue:changed', { action: 'remove', index, song: removed });
-        return removed;
-      }
-      return null;
-    },
-
-    clear: function() {
-      appState.queue.items = [];
-      storage.save(STORAGE_KEYS.QUEUE, appState.queue.items);
-      ui.updateCounts();
-      PubSub.publish('queue:changed', { action: 'clear' });
-    },
-
-    getNext: function() {
-      return appState.queue.items.length > 0 ? appState.queue.remove(0) : null;
-    },
-
-    get: function() {
-      return appState.queue.items;
-    },
-
-    playAt: function(index) {
-      const song = appState.queue.remove(index);
-      if (song) {
-        musicPlayer.ui.playSong(song);
-      }
-    }
-  }
-};
-const storage = {
-  save: (key, data) => {
-    try {
-      localStorage.setItem(key, JSON.stringify(data));
-      return true;
-    } catch (error) {
-      return false;
-    }
-  },
-
-  load: (key) => {
-    try {
-      const data = localStorage.getItem(key);
-      return data ? JSON.parse(data) : null;
-    } catch (error) {
-      return null;
-    }
-  },
-
-  initialize: () => {
-    const favoriteTypes = [
-      { type: "songs", key: STORAGE_KEYS.FAVORITE_SONGS },
-      { type: "artists", key: STORAGE_KEYS.FAVORITE_ARTISTS },
-      { type: "albums", key: STORAGE_KEYS.FAVORITE_ALBUMS }
-    ];
-
-    favoriteTypes.forEach(({ type, key }) => {
-      const data = storage.load(key);
-      if (data) {
-        appState.favorites[type] = new Set(data);
-      }
-    });
-
-    const dataLoaders = {
-      [STORAGE_KEYS.RECENTLY_PLAYED]: (data) => {
-        appState.recentlyPlayed = data || [];
-        setTimeout(() => {
-          musicPlayer.ui.updateHomeBentoGrid();
-        }, 100);
-      },
-      [STORAGE_KEYS.PLAYLISTS]: (data) => (appState.playlists = data || []),
-      [STORAGE_KEYS.QUEUE]: (data) => (appState.queue.items = data || [])
-    };
-
-    Object.entries(dataLoaders).forEach(([key, loader]) => {
-      const data = storage.load(key);
-      if (data) loader(data);
-    });
-  }
-};
-
-
 
 ////////////////////////////////////////////////////////////
 ////////////////////////////////  PAGE Updaters  ///////////
@@ -3550,7 +3228,326 @@ const playlists = {
 
 
 
+const perquisites = () => {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            clickables.init();
+            app.initialize();
+        });
+    } else {
+        clickables.init();
+        app.initialize();
+    }
+};
+const PubSub = {
+  events: new Map(),
 
+  subscribe(event, callback) {
+    if (!this.events.has(event)) {
+      this.events.set(event, new Set());
+    }
+    this.events.get(event).add(callback);
+    return () => this.unsubscribe(event, callback);
+  },
+
+  unsubscribe(event, callback) {
+    if (this.events.has(event)) {
+      this.events.get(event).delete(callback);
+    }
+  },
+
+  publish(event, data) {
+    if (this.events.has(event)) {
+      this.events.get(event).forEach(callback => {
+        try {
+          callback(data);
+        } catch (error) {
+          console.error(`Error in ${event} subscriber:`, error);
+        }
+      });
+    }
+  },
+
+  clear(event) {
+    if (event) {
+      this.events.delete(event);
+    } else {
+      this.events.clear();
+    }
+  }
+};
+const appState = {
+  audio: null,
+  currentSong: null,
+  currentArtist: null,
+  currentAlbum: null,
+  isPlaying: false,
+  duration: 0,
+  recentlyPlayed: [],
+  isDragging: false,
+  shuffleMode: false,
+  repeatMode: REPEAT_MODES.OFF,
+  seekTooltip: null,
+  currentIndex: 0,
+  playlists: [],
+  isPopupVisible: false,
+  currentTab: "now-playing",
+  inactivityTimer: null,
+  notificationContainer: null,
+  notifications: [],
+  currentNotificationTimeout: null,
+  router: null,
+  homePageManager: null,
+
+  setState(updates) {
+    const oldState = { ...this };
+    Object.keys(updates).forEach(key => {
+      if (this[key] !== updates[key]) {
+        const oldValue = this[key];
+        this[key] = updates[key];
+        switch (key) {
+          case 'isPlaying':
+            PubSub.publish(PLAYER_EVENTS.PLAYBACK_STATE, {
+              isPlaying: this.isPlaying,
+              previousState: oldValue
+            });
+            break;
+          case 'currentSong':
+            PubSub.publish(PLAYER_EVENTS.CURRENT_SONG, {
+              currentSong: this.currentSong,
+              previousSong: oldValue
+            });
+            break;
+          case 'shuffleMode':
+            PubSub.publish(PLAYER_EVENTS.SHUFFLE_MODE, {
+              shuffleMode: this.shuffleMode,
+              previousMode: oldValue
+            });
+            break;
+          case 'repeatMode':
+            PubSub.publish(PLAYER_EVENTS.REPEAT_MODE, {
+              repeatMode: this.repeatMode,
+              previousMode: oldValue
+            });
+            break;
+          case 'duration':
+          case 'currentTime':
+            PubSub.publish(PLAYER_EVENTS.TIME_UPDATE, {
+              currentTime: this.currentTime,
+              duration: this.duration
+            });
+            break;
+        }
+      }
+    });
+    PubSub.publish(PLAYER_EVENTS.STATE_CHANGE, {
+      newState: { ...this },
+      oldState,
+      changes: updates
+    });
+  },
+
+  setPlayingState(isPlaying) {
+    this.setState({ isPlaying });
+  },
+
+  setCurrentSong(song) {
+    this.setState({ 
+      currentSong: song,
+      currentArtist: song?.artist || null,
+      currentAlbum: song?.album || null
+    });
+  },
+
+  setPlaybackTime(currentTime, duration) {
+    this.setState({ currentTime, duration });
+  },
+
+  toggleShuffle() {
+    this.setState({ shuffleMode: !this.shuffleMode });
+  },
+
+  setRepeatMode(mode) {
+    this.setState({ repeatMode: mode });
+  },
+
+  favorites: {
+    songs: new Set(),
+    artists: new Set(),
+    albums: new Set(),
+
+    add: function(type, id) {
+        appState.favorites[type].add(id);
+        appState.favorites.save(type);
+        appState.favorites.updateIcon(type, id, true);
+        PubSub.publish('favorites:changed', {
+          type,
+          id,
+          action: 'add'
+        });
+        const itemName = type === "songs" ? "song" : type.slice(0, -1);
+        notifications.notify({
+          type: NOTIFICATION_TYPES.SUCCESS,
+          message: `Added ${itemName} to favorites`
+        });
+      },
+      
+    remove: function(type, id) {
+        appState.favorites[type].delete(id);
+        appState.favorites.save(type);
+        appState.favorites.updateIcon(type, id, false);
+        PubSub.publish('favorites:changed', {
+          type,
+          id,
+          action: 'remove'
+        });
+        const itemName = type === "songs" ? "song" : type.slice(0, -1);
+        notifications.notify({
+          type: NOTIFICATION_TYPES.INFO,
+          message: `Removed ${itemName} from favorites`
+        });
+      },
+      
+    toggle: function(type, id) {
+      if (appState.favorites[type].has(id)) {
+        appState.favorites.remove(type, id);
+        return false;
+      } else {
+        appState.favorites.add(type, id);
+        return true;
+      }
+    },
+
+    has: function(type, id) {
+      return appState.favorites[type].has(id);
+    },
+
+    save: function(type) {
+      const key = type === "songs" ? STORAGE_KEYS.FAVORITE_SONGS : 
+                 type === "artists" ? STORAGE_KEYS.FAVORITE_ARTISTS : 
+                 STORAGE_KEYS.FAVORITE_ALBUMS;
+      storage.save(key, Array.from(appState.favorites[type]));
+    },
+
+    updateIcon: function(type, id, isFavorite) {
+      const icons = document.querySelectorAll(`[data-favorite-${type}="${id}"]`);
+      icons.forEach((icon) => {
+        icon.classList.toggle("favorited", isFavorite);
+        icon.classList.toggle(CLASSES.active, isFavorite);
+        icon.setAttribute("aria-pressed", isFavorite);
+        if (type === "songs") {
+          const heartIcon = icon.querySelector("svg");
+          if (heartIcon) {
+            heartIcon.style.color = isFavorite ? "#ef4444" : "";
+            heartIcon.style.fill = isFavorite ? "currentColor" : "none";
+          }
+        }
+      });
+      if (type === "songs" && appState.currentSong && appState.currentSong.id === id) {
+        ui.updateFavoriteButton();
+      }
+    }
+  },
+
+  queue: {
+    items: [],
+
+    add: function(song, position = null) {
+      if (position !== null) {
+        appState.queue.items.splice(position, 0, song);
+      } else {
+        appState.queue.items.push(song);
+      }
+      storage.save(STORAGE_KEYS.QUEUE, appState.queue.items);
+      ui.updateCounts();
+      PubSub.publish('queue:changed', { action: 'add', song, position });
+      notifications.notify({ message: `Added "${song.title}" to queue` });
+    },
+
+    remove: function(index) {
+      if (index >= 0 && index < appState.queue.items.length) {
+        const removed = appState.queue.items.splice(index, 1)[0];
+        storage.save(STORAGE_KEYS.QUEUE, appState.queue.items);
+        ui.updateCounts();
+        PubSub.publish('queue:changed', { action: 'remove', index, song: removed });
+        return removed;
+      }
+      return null;
+    },
+
+    clear: function() {
+      appState.queue.items = [];
+      storage.save(STORAGE_KEYS.QUEUE, appState.queue.items);
+      ui.updateCounts();
+      PubSub.publish('queue:changed', { action: 'clear' });
+    },
+
+    getNext: function() {
+      return appState.queue.items.length > 0 ? appState.queue.remove(0) : null;
+    },
+
+    get: function() {
+      return appState.queue.items;
+    },
+
+    playAt: function(index) {
+      const song = appState.queue.remove(index);
+      if (song) {
+        musicPlayer.ui.playSong(song);
+      }
+    }
+  }
+};
+const storage = {
+  save: (key, data) => {
+    try {
+      localStorage.setItem(key, JSON.stringify(data));
+      return true;
+    } catch (error) {
+      return false;
+    }
+  },
+
+  load: (key) => {
+    try {
+      const data = localStorage.getItem(key);
+      return data ? JSON.parse(data) : null;
+    } catch (error) {
+      return null;
+    }
+  },
+
+  initialize: () => {
+    const favoriteTypes = [
+      { type: "songs", key: STORAGE_KEYS.FAVORITE_SONGS },
+      { type: "artists", key: STORAGE_KEYS.FAVORITE_ARTISTS },
+      { type: "albums", key: STORAGE_KEYS.FAVORITE_ALBUMS }
+    ];
+
+    favoriteTypes.forEach(({ type, key }) => {
+      const data = storage.load(key);
+      if (data) {
+        appState.favorites[type] = new Set(data);
+      }
+    });
+
+    const dataLoaders = {
+      [STORAGE_KEYS.RECENTLY_PLAYED]: (data) => {
+        appState.recentlyPlayed = data || [];
+        setTimeout(() => {
+          musicPlayer.ui.updateHomeBentoGrid();
+        }, 100);
+      },
+      [STORAGE_KEYS.PLAYLISTS]: (data) => (appState.playlists = data || []),
+      [STORAGE_KEYS.QUEUE]: (data) => (appState.queue.items = data || [])
+    };
+
+    Object.entries(dataLoaders).forEach(([key, loader]) => {
+      const data = storage.load(key);
+      if (data) loader(data);
+    });
+  }
+};
 
 window.clickables = clickables;
 window.musicPlayer = musicPlayer;
