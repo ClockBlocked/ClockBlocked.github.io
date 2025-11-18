@@ -1563,8 +1563,8 @@ renderList(container, items, options = {}) {
 }
 };
 const playlists = {
-    add(name) {
-        if (!name?.trim()) {
+    add: (name) => {
+        if (!name || !name.trim()) {
             notifications.notify({ type: NOTIFICATION_TYPES.WARNING, message: "Please enter a playlist name" });
             return null;
         }
@@ -1580,233 +1580,352 @@ const playlists = {
 
         appState.playlists.push(playlist);
         storage.save(STORAGE_KEYS.PLAYLISTS, appState.playlists);
-        homePage?.renderPlaylists?.();
-        
+
+        if (typeof homePage?.renderPlaylists === "function") {
+            homePage.renderPlaylists();
+        }
+
         notifications.notify({ type: NOTIFICATION_TYPES.SUCCESS, message: `Created playlist "${playlist.name}"` });
         return playlist;
     },
 
-    addSong(playlistId, song) {
-        const playlist = appState.playlists.find(p => p.id === playlistId);
+    addSong: (playlistId, song) => {
+        const playlist = appState.playlists.find((p) => p.id === playlistId);
         if (!playlist) {
             notifications.notify({ type: NOTIFICATION_TYPES.ERROR, message: "Playlist not found" });
             return false;
         }
 
-        if (playlist.songs.some(s => s.id === song.id)) {
+        const exists = playlist.songs.some((s) => s.id === song.id);
+        if (exists) {
             notifications.notify({ type: NOTIFICATION_TYPES.WARNING, message: "Song already in playlist" });
             return false;
         }
 
         playlist.songs.push(song);
         storage.save(STORAGE_KEYS.PLAYLISTS, appState.playlists);
+
         notifications.notify({ type: NOTIFICATION_TYPES.SUCCESS, message: `Added "${song.title}" to "${playlist.name}"` });
         return true;
     },
 
-    removeSong(playlistId, songId) {
-        const playlist = appState.playlists.find(p => p.id === playlistId);
+    removeSong: (playlistId, songId) => {
+        const playlist = appState.playlists.find((p) => p.id === playlistId);
         if (!playlist) return false;
 
         const initialLength = playlist.songs.length;
-        playlist.songs = playlist.songs.filter(s => s.id !== songId);
+        playlist.songs = playlist.songs.filter((s) => s.id !== songId);
 
         if (playlist.songs.length < initialLength) {
             storage.save(STORAGE_KEYS.PLAYLISTS, appState.playlists);
             notifications.notify({ type: NOTIFICATION_TYPES.INFO, message: "Song removed from playlist" });
             return true;
         }
+
         return false;
     },
 
-    play(playlistId) {
-        const playlist = appState.playlists.find(p => p.id === playlistId);
-        if (!playlist?.songs.length) {
+    play: (playlistId) => {
+        const playlist = appState.playlists.find((p) => p.id === playlistId);
+        if (!playlist || playlist.songs.length === 0) {
             notifications.notify({ type: NOTIFICATION_TYPES.WARNING, message: "Playlist is empty" });
             return;
         }
 
         appState.queue.clear();
-        playlist.songs.slice(1).forEach(song => appState.queue.add(song));
+        playlist.songs.slice(1).forEach((song) => appState.queue.add(song));
         musicPlayer.ui.playSong(playlist.songs[0]);
+
         notifications.notify({ type: NOTIFICATION_TYPES.SUCCESS, message: `Playing playlist "${playlist.name}"` });
     },
 
-    async remove(playlistId) {
-        const playlist = appState.playlists.find(p => p.id === playlistId);
+    remove: async (playlistId) => {
+        const playlist = appState.playlists.find((p) => p.id === playlistId);
         if (!playlist) return false;
         
         const confirmed = await overlays.dialog.confirm(
             `Delete the playlist "${playlist.name}"? This cannot be undone.`, 
-            { okText: "Delete", danger: true }
+            {
+                okText: "Delete",
+                danger: true,
+            }
         );
         
         if (!confirmed) return false;
         
-        appState.playlists = appState.playlists.filter(p => p.id !== playlistId);
+        const playlistName = playlist.name;
+        appState.playlists = appState.playlists.filter((p) => p.id !== playlistId);
         storage.save(STORAGE_KEYS.PLAYLISTS, appState.playlists);
-        notifications.notify({ type: NOTIFICATION_TYPES.INFO, message: `Deleted playlist "${playlist.name}"` });
+        notifications.notify({ type: NOTIFICATION_TYPES.INFO, message: `Deleted playlist "${playlistName}"` });
+        
         return true;
     },
 
-    async create() {
+    create: async () => {
         const name = await overlays.form.prompt(
             "Enter playlist name:", 
-            { okText: "Create", placeholder: "i.e. Car Sounds Favorites" }
+            {
+                okText: "Create",
+                placeholder: "i.e. Car Sounds Favorites",
+            }
         );
-        return name ? playlists.add(name) : null;
+        
+        if (name) return playlists.add(name);
+        return null;
     },
 
-    showAll() {
+    showAll: () => {
         if (appState.playlists.length === 0) {
-            overlays.viewer.playlists(views.renderEmptyState(
-                "No Playlists", 
-                "You haven't created any playlists yet.", 
-                "Create your first playlist to organize your music."
-            ));
+            overlays.viewer.playlists(
+                views.renderEmptyState(
+                    "No Playlists", 
+                    "You haven't created any playlists yet.", 
+                    "Create your first playlist to organize your music."
+                )
+            );
             return;
         }
 
         const content = `
             <div class="playlists-page animate__animated animate__fadeIn">
-                <!-- Playlist grid content (same as original) -->
+              <div class="page-header mb-8 flex justify-between items-center">
+                <div>
+                  <h1 class="text-3xl font-bold mb-2">Your Playlists</h1>
+                  <p class="text-gray-400">${appState.playlists.length} playlist${appState.playlists.length !== 1 ? "s" : ""}</p>
+                </div>
+                <button class="create-playlist-btn bg-accent-primary text-white px-6 py-3 rounded-full hover:bg-accent-secondary transition-colors flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                  </svg>
+                  Create Playlist
+                </button>
+              </div>
+
+              <div class="playlists-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                ${appState.playlists
+                  .map(
+                    (playlist, index) => `
+                  <div class="playlist-card bg-gray-800 rounded-lg overflow-hidden hover:bg-gray-700 transition-colors cursor-pointer" style="animation-delay: ${index * 100}ms;" data-playlist-id="${playlist.id}">
+                    <div class="playlist-cover aspect-square bg-gradient-to-br from-purple-500 to-blue-600 relative">
+                      <div class="absolute inset-0 bg-black/20 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" class="w-16 h-16">
+                          <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v2H3v-2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
+                        </svg>
+                      </div>
+                      <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button class="play-playlist-btn w-10 h-10 bg-accent-primary rounded-full flex items-center justify-center hover:scale-110 transition-transform" data-playlist-id="${playlist.id}">
+                          ${ICONS.play}
+                        </button>
+                      </div>
+                    </div>
+                    <div class="p-4">
+                      <h3 class="font-bold text-lg mb-1 truncate">${playlist.name}</h3>
+                      <p class="text-gray-400 text-sm mb-3">${playlist.songs.length} song${playlist.songs.length !== 1 ? "s" : ""}</p>
+                      <div class="flex gap-2">
+                        <button class="view-playlist-btn flex-1 bg-gray-600 text-white px-3 py-2 rounded hover:bg-gray-500 transition-colors text-sm" data-playlist-id="${playlist.id}">
+                          View
+                        </button>
+                        <button class="delete-playlist-btn px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors" data-playlist-id="${playlist.id}">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+                            <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 013.878.512.75.75 0 11-.256 1.478l-.209-.035-1.005 13.07a3 3 0 01-2.991 2.77H8.084a3 3 0 01-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 01-.256-1.478A48.567 48.567 0 017.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 013.369 0c1.603.051 2.815 1.387 2.815 2.951zm-6.136-1.452a51.196 51.196 0 013.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 00-6 0v-.113c0-.794.609-1.428 1.364-1.452zm-.355 5.945a.75.75 0 10-1.5.058l.347 9a.75.75 0 101.499-.058l-.346-9zm5.48.058a.75.75 0 10-1.498-.058l-.347 9a.75.75 0 001.5.058l.345-9z" clip-rule="evenodd"/>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                `
+                  )
+                  .join("")}
+              </div>
             </div>
-        `;
+          `;
 
         overlays.viewer.playlists(content);
-        playlists.bindEvents(document.getElementById("playlist-viewer"));
+        const modalEl = document.getElementById("playlist-viewer");
+        playlists.bindEvents(modalEl);
     },
 
-    show(playlistId) {
-        const playlist = appState.playlists.find(p => p.id === playlistId);
-        if (!playlist) {
+    show: (playlistId, options = {}) => {
+        if (!playlistId) {
             notifications.notify({ type: NOTIFICATION_TYPES.ERROR, message: "Playlist not found" });
             return;
         }
 
-        pageLoader.start({ message: "Loading playlist..." });
-        setTimeout(() => {
-            const dynamicContent = $byId(IDS.dynamicContent);
-            if (!dynamicContent) return;
+        const skipRouting = options.skipRouting ?? false;
+        const currentState = window.history.state;
+        const isCurrent = currentState?.name === ROUTES.PLAYLIST && currentState?.params?.playlistId === playlistId;
 
-            dynamicContent.innerHTML = `
-                <div class="playlist-page animate__animated animate__fadeIn">
-                    <!-- Playlist detail content (same as original) -->
-                </div>
-            `;
+        if (!skipRouting && appState.router && !isCurrent) {
+            appState.router.navigateTo(ROUTES.PLAYLIST, { playlistId });
+            return;
+        }
 
-            playlists.bindViewEvents(playlist);
-            pageLoader.complete();
-        }, 200);
+        navigation.pages.loadPlaylistPage(playlistId);
     },
+    bindEvents: (root = $byId(IDS.dynamicContent)) => {
+        const dynamicContent = root;
+        if (!dynamicContent) return;
 
-    bindEvents(root = $byId(IDS.dynamicContent)) {
-        root?.querySelector(".create-playlist-btn")?.addEventListener("click", async () => {
-            const newPlaylist = await playlists.create();
-            if (newPlaylist) setTimeout(() => playlists.showAll(), 100);
-        });
-
-        const attachListeners = (el, event, selector, handler) => {
-            el?.addEventListener(event, e => {
-                const target = e.target.closest(selector);
-                if (target) handler(e, target);
+        const createBtn = dynamicContent.querySelector(".create-playlist-btn");
+        if (createBtn) {
+            createBtn.addEventListener("click", async () => {
+                const newPlaylist = await playlists.create();
+                if (newPlaylist) {
+                    setTimeout(() => playlists.showAll(), 100);
+                }
             });
-        };
+        }
 
-        attachListeners(root, "click", ".view-playlist-btn", (e, btn) => {
-            e.stopPropagation();
-            playlists.show(btn.dataset.playlistId);
+        dynamicContent.querySelectorAll(".view-playlist-btn").forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const playlistId = btn.dataset.playlistId;
+                playlists.show(playlistId);
+            });
         });
 
-        attachListeners(root, "click", ".play-playlist-btn", (e, btn) => {
-            e.stopPropagation();
-            playlists.play(btn.dataset.playlistId);
+        dynamicContent.querySelectorAll(".play-playlist-btn").forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const playlistId = btn.dataset.playlistId;
+                playlists.play(playlistId);
+            });
         });
 
-        attachListeners(root, "click", ".delete-playlist-btn", async (e, btn) => {
-            e.stopPropagation();
-            if (await playlists.remove(btn.dataset.playlistId)) {
-                setTimeout(() => playlists.showAll(), 100);
-            }
+        dynamicContent.querySelectorAll(".delete-playlist-btn").forEach((btn) => {
+            btn.addEventListener("click", async (e) => {
+                e.stopPropagation();
+                const playlistId = btn.dataset.playlistId;
+                if (await playlists.remove(playlistId)) {
+                    setTimeout(() => playlists.showAll(), 100);
+                }
+            });
         });
 
-        attachListeners(root, "click", ".playlist-card", (e, card) => {
-            playlists.show(card.dataset.playlistId);
+        dynamicContent.querySelectorAll(".playlist-card").forEach((card) => {
+            card.addEventListener("click", () => {
+                const playlistId = card.dataset.playlistId;
+                playlists.show(playlistId);
+            });
         });
     },
 
-    bindViewEvents(playlist) {
+    bindViewEvents: (playlist) => {
         const dynamicContent = $byId(IDS.dynamicContent);
         if (!dynamicContent) return;
 
-        dynamicContent.querySelector(".play-playlist-btn")?.addEventListener("click", () => {
-            playlists.play(playlist.id);
-        });
+        const playBtn = dynamicContent.querySelector(".play-playlist-btn");
+        if (playBtn) {
+            playBtn.addEventListener("click", () => {
+                playlists.play(playlist.id);
+            });
+        }
 
-        dynamicContent.querySelector(".edit-playlist-btn")?.addEventListener("click", async () => {
-            const newName = await overlays.form.prompt(
-                "Enter new playlist name:",
-                { okText: "Rename", placeholder: "Playlist name", value: playlist.name }
-            );
-            
-            if (newName?.trim() && newName.trim() !== playlist.name) {
-                playlist.name = newName.trim();
-                storage.save(STORAGE_KEYS.PLAYLISTS, appState.playlists);
-                playlists.show(playlist.id);
-                notifications.notify({ type: NOTIFICATION_TYPES.SUCCESS, message: "Playlist renamed successfully" });
-            }
-        });
-
-        dynamicContent.querySelector(".delete-playlist-btn")?.addEventListener("click", async () => {
-            if (await playlists.remove(playlist.id)) {
-                appState.router?.navigateTo(ROUTES.HOME);
-            }
-        });
-
-        dynamicContent.querySelector(".browse-music-btn")?.addEventListener("click", () => {
-            appState.router?.navigateTo(ROUTES.HOME);
-        });
-
-        // Song row event delegation
-        dynamicContent.addEventListener("click", e => {
-            const songRow = e.target.closest(".song-row");
-            if (!songRow) return;
-
-            if (e.target.closest(".action-btn") || e.target.closest(".play-song-btn")) {
-                e.stopPropagation();
-                const action = e.target.closest(".action-btn")?.dataset.action;
-                const songData = JSON.parse(songRow.dataset.song);
+        const editBtn = dynamicContent.querySelector(".edit-playlist-btn");
+        if (editBtn) {
+            editBtn.addEventListener("click", async () => {
+                const newName = await overlays.form.prompt(
+                    "Enter new playlist name:",
+                    {
+                        okText: "Rename",
+                        placeholder: "Playlist name",
+                        value: playlist.name
+                    }
+                );
                 
+                if (newName && newName.trim() && newName.trim() !== playlist.name) {
+                    playlist.name = newName.trim();
+                    storage.save(STORAGE_KEYS.PLAYLISTS, appState.playlists);
+                    playlists.show(playlist.id);
+                    notifications.notify({ type: NOTIFICATION_TYPES.SUCCESS, message: "Playlist renamed successfully" });
+                }
+            });
+        }
+
+        const deleteBtn = dynamicContent.querySelector(".delete-playlist-btn");
+        if (deleteBtn) {
+            deleteBtn.addEventListener("click", async () => {
+                if (await playlists.remove(playlist.id)) {
+                    if (appState.router) {
+                        appState.router.navigateTo(ROUTES.HOME);
+                    }
+                }
+            });
+        }
+
+        const browseBtn = dynamicContent.querySelector(".browse-music-btn");
+        if (browseBtn) {
+            browseBtn.addEventListener("click", () => {
+                if (appState.router) {
+                    appState.router.navigateTo(ROUTES.HOME);
+                }
+            });
+        }
+
+        dynamicContent.querySelectorAll(".song-row").forEach((row) => {
+            row.addEventListener("click", (e) => {
+                if (e.target.closest(".action-btn") || e.target.closest(".play-song-btn")) return;
+
+                try {
+                    const songData = JSON.parse(row.dataset.song);
+                    musicPlayer.ui.playSong(songData);
+                } catch (error) {}
+            });
+        });
+
+        dynamicContent.querySelectorAll(".play-song-btn").forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const songRow = btn.closest(".song-row");
+                try {
+                    const songData = JSON.parse(songRow.dataset.song);
+                    musicPlayer.ui.playSong(songData);
+                } catch (error) {}
+            });
+        });
+
+        dynamicContent.querySelectorAll("[data-artist]").forEach((artistEl) => {
+            artistEl.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const artistName = artistEl.dataset.artist;
+                if (appState.router) {
+                    appState.router.navigateTo(ROUTES.ARTIST, {
+                        artist: artistName,
+                    });
+                }
+            });
+        });
+
+        dynamicContent.querySelectorAll(".action-btn").forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const action = btn.dataset.action;
+                const songRow = btn.closest(".song-row");
+                const songData = JSON.parse(songRow.dataset.song);
+
                 switch (action) {
                     case "favorite":
                         appState.favorites.toggle("songs", songData.id);
+                        const heartIcon = btn.querySelector("svg");
+                        const isFavorite = appState.favorites.has("songs", songData.id);
+                        heartIcon.style.color = isFavorite ? "#ef4444" : "";
+                        heartIcon.style.fill = isFavorite ? "currentColor" : "none";
                         break;
                     case "add-queue":
                         appState.queue.add(songData);
                         break;
                     case "remove-from-playlist":
-                        if (playlists.removeSong(songRow.dataset.playlistId, songData.id)) {
-                            playlists.show(songRow.dataset.playlistId);
+                        const playlistId = songRow.dataset.playlistId;
+                        const songIndex = parseInt(songRow.dataset.songIndex);
+                        if (playlists.removeSong(playlistId, songData.id)) {
+                            playlists.show(playlistId);
                         }
                         break;
                 }
-            } else {
-                try {
-                    const songData = JSON.parse(songRow.dataset.song);
-                    musicPlayer.ui.playSong(songData);
-                } catch (error) {}
-            }
+            });
         });
-
-        dynamicContent.addEventListener("click", e => {
-            if (e.target.matches("[data-artist]")) {
-                e.stopPropagation();
-                appState.router?.navigateTo(ROUTES.ARTIST, { artist: e.target.dataset.artist });
-            }
-        });
-    }
+    },
 };
-
 
 
 ////////////////////////////////////////////////////////////
