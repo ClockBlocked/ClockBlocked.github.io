@@ -378,10 +378,10 @@ const clickables = {
             clickables.removeListener(curtain, '_curtainHandler');
             const curtainHandler = (e) => {
                 e.stopPropagation();
-                if (typeof musicPlayer !== 'undefined' && musicPlayer.mainPlayer && musicPlayer.mainPlayer.close) {
-                    musicPlayer.mainPlayer.close();
+                if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.close) {
+                    musicPlayer.playback.close();
                 } else {
-                    console.error('musicPlayer.mainPlayer.close not available');
+                    console.error('musicPlayer.playback.close not available');
                 }
             };
             curtain.addEventListener('click', curtainHandler);
@@ -401,8 +401,8 @@ const clickables = {
             
             const resetTimer = () => {
                 if (typeof appState !== 'undefined' && appState.isPopupVisible && appState.currentTab !== MUSIC_PLAYER.tabs.playing) {
-                    if (typeof musicPlayer !== 'undefined' && musicPlayer.mainPlayer && musicPlayer.mainPlayer.resetInactivityTimer) {
-                        musicPlayer.mainPlayer.resetInactivityTimer();
+                    if (typeof musicPlayer !== 'undefined' && musicPlayer.playback && musicPlayer.playback.resetInactivityTimer) {
+                        musicPlayer.playback.resetInactivityTimer();
                     }
                 }
             };
@@ -492,7 +492,7 @@ const clickables = {
                         }
                     }, 100);
                 } else {
-                    console.error('musicPlayer.mainPlayer not available');
+                    console.error('musicPlayer.playback not available');
                 }
             };
             recentlyPlayed.addEventListener('click', recentlyPlayedHandler);
@@ -514,7 +514,7 @@ const clickables = {
                         }
                     }, 100);
                 } else {
-                    console.error('musicPlayer.mainPlayer not available');
+                    console.error('musicPlayer.playback not available');
                 }
             };
             queueView.addEventListener('click', queueViewHandler);
