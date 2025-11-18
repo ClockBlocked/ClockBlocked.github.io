@@ -5678,6 +5678,25 @@ const musicPlayer = {
             }
 
             musicPlayer.ui.updateProgress();
+        },
+
+        dispatchPlayerStateChange() {
+            const detail = {
+                isPlaying: appState.isPlaying,
+                currentSong: appState.currentSong,
+                currentTime: appState.audio?.currentTime ?? 0,
+                totalTime: appState.audio?.duration ?? 0,
+            };
+            window.dispatchEvent(new CustomEvent("playerstatechange", { detail }));
+        },
+
+        togglePlayPause() {
+            if (!appState.audio) return;
+            if (appState.isPlaying) {
+                this.pause();
+            } else {
+                this.play();
+            }
         }
     },
 
@@ -6311,73 +6330,215 @@ const musicPlayer = {
             
             this.bindSeekBar();
         },
-        
-            updateHomeBentoGrid: () => {
-      const dynamicContent = $byId(IDS.dynamicContent);
-      if (!dynamicContent) return;
-      
-      const bentoGrid = dynamicContent.querySelector('.bento-grid');
-      if (!bentoGrid) return;
-      
-      const recentlyPlayedSection = $byId(IDS.recentlyPlayedSection);
-      if (recentlyPlayedSection && appState.recentlyPlayed && appState.recentlyPlayed.length > 0) {
-        const recentTracksHtml = render.homeSection.recentlyPlayed(
-          appState.recentlyPlayed.slice(0, 5),
-          utils
-        );
-        recentlyPlayedSection.innerHTML = recentTracksHtml;
-        
-        musicPlayer.ui.bindHomeBentoEvents(recentlyPlayedSection);
-      }
-    },
-    
-    bindHomeBentoEvents: (container) => {
-      if (!container) return;
-      
-      container.querySelectorAll('.modern-track-item, .track-play-btn').forEach(item => {
-        item.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const songDataStr = item.closest('[data-song]')?.dataset.song;
-          if (songDataStr) {
-            try {
-              const songData = JSON.parse(songDataStr);
-              musicPlayer.ui.playSong(songData);
-            } catch (error) {
-              console.error('Error parsing song data:', error);
-            }
-          }
-        });
-      });
-      
-      container.querySelectorAll('[data-artist]').forEach(artistEl => {
-        artistEl.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const artistName = artistEl.dataset.artist;
-          if (appState.router) {
-            appState.router.navigateTo(ROUTES.ARTIST, { artist: artistName });
-          }
-        });
-      });
-      
-      container.querySelectorAll('.track-favorite-btn, .favorite-heart-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const songItem = btn.closest('[data-song]');
-          if (songItem) {
-            const songDataStr = songItem.dataset.song;
-            try {
-              const songData = JSON.parse(songDataStr);
-              appState.favorites.toggle('songs', songData.id);
-              
-              btn.classList.toggle('active', appState.favorites.has('songs', songData.id));
-            } catch (error) {
-              console.error('Error toggling favorite:', error);
-            }
-          }
-        });
-      });
-    },
 
+        updateHomeBentoGrid() {
+            const dynamicContent = QUERY('#dynamic-content');
+            if (!dynamicContent) return;
+            
+            const bentoGrid = dynamicContent.querySelector('.bento-grid');
+            if (!bentoGrid) return;
+            
+            const recentlyPlayedSection = QUERY('#recently-played-section');
+            if (recentlyPlayedSection && appState.recentlyPlayed && appState.recentlyPlayed.length > 0) {
+                const recentTracksHtml = render.homeSection.recentlyPlayed(
+                    appState.recentlyPlayed.slice(0, 5),
+                    utils
+                );
+                recentlyPlayedSection.innerHTML = recentTracksHtml;
+                
+                this.bindHomeBentoEvents(recentlyPlayedSection);
+            }
+        },
+        
+        bindHomeBentoEvents(container) {
+            if (!container) return;
+            
+            container.querySelectorAll('.modern-track-item, .track-play-btn').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const songDataStr = item.closest('[data-song]')?.dataset.song;
+                    if (songDataStr) {
+                        try {
+                            const songData = JSON.parse(songDataStr);
+                            this.playSong(songData);
+                        } catch (error) {
+                            console.error('Error parsing song data:', error);
+                        }
+                    }
+                });
+            });
+            
+            container.querySelectorAll('[data-artist]').forEach(artistEl => {
+                artistEl.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const artistName = artistEl.dataset.artist;
+                    if (appState.router) {
+                        appState.router.navigateTo('artist', { artist: artistName });
+                    }
+                });
+            });
+            
+            container.querySelectorAll('.track-favorite-btn, .favorite-heart-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const songItem = btn.closest('[data-song]');
+                    if (songItem) {
+                        const songDataStr = songItem.dataset.song;
+                        try {
+                            const songData = JSON.parse(songDataStr);
+                            if (storage.isFavorite) {
+                                const wasFavorite = storage.isFavorite(songData);
+                                if (wasFavorite) {
+                                    storage.removeFromFavorites(songData);
+                                } else {
+                                    storage.addToFavorites(songData);
+                                }
+                                btn.classList.toggle('active', !wasFavorite);
+                            }
+                        } catch (error) {
+                            console.error('Error toggling favorite:', error);
+                        }
+                    }
+                });
+            });
+        },
+
+        updatePlayPauseUI(isPlaying) {
+            const playBtn = QUERY(MUSIC_PLAYER.play);
+            if (playBtn) {
+                const playIcon = playBtn.querySelector('.playIcon');
+                const pauseIcon = playBtn.querySelector('.pauseIcon');
+                if (playIcon) playIcon.style.display = isPlaying ? 'none' : 'block';
+                if (pauseIcon) pauseIcon.style.display = isPlaying ? 'block' : 'none';
+            }
+        },
+
+        updateNowPlayingUI(song) {
+            if (!song) return;
+            
+            const coverUrl = song.cover || song.artwork;
+            const cover = QUERY(MUSIC_PLAYER.albumArtwork);
+            if (cover && coverUrl) cover.src = coverUrl;
+            
+            const updateText = (selector, text) => {
+                const el = QUERY(selector);
+                if (el && text) el.textContent = text;
+            };
+            
+            updateText(MUSIC_PLAYER.songName, song.title);
+            updateText(MUSIC_PLAYER.artistName, song.artist);
+            updateText(MUSIC_PLAYER.albumName, song.album);
+        },
+
+        updateNavbarUI(song) {
+            const nowPlayingArea = QUERY('#now-playing-area');
+            if (nowPlayingArea && song) {
+                nowPlayingArea.classList.add('has-song');
+                
+                const albumArt = nowPlayingArea.querySelector('.albumArtwork');
+                const songName = nowPlayingArea.querySelector('.songName');
+                const artistName = nowPlayingArea.querySelector('.artistName');
+                
+                if (albumArt && song.cover) {
+                    albumArt.src = song.cover;
+                }
+                
+                if (songName) {
+                    songName.textContent = song.title;
+                }
+                
+                if (artistName) {
+                    artistName.textContent = song.artist;
+                }
+            }
+        },
+
+        updateProgressUI(currentTime, duration) {
+            const percent = duration > 0 ? (currentTime / duration) * 100 : 0;
+            this.setProgressUI(percent, currentTime);
+            
+            const totalTimeElement = QUERY(MUSIC_PLAYER.totalTime);
+            if (totalTimeElement) {
+                totalTimeElement.textContent = utils.formatTime(duration);
+            }
+        },
+
+        updateShuffleUI(shuffleMode) {
+            const shuffleBtn = QUERY(MUSIC_PLAYER.shuffleBtn);
+            if (shuffleBtn) {
+                shuffleBtn.classList.toggle('active', shuffleMode);
+                shuffleBtn.setAttribute("aria-pressed", shuffleMode);
+            }
+        },
+        
+        updateRepeatUI(repeatMode) {
+            const repeatBtn = QUERY(MUSIC_PLAYER.repeatBtn);
+            if (repeatBtn) {
+                repeatBtn.classList.toggle('active', repeatMode !== 0);
+                repeatBtn.setAttribute("aria-pressed", repeatMode !== 0);
+            }
+        },
+
+        setupSubscriptions() {
+            if (window.PubSub && window.PLAYER_EVENTS) {
+                PubSub.subscribe(PLAYER_EVENTS.PLAYBACK_STATE, (data) => {
+                    this.updatePlayPauseUI(data.isPlaying);
+                });
+                
+                PubSub.subscribe(PLAYER_EVENTS.CURRENT_SONG, (data) => {
+                    this.updateNowPlayingUI(data.currentSong);
+                    this.updateNavbarUI(data.currentSong);
+                });
+                
+                PubSub.subscribe(PLAYER_EVENTS.TIME_UPDATE, (data) => {
+                    this.updateProgressUI(data.currentTime, data.duration);
+                });
+                
+                PubSub.subscribe(PLAYER_EVENTS.SHUFFLE_MODE, (data) => {
+                    this.updateShuffleUI(data.shuffleMode);
+                });
+                
+                PubSub.subscribe(PLAYER_EVENTS.REPEAT_MODE, (data) => {
+                    this.updateRepeatUI(data.repeatMode);
+                });
+                
+                PubSub.subscribe(PLAYER_EVENTS.RECENTLY_PLAYED_CHANGED, (data) => {
+                    if (appState.currentTab === 'recent') {
+                        musicPlayer.playback.updateRecentTab();
+                    }
+                    this.updateHomeBentoGrid();
+                });
+            }
+        },
+
+        onPlay() {
+            appState.setPlayingState(true);
+            if (window.PubSub && window.PLAYER_EVENTS) {
+                PubSub.publish(PLAYER_EVENTS.PLAYBACK_STATE, { isPlaying: true });
+            }
+        },
+        
+        onPause() {
+            appState.setPlayingState(false);
+            if (window.PubSub && window.PLAYER_EVENTS) {
+                PubSub.publish(PLAYER_EVENTS.PLAYBACK_STATE, { isPlaying: false });
+            }
+        },
+        
+        onError(error) {
+            if (window.notifications) {
+                notifications.show("Audio playback error", "error");
+            }
+        },
+        
+        onEnded() {
+            if (appState.repeatMode === 2) {
+                appState.audio.currentTime = 0;
+                appState.audio.play();
+                return;
+            }
+            musicPlayer.playback.next();
+        }
     }
 };
 
