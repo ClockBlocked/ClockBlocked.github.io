@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded') {
 document.addEventListener('DOMContentLoaded', () => {
     $byId(IDS.musicPlayerProgressBar)?.addEventListener('keydown', musicPlayer.ui.handleProgressBarKeyDown);
     if (notificationPlayer.utils.isSupported()) {
-        setTimeout(() => notificationPlayer.setup(), 100);
+        setTimeout(() => notificationPlayer.setup(), 500);
     }
 });
 const perquisites = () => {
