@@ -38,62 +38,91 @@ export const IDS = Object.freeze({
   menuTrigger: "menu-trigger",
   dropdownMenu: "dropdown-menu",
   dropdownClose: "dropdown-close",
+
   favoriteSongs: "favorite-songs",
   favoriteArtists: "favorite-artists",
   createPlaylist: "create-playlist",
+
   favoriteSongsCount: "favorite-songs-count",
   favoriteArtistsCount: "favorite-artists-count",
-  recentlyPlayed: "recently-played",
-  queueView: "queue-view",
   recentCount: "recent-count",
   queueCount: "queue-count",
+
+  recentlyPlayed: "recently-played",
+  queueView: "queue-view",
+
   recentlyPlayedSection: "recently-played-section",
   randomAlbumsSection: "random-albums-section",
   favoriteArtistsSection: "favorite-artists-section",
   playlistsSection: "playlists-section",
   favoriteSongsSection: "favorite-songs-section",
+
   searchMusic: "search-music",
   shuffleAll: "shuffle-all",
   appSettings: "app-settings",
   aboutApp: "about-app",
+
   dynamicContent: "dynamic-content",
   contentLoading: "content-loading",
+
   albumsContainer: "albumWrapper",
   artistsGrid: "artists-grid",
   artistSearch: "artist-search",
   genreFilters: "genre-filters",
+
   seekTooltip: "seek-tooltip",
+
+  /* ------------------------------
+     MUSIC PLAYER — VERIFIED IDs
+     ------------------------------ */
+
   musicPlayer: "music-player",
   musicPlayerTrigger: "now-playing-area",
   musicPlayerClose: "music-player-close",
-  albumCover: "music-player-cover", 
-  songTitle: "music-player-title",
-  artistName: "music-player-artist",
-  albumName: "music-player-album",
-  playBtn: "music-player-play",
-  prevBtn: "music-player-prev", 
-  nextBtn: "music-player-next",
-  rewindBtn: "music-player-rewind",
-  forwardBtn: "music-player-forward",
-  shuffleBtn: "music-player-shuffle",
-  repeatBtn: "music-player-repeat",
-  favoriteBtn: "music-player-favorite",
-  queueBtn: "music-player-queue",
-  shareBtn: "music-player-share",
-  moreBtn: "music-player-more",
-  progressBar: "music-player-progress-bar",
-  progressFill: "music-player-progress-fill", 
-  progressThumb: "music-player-progress-thumb",
-  currentTime: "music-player-current-time",
-  totalTime: "music-player-total-time",
-  queueList: "music-player-queue-list",
-  recentList: "music-player-recent-list",
+
+  albumCover: "cover",
+  songTitle: "title",
+  artistName: "artist",
+  albumName: "album",
+
+  playBtn: "playBtn",
+  prevBtn: "prevBtn",
+  nextBtn: "nextBtn",
+  rewindBtn: "rewindBtn",
+  forwardBtn: "forwardBtn",
+
+  shuffleBtn: "shuffleBtn",
+  repeatBtn: "repeatBtn",
+
+  favoriteBtn: "favoriteBtn",
+  queueBtn: "queueBtn",
+  shareBtn: "shareBtn",
+  moreBtn: "moreBtn",
+
+  /* ------------------------------
+     PROGRESS BAR — VERIFIED IDs
+     ------------------------------ */
+
+  progressBar: "progressBar",
+  progressFill: "progressFill",
+  progressThumb: "progressThumb",
+  currentTime: "currentTime",
+  totalTime: "totalTime",
+
+  queueList: "queueList",
+  recentList: "recentList",
+
+  /* ------------------------------
+     NAVBAR — VERIFIED IDs
+     ------------------------------ */
+
   playPauseNavbar: "navbar-play-pause",
   prevBtnNavbar: "navbar-prev",
   nextBtnNavbar: "navbar-next",
   playIconNavbar: "navbar-play-icon",
   pauseIconNavbar: "navbar-pause-icon",
   nowPlayingAreaNavbar: "now-playing-area",
+
   searchTrigger: "searchTrigger",
 });
 
