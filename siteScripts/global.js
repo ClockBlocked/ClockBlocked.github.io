@@ -783,19 +783,6 @@ const app = {
     }
 };
 
-const perquisites = () => {
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
-            clickables.init();
-            app.initialize();
-        });
-    } else {
-        clickables.init();
-        app.initialize();
-    }
-};
-perquisites();
-
 
 window.clickables = clickables;
 window.musicPlayer = musicPlayer;
@@ -816,6 +803,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+const perquisites = () => {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            clickables.init();
+            app.initialize();
+        });
+    } else {
+        clickables.init();
+        app.initialize();
+    }
+};
+perquisites();
 
 
 const PubSub = {
