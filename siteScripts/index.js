@@ -13,4 +13,4 @@ export {
   navigation, ACTION_GRID_ITEMS 
 } from './global.js';
 
-export { notifications as toastNotifications } from './toasts.js';
+export { notifications } from './toasts.js';
