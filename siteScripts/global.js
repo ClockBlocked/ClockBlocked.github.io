@@ -1936,9 +1936,10 @@ const musicPlayer = {
       buffer.style.width = (bufferProgress * 100).toFixed(2) + "%";
     },
     
-bindSeekBar: () => {
+  bindSeekBar: () => {
     const bar = $byId(IDS.progressBar);
     const thumb = $byId(IDS.progressThumb);
+    const player = musicPlayer.ui;
     if (!bar || !thumb) return;
 
     const onPointerDown = (e) => {
