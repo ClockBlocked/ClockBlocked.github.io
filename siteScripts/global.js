@@ -1,8 +1,11 @@
 import { 
-  DOM, QUERY, QUERY_ALL, IDS, CLASSES, ROUTES, THEMES, STORAGE_KEYS, 
-  ICONS, AUDIO_FORMATS, REPEAT_MODES, NOTIFICATION_TYPES, MUSIC_PLAYER, 
-  NAVBAR, $, $byId, notifications 
+  IDS, CLASSES, ROUTES, THEMES, STORAGE_KEYS, 
+  ICONS, AUDIO_FORMATS, REPEAT_MODES, NOTIFICATION_TYPES,
+  $, $byId
 } from './index.js';
+
+import { notifications } from './toasts.js';
+
 
 import { music } from "../../modules/library.js";
 import { render, create, encodeURIComponent } from "./utilities/index.js";
