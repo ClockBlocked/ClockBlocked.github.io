@@ -1936,71 +1936,47 @@ const musicPlayer = {
       buffer.style.width = (bufferProgress * 100).toFixed(2) + "%";
     },
     
-    bindSeekBar() {
-      const bar = QUERY(MUSIC_PLAYER.progressBar);
-      const thumb = QUERY(MUSIC_PLAYER.progressThumb);
-      const fill = QUERY(MUSIC_PLAYER.progressFill);
+bindSeekBar: () => {
+    const bar = $byId(IDS.progressBar);
+    const thumb = $byId(IDS.progressThumb);
+    if (!bar || !thumb) return;
 
-      if (!bar || !thumb || !fill) {
-        console.error("bindSeekBar: Could not find progress bar elements");
-        return;
-      }
-
-      const onPointerDown = (e) => {
+    const onPointerDown = (e) => {
         e.preventDefault();
         bar.setPointerCapture?.(e.pointerId ?? 1);
-
-        musicPlayer.ui.isScrubbing = true;
-        musicPlayer.ui.wasPlayingBeforeScrub = !!appState.isPlaying;
-
-        if (musicPlayer.ui.wasPlayingBeforeScrub) {
-          appState.audio.pause();
-        }
-
-        musicPlayer.ui.seekFromEvent(e, bar);
-        bar.classList.add(MUSIC_PLAYER.classes.dragging);
-
+        player.isScrubbing = true;
+        player.wasPlayingBeforeScrub = !!appState.isPlaying;
+        if (player.wasPlayingBeforeScrub) appState.audio.pause();
+        player.seekFromEvent(e, bar);
+        bar.classList.add('is-dragging');
         const moveTarget = bar;
-        moveTarget.addEventListener("pointermove", onPointerMove, { passive: false });
-        moveTarget.addEventListener("pointerup", onPointerUp, { once: true });
-        window.addEventListener("pointercancel", onPointerUp, { once: true });
-      };
+        moveTarget.addEventListener('pointermove', onPointerMove, { passive: false });
+        moveTarget.addEventListener('pointerup', onPointerUp, { once: true });
+        window.addEventListener('pointercancel', onPointerUp, { once: true });
+    };
 
-      const onPointerMove = (e) => {
-        if (!musicPlayer.ui.isScrubbing) return;
+    const onPointerMove = (e) => {
+        if (!player.isScrubbing) return;
         e.preventDefault();
-        musicPlayer.ui.seekFromEvent(e, bar);
-      };
+        player.seekFromEvent(e, bar);
+    };
 
-      const onPointerUp = (e) => {
-        musicPlayer.ui.seekFromEvent(e, bar, true);
-        musicPlayer.ui.isScrubbing = false;
-
-        bar.classList.remove(MUSIC_PLAYER.classes.dragging, MUSIC_PLAYER.classes.hovering);
-
-        if (musicPlayer.ui.wasPlayingBeforeScrub) {
-          appState.audio.play();
-        }
-
+    const onPointerUp = (e) => {
+        player.seekFromEvent(e, bar, true);
+        player.isScrubbing = false;
+        bar.classList.remove('is-dragging', 'is-hovering');
+        if (player.wasPlayingBeforeScrub) appState.audio.play();
         bar.releasePointerCapture?.(e.pointerId ?? 1);
-        bar.removeEventListener("pointermove", onPointerMove);
-      };
+        bar.removeEventListener('pointermove', onPointerMove);
+    };
 
-      const onEnter = () => {
-        bar.classList.add(MUSIC_PLAYER.classes.hovering);
-      };
+    const onEnter = () => bar.classList.add('is-hovering');
+    const onLeave = () => { if (!player.isScrubbing) bar.classList.remove('is-hovering'); };
 
-      const onLeave = () => {
-        if (!musicPlayer.ui.isScrubbing) {
-          bar.classList.remove(MUSIC_PLAYER.classes.hovering);
-        }
-      };
-
-      bar.addEventListener("pointerdown", onPointerDown, { passive: false });
-      bar.addEventListener("pointerenter", onEnter);
-      bar.addEventListener("pointerleave", onLeave);
-      bar.addEventListener("keydown", musicPlayer.ui.handleProgressBarKeyDown);
-    },
+    bar.addEventListener('pointerdown', onPointerDown, { passive: false });
+    bar.addEventListener('pointerenter', onEnter);
+    bar.addEventListener('pointerleave', onLeave);
+}
     
     seekFromEvent(e, bar, finalize = false) {
       const rect = bar.getBoundingClientRect();
