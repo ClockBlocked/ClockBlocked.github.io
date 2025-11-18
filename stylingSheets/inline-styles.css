@@ -552,7 +552,7 @@ html, body {
   animation: shimmer 2s infinite;
 }
 
-/* Progress Bar Styles */
+/**
 .progress {
   --bg: var(--background-700, #2b2f36);
   --bg2: var(--background-600, #353a42);
@@ -635,7 +635,7 @@ html, body {
   border-radius: inherit;
   pointer-events: none;
 }
-
+**/
 .nav-controls button {
   background: transparent !important;
   border: none !important;
