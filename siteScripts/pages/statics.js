@@ -1,16 +1,12 @@
 import {
-  appState,
-  storage,
-  notifications,
-  musicPlayer,
-  utils,
-  navigation,
-  playlists,
-  overlays,
-} from '../global.js';
+  appState, storage, notifications, musicPlayer, utils, 
+  navigation, playlists, overlays
+} from '../index.js';
+import { ui } from './index.js';
+import { render } from '../utilities/index.js';
 
-import { ui } from './updates.js';
-import { render } from '../utilities/templates.js';
+
+
 
 export const homePage = {
   initialize: () => {
