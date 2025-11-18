@@ -37,13 +37,15 @@ const PLAYER_EVENTS = {
 const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
 
 
+document.addEventListener('DOMContentLoaded') {
+  perquisites();
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     $byId(IDS.musicPlayerProgressBar)?.addEventListener('keydown', musicPlayer.ui.handleProgressBarKeyDown);
     if (notificationPlayer.utils.isSupported()) {
         setTimeout(() => notificationPlayer.setup(), 100);
     }
-perquisites();
 });
 const perquisites = () => {
   if (document.readyState === "loading") {
