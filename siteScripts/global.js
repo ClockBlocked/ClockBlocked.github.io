@@ -4334,7 +4334,8 @@ const app = {
         storage.initialize();
         notifications.init();
         
-        musicPlayer.ui.initialize();
+//        musicPlayer.ui.initialize();
+        musicPlayer.init();
 
         navigation.initialize();
         homePage.initialize();
