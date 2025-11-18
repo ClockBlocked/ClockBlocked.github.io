@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" data-theme="dim">
   <head>
     <meta charset="UTF-8" />
@@ -7,7 +7,10 @@
     <title id="dynamicTitle">MyBeats: Stream & share your favorite music for free.</title>
 
     <meta name="description" content="Stream & share your favourite music for free." />
-    <meta name="keywords" content="music, player, web, audio, streaming, playlist, songs, albums, artists, videos, sharing, media, radio, pop, hiphop, country, dance, party, dubstep, alternative, rock, free, forever" />
+    <meta
+      name="keywords"
+      content="music, player, web, audio, streaming, playlist, songs, albums, artists, videos, sharing, media, radio, pop, hiphop, country, dance, party, dubstep, alternative, rock, free, forever"
+    />
     <meta name="author" content="ClockBlocked" />
     <meta name="theme-color" id="theme-color" content="#4A535D" />
     <link rel="manifest" href="./system/manifest.json" />
@@ -56,7 +59,11 @@
     <link rel="stylesheet" href="./stylingSheets/inline-styles.css" />
     <link rel="stylesheet" href="./stylingSheets/tailwind-conversion.css" />
 
-    <link rel="stylesheet" media="screen and (min-width: 768px) and (max-width: 1024px)" href="./stylingSheets/responsive/tablet.css" />
+    <link
+      rel="stylesheet"
+      media="screen and (min-width: 768px) and (max-width: 1024px)"
+      href="./stylingSheets/responsive/tablet.css"
+    />
     <link rel="stylesheet" media="screen and (min-width: 1024px)" href="./stylingSheets/responsive/desktop.css" />
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/preline@2.0.3/dist/preline.min.css" />
@@ -74,12 +81,8 @@
     </script>
   </head>
   <body>
-    
-    
-<div id="pageWrapper">
-  
-  
-<!-- Site Themes -->
+    <div id="pageWrapper">
+      <!-- Site Themes -->
       <div class="theme-toggle-container">
         <div class="theme-trigger">
           <svg width="24" height="24" viewBox="0 0 24 24">
@@ -108,15 +111,16 @@
           </button>
           <button data-theme="dark" aria-label="Dark theme">
             <svg width="20" height="20" viewBox="0 0 24 24">
-              <path fill="currentColor" d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1-8.313-12.454z" />
+              <path
+                fill="currentColor"
+                d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1-8.313-12.454z"
+              />
             </svg>
           </button>
         </div>
       </div>
 
-
-
-<!-- Site Navigation -->
+      <!-- Site Navigation -->
       <div class="dropdown-menu" id="dropdown-menu">
         <div class="dropdown-header">
           <h3 class="dropdown-title">Music Library</h3>
@@ -133,7 +137,9 @@
         <div class="dropdown-section">
           <h4 class="section-title">
             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
+              <path
+                d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
+              />
             </svg>
             Search
           </h4>
@@ -149,9 +155,17 @@
             </div>
             <div class="dropdown-item-badge" id="favorite-songs-count">New!</div>
           </div>
-          <button id="searchTrigger" class="search-trigger-btn flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-300 backdrop-blur-sm">
+          <button
+            id="searchTrigger"
+            class="search-trigger-btn flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-300 backdrop-blur-sm"
+          >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
             </svg>
             <span class="text-sm">Search</span>
             <kbd class="hidden md:inline-block px-2 py-1 text-xs rounded bg-white/10">⌘K</kbd>
@@ -160,7 +174,9 @@
         <div class="dropdown-section">
           <h4 class="section-title">
             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
+              <path
+                d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
+              />
             </svg>
             Favorites
           </h4>
@@ -179,7 +195,9 @@
           <div class="dropdown-item" id="favorite-artists">
             <div class="dropdown-item-icon">
               <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9 12a3 3 0 00-3-3H2a1 1 0 100 2h4a1 1 0 011 1v.5a1 1 0 102 0V12zm3-8a3 3 0 100 6 3 3 0 000-6zm-1 4a1 1 0 11-2 0 1 1 0 012 0z" />
+                <path
+                  d="M9 12a3 3 0 00-3-3H2a1 1 0 100 2h4a1 1 0 011 1v.5a1 1 0 102 0V12zm3-8a3 3 0 100 6 3 3 0 000-6zm-1 4a1 1 0 11-2 0 1 1 0 012 0z"
+                />
               </svg>
             </div>
             <div class="dropdown-item-content">
@@ -192,14 +210,20 @@
         <div class="dropdown-section">
           <h4 class="section-title">
             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+              <path
+                d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"
+              />
             </svg>
             Library
           </h4>
           <div class="dropdown-item" id="recently-played">
             <div class="dropdown-item-icon">
               <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                  clip-rule="evenodd"
+                />
               </svg>
             </div>
             <div class="dropdown-item-content">
@@ -211,7 +235,9 @@
           <div class="dropdown-item" id="queue-view">
             <div class="dropdown-item-icon">
               <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" />
+                <path
+                  d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                />
               </svg>
             </div>
             <div class="dropdown-item-content">
@@ -224,14 +250,20 @@
         <div class="dropdown-section">
           <h4 class="section-title">
             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+              <path
+                d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"
+              />
             </svg>
             Playlists
           </h4>
           <div class="dropdown-item" id="create-playlist">
             <div class="dropdown-item-icon">
               <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                <path
+                  fill-rule="evenodd"
+                  d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                  clip-rule="evenodd"
+                />
               </svg>
             </div>
             <div class="dropdown-item-content">
@@ -243,7 +275,9 @@
             <div class="empty-state" id="playlists-empty">
               <div class="empty-state-icon">
                 <svg class="w-full h-full" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+                  <path
+                    d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"
+                  />
                 </svg>
               </div>
               <div class="empty-state-text">
@@ -305,7 +339,11 @@
           <div class="dropdown-item" id="about-app">
             <div class="dropdown-item-icon">
               <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                <path
+                  fill-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                  clip-rule="evenodd"
+                />
               </svg>
             </div>
             <div class="dropdown-item-content">
@@ -316,23 +354,37 @@
         </div>
       </div>
 
-<!-- NAVBar Music Player -- Mobile Only -->
+      <!-- NAVBar Music Player -- Mobile Only -->
       <nav id="navbar" class="glass-effect mobile-only">
         <div class="navbar-content">
           <div class="navbar-left">
             <button class="menu-trigger" id="menu-trigger" title="Menu" data-toggle-menu="toggle">
               <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
+                <path
+                  fill-rule="evenodd"
+                  d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                  clip-rule="evenodd"
+                />
               </svg>
             </button>
           </div>
           <div class="navbar-center" id="now-playing-area">
             <div class="nowPlaying">
               <div class="albumArtwork flex items-center justify-center relative">
-                <svg class="w-6 h-6 text-white transition-opacity duration-500 ease-in-out" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.369 4.369 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z" />
+                <svg
+                  class="w-6 h-6 text-white transition-opacity duration-500 ease-in-out"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.369 4.369 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z"
+                  />
                 </svg>
-                <img src="" alt="Album Cover" class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 ease-in-out" />
+                <img
+                  src=""
+                  alt="Album Cover"
+                  class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 ease-in-out"
+                />
               </div>
               <div class="songInfo">
                 <div class="songName truncate">No song playing</div>
@@ -345,20 +397,32 @@
             <div class="nav-controls">
               <button class="previous nav-control-btn" title="Previous Track">
                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M8.445 14.832A1 1 0 0010 14v-2.798l5.445 3.63A1 1 0 0017 14V6a1 1 0 00-1.555-.832L10 8.798V6a1 1 0 00-1.555-.832l-6 4a1 1 0 000 1.664l6 4z" />
+                  <path
+                    d="M8.445 14.832A1 1 0 0010 14v-2.798l5.445 3.63A1 1 0 0017 14V6a1 1 0 00-1.555-.832L10 8.798V6a1 1 0 00-1.555-.832l-6 4a1 1 0 000 1.664l6 4z"
+                  />
                 </svg>
               </button>
               <button class="playPause nav-control-btn play-pause" title="Play/Pause">
                 <svg id="play-icon-navbar" class="play w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+                    clip-rule="evenodd"
+                  />
                 </svg>
                 <svg id="pause-icon-navbar" class="pause w-6 h-6 hidden" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                  <path
+                    fill-rule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z"
+                    clip-rule="evenodd"
+                  />
                 </svg>
               </button>
               <button class="next nav-control-btn" title="Next Track">
                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798L4.555 5.168z" />
+                  <path
+                    d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798L4.555 5.168z"
+                  />
                 </svg>
               </button>
             </div>
@@ -370,216 +434,229 @@
           <div class="slide musicPlayerSlide">
             <button class="curtain musicPlayerCurtain" tabindex="-1" data-overlay-close="music-player"></button>
 
-<!-- Visual Drawer starts here -->
+            <!-- Visual Drawer starts here -->
             <div class="inner musicPlayerInner">
-                <!-- Drag Handle & Close Button -->
-                <div class="dragArea">
-                    <button autofocus class="dragHandle musicPlayerDragHandle">
-                        <span></span>
-                    </button>
-                </div>
-                <button class="closeBtn" id="music-player-close">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
+              <!-- Drag Handle & Close Button -->
+              <div class="dragArea">
+                <button autofocus class="dragHandle musicPlayerDragHandle">
+                  <span></span>
                 </button>
-                
-                <!-- TOP Half of drawer - always visible
+              </div>
+              <button class="closeBtn" id="music-player-close">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+
+              <!-- TOP Half of drawer - always visible
                                         ( Expanded & Collapsed Header State )
                                         -->
-                <div class="nowPlaying musicPlayerNowPlaying">
-                    <div class="coverWrapper musicPlayerCoverWrapper">
-                        <div class="customShapeDivider">
-                            <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
-                                <path
-                                    d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"
-                                    class="shapeFill"
-                                ></path>
-                            </svg>
-                        </div>
-                        <img src="https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/stable/global/content/images/albumCovers/placeholder.png" alt="Album Cover" class="cover" id="music-player-cover" />
-                        <div class="coverGlow musicPlayerCoverGlow"></div>
+              <div class="nowPlaying musicPlayerNowPlaying">
+                <div class="coverWrapper musicPlayerCoverWrapper">
+                  <div class="customShapeDivider">
+                    <svg
+                      data-name="Layer 1"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 1200 120"
+                      preserveAspectRatio="none"
+                    >
+                      <path
+                        d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"
+                        class="shapeFill"
+                      ></path>
+                    </svg>
+                  </div>
+                  <img
+                    src="https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/stable/global/content/images/albumCovers/placeholder.png"
+                    alt="Album Cover"
+                    class="cover"
+                    id="music-player-cover"
+                  />
+                  <div class="coverGlow musicPlayerCoverGlow"></div>
 
-                        <!-- Action Buttons
+                  <!-- Action Buttons
                             ( Overlaying the Album Cover ) -->
-                        <div class="actions musicPlayerActions albumOverlayActions">
-                            <button class="actionBtn" id="music-player-shuffle" title="Shuffle">
-                                <svg viewBox="0 0 24 24" fill="currentColor">...</svg>
-                            </button>
-                            <button class="actionBtn" id="music-player-repeat" title="Repeat">
-                                <svg viewBox="0 0 24 24" fill="currentColor">...</svg>
-                            </button>
-                            <button class="actionBtn" id="volumeBtn" title="Volume">
-                                <svg viewBox="0 0 24 24" fill="currentColor">...</svg>
-                            </button>
-                            <button class="actionBtn" id="music-player-queue" title="Queue">
-                                <svg viewBox="0 0 24 24" fill="currentColor">...</svg>
-                            </button>
-                        </div>
-                    </div>
+                  <div class="actions musicPlayerActions albumOverlayActions">
+                    <button class="actionBtn" id="music-player-shuffle" title="Shuffle">
+                      <svg viewBox="0 0 24 24" fill="currentColor">...</svg>
+                    </button>
+                    <button class="actionBtn" id="music-player-repeat" title="Repeat">
+                      <svg viewBox="0 0 24 24" fill="currentColor">...</svg>
+                    </button>
+                    <button class="actionBtn" id="volumeBtn" title="Volume">
+                      <svg viewBox="0 0 24 24" fill="currentColor">...</svg>
+                    </button>
+                    <button class="actionBtn" id="music-player-queue" title="Queue">
+                      <svg viewBox="0 0 24 24" fill="currentColor">...</svg>
+                    </button>
+                  </div>
                 </div>
-                
-                <!-- Area DIRECTLY BELOW the Cover Album
+              </div>
+
+              <!-- Area DIRECTLY BELOW the Cover Album
                     ( Playback Controls - Now Playing Tab )
                     ( Song Lists - Recently Played Tab & Up Next Queue Tab )
                     -->
-                <div class="content musicPlayerContent">
-                    <div class="panel musicPlayerPanel active" data-tab="playing">
-                        <div class="main">
-                            <div class="info musicPlayerInfo">
-                                <div class="details musicPlayerDetails">
-                                    <h3 id="music-player-title" class="title"></h3>
-                                    <p id="music-player-artist" class="artist"></p>
-                                    <p id="music-player-album" class="album"></p>
-                                </div>
-                                <button class="favoriteBtn" id="music-player-favorite" title="Add to Favorites">
-                                    <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
-                                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                                    </svg>
-                                </button>
-                            </div>
-                            <div class="progressSection musicPlayerProgressSection" id="music-player-progress-section">
-                                          <!-- Progress Bar Container - This wraps the entire progress bar -->
-                                          <div class="progressBarContainer">
-                                                        <!-- The clickable progress bar area -->
-                                                        <div
-                                                                      class="progressBar"
-                                                                      id="music-player-progress-bar"
-                                                                      tabindex="0"
-                                                                      role="slider"
-                                                                      aria-valuemin="0"
-                                                                      aria-valuemax="100"
-                                                                      aria-valuenow="0"
-                                                                      aria-label="Seek through song"
-                                                        ></div>
-
-                                                        <!-- Buffer indicator (shows how much is loaded) -->
-                                                        <div
-                                                                      class="progressBuffer"
-                                                                      id="musicPlayerProgressBuffer"
-                                                        ></div>
-
-                                                        <!-- Progress track (shows current progress) -->
-                                                        <div
-                                                                      class="progressTrack"
-                                                                      id="music-player-progress-fill"
-                                                        ></div>
-
-                                                        <!-- Draggable thumb (positioned outside the fill for correct positioning) -->
-                                                        <div
-                                                                      class="progressThumb"
-                                                                      id="music-player-progress-thumb"
-                                                        ></div>
-                                          </div>
-
-                                          <!-- Time display -->
-                                          <div class="timeDisplay musicPlayerTimeDisplay">
-                                                        <span id="music-player-current-time" class="currentTime"
-                                                                      >0:00</span
-                                                        >
-                                                        <span id="music-player-total-time" class="totalTime">0:00</span>
-                                          </div>
-                            </div>
-                            <div class="controls musicPlayerControls">
-                                <button class="controlBtn secondary" id="music-player-prev" title="Previous">
-                                    <svg viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
-                                    </svg>
-                                </button>
-                                <button class="controlBtn rewind" id="music-player-rewind" title="Rewind 10s">
-                                    <svg viewBox="0 0 24 24" fill="currentColor">
-                                        <path
-                                            d="M11.99 5V1l-5 5 5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6h-2c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8zm-1.1 11h-.85v-3.26l-1.01.31v-.69l1.77-.63h.09V16zm4.28-1.76c0 .32-.03.6-.1.82s-.17.42-.29.57-.28.26-.45.33-.37.1-.59.1-.41-.03-.59-.1-.33-.18-.46-.33-.23-.34-.3-.57-.11-.5-.11-.82v-.74c0-.32.03-.6.1-.82s.17-.42.29-.57.28-.26.45-.33.37-.1.59-.1.41.03.59.1.33.18.46.33.23.34.3.57.11.5.11.82v.74zm-.85-.86c0-.19-.01-.35-.04-.48s-.07-.23-.12-.31-.11-.14-.19-.17-.16-.05-.25-.05-.18.02-.25.05-.14.09-.19.17-.09.18-.12.31-.04.29-.04.48v.97c0 .19.01.35.04.48s.07.24.12.32.11.14.19.17.16.05.25.05.18-.02.25-.05.14-.09.19-.17.09-.19.12-.32.04-.29.04-.48v-.97z"
-                                        />
-                                    </svg>
-                                    <span class="skipLabel">10</span>
-                                </button>
-                                <button class="controlBtn primary" id="music-player-play" title="Play/Pause">
-                                    <span class="playIcon">
-                                        <svg viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M8 5v14l11-7z" />
-                                        </svg>
-                                    </span>
-                                    <span class="pauseIcon">
-                                        <svg viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-                                        </svg>
-                                    </span>
-                                </button>
-                                <button class="controlBtn forward" id="music-player-forward" title="Forward 10s">
-                                    <svg viewBox="0 0 24 24" fill="currentColor">
-                                        <path
-                                            d="M12 5V1l7 6-7 6V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8zm-1.1 11h-.85v-3.26l-1.01.31v-.69l1.77-.63h.09V16zm4.28-1.76c0 .32-.03.6-.1.82s-.17.42-.29.57-.28.26-.45.33-.37.1-.59.1-.41-.03-.59-.1-.33-.18-.46-.33-.23-.34-.3-.57-.11-.5-.11-.82v-.74c0-.32.03-.6.1-.82s.17-.42.29-.57.28-.26.45-.33.37-.1.59-.1.41.03.59.1.33.18.46.33.23.34.3.57.11.5.11.82v.74zm-.85-.86c0-.19-.01-.35-.04-.48s-.07-.23-.12-.31-.11-.14-.19-.17-.16-.05-.25-.05-.18.02-.25.05-.14.09-.19.17-.09.18-.12.31-.04.29-.04.48v.97c0 .19.01.35.04.48s.07.24.12.32.11.14.19.17.16.05.25.05.18-.02.25-.05.14-.09.19-.17.09-.19.12-.32.04-.29.04-.48v-.97z"
-                                        />
-                                    </svg>
-                                    <span class="skipLabel">10</span>
-                                </button>
-                                <button class="controlBtn secondary" id="music-player-next" title="Next">
-                                    <svg viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
+              <div class="content musicPlayerContent">
+                <div class="panel musicPlayerPanel active" data-tab="playing">
+                  <div class="main">
+                    <div class="info musicPlayerInfo">
+                      <div class="details musicPlayerDetails">
+                        <h3 id="music-player-title" class="title"></h3>
+                        <p id="music-player-artist" class="artist"></p>
+                        <p id="music-player-album" class="album"></p>
+                      </div>
+                      <button class="favoriteBtn" id="music-player-favorite" title="Add to Favorites">
+                        <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
+                          <path
+                            d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                          ></path>
+                        </svg>
+                      </button>
                     </div>
-                    <div class="panel musicPlayerPanel" data-tab="playlist">
-                        <div class="listHeader musicPlayerListHeader">
-                            <h3 class="listTitle musicPlayerListTitle">Recently Played</h3>
-                            <span class="listCount musicPlayerListCount" id="recent-count">0 songs</span>
+                    <div class="progressSection musicPlayerProgressSection" id="music-player-progress-section">
+                      <!-- Progress Bar Container - This wraps the entire progress bar -->
+                      <div class="progress" id="musicProgress">
+                        <div class="time">
+                          <span id="currentTime">0:00</span>
+                          <span id="totalTime">0:00</span>
                         </div>
-                        <ul class="list musicPlayerList" id="music-player-recent-list">
-                            <li class="empty musicPlayerEmpty">
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="panel musicPlayerPanel" data-tab="queue">
-                        <div class="listHeader musicPlayerListHeader">
-                            <h3 class="listTitle musicPlayerListTitle">Queue</h3>
-                            <span class="listCount musicPlayerListCount" id="queue-count">0 songs</span>
+
+                        <div
+                          id="progressBar"
+                          role="slider"
+                          tabindex="0"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                          aria-valuenow="0"
+                          class="ytp-progress-bar-container"
+                        >
+                          <div class="ytp-progress-hitbox"></div>
+
+                          <div id="progressHoverPreview" class="ytp-hover-scrub-bar"></div>
+
+                          <div id="progressBuffer" class="ytp-buffer-bar"></div>
+
+                          <div id="progressFill" class="ytp-played-bar">
+                            <div id="progressThumb" class="ytp-scrubber-button"></div>
+                          </div>
                         </div>
-                        <ul class="list musicPlayerList" id="music-player-queue-list">
-                            <li class="empty musicPlayerEmpty">
-                            </li>
-                        </ul>
+                      </div>
+                      <!-- Time display -->
+                      <div class="timeDisplay musicPlayerTimeDisplay">
+                        <span id="music-player-current-time" class="currentTime">0:00</span>
+                        <span id="music-player-total-time" class="totalTime">0:00</span>
+                      </div>
                     </div>
+                    <div class="controls musicPlayerControls">
+                      <button class="controlBtn secondary" id="music-player-prev" title="Previous">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
+                        </svg>
+                      </button>
+                      <button class="controlBtn rewind" id="music-player-rewind" title="Rewind 10s">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                          <path
+                            d="M11.99 5V1l-5 5 5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6h-2c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8zm-1.1 11h-.85v-3.26l-1.01.31v-.69l1.77-.63h.09V16zm4.28-1.76c0 .32-.03.6-.1.82s-.17.42-.29.57-.28.26-.45.33-.37.1-.59.1-.41-.03-.59-.1-.33-.18-.46-.33-.23-.34-.3-.57-.11-.5-.11-.82v-.74c0-.32.03-.6.1-.82s.17-.42.29-.57.28-.26.45-.33.37-.1.59-.1.41.03.59.1.33.18.46.33.23.34.3.57.11.5.11.82v.74zm-.85-.86c0-.19-.01-.35-.04-.48s-.07-.23-.12-.31-.11-.14-.19-.17-.16-.05-.25-.05-.18.02-.25.05-.14.09-.19.17-.09.18-.12.31-.04.29-.04.48v.97c0 .19.01.35.04.48s.07.24.12.32.11.14.19.17.16.05.25.05.18-.02.25-.05.14-.09.19-.17.09-.19.12-.32.04-.29.04-.48v-.97z"
+                          />
+                        </svg>
+                        <span class="skipLabel">10</span>
+                      </button>
+                      <button class="controlBtn primary" id="music-player-play" title="Play/Pause">
+                        <span class="playIcon">
+                          <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M8 5v14l11-7z" />
+                          </svg>
+                        </span>
+                        <span class="pauseIcon">
+                          <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                          </svg>
+                        </span>
+                      </button>
+                      <button class="controlBtn forward" id="music-player-forward" title="Forward 10s">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                          <path
+                            d="M12 5V1l7 6-7 6V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8zm-1.1 11h-.85v-3.26l-1.01.31v-.69l1.77-.63h.09V16zm4.28-1.76c0 .32-.03.6-.1.82s-.17.42-.29.57-.28.26-.45.33-.37.1-.59.1-.41-.03-.59-.1-.33-.18-.46-.33-.23-.34-.3-.57-.11-.5-.11-.82v-.74c0-.32.03-.6.1-.82s.17-.42.29-.57.28-.26.45-.33.37-.1.59-.1.41.03.59.1.33.18.46.33.23.34.3.57.11.5.11.82v.74zm-.85-.86c0-.19-.01-.35-.04-.48s-.07-.23-.12-.31-.11-.14-.19-.17-.16-.05-.25-.05-.18.02-.25.05-.14.09-.19.17-.09.18-.12.31-.04.29-.04.48v.97c0 .19.01.35.04.48s.07.24.12.32.11.14.19.17.16.05.25.05.18-.02.25-.05.14-.09.19-.17.09-.19.12-.32.04-.29.04-.48v-.97z"
+                          />
+                        </svg>
+                        <span class="skipLabel">10</span>
+                      </button>
+                      <button class="controlBtn secondary" id="music-player-next" title="Next">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
                 </div>
-                
-                <!-- Dot Indicators for Tabs -->
-                <div class="dotIndicators">
-                    <button class="dotIndicator active" data-tab="playing" aria-label="Now Playing">
-                        <span class="dotLabel">Now Playing</span>
-                    </button>
-                    <button class="dotIndicator" data-tab="playlist" aria-label="Recently Played">
-                        <span class="dotLabel">Recent</span>
-                    </button>
-                    <button class="dotIndicator" data-tab="queue" aria-label="Queue">
-                        <span class="dotLabel">Queue</span>
-                    </button>
+                <div class="panel musicPlayerPanel" data-tab="playlist">
+                  <div class="listHeader musicPlayerListHeader">
+                    <h3 class="listTitle musicPlayerListTitle">Recently Played</h3>
+                    <span class="listCount musicPlayerListCount" id="recent-count">0 songs</span>
+                  </div>
+                  <ul class="list musicPlayerList" id="music-player-recent-list">
+                    <li class="empty musicPlayerEmpty"></li>
+                  </ul>
                 </div>
+                <div class="panel musicPlayerPanel" data-tab="queue">
+                  <div class="listHeader musicPlayerListHeader">
+                    <h3 class="listTitle musicPlayerListTitle">Queue</h3>
+                    <span class="listCount musicPlayerListCount" id="queue-count">0 songs</span>
+                  </div>
+                  <ul class="list musicPlayerList" id="music-player-queue-list">
+                    <li class="empty musicPlayerEmpty"></li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Dot Indicators for Tabs -->
+              <div class="dotIndicators">
+                <button class="dotIndicator active" data-tab="playing" aria-label="Now Playing">
+                  <span class="dotLabel">Now Playing</span>
+                </button>
+                <button class="dotIndicator" data-tab="playlist" aria-label="Recently Played">
+                  <span class="dotLabel">Recent</span>
+                </button>
+                <button class="dotIndicator" data-tab="queue" aria-label="Queue">
+                  <span class="dotLabel">Queue</span>
+                </button>
+              </div>
             </div>
-        </div>
+          </div>
         </div>
       </aside>
 
-
-<!-- Desktop Only Triggers -->
+      <!-- Desktop Only Triggers -->
       <div class="unified-triggers desktop-tablet-only">
         <button class="unified-trigger menu-trigger" id="unified-menu-trigger" title="Menu">
           <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
+            <path
+              fill-rule="evenodd"
+              d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+              clip-rule="evenodd"
+            />
           </svg>
         </button>
         <button class="unified-trigger player-trigger" id="unified-player-trigger" title="Music Player">
           <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.369 4.369 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z" />
+            <path
+              d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.369 4.369 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z"
+            />
           </svg>
         </button>
       </div>
 
-
-
-<!-- Dynamic SPA-like Area -->
+      <!-- Dynamic SPA-like Area -->
       <div id="mainArea">
         <main id="main-container" class="content-container max-w-6xl mx-auto pb-24">
           <div id="contentWrapper" class="relative">
@@ -587,8 +664,18 @@
               <ol class="breadcrumb-list">
                 <li class="breadcrumb-item">
                   <a href="#" class="breadcrumb-link">
-                    <svg class="breadcrumb-home-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    <svg
+                      class="breadcrumb-home-icon"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                      ></path>
                     </svg>
                     <span>Dashboard</span>
                   </a>
@@ -626,24 +713,35 @@
               </ol>
             </nav>
             <div id="dynamic-content">
-              <div id="featured-artists" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 px-4"></div>
+              <div
+                id="featured-artists"
+                class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 px-4"
+              ></div>
             </div>
           </div>
         </main>
       </div>
 
-
-
-
-<!-- Dynamic Toasts & PopOvers -->
+      <!-- Dynamic Toasts & PopOvers -->
       <div id="toast-portal"></div>
       <div id="popover-portal" class="popover-portal"></div>
 
-
-<!-- Progressive Web App Reminder -->
-      <div id="pwa-install-banner" class="fixed bottom-0 end-0 z-60 sm:max-w-sm w-full mx-auto p-6 opacity-0 pointer-events-none transition-all duration-300">
-        <div class="p-4 bg-white border border-gray-200 rounded-xl shadow-2xs dark:bg-neutral-900 dark:border-neutral-800 flex gap-x-4">
-          <svg class="shrink-0 w-8 h-auto" width="72" height="63" viewBox="0 0 72 63" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Progressive Web App Reminder -->
+      <div
+        id="pwa-install-banner"
+        class="fixed bottom-0 end-0 z-60 sm:max-w-sm w-full mx-auto p-6 opacity-0 pointer-events-none transition-all duration-300"
+      >
+        <div
+          class="p-4 bg-white border border-gray-200 rounded-xl shadow-2xs dark:bg-neutral-900 dark:border-neutral-800 flex gap-x-4"
+        >
+          <svg
+            class="shrink-0 w-8 h-auto"
+            width="72"
+            height="63"
+            viewBox="0 0 72 63"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
             <path
               d="M15.5174 56.1528C16.2903 57.6825 16.929 61.4559 14.8118 60.9459C13.5013 60.5381 11.4445 57.6213 12.493 56.1528C12.661 55.8468 13.2189 55.2757 14.106 55.4389"
               stroke="currentColor"
@@ -658,12 +756,23 @@
               stroke-width="2"
               stroke-linecap="round"
             />
-            <ellipse cx="51.2061" cy="22.3973" rx="3.02446" ry="3.05945" fill="currentColor" class="text-gray-800 dark:fill-neutral-200" />
+            <ellipse
+              cx="51.2061"
+              cy="22.3973"
+              rx="3.02446"
+              ry="3.05945"
+              fill="currentColor"
+              class="text-gray-800 dark:fill-neutral-200"
+            />
           </svg>
           <div class="grow">
             <p class="text-sm text-gray-800 dark:text-neutral-200">
               Open in the app, or
-              <a id="pwa-download-link" class="inline-flex items-center gap-x-1.5 text-blue-600 decoration-2 hover:underline font-medium dark:text-blue-500" href="#">
+              <a
+                id="pwa-download-link"
+                class="inline-flex items-center gap-x-1.5 text-blue-600 decoration-2 hover:underline font-medium dark:text-blue-500"
+                href="#"
+              >
                 Install App
               </a>
             </p>
@@ -675,7 +784,18 @@
               class="p-2 inline-flex items-center gap-x-2 text-sm font-semibold rounded-full border border-transparent text-gray-500 hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
             >
               <span class="sr-only">Dismiss</span>
-              <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg
+                class="shrink-0 size-4"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
                 <path d="M18 6 6 18"></path>
                 <path d="m6 6 12 12"></path>
               </svg>
@@ -684,18 +804,38 @@
         </div>
       </div>
 
-<!-- Site Search -->
-      <div id="searchModal" class="search-modal-overlay hidden fixed inset-0 z-[9999] opacity-0 transition-opacity duration-300">
+      <!-- Site Search -->
+      <div
+        id="searchModal"
+        class="search-modal-overlay hidden fixed inset-0 z-[9999] opacity-0 transition-opacity duration-300"
+      >
         <div class="search-backdrop absolute inset-0 bg-black/60 backdrop-blur-xl"></div>
         <div class="search-container relative flex items-start justify-center min-h-screen p-4 pt-[15vh]">
           <div class="search-content w-full max-w-3xl transform scale-95 opacity-0 transition-all duration-300">
-            <div class="search-input-wrapper relative bg-gradient-to-br from-gray-900/95 to-gray-800/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/10 overflow-hidden">
+            <div
+              class="search-input-wrapper relative bg-gradient-to-br from-gray-900/95 to-gray-800/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/10 overflow-hidden"
+            >
               <div class="flex items-center gap-4 px-6 py-5 border-b border-white/10">
                 <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
                 </svg>
-                <input type="text" id="searchInput" placeholder="Search songs, artists, albums..." class="flex-1 bg-transparent text-white text-lg placeholder-gray-400 outline-none" autocomplete="off" spellcheck="false" />
-                <button id="clearSearch" class="clear-btn hidden text-gray-400 hover:text-white transition-colors p-2 rounded-full hover:bg-white/10">
+                <input
+                  type="text"
+                  id="searchInput"
+                  placeholder="Search songs, artists, albums..."
+                  class="flex-1 bg-transparent text-white text-lg placeholder-gray-400 outline-none"
+                  autocomplete="off"
+                  spellcheck="false"
+                />
+                <button
+                  id="clearSearch"
+                  class="clear-btn hidden text-gray-400 hover:text-white transition-colors p-2 rounded-full hover:bg-white/10"
+                >
                   <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fill-rule="evenodd"
@@ -712,12 +852,24 @@
                 <div id="recentSearches" class="recent-searches p-6">
                   <div class="flex items-center justify-between mb-4">
                     <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Recent Searches</h3>
-                    <button id="clearRecentBtn" class="text-xs text-gray-500 hover:text-white transition-colors">Clear All</button>
+                    <button id="clearRecentBtn" class="text-xs text-gray-500 hover:text-white transition-colors">
+                      Clear All
+                    </button>
                   </div>
                   <div id="recentSearchList" class="space-y-2"></div>
                   <div id="recentSearchesEmpty" class="hidden text-center py-12 text-gray-500">
-                    <svg class="w-16 h-16 mx-auto mb-4 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    <svg
+                      class="w-16 h-16 mx-auto mb-4 opacity-30"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                      />
                     </svg>
                     <p>No recent searches</p>
                     <p class="text-sm mt-2">Start searching to see your history</p>
@@ -743,15 +895,27 @@
                     <div id="albumsList" class="grid grid-cols-2 gap-4 p-6"></div>
                   </div>
                   <div id="noResults" class="hidden text-center py-16 px-6">
-                    <svg class="w-20 h-20 mx-auto mb-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <svg
+                      class="w-20 h-20 mx-auto mb-6 text-gray-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
                     </svg>
                     <h3 class="text-xl font-semibold text-gray-300 mb-2">No results found</h3>
                     <p class="text-gray-500">Try adjusting your search terms</p>
                   </div>
                 </div>
                 <div id="searchLoading" class="hidden py-16 text-center">
-                  <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-700 border-t-accent-primary"></div>
+                  <div
+                    class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-700 border-t-accent-primary"
+                  ></div>
                 </div>
               </div>
               <div class="px-6 py-3 border-t border-white/10 bg-black/20 flex gap-2 overflow-x-auto custom-scrollbar">
@@ -771,19 +935,16 @@
           </div>
         </div>
       </div>
-      
-      
-</div><!-- pageWrapper -->
+    </div>
+    <!-- pageWrapper -->
 
-
-
-<!-- D E P E N D E N C I E S -->
+    <!-- D E P E N D E N C I E S -->
     <script type="module" src="./siteScripts/map.js"></script>
     <script type="module" src="./siteScripts/utilities/overlays.js"></script>
     <script type="module" src="./modules/library.js"></script>
     <script type="module" src="./siteScripts/utilities/search.js"></script>
-    
-<!-- P R I M A R Y  Script -->
+
+    <!-- P R I M A R Y  Script -->
     <script type="module">
       import { music } from "./modules/library.js";
       import { app } from "./siteScripts/global.js";
@@ -793,17 +954,14 @@
       });
     </script>
 
-
-<!-- S E C O N D A R Y  Dependencies -->
+    <!-- S E C O N D A R Y  Dependencies -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/preline@2.0.3/dist/preline.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy.umd.min.js"></script>
 
-
-
-<!-- Eruda -->
-<!-- D E B U G G I N G -->
+    <!-- Eruda -->
+    <!-- D E B U G G I N G -->
     <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
     <script>
       eruda.init();
