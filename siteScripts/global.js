@@ -36,17 +36,7 @@ const PLAYER_EVENTS = {
 };
 const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
 
-window.clickables = clickables;
-window.musicPlayer = musicPlayer;
-window.navigation = navigation;
-window.playlists = playlists;
-window.views = views;
-window.MyTunesApp = {
-    initialize: app.initialize,
-    state: () => appState,
-    api: () => window.musicAppAPI,
-    goHome: app.goHome,
-};
+
 
 document.addEventListener('DOMContentLoaded', () => {
     $byId(IDS.musicPlayerProgressBar)?.addEventListener('keydown', musicPlayer.ui.handleProgressBarKeyDown);
