@@ -1,4 +1,4 @@
-import { getAlbumImageUrl } from './index.js';  // From utilities barrel
+import { getAlbumImageUrl } from './index.js';
 import { escapeForAttribute } from '../pages/index.js';
 
 
