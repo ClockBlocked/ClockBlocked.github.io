@@ -1248,7 +1248,6 @@ renderList(container, items, options = {}) {
 };
 
 const musicPlayer = {
-
   mainPlayer: {
     inactivityTimer: null,
     lastInteractionTime: null,
@@ -1477,7 +1476,7 @@ const musicPlayer = {
         });
       }
       
-    musicPlayer.state.init();
+      musicPlayer.state.init();
     },
     preventHorizontalScroll: () => {
       const scroller = QUERY(MUSIC_PLAYER.scroller);
@@ -1820,15 +1819,6 @@ const musicPlayer = {
           notificationPlayer.playbackState.onPause();
         }
         musicPlayer.playback.dispatchPlayerStateChange();
-//        
-//        
-// Will modify later & implement it 
-//
-//        setTimeout(() => {
-//          musicPlayer.playback.next();
-//        }, 1000);
-//
-//
       }
 
       if (window.ui && ui.setLoadingState) {
@@ -1836,49 +1826,49 @@ const musicPlayer = {
       }
     },
     
-loadAudioFile: async (songData) => {
-    if (!songData || !songData.id) return false;
-    
-    const songFileName = songData.id;
-    
-    if (!songFileName) return false;
-    
-    for (const format of window.AUDIO_FORMATS) { // ['mp3', 'ogg', 'wav']
+    loadAudioFile: async (songData) => {
+      if (!songData || !songData.id) return false;
+      
+      const songFileName = songData.id;
+      
+      if (!songFileName) return false;
+      
+      for (const format of window.AUDIO_FORMATS) {
         try {
-            const audioUrl = `https://pub-54216af4fb1549ff95a6cb5f8d63fe2d.r2.dev/${songFileName}.${format}`;
+          const audioUrl = `https://pub-54216af4fb1549ff95a6cb5f8d63fe2d.r2.dev/${songFileName}.${format}`;
+          
+          appState.audio.src = audioUrl;
+          appState.audio.preload = 'auto';
+          
+          await new Promise((resolve, reject) => {
+            const loadHandler = () => {
+              appState.audio.removeEventListener('canplaythrough', loadHandler);
+              appState.audio.removeEventListener('error', errorHandler);
+              resolve();
+            };
             
-            appState.audio.src = audioUrl;
-            appState.audio.preload = 'auto';
+            const errorHandler = (e) => {
+              appState.audio.removeEventListener('canplaythrough', loadHandler);
+              appState.audio.removeEventListener('error', errorHandler);
+              reject(e);
+            };
             
-            await new Promise((resolve, reject) => {
-                const loadHandler = () => {
-                    appState.audio.removeEventListener('canplaythrough', loadHandler);
-                    appState.audio.removeEventListener('error', errorHandler);
-                    resolve();
-                };
-                
-                const errorHandler = (e) => {
-                    appState.audio.removeEventListener('canplaythrough', loadHandler);
-                    appState.audio.removeEventListener('error', errorHandler);
-                    reject(e);
-                };
-                
-                appState.audio.addEventListener('canplaythrough', loadHandler, { once: true });
-                appState.audio.addEventListener('error', errorHandler, { once: true });
-                
-                if (appState.audio.readyState >= 3) {
-                    loadHandler();
-                }
-            });
+            appState.audio.addEventListener('canplaythrough', loadHandler, { once: true });
+            appState.audio.addEventListener('error', errorHandler, { once: true });
             
-            await appState.audio.play();
-            return true;
+            if (appState.audio.readyState >= 3) {
+              loadHandler();
+            }
+          });
+          
+          await appState.audio.play();
+          return true;
         } catch (error) {
-            continue;
+          continue;
         }
-    }
-    return false;
-},
+      }
+      return false;
+    },
 
     handleProgressBarKeyDown: (e) => {
       const audio = appState.audio;
@@ -2460,324 +2450,315 @@ loadAudioFile: async (songData) => {
     transitionTimeout: null,
     
     init() {
-        musicPlayer.state.cacheDOMElements();
-        musicPlayer.state.injectRequiredHTML();
-        musicPlayer.state.bindEvents();
-        musicPlayer.state.setupObservers();
+      musicPlayer.state.cacheDOMElements();
+      musicPlayer.state.injectRequiredHTML();
+      musicPlayer.state.bindEvents();
+      musicPlayer.state.setupObservers();
     },
     
     cacheDOMElements() {
-        this.player = QUERY(MUSIC_PLAYER.root);
-        this.coverWrapper = QUERY('.musicPlayerCoverWrapper');
-        this.cover = QUERY('#music-player-cover');
-        this.panels = QUERY_ALL('.musicPlayerPanel');
-        this.dotIndicators = QUERY_ALL('.dotIndicator');
+      this.player = QUERY(MUSIC_PLAYER.root);
+      this.coverWrapper = QUERY('.musicPlayerCoverWrapper');
+      this.cover = QUERY('#music-player-cover');
+      this.panels = QUERY_ALL('.musicPlayerPanel');
+      this.dotIndicators = QUERY_ALL('.dotIndicator');
     },
     
     injectRequiredHTML() {
-        if (!this.coverWrapper || !this.cover) return;
-        
-        if (!this.cover.parentElement.classList.contains('coverImageContainer')) {
-            const imageContainer = document.createElement('div');
-            imageContainer.className = 'coverImageContainer';
-            this.cover.parentNode.insertBefore(imageContainer, this.cover);
-            imageContainer.appendChild(this.cover);
+      if (!this.coverWrapper || !this.cover) return;
+      
+      if (!this.cover.parentElement.classList.contains('coverImageContainer')) {
+        const imageContainer = document.createElement('div');
+        imageContainer.className = 'coverImageContainer';
+        this.cover.parentNode.insertBefore(imageContainer, this.cover);
+        imageContainer.appendChild(this.cover);
+      }
+      
+      const existingGlow = this.coverWrapper.querySelector('.musicPlayerCoverGlow');
+      if (!existingGlow) {
+        const glow = document.createElement('div');
+        glow.className = 'coverGlow musicPlayerCoverGlow';
+        this.coverWrapper.insertBefore(glow, this.coverWrapper.firstChild);
+      }
+      
+      this.panels.forEach(panel => {
+        const list = panel.querySelector('.musicPlayerList');
+        if (list && !list.parentElement.classList.contains('listContainer')) {
+          const listContainer = document.createElement('div');
+          listContainer.className = 'listContainer';
+          list.parentNode.insertBefore(listContainer, list);
+          listContainer.appendChild(list);
         }
-        
-        const existingGlow = this.coverWrapper.querySelector('.musicPlayerCoverGlow');
-        if (!existingGlow) {
-            const glow = document.createElement('div');
-            glow.className = 'coverGlow musicPlayerCoverGlow';
-            this.coverWrapper.insertBefore(glow, this.coverWrapper.firstChild);
-        }
-        
-        this.panels.forEach(panel => {
-            const list = panel.querySelector('.musicPlayerList');
-            if (list && !list.parentElement.classList.contains('listContainer')) {
-                const listContainer = document.createElement('div');
-                listContainer.className = 'listContainer';
-                list.parentNode.insertBefore(listContainer, list);
-                listContainer.appendChild(list);
-            }
-        });
-        
-        musicPlayer.state.updateMiniHeaderElements();
+      });
+      
+      musicPlayer.state.updateMiniHeaderElements();
     },
     
     bindEvents() {
-        this.panels.forEach((panel, index) => {
-            const listContainer = panel.querySelector('.listContainer');
-            if (listContainer) {
-                listContainer.addEventListener('scroll', () => musicPlayer.state.handleScroll(listContainer, index));
-            }
-        });
-        
-        if (this.coverWrapper) {
-            this.coverWrapper.addEventListener('mousedown', (e) => musicPlayer.state.handleHeaderDragStart(e));
-            this.coverWrapper.addEventListener('touchstart', (e) => musicPlayer.state.handleHeaderDragStart(e), { passive: false });
-            
-            this.coverWrapper.addEventListener('click', (e) => {
-                if (musicPlayer.state.isCollapsed && appState.currentTab !== MUSIC_PLAYER.tabs.playing && !musicPlayer.state.isTransitioning) {
-                    if (e.target.closest('.miniControlBtn')) return;
-                    musicPlayer.state.expandHeader();
-                }
-            });
+      this.panels.forEach((panel, index) => {
+        const listContainer = panel.querySelector('.listContainer');
+        if (listContainer) {
+          listContainer.addEventListener('scroll', () => musicPlayer.state.handleScroll(listContainer, index));
         }
-        
-        document.addEventListener('mousemove', (e) => musicPlayer.state.handleHeaderDragMove(e));
-        document.addEventListener('touchmove', (e) => musicPlayer.state.handleHeaderDragMove(e), { passive: false });
-        document.addEventListener('mouseup', () => musicPlayer.state.handleHeaderDragEnd());
-        document.addEventListener('touchend', () => musicPlayer.state.handleHeaderDragEnd());
-        
-      if (this.coverWrapper) {
-      const resizeObserver = new ResizeObserver(() => {
-        this.updateListHeights();
       });
-      resizeObserver.observe(this.coverWrapper);
-    }      
+      
+      if (this.coverWrapper) {
+        this.coverWrapper.addEventListener('mousedown', (e) => musicPlayer.state.handleHeaderDragStart(e));
+        this.coverWrapper.addEventListener('touchstart', (e) => musicPlayer.state.handleHeaderDragStart(e), { passive: false });
+        
+        this.coverWrapper.addEventListener('click', (e) => {
+          if (musicPlayer.state.isCollapsed && appState.currentTab !== MUSIC_PLAYER.tabs.playing && !musicPlayer.state.isTransitioning) {
+            if (e.target.closest('.miniControlBtn')) return;
+            musicPlayer.state.expandHeader();
+          }
+        });
+      }
+      
+      document.addEventListener('mousemove', (e) => musicPlayer.state.handleHeaderDragMove(e));
+      document.addEventListener('touchmove', (e) => musicPlayer.state.handleHeaderDragMove(e), { passive: false });
+      document.addEventListener('mouseup', () => musicPlayer.state.handleHeaderDragEnd());
+      document.addEventListener('touchend', () => musicPlayer.state.handleHeaderDragEnd());
+      
+      if (this.coverWrapper) {
+        const resizeObserver = new ResizeObserver(() => {
+          this.updateListHeights();
+        });
+        resizeObserver.observe(this.coverWrapper);
+      }      
     },
     
     setupObservers() {
-        const mutationObserver = new MutationObserver(() => {
-            musicPlayer.state.addListItemInteractions();
-        });
-        
-        this.panels.forEach(panel => {
-            mutationObserver.observe(panel, {
-                childList: true,
-                subtree: true
-            });
-        });
-        
+      const mutationObserver = new MutationObserver(() => {
         musicPlayer.state.addListItemInteractions();
+      });
+      
+      this.panels.forEach(panel => {
+        mutationObserver.observe(panel, {
+          childList: true,
+          subtree: true
+        });
+      });
+      
+      musicPlayer.state.addListItemInteractions();
     },
     
-handleScroll(listContainer, tabIndex) {
-    const tabName = this.panels[tabIndex]?.dataset.tab;
-    if (musicPlayer.state.isTransitioning || appState.currentTab !== tabName || tabName === MUSIC_PLAYER.tabs.playing) {
+    handleScroll(listContainer, tabIndex) {
+      const tabName = this.panels[tabIndex]?.dataset.tab;
+      if (musicPlayer.state.isTransitioning || appState.currentTab !== tabName || tabName === MUSIC_PLAYER.tabs.playing) {
         return;
-    }
-    
-    const currentScrollTop = listContainer.scrollTop;
-    const lastScroll = musicPlayer.state.lastScrollTop[tabName] || 0;
-    const isScrollingDown = currentScrollTop > lastScroll;
-    const scrollDelta = Math.abs(currentScrollTop - lastScroll);
-    
-    musicPlayer.state.lastScrollTop[tabName] = currentScrollTop;
-    
-    if (scrollDelta < 5) return;
-    
-    clearTimeout(musicPlayer.state.scrollTimeout);
-    
-    // IMMEDIATE collapse on ANY downward scroll when expanded
-    if (isScrollingDown && !musicPlayer.state.isCollapsed && currentScrollTop > 0) {
+      }
+      
+      const currentScrollTop = listContainer.scrollTop;
+      const lastScroll = musicPlayer.state.lastScrollTop[tabName] || 0;
+      const isScrollingDown = currentScrollTop > lastScroll;
+      const scrollDelta = Math.abs(currentScrollTop - lastScroll);
+      
+      musicPlayer.state.lastScrollTop[tabName] = currentScrollTop;
+      
+      if (scrollDelta < 5) return;
+      
+      clearTimeout(musicPlayer.state.scrollTimeout);
+      
+      if (isScrollingDown && !musicPlayer.state.isCollapsed && currentScrollTop > 0) {
         musicPlayer.state.collapseHeader();
-    } 
-    // Expand when scrolled back to top
-    else if (currentScrollTop === 0 && musicPlayer.state.isCollapsed) {
+      } 
+      else if (currentScrollTop === 0 && musicPlayer.state.isCollapsed) {
         musicPlayer.state.expandHeader();
-    }
-},
+      }
+    },
     
-  updateListHeights: function() {
-    const coverWrapper = this.coverWrapper;
-    const recentList = document.getElementById('music-player-recent-list');
-    const queueList = document.getElementById('music-player-queue-list');
-    
-    if (!coverWrapper || !recentList || !queueList) return;
-    
-    const isCollapsed = coverWrapper.classList.contains('collapsed');
-    
-    // Update height based on collapsed state
-    if (isCollapsed) {
-      // Expanded height when cover is collapsed
-      recentList.style.height = 'calc(100vh - 200px)';
-      queueList.style.height = 'calc(100vh - 200px)';
-    } else {
-      // Default height when cover is expanded
-      recentList.style.height = '500px';
-      queueList.style.height = '500px';
-    }
-  },
+    updateListHeights: function() {
+      const coverWrapper = this.coverWrapper;
+      const recentList = document.getElementById('music-player-recent-list');
+      const queueList = document.getElementById('music-player-queue-list');
+      
+      if (!coverWrapper || !recentList || !queueList) return;
+      
+      const isCollapsed = coverWrapper.classList.contains('collapsed');
+      
+      if (isCollapsed) {
+        recentList.style.height = 'calc(100vh - 200px)';
+        queueList.style.height = 'calc(100vh - 200px)';
+      } else {
+        recentList.style.height = '500px';
+        queueList.style.height = '500px';
+      }
+    },
   
-collapseHeader() {
-    if (musicPlayer.state.isCollapsed || musicPlayer.state.isTransitioning || !this.coverWrapper) return;
-    
-    musicPlayer.state.isTransitioning = true;
-    musicPlayer.state.isCollapsed = true;
-    
-    const nowPlayingElement = QUERY('.nowPlaying'); // ADD THIS
-    
-    requestAnimationFrame(() => {
+    collapseHeader() {
+      if (musicPlayer.state.isCollapsed || musicPlayer.state.isTransitioning || !this.coverWrapper) return;
+      
+      musicPlayer.state.isTransitioning = true;
+      musicPlayer.state.isCollapsed = true;
+      
+      const nowPlayingElement = QUERY('.nowPlaying');
+      
+      requestAnimationFrame(() => {
         this.coverWrapper.classList.add('is-collapsing');
         if (nowPlayingElement) {
-            nowPlayingElement.classList.add('is-collapsing'); // ADD THIS
+          nowPlayingElement.classList.add('is-collapsing');
         }
         
         requestAnimationFrame(() => {
-            this.coverWrapper.classList.add('collapsed');
-            if (nowPlayingElement) {
-                nowPlayingElement.classList.add('collapsed'); // ADD THIS
-                nowPlayingElement.classList.remove('is-collapsing');
-            }
-            
-            clearTimeout(musicPlayer.state.transitionTimeout);
-            musicPlayer.state.transitionTimeout = setTimeout(() => {
-                this.coverWrapper.classList.remove('is-collapsing');
-                musicPlayer.state.isTransitioning = false;
-            }, 550);
+          this.coverWrapper.classList.add('collapsed');
+          if (nowPlayingElement) {
+            nowPlayingElement.classList.add('collapsed');
+            nowPlayingElement.classList.remove('is-collapsing');
+          }
+          
+          clearTimeout(musicPlayer.state.transitionTimeout);
+          musicPlayer.state.transitionTimeout = setTimeout(() => {
+            this.coverWrapper.classList.remove('is-collapsing');
+            musicPlayer.state.isTransitioning = false;
+          }, 550);
         });
-    });
-},
+      });
+    },
 
-expandHeader() {
-    if (!musicPlayer.state.isCollapsed || musicPlayer.state.isTransitioning || !this.coverWrapper) return;
-    
-    musicPlayer.state.isTransitioning = true;
-    musicPlayer.state.isCollapsed = false;
-    
-    const nowPlayingElement = QUERY('.nowPlaying'); // ADD THIS
-    
-    requestAnimationFrame(() => {
+    expandHeader() {
+      if (!musicPlayer.state.isCollapsed || musicPlayer.state.isTransitioning || !this.coverWrapper) return;
+      
+      musicPlayer.state.isTransitioning = true;
+      musicPlayer.state.isCollapsed = false;
+      
+      const nowPlayingElement = QUERY('.nowPlaying');
+      
+      requestAnimationFrame(() => {
         this.coverWrapper.classList.add('is-collapsing');
         if (nowPlayingElement) {
-            nowPlayingElement.classList.add('is-collapsing'); // ADD THIS
+          nowPlayingElement.classList.add('is-collapsing');
         }
         
         requestAnimationFrame(() => {
-            this.coverWrapper.classList.remove('collapsed');
-            if (nowPlayingElement) {
-                nowPlayingElement.classList.remove('collapsed'); // ADD THIS
-                nowPlayingElement.classList.remove('is-collapsing');
-            }
-            
-            clearTimeout(musicPlayer.state.transitionTimeout);
-            musicPlayer.state.transitionTimeout = setTimeout(() => {
-                this.coverWrapper.classList.remove('is-collapsing');
-                musicPlayer.state.isTransitioning = false;
-            }, 550);
+          this.coverWrapper.classList.remove('collapsed');
+          if (nowPlayingElement) {
+            nowPlayingElement.classList.remove('collapsed');
+            nowPlayingElement.classList.remove('is-collapsing');
+          }
+          
+          clearTimeout(musicPlayer.state.transitionTimeout);
+          musicPlayer.state.transitionTimeout = setTimeout(() => {
+            this.coverWrapper.classList.remove('is-collapsing');
+            musicPlayer.state.isTransitioning = false;
+          }, 550);
         });
-    });
-},
+      });
+    },
     
     updateMiniHeaderElements() {
-        if (!this.coverWrapper) return;
-        
-        const titleElement = QUERY('#music-player-title');
-        const artistElement = QUERY('#music-player-artist');
-        
-        let miniHeader = this.coverWrapper.querySelector('.miniHeader');
-        if (!miniHeader) {
-            miniHeader = document.createElement('div');
-            miniHeader.className = 'miniHeader';
-            this.coverWrapper.appendChild(miniHeader);
-        }
-        
-        const title = titleElement ? titleElement.textContent : '';
-        const artist = artistElement ? artistElement.textContent : '';
-        
-        miniHeader.innerHTML = `
-            <div class="miniTitle">${musicPlayer.state.escapeHTML(title)}</div>
-            <div class="miniArtist">${musicPlayer.state.escapeHTML(artist)}</div>
-        `;
-        
-        let miniControls = this.coverWrapper.querySelector('.miniControls');
-        if (!miniControls) {
-            miniControls = document.createElement('div');
-            miniControls.className = 'miniControls';
-            this.coverWrapper.appendChild(miniControls);
-        }
-        
-        const isPaused = !this.player || !this.player.classList.contains('isPlaying');
-        const playIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-14 9V3z"/></svg>';
-        const pauseIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>';
-        
-        miniControls.innerHTML = `
-            <button class="miniControlBtn" onclick="musicPlayer.playback.togglePlayPause()">
-                ${isPaused ? playIcon : pauseIcon}
-            </button>
-        `;
+      if (!this.coverWrapper) return;
+      
+      const titleElement = QUERY('#music-player-title');
+      const artistElement = QUERY('#music-player-artist');
+      
+      let miniHeader = this.coverWrapper.querySelector('.miniHeader');
+      if (!miniHeader) {
+        miniHeader = document.createElement('div');
+        miniHeader.className = 'miniHeader';
+        this.coverWrapper.appendChild(miniHeader);
+      }
+      
+      const title = titleElement ? titleElement.textContent : '';
+      const artist = artistElement ? artistElement.textContent : '';
+      
+      miniHeader.innerHTML = `
+        <div class="miniTitle">${musicPlayer.state.escapeHTML(title)}</div>
+        <div class="miniArtist">${musicPlayer.state.escapeHTML(artist)}</div>
+      `;
+      
+      let miniControls = this.coverWrapper.querySelector('.miniControls');
+      if (!miniControls) {
+        miniControls = document.createElement('div');
+        miniControls.className = 'miniControls';
+        this.coverWrapper.appendChild(miniControls);
+      }
+      
+      const isPaused = !this.player || !this.player.classList.contains('isPlaying');
+      const playIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-14 9V3z"/></svg>';
+      const pauseIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>';
+      
+      miniControls.innerHTML = `
+        <button class="miniControlBtn" onclick="musicPlayer.playback.togglePlayPause()">
+          ${isPaused ? playIcon : pauseIcon}
+        </button>
+      `;
     },
     
     escapeHTML(str) {
-        const div = document.createElement('div');
-        div.textContent = str;
-        return div.innerHTML;
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
     },
     
     handleHeaderDragStart(e) {
-        if (!this.coverWrapper || appState.currentTab === MUSIC_PLAYER.tabs.playing || musicPlayer.state.isTransitioning) return;
-        if (e.target.closest('.miniControlBtn')) return;
-        
-        const targetElement = e.target;
-        if (!targetElement.closest('.musicPlayerCoverWrapper')) return;
-        
-        musicPlayer.state.isDraggingHeader = true;
-        musicPlayer.state.dragStartY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
-        musicPlayer.state.dragDistance = 0;
+      if (!this.coverWrapper || appState.currentTab === MUSIC_PLAYER.tabs.playing || musicPlayer.state.isTransitioning) return;
+      if (e.target.closest('.miniControlBtn')) return;
+      
+      const targetElement = e.target;
+      if (!targetElement.closest('.musicPlayerCoverWrapper')) return;
+      
+      musicPlayer.state.isDraggingHeader = true;
+      musicPlayer.state.dragStartY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+      musicPlayer.state.dragDistance = 0;
     },
     
     handleHeaderDragMove(e) {
-        if (!musicPlayer.state.isDraggingHeader || !this.coverWrapper) return;
-        
-        const currentY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
-        musicPlayer.state.dragDistance = currentY - musicPlayer.state.dragStartY;
-        
-        if (musicPlayer.state.isCollapsed && musicPlayer.state.dragDistance < 0) {
-            return;
-        }
-        
-        if (!musicPlayer.state.isCollapsed && musicPlayer.state.dragDistance > 0) {
-            return;
-        }
+      if (!musicPlayer.state.isDraggingHeader || !this.coverWrapper) return;
+      
+      const currentY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+      musicPlayer.state.dragDistance = currentY - musicPlayer.state.dragStartY;
+      
+      if (musicPlayer.state.isCollapsed && musicPlayer.state.dragDistance < 0) {
+        return;
+      }
+      
+      if (!musicPlayer.state.isCollapsed && musicPlayer.state.dragDistance > 0) {
+        return;
+      }
     },
     
     handleHeaderDragEnd() {
-        if (!musicPlayer.state.isDraggingHeader || !this.coverWrapper) return;
-        
-        musicPlayer.state.isDraggingHeader = false;
-        
-        const dragThreshold = 60;
-        
-        if (Math.abs(musicPlayer.state.dragDistance) > dragThreshold) {
-            if (musicPlayer.state.dragDistance < 0 && !musicPlayer.state.isCollapsed) {
-                musicPlayer.state.collapseHeader();
-            } else if (musicPlayer.state.dragDistance > 0 && musicPlayer.state.isCollapsed) {
-                musicPlayer.state.expandHeader();
-            }
+      if (!musicPlayer.state.isDraggingHeader || !this.coverWrapper) return;
+      
+      musicPlayer.state.isDraggingHeader = false;
+      
+      const dragThreshold = 60;
+      
+      if (Math.abs(musicPlayer.state.dragDistance) > dragThreshold) {
+        if (musicPlayer.state.dragDistance < 0 && !musicPlayer.state.isCollapsed) {
+          musicPlayer.state.collapseHeader();
+        } else if (musicPlayer.state.dragDistance > 0 && musicPlayer.state.isCollapsed) {
+          musicPlayer.state.expandHeader();
         }
-        
-        musicPlayer.state.dragDistance = 0;
+      }
+      
+      musicPlayer.state.dragDistance = 0;
     },
     
     addListItemInteractions() {
-        const listItems = document.querySelectorAll('.list-item');
+      const listItems = document.querySelectorAll('.list-item');
+      
+      listItems.forEach(item => {
+        const artwork = item.querySelector('.item-artwork');
+        if (!artwork) return;
         
-        listItems.forEach(item => {
-            const artwork = item.querySelector('.item-artwork');
-            if (!artwork) return;
-            
-            let wrapper = artwork.parentElement;
-            if (!wrapper.classList.contains('item-artwork-wrapper')) {
-                wrapper = document.createElement('div');
-                wrapper.className = 'item-artwork-wrapper';
-                artwork.parentNode.insertBefore(wrapper, artwork);
-                wrapper.appendChild(artwork);
-            }
-            
-            if (!wrapper.querySelector('.item-play-overlay')) {
-                const overlay = document.createElement('div');
-                overlay.className = 'item-play-overlay';
-                overlay.innerHTML = '<svg viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>';
-                wrapper.appendChild(overlay);
-            }
-        });
+        let wrapper = artwork.parentElement;
+        if (!wrapper.classList.contains('item-artwork-wrapper')) {
+          wrapper = document.createElement('div');
+          wrapper.className = 'item-artwork-wrapper';
+          artwork.parentNode.insertBefore(wrapper, artwork);
+          wrapper.appendChild(artwork);
+        }
+        
+        if (!wrapper.querySelector('.item-play-overlay')) {
+          const overlay = document.createElement('div');
+          overlay.className = 'item-play-overlay';
+          overlay.innerHTML = '<svg viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>';
+          wrapper.appendChild(overlay);
+        }
+      });
     }
-},
-
-
-
-
+  }
 };
 
 const clickables = {
