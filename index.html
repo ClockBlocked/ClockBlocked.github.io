@@ -440,16 +440,46 @@
                                 </button>
                             </div>
                             <div class="progressSection musicPlayerProgressSection" id="music-player-progress-section">
-                                <div class="progressBar" id="music-player-progress-bar" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Seek">
-                                    <div class="progressBuffer" id="musicPlayerProgressBuffer"></div>
-                                    <div class="progressFill" id="music-player-progress-fill">
-                                        <div class="progressThumb" id="music-player-progress-thumb"></div>
-                                    </div>
-                                </div>
-                                <div class="timeDisplay musicPlayerTimeDisplay">
-                                    <span id="music-player-current-time" class="currentTime">0:00</span>
-                                    <span id="music-player-total-time" class="totalTime">0:00</span>
-                                </div>
+                                          <!-- Progress Bar Container - This wraps the entire progress bar -->
+                                          <div class="progressBarContainer">
+                                                        <!-- The clickable progress bar area -->
+                                                        <div
+                                                                      class="progressBar"
+                                                                      id="music-player-progress-bar"
+                                                                      tabindex="0"
+                                                                      role="slider"
+                                                                      aria-valuemin="0"
+                                                                      aria-valuemax="100"
+                                                                      aria-valuenow="0"
+                                                                      aria-label="Seek through song"
+                                                        ></div>
+
+                                                        <!-- Buffer indicator (shows how much is loaded) -->
+                                                        <div
+                                                                      class="progressBuffer"
+                                                                      id="musicPlayerProgressBuffer"
+                                                        ></div>
+
+                                                        <!-- Progress track (shows current progress) -->
+                                                        <div
+                                                                      class="progressTrack"
+                                                                      id="music-player-progress-fill"
+                                                        ></div>
+
+                                                        <!-- Draggable thumb (positioned outside the fill for correct positioning) -->
+                                                        <div
+                                                                      class="progressThumb"
+                                                                      id="music-player-progress-thumb"
+                                                        ></div>
+                                          </div>
+
+                                          <!-- Time display -->
+                                          <div class="timeDisplay musicPlayerTimeDisplay">
+                                                        <span id="music-player-current-time" class="currentTime"
+                                                                      >0:00</span
+                                                        >
+                                                        <span id="music-player-total-time" class="totalTime">0:00</span>
+                                          </div>
                             </div>
                             <div class="controls musicPlayerControls">
                                 <button class="controlBtn secondary" id="music-player-prev" title="Previous">
@@ -748,52 +778,10 @@
 
 
 <!-- D E P E N D E N C I E S -->
-    <script type="module" src="./siteScripts/map.js">
-      /**
-      *  Constants & Variables
-       ------------------------
-      *   globally available
-      *
-      **/
-    </script>
-
-
-    
-    <script type="module" src="./siteScripts/toasts.js">
-      /**
-      * Notifications — Toasts
-       ------------------------
-      *    User Interactions
-      *
-      **/
-    </script>
-    <script type="module" src="./siteScripts/utilities/overlays.js">
-      /**
-      *    Dynamic Overlays
-       ------------------------
-       Modals, PopOvers, Dialogs
-      *
-      **/
-    </script>
-
-
-    
-    <script type="module" src="./modules/library.js">
-      /**
-      *     Music Library
-       ------------------------
-      *    MetaData Database
-      *
-      **/
-    </script>
-    <script type="module" src="./siteScripts/utilities/search.js">
-      /**
-      *      Site Search
-       ------------------------
-      * Songs, Albums, Artists
-      *
-      **/
-    </script>
+    <script type="module" src="./siteScripts/map.js"></script>
+    <script type="module" src="./siteScripts/utilities/overlays.js"></script>
+    <script type="module" src="./modules/library.js"></script>
+    <script type="module" src="./siteScripts/utilities/search.js"></script>
     
 <!-- P R I M A R Y  Script -->
     <script type="module">
