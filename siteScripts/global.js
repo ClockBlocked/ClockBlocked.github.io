@@ -347,21 +347,6 @@ const storage = {
     });
   }
 };
-const perquisites = () => {
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
-            clickables.init();
-            app.initialize();
-        });
-    } else {
-        clickables.init();
-        app.initialize();
-    }
-};
-
-
-////////////////////////////////////////////////////////////
-////////////////////////////////  PAGE Updaters  ///////////
 const utils = {
   getAlbumImageUrl: (albumName) => {
     if (!albumName) return utils.getDefaultAlbumImage();
@@ -479,6 +464,64 @@ const utils = {
     return decodeURIComponent(results[2].replace(/\+/g, " "));
   }
 };
+const dropdown = {
+  toggle: (e) => {
+    e?.preventDefault();
+    e?.stopPropagation();
+    const menu = $byId(IDS.dropdownMenu);
+    const trigger = $byId(IDS.menuTrigger);
+
+    if (!menu || !trigger) return;
+
+    const isVisible = menu.classList.contains(CLASSES.show);
+    if (isVisible) {
+      dropdown.close();
+    } else {
+      dropdown.open();
+    }
+  },
+
+  open: (e) => {
+    e?.preventDefault();
+    e?.stopPropagation();
+    const menu = $byId(IDS.dropdownMenu);
+    const trigger = $byId(IDS.menuTrigger);
+
+    if (!menu || !trigger) return;
+
+    ui.updateCounts();
+    menu.classList.add(CLASSES.show);
+    trigger.classList.add(CLASSES.active);
+    musicPlayer.playback.close();
+  },
+
+  close: (e) => {
+    e?.preventDefault();
+    e?.stopPropagation();
+    const menu = $byId(IDS.dropdownMenu);
+    const trigger = $byId(IDS.menuTrigger);
+
+    if (!menu || !trigger) return;
+
+    menu.classList.remove(CLASSES.show);
+    trigger.classList.remove(CLASSES.active);
+  }
+};
+const perquisites = () => {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            clickables.init();
+            app.initialize();
+        });
+    } else {
+        clickables.init();
+        app.initialize();
+    }
+};
+
+
+////////////////////////////////////////////////////////////
+////////////////////////////////  PAGE Updaters  ///////////
 const overlays = {
   open: (id, content, type = 'default') => {
     let modal = document.getElementById(id);
@@ -656,49 +699,6 @@ const overlays = {
     favoriteArtists(content) {
       overlays.open('favorite-artists-viewer', content, 'viewer favorites');
     }
-  }
-};
-const dropdown = {
-  toggle: (e) => {
-    e?.preventDefault();
-    e?.stopPropagation();
-    const menu = $byId(IDS.dropdownMenu);
-    const trigger = $byId(IDS.menuTrigger);
-
-    if (!menu || !trigger) return;
-
-    const isVisible = menu.classList.contains(CLASSES.show);
-    if (isVisible) {
-      dropdown.close();
-    } else {
-      dropdown.open();
-    }
-  },
-
-  open: (e) => {
-    e?.preventDefault();
-    e?.stopPropagation();
-    const menu = $byId(IDS.dropdownMenu);
-    const trigger = $byId(IDS.menuTrigger);
-
-    if (!menu || !trigger) return;
-
-    ui.updateCounts();
-    menu.classList.add(CLASSES.show);
-    trigger.classList.add(CLASSES.active);
-    musicPlayer.playback.close();
-  },
-
-  close: (e) => {
-    e?.preventDefault();
-    e?.stopPropagation();
-    const menu = $byId(IDS.dropdownMenu);
-    const trigger = $byId(IDS.menuTrigger);
-
-    if (!menu || !trigger) return;
-
-    menu.classList.remove(CLASSES.show);
-    trigger.classList.remove(CLASSES.active);
   }
 };
 const listRenderer = {
