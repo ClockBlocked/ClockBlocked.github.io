@@ -36,53 +36,43 @@ const PLAYER_EVENTS = {
 };
 const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
 
-
-document.addEventListener('DOMContentLoaded') {
-  perquisites();
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    $byId(IDS.musicPlayerProgressBar)?.addEventListener('keydown', musicPlayer.ui.handleProgressBarKeyDown);
-    if (notificationPlayer.utils.isSupported()) {
-        setTimeout(() => notificationPlayer.setup(), 500);
-    }
-});
 const perquisites = () => {
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => {
       clickables.init();
       app.initialize();
-
-      window.clickables = clickables;
-      window.musicPlayer = musicPlayer;
-      window.navigation = navigation;
-      window.playlists = playlists;
-      window.views = views;
-      window.MyTunesApp = {
-        initialize: app.initialize,
-        state: () => appState,
-        api: () => window.musicAppAPI,
-        goHome: app.goHome,
-      };
+      attachToWindow();
     });
   } else {
     clickables.init();
     app.initialize();
-
-    window.clickables = clickables;
-    window.musicPlayer = musicPlayer;
-    window.navigation = navigation;
-    window.playlists = playlists;
-    window.views = views;
-    window.MyTunesApp = {
-      initialize: app.initialize,
-      state: () => appState,
-      api: () => window.musicAppAPI,
-      goHome: app.goHome,
-    };
+    attachToWindow();
   }
 };
 
+
+const attachToWindow = () => {
+  window.clickables = clickables;
+  window.musicPlayer = musicPlayer;
+  window.navigation = navigation;
+  window.playlists = playlists;
+  window.views = views;
+  window.MyTunesApp = {
+    initialize: app.initialize,
+    state: () => appState,
+    api: () => window.musicAppAPI,
+    goHome: app.goHome,
+  };
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  perquisites();
+  
+  $byId(IDS.musicPlayerProgressBar)?.addEventListener('keydown', musicPlayer.ui.handleProgressBarKeyDown);
+  if (notificationPlayer.utils.isSupported()) {
+    setTimeout(() => notificationPlayer.setup(), 500);
+  }
+});
 
 
 ////////////////////////////////////////////////////////////
