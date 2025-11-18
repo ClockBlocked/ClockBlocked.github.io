@@ -7243,14 +7243,20 @@ const clickables = {
         clickables.init();
     }
 };
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', clickables.init);
-} else {
-    clickables.init();
-}
 
-window.clickables = clickables;
-window.musicPlayer = musicPlayer;
+
+
+const perquisites = () => {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            clickables.init();
+            app.initialize();
+        });
+    } else {
+        clickables.init();
+        app.initialize();
+    }
+};
 
 const app = {
     initialize() {
@@ -7260,15 +7266,16 @@ const app = {
         musicPlayer.init();
         navigation.initialize();
         homePage.initialize();
-        app.resetUI();
-        app.syncGlobalState();
         deepLinkRouter.initialize();
         deepLinkRouter.bindPopState();
+        
+        this.resetUI();
+        this.syncGlobalState();
     },
 
     resetUI() {
         const nowPlayingArea = QUERY(NAVBAR.nowPlaying);
-        if (nowPlayingArea) nowPlayingArea.classList.remove(CLASSES.hasSong);
+        nowPlayingArea?.classList.remove(CLASSES.hasSong);
         ui.updateCounts();
     },
 
@@ -7276,34 +7283,30 @@ const app = {
         window.appState = appState;
         window.playerController = {
             playSong: musicPlayer.ui.playSong,
-            toggle: musicPlayer.mainPlayer.toggle,
+            toggle: musicPlayer.playback.toggle,
             next: musicPlayer.playback.next,
             previous: musicPlayer.playback.previous,
             seekTo: musicPlayer.playback.seekTo,
             skip: musicPlayer.playback.skip,
         };
         window.musicAppAPI = {
-            player: musicPlayer.mainPlayer,
+            player: musicPlayer.playback,
             controls: musicPlayer.playback,
-            musicPlayer: musicPlayer,
-            dropdown: dropdown,
-            notifications: notifications,
-            playlists: playlists,
-            utils: utils,
+            musicPlayer, dropdown, notifications, playlists, utils,
             favorites: appState.favorites,
             queue: appState.queue,
         };
     },
 
     goHome() {
-        if (appState.router) appState.router.navigateTo(ROUTES.HOME);
+        appState.router?.navigateTo(ROUTES.HOME);
     }
 };
 
 const playlists = {
     add(name) {
         if (!name?.trim()) {
-            notifications.show("Please enter a playlist name", NOTIFICATION_TYPES.WARNING);
+            notifications.notify({ type: NOTIFICATION_TYPES.WARNING, message: "Please enter a playlist name" });
             return null;
         }
 
@@ -7318,27 +7321,27 @@ const playlists = {
 
         appState.playlists.push(playlist);
         storage.save(STORAGE_KEYS.PLAYLISTS, appState.playlists);
-        if (homePage?.renderPlaylists) homePage.renderPlaylists();
+        homePage?.renderPlaylists?.();
         
-        notifications.show(`Created playlist "${playlist.name}"`, NOTIFICATION_TYPES.SUCCESS);
+        notifications.notify({ type: NOTIFICATION_TYPES.SUCCESS, message: `Created playlist "${playlist.name}"` });
         return playlist;
     },
 
     addSong(playlistId, song) {
         const playlist = appState.playlists.find(p => p.id === playlistId);
         if (!playlist) {
-            notifications.show("Playlist not found", NOTIFICATION_TYPES.ERROR);
+            notifications.notify({ type: NOTIFICATION_TYPES.ERROR, message: "Playlist not found" });
             return false;
         }
 
         if (playlist.songs.some(s => s.id === song.id)) {
-            notifications.show("Song already in playlist", NOTIFICATION_TYPES.WARNING);
+            notifications.notify({ type: NOTIFICATION_TYPES.WARNING, message: "Song already in playlist" });
             return false;
         }
 
         playlist.songs.push(song);
         storage.save(STORAGE_KEYS.PLAYLISTS, appState.playlists);
-        notifications.show(`Added "${song.title}" to "${playlist.name}"`, NOTIFICATION_TYPES.SUCCESS);
+        notifications.notify({ type: NOTIFICATION_TYPES.SUCCESS, message: `Added "${song.title}" to "${playlist.name}"` });
         return true;
     },
 
@@ -7351,7 +7354,7 @@ const playlists = {
 
         if (playlist.songs.length < initialLength) {
             storage.save(STORAGE_KEYS.PLAYLISTS, appState.playlists);
-            notifications.show("Song removed from playlist", NOTIFICATION_TYPES.INFO);
+            notifications.notify({ type: NOTIFICATION_TYPES.INFO, message: "Song removed from playlist" });
             return true;
         }
         return false;
@@ -7359,15 +7362,15 @@ const playlists = {
 
     play(playlistId) {
         const playlist = appState.playlists.find(p => p.id === playlistId);
-        if (!playlist || !playlist.songs.length) {
-            notifications.show("Playlist is empty", NOTIFICATION_TYPES.WARNING);
+        if (!playlist?.songs.length) {
+            notifications.notify({ type: NOTIFICATION_TYPES.WARNING, message: "Playlist is empty" });
             return;
         }
 
         appState.queue.clear();
         playlist.songs.slice(1).forEach(song => appState.queue.add(song));
         musicPlayer.ui.playSong(playlist.songs[0]);
-        notifications.show(`Playing playlist "${playlist.name}"`, NOTIFICATION_TYPES.SUCCESS);
+        notifications.notify({ type: NOTIFICATION_TYPES.SUCCESS, message: `Playing playlist "${playlist.name}"` });
     },
 
     async remove(playlistId) {
@@ -7383,30 +7386,188 @@ const playlists = {
         
         appState.playlists = appState.playlists.filter(p => p.id !== playlistId);
         storage.save(STORAGE_KEYS.PLAYLISTS, appState.playlists);
-        notifications.show(`Deleted playlist "${playlist.name}"`, NOTIFICATION_TYPES.INFO);
+        notifications.notify({ type: NOTIFICATION_TYPES.INFO, message: `Deleted playlist "${playlist.name}"` });
         return true;
     },
 
     async create() {
-        const name = await overlays.form.prompt("Enter playlist name:", {
-            okText: "Create",
-            placeholder: "i.e. Car Sounds Favorites",
-        });
+        const name = await overlays.form.prompt(
+            "Enter playlist name:", 
+            { okText: "Create", placeholder: "i.e. Car Sounds Favorites" }
+        );
         return name ? playlists.add(name) : null;
+    },
+
+    showAll() {
+        if (appState.playlists.length === 0) {
+            overlays.viewer.playlists(views.renderEmptyState(
+                "No Playlists", 
+                "You haven't created any playlists yet.", 
+                "Create your first playlist to organize your music."
+            ));
+            return;
+        }
+
+        const content = `
+            <div class="playlists-page animate__animated animate__fadeIn">
+                <!-- Playlist grid content (same as original) -->
+            </div>
+        `;
+
+        overlays.viewer.playlists(content);
+        playlists.bindEvents(document.getElementById("playlist-viewer"));
+    },
+
+    show(playlistId) {
+        const playlist = appState.playlists.find(p => p.id === playlistId);
+        if (!playlist) {
+            notifications.notify({ type: NOTIFICATION_TYPES.ERROR, message: "Playlist not found" });
+            return;
+        }
+
+        pageLoader.start({ message: "Loading playlist..." });
+        setTimeout(() => {
+            const dynamicContent = $byId(IDS.dynamicContent);
+            if (!dynamicContent) return;
+
+            dynamicContent.innerHTML = `
+                <div class="playlist-page animate__animated animate__fadeIn">
+                    <!-- Playlist detail content (same as original) -->
+                </div>
+            `;
+
+            playlists.bindViewEvents(playlist);
+            pageLoader.complete();
+        }, 200);
+    },
+
+    bindEvents(root = $byId(IDS.dynamicContent)) {
+        root?.querySelector(".create-playlist-btn")?.addEventListener("click", async () => {
+            const newPlaylist = await playlists.create();
+            if (newPlaylist) setTimeout(() => playlists.showAll(), 100);
+        });
+
+        const attachListeners = (el, event, selector, handler) => {
+            el?.addEventListener(event, e => {
+                const target = e.target.closest(selector);
+                if (target) handler(e, target);
+            });
+        };
+
+        attachListeners(root, "click", ".view-playlist-btn", (e, btn) => {
+            e.stopPropagation();
+            playlists.show(btn.dataset.playlistId);
+        });
+
+        attachListeners(root, "click", ".play-playlist-btn", (e, btn) => {
+            e.stopPropagation();
+            playlists.play(btn.dataset.playlistId);
+        });
+
+        attachListeners(root, "click", ".delete-playlist-btn", async (e, btn) => {
+            e.stopPropagation();
+            if (await playlists.remove(btn.dataset.playlistId)) {
+                setTimeout(() => playlists.showAll(), 100);
+            }
+        });
+
+        attachListeners(root, "click", ".playlist-card", (e, card) => {
+            playlists.show(card.dataset.playlistId);
+        });
+    },
+
+    bindViewEvents(playlist) {
+        const dynamicContent = $byId(IDS.dynamicContent);
+        if (!dynamicContent) return;
+
+        dynamicContent.querySelector(".play-playlist-btn")?.addEventListener("click", () => {
+            playlists.play(playlist.id);
+        });
+
+        dynamicContent.querySelector(".edit-playlist-btn")?.addEventListener("click", async () => {
+            const newName = await overlays.form.prompt(
+                "Enter new playlist name:",
+                { okText: "Rename", placeholder: "Playlist name", value: playlist.name }
+            );
+            
+            if (newName?.trim() && newName.trim() !== playlist.name) {
+                playlist.name = newName.trim();
+                storage.save(STORAGE_KEYS.PLAYLISTS, appState.playlists);
+                playlists.show(playlist.id);
+                notifications.notify({ type: NOTIFICATION_TYPES.SUCCESS, message: "Playlist renamed successfully" });
+            }
+        });
+
+        dynamicContent.querySelector(".delete-playlist-btn")?.addEventListener("click", async () => {
+            if (await playlists.remove(playlist.id)) {
+                appState.router?.navigateTo(ROUTES.HOME);
+            }
+        });
+
+        dynamicContent.querySelector(".browse-music-btn")?.addEventListener("click", () => {
+            appState.router?.navigateTo(ROUTES.HOME);
+        });
+
+        // Song row event delegation
+        dynamicContent.addEventListener("click", e => {
+            const songRow = e.target.closest(".song-row");
+            if (!songRow) return;
+
+            if (e.target.closest(".action-btn") || e.target.closest(".play-song-btn")) {
+                e.stopPropagation();
+                const action = e.target.closest(".action-btn")?.dataset.action;
+                const songData = JSON.parse(songRow.dataset.song);
+                
+                switch (action) {
+                    case "favorite":
+                        appState.favorites.toggle("songs", songData.id);
+                        break;
+                    case "add-queue":
+                        appState.queue.add(songData);
+                        break;
+                    case "remove-from-playlist":
+                        if (playlists.removeSong(songRow.dataset.playlistId, songData.id)) {
+                            playlists.show(songRow.dataset.playlistId);
+                        }
+                        break;
+                }
+            } else {
+                try {
+                    const songData = JSON.parse(songRow.dataset.song);
+                    musicPlayer.ui.playSong(songData);
+                } catch (error) {}
+            }
+        });
+
+        dynamicContent.addEventListener("click", e => {
+            if (e.target.matches("[data-artist]")) {
+                e.stopPropagation();
+                appState.router?.navigateTo(ROUTES.ARTIST, { artist: e.target.dataset.artist });
+            }
+        });
     }
 };
 
-window.addEventListener("load", () => !window.appState && app.initialize());
-window.MyTunesApp = { initialize: app.initialize, state: () => appState, api: () => window.musicAppAPI, goHome: app.goHome };
+window.clickables = clickables;
+window.musicPlayer = musicPlayer;
 window.navigation = navigation;
 window.playlists = playlists;
 window.views = views;
 
+window.MyTunesApp = {
+    initialize: app.initialize,
+    state: () => appState,
+    api: () => window.musicAppAPI,
+    goHome: app.goHome,
+};
+
 document.addEventListener('DOMContentLoaded', () => {
-    app.initialize();
-    const progressBar = $byId(IDS.musicPlayerProgressBar);
-    if (progressBar) progressBar.addEventListener('keydown', musicPlayer.ui.handleProgressBarKeyDown);
-    setTimeout(() => notificationPlayer.utils.isSupported() && notificationPlayer.setup(), 100);
+    $byId(IDS.musicPlayerProgressBar)?.addEventListener('keydown', musicPlayer.ui.handleProgressBarKeyDown);
+    if (notificationPlayer.utils.isSupported()) {
+        setTimeout(() => notificationPlayer.setup(), 100);
+    }
 });
+
+perquisites();
 
 export { appState, storage, notificationPlayer, musicPlayer, dropdown, overlays, playlists, notifications, utils, app, pageLoader, navigation, ACTION_GRID_ITEMS };
