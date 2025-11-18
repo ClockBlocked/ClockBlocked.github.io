@@ -9,7 +9,7 @@ export {
 
 export { 
   appState, storage, notificationPlayer, musicPlayer, dropdown, 
-  overlays, playlists, notifications, utils, app, pageLoader, 
+  overlays, playlists, utils, app, pageLoader, 
   navigation, ACTION_GRID_ITEMS 
 } from './global.js';
 
