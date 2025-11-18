@@ -7,7 +7,7 @@ import {
 import { music } from "../../modules/library.js";
 import { render, create, encodeURIComponent } from "./utilities/index.js";
 import { homePage, views, pageLoader, navigation, ui, pageUpdates, deepLinkRouter } from "./pages/index.js";
-import { toastNotifications } from './toasts.js';
+import { notifications } from './toasts.js';
 
 
 
