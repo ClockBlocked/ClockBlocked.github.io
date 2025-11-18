@@ -5248,7 +5248,9 @@ const musicPlayer = {
         dragStartY: 0,
         dragDistance: 0,
         isCollapsed: false,
-        currentTab: 'playing'
+        currentTab: 'playing',
+        inactivityTimer: null,
+        lastInteractionTime: null
     },
 
     init() {
@@ -5394,16 +5396,122 @@ const musicPlayer = {
         },
 
         open() {
-            const drawer = QUERY('#music-player');
-            if (drawer) {
-                drawer.showPopover();
+            const drawer = QUERY(MUSIC_PLAYER.root);
+            if (!drawer) {
+                console.warn("Music player drawer not found");
+                return;
             }
+
+            if (appState.currentSong) {
+                musicPlayer.ui.updateNowPlaying();
+            }
+
+            drawer.classList.remove("closing");
+            drawer.classList.add("open");
+
+            appState.isPopupVisible = true;
+
+            musicPlayer.ui.switchTab(MUSIC_PLAYER.tabs.playing);
+            musicPlayer.playback.updateTabContent(MUSIC_PLAYER.tabs.playing);
+
+            document.body.style.overflow = "hidden";
+
+            musicPlayer.playback.startInactivityTimer();
         },
 
         close() {
-            const drawer = QUERY('#music-player');
-            if (drawer) {
-                drawer.hidePopover();
+            const drawer = QUERY(MUSIC_PLAYER.root);
+            if (!drawer) {
+                console.warn("Music player drawer not found");
+                return;
+            }
+
+            musicPlayer.playback.stopInactivityTimer();
+
+            drawer.classList.add("closing");
+            drawer.classList.remove("open");
+
+            setTimeout(() => {
+                drawer.classList.remove("closing");
+                appState.isPopupVisible = false;
+                document.body.style.overflow = "";
+                musicPlayer.ui.switchTab(MUSIC_PLAYER.tabs.playing);
+            }, 550);
+        },
+
+        toggle() {
+            const drawer = QUERY(MUSIC_PLAYER.root);
+            if (!drawer) return;
+
+            const isOpen = drawer.classList.contains("open");
+
+            if (isOpen) {
+                this.close();
+            } else {
+                this.open();
+            }
+        },
+
+        startInactivityTimer() {
+            this.stopInactivityTimer();
+
+            musicPlayer.state.lastInteractionTime = Date.now();
+
+            musicPlayer.state.inactivityTimer = setTimeout(() => {
+                if (appState.currentTab !== MUSIC_PLAYER.tabs.playing) {
+                    musicPlayer.ui.switchTab(MUSIC_PLAYER.tabs.playing);
+                }
+            }, 30000);
+        },
+
+        stopInactivityTimer() {
+            if (musicPlayer.state.inactivityTimer) {
+                clearTimeout(musicPlayer.state.inactivityTimer);
+                musicPlayer.state.inactivityTimer = null;
+            }
+        },
+
+        resetInactivityTimer() {
+            const drawer = QUERY(MUSIC_PLAYER.root);
+            if (drawer && drawer.classList.contains("open")) {
+                if (appState.currentTab !== MUSIC_PLAYER.tabs.playing) {
+                    this.startInactivityTimer();
+                }
+            }
+        },
+
+        updateTabContent(tabName) {
+            if (tabName === MUSIC_PLAYER.tabs.recent) this.updateRecentTab();
+            else if (tabName === MUSIC_PLAYER.tabs.queue) this.updateQueueTab();
+        },
+
+        updateQueueTab() {
+            const queueList = QUERY(MUSIC_PLAYER.queueList);
+            const queueCount = QUERY(MUSIC_PLAYER.queueCount);
+
+            if (queueCount) {
+                queueCount.textContent = appState.queue.length;
+            }
+            
+            if (queueList) {
+                musicPlayer.ui.renderQueueList(queueList);
+            }
+        },
+
+        updateRecentTab() {
+            const recentList = QUERY(MUSIC_PLAYER.recentList);
+            const recentCount = QUERY(MUSIC_PLAYER.recentCount);
+
+            if (recentCount) {
+                recentCount.textContent = appState.recentlyPlayed.length;
+            }
+            
+            if (recentList && appState.recentlyPlayed) {
+                recentList.innerHTML = '';
+                appState.recentlyPlayed.slice(0, 50).forEach((song, index) => {
+                    const item = musicPlayer.helpers.createSongItem(song, index, 'recent');
+                    recentList.appendChild(item);
+                });
             }
         },
 
@@ -6041,7 +6149,6 @@ const musicPlayer = {
         }
     }
 };
-
 
 
 
