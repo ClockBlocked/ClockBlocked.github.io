@@ -6146,10 +6146,171 @@ const musicPlayer = {
                     wrapper.appendChild(overlay);
                 }
             });
+        },
+
+        async playSong(songData) {
+            if (!songData) return;
+            
+            this.initialize();
+            
+            if (window.ui && ui.setLoadingState) {
+                ui.setLoadingState(true);
+            }
+
+            if (appState.currentSong && appState.currentSong.id !== songData.id) {
+                this.addToRecentlyPlayed(appState.currentSong);
+            }
+
+            appState.setCurrentSong(songData);
+
+            this.updateNavbar();
+            this.updateNowPlaying();
+
+            if (window.ui) {
+                if (ui.updateCounts) ui.updateCounts();
+            }
+
+            const success = await this.loadAudioFile(songData);
+            
+            if (success) {
+                if (window.notificationPlayer && notificationPlayer.metadata) {
+                    notificationPlayer.metadata.update(songData);
+                }
+                if (window.notificationPlayer && notificationPlayer.events) {
+                    notificationPlayer.events.bind();
+                }
+                setTimeout(() => {
+                    if (window.clickables && clickables.musicPlayer) {
+                        clickables.musicPlayer();
+                    }
+                    this.bindSeekBar();
+                }, 100);
+                musicPlayer.playback.dispatchPlayerStateChange();
+            } else {
+                this.addToRecentlyPlayed(songData);
+                
+                appState.setPlayingState(false);
+                if (window.ui && ui.updatePlayPauseButtons) {
+                    ui.updatePlayPauseButtons();
+                }
+                if (window.notificationPlayer && notificationPlayer.playbackState) {
+                    notificationPlayer.playbackState.onPause();
+                }
+                musicPlayer.playback.dispatchPlayerStateChange();
+            }
+
+            if (window.ui && ui.setLoadingState) {
+                ui.setLoadingState(false);
+            }
+        },
+
+        async loadAudioFile(songData) {
+            if (!songData || !songData.id) return false;
+            
+            const sourceUrl = songData.url || songData.src;
+            
+            if (!sourceUrl) return false;
+
+            try {
+                if (appState.audio) {
+                    appState.audio.pause();
+                    appState.audio.src = '';
+                }
+
+                appState.audio = new Audio();
+                appState.audio.preload = 'auto';
+                appState.audio.src = sourceUrl;
+
+                appState.audio.addEventListener('loadedmetadata', musicPlayer.playback.onMetadataLoaded);
+                appState.audio.addEventListener('timeupdate', this.updateProgress.bind(this));
+                appState.audio.addEventListener('play', musicPlayer.playback.onPlay);
+                appState.audio.addEventListener('pause', musicPlayer.playback.onPause);
+                appState.audio.addEventListener('ended', musicPlayer.playback.onEnded);
+                appState.audio.addEventListener('error', musicPlayer.playback.onError);
+                appState.audio.addEventListener('progress', this.updateBufferDisplay.bind(this));
+
+                await appState.audio.load();
+                await appState.audio.play();
+                
+                return true;
+            } catch (error) {
+                console.error('Error loading audio:', error);
+                return false;
+            }
+        },
+
+        addToRecentlyPlayed(song) {
+            if (!song) return;
+            
+            appState.recentlyPlayed = appState.recentlyPlayed.filter(s => s.id !== song.id);
+            appState.recentlyPlayed.unshift(song);
+            appState.recentlyPlayed = appState.recentlyPlayed.slice(0, 50);
+            
+            if (window.storage) {
+                storage.save('recentlyPlayed', appState.recentlyPlayed);
+            }
+        },
+
+        updateNavbar() {
+            const nowPlayingArea = QUERY(NAVBAR.nowPlaying);
+            if (nowPlayingArea && appState.currentSong) {
+                nowPlayingArea.classList.add(CLASSES.hasSong);
+                
+                const albumArt = nowPlayingArea.querySelector('.albumArtwork');
+                const songName = nowPlayingArea.querySelector('.songName');
+                const artistName = nowPlayingArea.querySelector('.artistName');
+                
+                if (albumArt && appState.currentSong.cover) {
+                    albumArt.src = appState.currentSong.cover;
+                }
+                
+                if (songName) {
+                    songName.textContent = appState.currentSong.title;
+                }
+                
+                if (artistName) {
+                    artistName.textContent = appState.currentSong.artist;
+                }
+            }
+        },
+
+        updateNowPlaying() {
+            if (!appState.currentSong) return;
+            
+            const song = appState.currentSong;
+            const coverUrl = song.cover || song.artwork;
+            
+            this.updateCoverArt(song);
+            this.updateSongInfo(song);
+            this.updateFavoriteButton(song);
+            
+            const playBtn = QUERY(MUSIC_PLAYER.play);
+            const drawer = QUERY(MUSIC_PLAYER.root);
+            
+            if (playBtn) {
+                const playIcon = playBtn.querySelector('.playIcon');
+                const pauseIcon = playBtn.querySelector('.pauseIcon');
+                
+                if (appState.isPlaying) {
+                    if (playIcon) playIcon.style.display = 'none';
+                    if (pauseIcon) pauseIcon.style.display = 'block';
+                    if (drawer) drawer.classList.add('playing');
+                } else {
+                    if (playIcon) playIcon.style.display = 'block';
+                    if (pauseIcon) pauseIcon.style.display = 'none';
+                    if (drawer) drawer.classList.remove('playing');
+                }
+            }
+        },
+
+        initialize() {
+            if (this._initialized) return;
+            this._initialized = true;
+            
+            this.bindSeekBar();
         }
     }
 };
-
 
 
 
