@@ -6315,17 +6315,6 @@ const musicPlayer = {
 };
 
 
-
-
-
-
-
-
-
-
-
-
-
 const clickables = {
     elements: {
         menuBtn: null,
@@ -7026,64 +7015,47 @@ const clickables = {
         clickables.init();
     }
 };
-
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        clickables.init();
-    });
+    document.addEventListener('DOMContentLoaded', clickables.init);
 } else {
     clickables.init();
 }
 
 window.clickables = clickables;
-/**
-document.addEventListener('DOMContentLoaded', () => {
-    musicPlayer.mainPlayer.init();
-    musicPlayer.mainPlayer.initialize();
-});
-**/
 window.musicPlayer = musicPlayer;
 
 const app = {
-    initialize: function() {
+    initialize() {
         window.music = music;
-
         storage.initialize();
-        notifications.init();
-        
-//        musicPlayer.ui.initialize();
-        musicPlayer.init();
-
+        notifications.initialize();
+        musicPlayer.ui.initialize();
         navigation.initialize();
         homePage.initialize();
-
         app.resetUI();
         app.syncGlobalState();
-
         deepLinkRouter.initialize();
         deepLinkRouter.bindPopState();
     },
 
-    resetUI: function() {
+    resetUI() {
         const nowPlayingArea = QUERY(NAVBAR.nowPlaying);
-        if (nowPlayingArea) {
-            nowPlayingArea.classList.remove(CLASSES.hasSong);
-        }
+        if (nowPlayingArea) nowPlayingArea.classList.remove(CLASSES.hasSong);
         ui.updateCounts();
     },
 
-    syncGlobalState: function() {
+    syncGlobalState() {
         window.appState = appState;
         window.playerController = {
             playSong: musicPlayer.ui.playSong,
-            toggle: musicPlayer.playback.toggle,
+            toggle: musicPlayer.mainPlayer.toggle,
             next: musicPlayer.playback.next,
             previous: musicPlayer.playback.previous,
             seekTo: musicPlayer.playback.seekTo,
             skip: musicPlayer.playback.skip,
         };
         window.musicAppAPI = {
-            player: musicPlayer.playback,
+            player: musicPlayer.mainPlayer,
             controls: musicPlayer.playback,
             musicPlayer: musicPlayer,
             dropdown: dropdown,
@@ -7095,17 +7067,15 @@ const app = {
         };
     },
 
-    goHome: function() {
-        if (appState.router) {
-            appState.router.navigateTo(ROUTES.HOME);
-        }
+    goHome() {
+        if (appState.router) appState.router.navigateTo(ROUTES.HOME);
     }
 };
 
 const playlists = {
-    add: (name) => {
-        if (!name || !name.trim()) {
-            notifications.notify({ type: NOTIFICATION_TYPES.WARNING, message: "Please enter a playlist name" });
+    add(name) {
+        if (!name?.trim()) {
+            notifications.show("Please enter a playlist name", NOTIFICATION_TYPES.WARNING);
             return null;
         }
 
@@ -7120,513 +7090,95 @@ const playlists = {
 
         appState.playlists.push(playlist);
         storage.save(STORAGE_KEYS.PLAYLISTS, appState.playlists);
-
-        if (typeof homePage?.renderPlaylists === "function") {
-            homePage.renderPlaylists();
-        }
-
-        notifications.notify({ type: NOTIFICATION_TYPES.SUCCESS, message: `Created playlist "${playlist.name}"` });
+        if (homePage?.renderPlaylists) homePage.renderPlaylists();
+        
+        notifications.show(`Created playlist "${playlist.name}"`, NOTIFICATION_TYPES.SUCCESS);
         return playlist;
     },
 
-    addSong: (playlistId, song) => {
-        const playlist = appState.playlists.find((p) => p.id === playlistId);
+    addSong(playlistId, song) {
+        const playlist = appState.playlists.find(p => p.id === playlistId);
         if (!playlist) {
-            notifications.notify({ type: NOTIFICATION_TYPES.ERROR, message: "Playlist not found" });
+            notifications.show("Playlist not found", NOTIFICATION_TYPES.ERROR);
             return false;
         }
 
-        const exists = playlist.songs.some((s) => s.id === song.id);
-        if (exists) {
-            notifications.notify({ type: NOTIFICATION_TYPES.WARNING, message: "Song already in playlist" });
+        if (playlist.songs.some(s => s.id === song.id)) {
+            notifications.show("Song already in playlist", NOTIFICATION_TYPES.WARNING);
             return false;
         }
 
         playlist.songs.push(song);
         storage.save(STORAGE_KEYS.PLAYLISTS, appState.playlists);
-
-        notifications.notify({ type: NOTIFICATION_TYPES.SUCCESS, message: `Added "${song.title}" to "${playlist.name}"` });
+        notifications.show(`Added "${song.title}" to "${playlist.name}"`, NOTIFICATION_TYPES.SUCCESS);
         return true;
     },
 
-    removeSong: (playlistId, songId) => {
-        const playlist = appState.playlists.find((p) => p.id === playlistId);
+    removeSong(playlistId, songId) {
+        const playlist = appState.playlists.find(p => p.id === playlistId);
         if (!playlist) return false;
 
         const initialLength = playlist.songs.length;
-        playlist.songs = playlist.songs.filter((s) => s.id !== songId);
+        playlist.songs = playlist.songs.filter(s => s.id !== songId);
 
         if (playlist.songs.length < initialLength) {
             storage.save(STORAGE_KEYS.PLAYLISTS, appState.playlists);
-            notifications.notify({ type: NOTIFICATION_TYPES.INFO, message: "Song removed from playlist" });
+            notifications.show("Song removed from playlist", NOTIFICATION_TYPES.INFO);
             return true;
         }
-
         return false;
     },
 
-    play: (playlistId) => {
-        const playlist = appState.playlists.find((p) => p.id === playlistId);
-        if (!playlist || playlist.songs.length === 0) {
-            notifications.notify({ type: NOTIFICATION_TYPES.WARNING, message: "Playlist is empty" });
+    play(playlistId) {
+        const playlist = appState.playlists.find(p => p.id === playlistId);
+        if (!playlist || !playlist.songs.length) {
+            notifications.show("Playlist is empty", NOTIFICATION_TYPES.WARNING);
             return;
         }
 
         appState.queue.clear();
-        playlist.songs.slice(1).forEach((song) => appState.queue.add(song));
+        playlist.songs.slice(1).forEach(song => appState.queue.add(song));
         musicPlayer.ui.playSong(playlist.songs[0]);
-
-        notifications.notify({ type: NOTIFICATION_TYPES.SUCCESS, message: `Playing playlist "${playlist.name}"` });
+        notifications.show(`Playing playlist "${playlist.name}"`, NOTIFICATION_TYPES.SUCCESS);
     },
 
-    remove: async (playlistId) => {
-        const playlist = appState.playlists.find((p) => p.id === playlistId);
+    async remove(playlistId) {
+        const playlist = appState.playlists.find(p => p.id === playlistId);
         if (!playlist) return false;
         
         const confirmed = await overlays.dialog.confirm(
             `Delete the playlist "${playlist.name}"? This cannot be undone.`, 
-            {
-                okText: "Delete",
-                danger: true,
-            }
+            { okText: "Delete", danger: true }
         );
         
         if (!confirmed) return false;
         
-        const playlistName = playlist.name;
-        appState.playlists = appState.playlists.filter((p) => p.id !== playlistId);
+        appState.playlists = appState.playlists.filter(p => p.id !== playlistId);
         storage.save(STORAGE_KEYS.PLAYLISTS, appState.playlists);
-        notifications.notify({ type: NOTIFICATION_TYPES.INFO, message: `Deleted playlist "${playlistName}"` });
-        
+        notifications.show(`Deleted playlist "${playlist.name}"`, NOTIFICATION_TYPES.INFO);
         return true;
     },
 
-    create: async () => {
-        const name = await overlays.form.prompt(
-            "Enter playlist name:", 
-            {
-                okText: "Create",
-                placeholder: "i.e. Car Sounds Favorites",
-            }
-        );
-        
-        if (name) return playlists.add(name);
-        return null;
-    },
-
-    showAll: () => {
-        if (appState.playlists.length === 0) {
-            overlays.viewer.playlists(
-                views.renderEmptyState(
-                    "No Playlists", 
-                    "You haven't created any playlists yet.", 
-                    "Create your first playlist to organize your music."
-                )
-            );
-            return;
-        }
-
-        const content = `
-            <div class="playlists-page animate__animated animate__fadeIn">
-              <div class="page-header mb-8 flex justify-between items-center">
-                <div>
-                  <h1 class="text-3xl font-bold mb-2">Your Playlists</h1>
-                  <p class="text-gray-400">${appState.playlists.length} playlist${appState.playlists.length !== 1 ? "s" : ""}</p>
-                </div>
-                <button class="create-playlist-btn bg-accent-primary text-white px-6 py-3 rounded-full hover:bg-accent-secondary transition-colors flex items-center gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-                  </svg>
-                  Create Playlist
-                </button>
-              </div>
-
-              <div class="playlists-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                ${appState.playlists
-                  .map(
-                    (playlist, index) => `
-                  <div class="playlist-card bg-gray-800 rounded-lg overflow-hidden hover:bg-gray-700 transition-colors cursor-pointer" style="animation-delay: ${index * 100}ms;" data-playlist-id="${playlist.id}">
-                    <div class="playlist-cover aspect-square bg-gradient-to-br from-purple-500 to-blue-600 relative">
-                      <div class="absolute inset-0 bg-black/20 flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" class="w-16 h-16">
-                          <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v2H3v-2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
-                        </svg>
-                      </div>
-                      <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button class="play-playlist-btn w-10 h-10 bg-accent-primary rounded-full flex items-center justify-center hover:scale-110 transition-transform" data-playlist-id="${playlist.id}">
-                          ${ICONS.play}
-                        </button>
-                      </div>
-                    </div>
-                    <div class="p-4">
-                      <h3 class="font-bold text-lg mb-1 truncate">${playlist.name}</h3>
-                      <p class="text-gray-400 text-sm mb-3">${playlist.songs.length} song${playlist.songs.length !== 1 ? "s" : ""}</p>
-                      <div class="flex gap-2">
-                        <button class="view-playlist-btn flex-1 bg-gray-600 text-white px-3 py-2 rounded hover:bg-gray-500 transition-colors text-sm" data-playlist-id="${playlist.id}">
-                          View
-                        </button>
-                        <button class="delete-playlist-btn px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors" data-playlist-id="${playlist.id}">
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
-                            <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 013.878.512.75.75 0 11-.256 1.478l-.209-.035-1.005 13.07a3 3 0 01-2.991 2.77H8.084a3 3 0 01-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 01-.256-1.478A48.567 48.567 0 017.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 013.369 0c1.603.051 2.815 1.387 2.815 2.951zm-6.136-1.452a51.196 51.196 0 013.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 00-6 0v-.113c0-.794.609-1.428 1.364-1.452zm-.355 5.945a.75.75 0 10-1.5.058l.347 9a.75.75 0 101.499-.058l-.346-9zm5.48.058a.75.75 0 10-1.498-.058l-.347 9a.75.75 0 001.5.058l.345-9z" clip-rule="evenodd"/>
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                `
-                  )
-                  .join("")}
-              </div>
-            </div>
-          `;
-
-        overlays.viewer.playlists(content);
-        const modalEl = document.getElementById("playlist-viewer");
-        playlists.bindEvents(modalEl);
-    },
-
-    show: (playlistId) => {
-        const playlist = appState.playlists.find((p) => p.id === playlistId);
-        if (!playlist) {
-            notifications.notify({ type: NOTIFICATION_TYPES.ERROR, message: "Playlist not found" });
-            return;
-        }
-
-        pageLoader.start({ message: "Loading playlist..." });
-
-        setTimeout(() => {
-            const dynamicContent = $byId(IDS.dynamicContent);
-            if (!dynamicContent) return;
-
-            dynamicContent.innerHTML = `
-                <div class="playlist-page animate__animated animate__fadeIn">
-                  <div class="playlist-header mb-8 flex items-start gap-6">
-                    <div class="playlist-cover w-48 h-48 bg-gradient-to-br from-purple-500 to-blue-600 rounded-lg flex items-center justify-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" class="w-24 h-24">
-                        <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v2H3v-2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
-                      </svg>
-                    </div>
-                    <div class="playlist-info flex-1">
-                      <p class="text-sm text-gray-400 mb-2">PLAYLIST</p>
-                      <h1 class="text-4xl font-bold mb-4">${playlist.name}</h1>
-                      <p class="text-gray-400 mb-6">${playlist.songs.length} song${playlist.songs.length !== 1 ? "s" : ""} • Created ${new Date(playlist.created).toLocaleDateString()}</p>
-                      <div class="flex gap-4">
-                        <button class="play-playlist-btn bg-accent-primary text-white px-8 py-3 rounded-full hover:bg-accent-secondary transition-colors flex items-center gap-2" data-playlist-id="${playlist.id}" ${
-            playlist.songs.length === 0 ? "disabled" : ""
-          }>
-                          ${ICONS.play}
-                          Play
-                        </button>
-                        <button class="edit-playlist-btn bg-gray-600 text-white px-6 py-3 rounded-full hover:bg-gray-500 transition-colors" data-playlist-id="${playlist.id}">
-                          Edit
-                        </button>
-                        <button class="delete-playlist-btn bg-red-600 text-white px-6 py-3 rounded-full hover:bg-red-700 transition-colors" data-playlist-id="${playlist.id}">
-                          Delete
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  ${
-                    playlist.songs.length === 0
-                      ? `
-                    <div class="empty-playlist text-center py-12">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-16 h-16 mx-auto mb-4 text-gray-600">
-                        <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v2H3v-2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
-                      </svg>
-                      <h3 class="text-xl font-bold mb-2">This playlist is empty</h3>
-                      <p class="text-gray-400 mb-4">Add songs to start building your playlist</p>
-                      <button class="browse-music-btn bg-accent-primary text-white px-6 py-2 rounded-full hover:bg-accent-secondary transition-colors">
-                        Browse Music
-                      </button>
-                    </div>
-                  `
-                      : `
-                    <div class="songs-list">
-                      <div class="songs-header grid grid-cols-12 gap-4 px-4 py-2 text-sm text-gray-400 border-b border-gray-700 mb-2">
-                        <div class="col-span-1">#</div>
-                        <div class="col-span-5">Title</div>
-                        <div class="col-span-3 hidden md:block">Album</div>
-                        <div class="col-span-2 hidden md:block">Date Added</div>
-                        <div class="col-span-1">Duration</div>
-                      </div>
-                      ${playlist.songs
-                        .map(
-                          (song, index) => `
-                        <div class="song-row grid grid-cols-12 gap-4 items-center px-4 py-3 rounded-lg hover:bg-white/5 transition-colors cursor-pointer group" data-song='${JSON.stringify(song).replace(/'/g, "&apos;")}' data-playlist-id="${
-                            playlist.id
-                          }" data-song-index="${index}">
-                          <div class="col-span-1 text-gray-400 group-hover:hidden">${index + 1}</div>
-                          <div class="col-span-1 hidden group-hover:block">
-                            <button class="play-song-btn w-8 h-8 bg-accent-primary rounded-full flex items-center justify-center hover:scale-110 transition-transform">
-                              ${ICONS.play}
-                            </button>
-                          </div>
-                          <div class="col-span-5 flex items-center gap-3">
-                            <img src="${utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="w-10 h-10 rounded object-cover">
-                            <div>
-                              <div class="font-medium">${song.title}</div>
-                              <div class="text-sm text-gray-400 cursor-pointer hover:text-white transition-colors" data-artist="${song.artist}">${song.artist}</div>
-                            </div>
-                          </div>
-                          <div class="col-span-3 hidden md:block text-gray-400 text-sm">${song.album}</div>
-                          <div class="col-span-2 hidden md:block text-gray-400 text-sm">${new Date().toLocaleDateString()}</div>
-                          <div class="col-span-1 flex items-center justify-between">
-                            <span class="text-gray-400 text-sm">${song.duration || "0:00"}</span>
-                            <div class="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
-                              <button class="action-btn p-1 hover:bg-white/10 rounded transition-colors" data-action="favorite" data-song-id="${song.id}" title="Add to favorites">
-                                <svg class="w-4 h-4 ${appState.favorites.has("songs", song.id) ? "text-red-500" : ""}" fill="${appState.favorites.has("songs", song.id) ? "currentColor" : "none"}" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                                </svg>
-                              </button>
-                              <button class="action-btn p-1 hover:bg-white/10 rounded transition-colors" data-action="add-queue" title="Add to queue">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                                </svg>
-                              </button>
-                              <button class="action-btn p-1 hover:bg-white/10 rounded transition-colors" data-action="remove-from-playlist" title="Remove from playlist">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                </svg>
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      `
-                        )
-                        .join("")}
-                    </div>
-                  `
-                  }
-                </div>
-              `;
-
-            playlists.bindViewEvents(playlist);
-            pageLoader.complete();
-        }, 200);
-    },
-
-    bindEvents: (root = $byId(IDS.dynamicContent)) => {
-        const dynamicContent = root;
-        if (!dynamicContent) return;
-
-        const createBtn = dynamicContent.querySelector(".create-playlist-btn");
-        if (createBtn) {
-            createBtn.addEventListener("click", async () => {
-                const newPlaylist = await playlists.create();
-                if (newPlaylist) {
-                    setTimeout(() => playlists.showAll(), 100);
-                }
-            });
-        }
-
-        dynamicContent.querySelectorAll(".view-playlist-btn").forEach((btn) => {
-            btn.addEventListener("click", (e) => {
-                e.stopPropagation();
-                const playlistId = btn.dataset.playlistId;
-                playlists.show(playlistId);
-            });
+    async create() {
+        const name = await overlays.form.prompt("Enter playlist name:", {
+            okText: "Create",
+            placeholder: "i.e. Car Sounds Favorites",
         });
-
-        dynamicContent.querySelectorAll(".play-playlist-btn").forEach((btn) => {
-            btn.addEventListener("click", (e) => {
-                e.stopPropagation();
-                const playlistId = btn.dataset.playlistId;
-                playlists.play(playlistId);
-            });
-        });
-
-        dynamicContent.querySelectorAll(".delete-playlist-btn").forEach((btn) => {
-            btn.addEventListener("click", async (e) => {
-                e.stopPropagation();
-                const playlistId = btn.dataset.playlistId;
-                if (await playlists.remove(playlistId)) {
-                    setTimeout(() => playlists.showAll(), 100);
-                }
-            });
-        });
-
-        dynamicContent.querySelectorAll(".playlist-card").forEach((card) => {
-            card.addEventListener("click", () => {
-                const playlistId = card.dataset.playlistId;
-                playlists.show(playlistId);
-            });
-        });
-    },
-
-    bindViewEvents: (playlist) => {
-        const dynamicContent = $byId(IDS.dynamicContent);
-        if (!dynamicContent) return;
-
-        const playBtn = dynamicContent.querySelector(".play-playlist-btn");
-        if (playBtn) {
-            playBtn.addEventListener("click", () => {
-                playlists.play(playlist.id);
-            });
-        }
-
-        const editBtn = dynamicContent.querySelector(".edit-playlist-btn");
-        if (editBtn) {
-            editBtn.addEventListener("click", async () => {
-                const newName = await overlays.form.prompt(
-                    "Enter new playlist name:",
-                    {
-                        okText: "Rename",
-                        placeholder: "Playlist name",
-                        value: playlist.name
-                    }
-                );
-                
-                if (newName && newName.trim() && newName.trim() !== playlist.name) {
-                    playlist.name = newName.trim();
-                    storage.save(STORAGE_KEYS.PLAYLISTS, appState.playlists);
-                    playlists.show(playlist.id);
-                    notifications.notify({ type: NOTIFICATION_TYPES.SUCCESS, message: "Playlist renamed successfully" });
-                }
-            });
-        }
-
-        const deleteBtn = dynamicContent.querySelector(".delete-playlist-btn");
-        if (deleteBtn) {
-            deleteBtn.addEventListener("click", async () => {
-                if (await playlists.remove(playlist.id)) {
-                    if (appState.router) {
-                        appState.router.navigateTo(ROUTES.HOME);
-                    }
-                }
-            });
-        }
-
-        const browseBtn = dynamicContent.querySelector(".browse-music-btn");
-        if (browseBtn) {
-            browseBtn.addEventListener("click", () => {
-                if (appState.router) {
-                    appState.router.navigateTo(ROUTES.HOME);
-                }
-            });
-        }
-
-        dynamicContent.querySelectorAll(".song-row").forEach((row) => {
-            row.addEventListener("click", (e) => {
-                if (e.target.closest(".action-btn") || e.target.closest(".play-song-btn")) return;
-
-                try {
-                    const songData = JSON.parse(row.dataset.song);
-                    musicPlayer.ui.playSong(songData);
-                } catch (error) {}
-            });
-        });
-
-        dynamicContent.querySelectorAll(".play-song-btn").forEach((btn) => {
-            btn.addEventListener("click", (e) => {
-                e.stopPropagation();
-                const songRow = btn.closest(".song-row");
-                try {
-                    const songData = JSON.parse(songRow.dataset.song);
-                    musicPlayer.ui.playSong(songData);
-                } catch (error) {}
-            });
-        });
-
-        dynamicContent.querySelectorAll("[data-artist]").forEach((artistEl) => {
-            artistEl.addEventListener("click", (e) => {
-                e.stopPropagation();
-                const artistName = artistEl.dataset.artist;
-                if (appState.router) {
-                    appState.router.navigateTo(ROUTES.ARTIST, {
-                        artist: artistName,
-                    });
-                }
-            });
-        });
-
-        dynamicContent.querySelectorAll(".action-btn").forEach((btn) => {
-            btn.addEventListener("click", (e) => {
-                e.stopPropagation();
-                const action = btn.dataset.action;
-                const songRow = btn.closest(".song-row");
-                const songData = JSON.parse(songRow.dataset.song);
-
-                switch (action) {
-                    case "favorite":
-                        appState.favorites.toggle("songs", songData.id);
-                        const heartIcon = btn.querySelector("svg");
-                        const isFavorite = appState.favorites.has("songs", songData.id);
-                        heartIcon.style.color = isFavorite ? "#ef4444" : "";
-                        heartIcon.style.fill = isFavorite ? "currentColor" : "none";
-                        break;
-                    case "add-queue":
-                        appState.queue.add(songData);
-                        break;
-                    case "remove-from-playlist":
-                        const playlistId = songRow.dataset.playlistId;
-                        const songIndex = parseInt(songRow.dataset.songIndex);
-                        if (playlists.removeSong(playlistId, songData.id)) {
-                            playlists.show(playlistId);
-                        }
-                        break;
-                }
-            });
-        });
-    },
-};
-
-window.addEventListener("load", function() {
-    if (!window.appState) {
-        app.initialize();
+        return name ? playlists.add(name) : null;
     }
-});
-
-window.MyTunesApp = {
-    initialize: app.initialize,
-    state: function() { return appState; },
-    api: function() { return window.musicAppAPI; },
-    goHome: app.goHome,
 };
 
-if (window.music) {
-    app.initialize();
-}
-
+window.addEventListener("load", () => !window.appState && app.initialize());
+window.MyTunesApp = { initialize: app.initialize, state: () => appState, api: () => window.musicAppAPI, goHome: app.goHome };
 window.navigation = navigation;
 window.playlists = playlists;
 window.views = views;
 
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        clickables.init();
-    });
-} else {
-    clickables.init();
-}
-
 document.addEventListener('DOMContentLoaded', () => {
     app.initialize();
-    
     const progressBar = $byId(IDS.musicPlayerProgressBar);
-    if (progressBar) {
-        progressBar.addEventListener('keydown', musicPlayer.ui.handleProgressBarKeyDown);
-    }
-    
-    setTimeout(() => {
-        if (notificationPlayer.utils.isSupported()) {
-            notificationPlayer.setup();
-        }
-    }, 100);
+    if (progressBar) progressBar.addEventListener('keydown', musicPlayer.ui.handleProgressBarKeyDown);
+    setTimeout(() => notificationPlayer.utils.isSupported() && notificationPlayer.setup(), 100);
 });
 
-export {
-    appState,
-    storage,
-    notificationPlayer,
-    musicPlayer,
-    dropdown,
-    overlays,
-    playlists,
-    notifications,
-    utils,
-    app,
-    pageLoader,
-    navigation,
-    ACTION_GRID_ITEMS
-};
+export { appState, storage, notificationPlayer, musicPlayer, dropdown, overlays, playlists, notifications, utils, app, pageLoader, navigation, ACTION_GRID_ITEMS };
