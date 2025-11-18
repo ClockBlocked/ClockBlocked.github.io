@@ -46,15 +46,39 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 const perquisites = () => {
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
-            clickables.init();
-            app.initialize();
-        });
-    } else {
-        clickables.init();
-        app.initialize();
-    }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => {
+      clickables.init();
+      app.initialize();
+
+      window.clickables = clickables;
+      window.musicPlayer = musicPlayer;
+      window.navigation = navigation;
+      window.playlists = playlists;
+      window.views = views;
+      window.MyTunesApp = {
+        initialize: app.initialize,
+        state: () => appState,
+        api: () => window.musicAppAPI,
+        goHome: app.goHome,
+      };
+    });
+  } else {
+    clickables.init();
+    app.initialize();
+
+    window.clickables = clickables;
+    window.musicPlayer = musicPlayer;
+    window.navigation = navigation;
+    window.playlists = playlists;
+    window.views = views;
+    window.MyTunesApp = {
+      initialize: app.initialize,
+      state: () => appState,
+      api: () => window.musicAppAPI,
+      goHome: app.goHome,
+    };
+  }
 };
 perquisites();
 
