@@ -1,11 +1,10 @@
 import {
-  appState,
-  storage,
-  notifications,
-  musicPlayer,
-  utils,
-  notificationPlayer
-} from '../global.js';
+  appState, storage, notifications, musicPlayer, 
+  utils, notificationPlayer
+} from '../index.js';
+
+
+
 
 export const pageUpdates = {
   breadCrumbs: (items, options = {}) => {
