@@ -4320,11 +4320,12 @@ if (document.readyState === 'loading') {
 }
 
 window.clickables = clickables;
+/**
 document.addEventListener('DOMContentLoaded', () => {
     musicPlayer.mainPlayer.init();
     musicPlayer.mainPlayer.initialize();
 });
-
+**/
 window.musicPlayer = musicPlayer;
 
 const app = {
