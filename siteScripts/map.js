@@ -73,9 +73,7 @@ export const IDS = Object.freeze({
 
   seekTooltip: "seek-tooltip",
 
-  /* ------------------------------
-     MUSIC PLAYER — VERIFIED IDs
-     ------------------------------ */
+
 
   musicPlayer: "music-player",
   musicPlayerTrigger: "now-playing-area",
@@ -100,9 +98,8 @@ export const IDS = Object.freeze({
   shareBtn: "shareBtn",
   moreBtn: "moreBtn",
 
-  /* ------------------------------
-     PROGRESS BAR — VERIFIED IDs
-     ------------------------------ */
+
+
 
   progressBar: "progressBar",
   progressFill: "progressFill",
@@ -113,9 +110,8 @@ export const IDS = Object.freeze({
   queueList: "queueList",
   recentList: "recentList",
 
-  /* ------------------------------
-     NAVBAR — VERIFIED IDs
-     ------------------------------ */
+
+
 
   playPauseNavbar: "navbar-play-pause",
   prevBtnNavbar: "navbar-prev",
