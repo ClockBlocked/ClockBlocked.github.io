@@ -360,7 +360,8 @@ const perquisites = () => {
 };
 
 
-
+////////////////////////////////////////////////////////////
+////////////////////////////////  PAGE Updaters  ///////////
 const utils = {
   getAlbumImageUrl: (albumName) => {
     if (!albumName) return utils.getDefaultAlbumImage();
@@ -1033,7 +1034,8 @@ const playlists = {
 
 
 
-
+////////////////////////////////////////////////////////////
+///////////  Music Drawer & Android Media Session API //////
 const musicPlayer = {
     state: {
         isDraggingHeader: false,
@@ -2799,7 +2801,8 @@ const notificationPlayer = {
 
 
 
-
+////////////////////////////////////////////////////////////
+//////////////////////////////  Event Listeners  ///////////
 const app = {
     initialize() {
         window.music = music;
