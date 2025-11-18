@@ -36,6 +36,39 @@ const PLAYER_EVENTS = {
 };
 const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
 
+window.clickables = clickables;
+window.musicPlayer = musicPlayer;
+window.navigation = navigation;
+window.playlists = playlists;
+window.views = views;
+window.MyTunesApp = {
+    initialize: app.initialize,
+    state: () => appState,
+    api: () => window.musicAppAPI,
+    goHome: app.goHome,
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    $byId(IDS.musicPlayerProgressBar)?.addEventListener('keydown', musicPlayer.ui.handleProgressBarKeyDown);
+    if (notificationPlayer.utils.isSupported()) {
+        setTimeout(() => notificationPlayer.setup(), 100);
+    }
+});
+
+const perquisites = () => {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            clickables.init();
+            app.initialize();
+        });
+    } else {
+        clickables.init();
+        app.initialize();
+    }
+};
+perquisites();
+
+
 ////////////////////////////////////////////////////////////
 //////////////////////////////  Event Listeners  ///////////
 const clickables = {
@@ -783,38 +816,6 @@ const app = {
     }
 };
 
-
-window.clickables = clickables;
-window.musicPlayer = musicPlayer;
-window.navigation = navigation;
-window.playlists = playlists;
-window.views = views;
-window.MyTunesApp = {
-    initialize: app.initialize,
-    state: () => appState,
-    api: () => window.musicAppAPI,
-    goHome: app.goHome,
-};
-
-document.addEventListener('DOMContentLoaded', () => {
-    $byId(IDS.musicPlayerProgressBar)?.addEventListener('keydown', musicPlayer.ui.handleProgressBarKeyDown);
-    if (notificationPlayer.utils.isSupported()) {
-        setTimeout(() => notificationPlayer.setup(), 100);
-    }
-});
-
-const perquisites = () => {
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
-            clickables.init();
-            app.initialize();
-        });
-    } else {
-        clickables.init();
-        app.initialize();
-    }
-};
-perquisites();
 
 
 const PubSub = {
