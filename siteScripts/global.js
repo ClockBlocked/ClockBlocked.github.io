@@ -1976,7 +1976,7 @@ bindSeekBar: () => {
     bar.addEventListener('pointerdown', onPointerDown, { passive: false });
     bar.addEventListener('pointerenter', onEnter);
     bar.addEventListener('pointerleave', onLeave);
-}
+},
     
     seekFromEvent(e, bar, finalize = false) {
       const rect = bar.getBoundingClientRect();
