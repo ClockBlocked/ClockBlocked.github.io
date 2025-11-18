@@ -213,10 +213,10 @@ export const IDS = Object.freeze({
   moreBtn: "moreBtn",
   queueBtn: "queueBtn",
 
-  progressBar: "progressBar",
-  progressFill: "progressFill",
-  progressThumb: "progressThumb",
-  progressBuffer: "progressBuffer",
+  progressBar: "music-player-progress-bar",
+  progressFill: "music-player-progress-fill",
+  progressThumb: "music-player-progress-thumb",
+  progressBuffer: "music-player-progress-buffer",
   currentTime: "currentTime",
   totalTime: "totalTime",
 
@@ -307,7 +307,7 @@ export const MUSIC_PLAYER = (() => {
     albumName: `${parent} #music-player-album`,
     progressSection: `${parent} .musicPlayerProgressSection`,
     progressBar: `${parent} #music-player-progress-bar`,
-    progressBuffer: `${parent} #musicPlayerProgressBuffer`,
+    progressBuffer: `${parent} #music-player-progress-buffer`,
     progressFill: `${parent} #music-player-progress-fill`,
     progressThumb: `${parent} #music-player-progress-thumb`,
     timeDisplay: `${parent} .musicPlayerTimeDisplay`,
