@@ -2767,125 +2767,64 @@ const musicPlayer = {
     
     
     collapsibles: {
-    // Toggle collapse state
-    toggleNowPlaying: function() {
-        const nowPlaying = document.querySelector('.player.open .nowPlaying');
-        const listContainer = document.querySelector('.player.open .panel[data-tab="queue"] .listContainer');
-        const queuePanel = document.querySelector('.player.open .panel[data-tab="queue"]');
+        // Initialize tab listeners
+        init: function() {
+            this.setupTabListeners();
+            // Set initial state based on active tab
+            this.updateActiveTabState();
+            console.log('Collapsibles initialized (data attribute approach)');
+        },
         
-        if (!nowPlaying || !listContainer || !queuePanel) return;
-        
-        const isQueueActive = queuePanel.classList.contains('active');
-        
-        if (isQueueActive) {
-            // Collapse nowPlaying and expand listContainer
-            this.collapseNowPlaying();
-            this.expandListContainer();
-        } else {
-            // Expand nowPlaying and reset listContainer
-            this.expandNowPlaying();
-            this.resetListContainer();
-        }
-    },
-    
-    // Collapse the nowPlaying section
-    collapseNowPlaying: function() {
-        const nowPlaying = document.querySelector('.player.open .nowPlaying');
-        if (nowPlaying) {
-            nowPlaying.style.transition = 'height 0.3s ease, opacity 0.3s ease';
-            nowPlaying.style.height = '0vh';
-            nowPlaying.style.opacity = '0';
-            nowPlaying.style.overflow = 'hidden';
-            console.log('NowPlaying collapsed');
-        }
-    },
-    
-    // Expand the nowPlaying section
-    expandNowPlaying: function() {
-        const nowPlaying = document.querySelector('.player.open .nowPlaying');
-        if (nowPlaying) {
-            nowPlaying.style.transition = 'height 0.3s ease, opacity 0.3s ease';
-            nowPlaying.style.height = '';
-            nowPlaying.style.opacity = '1';
-            nowPlaying.style.overflow = '';
-            console.log('NowPlaying expanded');
-        }
-    },
-    
-    // Expand listContainer to take full available space
-    expandListContainer: function() {
-        const listContainer = document.querySelector('.player.open .panel[data-tab="queue"] .listContainer');
-        if (listContainer) {
-            listContainer.style.transition = 'height 0.3s ease';
-            listContainer.style.height = 'calc(100vh - 120px)'; // Adjust based on your header height
-            console.log('ListContainer expanded');
-        }
-    },
-    
-    // Reset listContainer to original height
-    resetListContainer: function() {
-        const listContainer = document.querySelector('.player.open .panel[data-tab="queue"] .listContainer');
-        if (listContainer) {
-            listContainer.style.transition = 'height 0.3s ease';
-            listContainer.style.height = '';
-            console.log('ListContainer reset');
-        }
-    },
-    
-    // Initialize collapsible behavior
-    init: function() {
-        // Set up tab change listeners
-        this.setupTabListeners();
-        
-        // Initial state check
-        this.checkQueueState();
-        
-        console.log('Collapsibles initialized');
-    },
-    
-    // Listen for tab changes
-    setupTabListeners: function() {
-        const dotIndicators = document.querySelectorAll('.dotIndicator');
-        
-        dotIndicators.forEach(indicator => {
-            indicator.addEventListener('click', () => {
-                // Small delay to allow active class to update
-                setTimeout(() => {
-                    this.toggleNowPlaying();
-                }, 50);
+        // Listen for tab changes
+        setupTabListeners: function() {
+            const dotIndicators = document.querySelectorAll('.dotIndicator');
+            const player = document.getElementById('music-player');
+            
+            dotIndicators.forEach(indicator => {
+                indicator.addEventListener('click', (e) => {
+                    const tab = e.target.closest('.dotIndicator').dataset.tab;
+                    if (player && tab) {
+                        // Update the data attribute - CSS handles the rest
+                        player.setAttribute('data-active-tab', tab);
+                        console.log(`Tab changed to: ${tab}`);
+                    }
+                });
             });
-        });
+            
+            // Listen for your 30-second timer reset
+            document.addEventListener('queueTabReset', () => {
+                if (player) {
+                    player.setAttribute('data-active-tab', 'playing'); // or whatever default tab
+                }
+            });
+        },
         
-        // Also listen for your 30-second timer reset
-        document.addEventListener('queueTabReset', () => {
-            this.toggleNowPlaying();
-        });
-    },
-    
-    // Check current state and apply appropriate styles
-    checkQueueState: function() {
-        const queuePanel = document.querySelector('.player.open .panel[data-tab="queue"]');
-        if (queuePanel && queuePanel.classList.contains('active')) {
-            this.collapseNowPlaying();
-            this.expandListContainer();
-        } else {
-            this.expandNowPlaying();
-            this.resetListContainer();
+        // Update state based on currently active tab
+        updateActiveTabState: function() {
+            const player = document.getElementById('music-player');
+            if (!player) return;
+            
+            // Find which tab is currently active
+            const activeIndicator = document.querySelector('.dotIndicator.active');
+            if (activeIndicator && activeIndicator.dataset.tab) {
+                player.setAttribute('data-active-tab', activeIndicator.dataset.tab);
+            }
+        },
+        
+        // Manual control methods (if needed)
+        setActiveTab: function(tabName) {
+            const player = document.getElementById('music-player');
+            if (player && ['playing', 'queue', 'playlist'].includes(tabName)) {
+                player.setAttribute('data-active-tab', tabName);
+            }
+        },
+        
+        // Get current active tab
+        getActiveTab: function() {
+            const player = document.getElementById('music-player');
+            return player ? player.getAttribute('data-active-tab') : null;
         }
-    },
-    
-    // Manual trigger for external use
-    forceCollapse: function() {
-        this.collapseNowPlaying();
-        this.expandListContainer();
-    },
-    
-    // Manual trigger for external use
-    forceExpand: function() {
-        this.expandNowPlaying();
-        this.resetListContainer();
     }
-}
 
   }
 };
