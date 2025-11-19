@@ -1302,9 +1302,32 @@
 
 
 .player .coverWrapper.collapsed .nowPlaying {
-  height: auto;
+  height: 0vh !important;
   transition: height 0.45s ease;
 }
+
+/* Smooth transitions for collapsible elements */
+.player.open .nowPlaying {
+    transition: height 0.3s ease, opacity 0.3s ease;
+}
+
+.player.open .panel[data-tab="queue"] .listContainer {
+    transition: height 0.3s ease;
+}
+
+/* When nowPlaying is collapsed */
+.player.open .nowPlaying.collapsed {
+    height: 0vh !important;
+    opacity: 0;
+    overflow: hidden;
+}
+
+/* When listContainer is expanded */
+.player.open .panel[data-tab="queue"] .listContainer.expanded {
+    height: calc(100vh - 120px) !important; /* Adjust based on your header height */
+}
+
+
 
 
 .player .miniTitle {
