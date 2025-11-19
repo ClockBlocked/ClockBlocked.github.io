@@ -1322,6 +1322,8 @@ const musicPlayer = {
 
       musicPlayer.mainPlayer.updateTabContent(tabName);
       musicPlayer.mainPlayer.resetInactivityTimer();
+      
+      musicPlayer.state.handleTabChange(tabName);
     },
 
     startInactivityTimer: () => {
@@ -2528,6 +2530,18 @@ const musicPlayer = {
       musicPlayer.state.addListItemInteractions();
     },
     
+    handleTabChange(tabName) {
+      if (tabName === MUSIC_PLAYER.tabs.playlist || tabName === MUSIC_PLAYER.tabs.queue) {
+        if (!this.isCollapsed && !this.isTransitioning) {
+          this.collapseHeader();
+        }
+      } else if (tabName === MUSIC_PLAYER.tabs.playing) {
+        if (this.isCollapsed && !this.isTransitioning) {
+          this.expandHeader();
+        }
+      }
+    },
+    
     handleScroll(listContainer, tabIndex) {
       const tabName = this.panels[tabIndex]?.dataset.tab;
       if (musicPlayer.state.isTransitioning || appState.currentTab !== tabName || tabName === MUSIC_PLAYER.tabs.playing) {
@@ -2545,10 +2559,7 @@ const musicPlayer = {
       
       clearTimeout(musicPlayer.state.scrollTimeout);
       
-      if (isScrollingDown && !musicPlayer.state.isCollapsed && currentScrollTop > 0) {
-        musicPlayer.state.collapseHeader();
-      } 
-      else if (currentScrollTop === 0 && musicPlayer.state.isCollapsed) {
+      if (currentScrollTop === 0 && musicPlayer.state.isCollapsed) {
         musicPlayer.state.expandHeader();
       }
     },
@@ -2561,10 +2572,13 @@ const musicPlayer = {
       if (!coverWrapper || !recentList || !queueList) return;
       
       const isCollapsed = coverWrapper.classList.contains('collapsed');
+      const coverHeight = coverWrapper.offsetHeight;
+      const viewportHeight = window.innerHeight;
       
       if (isCollapsed) {
-        recentList.style.height = 'calc(100vh - 200px)';
-        queueList.style.height = 'calc(100vh - 200px)';
+        const availableHeight = viewportHeight - coverHeight - 100;
+        recentList.style.height = `${availableHeight}px`;
+        queueList.style.height = `${availableHeight}px`;
       } else {
         recentList.style.height = '500px';
         queueList.style.height = '500px';
@@ -2591,6 +2605,8 @@ const musicPlayer = {
             nowPlayingElement.classList.add('collapsed');
             nowPlayingElement.classList.remove('is-collapsing');
           }
+          
+          this.updateListHeights();
           
           clearTimeout(musicPlayer.state.transitionTimeout);
           musicPlayer.state.transitionTimeout = setTimeout(() => {
@@ -2621,6 +2637,8 @@ const musicPlayer = {
             nowPlayingElement.classList.remove('collapsed');
             nowPlayingElement.classList.remove('is-collapsing');
           }
+          
+          this.updateListHeights();
           
           clearTimeout(musicPlayer.state.transitionTimeout);
           musicPlayer.state.transitionTimeout = setTimeout(() => {
