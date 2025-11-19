@@ -1229,9 +1229,14 @@
     position: absolute;
     left: 0;
     top: 50%;
-    width: 80px;
-    height: 80px;
+    width: 60px;
+    height: 60px;
     inset: auto;
+    border-radius: 50%;
+    margin-top: 0.5rem;
+    margin-left: 0.25rem;
+    margin-right: 0.75rem;
+    border: 1.5px solid var(--border-200);
 }
 
 .player .cover {
