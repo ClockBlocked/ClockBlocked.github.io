@@ -1300,6 +1300,13 @@
     pointer-events: auto;
 }
 
+
+.player .coverWrapper.collapsed .nowPlaying {
+  height: auto;
+  transition: height 0.45s ease;
+}
+
+
 .player .miniTitle {
     font-size: 15px;
     font-weight: 700;
