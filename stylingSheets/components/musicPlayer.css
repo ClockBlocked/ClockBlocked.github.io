@@ -1799,7 +1799,7 @@
   flex: 1 1 auto;
 }
 
-/* Now Playing Tab *//* EXPANDED */
+/* Recently Played Tab / Up Next Queue Tab *//* EXPANDED */
 .player.open[data-active-tab="playing"] .panel[data-tab="queue"] .listContainer,
 .player.open[data-active-tab="playing"] .panel[data-tab="playlist"] .listContainer {
   height: auto !important;
