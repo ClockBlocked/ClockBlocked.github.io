@@ -2767,15 +2767,13 @@ const musicPlayer = {
     
     
     collapsibles: {
-        // Initialize tab listeners
         init: function() {
             this.setupTabListeners();
-            // Set initial state based on active tab
+            this.setupActionButtonListeners();
             this.updateActiveTabState();
-            console.log('Collapsibles initialized (data attribute approach)');
+            console.log('Collapsibles initialized');
         },
         
-        // Listen for tab changes
         setupTabListeners: function() {
             const dotIndicators = document.querySelectorAll('.dotIndicator');
             const player = document.getElementById('music-player');
@@ -2783,46 +2781,73 @@ const musicPlayer = {
             dotIndicators.forEach(indicator => {
                 indicator.addEventListener('click', (e) => {
                     const tab = e.target.closest('.dotIndicator').dataset.tab;
-                    if (player && tab) {
-                        // Update the data attribute - CSS handles the rest
-                        player.setAttribute('data-active-tab', tab);
-                        console.log(`Tab changed to: ${tab}`);
-                    }
+                    console.log('Dot indicator clicked:', tab);
+                    
+                    // Use a slightly longer delay to ensure DOM updates first
+                    setTimeout(() => {
+                        if (player && tab) {
+                            player.setAttribute('data-active-tab', tab);
+                            console.log('Data attribute updated to:', tab);
+                        }
+                    }, 100); // Increased delay
                 });
-            });
-            
-            // Listen for your 30-second timer reset
-            document.addEventListener('queueTabReset', () => {
-                if (player) {
-                    player.setAttribute('data-active-tab', 'playing'); // or whatever default tab
-                }
             });
         },
         
-        // Update state based on currently active tab
+        setupActionButtonListeners: function() {
+            const actionButtons = document.querySelectorAll('[id="music-player-queue"], .actionBtn[data-tab="queue"]');
+            const player = document.getElementById('music-player');
+            
+            actionButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    console.log('Queue action button clicked');
+                    
+                    setTimeout(() => {
+                        if (player) {
+                            player.setAttribute('data-active-tab', 'queue');
+                            console.log('Data attribute updated to: queue (from action button)');
+                        }
+                    }, 100);
+                });
+            });
+        },
+        
         updateActiveTabState: function() {
             const player = document.getElementById('music-player');
             if (!player) return;
             
-            // Find which tab is currently active
-            const activeIndicator = document.querySelector('.dotIndicator.active');
-            if (activeIndicator && activeIndicator.dataset.tab) {
-                player.setAttribute('data-active-tab', activeIndicator.dataset.tab);
-            }
+            // Watch for DOM changes to catch any tab changes
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                        const activeIndicator = document.querySelector('.dotIndicator.active');
+                        if (activeIndicator && activeIndicator.dataset.tab) {
+                            const currentTab = player.getAttribute('data-active-tab');
+                            const newTab = activeIndicator.dataset.tab;
+                            
+                            if (currentTab !== newTab) {
+                                player.setAttribute('data-active-tab', newTab);
+                                console.log('Tab change detected via observer:', newTab);
+                            }
+                        }
+                    }
+                });
+            });
+            
+            // Observe the dot indicators for class changes
+            const dotIndicators = document.querySelectorAll('.dotIndicator');
+            dotIndicators.forEach(indicator => {
+                observer.observe(indicator, { attributes: true, attributeFilter: ['class'] });
+            });
         },
         
-        // Manual control methods (if needed)
-        setActiveTab: function(tabName) {
+        // Force update method for debugging
+        forceUpdateTab: function(tabName) {
             const player = document.getElementById('music-player');
-            if (player && ['playing', 'queue', 'playlist'].includes(tabName)) {
+            if (player) {
                 player.setAttribute('data-active-tab', tabName);
+                console.log('Forced tab update to:', tabName);
             }
-        },
-        
-        // Get current active tab
-        getActiveTab: function() {
-            const player = document.getElementById('music-player');
-            return player ? player.getAttribute('data-active-tab') : null;
         }
     }
 
