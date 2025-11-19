@@ -1818,7 +1818,7 @@
 * [ Target Area - During this State ]
 *********************************/
 
-/* Now Playing Tab *//* EXPANDED*/
+/* Now Playing Tab *//* COLLAPSED */
 .player.open[data-active-tab="playing"] .nowPlaying.musicPlayerNowPlaying {
   height: auto !important;
   opacity: 1;
@@ -1826,7 +1826,7 @@
   pointer-events: auto;
 }
 
-/* Now Playing Tab *//* COLLAPSED*/
+/* Now Playing Tab *//* EXPANDED */
 .player.open[data-active-tab="queue"] .nowPlaying.musicPlayerNowPlaying,
 .player.open[data-active-tab="playlist"] .nowPlaying.musicPlayerNowPlaying {
   height: 0vh !important;
