@@ -1274,6 +1274,8 @@ const musicPlayer = {
       document.body.style.overflow = "hidden";
 
       musicPlayer.mainPlayer.startInactivityTimer();
+      
+      musicPlayer.state.collapsibles.init();
     },
 
     close: () => {
@@ -2761,7 +2763,130 @@ const musicPlayer = {
           wrapper.appendChild(overlay);
         }
       });
+    },
+    
+    
+    collapsibles: {
+    // Toggle collapse state
+    toggleNowPlaying: function() {
+        const nowPlaying = document.querySelector('.player.open .nowPlaying');
+        const listContainer = document.querySelector('.player.open .panel[data-tab="queue"] .listContainer');
+        const queuePanel = document.querySelector('.player.open .panel[data-tab="queue"]');
+        
+        if (!nowPlaying || !listContainer || !queuePanel) return;
+        
+        const isQueueActive = queuePanel.classList.contains('active');
+        
+        if (isQueueActive) {
+            // Collapse nowPlaying and expand listContainer
+            this.collapseNowPlaying();
+            this.expandListContainer();
+        } else {
+            // Expand nowPlaying and reset listContainer
+            this.expandNowPlaying();
+            this.resetListContainer();
+        }
+    },
+    
+    // Collapse the nowPlaying section
+    collapseNowPlaying: function() {
+        const nowPlaying = document.querySelector('.player.open .nowPlaying');
+        if (nowPlaying) {
+            nowPlaying.style.transition = 'height 0.3s ease, opacity 0.3s ease';
+            nowPlaying.style.height = '0vh';
+            nowPlaying.style.opacity = '0';
+            nowPlaying.style.overflow = 'hidden';
+            console.log('NowPlaying collapsed');
+        }
+    },
+    
+    // Expand the nowPlaying section
+    expandNowPlaying: function() {
+        const nowPlaying = document.querySelector('.player.open .nowPlaying');
+        if (nowPlaying) {
+            nowPlaying.style.transition = 'height 0.3s ease, opacity 0.3s ease';
+            nowPlaying.style.height = '';
+            nowPlaying.style.opacity = '1';
+            nowPlaying.style.overflow = '';
+            console.log('NowPlaying expanded');
+        }
+    },
+    
+    // Expand listContainer to take full available space
+    expandListContainer: function() {
+        const listContainer = document.querySelector('.player.open .panel[data-tab="queue"] .listContainer');
+        if (listContainer) {
+            listContainer.style.transition = 'height 0.3s ease';
+            listContainer.style.height = 'calc(100vh - 120px)'; // Adjust based on your header height
+            console.log('ListContainer expanded');
+        }
+    },
+    
+    // Reset listContainer to original height
+    resetListContainer: function() {
+        const listContainer = document.querySelector('.player.open .panel[data-tab="queue"] .listContainer');
+        if (listContainer) {
+            listContainer.style.transition = 'height 0.3s ease';
+            listContainer.style.height = '';
+            console.log('ListContainer reset');
+        }
+    },
+    
+    // Initialize collapsible behavior
+    init: function() {
+        // Set up tab change listeners
+        this.setupTabListeners();
+        
+        // Initial state check
+        this.checkQueueState();
+        
+        console.log('Collapsibles initialized');
+    },
+    
+    // Listen for tab changes
+    setupTabListeners: function() {
+        const dotIndicators = document.querySelectorAll('.dotIndicator');
+        
+        dotIndicators.forEach(indicator => {
+            indicator.addEventListener('click', () => {
+                // Small delay to allow active class to update
+                setTimeout(() => {
+                    this.toggleNowPlaying();
+                }, 50);
+            });
+        });
+        
+        // Also listen for your 30-second timer reset
+        document.addEventListener('queueTabReset', () => {
+            this.toggleNowPlaying();
+        });
+    },
+    
+    // Check current state and apply appropriate styles
+    checkQueueState: function() {
+        const queuePanel = document.querySelector('.player.open .panel[data-tab="queue"]');
+        if (queuePanel && queuePanel.classList.contains('active')) {
+            this.collapseNowPlaying();
+            this.expandListContainer();
+        } else {
+            this.expandNowPlaying();
+            this.resetListContainer();
+        }
+    },
+    
+    // Manual trigger for external use
+    forceCollapse: function() {
+        this.collapseNowPlaying();
+        this.expandListContainer();
+    },
+    
+    // Manual trigger for external use
+    forceExpand: function() {
+        this.expandNowPlaying();
+        this.resetListContainer();
     }
+};
+
   }
 };
 
