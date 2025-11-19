@@ -2539,7 +2539,7 @@ state: {
     },
 
 
-/**    
+/**
     updateListHeights: function() {
       const coverWrapper = this.coverWrapper;
       const recentList = document.getElementById('music-player-recent-list');
@@ -2562,7 +2562,7 @@ state: {
     },
 
 
-
+**/
     collapseHeader() {
       if (musicPlayer.state.isCollapsed || musicPlayer.state.isTransitioning || !this.coverWrapper) return;
       
@@ -2626,7 +2626,7 @@ state: {
         });
       });
     },
-**/
+
 
 
 
