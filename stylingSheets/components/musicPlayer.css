@@ -2060,7 +2060,6 @@
 .player .nowPlaying.collapsed ~ .content .panel[data-tab="playlist"] .list,
 .player .nowPlaying.collapsed ~ .content .panel[data-tab="queue"] .list {
     height: 100%;
-    max-height: none;
     min-height: 0;
     flex: 1;
 }
