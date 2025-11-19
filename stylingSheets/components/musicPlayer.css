@@ -1274,9 +1274,10 @@
 
 
 
+
 .player .miniHeader {
     position: absolute;
-    left: 112px;
+    left: 100px;
     top: 50%;
     transform: translateY(-50%);
     display: flex;
