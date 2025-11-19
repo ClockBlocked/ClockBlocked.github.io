@@ -1776,126 +1776,45 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-/* Smooth transitions for the collapsing elements */
+/* Base transitions */
 .player.open .nowPlaying,
 .player.open .panel .listContainer {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* When queue tab is active - collapse nowPlaying */
-.player.open[data-active-tab="queue"] .nowPlaying {
-  height: 0vh !important;
-  opacity: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-/* When queue tab is active - expand listContainer */
-.player.open[data-active-tab="queue"] .panel[data-tab="queue"] .listContainer {
-  height: calc(100vh - 120px) !important;
-  flex: 1;
-}
-
-/* Reset for other tabs - ensure nowPlaying is visible */
-.player.open[data-active-tab="playing"] .nowPlaying,
-.player.open[data-active-tab="playlist"] .nowPlaying {
-  height: auto;
-  opacity: 1;
-  overflow: visible;
-  pointer-events: auto;
-}
-
-/* Reset listContainer for other tabs */
-.player.open[data-active-tab="playing"] .panel[data-tab="queue"] .listContainer,
-.player.open[data-active-tab="playlist"] .panel[data-tab="queue"] .listContainer {
-  height: auto;
-}
-
-
-
-
-
-
-
-
-
-
-/* Smooth height transition for the entire content area */
-.player.open .content.musicPlayerContent {
-  transition: flex 0.3s ease;
-}
-
-.player.open[data-active-tab="queue"] .content.musicPlayerContent {
-  flex: 1;
-}
-
-
-
-/* Base transitions */
-.player.open .nowPlaying,
-.player.open .panel[data-tab="queue"] .listContainer {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Queue tab active states */
-.player.open[data-active-tab="queue"] .nowPlaying.musicPlayerNowPlaying {
+/* COLLAPSE ALBUM COVER for BOTH Queue AND Recently Played tabs */
+.player.open[data-active-tab="queue"] .nowPlaying.musicPlayerNowPlaying,
+.player.open[data-active-tab="playlist"] .nowPlaying.musicPlayerNowPlaying {
   height: 0vh !important;
   min-height: 0 !important;
   opacity: 0;
   overflow: hidden;
   margin: 0 !important;
   padding: 0 !important;
+  pointer-events: none;
 }
 
-.player.open[data-active-tab="queue"] .panel[data-tab="queue"].active .listContainer {
-  height: calc(100vh - 80px) !important; /* Reduced from 120px */
+/* EXPAND LIST CONTAINER for BOTH Queue AND Recently Played tabs */
+.player.open[data-active-tab="queue"] .panel[data-tab="queue"].active .listContainer,
+.player.open[data-active-tab="playlist"] .panel[data-tab="playlist"].active .listContainer {
+  height: calc(100vh - 80px) !important;
   min-height: calc(100vh - 80px) !important;
   flex: 1 1 auto;
 }
 
-/* Ensure other tabs reset properly */
-.player.open[data-active-tab="playing"] .nowPlaying.musicPlayerNowPlaying,
-.player.open[data-active-tab="playlist"] .nowPlaying.musicPlayerNowPlaying {
+/* Ensure Now Playing tab shows album cover normally */
+.player.open[data-active-tab="playing"] .nowPlaying.musicPlayerNowPlaying {
   height: auto !important;
   opacity: 1;
   overflow: visible;
+  pointer-events: auto;
 }
 
+/* Reset list containers for Now Playing tab */
 .player.open[data-active-tab="playing"] .panel[data-tab="queue"] .listContainer,
-.player.open[data-active-tab="playlist"] .panel[data-tab="queue"] .listContainer {
+.player.open[data-active-tab="playing"] .panel[data-tab="playlist"] .listContainer {
   height: auto !important;
 }
-
-
-
-
-
-/* Debug styles - remove after fixing */
-.player.open::after {
-  content: "Active Tab: " attr(data-active-tab);
-  position: fixed;
-  top: 50px;
-  right: 10px;
-  background: red;
-  color: white;
-  padding: 8px 12px;
-  border-radius: 4px;
-  font-size: 14px;
-  z-index: 10000;
-  font-family: monospace;
-}
-
 
 
 
