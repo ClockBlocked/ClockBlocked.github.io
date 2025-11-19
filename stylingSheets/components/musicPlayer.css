@@ -1842,7 +1842,40 @@
 
 
 
+/* Base transitions */
+.player.open .nowPlaying,
+.player.open .panel[data-tab="queue"] .listContainer {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
+/* Queue tab active states */
+.player.open[data-active-tab="queue"] .nowPlaying.musicPlayerNowPlaying {
+  height: 0vh !important;
+  min-height: 0 !important;
+  opacity: 0;
+  overflow: hidden;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.player.open[data-active-tab="queue"] .panel[data-tab="queue"].active .listContainer {
+  height: calc(100vh - 80px) !important; /* Reduced from 120px */
+  min-height: calc(100vh - 80px) !important;
+  flex: 1 1 auto;
+}
+
+/* Ensure other tabs reset properly */
+.player.open[data-active-tab="playing"] .nowPlaying.musicPlayerNowPlaying,
+.player.open[data-active-tab="playlist"] .nowPlaying.musicPlayerNowPlaying {
+  height: auto !important;
+  opacity: 1;
+  overflow: visible;
+}
+
+.player.open[data-active-tab="playing"] .panel[data-tab="queue"] .listContainer,
+.player.open[data-active-tab="playlist"] .panel[data-tab="queue"] .listContainer {
+  height: auto !important;
+}
 
 
 
