@@ -2135,8 +2135,7 @@
 /* EXPAND LIST CONTAINER for BOTH Queue AND Recently Played tabs */
 .player.open[data-active-tab="queue"] .panel[data-tab="queue"].active .listContainer,
 .player.open[data-active-tab="playlist"] .panel[data-tab="playlist"].active .listContainer {
-  height: calc(100vh - 80px) !important;
-  min-height: calc(100vh - 80px) !important;
+  height: calc(75vh - 80px) !important;
   flex: 1 1 auto;
 }
 
