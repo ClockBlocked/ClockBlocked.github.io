@@ -2114,7 +2114,45 @@
 
 
 
+/* Base transitions */
+.player.open .nowPlaying,
+.player.open .panel .listContainer {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
+/* COLLAPSE ALBUM COVER for BOTH Queue AND Recently Played tabs */
+.player.open[data-active-tab="queue"] .nowPlaying.musicPlayerNowPlaying,
+.player.open[data-active-tab="playlist"] .nowPlaying.musicPlayerNowPlaying {
+  height: 0vh !important;
+  min-height: 0 !important;
+  opacity: 0;
+  overflow: hidden;
+  margin: 0 !important;
+  padding: 0 !important;
+  pointer-events: none;
+}
+
+/* EXPAND LIST CONTAINER for BOTH Queue AND Recently Played tabs */
+.player.open[data-active-tab="queue"] .panel[data-tab="queue"].active .listContainer,
+.player.open[data-active-tab="playlist"] .panel[data-tab="playlist"].active .listContainer {
+  height: calc(100vh - 80px) !important;
+  min-height: calc(100vh - 80px) !important;
+  flex: 1 1 auto;
+}
+
+/* Ensure Now Playing tab shows album cover normally */
+.player.open[data-active-tab="playing"] .nowPlaying.musicPlayerNowPlaying {
+  height: auto !important;
+  opacity: 1;
+  overflow: visible;
+  pointer-events: auto;
+}
+
+/* Reset list containers for Now Playing tab */
+.player.open[data-active-tab="playing"] .panel[data-tab="queue"] .listContainer,
+.player.open[data-active-tab="playing"] .panel[data-tab="playlist"] .listContainer {
+  height: auto !important;
+}
 
 
 
