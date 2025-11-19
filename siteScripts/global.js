@@ -2513,7 +2513,7 @@ state: {
 
     setupObservers() {
       const mutationObserver = new MutationObserver(() => {
-        musicPlayer.state.addListItemInteractions();
+        musicPlayer.collapsibles.addListItemInteractions();
       });
       
       this.panels.forEach(panel => {
@@ -2523,7 +2523,7 @@ state: {
         });
       });
       
-      musicPlayer.state.addListItemInteractions();
+      musicPlayer.collapsibles.addListItemInteractions();
     },
     
     handleTabChange(tabName) {
