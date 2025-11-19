@@ -1301,31 +1301,6 @@
 }
 
 
-.player .coverWrapper.collapsed .nowPlaying {
-  height: 0vh !important;
-  transition: height 0.45s ease;
-}
-
-/* Smooth transitions for collapsible elements */
-.player.open .nowPlaying {
-    transition: height 0.3s ease, opacity 0.3s ease;
-}
-
-.player.open .panel[data-tab="queue"] .listContainer {
-    transition: height 0.3s ease;
-}
-
-/* When nowPlaying is collapsed */
-.player.open .nowPlaying.collapsed {
-    height: 0vh !important;
-    opacity: 0;
-    overflow: hidden;
-}
-
-/* When listContainer is expanded */
-.player.open .panel[data-tab="queue"] .listContainer.expanded {
-    height: calc(100vh - 120px) !important; /* Adjust based on your header height */
-}
 
 
 
@@ -1416,6 +1391,8 @@
 .player .coverWrapper.collapsed .coverGlow {
     opacity: 0;
 }
+
+
 
 .player .panel {
     display: none;
@@ -1810,7 +1787,40 @@
 
 
 
+/* Smooth transitions for the collapsing elements */
+.player.open .nowPlaying,
+.player.open .panel .listContainer {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
+/* When queue tab is active - collapse nowPlaying */
+.player.open[data-active-tab="queue"] .nowPlaying {
+  height: 0vh !important;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* When queue tab is active - expand listContainer */
+.player.open[data-active-tab="queue"] .panel[data-tab="queue"] .listContainer {
+  height: calc(100vh - 120px) !important;
+  flex: 1;
+}
+
+/* Reset for other tabs - ensure nowPlaying is visible */
+.player.open[data-active-tab="playing"] .nowPlaying,
+.player.open[data-active-tab="playlist"] .nowPlaying {
+  height: auto;
+  opacity: 1;
+  overflow: visible;
+  pointer-events: auto;
+}
+
+/* Reset listContainer for other tabs */
+.player.open[data-active-tab="playing"] .panel[data-tab="queue"] .listContainer,
+.player.open[data-active-tab="playlist"] .panel[data-tab="queue"] .listContainer {
+  height: auto;
+}
 
 
 
