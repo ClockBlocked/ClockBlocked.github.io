@@ -1238,6 +1238,9 @@
     margin-right: 0.75rem;
     border: 1.5px solid var(--border-200);
 }
+.player .coverWrapper.collapsed .actions {
+  opacity: 0; visibility: hidden; pointer-events: none;
+}
 
 .player .cover {
     width: 100%;
