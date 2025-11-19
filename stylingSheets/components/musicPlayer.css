@@ -1881,7 +1881,20 @@
 
 
 
-
+/* Debug styles - remove after fixing */
+.player.open::after {
+  content: "Active Tab: " attr(data-active-tab);
+  position: fixed;
+  top: 50px;
+  right: 10px;
+  background: red;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  z-index: 10000;
+  font-family: monospace;
+}
 
 
 
