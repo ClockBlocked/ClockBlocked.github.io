@@ -2885,7 +2885,7 @@ const musicPlayer = {
         this.expandNowPlaying();
         this.resetListContainer();
     }
-};
+}
 
   }
 };
