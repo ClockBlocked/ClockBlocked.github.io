@@ -2482,7 +2482,7 @@ state: {
     },
 
 
-/**    
+
     bindEvents() {
       if (this.coverWrapper) {
         this.coverWrapper.addEventListener('mousedown', (e) => musicPlayer.state.handleHeaderDragStart(e));
@@ -2508,7 +2508,6 @@ state: {
         resizeObserver.observe(this.coverWrapper);
       }      
     },
-**/
 
 
     setupObservers() {
@@ -2539,7 +2538,7 @@ state: {
     },
 
 
-/**
+
     updateListHeights: function() {
       const coverWrapper = this.coverWrapper;
       const recentList = document.getElementById('music-player-recent-list');
@@ -2562,7 +2561,7 @@ state: {
     },
 
 
-**/
+
     collapseHeader() {
       if (musicPlayer.state.isCollapsed || musicPlayer.state.isTransitioning || !this.coverWrapper) return;
       
