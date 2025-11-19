@@ -2427,22 +2427,19 @@ const musicPlayer = {
     }
   },
   
-  state: {
+state: {
     currentTab: 0,
     isCollapsed: false,
     isTransitioning: false,
-    scrollThreshold: 150,
     isDraggingHeader: false,
     dragStartY: 0,
     dragDistance: 0,
-    lastScrollTop: {},
-    scrollTimeout: null,
     transitionTimeout: null,
     
     init() {
       musicPlayer.state.cacheDOMElements();
       musicPlayer.state.injectRequiredHTML();
-      musicPlayer.state.bindEvents();
+//      musicPlayer.state.bindEvents();
       musicPlayer.state.setupObservers();
     },
     
@@ -2483,15 +2480,10 @@ const musicPlayer = {
       
       musicPlayer.state.updateMiniHeaderElements();
     },
-    
+
+
+/**    
     bindEvents() {
-      this.panels.forEach((panel, index) => {
-        const listContainer = panel.querySelector('.listContainer');
-        if (listContainer) {
-          listContainer.addEventListener('scroll', () => musicPlayer.state.handleScroll(listContainer, index));
-        }
-      });
-      
       if (this.coverWrapper) {
         this.coverWrapper.addEventListener('mousedown', (e) => musicPlayer.state.handleHeaderDragStart(e));
         this.coverWrapper.addEventListener('touchstart', (e) => musicPlayer.state.handleHeaderDragStart(e), { passive: false });
@@ -2516,7 +2508,9 @@ const musicPlayer = {
         resizeObserver.observe(this.coverWrapper);
       }      
     },
-    
+**/
+
+
     setupObservers() {
       const mutationObserver = new MutationObserver(() => {
         musicPlayer.state.addListItemInteractions();
@@ -2543,29 +2537,9 @@ const musicPlayer = {
         }
       }
     },
-    
-    handleScroll(listContainer, tabIndex) {
-      const tabName = this.panels[tabIndex]?.dataset.tab;
-      if (musicPlayer.state.isTransitioning || appState.currentTab !== tabName || tabName === MUSIC_PLAYER.tabs.playing) {
-        return;
-      }
-      
-      const currentScrollTop = listContainer.scrollTop;
-      const lastScroll = musicPlayer.state.lastScrollTop[tabName] || 0;
-      const isScrollingDown = currentScrollTop > lastScroll;
-      const scrollDelta = Math.abs(currentScrollTop - lastScroll);
-      
-      musicPlayer.state.lastScrollTop[tabName] = currentScrollTop;
-      
-      if (scrollDelta < 5) return;
-      
-      clearTimeout(musicPlayer.state.scrollTimeout);
-      
-      if (currentScrollTop === 0 && musicPlayer.state.isCollapsed) {
-        musicPlayer.state.expandHeader();
-      }
-    },
-    
+
+
+/**    
     updateListHeights: function() {
       const coverWrapper = this.coverWrapper;
       const recentList = document.getElementById('music-player-recent-list');
@@ -2586,7 +2560,9 @@ const musicPlayer = {
         queueList.style.height = '500px';
       }
     },
-  
+
+
+
     collapseHeader() {
       if (musicPlayer.state.isCollapsed || musicPlayer.state.isTransitioning || !this.coverWrapper) return;
       
@@ -2650,7 +2626,10 @@ const musicPlayer = {
         });
       });
     },
-    
+**/
+
+
+
     updateMiniHeaderElements() {
       if (!this.coverWrapper) return;
       
@@ -2695,7 +2674,9 @@ const musicPlayer = {
       div.textContent = str;
       return div.innerHTML;
     },
-    
+
+
+/**    
     handleHeaderDragStart(e) {
       if (!this.coverWrapper || appState.currentTab === MUSIC_PLAYER.tabs.playing || musicPlayer.state.isTransitioning) return;
       if (e.target.closest('.miniControlBtn')) return;
@@ -2740,37 +2721,16 @@ const musicPlayer = {
       
       musicPlayer.state.dragDistance = 0;
     },
-    
-    addListItemInteractions() {
-      const listItems = document.querySelectorAll('.list-item');
-      
-      listItems.forEach(item => {
-        const artwork = item.querySelector('.item-artwork');
-        if (!artwork) return;
-        
-        let wrapper = artwork.parentElement;
-        if (!wrapper.classList.contains('item-artwork-wrapper')) {
-          wrapper = document.createElement('div');
-          wrapper.className = 'item-artwork-wrapper';
-          artwork.parentNode.insertBefore(wrapper, artwork);
-          wrapper.appendChild(artwork);
-        }
-        
-        if (!wrapper.querySelector('.item-play-overlay')) {
-          const overlay = document.createElement('div');
-          overlay.className = 'item-play-overlay';
-          overlay.innerHTML = '<svg viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>';
-          wrapper.appendChild(overlay);
-        }
-      });
-    },
-    
-    
+**/
+
+
+
     collapsibles: {
         init: function() {
             this.setupTabListeners();
             this.setupActionButtonListeners();
             this.updateActiveTabState();
+            this.addListItemInteractions();
             console.log('Collapsibles initialized - BOTH tabs will collapse album cover');
         },
         
@@ -2857,10 +2817,33 @@ const musicPlayer = {
                 player.setAttribute('data-active-tab', tabName);
                 console.log('Forced tab update to:', tabName);
             }
-        }
+        },
+        
+        addListItemInteractions: function() {
+          const listItems = document.querySelectorAll('.list-item');
+      
+            listItems.forEach(item => {
+            const artwork = item.querySelector('.item-artwork');
+                if (!artwork) return;
+        
+          let wrapper = artwork.parentElement;
+                if (!wrapper.classList.contains('item-artwork-wrapper')) {
+                    wrapper = document.createElement('div');
+                    wrapper.className = 'item-artwork-wrapper';
+                    artwork.parentNode.insertBefore(wrapper, artwork);
+                    wrapper.appendChild(artwork);
+                }
+        
+                if (!wrapper.querySelector('.item-play-overlay')) {
+                  const overlay = document.createElement('div');
+                    overlay.className = 'item-play-overlay';
+                    overlay.innerHTML = '<svg viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>';
+                    wrapper.appendChild(overlay);
+                }
+            });
+        },
     }
-
-  }
+}
 };
 
 const clickables = {
