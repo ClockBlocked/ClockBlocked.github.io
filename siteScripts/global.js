@@ -3263,7 +3263,7 @@ setupListContainers() {
   this.updateMiniHeaderElements();
   
   console.log('List containers setup complete');
-}
+},
 
 // ENHANCED: Paste this to REPLACE your existing bindEvents function
 bindEvents() {
