@@ -3043,7 +3043,7 @@ expandHeader() {
       }, 550);
     });
   });
-}
+},
 
 
 // ENHANCED: Paste this to REPLACE your existing updateListHeights function
