@@ -1788,6 +1788,7 @@ const musicPlayer = {
       }
 
       appState.setCurrentSong(songData);
+      musicPlayer.state.handleTrackChange();
 
       musicPlayer.ui.updateNavbar();
       musicPlayer.ui.updateNowPlaying();
@@ -2841,7 +2842,643 @@ state: {
                 }
             });
         },
+    },
+    
+    
+    
+    
+    
+    // ENHANCED: Paste this to REPLACE your existing updateMiniHeaderElements function
+updateMiniHeaderElements() {
+  if (!this.coverWrapper) return;
+  
+  // Get current track information with fallback selectors
+  const titleElement = QUERY('#music-player-title') || QUERY('.player .title');
+  const artistElement = QUERY('#music-player-artist') || QUERY('.player .artist');
+  
+  // Create or get mini header container
+  let miniHeader = this.coverWrapper.querySelector('.miniHeader');
+  if (!miniHeader) {
+    miniHeader = document.createElement('div');
+    miniHeader.className = 'miniHeader';
+    this.coverWrapper.appendChild(miniHeader);
+  }
+  
+  // Extract text content safely
+  const title = titleElement ? titleElement.textContent.trim() : 'Unknown Track';
+  const artist = artistElement ? artistElement.textContent.trim() : 'Unknown Artist';
+  
+  // ENHANCED: Create mini header with proper structure and immediate visibility fix
+  miniHeader.innerHTML = `
+    <div class="miniTitle" title="${title}">${title}</div>
+    <div class="miniArtist" title="${artist}">${artist}</div>
+  `;
+  
+  // ENHANCED: Force proper positioning and z-index
+  miniHeader.style.cssText += `
+    position: absolute !important;
+    left: 100px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    z-index: 310 !important;
+    max-width: calc(100% - 180px) !important;
+  `;
+  
+  // ENHANCED: If we're on queue/playlist tabs, ensure mini header is visible immediately
+  const currentTab = QUERY('.player')?.getAttribute('data-active-tab');
+  if ((currentTab === 'queue' || currentTab === 'playlist') && this.isCollapsed) {
+    miniHeader.style.opacity = '1';
+    miniHeader.style.pointerEvents = 'auto';
+    miniHeader.style.visibility = 'visible';
+  }
+},
+
+// ENHANCED: Paste this to REPLACE your existing handleTabChange function  
+handleTabChange(tabName) {
+  console.log('Tab changed to:', tabName);
+  
+  // ENHANCED: Update player data attribute for CSS targeting
+  const player = QUERY('.player');
+  if (player) {
+    player.setAttribute('data-active-tab', tabName);
+  }
+  
+  if (tabName === MUSIC_PLAYER.tabs.playlist || tabName === MUSIC_PLAYER.tabs.queue) {
+    // ENHANCED: Force immediate collapse and mini header visibility for list tabs
+    if (!this.isCollapsed && !this.isTransitioning) {
+      this.forceCollapseForListTabs();
+    } else if (this.isCollapsed) {
+      // ENHANCED: If already collapsed, just ensure mini header is visible
+      this.ensureMiniHeaderVisible();
     }
+  } else if (tabName === MUSIC_PLAYER.tabs.playing) {
+    if (this.isCollapsed && !this.isTransitioning) {
+      this.expandHeader();
+    }
+  }
+  
+  // ENHANCED: Update list heights after tab change
+  setTimeout(() => this.updateListHeights(), 50);
+},
+
+// ENHANCED: Add this NEW function (doesn't replace anything)
+forceCollapseForListTabs() {
+  if (!this.coverWrapper) return;
+  
+  console.log('Force collapsing for list tabs');
+  
+  // ENHANCED: Set state immediately
+  this.isCollapsed = true;
+  this.isTransitioning = false;
+  
+  // ENHANCED: Apply collapsed classes immediately
+  this.coverWrapper.classList.add('collapsed');
+  this.coverWrapper.classList.remove('is-collapsing');
+  
+  // ENHANCED: Force proper positioning
+  this.coverWrapper.style.cssText += `
+    height: 100px !important;
+    min-height: 100px !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 300 !important;
+  `;
+  
+  // ENHANCED: Update mini header and make it visible
+  this.updateMiniHeaderElements();
+  this.ensureMiniHeaderVisible();
+},
+
+// ENHANCED: Add this NEW function (doesn't replace anything)
+ensureMiniHeaderVisible() {
+  if (!this.coverWrapper) return;
+  
+  const miniHeader = this.coverWrapper.querySelector('.miniHeader');
+  if (!miniHeader) {
+    this.updateMiniHeaderElements();
+    return;
+  }
+  
+  // ENHANCED: Force mini header visibility
+  miniHeader.style.cssText += `
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    visibility: visible !important;
+  `;
+  
+  console.log('Mini header visibility ensured');
+},
+
+// ENHANCED: Paste this to REPLACE your existing collapseHeader function
+collapseHeader() {
+  if (musicPlayer.state.isCollapsed || musicPlayer.state.isTransitioning || !this.coverWrapper) return;
+  
+  musicPlayer.state.isTransitioning = true;
+  musicPlayer.state.isCollapsed = true;
+  
+  const nowPlayingElement = QUERY('.nowPlaying');
+  
+  requestAnimationFrame(() => {
+    this.coverWrapper.classList.add('is-collapsing');
+    if (nowPlayingElement) {
+      nowPlayingElement.classList.add('is-collapsing');
+    }
+    
+    requestAnimationFrame(() => {
+      this.coverWrapper.classList.add('collapsed');
+      if (nowPlayingElement) {
+        nowPlayingElement.classList.add('collapsed');
+        nowPlayingElement.classList.remove('is-collapsing');
+      }
+      
+      // ENHANCED: Update mini header content and ensure visibility
+      this.updateMiniHeaderElements();
+      this.ensureMiniHeaderVisible();
+      this.updateListHeights();
+      
+      clearTimeout(musicPlayer.state.transitionTimeout);
+      musicPlayer.state.transitionTimeout = setTimeout(() => {
+        this.coverWrapper.classList.remove('is-collapsing');
+        musicPlayer.state.isTransitioning = false;
+      }, 550);
+    });
+  });
+},
+
+// ENHANCED: Paste this to REPLACE your existing expandHeader function  
+expandHeader() {
+  if (!musicPlayer.state.isCollapsed || musicPlayer.state.isTransitioning || !this.coverWrapper) return;
+  
+  musicPlayer.state.isTransitioning = true;
+  musicPlayer.state.isCollapsed = false;
+  
+  const nowPlayingElement = QUERY('.nowPlaying');
+  
+  requestAnimationFrame(() => {
+    this.coverWrapper.classList.add('is-collapsing');
+    if (nowPlayingElement) {
+      nowPlayingElement.classList.add('is-collapsing');
+    }
+    
+    requestAnimationFrame(() => {
+      this.coverWrapper.classList.remove('collapsed');
+      if (nowPlayingElement) {
+        nowPlayingElement.classList.remove('collapsed');
+        nowPlayingElement.classList.remove('is-collapsing');
+      }
+      
+      // ENHANCED: Hide mini header when expanding
+      const miniHeader = this.coverWrapper.querySelector('.miniHeader');
+      if (miniHeader) {
+        miniHeader.style.opacity = '0';
+        miniHeader.style.pointerEvents = 'none';
+      }
+      
+      this.updateListHeights();
+      
+      clearTimeout(musicPlayer.state.transitionTimeout);
+      musicPlayer.state.transitionTimeout = setTimeout(() => {
+        this.coverWrapper.classList.remove('is-collapsing');
+        musicPlayer.state.isTransitioning = false;
+      }, 550);
+    });
+  });
+}
+
+
+// ENHANCED: Paste this to REPLACE your existing updateListHeights function
+updateListHeights: function() {
+  const coverWrapper = this.coverWrapper;
+  const recentList = document.getElementById('music-player-recent-list');
+  const queueList = document.getElementById('music-player-queue-list');
+  
+  if (!coverWrapper || !recentList || !queueList) return;
+  
+  const isCollapsed = coverWrapper.classList.contains('collapsed');
+  const coverHeight = coverWrapper.offsetHeight;
+  const viewportHeight = window.innerHeight;
+  
+  // ENHANCED: Better height calculations accounting for mini header
+  if (isCollapsed) {
+    const availableHeight = viewportHeight - coverHeight - 120; // Extra padding for mini header
+    recentList.style.height = `${Math.max(availableHeight, 280)}px`;
+    queueList.style.height = `${Math.max(availableHeight, 280)}px`;
+    
+    // ENHANCED: Force proper list container styling
+    const recentContainer = recentList.closest('.listContainer');
+    const queueContainer = queueList.closest('.listContainer');
+    
+    if (recentContainer) {
+      recentContainer.style.cssText += `
+        max-height: calc(100vh - ${coverHeight}px) !important;
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+      `;
+    }
+    
+    if (queueContainer) {
+      queueContainer.style.cssText += `
+        max-height: calc(100vh - ${coverHeight}px) !important;
+        margin-top: 0 !important; 
+        padding-top: 0 !important;
+      `;
+    }
+  } else {
+    recentList.style.height = '500px';
+    queueList.style.height = '500px';
+    
+    // ENHANCED: Reset container styling when expanded
+    const recentContainer = recentList.closest('.listContainer');
+    const queueContainer = queueList.closest('.listContainer');
+    
+    if (recentContainer) {
+      recentContainer.style.cssText += `
+        max-height: 75svh !important;
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+      `;
+    }
+    
+    if (queueContainer) {
+      queueContainer.style.cssText += `
+        max-height: 75svh !important;
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+      `;
+    }
+  }
+  
+  console.log('List heights updated, collapsed:', isCollapsed);
+},
+
+// ENHANCED: Add this NEW initialization function (doesn't replace anything)
+initializeMiniHeader() {
+  if (!this.coverWrapper) return;
+  
+  console.log('Initializing mini header system');
+  
+  // ENHANCED: Ensure proper cover wrapper styling
+  this.coverWrapper.style.cssText += `
+    position: relative !important;
+    overflow: visible !important;
+  `;
+  
+  // ENHANCED: Create initial mini header
+  this.updateMiniHeaderElements();
+  
+  // ENHANCED: Check current tab state and apply appropriate styling
+  const player = QUERY('.player');
+  const currentTab = player?.getAttribute('data-active-tab');
+  
+  if (currentTab === 'queue' || currentTab === 'playlist') {
+    setTimeout(() => {
+      this.forceCollapseForListTabs();
+    }, 100);
+  }
+  
+  // ENHANCED: Add click handler for mini header expansion
+  const miniHeaderClickHandler = (e) => {
+    if (this.isCollapsed && !this.isTransitioning) {
+      const currentTab = QUERY('.player')?.getAttribute('data-active-tab');
+      if (currentTab !== 'playing') {
+        // Switch to playing tab when mini header is clicked
+        if (window.musicPlayer && window.musicPlayer.mainPlayer) {
+          window.musicPlayer.mainPlayer.switchTab('playing');
+        }
+      }
+    }
+  };
+  
+  // ENHANCED: Bind click handler to cover wrapper
+  this.coverWrapper.addEventListener('click', miniHeaderClickHandler);
+},
+
+// ENHANCED: Add this NEW function for better scroll handling (doesn't replace anything)
+enhancedScrollHandler(listContainer, tabIndex) {
+  // ENHANCED: Skip scroll handling for queue/playlist tabs - they should stay collapsed
+  const currentTab = QUERY('.player')?.getAttribute('data-active-tab');
+  if (currentTab === 'queue' || currentTab === 'playlist') {
+    // ENHANCED: Ensure these tabs stay collapsed regardless of scroll
+    if (!this.isCollapsed) {
+      this.forceCollapseForListTabs();
+    }
+    return;
+  }
+  
+  // ENHANCED: Continue with normal scroll handling for other tabs
+  if (this.isTransitioning || this.currentTab !== tabIndex || tabIndex === 0) {
+    return;
+  }
+
+  const currentScrollTop = listContainer.scrollTop;
+  const isScrollingDown = currentScrollTop > this.lastScrollTop;
+  const scrollDelta = Math.abs(currentScrollTop - this.lastScrollTop);
+  
+  this.lastScrollTop = currentScrollTop;
+  
+  if (scrollDelta < 5) return;
+  
+  clearTimeout(this.scrollTimeout);
+  
+  this.scrollTimeout = setTimeout(() => {
+    if (currentScrollTop > this.scrollThreshold && isScrollingDown && !this.isCollapsed) {
+      this.collapseHeader();
+    } 
+    else if (currentScrollTop < 50 && !isScrollingDown && this.isCollapsed) {
+      this.expandHeader();
+    }
+  }, 50);
+},
+
+// ENHANCED: Add this NEW function for tab state management (doesn't replace anything)
+updateTabState(tabName) {
+  const player = QUERY('.player');
+  if (!player) return;
+  
+  // ENHANCED: Update data attribute for CSS targeting
+  player.setAttribute('data-active-tab', tabName);
+  
+  // ENHANCED: Apply immediate visual changes for list tabs
+  if (tabName === 'queue' || tabName === 'playlist') {
+    // ENHANCED: Force sticky header positioning
+    if (this.coverWrapper) {
+      this.coverWrapper.style.cssText += `
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 300 !important;
+      `;
+    }
+  }
+  
+  console.log('Tab state updated to:', tabName);
+},
+
+// ENHANCED: Add this NEW function for cleanup (doesn't replace anything) 
+cleanupMiniHeader() {
+  const miniHeaders = document.querySelectorAll('.miniHeader');
+  miniHeaders.forEach(header => {
+    if (header.parentNode !== this.coverWrapper) {
+      header.remove();
+    }
+  });
+  
+  // ENHANCED: Ensure only one mini header exists
+  if (this.coverWrapper) {
+    const existingHeaders = this.coverWrapper.querySelectorAll('.miniHeader');
+    if (existingHeaders.length > 1) {
+      for (let i = 1; i < existingHeaders.length; i++) {
+        existingHeaders[i].remove();
+      }
+    }
+  }
+},
+
+// ENHANCED: Paste this to REPLACE your existing setupListContainers function
+setupListContainers() {
+  const panels = document.querySelectorAll('.player .panel');
+  
+  panels.forEach(panel => {
+    const list = panel.querySelector('.musicPlayerList');
+    if (list && !list.parentElement.classList.contains('listContainer')) {
+      const listContainer = document.createElement('div');
+      listContainer.className = 'listContainer';
+      
+      // ENHANCED: Add proper styling to list container
+      listContainer.style.cssText = `
+        flex: 1 !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        position: relative !important;
+        min-height: 0 !important;
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+      `;
+      
+      list.parentNode.insertBefore(listContainer, list);
+      listContainer.appendChild(list);
+    }
+  });
+  
+  // ENHANCED: Update mini header after container setup
+  this.updateMiniHeaderElements();
+  
+  console.log('List containers setup complete');
+}
+
+// ENHANCED: Paste this to REPLACE your existing bindEvents function
+bindEvents() {
+  if (this.coverWrapper) {
+    this.coverWrapper.addEventListener('mousedown', (e) => musicPlayer.state.handleHeaderDragStart(e));
+    this.coverWrapper.addEventListener('touchstart', (e) => musicPlayer.state.handleHeaderDragStart(e), { passive: false });
+    
+    // ENHANCED: Improved click handler with mini header support
+    this.coverWrapper.addEventListener('click', (e) => {
+      const currentTab = QUERY('.player')?.getAttribute('data-active-tab');
+      
+      if (this.isCollapsed && currentTab !== MUSIC_PLAYER.tabs.playing && !this.isTransitioning) {
+        // ENHANCED: Check if click is on mini control button
+        if (e.target.closest('.miniControlBtn')) return;
+        
+        // ENHANCED: Click on mini header should switch to playing tab
+        if (e.target.closest('.miniHeader') || e.target.closest('.coverImageContainer')) {
+          if (window.musicPlayer && window.musicPlayer.mainPlayer && window.musicPlayer.mainPlayer.switchTab) {
+            window.musicPlayer.mainPlayer.switchTab(MUSIC_PLAYER.tabs.playing);
+          }
+          return;
+        }
+        
+        // ENHANCED: Regular click expands header
+        this.expandHeader();
+      }
+    });
+  }
+  
+  document.addEventListener('mousemove', (e) => musicPlayer.state.handleHeaderDragMove(e));
+  document.addEventListener('touchmove', (e) => musicPlayer.state.handleHeaderDragMove(e), { passive: false });
+  document.addEventListener('mouseup', () => musicPlayer.state.handleHeaderDragEnd());
+  document.addEventListener('touchend', () => musicPlayer.state.handleHeaderDragEnd());
+  
+  // ENHANCED: Improved resize observer with mini header updates
+  if (this.coverWrapper) {
+    const resizeObserver = new ResizeObserver(() => {
+      this.updateListHeights();
+      
+      // ENHANCED: Update mini header positioning on resize
+      const miniHeader = this.coverWrapper.querySelector('.miniHeader');
+      if (miniHeader && this.isCollapsed) {
+        this.ensureMiniHeaderVisible();
+      }
+    });
+    resizeObserver.observe(this.coverWrapper);
+  }      
+},
+
+// ENHANCED: Add this NEW function for proper initialization sequence (doesn't replace anything)
+initializeComplete() {
+  console.log('Starting complete mini header initialization');
+  
+  // ENHANCED: Setup in correct order
+  this.setupListContainers();
+  this.initializeMiniHeader();
+  this.bindEvents();
+  
+  // ENHANCED: Setup mutation observer for dynamic content
+  this.setupEnhancedObservers();
+  
+  // ENHANCED: Initial state check
+  setTimeout(() => {
+    const currentTab = QUERY('.player')?.getAttribute('data-active-tab');
+    if (currentTab === 'queue' || currentTab === 'playlist') {
+      this.forceCollapseForListTabs();
+    }
+    this.updateListHeights();
+  }, 200);
+  
+  console.log('Mini header initialization complete');
+},
+
+// ENHANCED: Add this NEW function for enhanced observers (doesn't replace anything)
+setupEnhancedObservers() {
+  const mutationObserver = new MutationObserver(() => {
+    // ENHANCED: Clean up any duplicate mini headers
+    this.cleanupMiniHeader();
+    
+    // ENHANCED: Ensure list containers are properly set up
+    this.setupListContainers();
+    
+    // ENHANCED: Update mini header content if track changes
+    this.updateMiniHeaderElements();
+    
+    // ENHANCED: Maintain collapsed state for list tabs
+    const currentTab = QUERY('.player')?.getAttribute('data-active-tab');
+    if ((currentTab === 'queue' || currentTab === 'playlist') && !this.isCollapsed) {
+      setTimeout(() => this.forceCollapseForListTabs(), 50);
+    }
+  });
+  
+  // ENHANCED: Observe all panels for changes
+  this.panels.forEach(panel => {
+    mutationObserver.observe(panel, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class', 'data-tab']
+    });
+  });
+  
+  // ENHANCED: Observe player for attribute changes
+  const player = QUERY('.player');
+  if (player) {
+    mutationObserver.observe(player, {
+      attributes: true,
+      attributeFilter: ['data-active-tab', 'class']
+    });
+  }
+  
+  console.log('Enhanced observers setup complete');
+},
+
+// ENHANCED: Add this NEW function for track change handling (doesn't replace anything)
+handleTrackChange() {
+  console.log('Track changed, updating mini header');
+  
+  // ENHANCED: Update mini header content
+  this.updateMiniHeaderElements();
+  
+  // ENHANCED: Ensure visibility if we're on list tabs
+  const currentTab = QUERY('.player')?.getAttribute('data-active-tab');
+  if ((currentTab === 'queue' || currentTab === 'playlist') && this.isCollapsed) {
+    this.ensureMiniHeaderVisible();
+  }
+},
+
+// ENHANCED: Add this NEW function for window events (doesn't replace anything)
+handleWindowEvents() {
+  // ENHANCED: Handle window resize
+  window.addEventListener('resize', () => {
+    clearTimeout(this.resizeTimeout);
+    this.resizeTimeout = setTimeout(() => {
+      this.updateListHeights();
+      if (this.isCollapsed) {
+        this.ensureMiniHeaderVisible();
+      }
+    }, 150);
+  });
+  
+  // ENHANCED: Handle page visibility changes
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && this.isCollapsed) {
+      setTimeout(() => {
+        this.ensureMiniHeaderVisible();
+      }, 100);
+    }
+  });
+  
+  // ENHANCED: Handle orientation changes on mobile
+  window.addEventListener('orientationchange', () => {
+    setTimeout(() => {
+      this.updateListHeights();
+      if (this.isCollapsed) {
+        this.ensureMiniHeaderVisible();
+      }
+    }, 300);
+  });
+},
+
+// ENHANCED: Add this NEW function for debugging (doesn't replace anything)
+debugMiniHeader() {
+  const coverWrapper = this.coverWrapper;
+  const miniHeader = coverWrapper?.querySelector('.miniHeader');
+  const currentTab = QUERY('.player')?.getAttribute('data-active-tab');
+  
+  console.log('=== Mini Header Debug Info ===');
+  console.log('Cover Wrapper:', !!coverWrapper);
+  console.log('Mini Header:', !!miniHeader);
+  console.log('Is Collapsed:', this.isCollapsed);
+  console.log('Is Transitioning:', this.isTransitioning);
+  console.log('Current Tab:', currentTab);
+  
+  if (miniHeader) {
+    const styles = window.getComputedStyle(miniHeader);
+    console.log('Mini Header Opacity:', styles.opacity);
+    console.log('Mini Header Visibility:', styles.visibility);
+    console.log('Mini Header Z-Index:', styles.zIndex);
+  }
+  
+  if (coverWrapper) {
+    console.log('Cover Wrapper Classes:', coverWrapper.className);
+    console.log('Cover Wrapper Height:', coverWrapper.offsetHeight);
+  }
+  
+  console.log('=== End Debug Info ===');
+},
+
+// ENHANCED: Add this NEW function for emergency reset (doesn't replace anything)
+emergencyReset() {
+  console.log('Emergency mini header reset');
+  
+  // ENHANCED: Reset all states
+  this.isCollapsed = false;
+  this.isTransitioning = false;
+  
+  // ENHANCED: Clean up classes
+  if (this.coverWrapper) {
+    this.coverWrapper.classList.remove('collapsed', 'is-collapsing');
+    this.coverWrapper.style.cssText = '';
+  }
+  
+  // ENHANCED: Remove all mini headers
+  document.querySelectorAll('.miniHeader').forEach(header => header.remove());
+  
+  // ENHANCED: Reinitialize
+  setTimeout(() => {
+    this.initializeComplete();
+  }, 100);
+}
+
+// ENHANCED: Add these NEW properties to track timeouts (add to your state object properties)
+// resizeTimeout: null,
+// Add the above line to your existing state properties if you don't already have it
 }
 };
 
@@ -3570,6 +4207,7 @@ const app = {
         notifications.init();
         
         musicPlayer.ui.initialize();
+        musicPlayer.state.initializeComplete();
 
         navigation.initialize();
         homePage.initialize();
