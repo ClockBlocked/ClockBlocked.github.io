@@ -2644,7 +2644,18 @@
 ***********/
 
 
+.listContainer.expandHeight {
+    height: calc(100svh - 100px) !important;
+    flex: 1 !important;
+    min-height: 0 !important;
+    margin-top: 100px !important;
+}
 
+.player .coverWrapper.collapsed ~ .content .musicPlayerPanel[data-tab="playlist"].active .listContainer.expandHeight,
+.player .coverWrapper.collapsed ~ .content .musicPlayerPanel[data-tab="queue"].active .listContainer.expandHeight {
+    height: 100% !important;
+    margin-top: 0 !important;
+}
 
 
 
