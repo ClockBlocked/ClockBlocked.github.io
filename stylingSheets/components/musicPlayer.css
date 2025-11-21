@@ -1169,265 +1169,10 @@
 *
 **/
 
-.player .main {
-    padding: 0 0.5rem 0.45rem;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    flex: 1;
-    overflow: hidden;
-    min-height: 0;
-}
-
-.player .coverWrapper {
-    position: relative;
-    width: 100%;
-    height: 40vh;
-    min-height: 280px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    overflow: hidden;
-    border-radius: 0 0 12px 12px;
-    flex-shrink: 0;
-    background: #1a1f24;
-    transition: none;
-    will-change: auto;
-}
-
-.player .coverWrapper.is-collapsing {
-    transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.player .coverWrapper.collapsed {
-    height: 100px;
-    min-height: 100px;
-    position: sticky;
-    top: 0;
-    z-index: 200;
-    border-radius: 0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-.player .coverImageContainer {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 2;
-    transition: none;
-    width: 100%;
-}
-
-.player .coverWrapper.is-collapsing .coverImageContainer {
-    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-
-.player .coverWrapper.collapsed .actions {
-  opacity: 0; visibility: hidden; pointer-events: none;
-}
-
-.player .cover {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center center;
-    border-radius: 0;
-    background: #1a1f24;
-    display: block;
-    transition: none;
-}
-
-.player .coverWrapper.is-collapsing .cover {
-    transition: border-radius 0.35s cubic-bezier(0.4, 0, 0.2, 1), object-fit 0.45s ease-in-out;
-}
-
-.player .coverWrapper.collapsed .cover {
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-    object-fit: cover;
-}
-
-.player .coverWrapper.collapsed .coverImageContainer {
-    position: absolute;
-    left: 16px;
-    top: 50%;
-    width: 60px;
-    height: 60px;
-    transform: translateY(-50%);
-    inset: auto;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 1.5px solid var(--border-200);
-}
-
-.player .coverWrapper.collapsed .cover {
-    border-radius: 50%;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-    object-fit: cover;
-    width: 100%;
-    height: 100%;
-}
 
 
 
 
-.player .miniHeader {
-    position: absolute;
-    left: 100px;
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 4px;
-    opacity: 0;
-    pointer-events: none;
-    max-width: calc(100% - 180px);
-    z-index: 3;
-    transition: none;
-}
-
-.player .coverWrapper.is-collapsing .miniHeader {
-    transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.player .coverWrapper.collapsed .miniHeader {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-
-
-
-
-
-.player .miniTitle {
-    font-size: 15px;
-    font-weight: 700;
-    color: #fff;
-    margin: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.player .miniArtist {
-    font-size: 13px;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.7);
-    margin: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.player .miniControls {
-    position: absolute;
-    right: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    opacity: 0;
-    pointer-events: none;
-    z-index: 3;
-    transition: none;
-}
-
-.player .coverWrapper.is-collapsing .miniControls {
-    transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.player .coverWrapper.collapsed .miniControls {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-.player .miniControlBtn {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.player .miniControlBtn:hover {
-    background: rgba(255, 255, 255, 0.25);
-    transform: scale(1.05);
-}
-
-.player .miniControlBtn svg {
-    width: 18px;
-    height: 18px;
-    color: #fff;
-}
-
-.player .coverGlow {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at center, rgba(139, 92, 246, 0.3) 0%, rgba(59, 130, 246, 0.2) 30%, transparent 70%);
-    filter: blur(60px);
-    opacity: 0.6;
-    z-index: 1;
-    pointer-events: none;
-    transition: none;
-}
-
-.player .coverWrapper.is-collapsing .coverGlow {
-    transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.player .coverWrapper.collapsed .coverGlow {
-    opacity: 0;
-}
-
-
-
-.player .panel {
-    display: none;
-    flex-direction: column;
-    flex: 1;
-    position: relative;
-    animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    min-height: 0;
-    overflow: hidden;
-}
-
-.player .panel.active {
-    display: flex;
-}
-
-.player .listContainer {
-    flex: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
-    position: relative;
-    overflow-anchor: none;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-}
-
-.list {
-    list-style: none;
-    padding: 16px 24px 40px;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    overflow-y: auto;
-}
 
 .list::-webkit-scrollbar {
     width: 6px;
@@ -1725,6 +1470,629 @@
 
 
 
+.player .main {
+    padding: 0 0.5rem 0.45rem;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
+}
+
+.player .coverWrapper {
+    position: relative;
+    width: 100%;
+    height: 40vh;
+    min-height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    overflow: hidden;
+    border-radius: 0 0 12px 12px;
+    flex-shrink: 0;
+    background: #1a1f24;
+    transition: none;
+    will-change: auto;
+}
+
+.player .coverWrapper.is-collapsing {
+    transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.player .coverWrapper.collapsed {
+    height: 100px;
+    min-height: 100px;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    border-radius: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.player .coverImageContainer {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    transition: none;
+    width: 100%;
+}
+
+.player .coverWrapper.is-collapsing .coverImageContainer {
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.player .coverWrapper.collapsed .actions {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.player .cover {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+    border-radius: 0;
+    background: #1a1f24;
+    display: block;
+    transition: none;
+}
+
+.player .coverWrapper.is-collapsing .cover {
+    transition: border-radius 0.35s cubic-bezier(0.4, 0, 0.2, 1), object-fit 0.45s ease-in-out;
+}
+
+.player .coverWrapper.collapsed .cover {
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    object-fit: cover;
+}
+
+.player .coverWrapper.collapsed .coverImageContainer {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    width: 60px;
+    height: 60px;
+    transform: translateY(-50%);
+    inset: auto;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 1.5px solid var(--border-200);
+}
+
+.player .coverWrapper.collapsed .cover {
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+}
+
+.player .miniHeader {
+    position: absolute;
+    left: 100px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    opacity: 0;
+    pointer-events: none;
+    max-width: calc(100% - 180px);
+    z-index: 3;
+    transition: none;
+}
+
+.player .coverWrapper.is-collapsing .miniHeader {
+    transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.player .coverWrapper.collapsed .miniHeader {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.player .miniTitle {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.player .miniArtist {
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.player .miniControls {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 3;
+    transition: none;
+}
+
+.player .coverWrapper.is-collapsing .miniControls {
+    transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.player .coverWrapper.collapsed .miniControls {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.player .miniControlBtn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.player .miniControlBtn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(1.05);
+}
+
+.player .miniControlBtn svg {
+    width: 18px;
+    height: 18px;
+    color: #fff;
+}
+
+.player .coverGlow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(139, 92, 246, 0.3) 0%, rgba(59, 130, 246, 0.2) 30%, transparent 70%);
+    filter: blur(60px);
+    opacity: 0.6;
+    z-index: 1;
+    pointer-events: none;
+    transition: none;
+}
+
+.player .coverWrapper.is-collapsing .coverGlow {
+    transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.player .coverWrapper.collapsed .coverGlow {
+    opacity: 0;
+}
+
+.player .panel {
+    display: none;
+    flex-direction: column;
+    flex: 1;
+    position: relative;
+    animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    min-height: 0;
+    overflow: hidden;
+}
+
+.player .panel.active {
+    display: flex;
+}
+
+.player .listContainer {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+    overflow-anchor: none;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.list {
+    list-style: none;
+    padding: 16px 24px 40px;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.player .nowPlaying {
+    position: relative;
+    width: 100%;
+    height: 40vh;
+    min-height: 280px;
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0;
+    flex-shrink: 0;
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    transition: opacity 0.45s cubic-bezier(0.34, 1.26, 0.64, 1), 
+                transform 0.45s cubic-bezier(0.34, 1.26, 0.64, 1),
+                visibility 0s linear 0s,
+                display 0s linear 0s;
+    will-change: opacity, transform;
+}
+
+.player .nowPlaying.collapsed {
+    opacity: 0;
+    visibility: hidden;
+    display: none;
+    transform: translateY(-30px);
+    height: 0;
+    min-height: 0;
+    margin-bottom: 0;
+    overflow: hidden;
+    pointer-events: none;
+    transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                height 0.45s cubic-bezier(0.34, 1.26, 0.64, 1),
+                visibility 0s linear 0.35s,
+                display 0s linear 0.45s;
+}
+
+.player .nowPlaying.is-collapsing {
+    transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                height 0.45s cubic-bezier(0.34, 1.26, 0.64, 1),
+                margin 0.45s cubic-bezier(0.34, 1.26, 0.64, 1),
+                visibility 0s linear 0s,
+                display 0s linear 0s;
+}
+
+.player .coverWrapper.is-collapsing {
+    transition: height 0.45s cubic-bezier(0.34, 1.26, 0.64, 1);
+}
+
+.player .coverWrapper.collapsed {
+    height: 88px;
+    min-height: 88px;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    border-radius: 0;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+}
+
+.player .coverWrapper.is-collapsing .coverImageContainer {
+    transition: all 0.45s cubic-bezier(0.34, 1.26, 0.64, 1);
+}
+
+.player .coverWrapper.collapsed .coverImageContainer {
+    position: absolute;
+    left: 16px !important;
+    top: 50%;
+    width: 64px;
+    height: 64px;
+    transform: translateY(-50%);
+    inset: auto;
+}
+
+.player .coverWrapper.is-collapsing .cover {
+    transition: border-radius 0.45s cubic-bezier(0.34, 1.26, 0.64, 1),
+                object-fit 0.5s cubic-bezier(0.34, 1.26, 0.64, 1);
+}
+
+.player .coverWrapper.collapsed .cover {
+    border-radius: 50%;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
+    object-fit: cover;
+}
+
+.player .coverWrapper.is-collapsing .miniHeader {
+    transition: opacity 0.45s cubic-bezier(0.34, 1.26, 0.64, 1) 0.15s;
+}
+
+.player .coverWrapper.collapsed .miniHeader {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.player .coverWrapper.is-collapsing .miniControls {
+    transition: opacity 0.45s cubic-bezier(0.34, 1.26, 0.64, 1) 0.15s;
+}
+
+.player .coverWrapper.collapsed .miniControls {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.player .content .panel[data-tab="playlist"],
+.player .content .panel[data-tab="queue"] {
+    display: none;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+    transition: opacity 0.45s cubic-bezier(0.34, 1.26, 0.64, 1),
+                transform 0.45s cubic-bezier(0.34, 1.26, 0.64, 1),
+                visibility 0s linear 0.45s;
+}
+
+.player .content .panel[data-tab="playlist"].active,
+.player .content .panel[data-tab="queue"].active {
+    display: flex;
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    transition: opacity 0.45s cubic-bezier(0.34, 1.26, 0.64, 1) 0.1s,
+                transform 0.45s cubic-bezier(0.34, 1.26, 0.64, 1) 0.1s,
+                visibility 0s linear 0s;
+}
+
+.player .content .panel[data-tab="playlist"] .listContainer,
+.player .content .panel[data-tab="queue"] .listContainer {
+    flex: 0 0 auto;
+    max-height: 75svh;
+    min-height: 280px;
+    overflow-y: auto;
+    transition: none;
+}
+
+.player .nowPlaying.is-collapsing ~ .content .panel[data-tab="playlist"] .listContainer,
+.player .nowPlaying.is-collapsing ~ .content .panel[data-tab="queue"] .listContainer {
+    transition: flex 0.45s cubic-bezier(0.34, 1.26, 0.64, 1),
+                max-height 0.45s cubic-bezier(0.34, 1.26, 0.64, 1);
+}
+
+.player .nowPlaying.collapsed ~ .content .panel[data-tab="playlist"] .listContainer,
+.player .nowPlaying.collapsed ~ .content .panel[data-tab="queue"] .listContainer {
+    flex: 1;
+    max-height: none;
+    min-height: 0;
+}
+
+.player .content .panel[data-tab="playlist"] .list,
+.player .content .panel[data-tab="queue"] .list {
+    height: auto;
+    max-height: 100%;
+    min-height: 280px;
+    overflow-y: auto;
+    flex: 0 0 auto;
+}
+
+.player .nowPlaying.is-collapsing ~ .content .panel[data-tab="playlist"] .list,
+.player .nowPlaying.is-collapsing ~ .content .panel[data-tab="queue"] .list {
+    transition: height 0.45s cubic-bezier(0.34, 1.26, 0.64, 1),
+                max-height 0.45s cubic-bezier(0.34, 1.26, 0.64, 1),
+                flex 0.45s cubic-bezier(0.34, 1.26, 0.64, 1);
+}
+
+.player .nowPlaying.collapsed ~ .content .panel[data-tab="playlist"] .list,
+.player .nowPlaying.collapsed ~ .content .panel[data-tab="queue"] .list {
+    height: 100%;
+    max-height: none;
+    min-height: 0;
+    flex: 1;
+}
+
+.player .nowPlaying.collapsed ~ .content .panel.active {
+    flex: 1;
+    min-height: 0;
+}
+
+.player.open .coverWrapper.collapsed ~ .content .panel[data-tab="playlist"].active,
+.player.open .coverWrapper.collapsed ~ .content .panel[data-tab="queue"].active {
+    margin-top: 100px;
+    height: calc(100svh - 100px);
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.player.open .coverWrapper.collapsed ~ .content .panel[data-tab="playlist"].active .listContainer,
+.player.open .coverWrapper.collapsed ~ .content .panel[data-tab="queue"].active .listContainer {
+    height: 100%;
+    margin-top: 0;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.player.open .coverWrapper.collapsed ~ .content .panel[data-tab="playlist"].active .list,
+.player.open .coverWrapper.collapsed ~ .content .panel[data-tab="queue"].active .list {
+    height: 100%;
+    max-height: none;
+}
+
+@media (max-width: 480px) {
+    .player .coverWrapper.collapsed {
+        height: 80px;
+        min-height: 80px;
+    }
+
+    .player .coverWrapper.collapsed .coverImageContainer {
+        left: 12px !important;
+        width: 56px;
+        height: 56px;
+    }
+
+    .player .miniHeader {
+        left: 80px;
+        max-width: calc(100% - 140px);
+    }
+
+    .player .miniTitle {
+        font-size: 14px;
+    }
+
+    .player .miniArtist {
+        font-size: 12px;
+    }
+
+    .player .nowPlaying {
+        height: 35vh;
+        min-height: 240px;
+    }
+
+    .player.open .coverWrapper.collapsed ~ .content .panel[data-tab="playlist"].active,
+    .player.open .coverWrapper.collapsed ~ .content .panel[data-tab="queue"].active {
+        margin-top: 80px;
+        height: calc(100svh - 80px);
+    }
+}
+
+
+
+
+/******* BEFORE ********
+
+.player .main {
+    padding: 0 0.5rem 0.45rem;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
+}
+
+.player .coverWrapper {
+    position: relative;
+    width: 100%;
+    height: 40vh;
+    min-height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    overflow: hidden;
+    border-radius: 0 0 12px 12px;
+    flex-shrink: 0;
+    background: #1a1f24;
+    transition: none;
+    will-change: auto;
+}
+
+.player .coverWrapper.is-collapsing {
+    transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.player .coverWrapper.collapsed {
+    height: 100px;
+    min-height: 100px;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    border-radius: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.player .coverImageContainer {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    transition: none;
+    width: 100%;
+}
+
+.player .coverWrapper.is-collapsing .coverImageContainer {
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
+.player .coverWrapper.collapsed .actions {
+  opacity: 0; visibility: hidden; pointer-events: none;
+}
+
+.player .cover {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+    border-radius: 0;
+    background: #1a1f24;
+    display: block;
+    transition: none;
+}
+
+.player .coverWrapper.is-collapsing .cover {
+    transition: border-radius 0.35s cubic-bezier(0.4, 0, 0.2, 1), object-fit 0.45s ease-in-out;
+}
+
+.player .coverWrapper.collapsed .cover {
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    object-fit: cover;
+}
+
+.player .coverWrapper.collapsed .coverImageContainer {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    width: 60px;
+    height: 60px;
+    transform: translateY(-50%);
+    inset: auto;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 1.5px solid var(--border-200);
+}
+
+.player .coverWrapper.collapsed .cover {
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+}
+
+
+
+
+.player .miniHeader {
+    position: absolute;
+    left: 100px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    opacity: 0;
+    pointer-events: none;
+    max-width: calc(100% - 180px);
+    z-index: 3;
+    transition: none;
+}
+
+.player .coverWrapper.is-collapsing .miniHeader {
+    transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.player .coverWrapper.collapsed .miniHeader {
+    opacity: 1;
+    pointer-events: auto;
+}
 
 
 
@@ -1732,11 +2100,129 @@
 
 
 
+.player .miniTitle {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.player .miniArtist {
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.player .miniControls {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 3;
+    transition: none;
+}
+
+.player .coverWrapper.is-collapsing .miniControls {
+    transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.player .coverWrapper.collapsed .miniControls {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.player .miniControlBtn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.player .miniControlBtn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(1.05);
+}
+
+.player .miniControlBtn svg {
+    width: 18px;
+    height: 18px;
+    color: #fff;
+}
+
+.player .coverGlow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(139, 92, 246, 0.3) 0%, rgba(59, 130, 246, 0.2) 30%, transparent 70%);
+    filter: blur(60px);
+    opacity: 0.6;
+    z-index: 1;
+    pointer-events: none;
+    transition: none;
+}
+
+.player .coverWrapper.is-collapsing .coverGlow {
+    transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.player .coverWrapper.collapsed .coverGlow {
+    opacity: 0;
+}
 
 
 
+.player .panel {
+    display: none;
+    flex-direction: column;
+    flex: 1;
+    position: relative;
+    animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    min-height: 0;
+    overflow: hidden;
+}
 
+.player .panel.active {
+    display: flex;
+}
 
+.player .listContainer {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+    overflow-anchor: none;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.list {
+    list-style: none;
+    padding: 16px 24px 40px;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow-y: auto;
+}
 
 
 
@@ -1948,7 +2434,9 @@
     height: 18px;
     color: rgba(255, 255, 255, 0.9);
 }
-/**
+
+
+*********
 .player .nowPlaying {
     position: relative;
     width: 100%;
@@ -1993,7 +2481,7 @@
         margin 0.45s cubic-bezier(0.34, 1.26, 0.64, 1),
         visibility 0s linear 0s;
 }
-**/
+*********
 
 .player .content .panel[data-tab="playlist"],
 .player .content .panel[data-tab="queue"] {
@@ -2114,13 +2602,13 @@
 
 
 
-/* Base transitions */
+
 .player.open .nowPlaying,
 .player.open .panel .listContainer {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* COLLAPSE ALBUM COVER for BOTH Queue AND Recently Played tabs */
+
 .player.open[data-active-tab="queue"] .nowPlaying.musicPlayerNowPlaying,
 .player.open[data-active-tab="playlist"] .nowPlaying.musicPlayerNowPlaying {
   height: 0vh !important;
@@ -2132,14 +2620,13 @@
   pointer-events: none;
 }
 
-/* EXPAND LIST CONTAINER for BOTH Queue AND Recently Played tabs */
 .player.open[data-active-tab="queue"] .panel[data-tab="queue"].active .listContainer,
 .player.open[data-active-tab="playlist"] .panel[data-tab="playlist"].active .listContainer {
   height: calc(75vh - 80px) !important;
   flex: 1 1 auto;
 }
 
-/* Ensure Now Playing tab shows album cover normally */
+
 .player.open[data-active-tab="playing"] .nowPlaying.musicPlayerNowPlaying {
   height: auto !important;
   opacity: 1;
@@ -2147,14 +2634,14 @@
   pointer-events: auto;
 }
 
-/* Reset list containers for Now Playing tab */
+
 .player.open[data-active-tab="playing"] .panel[data-tab="queue"] .listContainer,
 .player.open[data-active-tab="playing"] .panel[data-tab="playlist"] .listContainer {
   height: auto !important;
 }
 
 
-
+***********/
 
 
 
