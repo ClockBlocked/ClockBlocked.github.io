@@ -2644,445 +2644,375 @@
 
 ***********/
 
-
-.listContainer.expandHeight {
-    height: calc(100svh - 100px) !important;
-    flex: 1 !important;
-    min-height: 0 !important;
-    margin-top: 100px !important;
+/* Layout container inside the drawer */
+.playerInner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
-.player .coverWrapper.collapsed ~ .content .musicPlayerPanel[data-tab="playlist"].active .listContainer.expandHeight,
-.player .coverWrapper.collapsed ~ .content .musicPlayerPanel[data-tab="queue"].active .listContainer.expandHeight {
-    height: 100% !important;
-    margin-top: 0 !important;
+/* Main header (Now Playing area) */
+.playerHeader {
+  position: relative;
+  width: 100%;
+  height: 40vh;
+  min-height: 280px;
+  overflow: visible;
+  display: flex;
+  flex-shrink: 0;
+  margin-bottom: 0;
+  transition:
+    height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-.player .main {
-    padding: 0 0.5rem 0.45rem;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    flex: 1;
-    overflow: hidden;
-    min-height: 0;
+/* Header content wrapper (album cover + overlays) */
+.playerHeader .coverWrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 0 0 12px 12px;
+  flex-shrink: 0;
+  background: #1a1f24;
 }
 
-.player .coverWrapper {
-    position: relative;
-    width: 100%;
-    height: 40vh;
-    min-height: 280px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    overflow: hidden;
-    border-radius: 0 0 12px 12px;
-    flex-shrink: 0;
-    background: #1a1f24;
-    transition: none;
-    will-change: auto;
+/* Collapsed header state driven by parent */
+.player.playerCollapsed .playerHeader {
+  height: 100px;
+  min-height: 100px;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-.player .coverWrapper.is-collapsing {
-    transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+/* Cover image container (injected by JS if missing) */
+.coverImageContainer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  width: 100%;
 }
 
-.player .coverWrapper.collapsed {
-    height: 100px;
-    min-height: 100px;
-    position: sticky;
-    top: 0;
-    z-index: 200;
-    border-radius: 0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+/* Cover image */
+.cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  border-radius: 0;
+  background: #1a1f24;
+  display: block;
 }
 
-.player .coverImageContainer {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 2;
-    transition: none;
-    width: 100%;
+/* Collapsed cover avatar-like positioning */
+.player.playerCollapsed .coverImageContainer {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  width: 60px;
+  height: 60px;
+  transform: translateY(-50%);
+  inset: auto;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1.5px solid var(--border-200);
 }
 
-.player .coverWrapper.is-collapsing .coverImageContainer {
-    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+.player.playerCollapsed .cover {
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
 }
 
-.player .coverWrapper.collapsed .actions {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
+/* Glow overlay behind cover */
+.coverGlow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(139, 92, 246, 0.3) 0%,
+    rgba(59, 130, 246, 0.2) 30%,
+    transparent 70%
+  );
+  filter: blur(60px);
+  opacity: 0.6;
+  z-index: 1;
+  pointer-events: none;
 }
 
-.player .cover {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center center;
-    border-radius: 0;
-    background: #1a1f24;
-    display: block;
-    transition: none;
+.player.playerCollapsed .coverGlow {
+  opacity: 0;
 }
 
-.player .coverWrapper.is-collapsing .cover {
-    transition: border-radius 0.35s cubic-bezier(0.4, 0, 0.2, 1), object-fit 0.45s ease-in-out;
+/* Actions over main cover (shuffle/repeat/queue/volume) */
+.coverActions {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 12px;
+  z-index: 3;
+  gap: 8px;
 }
 
-.player .coverWrapper.collapsed .coverImageContainer {
-    position: absolute;
-    left: 16px;
-    top: 50%;
-    width: 60px;
-    height: 60px;
-    transform: translateY(-50%);
-    inset: auto;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 1.5px solid var(--border-200);
+.player.playerCollapsed .coverActions {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
 }
 
-.player .coverWrapper.collapsed .cover {
-    border-radius: 50%;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-    object-fit: cover;
-    width: 100%;
-    height: 100%;
+/* Mini header (title/artist in collapsed state) */
+.miniHeader {
+  position: absolute;
+  left: 100px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  opacity: 0;
+  pointer-events: none;
+  max-width: calc(100% - 180px);
+  z-index: 3;
 }
 
-.player .miniHeader {
-    position: absolute;
-    left: 100px;
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 4px;
-    opacity: 0;
-    pointer-events: none;
-    max-width: calc(100% - 180px);
-    z-index: 3;
-    transition: none;
+.miniTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.player .coverWrapper.is-collapsing .miniHeader {
-    transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+.miniArtist {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.player .coverWrapper.collapsed .miniHeader {
-    opacity: 1;
-    pointer-events: auto;
+/* Mini controls (play/pause in collapsed mode) */
+.miniControls {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 3;
 }
 
-.player .miniTitle {
-    font-size: 15px;
-    font-weight: 700;
-    color: #fff;
-    margin: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+.miniControlBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.player .miniArtist {
-    font-size: 13px;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.7);
-    margin: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+.miniControlBtn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.05);
 }
 
-.player .miniControls {
-    position: absolute;
-    right: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    opacity: 0;
-    pointer-events: none;
-    z-index: 3;
-    transition: none;
+.miniControlBtn svg {
+  width: 18px;
+  height: 18px;
+  color: #fff;
 }
 
-.player .coverWrapper.is-collapsing .miniControls {
-    transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+/* Only visible when player is collapsed */
+.player.playerCollapsed .miniHeader,
+.player.playerCollapsed .miniControls {
+  opacity: 1;
+  pointer-events: auto;
 }
 
-.player .coverWrapper.collapsed .miniControls {
-    opacity: 1;
-    pointer-events: auto;
+/* Main body below the header */
+.playerContent {
+  padding: 0 0.5rem 0.45rem;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
 }
 
-.player .miniControlBtn {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+/* Generic panel (Now Playing / Playlist / Queue) */
+.panel {
+  display: none;
+  flex-direction: column;
+  flex: 1;
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.player .miniControlBtn:hover {
-    background: rgba(255, 255, 255, 0.25);
-    transform: scale(1.05);
+.panel.active {
+  display: flex;
 }
 
-.player .miniControlBtn svg {
-    width: 18px;
-    height: 18px;
-    color: #fff;
+/* Now Playing main content */
+.main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
 
-.player .coverGlow {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at center, rgba(139, 92, 246, 0.3) 0%, rgba(59, 130, 246, 0.2) 30%, transparent 70%);
-    filter: blur(60px);
-    opacity: 0.6;
-    z-index: 1;
-    pointer-events: none;
-    transition: none;
+/* Track info row */
+.trackInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
 }
 
-.player .coverWrapper.is-collapsing .coverGlow {
-    transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+.trackDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
-.player .coverWrapper.collapsed .coverGlow {
-    opacity: 0;
+/* Lists: Recently Played / Queue */
+.listHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 0 24px;
+  margin-top: 8px;
 }
 
-.player .panel {
-    display: none;
-    flex-direction: column;
-    flex: 1;
-    position: relative;
-    animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    min-height: 0;
-    overflow: hidden;
+.listTitle {
+  font-size: 16px;
+  font-weight: 600;
 }
 
-.player .panel.active {
-    display: flex;
+.listCount {
+  font-size: 13px;
+  opacity: 0.7;
 }
 
-.player .listContainer {
-    flex: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
-    position: relative;
-    overflow-anchor: none;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
+/* Wrapper around the <ul> so we can flex/size it */
+.listContainer {
+  flex: 0 0 auto;
+  max-height: 75svh;
+  min-height: 280px;
+  overflow-y: auto;
+  position: relative;
+  overflow-anchor: none;
+  display: flex;
+  flex-direction: column;
 }
 
-.list {
-    list-style: none;
-    padding: 16px 24px 40px;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    overflow-y: auto;
+/* The actual list */
+.songList {
+  list-style: none;
+  padding: 16px 24px 40px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
 }
 
-.player .nowPlaying {
-    position: relative;
-    width: 100%;
-    height: 40vh;
-    min-height: 280px;
-    overflow: visible;
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 0;
-    flex-shrink: 0;
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-    transition: opacity 0.45s cubic-bezier(0.34, 1.26, 0.64, 1), 
-                transform 0.45s cubic-bezier(0.34, 1.26, 0.64, 1),
-                visibility 0s linear 0s;
-    will-change: opacity, transform;
+/* Empty state item */
+.listEmpty {
+  opacity: 0.6;
+  font-size: 14px;
 }
 
-.player .coverWrapper.collapsed ~ .content .musicPlayerPanel[data-tab="playlist"].active,
-.player .coverWrapper.collapsed ~ .content .musicPlayerPanel[data-tab="queue"].active {
-    margin-top: 100px;
-    height: calc(100svh - 100px);
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
+/* When player is collapsed, playlist/queue list area fills available viewport */
+.player.playerCollapsed .panel[data-tab="playlist"].active .listContainer,
+.player.playerCollapsed .panel[data-tab="queue"].active .listContainer {
+  flex: 1;
+  max-height: none;
+  min-height: 0;
+  height: calc(100svh - 100px);
 }
 
-.player .coverWrapper.collapsed ~ .content .musicPlayerPanel[data-tab="playlist"].active .listContainer,
-.player .coverWrapper.collapsed ~ .content .musicPlayerPanel[data-tab="queue"].active .listContainer {
-    height: 100%;
-    margin-top: 0;
-    overflow-y: auto;
-    flex: 1;
+/* Ensure the list itself stretches */
+.player.playerCollapsed .panel[data-tab="playlist"].active .songList,
+.player.playerCollapsed .panel[data-tab="queue"].active .songList {
+  height: 100%;
+  max-height: none;
+  min-height: 0;
+  flex: 1;
+  overflow-y: auto;
 }
 
-.player .coverWrapper.collapsed ~ .content .musicPlayerPanel[data-tab="playlist"].active .musicPlayerList,
-.player .coverWrapper.collapsed ~ .content .musicPlayerPanel[data-tab="queue"].active .musicPlayerList {
-    height: 100%;
-    max-height: none;
+/* In collapsed mode, the active panel should take remaining space */
+.player.playerCollapsed .panel.active {
+  flex: 1;
+  min-height: 0;
 }
 
-.player .content .panel[data-tab="playlist"],
-.player .content .panel[data-tab="queue"] {
-    display: none;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(20px);
-    transition: opacity 0.45s cubic-bezier(0.34, 1.26, 0.64, 1),
-                transform 0.45s cubic-bezier(0.34, 1.26, 0.64, 1),
-                visibility 0s linear 0.45s;
-}
-
-.player .content .panel[data-tab="playlist"].active,
-.player .content .panel[data-tab="queue"].active {
-    display: flex;
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-    transition: opacity 0.45s cubic-bezier(0.34, 1.26, 0.64, 1) 0.1s,
-                transform 0.45s cubic-bezier(0.34, 1.26, 0.64, 1) 0.1s,
-                visibility 0s linear 0s;
-}
-
-.player .content .panel[data-tab="playlist"] .listContainer,
-.player .content .panel[data-tab="queue"] .listContainer {
-    flex: 0 0 auto;
-    max-height: 75svh;
-    min-height: 280px;
-    overflow-y: auto;
-    transition: none;
-}
-
-.player .coverWrapper.collapsed ~ .content .panel[data-tab="playlist"] .listContainer,
-.player .coverWrapper.collapsed ~ .content .panel[data-tab="queue"] .listContainer {
-    flex: 1;
-    max-height: none;
-    min-height: 0;
-}
-
-.player .content .panel[data-tab="playlist"] .list,
-.player .content .panel[data-tab="queue"] .list {
-    height: auto;
-    max-height: 100%;
-    min-height: 280px;
-    overflow-y: auto;
-    flex: 0 0 auto;
-}
-
-.player .coverWrapper.collapsed ~ .content .panel[data-tab="playlist"] .list,
-.player .coverWrapper.collapsed ~ .content .panel[data-tab="queue"] .list {
-    height: 100%;
-    max-height: none;
-    min-height: 0;
-    flex: 1;
-}
-
-.player .coverWrapper.collapsed ~ .content .panel.active {
-    flex: 1;
-    min-height: 0;
-}
-
+/* Responsive tweaks for smaller screens */
 @media (max-width: 480px) {
-    .player .coverWrapper.collapsed {
-        height: 80px;
-        min-height: 80px;
-    }
+  .player.playerCollapsed .playerHeader {
+    height: 80px;
+    min-height: 80px;
+  }
 
-    .player .coverWrapper.collapsed .coverImageContainer {
-        left: 12px !important;
-        width: 56px;
-        height: 56px;
-    }
+  .player.playerCollapsed .coverImageContainer {
+    left: 12px;
+    width: 56px;
+    height: 56px;
+  }
 
-    .player .miniHeader {
-        left: 80px;
-        max-width: calc(100% - 140px);
-    }
+  .miniHeader {
+    left: 80px;
+    max-width: calc(100% - 140px);
+  }
 
-    .player .miniTitle {
-        font-size: 14px;
-    }
+  .miniTitle {
+    font-size: 14px;
+  }
 
-    .player .miniArtist {
-        font-size: 12px;
-    }
+  .miniArtist {
+    font-size: 12px;
+  }
 
-    .player .nowPlaying {
-        height: 35vh;
-        min-height: 240px;
-    }
+  .playerHeader {
+    height: 35vh;
+    min-height: 240px;
+  }
 
-    .player .coverWrapper.collapsed ~ .content .musicPlayerPanel[data-tab="playlist"].active,
-    .player .coverWrapper.collapsed ~ .content .musicPlayerPanel[data-tab="queue"].active {
-        margin-top: 80px;
-        height: calc(100svh - 80px);
-    }
+  .player.playerCollapsed .panel[data-tab="playlist"].active .listContainer,
+  .player.playerCollapsed .panel[data-tab="queue"].active .listContainer {
+    height: calc(100svh - 80px);
+  }
 }
-
 
 
 
@@ -3783,3 +3713,5 @@
   }
 }
 **/
+
+
