@@ -2528,69 +2528,82 @@ state: {
       }
     },
 
-    collapseHeader() {
-      if (musicPlayer.state.isCollapsed || musicPlayer.state.isTransitioning || !this.coverWrapper) return;
-      
-      musicPlayer.state.isTransitioning = true;
-      musicPlayer.state.isCollapsed = true;
-      
-      const nowPlayingElement = QUERY('.nowPlaying');
-      
-      requestAnimationFrame(() => {
-        this.coverWrapper.classList.add('is-collapsing');
-        if (nowPlayingElement) {
-          nowPlayingElement.classList.add('is-collapsing');
-        }
-        
-        requestAnimationFrame(() => {
-          this.coverWrapper.classList.add('collapsed');
-          if (nowPlayingElement) {
-            nowPlayingElement.classList.add('collapsed');
-            nowPlayingElement.classList.remove('is-collapsing');
-          }
-          
-          this.updateListHeights();
-          
-          clearTimeout(musicPlayer.state.transitionTimeout);
-          musicPlayer.state.transitionTimeout = setTimeout(() => {
-            this.coverWrapper.classList.remove('is-collapsing');
-            musicPlayer.state.isTransitioning = false;
-          }, 550);
-        });
-      });
-    },
 
-    expandHeader() {
-      if (!musicPlayer.state.isCollapsed || musicPlayer.state.isTransitioning || !this.coverWrapper) return;
+collapseHeader() {
+  if (musicPlayer.state.isCollapsed || musicPlayer.state.isTransitioning || !this.coverWrapper) return;
+  
+  musicPlayer.state.isTransitioning = true;
+  musicPlayer.state.isCollapsed = true;
+  
+  const nowPlayingElement = QUERY('.nowPlaying');
+  const listContainers = QUERY_ALL('.listContainer');
+  
+  requestAnimationFrame(() => {
+    this.coverWrapper.classList.add('is-collapsing');
+    if (nowPlayingElement) {
+      nowPlayingElement.classList.add('is-collapsing');
+    }
+    
+    requestAnimationFrame(() => {
+      this.coverWrapper.classList.add('collapsed');
+      if (nowPlayingElement) {
+        nowPlayingElement.classList.add('collapsed');
+        nowPlayingElement.classList.remove('is-collapsing');
+      }
       
-      musicPlayer.state.isTransitioning = true;
-      musicPlayer.state.isCollapsed = false;
-      
-      const nowPlayingElement = QUERY('.nowPlaying');
-      
-      requestAnimationFrame(() => {
-        this.coverWrapper.classList.add('is-collapsing');
-        if (nowPlayingElement) {
-          nowPlayingElement.classList.add('is-collapsing');
-        }
-        
-        requestAnimationFrame(() => {
-          this.coverWrapper.classList.remove('collapsed');
-          if (nowPlayingElement) {
-            nowPlayingElement.classList.remove('collapsed');
-            nowPlayingElement.classList.remove('is-collapsing');
-          }
-          
-          this.updateListHeights();
-          
-          clearTimeout(musicPlayer.state.transitionTimeout);
-          musicPlayer.state.transitionTimeout = setTimeout(() => {
-            this.coverWrapper.classList.remove('is-collapsing');
-            musicPlayer.state.isTransitioning = false;
-          }, 550);
-        });
+      // ADD expandHeight class to listContainers
+      listContainers.forEach(container => {
+        container.classList.add('expandHeight');
       });
-    },
+      
+      this.updateListHeights();
+      
+      clearTimeout(musicPlayer.state.transitionTimeout);
+      musicPlayer.state.transitionTimeout = setTimeout(() => {
+        this.coverWrapper.classList.remove('is-collapsing');
+        musicPlayer.state.isTransitioning = false;
+      }, 550);
+    });
+  });
+},
+
+expandHeader() {
+  if (!musicPlayer.state.isCollapsed || musicPlayer.state.isTransitioning || !this.coverWrapper) return;
+  
+  musicPlayer.state.isTransitioning = true;
+  musicPlayer.state.isCollapsed = false;
+  
+  const nowPlayingElement = QUERY('.nowPlaying');
+  const listContainers = QUERY_ALL('.listContainer');
+  
+  requestAnimationFrame(() => {
+    this.coverWrapper.classList.add('is-collapsing');
+    if (nowPlayingElement) {
+      nowPlayingElement.classList.add('is-collapsing');
+    }
+    
+    requestAnimationFrame(() => {
+      this.coverWrapper.classList.remove('collapsed');
+      if (nowPlayingElement) {
+        nowPlayingElement.classList.remove('collapsed');
+        nowPlayingElement.classList.remove('is-collapsing');
+      }
+      
+      // REMOVE expandHeight class from listContainers
+      listContainers.forEach(container => {
+        container.classList.remove('expandHeight');
+      });
+      
+      this.updateListHeights();
+      
+      clearTimeout(musicPlayer.state.transitionTimeout);
+      musicPlayer.state.transitionTimeout = setTimeout(() => {
+        this.coverWrapper.classList.remove('is-collapsing');
+        musicPlayer.state.isTransitioning = false;
+      }, 550);
+    });
+  });
+},
 
     updateMiniHeaderElements() {
       if (!this.coverWrapper) return;
