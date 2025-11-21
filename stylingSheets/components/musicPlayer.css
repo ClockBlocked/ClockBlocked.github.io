@@ -1897,8 +1897,8 @@
     min-height: 0;
 }
 
-.player.open .coverWrapper.collapsed ~ .content .panel[data-tab="playlist"].active,
-.player.open .coverWrapper.collapsed ~ .content .panel[data-tab="queue"].active {
+.player.open .coverWrapper.collapsed ~ .content .musicPlayerPanel[data-tab="playlist"].active,
+.player.open .coverWrapper.collapsed ~ .content .musicPlayerPanel[data-tab="queue"].active {
     margin-top: 100px;
     height: calc(100svh - 100px);
     position: relative;
@@ -1907,16 +1907,16 @@
     flex-direction: column;
 }
 
-.player.open .coverWrapper.collapsed ~ .content .panel[data-tab="playlist"].active .listContainer,
-.player.open .coverWrapper.collapsed ~ .content .panel[data-tab="queue"].active .listContainer {
+.player.open .coverWrapper.collapsed ~ .content .musicPlayerPanel[data-tab="playlist"].active .listContainer,
+.player.open .coverWrapper.collapsed ~ .content .musicPlayerPanel[data-tab="queue"].active .listContainer {
     height: 100%;
     margin-top: 0;
     overflow-y: auto;
     flex: 1;
 }
 
-.player.open .coverWrapper.collapsed ~ .content .panel[data-tab="playlist"].active .list,
-.player.open .coverWrapper.collapsed ~ .content .panel[data-tab="queue"].active .list {
+.player.open .coverWrapper.collapsed ~ .content .musicPlayerPanel[data-tab="playlist"].active .musicPlayerList,
+.player.open .coverWrapper.collapsed ~ .content .musicPlayerPanel[data-tab="queue"].active .musicPlayerList {
     height: 100%;
     max-height: none;
 }
@@ -1951,8 +1951,8 @@
         min-height: 240px;
     }
 
-    .player.open .coverWrapper.collapsed ~ .content .panel[data-tab="playlist"].active,
-    .player.open .coverWrapper.collapsed ~ .content .panel[data-tab="queue"].active {
+    .player.open .coverWrapper.collapsed ~ .content .musicPlayerPanel[data-tab="playlist"].active,
+    .player.open .coverWrapper.collapsed ~ .content .musicPlayerPanel[data-tab="queue"].active {
         margin-top: 80px;
         height: calc(100svh - 80px);
     }
