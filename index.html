@@ -460,8 +460,8 @@
               <!-- TOP Half of drawer - always visible
                                         ( Expanded & Collapsed Header State )
                                         -->
-              <div class="nowPlaying musicPlayerNowPlaying">
-                <div class="coverWrapper musicPlayerCoverWrapper">
+              <div class="nowPlaying musicPlayerNowPlaying" style="border: 2px solid crimson;">
+                <div class="coverWrapper musicPlayerCoverWrapper" style="border: 2px solid blue;">
                   <div class="customShapeDivider">
                     <svg
                       data-name="Layer 1"
@@ -481,7 +481,6 @@
                     class="cover"
                     id="music-player-cover"
                   />
-                  <div class="coverGlow musicPlayerCoverGlow"></div>
 
                   <!-- Action Buttons
                             ( Overlaying the Album Cover ) -->
@@ -599,7 +598,7 @@
                     <h3 class="listTitle musicPlayerListTitle">Recently Played</h3>
                     <span class="listCount musicPlayerListCount" id="recent-count">0 songs</span>
                   </div>
-                  <ul class="list musicPlayerList" id="music-player-recent-list">
+                  <ul class="list musicPlayerList" id="music-player-recent-list" style="border: 2px solid orange;">
                     <li class="empty musicPlayerEmpty"></li>
                   </ul>
                 </div>
@@ -608,7 +607,7 @@
                     <h3 class="listTitle musicPlayerListTitle">Queue</h3>
                     <span class="listCount musicPlayerListCount" id="queue-count">0 songs</span>
                   </div>
-                  <ul class="list musicPlayerList" id="music-player-queue-list">
+                  <ul class="list musicPlayerList" id="music-player-queue-list" style="border: 2px solid yellow;">
                     <li class="empty musicPlayerEmpty"></li>
                   </ul>
                 </div>
