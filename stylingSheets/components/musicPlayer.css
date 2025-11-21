@@ -2653,34 +2653,86 @@
 
 
 
-/* Layout container inside the drawer */
-.playerInner {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+/* Optional: if JS still adds this class, it will not break anything */
+.listContainer.expandHeight {
+  height: calc(100svh - 100px) !important;
+  flex: 1 !important;
+  min-height: 0 !important;
+  margin-top: 100px !important;
 }
 
-/* Main header (Now Playing area) */
-.playerHeader {
+/* ------------------------------------------------------------------
+   INNER CONTAINER: WIDTH + RADIUS
+   ------------------------------------------------------------------ */
+
+.player .inner.musicPlayerInner {
+  width: 85%;
+  max-width: 480px;          /* Adjust if you want a wider drawer */
+  margin: 0 auto;
+  border-radius: 20px 20px 0 0;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+}
+
+/* ------------------------------------------------------------------
+   MAIN BODY INSIDE PLAYER
+   ------------------------------------------------------------------ */
+
+.player .main {
+  padding: 0 0.5rem 0.45rem;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ------------------------------------------------------------------
+   HEADER: NOW PLAYING AREA (EXPANDED & COLLAPSED)
+   ------------------------------------------------------------------ */
+
+.player .nowPlaying {
   position: relative;
   width: 100%;
   height: 40vh;
   min-height: 280px;
   overflow: visible;
   display: flex;
-  flex-shrink: 0;
+  flex-direction: column;
   margin-bottom: 0;
+  flex-shrink: 0;
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
   transition:
-    height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity 0.45s cubic-bezier(0.34, 1.26, 0.64, 1),
+    transform 0.45s cubic-bezier(0.34, 1.26, 0.64, 1),
+    visibility 0s linear 0s;
+  will-change: opacity, transform;
 }
 
-/* Header content wrapper (album cover + overlays) */
-.playerHeader .coverWrapper {
+/* HEADER hidden when playlist/queue active (old behavior, kept for safety) */
+.player .content .panel[data-tab="playlist"].active ~ .nowPlaying,
+.player .content .panel[data-tab="queue"].active ~ .nowPlaying {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition:
+    opacity 0.35s cubic-bezier(0.34, 1.26, 0.64, 1),
+    transform 0.35s cubic-bezier(0.34, 1.26, 0.64, 1),
+    visibility 0s linear 0.35s;
+}
+
+/* COVER WRAPPER: big header base state */
+.player .coverWrapper {
   position: relative;
   width: 100%;
-  height: 100%;
-  min-height: inherit;
+  height: 40vh;
+  min-height: 280px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2689,31 +2741,45 @@
   border-radius: 0 0 12px 12px;
   flex-shrink: 0;
   background: #1a1f24;
+  transition: none;
+  will-change: auto;
 }
 
-/* Collapsed header state driven by parent */
-.player.playerCollapsed .playerHeader {
+/* When JS marks it as animating */
+.player .coverWrapper.is-collapsing {
+  transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* COLLAPSED HEADER STATE */
+.player .coverWrapper.collapsed {
   height: 100px;
   min-height: 100px;
   position: sticky;
   top: 0;
   z-index: 200;
+  border-radius: 0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-/* Cover image container (injected by JS if missing) */
-.coverImageContainer {
+/* IMAGE CONTAINER (JS wraps #music-player-cover in this) */
+.player .coverImageContainer {
   position: absolute;
   inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 2;
+  transition: none;
   width: 100%;
 }
 
-/* Cover image */
-.cover {
+/* Transition for container during collapse */
+.player .coverWrapper.is-collapsing .coverImageContainer {
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* COVER IMAGE */
+.player .cover {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -2721,10 +2787,18 @@
   border-radius: 0;
   background: #1a1f24;
   display: block;
+  transition: none;
 }
 
-/* Collapsed cover avatar-like positioning */
-.player.playerCollapsed .coverImageContainer {
+/* Animate cover shape on collapse */
+.player .coverWrapper.is-collapsing .cover {
+  transition:
+    border-radius 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    object-fit 0.45s ease-in-out;
+}
+
+/* AVATAR SHAPE IN COLLAPSED HEADER */
+.player .coverWrapper.collapsed .coverImageContainer {
   position: absolute;
   left: 16px;
   top: 50%;
@@ -2737,7 +2811,7 @@
   border: 1.5px solid var(--border-200);
 }
 
-.player.playerCollapsed .cover {
+.player .coverWrapper.collapsed .cover {
   border-radius: 50%;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
   object-fit: cover;
@@ -2745,8 +2819,8 @@
   height: 100%;
 }
 
-/* Glow overlay behind cover */
-.coverGlow {
+/* BACKGROUND GLOW BEHIND COVER */
+.player .coverGlow {
   position: absolute;
   inset: 0;
   background: radial-gradient(
@@ -2759,32 +2833,52 @@
   opacity: 0.6;
   z-index: 1;
   pointer-events: none;
+  transition: none;
 }
 
-.player.playerCollapsed .coverGlow {
+.player .coverWrapper.collapsed .coverGlow {
   opacity: 0;
 }
 
-/* Actions over main cover (shuffle/repeat/queue/volume) */
-.coverActions {
+/* ------------------------------------------------------------------
+   ACTION BUTTONS OVERLAY ON COVER (LEFT SIDE)
+   ------------------------------------------------------------------ */
+
+.player .coverWrapper .actions.musicPlayerActions.albumOverlayActions {
   position: absolute;
-  inset: 0;
+  top: 12px;
+  left: 12px;            /* LEFT aligned over cover */
+  right: auto;
   display: flex;
-  align-items: flex-start;
-  justify-content: flex-end;
-  padding: 12px;
-  z-index: 3;
-  gap: 8px;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 4;
 }
 
-.player.playerCollapsed .coverActions {
+.player .coverWrapper .actions.musicPlayerActions.albumOverlayActions .actionBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Hide overlay actions in collapsed header */
+.player .coverWrapper.collapsed .actions.musicPlayerActions.albumOverlayActions {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
 }
 
-/* Mini header (title/artist in collapsed state) */
-.miniHeader {
+/* ------------------------------------------------------------------
+   MINI HEADER & MINI CONTROLS (COLLAPSED MODE)
+   ------------------------------------------------------------------ */
+
+.player .miniHeader {
   position: absolute;
   left: 100px;
   top: 50%;
@@ -2797,9 +2891,19 @@
   pointer-events: none;
   max-width: calc(100% - 180px);
   z-index: 3;
+  transition: none;
 }
 
-.miniTitle {
+.player .coverWrapper.is-collapsing .miniHeader {
+  transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.player .coverWrapper.collapsed .miniHeader {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.player .miniTitle {
   font-size: 15px;
   font-weight: 700;
   color: #fff;
@@ -2809,7 +2913,7 @@
   white-space: nowrap;
 }
 
-.miniArtist {
+.player .miniArtist {
   font-size: 13px;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.7);
@@ -2819,8 +2923,7 @@
   white-space: nowrap;
 }
 
-/* Mini controls (play/pause in collapsed mode) */
-.miniControls {
+.player .miniControls {
   position: absolute;
   right: 16px;
   top: 50%;
@@ -2831,9 +2934,19 @@
   opacity: 0;
   pointer-events: none;
   z-index: 3;
+  transition: none;
 }
 
-.miniControlBtn {
+.player .coverWrapper.is-collapsing .miniControls {
+  transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.player .coverWrapper.collapsed .miniControls {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.player .miniControlBtn {
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -2847,26 +2960,37 @@
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.miniControlBtn:hover {
+.player .miniControlBtn:hover {
   background: rgba(255, 255, 255, 0.25);
   transform: scale(1.05);
 }
 
-.miniControlBtn svg {
+.player .miniControlBtn svg {
   width: 18px;
   height: 18px;
   color: #fff;
 }
 
-/* Only visible when player is collapsed */
-.player.playerCollapsed .miniHeader,
-.player.playerCollapsed .miniControls {
-  opacity: 1;
-  pointer-events: auto;
+/* ------------------------------------------------------------------
+   PANELS: NOW PLAYING / PLAYLIST / QUEUE
+   ------------------------------------------------------------------ */
+
+.player .panel {
+  display: none;
+  flex-direction: column;
+  flex: 1;
+  position: relative;
+  animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-height: 0;
+  overflow: hidden;
 }
 
-/* Main body below the header */
-.playerContent {
+.player .panel.active {
+  display: flex;
+}
+
+/* Content wrapper under header (where panels live) */
+.player .content {
   padding: 0 0.5rem 0.45rem;
   display: flex;
   flex-direction: column;
@@ -2876,76 +3000,48 @@
   min-height: 0;
 }
 
-/* Generic panel (Now Playing / Playlist / Queue) */
-.panel {
-  display: none;
-  flex-direction: column;
+/* Fade / slide for playlist & queue panels when they become active */
+.player .content .panel[data-tab="playlist"],
+.player .content .panel[data-tab="queue"] {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition:
+    opacity 0.45s cubic-bezier(0.34, 1.26, 0.64, 1),
+    transform 0.45s cubic-bezier(0.34, 1.26, 0.64, 1),
+    visibility 0s linear 0.45s;
+}
+
+.player .content .panel[data-tab="playlist"].active,
+.player .content .panel[data-tab="queue"].active {
+  display: flex;
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition:
+    opacity 0.45s cubic-bezier(0.34, 1.26, 0.64, 1) 0.1s,
+    transform 0.45s cubic-bezier(0.34, 1.26, 0.64, 1) 0.1s,
+    visibility 0s linear 0s;
+}
+
+/* ------------------------------------------------------------------
+   LIST CONTAINERS + LISTS (RECENT + QUEUE)
+   ------------------------------------------------------------------ */
+
+.player .listContainer {
   flex: 1;
-  position: relative;
-  min-height: 0;
-  overflow: hidden;
-  animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.panel.active {
-  display: flex;
-}
-
-/* Now Playing main content */
-.main {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
-}
-
-/* Track info row */
-.trackInfo {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-}
-
-.trackDetails {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-/* Lists: Recently Played / Queue */
-.listHeader {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  padding: 0 24px;
-  margin-top: 8px;
-}
-
-.listTitle {
-  font-size: 16px;
-  font-weight: 600;
-}
-
-.listCount {
-  font-size: 13px;
-  opacity: 0.7;
-}
-
-/* Wrapper around the <ul> so we can flex/size it */
-.listContainer {
-  flex: 0 0 auto;
-  max-height: 75svh;
-  min-height: 280px;
   overflow-y: auto;
+  overflow-x: hidden;
   position: relative;
   overflow-anchor: none;
+  min-height: 0;
   display: flex;
   flex-direction: column;
 }
 
-/* The actual list */
-.songList {
+/* UL base style */
+.list,
+.musicPlayerList {
   list-style: none;
   padding: 16px 24px 40px;
   margin: 0;
@@ -2955,207 +3051,144 @@
   overflow-y: auto;
 }
 
-/* Empty state item */
-.listEmpty {
+/* Default constrained list height when header expanded */
+.player .content .panel[data-tab="playlist"] .listContainer,
+.player .content .panel[data-tab="queue"] .listContainer {
+  flex: 0 0 auto;
+  max-height: 75svh;
+  min-height: 280px;
+  overflow-y: auto;
+  transition: none;
+}
+
+/* In collapsed header mode, allow list containers to flex to fill space */
+.player .coverWrapper.collapsed ~ .content .panel[data-tab="playlist"] .listContainer,
+.player .coverWrapper.collapsed ~ .content .panel[data-tab="queue"] .listContainer {
+  flex: 1;
+  max-height: none;
+  min-height: 0;
+}
+
+/* List height defaults */
+.player .content .panel[data-tab="playlist"] .list,
+.player .content .panel[data-tab="queue"] .list {
+  height: auto;
+  max-height: 100%;
+  min-height: 280px;
+  overflow-y: auto;
+  flex: 0 0 auto;
+}
+
+/* When collapsed, lists themselves expand to full height */
+.player .coverWrapper.collapsed ~ .content .panel[data-tab="playlist"] .list,
+.player .coverWrapper.collapsed ~ .content .panel[data-tab="queue"] .list {
+  height: 100%;
+  max-height: none;
+  min-height: 0;
+  flex: 1;
+}
+
+/* When using the older musicPlayerPanel + musicPlayerList selectors,
+   keep symmetric behavior for both tabs */
+.player .coverWrapper.collapsed ~ .content .musicPlayerPanel[data-tab="playlist"].active {
+  margin-top: 100px;
+  height: calc(100svh - 100px);
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.player .coverWrapper.collapsed ~ .content .musicPlayerPanel[data-tab="queue"].active {
+  margin-top: 100px;
+  height: calc(100svh - 100px);
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.player .coverWrapper.collapsed ~ .content .musicPlayerPanel[data-tab="playlist"].active .listContainer,
+.player .coverWrapper.collapsed ~ .content .musicPlayerPanel[data-tab="queue"].active .listContainer {
+  height: 100%;
+  margin-top: 0;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.player .coverWrapper.collapsed ~ .content .musicPlayerPanel[data-tab="playlist"].active .musicPlayerList,
+.player .coverWrapper.collapsed ~ .content .musicPlayerPanel[data-tab="queue"].active .musicPlayerList {
+  height: 100%;
+  max-height: none;
+}
+
+/* Make the active panel itself flex to fill remaining space when header collapsed */
+.player .coverWrapper.collapsed ~ .content .panel.active {
+  flex: 1;
+  min-height: 0;
+}
+
+/* Simple empty state item */
+.player .listContainer .empty,
+.player .listContainer .musicPlayerEmpty {
   opacity: 0.6;
   font-size: 14px;
 }
 
-/* When player is collapsed, playlist/queue list area fills available viewport */
-.player.playerCollapsed .panel[data-tab="playlist"].active .listContainer,
-.player.playerCollapsed .panel[data-tab="queue"].active .listContainer {
-  flex: 1;
-  max-height: none;
-  min-height: 0;
-  height: calc(100svh - 100px);
+/* ------------------------------------------------------------------
+   KEYFRAMES
+   ------------------------------------------------------------------ */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* Ensure the list itself stretches */
-.player.playerCollapsed .panel[data-tab="playlist"].active .songList,
-.player.playerCollapsed .panel[data-tab="queue"].active .songList {
-  height: 100%;
-  max-height: none;
-  min-height: 0;
-  flex: 1;
-  overflow-y: auto;
-}
+/* ------------------------------------------------------------------
+   RESPONSIVE TUNING (MOBILE)
+   ------------------------------------------------------------------ */
 
-/* In collapsed mode, the active panel should take remaining space */
-.player.playerCollapsed .panel.active {
-  flex: 1;
-  min-height: 0;
-}
-
-/* Responsive tweaks for smaller screens */
 @media (max-width: 480px) {
-  .player.playerCollapsed .playerHeader {
+  .player .coverWrapper.collapsed {
     height: 80px;
     min-height: 80px;
   }
 
-  .player.playerCollapsed .coverImageContainer {
-    left: 12px;
+  .player .coverWrapper.collapsed .coverImageContainer {
+    left: 12px !important;
     width: 56px;
     height: 56px;
   }
 
-  .miniHeader {
+  .player .miniHeader {
     left: 80px;
     max-width: calc(100% - 140px);
   }
 
-  .miniTitle {
+  .player .miniTitle {
     font-size: 14px;
   }
 
-  .miniArtist {
+  .player .miniArtist {
     font-size: 12px;
   }
 
-  .playerHeader {
+  .player .nowPlaying {
     height: 35vh;
     min-height: 240px;
   }
 
-  .player.playerCollapsed .panel[data-tab="playlist"].active .listContainer,
-  .player.playerCollapsed .panel[data-tab="queue"].active .listContainer {
+  .player .coverWrapper.collapsed ~ .content .musicPlayerPanel[data-tab="playlist"].active,
+  .player .coverWrapper.collapsed ~ .content .musicPlayerPanel[data-tab="queue"].active {
+    margin-top: 80px;
     height: calc(100svh - 80px);
   }
-}
-
-
-
-
-
-
-
-/* ------------------------------------------------------------
-   1. RESTORE ORIGINAL BACKGROUND + INNER CONTAINER RADIUS
------------------------------------------------------------- */
-
-/* Keep player's existing dark background and shape */
-.player {
-  background: #0f1214;
-}
-
-/* Restore your original inner container width + radius */
-.playerInner {
-  width: 100%;
-  max-width: 480px;            /* Adjust if you need a different cap */
-  margin: 0 auto;
-  border-radius: 20px 20px 0 0; 
-  background: #0f1214;        /* Ensure solid background stays visible */
-  overflow: hidden;
-  position: relative;
-}
-
-/* Ensure the header inherits the rounded top corners */
-.playerInner .playerHeader {
-  border-radius: 20px 20px 0 0;
-  overflow: hidden;
-}
-
-/* ------------------------------------------------------------
-   2. FIX THE COVER ACTION BUTTON ALIGNMENT (LEFT SIDE)
------------------------------------------------------------- */
-
-.coverActions {
-  position: absolute;
-  top: 12px;
-  left: 12px;                 /* SHIFT ACTION BUTTONS LEFT */
-  right: auto;                /* Prevent centering */
-  display: flex;
-  flex-direction: column;     /* Stack vertically for cleaner look */
-  gap: 10px;
-  z-index: 10;
-}
-
-.coverActions .actionBtn {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: rgba(0,0,0,0.35);
-  backdrop-filter: blur(10px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* MAKE SURE THE COVER IMAGE DOES *NOT* BLOCK ACTION BUTTONS */
-.coverWrapper,
-.coverImageContainer,
-.cover {
-  position: relative;
-  z-index: 1;        /* Buttons overlay successfully at z-index:10 */
-}
-
-/* ------------------------------------------------------------
-   3. FIX PLAYLIST TAB COLLAPSE BEHAVIOR
-      (Match Queue Tab behavior exactly)
------------------------------------------------------------- */
-
-/* When collapsed, BOTH tabs get full-height container */
-.player.playerCollapsed .panel[data-tab="playlist"].active .listContainer,
-.player.playerCollapsed .panel[data-tab="queue"].active .listContainer {
-  flex: 1;
-  max-height: none;
-  min-height: 0;
-  height: calc(100svh - 100px);     /* Same available space as Queue */
-  overflow-y: auto;
-}
-
-/* Ensure BOTH tabs' lists stretch fully */
-.player.playerCollapsed .panel[data-tab="playlist"].active .songList,
-.player.playerCollapsed .panel[data-tab="queue"].active .songList {
-  height: 100%;
-  max-height: none;
-  min-height: 0;
-  flex: 1;
-  overflow-y: auto;
-}
-
-/* ------------------------------------------------------------
-   4. MOBILE HEIGHT NORMALIZATION
------------------------------------------------------------- */
-@media (max-width: 480px) {
-  .player.playerCollapsed .playerHeader {
-    height: 80px;
-  }
-
-  .player.playerCollapsed .panel[data-tab="playlist"].active .listContainer,
-  .player.playerCollapsed .panel[data-tab="queue"].active .listContainer {
-    height: calc(100svh - 80px);
-  }
-}
-
-/* ------------------------------------------------------------
-   5. ENSURE COVER IMAGE DOES NOT EXPAND WHEN COLLAPSED
------------------------------------------------------------- */
-
-.player.playerCollapsed .coverWrapper {
-  height: 100px;
-  min-height: 100px;
-}
-
-/* Avatar-sized cover image */
-.player.playerCollapsed .coverImageContainer {
-  width: 60px;
-  height: 60px;
-  left: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.player.playerCollapsed .cover {
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-/* ------------------------------------------------------------
-   6. ENSURE HEADER REMAINS DARK WHEN COLLAPSED
------------------------------------------------------------- */
-.player.playerCollapsed .playerHeader {
-  background: #0f1214;
 }
 
 
