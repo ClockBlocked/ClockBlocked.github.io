@@ -2644,6 +2644,15 @@
 
 ***********/
 
+
+
+
+
+
+
+
+
+
 /* Layout container inside the drawer */
 .playerInner {
   display: flex;
@@ -3015,6 +3024,139 @@
 }
 
 
+
+
+
+
+
+/* ------------------------------------------------------------
+   1. RESTORE ORIGINAL BACKGROUND + INNER CONTAINER RADIUS
+------------------------------------------------------------ */
+
+/* Keep player's existing dark background and shape */
+.player {
+  background: #0f1214;
+}
+
+/* Restore your original inner container width + radius */
+.playerInner {
+  width: 100%;
+  max-width: 480px;            /* Adjust if you need a different cap */
+  margin: 0 auto;
+  border-radius: 20px 20px 0 0; 
+  background: #0f1214;        /* Ensure solid background stays visible */
+  overflow: hidden;
+  position: relative;
+}
+
+/* Ensure the header inherits the rounded top corners */
+.playerInner .playerHeader {
+  border-radius: 20px 20px 0 0;
+  overflow: hidden;
+}
+
+/* ------------------------------------------------------------
+   2. FIX THE COVER ACTION BUTTON ALIGNMENT (LEFT SIDE)
+------------------------------------------------------------ */
+
+.coverActions {
+  position: absolute;
+  top: 12px;
+  left: 12px;                 /* SHIFT ACTION BUTTONS LEFT */
+  right: auto;                /* Prevent centering */
+  display: flex;
+  flex-direction: column;     /* Stack vertically for cleaner look */
+  gap: 10px;
+  z-index: 10;
+}
+
+.coverActions .actionBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.35);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* MAKE SURE THE COVER IMAGE DOES *NOT* BLOCK ACTION BUTTONS */
+.coverWrapper,
+.coverImageContainer,
+.cover {
+  position: relative;
+  z-index: 1;        /* Buttons overlay successfully at z-index:10 */
+}
+
+/* ------------------------------------------------------------
+   3. FIX PLAYLIST TAB COLLAPSE BEHAVIOR
+      (Match Queue Tab behavior exactly)
+------------------------------------------------------------ */
+
+/* When collapsed, BOTH tabs get full-height container */
+.player.playerCollapsed .panel[data-tab="playlist"].active .listContainer,
+.player.playerCollapsed .panel[data-tab="queue"].active .listContainer {
+  flex: 1;
+  max-height: none;
+  min-height: 0;
+  height: calc(100svh - 100px);     /* Same available space as Queue */
+  overflow-y: auto;
+}
+
+/* Ensure BOTH tabs' lists stretch fully */
+.player.playerCollapsed .panel[data-tab="playlist"].active .songList,
+.player.playerCollapsed .panel[data-tab="queue"].active .songList {
+  height: 100%;
+  max-height: none;
+  min-height: 0;
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* ------------------------------------------------------------
+   4. MOBILE HEIGHT NORMALIZATION
+------------------------------------------------------------ */
+@media (max-width: 480px) {
+  .player.playerCollapsed .playerHeader {
+    height: 80px;
+  }
+
+  .player.playerCollapsed .panel[data-tab="playlist"].active .listContainer,
+  .player.playerCollapsed .panel[data-tab="queue"].active .listContainer {
+    height: calc(100svh - 80px);
+  }
+}
+
+/* ------------------------------------------------------------
+   5. ENSURE COVER IMAGE DOES NOT EXPAND WHEN COLLAPSED
+------------------------------------------------------------ */
+
+.player.playerCollapsed .coverWrapper {
+  height: 100px;
+  min-height: 100px;
+}
+
+/* Avatar-sized cover image */
+.player.playerCollapsed .coverImageContainer {
+  width: 60px;
+  height: 60px;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.player.playerCollapsed .cover {
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* ------------------------------------------------------------
+   6. ENSURE HEADER REMAINS DARK WHEN COLLAPSED
+------------------------------------------------------------ */
+.player.playerCollapsed .playerHeader {
+  background: #0f1214;
+}
 
 
 /**
