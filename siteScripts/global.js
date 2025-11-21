@@ -2439,7 +2439,6 @@ state: {
     init() {
       musicPlayer.state.cacheDOMElements();
       musicPlayer.state.injectRequiredHTML();
-//      musicPlayer.state.bindEvents();
       musicPlayer.state.setupObservers();
     },
     
@@ -2481,35 +2480,6 @@ state: {
       musicPlayer.state.updateMiniHeaderElements();
     },
 
-
-
-    bindEvents() {
-      if (this.coverWrapper) {
-        this.coverWrapper.addEventListener('mousedown', (e) => musicPlayer.state.handleHeaderDragStart(e));
-        this.coverWrapper.addEventListener('touchstart', (e) => musicPlayer.state.handleHeaderDragStart(e), { passive: false });
-        
-        this.coverWrapper.addEventListener('click', (e) => {
-          if (musicPlayer.state.isCollapsed && appState.currentTab !== MUSIC_PLAYER.tabs.playing && !musicPlayer.state.isTransitioning) {
-            if (e.target.closest('.miniControlBtn')) return;
-            musicPlayer.state.expandHeader();
-          }
-        });
-      }
-      
-      document.addEventListener('mousemove', (e) => musicPlayer.state.handleHeaderDragMove(e));
-      document.addEventListener('touchmove', (e) => musicPlayer.state.handleHeaderDragMove(e), { passive: false });
-      document.addEventListener('mouseup', () => musicPlayer.state.handleHeaderDragEnd());
-      document.addEventListener('touchend', () => musicPlayer.state.handleHeaderDragEnd());
-      
-      if (this.coverWrapper) {
-        const resizeObserver = new ResizeObserver(() => {
-          this.updateListHeights();
-        });
-        resizeObserver.observe(this.coverWrapper);
-      }      
-    },
-
-
     setupObservers() {
       const mutationObserver = new MutationObserver(() => {
         musicPlayer.state.collapsibles.addListItemInteractions();
@@ -2537,8 +2507,6 @@ state: {
       }
     },
 
-
-
     updateListHeights: function() {
       const coverWrapper = this.coverWrapper;
       const recentList = document.getElementById('music-player-recent-list');
@@ -2559,8 +2527,6 @@ state: {
         queueList.style.height = '500px';
       }
     },
-
-
 
     collapseHeader() {
       if (musicPlayer.state.isCollapsed || musicPlayer.state.isTransitioning || !this.coverWrapper) return;
@@ -2626,9 +2592,6 @@ state: {
       });
     },
 
-
-
-
     updateMiniHeaderElements() {
       if (!this.coverWrapper) return;
       
@@ -2674,63 +2637,12 @@ state: {
       return div.innerHTML;
     },
 
-
-/**    
-    handleHeaderDragStart(e) {
-      if (!this.coverWrapper || appState.currentTab === MUSIC_PLAYER.tabs.playing || musicPlayer.state.isTransitioning) return;
-      if (e.target.closest('.miniControlBtn')) return;
-      
-      const targetElement = e.target;
-      if (!targetElement.closest('.musicPlayerCoverWrapper')) return;
-      
-      musicPlayer.state.isDraggingHeader = true;
-      musicPlayer.state.dragStartY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
-      musicPlayer.state.dragDistance = 0;
-    },
-    
-    handleHeaderDragMove(e) {
-      if (!musicPlayer.state.isDraggingHeader || !this.coverWrapper) return;
-      
-      const currentY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
-      musicPlayer.state.dragDistance = currentY - musicPlayer.state.dragStartY;
-      
-      if (musicPlayer.state.isCollapsed && musicPlayer.state.dragDistance < 0) {
-        return;
-      }
-      
-      if (!musicPlayer.state.isCollapsed && musicPlayer.state.dragDistance > 0) {
-        return;
-      }
-    },
-    
-    handleHeaderDragEnd() {
-      if (!musicPlayer.state.isDraggingHeader || !this.coverWrapper) return;
-      
-      musicPlayer.state.isDraggingHeader = false;
-      
-      const dragThreshold = 60;
-      
-      if (Math.abs(musicPlayer.state.dragDistance) > dragThreshold) {
-        if (musicPlayer.state.dragDistance < 0 && !musicPlayer.state.isCollapsed) {
-          musicPlayer.state.collapseHeader();
-        } else if (musicPlayer.state.dragDistance > 0 && musicPlayer.state.isCollapsed) {
-          musicPlayer.state.expandHeader();
-        }
-      }
-      
-      musicPlayer.state.dragDistance = 0;
-    },
-**/
-
-
-
     collapsibles: {
         init: function() {
             this.setupTabListeners();
             this.setupActionButtonListeners();
             this.updateActiveTabState();
             this.addListItemInteractions();
-            console.log('Collapsibles initialized - BOTH tabs will collapse album cover');
         },
         
         setupTabListeners: function() {
@@ -2740,12 +2652,10 @@ state: {
             dotIndicators.forEach(indicator => {
                 indicator.addEventListener('click', (e) => {
                     const tab = e.target.closest('.dotIndicator').dataset.tab;
-                    console.log('Dot indicator clicked:', tab);
                     
                     setTimeout(() => {
                         if (player && tab) {
                             player.setAttribute('data-active-tab', tab);
-                            console.log('Data attribute updated to:', tab);
                         }
                     }, 100);
                 });
@@ -2755,27 +2665,23 @@ state: {
         setupActionButtonListeners: function() {
             const player = document.getElementById('music-player');
             
-            // Queue action button
             const queueButton = document.getElementById('music-player-queue');
             if (queueButton) {
                 queueButton.addEventListener('click', () => {
                     setTimeout(() => {
                         if (player) {
                             player.setAttribute('data-active-tab', 'queue');
-                            console.log('Data attribute updated to: queue (from action button)');
                         }
                     }, 100);
                 });
             }
             
-            // Recently Played action button (if it exists)
             const recentButton = document.querySelector('[data-tab="playlist"], [id*="recent"], [id*="playlist"]');
             if (recentButton) {
                 recentButton.addEventListener('click', () => {
                     setTimeout(() => {
                         if (player) {
                             player.setAttribute('data-active-tab', 'playlist');
-                            console.log('Data attribute updated to: playlist (from action button)');
                         }
                     }, 100);
                 });
@@ -2796,7 +2702,6 @@ state: {
                             
                             if (currentTab !== newTab) {
                                 player.setAttribute('data-active-tab', newTab);
-                                console.log('Tab change detected via observer:', newTab);
                             }
                         }
                     }
@@ -2809,12 +2714,10 @@ state: {
             });
         },
         
-        // Manual control for testing
         forceUpdateTab: function(tabName) {
             const player = document.getElementById('music-player');
             if (player && ['playing', 'queue', 'playlist'].includes(tabName)) {
                 player.setAttribute('data-active-tab', tabName);
-                console.log('Forced tab update to:', tabName);
             }
         },
         
