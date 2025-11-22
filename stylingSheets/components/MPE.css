@@ -1,0 +1,1222 @@
+/* ============================================
+   MUSIC PLAYER - REFACTORED STRUCTURE
+   ============================================ */
+
+/* Base Player Container */
+.player {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: auto;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  z-index: -1;
+  overflow: hidden;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), visibility 0s linear 0.6s, z-index 0s linear 0.6s;
+  will-change: opacity, visibility, z-index;
+}
+
+/* State attribute on player controls everything */
+.player[data-view="playing"] { /* default/now-playing view */ }
+.player[data-view="recent"] { /* recently played view */ }
+.player[data-view="queue"] { /* queue view */ }
+
+/* ============================================
+   MAIN CONTENT AREA
+   ============================================ */
+
+.player .main-content {
+  padding: 0 0.5rem 0.45rem;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ============================================
+   HEADER SECTION (Album Cover + Mini Header)
+   ============================================ */
+
+.player .header {
+  position: relative;
+  width: 100%;
+  height: 40vh;
+  min-height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 0 0 12px 12px;
+  flex-shrink: 0;
+  background: #1a1f24;
+  transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              min-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              border-radius 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: height, min-height;
+}
+
+/* Collapsed header state (for recent/queue views) */
+.player[data-view="recent"] .header,
+.player[data-view="queue"] .header {
+  height: 100px;
+  min-height: 100px;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  border-radius: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* ============================================
+   ALBUM COVER
+   ============================================ */
+
+.player .cover-container {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 100%;
+}
+
+.player .cover-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  border-radius: 0;
+  background: #1a1f24;
+  display: block;
+  transition: border-radius 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              object-fit 0.45s ease-in-out;
+}
+
+/* Collapsed cover (circular thumbnail) */
+.player[data-view="recent"] .cover-container,
+.player[data-view="queue"] .cover-container {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  width: 60px;
+  height: 60px;
+  transform: translateY(-50%);
+  inset: auto;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1.5px solid var(--border-200);
+}
+
+.player[data-view="recent"] .cover-image,
+.player[data-view="queue"] .cover-image {
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+/* ============================================
+   COVER GLOW EFFECT
+   ============================================ */
+
+.player .cover-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(139, 92, 246, 0.3) 0%,
+    rgba(59, 130, 246, 0.2) 30%,
+    transparent 70%
+  );
+  filter: blur(60px);
+  opacity: 0.6;
+  z-index: 1;
+  pointer-events: none;
+  transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.player[data-view="recent"] .cover-glow,
+.player[data-view="queue"] .cover-glow {
+  opacity: 0;
+}
+
+/* ============================================
+   MINI HEADER (Collapsed State Info)
+   ============================================ */
+
+.player .mini-header {
+  position: absolute;
+  left: 100px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  opacity: 0;
+  pointer-events: none;
+  max-width: calc(100% - 180px);
+  z-index: 3;
+  transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.player[data-view="recent"] .mini-header,
+.player[data-view="queue"] .mini-header {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.player .mini-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.player .mini-artist {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ============================================
+   MINI CONTROLS (Collapsed State Controls)
+   ============================================ */
+
+.player .mini-controls {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 3;
+  transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.player[data-view="recent"] .mini-controls,
+.player[data-view="queue"] .mini-controls {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.player .mini-control-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.player .mini-control-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.05);
+}
+
+.player .mini-control-btn svg {
+  width: 18px;
+  height: 18px;
+  color: #fff;
+}
+
+/* ============================================
+   ACTION BUTTONS (Overlay on Album Cover)
+   ============================================ */
+
+.player .header-actions {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  z-index: 10;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              visibility 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.player[data-view="recent"] .header-actions,
+.player[data-view="queue"] .header-actions {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.player .action-btn {
+  /* Your existing action button styles */
+}
+
+/* ============================================
+   TAB PANELS CONTAINER
+   ============================================ */
+
+.player .panels-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ============================================
+   INDIVIDUAL TAB PANELS
+   ============================================ */
+
+.player .tab-panel {
+  display: none;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition: opacity 0.45s cubic-bezier(0.34, 1.26, 0.64, 1),
+              transform 0.45s cubic-bezier(0.34, 1.26, 0.64, 1),
+              visibility 0s linear 0.45s;
+}
+
+/* Active panel states */
+.player[data-view="playing"] .tab-panel[data-tab="playing"],
+.player[data-view="recent"] .tab-panel[data-tab="recent"],
+.player[data-view="queue"] .tab-panel[data-tab="queue"] {
+  display: flex;
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition: opacity 0.45s cubic-bezier(0.34, 1.26, 0.64, 1) 0.1s,
+              transform 0.45s cubic-bezier(0.34, 1.26, 0.64, 1) 0.1s,
+              visibility 0s linear 0s;
+}
+
+/* ============================================
+   NOW PLAYING TAB CONTENT
+   ============================================ */
+
+.player .now-playing-content {
+  padding: 0 0.5rem 0.45rem;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.player .track-info {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.player .track-metadata {
+  flex: 1;
+  min-width: 0;
+}
+
+.player .track-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 8px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.player .track-artist {
+  font-size: 16px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0 0 4px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.player .track-album {
+  font-size: 14px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.player .favorite-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.player .favorite-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.player .favorite-btn svg {
+  width: 20px;
+  height: 20px;
+  color: #fff;
+}
+
+/* ============================================
+   PROGRESS SECTION
+   ============================================ */
+
+.player .progress-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.player .progress-bar-container {
+  position: relative;
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.player .progress-buffer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  transition: width 0.1s linear;
+}
+
+.player .progress-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: linear-gradient(90deg, #8b5cf6, #3b82f6);
+  border-radius: 3px;
+  transition: width 0.1s linear;
+}
+
+.player .progress-thumb {
+  position: absolute;
+  top: 50%;
+  right: -6px;
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  border-radius: 50%;
+  transform: translateY(-50%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.player .progress-bar-container:hover .progress-thumb {
+  opacity: 1;
+}
+
+.player .time-display {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* ============================================
+   PLAYBACK CONTROLS
+   ============================================ */
+
+.player .playback-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.player .control-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.player .control-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.player .control-btn.primary {
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+  border: none;
+}
+
+.player .control-btn.primary:hover {
+  background: linear-gradient(135deg, #7c3aed, #2563eb);
+  transform: scale(1.1);
+}
+
+.player .control-btn svg {
+  width: 20px;
+  height: 20px;
+  color: #fff;
+}
+
+.player .control-btn.primary svg {
+  width: 24px;
+  height: 24px;
+}
+
+.player .skip-label {
+  position: absolute;
+  bottom: 2px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* ============================================
+   LIST VIEWS (Recent & Queue)
+   ============================================ */
+
+.player .list-view {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.player .list-header {
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.player .list-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+
+.player .list-count {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.player .list-scroll-container {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+  transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dynamic height for collapsed state */
+.player[data-view="recent"] .list-scroll-container,
+.player[data-view="queue"] .list-scroll-container {
+  height: calc(100vh - 100px - 80px); /* viewport - header - list-header/tabs */
+}
+
+.player .song-list {
+  list-style: none;
+  padding: 8px 16px 40px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* ============================================
+   SONG LIST ITEMS
+   ============================================ */
+
+.player .song-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.player .song-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.player .song-item.active {
+  background: rgba(139, 92, 246, 0.2);
+  border: 1px solid rgba(139, 92, 246, 0.4);
+}
+
+.player .song-artwork-wrapper {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.player .song-artwork {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.player .song-play-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.player .song-item:hover .song-play-overlay {
+  opacity: 1;
+}
+
+.player .song-play-overlay svg {
+  width: 20px;
+  height: 20px;
+  color: #fff;
+}
+
+.player .song-metadata {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.player .song-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin: 0;
+}
+
+.player .song-artist {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin: 0;
+}
+
+.player .song-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.player .song-item:hover .song-actions {
+  opacity: 1;
+}
+
+.player .song-action-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.player .song-action-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.player .song-action-btn svg {
+  width: 16px;
+  height: 16px;
+  color: #fff;
+}
+
+/* ============================================
+   DOT INDICATORS (Tab Navigation)
+   ============================================ */
+
+.player .tab-indicators {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 24px;
+  flex-shrink: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(26, 31, 36, 0.8);
+  backdrop-filter: blur(10px);
+}
+
+.player .tab-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.player .tab-indicator:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.player .tab-indicator::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.player .tab-indicator.active::before {
+  background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+  width: 10px;
+  height: 10px;
+  box-shadow: 0 0 12px rgba(139, 92, 246, 0.6);
+}
+
+.player .tab-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: color 0.2s;
+}
+
+.player .tab-indicator.active .tab-label {
+  color: #fff;
+}
+
+/* ============================================
+   DRAG HANDLE & CLOSE BUTTON
+   ============================================ */
+
+.player .drag-area {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+  cursor: grab;
+}
+
+.player .drag-area:active {
+  cursor: grabbing;
+}
+
+.player .drag-handle {
+  width: 40px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+  border: none;
+  padding: 0;
+  cursor: grab;
+  transition: all 0.2s;
+}
+
+.player .drag-handle:active {
+  cursor: grabbing;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.player .close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 300;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.player .close-btn:hover {
+  background: rgba(0, 0, 0, 0.6);
+  transform: scale(1.05);
+}
+
+.player .close-btn svg {
+  width: 18px;
+  height: 18px;
+  color: #fff;
+}
+
+/* ============================================
+   CUSTOM SHAPE DIVIDER
+   ============================================ */
+
+.player .shape-divider {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  z-index: 1;
+  pointer-events: none;
+  transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.player[data-view="recent"] .shape-divider,
+.player[data-view="queue"] .shape-divider {
+  opacity: 0;
+}
+
+.player .shape-divider svg {
+  position: relative;
+  display: block;
+  width: calc(100% + 1.3px);
+  height: 60px;
+}
+
+.player .shape-fill {
+  fill: #1a1f24;
+}
+
+/* ============================================
+   EMPTY STATE
+   ============================================ */
+
+.player .empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.player .empty-state svg {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 16px;
+  opacity: 0.3;
+}
+
+.player .empty-state p {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* ============================================
+   SCROLLBAR STYLING
+   ============================================ */
+
+.player .list-scroll-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.player .list-scroll-container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+.player .list-scroll-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.player .list-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* ============================================
+   MOBILE RESPONSIVE (480px and below)
+   ============================================ */
+
+@media (max-width: 480px) {
+  /* Smaller collapsed header on mobile */
+  .player[data-view="recent"] .header,
+  .player[data-view="queue"] .header {
+    height: 80px;
+    min-height: 80px;
+  }
+
+  /* Adjust cover thumbnail size */
+  .player[data-view="recent"] .cover-container,
+  .player[data-view="queue"] .cover-container {
+    left: 12px;
+    width: 56px;
+    height: 56px;
+  }
+
+  /* Adjust mini header position */
+  .player .mini-header {
+    left: 80px;
+    max-width: calc(100% - 140px);
+  }
+
+  .player .mini-title {
+    font-size: 14px;
+  }
+
+  .player .mini-artist {
+    font-size: 12px;
+  }
+
+  /* Smaller now playing header */
+  .player .header {
+    height: 35vh;
+    min-height: 240px;
+  }
+
+  /* Adjust list height for mobile collapsed state */
+  .player[data-view="recent"] .list-scroll-container,
+  .player[data-view="queue"] .list-scroll-container {
+    height: calc(100vh - 80px - 80px);
+  }
+
+  /* Smaller track info */
+  .player .track-title {
+    font-size: 20px;
+  }
+
+  .player .track-artist {
+    font-size: 14px;
+  }
+
+  .player .track-album {
+    font-size: 12px;
+  }
+
+  /* Smaller controls */
+  .player .control-btn {
+    width: 44px;
+    height: 44px;
+  }
+
+  .player .control-btn.primary {
+    width: 56px;
+    height: 56px;
+  }
+
+  /* Smaller song items */
+  .player .song-item {
+    gap: 10px;
+    padding: 6px 10px;
+  }
+
+  .player .song-artwork-wrapper {
+    width: 44px;
+    height: 44px;
+  }
+
+  .player .song-title {
+    font-size: 13px;
+  }
+
+  .player .song-artist {
+    font-size: 11px;
+  }
+
+  /* Compact tab indicators */
+  .player .tab-indicators {
+    gap: 4px;
+    padding: 12px 16px;
+  }
+
+  .player .tab-indicator {
+    padding: 6px 8px;
+  }
+
+  .player .tab-label {
+    font-size: 10px;
+  }
+}
+
+/* ============================================
+   TABLET RESPONSIVE (481px - 768px)
+   ============================================ */
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .player .header {
+    height: 38vh;
+    min-height: 260px;
+  }
+
+  .player[data-view="recent"] .header,
+  .player[data-view="queue"] .header {
+    height: 90px;
+    min-height: 90px;
+  }
+
+  .player[data-view="recent"] .list-scroll-container,
+  .player[data-view="queue"] .list-scroll-container {
+    height: calc(100vh - 90px - 80px);
+  }
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Apply animations */
+.player .song-item {
+  animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.player .tab-panel[data-tab="playing"] {
+  animation: fadeIn 0.45s cubic-bezier(0.34, 1.26, 0.64, 1);
+}
+
+/* Loading state animation */
+.player .loading {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+.player .hidden {
+  display: none !important;
+}
+
+.player .invisible {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.player .no-transition {
+  transition: none !important;
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+
+@media print {
+  .player {
+    display: none;
+  }
+}
+
+/* ============================================
+   ACCESSIBILITY IMPROVEMENTS
+   ============================================ */
+
+/* Focus visible styles */
+.player .control-btn:focus-visible,
+.player .tab-indicator:focus-visible,
+.player .song-item:focus-visible {
+  outline: 2px solid #8b5cf6;
+  outline-offset: 2px;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  .player *,
+  .player *::before,
+  .player *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .player .song-item {
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .player .control-btn {
+    border: 2px solid rgba(255, 255, 255, 0.5);
+  }
+}
+
+/* ============================================
+   DARK MODE ADJUSTMENTS (if needed)
+   ============================================ */
+
+@media (prefers-color-scheme: dark) {
+  /* Already designed for dark mode, but add overrides if needed */
+}
+
+/* ============================================
+   STATE-SPECIFIC OVERRIDES
+   ============================================ */
+
+/* When player is playing */
+.player.isPlaying .control-btn.primary {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* When player is loading */
+.player.isLoading .cover-image {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* When player is open */
+.player.open {
+  /* Add any open-specific styles */
+}
+
+/* ============================================
+   LEGACY SUPPORT FALLBACKS
+   ============================================ */
+
+/* Fallback for browsers without backdrop-filter */
+@supports not (backdrop-filter: blur(10px)) {
+  .player .mini-control-btn,
+  .player .control-btn,
+  .player .favorite-btn {
+    background: rgba(255, 255, 255, 0.25);
+  }
+  
+  .player .tab-indicators {
+    background: rgba(26, 31, 36, 0.95);
+  }
+}
+
+/* Fallback for svh units */
+@supports not (height: 100svh) {
+  .player[data-view="recent"] .list-scroll-container,
+  .player[data-view="queue"] .list-scroll-container {
+    height: calc(100vh - 100px - 80px);
+  }
+  
+  @media (max-width: 480px) {
+    .player[data-view="recent"] .list-scroll-container,
+    .player[data-view="queue"] .list-scroll-container {
+      height: calc(100vh - 80px - 80px);
+    }
+  }
+}
