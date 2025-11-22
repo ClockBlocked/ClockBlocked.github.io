@@ -1247,6 +1247,8 @@ renderList(container, items, options = {}) {
 }
 };
 
+
+/**
 const musicPlayer = {
   mainPlayer: {
     inactivityTimer: null,
@@ -2760,6 +2762,1256 @@ expandHeader() {
     },
 }
 };
+**/
+
+
+/* ============================================
+   MUSIC PLAYER - REFACTORED STATE MANAGEMENT
+   ============================================ */
+
+const musicPlayer = {
+  
+  /* ============================================
+     CONFIGURATION & CONSTANTS
+     ============================================ */
+  
+  config: {
+    selectors: {
+      // Main containers
+      player: '#music-player',
+      header: '.header',
+      coverContainer: '.cover-container',
+      coverImage: '#player-cover',
+      coverGlow: '.cover-glow',
+      
+      // Panels
+      panelsContainer: '.panels-container',
+      tabPanels: '.tab-panel',
+      
+      // Now Playing elements
+      trackTitle: '#track-title',
+      trackArtist: '#track-artist',
+      trackAlbum: '#track-album',
+      miniTitle: '#mini-title',
+      miniArtist: '#mini-artist',
+      
+      // Progress bar
+      progressBar: '#progress-bar',
+      progressBuffer: '#progress-buffer',
+      progressFill: '#progress-fill',
+      progressThumb: '#progress-thumb',
+      currentTime: '#current-time',
+      totalTime: '#total-time',
+      
+      // Controls
+      playBtn: '#player-play',
+      prevBtn: '#player-prev',
+      nextBtn: '#player-next',
+      rewindBtn: '#player-rewind',
+      forwardBtn: '#player-forward',
+      miniPlayBtn: '#mini-play-btn',
+      
+      // Action buttons
+      shuffleBtn: '#player-shuffle',
+      repeatBtn: '#player-repeat',
+      volumeBtn: '#player-volume',
+      queueBtn: '#player-queue-btn',
+      favoriteBtn: '#player-favorite',
+      
+      // Lists
+      recentList: '#recent-list',
+      queueList: '#queue-list',
+      recentCount: '#recent-count',
+      queueCount: '#queue-count',
+      
+      // Tab indicators
+      tabIndicators: '.tab-indicator',
+      
+      // Close button
+      closeBtn: '#player-close'
+    },
+    
+    views: {
+      PLAYING: 'playing',
+      RECENT: 'recent',
+      QUEUE: 'queue'
+    },
+    
+    transitions: {
+      HEADER_COLLAPSE: 350, // ms
+      TAB_SWITCH: 450 // ms
+    }
+  },
+  
+  /* ============================================
+     STATE MANAGEMENT
+     ============================================ */
+  
+  state: {
+    // Current view
+    currentView: 'playing',
+    
+    // Transition flags
+    isTransitioning: false,
+    
+    // DOM elements cache
+    elements: {},
+    
+    // Player state
+    isPlaying: false,
+    currentTrack: null,
+    
+    // Lists
+    recentTracks: [],
+    queueTracks: [],
+    
+    /**
+     * Initialize the state management system
+     */
+    init() {
+      this.cacheElements();
+      this.setupEventListeners();
+      this.setupMutationObservers();
+      this.updateView(musicPlayer.config.views.PLAYING);
+    },
+    
+    /**
+     * Cache all DOM elements for better performance
+     */
+    cacheElements() {
+      const sel = musicPlayer.config.selectors;
+      
+      this.elements = {
+        player: document.querySelector(sel.player),
+        header: document.querySelector(sel.header),
+        coverContainer: document.querySelector(sel.coverContainer),
+        coverImage: document.querySelector(sel.coverImage),
+        coverGlow: document.querySelector(sel.coverGlow),
+        
+        panelsContainer: document.querySelector(sel.panelsContainer),
+        tabPanels: document.querySelectorAll(sel.tabPanels),
+        
+        trackTitle: document.querySelector(sel.trackTitle),
+        trackArtist: document.querySelector(sel.trackArtist),
+        trackAlbum: document.querySelector(sel.trackAlbum),
+        miniTitle: document.querySelector(sel.miniTitle),
+        miniArtist: document.querySelector(sel.miniArtist),
+        
+        progressBar: document.querySelector(sel.progressBar),
+        progressBuffer: document.querySelector(sel.progressBuffer),
+        progressFill: document.querySelector(sel.progressFill),
+        progressThumb: document.querySelector(sel.progressThumb),
+        currentTime: document.querySelector(sel.currentTime),
+        totalTime: document.querySelector(sel.totalTime),
+        
+        playBtn: document.querySelector(sel.playBtn),
+        prevBtn: document.querySelector(sel.prevBtn),
+        nextBtn: document.querySelector(sel.nextBtn),
+        rewindBtn: document.querySelector(sel.rewindBtn),
+        forwardBtn: document.querySelector(sel.forwardBtn),
+        miniPlayBtn: document.querySelector(sel.miniPlayBtn),
+        
+        shuffleBtn: document.querySelector(sel.shuffleBtn),
+        repeatBtn: document.querySelector(sel.repeatBtn),
+        volumeBtn: document.querySelector(sel.volumeBtn),
+        queueBtn: document.querySelector(sel.queueBtn),
+        favoriteBtn: document.querySelector(sel.favoriteBtn),
+        
+        recentList: document.querySelector(sel.recentList),
+        queueList: document.querySelector(sel.queueList),
+        recentCount: document.querySelector(sel.recentCount),
+        queueCount: document.querySelector(sel.queueCount),
+        
+        tabIndicators: document.querySelectorAll(sel.tabIndicators),
+        
+        closeBtn: document.querySelector(sel.closeBtn)
+      };
+      
+      // Verify critical elements exist
+      if (!this.elements.player) {
+        console.error('Music Player: Critical element #music-player not found');
+      }
+    },
+    
+    /**
+     * Setup all event listeners
+     */
+    setupEventListeners() {
+      // Tab indicator clicks
+      this.elements.tabIndicators.forEach(indicator => {
+        indicator.addEventListener('click', (e) => {
+          const tab = e.currentTarget.dataset.tab;
+          this.updateView(tab);
+        });
+      });
+      
+      // Queue button in header actions
+      if (this.elements.queueBtn) {
+        this.elements.queueBtn.addEventListener('click', () => {
+          this.updateView(musicPlayer.config.views.QUEUE);
+        });
+      }
+      
+      // Window resize handler
+      window.addEventListener('resize', () => {
+        this.updateListHeights();
+      });
+      
+      // Mini play button
+      if (this.elements.miniPlayBtn) {
+        this.elements.miniPlayBtn.addEventListener('click', () => {
+          musicPlayer.playback.togglePlayPause();
+        });
+      }
+    },
+    
+    /**
+     * Setup mutation observers for dynamic content
+     */
+    setupMutationObservers() {
+      // Watch for list item changes
+      const listObserver = new MutationObserver(() => {
+        this.updateListInteractions();
+      });
+      
+      if (this.elements.recentList) {
+        listObserver.observe(this.elements.recentList, {
+          childList: true,
+          subtree: true
+        });
+      }
+      
+      if (this.elements.queueList) {
+        listObserver.observe(this.elements.queueList, {
+          childList: true,
+          subtree: true
+        });
+      }
+    },
+    
+    /**
+     * Update the current view
+     * @param {string} view - The view to switch to ('playing', 'recent', 'queue')
+     */
+    updateView(view) {
+      if (this.isTransitioning || !this.elements.player) return;
+      if (view === this.currentView) return;
+      
+      // Validate view
+      const validViews = Object.values(musicPlayer.config.views);
+      if (!validViews.includes(view)) {
+        console.error(`Invalid view: ${view}`);
+        return;
+      }
+      
+      this.isTransitioning = true;
+      this.currentView = view;
+      
+      // Update player data attribute
+      this.elements.player.setAttribute('data-view', view);
+      
+      // Update tab indicators
+      this.updateTabIndicators(view);
+      
+      // Update list heights if switching to list views
+      if (view === musicPlayer.config.views.RECENT || view === musicPlayer.config.views.QUEUE) {
+        // Small delay to allow CSS transition to start
+        requestAnimationFrame(() => {
+          this.updateListHeights();
+        });
+      }
+      
+      // Reset transitioning flag after transition completes
+      setTimeout(() => {
+        this.isTransitioning = false;
+      }, musicPlayer.config.transitions.TAB_SWITCH);
+    },
+    
+    /**
+     * Update active tab indicator
+     * @param {string} activeTab - The tab to mark as active
+     */
+    updateTabIndicators(activeTab) {
+      this.elements.tabIndicators.forEach(indicator => {
+        const tab = indicator.dataset.tab;
+        if (tab === activeTab) {
+          indicator.classList.add('active');
+          indicator.setAttribute('aria-selected', 'true');
+        } else {
+          indicator.classList.remove('active');
+          indicator.setAttribute('aria-selected', 'false');
+        }
+      });
+    },
+    
+    /**
+     * Update list container heights dynamically
+     */
+    updateListHeights() {
+      if (!this.elements.player || !this.elements.header) return;
+      
+      const view = this.currentView;
+      const isListView = view === musicPlayer.config.views.RECENT || 
+                        view === musicPlayer.config.views.QUEUE;
+      
+      if (!isListView) return;
+      
+      // Get header height
+      const headerHeight = this.elements.header.offsetHeight;
+      
+      // Get viewport height
+      const viewportHeight = window.innerHeight;
+      
+      // Calculate available height for list
+      // Account for: header + list-header + tab-indicators + padding
+      const reservedSpace = headerHeight + 80 + 70; // Approximate values
+      const availableHeight = viewportHeight - reservedSpace;
+      
+      // Find the active list container
+      const activePanel = this.elements.player.querySelector(`.tab-panel[data-tab="${view}"]`);
+      if (activePanel) {
+        const scrollContainer = activePanel.querySelector('.list-scroll-container');
+        if (scrollContainer) {
+          scrollContainer.style.height = `${availableHeight}px`;
+        }
+      }
+    },
+    
+    /**
+     * Update track metadata in both expanded and mini views
+     * @param {Object} track - Track object with title, artist, album properties
+     */
+    updateTrackMetadata(track) {
+      if (!track) return;
+      
+      this.currentTrack = track;
+      
+      // Update expanded view
+      if (this.elements.trackTitle) {
+        this.elements.trackTitle.textContent = track.title || 'Unknown Title';
+      }
+      if (this.elements.trackArtist) {
+        this.elements.trackArtist.textContent = track.artist || 'Unknown Artist';
+      }
+      if (this.elements.trackAlbum) {
+        this.elements.trackAlbum.textContent = track.album || 'Unknown Album';
+      }
+      
+      // Update mini header
+      if (this.elements.miniTitle) {
+        this.elements.miniTitle.textContent = track.title || 'Unknown Title';
+      }
+      if (this.elements.miniArtist) {
+        this.elements.miniArtist.textContent = track.artist || 'Unknown Artist';
+      }
+      
+      // Update cover image
+      if (this.elements.coverImage && track.cover) {
+        this.elements.coverImage.src = track.cover;
+        this.elements.coverImage.alt = `${track.title} - ${track.artist}`;
+      }
+    },
+    
+    /**
+     * Update mini controls play/pause icon
+     */
+    updateMiniPlayButton() {
+      if (!this.elements.miniPlayBtn) return;
+      
+      const isPlaying = this.elements.player?.classList.contains('isPlaying');
+      
+      const playIcon = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 3l14 9-14 9V3z"/>
+        </svg>
+      `;
+      
+      const pauseIcon = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 4h4v16H6zM14 4h4v16h-4z"/>
+        </svg>
+      `;
+      
+      this.elements.miniPlayBtn.innerHTML = isPlaying ? pauseIcon : playIcon;
+    },
+    
+    /**
+     * Add interactions to list items (play on click, hover effects, etc.)
+     */
+    updateListInteractions() {
+      const listItems = document.querySelectorAll('.song-item');
+      
+      listItems.forEach(item => {
+        // Ensure artwork wrapper exists
+        const artwork = item.querySelector('.song-artwork');
+        if (!artwork) return;
+        
+        let wrapper = artwork.closest('.song-artwork-wrapper');
+        if (!wrapper) {
+          wrapper = document.createElement('div');
+          wrapper.className = 'song-artwork-wrapper';
+          artwork.parentNode.insertBefore(wrapper, artwork);
+          wrapper.appendChild(artwork);
+        }
+        
+        // Add play overlay if it doesn't exist
+        if (!wrapper.querySelector('.song-play-overlay')) {
+          const overlay = document.createElement('div');
+          overlay.className = 'song-play-overlay';
+          overlay.innerHTML = `
+            <svg viewBox="0 0 24 24" fill="white">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          `;
+          wrapper.appendChild(overlay);
+        }
+        
+        // Add click handler to play overlay
+        const playOverlay = wrapper.querySelector('.song-play-overlay');
+        if (playOverlay && !playOverlay.dataset.listenerAdded) {
+          playOverlay.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const index = parseInt(item.dataset.index);
+            const source = item.dataset.source;
+            musicPlayer.playback.playTrack(index, source);
+          });
+          playOverlay.dataset.listenerAdded = 'true';
+        }
+      });
+    },
+    
+    /**
+     * Utility: Escape HTML to prevent XSS
+     * @param {string} str - String to escape
+     * @returns {string} Escaped string
+     */
+    escapeHTML(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+  },
+  
+  /* ============================================
+     PLAYBACK CONTROLS
+     ============================================ */
+  
+  playback: {
+    
+    /**
+     * Toggle play/pause state
+     */
+    togglePlayPause() {
+      const player = musicPlayer.state.elements.player;
+      if (!player) return;
+      
+      const isPlaying = player.classList.contains('isPlaying');
+      
+      if (isPlaying) {
+        this.pause();
+      } else {
+        this.play();
+      }
+    },
+    
+    /**
+     * Play the current track
+     */
+    play() {
+      const player = musicPlayer.state.elements.player;
+      if (!player) return;
+      
+      player.classList.add('isPlaying');
+      musicPlayer.state.isPlaying = true;
+      
+      // Update play button icon
+      this.updatePlayButtonIcon(true);
+      
+      // Update mini play button
+      musicPlayer.state.updateMiniPlayButton();
+      
+      // Trigger actual audio playback (implement based on your audio system)
+      // Example: audioElement.play();
+    },
+    
+    /**
+     * Pause the current track
+     */
+    pause() {
+      const player = musicPlayer.state.elements.player;
+      if (!player) return;
+      
+      player.classList.remove('isPlaying');
+      musicPlayer.state.isPlaying = false;
+      
+      // Update play button icon
+      this.updatePlayButtonIcon(false);
+      
+      // Update mini play button
+      musicPlayer.state.updateMiniPlayButton();
+      
+      // Trigger actual audio pause (implement based on your audio system)
+      // Example: audioElement.pause();
+    },
+    
+    /**
+     * Update play/pause button icon
+     * @param {boolean} isPlaying - Whether audio is currently playing
+     */
+    updatePlayButtonIcon(isPlaying) {
+      const playBtn = musicPlayer.state.elements.playBtn;
+      if (!playBtn) return;
+      
+      const playIcon = playBtn.querySelector('.play-icon');
+      const pauseIcon = playBtn.querySelector('.pause-icon');
+      
+      if (isPlaying) {
+        playIcon?.classList.add('hidden');
+        pauseIcon?.classList.remove('hidden');
+      } else {
+        playIcon?.classList.remove('hidden');
+        pauseIcon?.classList.add('hidden');
+      }
+    },
+    
+    /**
+     * Play next track
+     */
+    nextTrack() {
+      // Implement next track logic
+      console.log('Next track');
+    },
+    
+    /**
+     * Play previous track
+     */
+    previousTrack() {
+      // Implement previous track logic
+      console.log('Previous track');
+    },
+    
+    /**
+     * Rewind by specified seconds
+     * @param {number} seconds - Seconds to rewind (default: 10)
+     */
+    rewind(seconds = 10) {
+      // Implement rewind logic
+      console.log(`Rewind ${seconds} seconds`);
+    },
+    
+    /**
+     * Forward by specified seconds
+     * @param {number} seconds - Seconds to forward (default: 10)
+     */
+    forward(seconds = 10) {
+      // Implement forward logic
+      console.log(`Forward ${seconds} seconds`);
+    },
+    
+    /**
+     * Play a specific track from a list
+     * @param {number} index - Track index
+     * @param {string} source - Source list ('recent' or 'queue')
+     */
+    playTrack(index, source) {
+      const tracks = source === 'recent' ? 
+        musicPlayer.state.recentTracks : 
+        musicPlayer.state.queueTracks;
+      
+      if (index < 0 || index >= tracks.length) {
+        console.error('Invalid track index');
+        return;
+      }
+      
+      const track = tracks[index];
+      musicPlayer.state.updateTrackMetadata(track);
+      this.play();
+      
+      // Switch to now playing view
+      musicPlayer.state.updateView(musicPlayer.config.views.PLAYING);
+    },
+    
+    /**
+     * Update progress bar
+     * @param {number} currentTime - Current playback time in seconds
+     * @param {number} duration - Total duration in seconds
+     */
+    updateProgress(currentTime, duration) {
+      if (!musicPlayer.state.elements.progressFill) return;
+      
+      const percentage = (currentTime / duration) * 100;
+      
+      musicPlayer.state.elements.progressFill.style.width = `${percentage}%`;
+      
+      if (musicPlayer.state.elements.progressThumb) {
+        musicPlayer.state.elements.progressThumb.style.left = `${percentage}%`;
+      }
+      
+      // Update time displays
+      this.updateTimeDisplay(currentTime, duration);
+    },
+    
+    /**
+     * Update time display
+     * @param {number} currentTime - Current time in seconds
+     * @param {number} duration - Total duration in seconds
+     */
+    updateTimeDisplay(currentTime, duration) {
+      if (musicPlayer.state.elements.currentTime) {
+        musicPlayer.state.elements.currentTime.textContent = this.formatTime(currentTime);
+      }
+      
+      if (musicPlayer.state.elements.totalTime) {
+        musicPlayer.state.elements.totalTime.textContent = this.formatTime(duration);
+      }
+    },
+    
+    /**
+     * Format time from seconds to MM:SS
+     * @param {number} seconds - Time in seconds
+     * @returns {string} Formatted time string
+     */
+    formatTime(seconds) {
+      if (isNaN(seconds) || seconds < 0) return '0:00';
+      
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+  },
+  
+/* ============================================
+     LIST MANAGEMENT
+     ============================================ */
+  
+  lists: {
+    
+    /**
+     * Add a track to the recent list
+     * @param {Object} track - Track object
+     */
+    addToRecent(track) {
+      if (!track) return;
+      
+      // Add to state
+      musicPlayer.state.recentTracks.unshift(track);
+      
+      // Limit to 50 tracks
+      if (musicPlayer.state.recentTracks.length > 50) {
+        musicPlayer.state.recentTracks.pop();
+      }
+      
+      // Update UI
+      this.renderRecentList();
+    },
+    
+    /**
+     * Add a track to the queue
+     * @param {Object} track - Track object
+     */
+    addToQueue(track) {
+      if (!track) return;
+      
+      // Add to state
+      musicPlayer.state.queueTracks.push(track);
+      
+      // Update UI
+      this.renderQueueList();
+    },
+    
+    /**
+     * Remove a track from the queue
+     * @param {number} index - Track index to remove
+     */
+    removeFromQueue(index) {
+      if (index < 0 || index >= musicPlayer.state.queueTracks.length) return;
+      
+      // Remove from state
+      musicPlayer.state.queueTracks.splice(index, 1);
+      
+      // Update UI
+      this.renderQueueList();
+    },
+    
+    /**
+     * Clear the entire queue
+     */
+    clearQueue() {
+      musicPlayer.state.queueTracks = [];
+      this.renderQueueList();
+    },
+    
+    /**
+     * Clear recent list
+     */
+    clearRecent() {
+      musicPlayer.state.recentTracks = [];
+      this.renderRecentList();
+    },
+    
+    /**
+     * Render the recent tracks list
+     */
+    renderRecentList() {
+      const listElement = musicPlayer.state.elements.recentList;
+      const countElement = musicPlayer.state.elements.recentCount;
+      
+      if (!listElement) return;
+      
+      const tracks = musicPlayer.state.recentTracks;
+      
+      // Update count
+      if (countElement) {
+        countElement.textContent = `${tracks.length} ${tracks.length === 1 ? 'song' : 'songs'}`;
+      }
+      
+      // Clear list
+      listElement.innerHTML = '';
+      
+      // Show empty state if no tracks
+      if (tracks.length === 0) {
+        listElement.innerHTML = `
+          <li class="empty-state">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+            </svg>
+            <p>No recently played songs</p>
+          </li>
+        `;
+        return;
+      }
+      
+      // Render tracks
+      tracks.forEach((track, index) => {
+        const item = this.createListItem(track, index, 'recent');
+        listElement.appendChild(item);
+      });
+      
+      // Update interactions
+      musicPlayer.state.updateListInteractions();
+    },
+    
+    /**
+     * Render the queue list
+     */
+    renderQueueList() {
+      const listElement = musicPlayer.state.elements.queueList;
+      const countElement = musicPlayer.state.elements.queueCount;
+      
+      if (!listElement) return;
+      
+      const tracks = musicPlayer.state.queueTracks;
+      
+      // Update count
+      if (countElement) {
+        countElement.textContent = `${tracks.length} ${tracks.length === 1 ? 'song' : 'songs'}`;
+      }
+      
+      // Clear list
+      listElement.innerHTML = '';
+      
+      // Show empty state if no tracks
+      if (tracks.length === 0) {
+        listElement.innerHTML = `
+          <li class="empty-state">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
+            </svg>
+            <p>Queue is empty</p>
+          </li>
+        `;
+        return;
+      }
+      
+      // Render tracks
+      tracks.forEach((track, index) => {
+        const item = this.createListItem(track, index, 'queue');
+        listElement.appendChild(item);
+      });
+      
+      // Update interactions
+      musicPlayer.state.updateListInteractions();
+    },
+    
+    /**
+     * Create a list item element for a track
+     * @param {Object} track - Track object
+     * @param {number} index - Track index
+     * @param {string} source - Source list ('recent' or 'queue')
+     * @returns {HTMLElement} List item element
+     */
+    createListItem(track, index, source) {
+      const li = document.createElement('li');
+      li.className = 'song-item';
+      li.dataset.index = index;
+      li.dataset.source = source;
+      
+      // Check if this is the currently playing track
+      const isActive = musicPlayer.state.currentTrack && 
+                      musicPlayer.state.currentTrack.id === track.id;
+      
+      if (isActive) {
+        li.classList.add('active');
+      }
+      
+      // Escape HTML to prevent XSS
+      const title = musicPlayer.state.escapeHTML(track.title || 'Unknown Title');
+      const artist = musicPlayer.state.escapeHTML(track.artist || 'Unknown Artist');
+      const cover = track.cover || 'https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/stable/global/content/images/albumCovers/placeholder.png';
+      
+      li.innerHTML = `
+        <div class="song-artwork-wrapper">
+          <img src="${cover}" alt="${title}" class="song-artwork">
+          <div class="song-play-overlay">
+            <svg viewBox="0 0 24 24" fill="white">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="song-metadata">
+          <div class="song-title">${title}</div>
+          <div class="song-artist">${artist}</div>
+        </div>
+        <div class="song-actions">
+          <button class="song-action-btn" data-action="play" title="Play Now">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          </button>
+          ${source === 'queue' ? `
+            <button class="song-action-btn" data-action="remove" title="Remove from Queue">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+              </svg>
+            </button>
+          ` : ''}
+        </div>
+      `;
+      
+      // Add event listeners to action buttons
+      this.attachListItemListeners(li, track, index, source);
+      
+      return li;
+    },
+    
+    /**
+     * Attach event listeners to list item action buttons
+     * @param {HTMLElement} listItem - The list item element
+     * @param {Object} track - Track object
+     * @param {number} index - Track index
+     * @param {string} source - Source list
+     */
+    attachListItemListeners(listItem, track, index, source) {
+      // Play button
+      const playBtn = listItem.querySelector('[data-action="play"]');
+      if (playBtn) {
+        playBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          musicPlayer.playback.playTrack(index, source);
+        });
+      }
+      
+      // Remove button (queue only)
+      const removeBtn = listItem.querySelector('[data-action="remove"]');
+      if (removeBtn) {
+        removeBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.removeFromQueue(index);
+        });
+      }
+      
+      // Click on entire item to play
+      listItem.addEventListener('click', () => {
+        musicPlayer.playback.playTrack(index, source);
+      });
+    },
+    
+    /**
+     * Shuffle the queue
+     */
+    shuffleQueue() {
+      const tracks = musicPlayer.state.queueTracks;
+      
+      // Fisher-Yates shuffle algorithm
+      for (let i = tracks.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [tracks[i], tracks[j]] = [tracks[j], tracks[i]];
+      }
+      
+      this.renderQueueList();
+    }
+  },
+  
+  /* ============================================
+     PROGRESS BAR INTERACTIONS
+     ============================================ */
+  
+  progress: {
+    
+    isDragging: false,
+    
+    /**
+     * Initialize progress bar interactions
+     */
+    init() {
+      const progressBar = musicPlayer.state.elements.progressBar;
+      if (!progressBar) return;
+      
+      // Mouse events
+      progressBar.addEventListener('mousedown', this.handleMouseDown.bind(this));
+      document.addEventListener('mousemove', this.handleMouseMove.bind(this));
+      document.addEventListener('mouseup', this.handleMouseUp.bind(this));
+      
+      // Touch events
+      progressBar.addEventListener('touchstart', this.handleTouchStart.bind(this));
+      document.addEventListener('touchmove', this.handleTouchMove.bind(this));
+      document.addEventListener('touchend', this.handleTouchEnd.bind(this));
+      
+      // Keyboard events
+      progressBar.addEventListener('keydown', this.handleKeyDown.bind(this));
+      
+      // Click to seek
+      progressBar.addEventListener('click', this.handleClick.bind(this));
+    },
+    
+    /**
+     * Handle mouse down on progress bar
+     * @param {MouseEvent} e - Mouse event
+     */
+    handleMouseDown(e) {
+      this.isDragging = true;
+      this.seek(e);
+    },
+    
+    /**
+     * Handle mouse move
+     * @param {MouseEvent} e - Mouse event
+     */
+    handleMouseMove(e) {
+      if (!this.isDragging) return;
+      this.seek(e);
+    },
+    
+    /**
+     * Handle mouse up
+     */
+    handleMouseUp() {
+      this.isDragging = false;
+    },
+    
+    /**
+     * Handle touch start
+     * @param {TouchEvent} e - Touch event
+     */
+    handleTouchStart(e) {
+      this.isDragging = true;
+      this.seek(e.touches[0]);
+    },
+    
+    /**
+     * Handle touch move
+     * @param {TouchEvent} e - Touch event
+     */
+    handleTouchMove(e) {
+      if (!this.isDragging) return;
+      e.preventDefault();
+      this.seek(e.touches[0]);
+    },
+    
+    /**
+     * Handle touch end
+     */
+    handleTouchEnd() {
+      this.isDragging = false;
+    },
+    
+    /**
+     * Handle click on progress bar
+     * @param {MouseEvent} e - Mouse event
+     */
+    handleClick(e) {
+      if (this.isDragging) return;
+      this.seek(e);
+    },
+    
+    /**
+     * Seek to position based on click/touch
+     * @param {MouseEvent|Touch} e - Event object
+     */
+    seek(e) {
+      const progressBar = musicPlayer.state.elements.progressBar;
+      if (!progressBar) return;
+      
+      const rect = progressBar.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
+      
+      // Update visual immediately
+      if (musicPlayer.state.elements.progressFill) {
+        musicPlayer.state.elements.progressFill.style.width = `${percentage}%`;
+      }
+      
+      if (musicPlayer.state.elements.progressThumb) {
+        musicPlayer.state.elements.progressThumb.style.left = `${percentage}%`;
+      }
+      
+      // Update aria attributes
+      progressBar.setAttribute('aria-valuenow', Math.round(percentage));
+      
+      // Trigger actual seek in audio (implement based on your audio system)
+      // Example: audioElement.currentTime = (percentage / 100) * audioElement.duration;
+      
+      console.log(`Seeking to ${percentage.toFixed(2)}%`);
+    },
+    
+    /**
+     * Handle keyboard navigation on progress bar
+     * @param {KeyboardEvent} e - Keyboard event
+     */
+    handleKeyDown(e) {
+      const progressBar = musicPlayer.state.elements.progressBar;
+      if (!progressBar) return;
+      
+      let percentage = parseFloat(progressBar.getAttribute('aria-valuenow')) || 0;
+      
+      switch (e.key) {
+        case 'ArrowLeft':
+          percentage = Math.max(0, percentage - 5);
+          break;
+        case 'ArrowRight':
+          percentage = Math.min(100, percentage + 5);
+          break;
+        case 'Home':
+          percentage = 0;
+          break;
+        case 'End':
+          percentage = 100;
+          break;
+        default:
+          return;
+      }
+      
+      e.preventDefault();
+      
+      // Update visual
+      if (musicPlayer.state.elements.progressFill) {
+        musicPlayer.state.elements.progressFill.style.width = `${percentage}%`;
+      }
+      
+      if (musicPlayer.state.elements.progressThumb) {
+        musicPlayer.state.elements.progressThumb.style.left = `${percentage}%`;
+      }
+      
+      progressBar.setAttribute('aria-valuenow', Math.round(percentage));
+      
+      console.log(`Keyboard seeking to ${percentage.toFixed(2)}%`);
+    }
+  },
+  
+  /* ============================================
+     CONTROLS INITIALIZATION
+     ============================================ */
+  
+  controls: {
+    
+    /**
+     * Initialize all control buttons
+     */
+    init() {
+      this.initPlaybackControls();
+      this.initActionButtons();
+    },
+    
+    /**
+     * Initialize playback control buttons
+     */
+    initPlaybackControls() {
+      const elements = musicPlayer.state.elements;
+      
+      // Play/Pause
+      if (elements.playBtn) {
+        elements.playBtn.addEventListener('click', () => {
+          musicPlayer.playback.togglePlayPause();
+        });
+      }
+      
+      // Previous
+      if (elements.prevBtn) {
+        elements.prevBtn.addEventListener('click', () => {
+          musicPlayer.playback.previousTrack();
+        });
+      }
+      
+      // Next
+      if (elements.nextBtn) {
+        elements.nextBtn.addEventListener('click', () => {
+          musicPlayer.playback.nextTrack();
+        });
+      }
+      
+      // Rewind
+      if (elements.rewindBtn) {
+        elements.rewindBtn.addEventListener('click', () => {
+          musicPlayer.playback.rewind(10);
+        });
+      }
+      
+      // Forward
+      if (elements.forwardBtn) {
+        elements.forwardBtn.addEventListener('click', () => {
+          musicPlayer.playback.forward(10);
+        });
+      }
+    },
+    
+    /**
+     * Initialize action buttons (shuffle, repeat, volume, etc.)
+     */
+    initActionButtons() {
+      const elements = musicPlayer.state.elements;
+      
+      // Shuffle
+      if (elements.shuffleBtn) {
+        elements.shuffleBtn.addEventListener('click', () => {
+          this.toggleShuffle();
+        });
+      }
+      
+      // Repeat
+      if (elements.repeatBtn) {
+        elements.repeatBtn.addEventListener('click', () => {
+          this.toggleRepeat();
+        });
+      }
+      
+      // Volume
+      if (elements.volumeBtn) {
+        elements.volumeBtn.addEventListener('click', () => {
+          this.toggleVolume();
+        });
+      }
+      
+      // Favorite
+      if (elements.favoriteBtn) {
+        elements.favoriteBtn.addEventListener('click', () => {
+          this.toggleFavorite();
+        });
+      }
+    },
+    
+    /**
+     * Toggle shuffle mode
+     */
+    toggleShuffle() {
+      const btn = musicPlayer.state.elements.shuffleBtn;
+      if (!btn) return;
+      
+      const isActive = btn.classList.toggle('active');
+      
+      if (isActive) {
+        musicPlayer.lists.shuffleQueue();
+        console.log('Shuffle enabled');
+      } else {
+        console.log('Shuffle disabled');
+      }
+    },
+    
+    /**
+     * Toggle repeat mode
+     */
+    toggleRepeat() {
+      const btn = musicPlayer.state.elements.repeatBtn;
+      if (!btn) return;
+      
+      btn.classList.toggle('active');
+      
+      console.log('Repeat toggled');
+    },
+    
+    /**
+     * Toggle volume/mute
+     */
+    toggleVolume() {
+      console.log('Volume control clicked');
+      // Implement volume control UI
+    },
+    
+    /**
+     * Toggle favorite status
+     */
+    toggleFavorite() {
+      const btn = musicPlayer.state.elements.favoriteBtn;
+      if (!btn) return;
+      
+      const isActive = btn.classList.toggle('active');
+      
+      console.log(isActive ? 'Added to favorites' : 'Removed from favorites');
+    }
+  },
+  
+  /* ============================================
+     MAIN INITIALIZATION
+     ============================================ */
+  
+  /**
+   * Initialize the entire music player
+   */
+  init() {
+    console.log('Initializing Music Player...');
+    
+    // Initialize state management
+    this.state.init();
+    
+    // Initialize progress bar
+    this.progress.init();
+    
+    // Initialize controls
+    this.controls.init();
+    
+    // Initialize lists with empty state
+    this.lists.renderRecentList();
+    this.lists.renderQueueList();
+    
+    console.log('Music Player initialized successfully');
+  }
+};
+
+/* ============================================
+   AUTO-INITIALIZE ON DOM READY
+   ============================================ */
+
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    musicPlayer.init();
+  });
+} else {
+  musicPlayer.init();
+}
+
+/* ============================================
+   UTILITY FUNCTIONS (GLOBAL HELPERS)
+   ============================================ */
+
+/**
+ * Query selector helper
+ * @param {string} selector - CSS selector
+ * @returns {Element|null} Selected element
+ */
+function QUERY(selector) {
+  return document.querySelector(selector);
+}
+
+/**
+ * Query selector all helper
+ * @param {string} selector - CSS selector
+ * @returns {NodeList} Selected elements
+ */
+function QUERY_ALL(selector) {
+  return document.querySelectorAll(selector);
+}  
+
+
 
 const clickables = {
     elements: {
