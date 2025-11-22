@@ -449,7 +449,7 @@
           </svg>
         </button>
 
-        <!-- Header Area (Expandable/Collapsible) -->
+        <!-- TOP Half of drawer - always visible (Expanded & Collapsed Header State) -->
         <div class="header">
           <div class="coverArea">
             <div class="customShapeDivider">
@@ -457,45 +457,39 @@
                 <path d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z" class="shapeFill"></path>
               </svg>
             </div>
-            <div class="coverImageContainer">
-              <img src="https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/stable/global/content/images/albumCovers/placeholder.png" alt="Album Cover" class="cover" id="music-player-cover" />
-            </div>
+            <img src="https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/stable/global/content/images/albumCovers/placeholder.png" alt="Album Cover" class="cover" id="music-player-cover" />
             <div class="coverGlow"></div>
 
             <!-- Action Buttons (Overlaying the Album Cover) -->
             <div class="actions albumOverlayActions">
               <button class="actionBtn" id="music-player-shuffle" title="Shuffle">
-                <svg viewBox="0 0 24 24" fill="currentColor"><!-- SVG content --></svg>
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z" />
+                </svg>
               </button>
               <button class="actionBtn" id="music-player-repeat" title="Repeat">
-                <svg viewBox="0 0 24 24" fill="currentColor"><!-- SVG content --></svg>
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z" />
+                </svg>
               </button>
               <button class="actionBtn" id="volumeBtn" title="Volume">
-                <svg viewBox="0 0 24 24" fill="currentColor"><!-- SVG content --></svg>
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
+                </svg>
               </button>
               <button class="actionBtn" id="music-player-queue" title="Queue">
-                <svg viewBox="0 0 24 24" fill="currentColor"><!-- SVG content --></svg>
-              </button>
-            </div>
-
-            <!-- Mini Header (visible when collapsed) -->
-            <div class="miniHeader">
-              <div class="miniTitle"></div>
-              <div class="miniArtist"></div>
-            </div>
-
-            <!-- Mini Controls (visible when collapsed) -->
-            <div class="miniControls">
-              <button class="miniControlBtn" onclick="musicPlayer.playback.togglePlayPause()">
-                <svg viewBox="0 0 24 24" fill="currentColor"><!-- SVG --></svg>
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z" />
+                </svg>
               </button>
             </div>
           </div>
         </div>
 
-        <!-- Content Area (Tabs) -->
+        <!-- Area DIRECTLY BELOW the Cover Album
+             (Playback Controls - Now Playing Tab)
+             (Song Lists - Recently Played Tab & Up Next Queue Tab) -->
         <div class="content">
-          <!-- Now Playing Tab -->
           <div class="panel active" data-tab="playing">
             <div class="main">
               <div class="info">
@@ -566,31 +560,23 @@
               </div>
             </div>
           </div>
-
-          <!-- Recently Played Tab -->
           <div class="panel" data-tab="playlist">
             <div class="listHeader">
               <h3 class="listTitle">Recently Played</h3>
               <span class="listCount" id="recent-count">0 songs</span>
             </div>
-            <div class="listContainer">
-              <ul class="list" id="music-player-recent-list">
-                <li class="empty"></li>
-              </ul>
-            </div>
+            <ul class="list" id="music-player-recent-list">
+              <li class="empty"></li>
+            </ul>
           </div>
-
-          <!-- Queue Tab -->
           <div class="panel" data-tab="queue">
             <div class="listHeader">
               <h3 class="listTitle">Queue</h3>
               <span class="listCount" id="queue-count">0 songs</span>
             </div>
-            <div class="listContainer">
-              <ul class="list" id="music-player-queue-list">
-                <li class="empty"></li>
-              </ul>
-            </div>
+            <ul class="list" id="music-player-queue-list">
+              <li class="empty"></li>
+            </ul>
           </div>
         </div>
 
