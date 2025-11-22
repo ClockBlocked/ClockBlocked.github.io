@@ -2446,7 +2446,7 @@ state: {
     
     cacheDOMElements() {
       this.player = QUERY(MUSIC_PLAYER.root);
-      this.coverWrapper = QUERY('.musicPlayerCoverWrapper');
+      this.coverWrapper = QUERY('.nowPlaying');
       this.cover = QUERY('#music-player-cover');
       this.panels = QUERY_ALL('.musicPlayerPanel');
       this.dotIndicators = QUERY_ALL('.dotIndicator');
