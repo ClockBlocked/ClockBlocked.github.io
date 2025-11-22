@@ -3989,28 +3989,6 @@ if (document.readyState === 'loading') {
   musicPlayer.init();
 }
 
-/* ============================================
-   UTILITY FUNCTIONS (GLOBAL HELPERS)
-   ============================================ */
-
-/**
- * Query selector helper
- * @param {string} selector - CSS selector
- * @returns {Element|null} Selected element
- */
-function QUERY(selector) {
-  return document.querySelector(selector);
-}
-
-/**
- * Query selector all helper
- * @param {string} selector - CSS selector
- * @returns {NodeList} Selected elements
- */
-function QUERY_ALL(selector) {
-  return document.querySelectorAll(selector);
-}  
-
 
 
 const clickables = {
