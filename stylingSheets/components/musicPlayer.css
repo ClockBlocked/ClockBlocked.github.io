@@ -2796,7 +2796,7 @@
 }
 
 .player .miniHeader {
-    position: absolute;
+    position: relative;
     left: 1rem;
     top: 50%;
 
@@ -2810,16 +2810,13 @@
     z-index: 3;
     transition: none;
 }
-
 .player .coverWrapper.is-collapsing .miniHeader {
     transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .player .coverWrapper.collapsed .miniHeader {
     opacity: 1;
     pointer-events: auto;
 }
-
 .player .miniTitle {
     font-size: 15px;
     font-weight: 700;
@@ -2829,7 +2826,6 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-
 .player .miniArtist {
     font-size: 13px;
     font-weight: 500;
@@ -2853,11 +2849,9 @@
     z-index: 3;
     transition: none;
 }
-
 .player .coverWrapper.is-collapsing .miniControls {
     transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .player .coverWrapper.collapsed .miniControls {
     opacity: 1;
     pointer-events: auto;
@@ -2876,12 +2870,10 @@
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .player .miniControlBtn:hover {
     background: rgba(255, 255, 255, 0.25);
     transform: scale(1.05);
 }
-
 .player .miniControlBtn svg {
     width: 18px;
     height: 18px;
@@ -3082,6 +3074,7 @@
     }
 }
 
+/* .nowPlaying Area whenever Player is collapsed */
 .nowPlaying:has(.musicPlayerCoverWrapper.collapsed) {
   height: 8rem !important;
   min-height: 0 !important;
