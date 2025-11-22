@@ -2724,11 +2724,9 @@
     transition: none;
     will-change: auto;
 }
-
 .player .coverWrapper.is-collapsing {
     transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .player .coverWrapper.collapsed {
     height: 100px;
     min-height: 100px;
@@ -2749,7 +2747,6 @@
     transition: none;
     width: 100%;
 }
-
 .player .coverWrapper.is-collapsing .coverImageContainer {
     transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
