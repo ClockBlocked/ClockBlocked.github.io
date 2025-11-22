@@ -3852,17 +3852,6 @@ if (document.readyState === 'loading') {
   });
 } else {
   musicPlayer.initialize();
-}
-
-// Global helpers
-function QUERY(selector) {
-  return document.querySelector(selector);
-}
-
-function QUERY_ALL(selector) {
-  return document.querySelectorAll(selector);
-}
-
 
 
 
