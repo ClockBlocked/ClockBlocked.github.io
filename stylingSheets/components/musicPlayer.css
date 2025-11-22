@@ -2781,7 +2781,6 @@
     top: 50%;
     width: 60px;
     height: 60px;
-    transform: translateY(-50%);
     inset: auto;
     border-radius: 50%;
     overflow: hidden;
