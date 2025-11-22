@@ -3090,6 +3090,9 @@
   margin: 0 !important;
   padding: 1rem !important;
   pointer-events: auto;
+  
+  display: flex;
+  position: relative;
 }
 
 
