@@ -1152,7 +1152,176 @@
 
 
 
+/* ============================================
+   SMOOTH TRANSITIONS - Apply to ALL elements
+   ============================================ */
 
+/* Header - ALWAYS smooth */
+.player .header {
+  position: relative;
+  width: 100%;
+  height: 40vh;
+  min-height: 280px;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0;
+  flex-shrink: 0;
+  /* ALWAYS have transition */
+  transition: height 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+              min-height 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: height, min-height;
+}
+
+/* Cover Area - ALWAYS smooth */
+.player .coverArea {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 0 0 12px 12px;
+  flex-shrink: 0;
+  background: #1a1f24;
+  /* ALWAYS have transition */
+  transition: border-radius 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: border-radius, box-shadow;
+}
+
+/* Cover Image Container - ALWAYS smooth */
+.player .coverImageContainer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  width: 100%;
+  /* ALWAYS have transition */
+  transition: all 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: left, top, width, height, transform, inset, border-radius;
+}
+
+.player .cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  border-radius: 0;
+  background: #1a1f24;
+  display: block;
+  /* ALWAYS have transition */
+  transition: border-radius 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+              object-fit 0.45s ease-in-out,
+              box-shadow 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: border-radius, object-fit, box-shadow;
+}
+
+/* Cover Glow - ALWAYS smooth */
+.player .coverGlow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(139, 92, 246, 0.3) 0%,
+    rgba(59, 130, 246, 0.2) 30%,
+    transparent 70%
+  );
+  filter: blur(60px);
+  opacity: 0.6;
+  z-index: 1;
+  pointer-events: none;
+  /* ALWAYS have transition */
+  transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity;
+}
+
+/* Action Buttons - ALWAYS smooth */
+.player .actions {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 0;
+  padding: 0;
+  z-index: 10;
+  pointer-events: none;
+  /* ALWAYS have transition */
+  transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+              visibility 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity, visibility;
+}
+
+/* Mini Header - ALWAYS smooth */
+.player .miniHeader {
+  position: absolute;
+  left: 100px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  opacity: 0;
+  pointer-events: none;
+  max-width: calc(100% - 180px);
+  z-index: 3;
+  /* ALWAYS have transition */
+  transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity;
+}
+
+/* Mini Controls - ALWAYS smooth */
+.player .miniControls {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 3;
+  /* ALWAYS have transition */
+  transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity;
+}
+
+/* List Container transitions */
+.player .panel[data-tab="playlist"] .listContainer,
+.player .panel[data-tab="queue"] .listContainer {
+  flex: 0 0 auto;
+  max-height: 75svh;
+  min-height: 280px;
+  overflow-y: auto;
+  /* ALWAYS have transition */
+  transition: flex 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+              max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+              min-height 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: flex, max-height, min-height;
+}
+
+/* List transitions */
+.player .panel[data-tab="playlist"] .list,
+.player .panel[data-tab="queue"] .list {
+  height: auto;
+  max-height: 100%;
+  min-height: 280px;
+  overflow-y: auto;
+  flex: 0 0 auto;
+  /* ALWAYS have transition */
+  transition: height 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+              max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+              min-height 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+              flex 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: height, max-height, min-height, flex;
+}
 
 
 
@@ -1175,22 +1344,6 @@
    HEADER AREA (Expandable/Collapsible)
    ============================================ */
 
-.player .header {
-  position: relative;
-  width: 100%;
-  height: 40vh;
-  min-height: 280px;
-  overflow: visible;
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 0;
-  flex-shrink: 0;
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-  transition: none;
-  will-change: auto;
-}
 
 .player .header.is-collapsing {
   transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
@@ -1209,21 +1362,6 @@
    COVER AREA
    ============================================ */
 
-.player .coverArea {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  overflow: hidden;
-  border-radius: 0 0 12px 12px;
-  flex-shrink: 0;
-  background: #1a1f24;
-  transition: none;
-  will-change: auto;
-}
 
 .player .header.is-collapsing .coverArea {
   transition: border-radius 0.35s cubic-bezier(0.4, 0, 0.2, 1),
@@ -1239,31 +1377,11 @@
    COVER IMAGE
    ============================================ */
 
-.player .coverImageContainer {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2;
-  transition: none;
-  width: 100%;
-}
 
 .player .header.is-collapsing .coverImageContainer {
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.player .cover {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center center;
-  border-radius: 0;
-  background: #1a1f24;
-  display: block;
-  transition: none;
-}
 
 .player .header.is-collapsing .cover {
   transition: border-radius 0.35s cubic-bezier(0.4, 0, 0.2, 1),
@@ -1295,21 +1413,7 @@
    COVER GLOW EFFECT
    ============================================ */
 
-.player .coverGlow {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    ellipse at center,
-    rgba(139, 92, 246, 0.3) 0%,
-    rgba(59, 130, 246, 0.2) 30%,
-    transparent 70%
-  );
-  filter: blur(60px);
-  opacity: 0.6;
-  z-index: 1;
-  pointer-events: none;
-  transition: none;
-}
+
 
 .player .header.is-collapsing .coverGlow {
   transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1323,18 +1427,7 @@
    ACTION BUTTONS (Album Overlay)
    ============================================ */
 
-.player .actions {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: repeat(2, 1fr);
-  gap: 0;
-  padding: 0;
-  z-index: 10;
-  pointer-events: none;
-  transition: none;
-}
+
 
 .player .header.is-collapsing .actions {
   transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
@@ -1395,21 +1488,6 @@
    MINI HEADER (Collapsed State)
    ============================================ */
 
-.player .miniHeader {
-  position: absolute;
-  left: 100px;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 4px;
-  opacity: 0;
-  pointer-events: none;
-  max-width: calc(100% - 180px);
-  z-index: 3;
-  transition: none;
-}
 
 .player .header.is-collapsing .miniHeader {
   transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1444,19 +1522,6 @@
    MINI CONTROLS (Collapsed State)
    ============================================ */
 
-.player .miniControls {
-  position: absolute;
-  right: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  opacity: 0;
-  pointer-events: none;
-  z-index: 3;
-  transition: none;
-}
 
 .player .header.is-collapsing .miniControls {
   transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1558,14 +1623,7 @@
 }
 
 /* List containers - default and collapsed states */
-.player .panel[data-tab="playlist"] .listContainer,
-.player .panel[data-tab="queue"] .listContainer {
-  flex: 0 0 auto;
-  max-height: 75svh;
-  min-height: 280px;
-  overflow-y: auto;
-  transition: none;
-}
+
 
 .player .header.collapsed ~ .content .panel[data-tab="playlist"] .listContainer,
 .player .header.collapsed ~ .content .panel[data-tab="queue"] .listContainer {
@@ -1575,14 +1633,7 @@
 }
 
 /* List element itself */
-.player .panel[data-tab="playlist"] .list,
-.player .panel[data-tab="queue"] .list {
-  height: auto;
-  max-height: 100%;
-  min-height: 280px;
-  overflow-y: auto;
-  flex: 0 0 auto;
-}
+
 
 .player .header.collapsed ~ .content .panel[data-tab="playlist"] .list,
 .player .header.collapsed ~ .content .panel[data-tab="queue"] .list {
@@ -1625,7 +1676,6 @@
   height: 100%;
   overflow-y: auto;
 }
-
 .player .list {
   list-style: none;
   padding: 16px 24px 40px;
@@ -1648,14 +1698,12 @@
   background: rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(10px);
 }
-
 .player .listTitle {
   font-size: 18px;
   font-weight: 700;
   color: #fff;
   margin: 0;
 }
-
 .player .listCount {
   font-size: 13px;
   color: rgba(255, 255, 255, 0.6);
