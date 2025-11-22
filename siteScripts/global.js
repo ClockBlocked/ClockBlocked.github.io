@@ -2430,336 +2430,238 @@ const musicPlayer = {
   },
   
 state: {
-    currentTab: 0,
-    isCollapsed: false,
-    isTransitioning: false,
-    isDraggingHeader: false,
-    dragStartY: 0,
-    dragDistance: 0,
-    transitionTimeout: null,
+  currentTab: 'playing',
+  isCollapsed: false,
+  isTransitioning: false,
+  transitionTimeout: null,
+  
+  init() {
+    this.cacheDOMElements();
+    this.injectRequiredHTML();
+    this.setupObservers();
+    this.setupTabListeners();
+  },
+  
+  cacheDOMElements() {
+    this.player = QUERY('#music-player');
+    this.header = QUERY('.player .header');
+    this.coverArea = QUERY('.player .coverArea');
+    this.panels = QUERY_ALL('.player .panel');
+    this.dotIndicators = QUERY_ALL('.dotIndicator');
+  },
+  
+  injectRequiredHTML() {
+    if (!this.coverArea) return;
     
-    init() {
-      musicPlayer.state.cacheDOMElements();
-      musicPlayer.state.injectRequiredHTML();
-      musicPlayer.state.setupObservers();
-    },
+    // Ensure cover image is wrapped
+    const cover = this.coverArea.querySelector('.cover');
+    if (cover && !cover.parentElement.classList.contains('coverImageContainer')) {
+      const imageContainer = document.createElement('div');
+      imageContainer.className = 'coverImageContainer';
+      cover.parentNode.insertBefore(imageContainer, cover);
+      imageContainer.appendChild(cover);
+    }
     
-    cacheDOMElements() {
-      this.player = QUERY(MUSIC_PLAYER.root);
-      this.coverWrapper = QUERY('.musicPlayerCoverWrapper');
-      this.cover = QUERY('#music-player-cover');
-      this.panels = QUERY_ALL('.musicPlayerPanel');
-      this.dotIndicators = QUERY_ALL('.dotIndicator');
-    },
+    // Ensure glow exists
+    const existingGlow = this.coverArea.querySelector('.coverGlow');
+    if (!existingGlow) {
+      const glow = document.createElement('div');
+      glow.className = 'coverGlow';
+      this.coverArea.insertBefore(glow, this.coverArea.firstChild);
+    }
     
-    injectRequiredHTML() {
-      if (!this.coverWrapper || !this.cover) return;
-      
-      if (!this.cover.parentElement.classList.contains('coverImageContainer')) {
-        const imageContainer = document.createElement('div');
-        imageContainer.className = 'coverImageContainer';
-        this.cover.parentNode.insertBefore(imageContainer, this.cover);
-        imageContainer.appendChild(this.cover);
+    // Ensure list containers exist
+    this.panels.forEach(panel => {
+      const list = panel.querySelector('.list');
+      if (list && !list.parentElement.classList.contains('listContainer')) {
+        const listContainer = document.createElement('div');
+        listContainer.className = 'listContainer';
+        list.parentNode.insertBefore(listContainer, list);
+        listContainer.appendChild(list);
       }
-      
-      const existingGlow = this.coverWrapper.querySelector('.musicPlayerCoverGlow');
-      if (!existingGlow) {
-        const glow = document.createElement('div');
-        glow.className = 'coverGlow musicPlayerCoverGlow';
-        this.coverWrapper.insertBefore(glow, this.coverWrapper.firstChild);
-      }
-      
-      this.panels.forEach(panel => {
-        const list = panel.querySelector('.musicPlayerList');
-        if (list && !list.parentElement.classList.contains('listContainer')) {
-          const listContainer = document.createElement('div');
-          listContainer.className = 'listContainer';
-          list.parentNode.insertBefore(listContainer, list);
-          listContainer.appendChild(list);
-        }
-      });
-      
-      musicPlayer.state.updateMiniHeaderElements();
-    },
+    });
+    
+    // Create mini header and controls
+    this.updateMiniHeaderElements();
+  },
 
-    setupObservers() {
-      const mutationObserver = new MutationObserver(() => {
-        musicPlayer.state.collapsibles.addListItemInteractions();
+  setupObservers() {
+    const mutationObserver = new MutationObserver(() => {
+      this.addListItemInteractions();
+    });
+    
+    this.panels.forEach(panel => {
+      mutationObserver.observe(panel, {
+        childList: true,
+        subtree: true
       });
-      
-      this.panels.forEach(panel => {
-        mutationObserver.observe(panel, {
-          childList: true,
-          subtree: true
+    });
+    
+    this.addListItemInteractions();
+  },
+  
+  setupTabListeners() {
+    // Listen to dot indicator clicks
+    this.dotIndicators.forEach(indicator => {
+      indicator.addEventListener('click', (e) => {
+        const tab = e.currentTarget.dataset.tab;
+        this.switchTab(tab);
+      });
+    });
+    
+    // Listen to player attribute changes
+    if (this.player) {
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (mutation.type === 'attributes' && mutation.attributeName === 'data-active-tab') {
+            const tab = this.player.getAttribute('data-active-tab');
+            this.handleTabChange(tab);
+          }
         });
       });
       
-      musicPlayer.state.collapsibles.addListItemInteractions();
-    },
+      observer.observe(this.player, {
+        attributes: true,
+        attributeFilter: ['data-active-tab']
+      });
+    }
+  },
+  
+  switchTab(tabName) {
+    if (!this.player || !tabName) return;
     
-    handleTabChange(tabName) {
-      if (tabName === MUSIC_PLAYER.tabs.playlist || tabName === MUSIC_PLAYER.tabs.queue) {
-        if (!this.isCollapsed && !this.isTransitioning) {
-          this.collapseHeader();
-        }
-      } else if (tabName === MUSIC_PLAYER.tabs.playing) {
-        if (this.isCollapsed && !this.isTransitioning) {
-          this.expandHeader();
-        }
-      }
-    },
-
-    updateListHeights: function() {
-      const coverWrapper = this.coverWrapper;
-      const recentList = document.getElementById('music-player-recent-list');
-      const queueList = document.getElementById('music-player-queue-list');
-      
-      if (!coverWrapper || !recentList || !queueList) return;
-      
-      const isCollapsed = coverWrapper.classList.contains('collapsed');
-      const coverHeight = coverWrapper.offsetHeight;
-      const viewportHeight = window.innerHeight;
-      
-      if (isCollapsed) {
-        const availableHeight = viewportHeight - coverHeight - 100;
-        recentList.style.height = `${availableHeight}px`;
-        queueList.style.height = `${availableHeight}px`;
+    // Update player attribute
+    this.player.setAttribute('data-active-tab', tabName);
+    
+    // Update active classes on panels
+    this.panels.forEach(panel => {
+      if (panel.dataset.tab === tabName) {
+        panel.classList.add('active');
       } else {
-        recentList.style.height = '500px';
-        queueList.style.height = '500px';
+        panel.classList.remove('active');
       }
-    },
-
-
-collapseHeader() {
-  if (musicPlayer.state.isCollapsed || musicPlayer.state.isTransitioning || !this.coverWrapper) return;
+    });
+    
+    // Update active classes on dot indicators
+    this.dotIndicators.forEach(indicator => {
+      if (indicator.dataset.tab === tabName) {
+        indicator.classList.add('active');
+      } else {
+        indicator.classList.remove('active');
+      }
+    });
+    
+    // Handle collapse/expand based on tab
+    this.handleTabChange(tabName);
+  },
   
-  musicPlayer.state.isTransitioning = true;
-  musicPlayer.state.isCollapsed = true;
-  
-  const nowPlayingElement = QUERY('.nowPlaying');
-  const listContainers = QUERY_ALL('.listContainer');
-  
-  requestAnimationFrame(() => {
-    this.coverWrapper.classList.add('is-collapsing');
-    if (nowPlayingElement) {
-      nowPlayingElement.classList.add('is-collapsing');
+  handleTabChange(tabName) {
+    if (tabName === 'playlist' || tabName === 'queue') {
+      if (!this.isCollapsed && !this.isTransitioning) {
+        this.collapseHeader();
+      }
+    } else if (tabName === 'playing') {
+      if (this.isCollapsed && !this.isTransitioning) {
+        this.expandHeader();
+      }
     }
+  },
+  
+  collapseHeader() {
+    if (this.isCollapsed || this.isTransitioning || !this.player) return;
+    
+    this.isTransitioning = true;
+    this.isCollapsed = true;
     
     requestAnimationFrame(() => {
-      this.coverWrapper.classList.add('collapsed');
-      if (nowPlayingElement) {
-        nowPlayingElement.classList.add('collapsed');
-        nowPlayingElement.classList.remove('is-collapsing');
-      }
+      this.player.classList.add('state-collapsed');
       
-      // ADD expandHeight class to listContainers
-      listContainers.forEach(container => {
-        container.classList.add('expandHeight');
-      });
-      
-      this.updateListHeights();
-      
-      clearTimeout(musicPlayer.state.transitionTimeout);
-      musicPlayer.state.transitionTimeout = setTimeout(() => {
-        this.coverWrapper.classList.remove('is-collapsing');
-        musicPlayer.state.isTransitioning = false;
-      }, 550);
+      clearTimeout(this.transitionTimeout);
+      this.transitionTimeout = setTimeout(() => {
+        this.isTransitioning = false;
+      }, 400);
     });
-  });
-},
-
-expandHeader() {
-  if (!musicPlayer.state.isCollapsed || musicPlayer.state.isTransitioning || !this.coverWrapper) return;
+  },
   
-  musicPlayer.state.isTransitioning = true;
-  musicPlayer.state.isCollapsed = false;
-  
-  const nowPlayingElement = QUERY('.nowPlaying');
-  const listContainers = QUERY_ALL('.listContainer');
-  
-  requestAnimationFrame(() => {
-    this.coverWrapper.classList.add('is-collapsing');
-    if (nowPlayingElement) {
-      nowPlayingElement.classList.add('is-collapsing');
-    }
+  expandHeader() {
+    if (!this.isCollapsed || this.isTransitioning || !this.player) return;
+    
+    this.isTransitioning = true;
+    this.isCollapsed = false;
     
     requestAnimationFrame(() => {
-      this.coverWrapper.classList.remove('collapsed');
-      if (nowPlayingElement) {
-        nowPlayingElement.classList.remove('collapsed');
-        nowPlayingElement.classList.remove('is-collapsing');
-      }
+      this.player.classList.remove('state-collapsed');
       
-      // REMOVE expandHeight class from listContainers
-      listContainers.forEach(container => {
-        container.classList.remove('expandHeight');
-      });
-      
-      this.updateListHeights();
-      
-      clearTimeout(musicPlayer.state.transitionTimeout);
-      musicPlayer.state.transitionTimeout = setTimeout(() => {
-        this.coverWrapper.classList.remove('is-collapsing');
-        musicPlayer.state.isTransitioning = false;
-      }, 550);
+      clearTimeout(this.transitionTimeout);
+      this.transitionTimeout = setTimeout(() => {
+        this.isTransitioning = false;
+      }, 400);
     });
-  });
-},
-
-    updateMiniHeaderElements() {
-      if (!this.coverWrapper) return;
-      
-      const titleElement = QUERY('#music-player-title');
-      const artistElement = QUERY('#music-player-artist');
-      
-      let miniHeader = this.coverWrapper.querySelector('.miniHeader');
-      if (!miniHeader) {
-        miniHeader = document.createElement('div');
-        miniHeader.className = 'miniHeader';
-        this.coverWrapper.appendChild(miniHeader);
-      }
-      
-      const title = titleElement ? titleElement.textContent : '';
-      const artist = artistElement ? artistElement.textContent : '';
-      
-      miniHeader.innerHTML = `
-        <div class="miniTitle">${musicPlayer.state.escapeHTML(title)}</div>
-        <div class="miniArtist">${musicPlayer.state.escapeHTML(artist)}</div>
-      `;
-      
-      let miniControls = this.coverWrapper.querySelector('.miniControls');
-      if (!miniControls) {
-        miniControls = document.createElement('div');
-        miniControls.className = 'miniControls';
-        this.coverWrapper.appendChild(miniControls);
-      }
-      
-      const isPaused = !this.player || !this.player.classList.contains('isPlaying');
-      const playIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-14 9V3z"/></svg>';
-      const pauseIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>';
-      
-      miniControls.innerHTML = `
-        <button class="miniControlBtn" onclick="musicPlayer.playback.togglePlayPause()">
-          ${isPaused ? playIcon : pauseIcon}
-        </button>
-      `;
-    },
+  },
+  
+  updateMiniHeaderElements() {
+    if (!this.coverArea) return;
     
-    escapeHTML(str) {
-      const div = document.createElement('div');
-      div.textContent = str;
-      return div.innerHTML;
-    },
-
-    collapsibles: {
-        init: function() {
-            this.setupTabListeners();
-            this.setupActionButtonListeners();
-            this.updateActiveTabState();
-            this.addListItemInteractions();
-        },
-        
-        setupTabListeners: function() {
-            const dotIndicators = document.querySelectorAll('.dotIndicator');
-            const player = document.getElementById('music-player');
-            
-            dotIndicators.forEach(indicator => {
-                indicator.addEventListener('click', (e) => {
-                    const tab = e.target.closest('.dotIndicator').dataset.tab;
-                    
-                    setTimeout(() => {
-                        if (player && tab) {
-                            player.setAttribute('data-active-tab', tab);
-                        }
-                    }, 100);
-                });
-            });
-        },
-        
-        setupActionButtonListeners: function() {
-            const player = document.getElementById('music-player');
-            
-            const queueButton = document.getElementById('music-player-queue');
-            if (queueButton) {
-                queueButton.addEventListener('click', () => {
-                    setTimeout(() => {
-                        if (player) {
-                            player.setAttribute('data-active-tab', 'queue');
-                        }
-                    }, 100);
-                });
-            }
-            
-            const recentButton = document.querySelector('[data-tab="playlist"], [id*="recent"], [id*="playlist"]');
-            if (recentButton) {
-                recentButton.addEventListener('click', () => {
-                    setTimeout(() => {
-                        if (player) {
-                            player.setAttribute('data-active-tab', 'playlist');
-                        }
-                    }, 100);
-                });
-            }
-        },
-        
-        updateActiveTabState: function() {
-            const player = document.getElementById('music-player');
-            if (!player) return;
-            
-            const observer = new MutationObserver((mutations) => {
-                mutations.forEach((mutation) => {
-                    if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                        const activeIndicator = document.querySelector('.dotIndicator.active');
-                        if (activeIndicator && activeIndicator.dataset.tab) {
-                            const currentTab = player.getAttribute('data-active-tab');
-                            const newTab = activeIndicator.dataset.tab;
-                            
-                            if (currentTab !== newTab) {
-                                player.setAttribute('data-active-tab', newTab);
-                            }
-                        }
-                    }
-                });
-            });
-            
-            const dotIndicators = document.querySelectorAll('.dotIndicator');
-            dotIndicators.forEach(indicator => {
-                observer.observe(indicator, { attributes: true, attributeFilter: ['class'] });
-            });
-        },
-        
-        forceUpdateTab: function(tabName) {
-            const player = document.getElementById('music-player');
-            if (player && ['playing', 'queue', 'playlist'].includes(tabName)) {
-                player.setAttribute('data-active-tab', tabName);
-            }
-        },
-        
-        addListItemInteractions: function() {
-          const listItems = document.querySelectorAll('.list-item');
+    const titleElement = QUERY('#music-player-title');
+    const artistElement = QUERY('#music-player-artist');
+    
+    let miniHeader = this.coverArea.querySelector('.miniHeader');
+    if (!miniHeader) {
+      miniHeader = document.createElement('div');
+      miniHeader.className = 'miniHeader';
+      this.coverArea.appendChild(miniHeader);
+    }
+    
+    const title = titleElement ? titleElement.textContent : '';
+    const artist = artistElement ? artistElement.textContent : '';
+    
+    const miniTitle = miniHeader.querySelector('.miniTitle');
+    const miniArtist = miniHeader.querySelector('.miniArtist');
+    
+    if (miniTitle) miniTitle.textContent = title;
+    if (miniArtist) miniArtist.textContent = artist;
+    
+    let miniControls = this.coverArea.querySelector('.miniControls');
+    if (!miniControls) {
+      miniControls = document.createElement('div');
+      miniControls.className = 'miniControls';
+      this.coverArea.appendChild(miniControls);
+    }
+    
+    const isPaused = !this.player || !this.player.classList.contains('isPlaying');
+    const playIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-14 9V3z"/></svg>';
+    const pauseIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>';
+    
+    miniControls.innerHTML = `
+      <button class="miniControlBtn" onclick="musicPlayer.playback.togglePlayPause()">
+        ${isPaused ? playIcon : pauseIcon}
+      </button>
+    `;
+  },
+  
+  addListItemInteractions() {
+    const listItems = document.querySelectorAll('.list-item');
+    
+    listItems.forEach(item => {
+      const artwork = item.querySelector('.item-artwork');
+      if (!artwork) return;
       
-            listItems.forEach(item => {
-            const artwork = item.querySelector('.item-artwork');
-                if (!artwork) return;
-        
-          let wrapper = artwork.parentElement;
-                if (!wrapper.classList.contains('item-artwork-wrapper')) {
-                    wrapper = document.createElement('div');
-                    wrapper.className = 'item-artwork-wrapper';
-                    artwork.parentNode.insertBefore(wrapper, artwork);
-                    wrapper.appendChild(artwork);
-                }
-        
-                if (!wrapper.querySelector('.item-play-overlay')) {
-                  const overlay = document.createElement('div');
-                    overlay.className = 'item-play-overlay';
-                    overlay.innerHTML = '<svg viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>';
-                    wrapper.appendChild(overlay);
-                }
-            });
-        },
-    },
+      let wrapper = artwork.parentElement;
+      if (!wrapper.classList.contains('item-artwork-wrapper')) {
+        wrapper = document.createElement('div');
+        wrapper.className = 'item-artwork-wrapper';
+        artwork.parentNode.insertBefore(wrapper, artwork);
+        wrapper.appendChild(artwork);
+      }
+      
+      if (!wrapper.querySelector('.item-play-overlay')) {
+        const overlay = document.createElement('div');
+        overlay.className = 'item-play-overlay';
+        overlay.innerHTML = '<svg viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>';
+        wrapper.appendChild(overlay);
+      }
+    });
+  }
 }
 };
 
