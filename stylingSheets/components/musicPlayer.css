@@ -3083,7 +3083,15 @@
     }
 }
 
-
+.nowPlaying:has(.musicPlayerCoverWrapper.collapsed) {
+  height: 0vh !important;
+  min-height: 0 !important;
+  opacity: 0;
+  overflow: hidden;
+  margin: 0 !important;
+  padding: 0 !important;
+  pointer-events: none;
+}
 
 
 
