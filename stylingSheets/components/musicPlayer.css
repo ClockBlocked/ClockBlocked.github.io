@@ -3078,13 +3078,13 @@
 
     .player .coverWrapper.collapsed ~ .content .musicPlayerPanel[data-tab="playlist"].active,
     .player .coverWrapper.collapsed ~ .content .musicPlayerPanel[data-tab="queue"].active {
-        margin-top: 80px;
-        height: calc(100svh - 80px);
+        margin-top: 4rem;
+        height: calc(100svh - 4rem);
     }
 }
 
 .nowPlaying:has(.musicPlayerCoverWrapper.collapsed) {
-  height: 0vh !important;
+  height: 4rem !important;
   min-height: 0 !important;
   opacity: 0;
   overflow: hidden;
