@@ -1337,7 +1337,7 @@
    ============================================ */
 
 
-
+/* Now Playing */
 .player .coverImageContainer {
   position: absolute;
   inset: 0;
@@ -1355,20 +1355,10 @@
 .player .header.is-collapsing .coverImageContainer {
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.player .header.collapsed .coverImageContainer {
-  position: absolute;
-  left: 16px;
-  top: 50%;
-  width: 60px;
-  height: 60px;
-  transform: translateY(-50%);
-  inset: auto;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 1.5px solid var(--border-200);
-}
 
 
+
+/* Now Playing */
 .player .cover {
   width: 100%;
   height: 100%;
@@ -1399,15 +1389,23 @@
 
 
 
-/* Position album cover ONLY when on playlist or queue tabs */
+/* Mini Player */
 .player[data-active-tab="playlist"] .header.collapsed .coverImageContainer,
 .player[data-active-tab="queue"] .header.collapsed .coverImageContainer {
   left: 1rem;
   top: 50%;
   bottom: 50%;
+  
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  inset: auto;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1.5px solid var(--border-200);  
 }
 
-/* Adjust mini header position accordingly */
+
 .player[data-active-tab="playlist"] .miniHeader,
 .player[data-active-tab="queue"] .miniHeader {
   left: 90px;
