@@ -43,7 +43,7 @@
 
     <link rel="stylesheet" href="./stylingSheets/components/breadCrumbs.css" />
     <link rel="stylesheet" href="./stylingSheets/components/navbarPlayer.css" />
-    <link rel="stylesheet" href="./stylingSheets/components/musicPlayer.css" />
+    <link rel="stylesheet" href="./stylingSheets/components/MPE.css" />
     <link rel="stylesheet" href="./stylingSheets/components/lists.css" />
     <link rel="stylesheet" href="./stylingSheets/components/playlists.css" />
 
@@ -429,206 +429,187 @@
           </div>
         </div>
       </nav>
-      <aside class="player" id="music-player" data-active-tab="playing">
-        <div class="scroller musicPlayerScroller">
-          <div class="slide musicPlayerSlide">
-            <button class="curtain musicPlayerCurtain" tabindex="-1" data-overlay-close="music-player"></button>
+<aside class="player" id="music-player" data-active-tab="playing">
+  <div class="scroller">
+    <div class="slide">
+      <button class="curtain" tabindex="-1" data-overlay-close="music-player"></button>
 
-            <!-- Visual Drawer starts here -->
-            <div class="inner musicPlayerInner">
-              <!-- Drag Handle & Close Button -->
-              <div class="dragArea">
-                <button autofocus class="dragHandle musicPlayerDragHandle">
-                  <span></span>
-                </button>
-              </div>
-              <button class="closeBtn" id="music-player-close">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
+      <!-- Visual Drawer starts here -->
+      <div class="inner">
+        <!-- Drag Handle & Close Button -->
+        <div class="dragArea">
+          <button autofocus class="dragHandle">
+            <span></span>
+          </button>
+        </div>
+        <button class="closeBtn" id="music-player-close">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+
+        <!-- Header Area (Expandable/Collapsible) -->
+        <div class="header">
+          <div class="coverArea">
+            <div class="customShapeDivider">
+              <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z" class="shapeFill"></path>
+              </svg>
+            </div>
+            <div class="coverImageContainer">
+              <img src="https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/stable/global/content/images/albumCovers/placeholder.png" alt="Album Cover" class="cover" id="music-player-cover" />
+            </div>
+            <div class="coverGlow"></div>
+
+            <!-- Action Buttons (Overlaying the Album Cover) -->
+            <div class="actions albumOverlayActions">
+              <button class="actionBtn" id="music-player-shuffle" title="Shuffle">
+                <svg viewBox="0 0 24 24" fill="currentColor"><!-- SVG content --></svg>
               </button>
+              <button class="actionBtn" id="music-player-repeat" title="Repeat">
+                <svg viewBox="0 0 24 24" fill="currentColor"><!-- SVG content --></svg>
+              </button>
+              <button class="actionBtn" id="volumeBtn" title="Volume">
+                <svg viewBox="0 0 24 24" fill="currentColor"><!-- SVG content --></svg>
+              </button>
+              <button class="actionBtn" id="music-player-queue" title="Queue">
+                <svg viewBox="0 0 24 24" fill="currentColor"><!-- SVG content --></svg>
+              </button>
+            </div>
 
-              <!-- TOP Half of drawer - always visible
-                                        ( Expanded & Collapsed Header State )
-                                        -->
-              <div class="nowPlaying" style="border: 2px solid crimson;">
-                <div class="coverWrapper musicPlayerCoverWrapper" style="border: 2px solid blue;">
-                  <div class="customShapeDivider">
-                    <svg
-                      data-name="Layer 1"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 1200 120"
-                      preserveAspectRatio="none"
-                    >
-                      <path
-                        d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"
-                        class="shapeFill"
-                      ></path>
+            <!-- Mini Header (visible when collapsed) -->
+            <div class="miniHeader">
+              <div class="miniTitle"></div>
+              <div class="miniArtist"></div>
+            </div>
+
+            <!-- Mini Controls (visible when collapsed) -->
+            <div class="miniControls">
+              <button class="miniControlBtn" onclick="musicPlayer.playback.togglePlayPause()">
+                <svg viewBox="0 0 24 24" fill="currentColor"><!-- SVG --></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Content Area (Tabs) -->
+        <div class="content">
+          <!-- Now Playing Tab -->
+          <div class="panel active" data-tab="playing">
+            <div class="main">
+              <div class="info">
+                <div class="details">
+                  <h3 id="music-player-title" class="title"></h3>
+                  <p id="music-player-artist" class="artist"></p>
+                  <p id="music-player-album" class="album"></p>
+                </div>
+                <button class="favoriteBtn" id="music-player-favorite" title="Add to Favorites">
+                  <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                  </svg>
+                </button>
+              </div>
+              <div class="progressSection" id="music-player-progress-section">
+                <div class="progress" id="musicProgress">
+                  <div class="time">
+                    <span id="currentTime">0:00</span>
+                    <span id="totalTime">0:00</span>
+                  </div>
+                  <div id="music-player-progress-bar" role="slider" tabindex="0" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" class="progressBar">
+                    <div id="music-player-progress-buffer" class="progressBuffer"></div>
+                    <div id="music-player-progress-fill" class="progressFill">
+                      <div id="music-player-progress-thumb" class="progressThumb"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="timeDisplay">
+                  <span id="music-player-current-time" class="currentTime">0:00</span>
+                  <span id="music-player-total-time" class="totalTime">0:00</span>
+                </div>
+              </div>
+              <div class="controls">
+                <button class="controlBtn secondary" id="music-player-prev" title="Previous">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
+                  </svg>
+                </button>
+                <button class="controlBtn rewind" id="music-player-rewind" title="Rewind 10s">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M11.99 5V1l-5 5 5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6h-2c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8zm-1.1 11h-.85v-3.26l-1.01.31v-.69l1.77-.63h.09V16zm4.28-1.76c0 .32-.03.6-.1.82s-.17.42-.29.57-.28.26-.45.33-.37.1-.59.1-.41-.03-.59-.1-.33-.18-.46-.33-.23-.34-.3-.57-.11-.5-.11-.82v-.74c0-.32.03-.6.1-.82s.17-.42.29-.57.28-.26.45-.33.37-.1.59-.1.41.03.59.1.33.18.46.33.23.34.3.57.11.5.11.82v.74zm-.85-.86c0-.19-.01-.35-.04-.48s-.07-.23-.12-.31-.11-.14-.19-.17-.16-.05-.25-.05-.18.02-.25.05-.14.09-.19.17-.09.18-.12.31-.04.29-.04.48v.97c0 .19.01.35.04.48s.07.24.12.32.11.14.19.17.16.05.25.05.18-.02.25-.05.14-.09.19-.17.09-.19.12-.32.04-.29.04-.48v-.97z" />
+                  </svg>
+                  <span class="skipLabel">10</span>
+                </button>
+                <button class="controlBtn primary" id="music-player-play" title="Play/Pause">
+                  <span class="playIcon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M8 5v14l11-7z" />
                     </svg>
-                  </div>
-                  <img
-                    src="https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/stable/global/content/images/albumCovers/placeholder.png"
-                    alt="Album Cover"
-                    class="cover"
-                    id="music-player-cover"
-                  />
-
-                  <!-- Action Buttons
-                            ( Overlaying the Album Cover ) -->
-                  <div class="actions musicPlayerActions albumOverlayActions">
-                    <button class="actionBtn" id="music-player-shuffle" title="Shuffle">
-                      <svg viewBox="0 0 24 24" fill="currentColor">...</svg>
-                    </button>
-                    <button class="actionBtn" id="music-player-repeat" title="Repeat">
-                      <svg viewBox="0 0 24 24" fill="currentColor">...</svg>
-                    </button>
-                    <button class="actionBtn" id="volumeBtn" title="Volume">
-                      <svg viewBox="0 0 24 24" fill="currentColor">...</svg>
-                    </button>
-                    <button class="actionBtn" id="music-player-queue" title="Queue">
-                      <svg viewBox="0 0 24 24" fill="currentColor">...</svg>
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Area DIRECTLY BELOW the Cover Album
-                    ( Playback Controls - Now Playing Tab )
-                    ( Song Lists - Recently Played Tab & Up Next Queue Tab )
-                    -->
-              <div class="content musicPlayerContent">
-                <div class="panel musicPlayerPanel active" data-tab="playing">
-                  <div class="main">
-                    <div class="info musicPlayerInfo">
-                      <div class="details musicPlayerDetails">
-                        <h3 id="music-player-title" class="title"></h3>
-                        <p id="music-player-artist" class="artist"></p>
-                        <p id="music-player-album" class="album"></p>
-                      </div>
-                      <button class="favoriteBtn" id="music-player-favorite" title="Add to Favorites">
-                        <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
-                          <path
-                            d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
-                          ></path>
-                        </svg>
-                      </button>
-                    </div>
-                    <div class="progressSection musicPlayerProgressSection" id="music-player-progress-section">
-                      <!-- Progress Bar Container - This wraps the entire progress bar -->
-                      <div class="progress" id="musicProgress">
-                        <div class="time">
-                          <span id="currentTime">0:00</span>
-                          <span id="totalTime">0:00</span>
-                        </div>
-
-                        <div
-                          id="music-player-progress-bar"
-                          role="slider"
-                          tabindex="0"
-                          aria-valuemin="0"
-                          aria-valuemax="100"
-                          aria-valuenow="0"
-                          class="progressBar"
-                        >
-                          <div id="music-player-progress-buffer" class="progressBuffer"></div>
-                          <div id="music-player-progress-fill" class="progressFill">
-                            <div id="music-player-progress-thumb" class="progressThumb"></div>
-                          </div>
-                        </div>
-                      </div>
-                      <!-- Time display -->
-                      <div class="timeDisplay musicPlayerTimeDisplay">
-                        <span id="music-player-current-time" class="currentTime">0:00</span>
-                        <span id="music-player-total-time" class="totalTime">0:00</span>
-                      </div>
-                    </div>
-                    <div class="controls musicPlayerControls">
-                      <button class="controlBtn secondary" id="music-player-prev" title="Previous">
-                        <svg viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
-                        </svg>
-                      </button>
-                      <button class="controlBtn rewind" id="music-player-rewind" title="Rewind 10s">
-                        <svg viewBox="0 0 24 24" fill="currentColor">
-                          <path
-                            d="M11.99 5V1l-5 5 5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6h-2c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8zm-1.1 11h-.85v-3.26l-1.01.31v-.69l1.77-.63h.09V16zm4.28-1.76c0 .32-.03.6-.1.82s-.17.42-.29.57-.28.26-.45.33-.37.1-.59.1-.41-.03-.59-.1-.33-.18-.46-.33-.23-.34-.3-.57-.11-.5-.11-.82v-.74c0-.32.03-.6.1-.82s.17-.42.29-.57.28-.26.45-.33.37-.1.59-.1.41.03.59.1.33.18.46.33.23.34.3.57.11.5.11.82v.74zm-.85-.86c0-.19-.01-.35-.04-.48s-.07-.23-.12-.31-.11-.14-.19-.17-.16-.05-.25-.05-.18.02-.25.05-.14.09-.19.17-.09.18-.12.31-.04.29-.04.48v.97c0 .19.01.35.04.48s.07.24.12.32.11.14.19.17.16.05.25.05.18-.02.25-.05.14-.09.19-.17.09-.19.12-.32.04-.29.04-.48v-.97z"
-                          />
-                        </svg>
-                        <span class="skipLabel">10</span>
-                      </button>
-                      <button class="controlBtn primary" id="music-player-play" title="Play/Pause">
-                        <span class="playIcon">
-                          <svg viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M8 5v14l11-7z" />
-                          </svg>
-                        </span>
-                        <span class="pauseIcon">
-                          <svg viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-                          </svg>
-                        </span>
-                      </button>
-                      <button class="controlBtn forward" id="music-player-forward" title="Forward 10s">
-                        <svg viewBox="0 0 24 24" fill="currentColor">
-                          <path
-                            d="M12 5V1l7 6-7 6V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8zm-1.1 11h-.85v-3.26l-1.01.31v-.69l1.77-.63h.09V16zm4.28-1.76c0 .32-.03.6-.1.82s-.17.42-.29.57-.28.26-.45.33-.37.1-.59.1-.41-.03-.59-.1-.33-.18-.46-.33-.23-.34-.3-.57-.11-.5-.11-.82v-.74c0-.32.03-.6.1-.82s.17-.42.29-.57.28-.26.45-.33.37-.1.59-.1.41.03.59.1.33.18.46.33.23.34.3.57.11.5.11.82v.74zm-.85-.86c0-.19-.01-.35-.04-.48s-.07-.23-.12-.31-.11-.14-.19-.17-.16-.05-.25-.05-.18.02-.25.05-.14.09-.19.17-.09.18-.12.31-.04.29-.04.48v.97c0 .19.01.35.04.48s.07.24.12.32.11.14.19.17.16.05.25.05.18-.02.25-.05.14-.09.19-.17.09-.19.12-.32.04-.29.04-.48v-.97z"
-                          />
-                        </svg>
-                        <span class="skipLabel">10</span>
-                      </button>
-                      <button class="controlBtn secondary" id="music-player-next" title="Next">
-                        <svg viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                <div class="panel musicPlayerPanel" data-tab="playlist">
-                  <div class="listHeader musicPlayerListHeader">
-                    <h3 class="listTitle musicPlayerListTitle">Recently Played</h3>
-                    <span class="listCount musicPlayerListCount" id="recent-count">0 songs</span>
-                  </div>
-                  <ul class="list musicPlayerList" id="music-player-recent-list" style="border: 2px solid orange;">
-                    <li class="empty musicPlayerEmpty"></li>
-                  </ul>
-                </div>
-                <div class="panel musicPlayerPanel" data-tab="queue">
-                  <div class="listHeader musicPlayerListHeader">
-                    <h3 class="listTitle musicPlayerListTitle">Queue</h3>
-                    <span class="listCount musicPlayerListCount" id="queue-count">0 songs</span>
-                  </div>
-                  <ul class="list musicPlayerList" id="music-player-queue-list" style="border: 2px solid yellow;">
-                    <li class="empty musicPlayerEmpty"></li>
-                  </ul>
-                </div>
-              </div>
-
-              <!-- Dot Indicators for Tabs -->
-              <div class="dotIndicators">
-                <button class="dotIndicator active" data-tab="playing" aria-label="Now Playing">
-                  <span class="dotLabel">Now Playing</span>
+                  </span>
+                  <span class="pauseIcon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                    </svg>
+                  </span>
                 </button>
-                <button class="dotIndicator" data-tab="playlist" aria-label="Recently Played">
-                  <span class="dotLabel">Recent</span>
+                <button class="controlBtn forward" id="music-player-forward" title="Forward 10s">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 5V1l7 6-7 6V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8zm-1.1 11h-.85v-3.26l-1.01.31v-.69l1.77-.63h.09V16zm4.28-1.76c0 .32-.03.6-.1.82s-.17.42-.29.57-.28.26-.45.33-.37.1-.59.1-.41-.03-.59-.1-.33-.18-.46-.33-.23-.34-.3-.57-.11-.5-.11-.82v-.74c0-.32.03-.6.1-.82s.17-.42.29-.57.28-.26.45-.33.37-.1.59-.1.41.03.59.1.33.18.46.33.23.34.3.57.11.5.11.82v.74zm-.85-.86c0-.19-.01-.35-.04-.48s-.07-.23-.12-.31-.11-.14-.19-.17-.16-.05-.25-.05-.18.02-.25.05-.14.09-.19.17-.09.18-.12.31-.04.29-.04.48v.97c0 .19.01.35.04.48s.07.24.12.32.11.14.19.17.16.05.25.05.18-.02.25-.05.14-.09.19-.17.09-.19.12-.32.04-.29.04-.48v-.97z" />
+                  </svg>
+                  <span class="skipLabel">10</span>
                 </button>
-                <button class="dotIndicator" data-tab="queue" aria-label="Queue">
-                  <span class="dotLabel">Queue</span>
+                <button class="controlBtn secondary" id="music-player-next" title="Next">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
+                  </svg>
                 </button>
               </div>
             </div>
           </div>
+
+          <!-- Recently Played Tab -->
+          <div class="panel" data-tab="playlist">
+            <div class="listHeader">
+              <h3 class="listTitle">Recently Played</h3>
+              <span class="listCount" id="recent-count">0 songs</span>
+            </div>
+            <div class="listContainer">
+              <ul class="list" id="music-player-recent-list">
+                <li class="empty"></li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Queue Tab -->
+          <div class="panel" data-tab="queue">
+            <div class="listHeader">
+              <h3 class="listTitle">Queue</h3>
+              <span class="listCount" id="queue-count">0 songs</span>
+            </div>
+            <div class="listContainer">
+              <ul class="list" id="music-player-queue-list">
+                <li class="empty"></li>
+              </ul>
+            </div>
+          </div>
         </div>
-      </aside>
+
+        <!-- Dot Indicators for Tabs -->
+        <div class="dotIndicators">
+          <button class="dotIndicator active" data-tab="playing" aria-label="Now Playing">
+            <span class="dotLabel">Now Playing</span>
+          </button>
+          <button class="dotIndicator" data-tab="playlist" aria-label="Recently Played">
+            <span class="dotLabel">Recent</span>
+          </button>
+          <button class="dotIndicator" data-tab="queue" aria-label="Queue">
+            <span class="dotLabel">Queue</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</aside>
 
       <!-- Desktop Only Triggers -->
       <div class="unified-triggers desktop-tablet-only">
