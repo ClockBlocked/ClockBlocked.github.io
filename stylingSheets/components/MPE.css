@@ -1397,6 +1397,22 @@
   height: 100%;
 }
 
+
+
+/* Position album cover ONLY when on playlist or queue tabs */
+.player[data-active-tab="playlist"] .header.collapsed .coverImageContainer,
+.player[data-active-tab="queue"] .header.collapsed .coverImageContainer {
+  left: 1rem;
+  top: 50%;
+  bottom: 50%;
+}
+
+/* Adjust mini header position accordingly */
+.player[data-active-tab="playlist"] .miniHeader,
+.player[data-active-tab="queue"] .miniHeader {
+  left: 90px;
+}
+
 /* ============================================
    COVER GLOW EFFECT
    ============================================ */
