@@ -13,7 +13,10 @@
   visibility: hidden;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), visibility 0s linear 0.6s, z-index 0s linear 0.6s;
+  transition:
+    opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    visibility 0s linear 0.6s,
+    z-index 0s linear 0.6s;
   will-change: opacity, visibility, z-index;
 }
 .player.open {
@@ -21,15 +24,26 @@
   opacity: 1;
   z-index: 9999;
   pointer-events: auto;
-  transition: opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), visibility 0s linear 0s, z-index 0s linear 0s;
+  transition:
+    opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    visibility 0s linear 0s,
+    z-index 0s linear 0s;
 }
 .player.closing {
-  transition: opacity 0.5s cubic-bezier(0.55, 0.085, 0.68, 0.53), visibility 0s linear 0.5s, z-index 0s linear 0.5s;
+  transition:
+    opacity 0.5s cubic-bezier(0.55, 0.085, 0.68, 0.53),
+    visibility 0s linear 0.5s,
+    z-index 0s linear 0.5s;
 }
 
 .player.loading .cover {
   animation: shimmer 2s infinite linear;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.05) 100%);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
   background-size: 1000px 100%;
 }
 
@@ -47,7 +61,9 @@
   background: rgba(0, 0, 0, 0);
   backdrop-filter: blur(0px);
   -webkit-backdrop-filter: blur(0px);
-  transition: background 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), backdrop-filter 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition:
+    background 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    backdrop-filter 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   pointer-events: none;
   will-change: background, backdrop-filter;
 }
@@ -61,7 +77,9 @@
   background: rgba(0, 0, 0, 0);
   backdrop-filter: blur(0px);
   -webkit-backdrop-filter: blur(0px);
-  transition: background 0.5s cubic-bezier(0.55, 0.085, 0.68, 0.53), backdrop-filter 0.5s cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  transition:
+    background 0.5s cubic-bezier(0.55, 0.085, 0.68, 0.53),
+    backdrop-filter 0.5s cubic-bezier(0.55, 0.085, 0.68, 0.53);
 }
 
 .player .curtain {
@@ -119,7 +137,9 @@
   flex-direction: column;
   transform: translateY(20px);
   opacity: 0;
-  transition: transform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition:
+    transform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1),
+    opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   will-change: transform, opacity;
 }
 .player.open .inner {
@@ -130,7 +150,9 @@
 .player.closing .inner {
   transform: translateY(20px);
   opacity: 0;
-  transition: transform 0.5s cubic-bezier(0.55, 0.085, 0.68, 0.53), opacity 0.4s cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  transition:
+    transform 0.5s cubic-bezier(0.55, 0.085, 0.68, 0.53),
+    opacity 0.4s cubic-bezier(0.55, 0.085, 0.68, 0.53);
 }
 
 @media (max-width: 480px) {
@@ -151,9 +173,6 @@
   }
 }
 
-
-
-
 /* Drag handle and close button */
 .player .dragArea {
   display: flex;
@@ -166,7 +185,9 @@
   overflow: visible;
   opacity: 0;
   transform: translateY(-10px);
-  transition: opacity 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition:
+    opacity 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   will-change: opacity, transform;
 }
 .player.open .dragArea {
@@ -213,7 +234,10 @@
   z-index: 1000;
   opacity: 0;
   transform: scale(0.8);
-  transition: opacity 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), background 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition:
+    opacity 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    background 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   will-change: opacity, transform;
 }
 .player.open .closeBtn {
@@ -231,9 +255,6 @@
   color: #fff;
 }
 
-
-
-
 /* Dot navigation indicators */
 .player .dotIndicators {
   position: relative;
@@ -246,7 +267,9 @@
   gap: 16px;
   opacity: 0;
   transform: translateY(10px);
-  transition: opacity 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition:
+    opacity 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   z-index: 50;
   will-change: opacity, transform;
 }
@@ -330,9 +353,6 @@
 .player .dotIndicator.active .dotLabel::after {
   border-top-color: #3b82f6;
 }
-
-
-
 
 /* Now Playing section - cover art and metadata */
 /**""
@@ -424,7 +444,6 @@
   display: block;
 }
 
-
 .customShapeDivider {
   position: absolute;
   bottom: -2px;
@@ -446,7 +465,6 @@
 .customShapeDivider .shapeFill {
   fill: #2d333b;
 }
-
 
 .player .info {
   padding: 20px;
@@ -491,7 +509,6 @@
   letter-spacing: 1.35px;
   text-align: center;
 }
-
 
 .player .favoriteBtn {
   width: 20px;
@@ -562,9 +579,6 @@
   }
 }
 
-
-
-
 /* Progress bar and time display */
 .player .progressSection {
   display: flex;
@@ -631,12 +645,16 @@
 .player .progressBar.is-hovering .progressThumb {
   width: 16px;
   height: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 0 4px rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.4),
+    0 0 0 4px rgba(255, 255, 255, 0.1);
 }
 .player .progressBar.is-dragging .progressThumb {
   width: 18px;
   height: 18px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), 0 0 0 6px rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.5),
+    0 0 0 6px rgba(255, 255, 255, 0.15);
   cursor: grabbing;
 }
 
@@ -653,9 +671,6 @@
   color: rgba(255, 255, 255, 0.6);
   font-variant-numeric: tabular-nums;
 }
-
-
-
 
 /* Playback controls and action buttons */
 .player .controls {
@@ -718,11 +733,15 @@
   width: 68px;
   height: 68px;
   background: linear-gradient(135deg, #8b5cf6, #3b82f6);
-  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.4), 0 4px 12px rgba(59, 130, 246, 0.3);
+  box-shadow:
+    0 8px 24px rgba(139, 92, 246, 0.4),
+    0 4px 12px rgba(59, 130, 246, 0.3);
 }
 .player .controlBtn.primary:hover {
   background: linear-gradient(135deg, #9d6dff, #4c93ff);
-  box-shadow: 0 12px 32px rgba(139, 92, 246, 0.5), 0 6px 16px rgba(59, 130, 246, 0.4);
+  box-shadow:
+    0 12px 32px rgba(139, 92, 246, 0.5),
+    0 6px 16px rgba(59, 130, 246, 0.4);
   transform: translateY(-4px) scale(1.05);
 }
 .player .controlBtn.primary svg {
@@ -746,7 +765,6 @@
   font-weight: 700;
   color: #fff;
 }
-
 
 .player .actions {
   display: flex;
@@ -875,9 +893,6 @@
     height: 18px;
   }
 }
-
-
-
 
 /* Content area, panels, and lists */
 /**************************************************
@@ -1101,8 +1116,6 @@
 ****************************************************
 ****************************************************/
 
-
-
 /* Accessibility */
 .player .controlBtn:focus,
 .player .actionBtn:focus,
@@ -1110,7 +1123,6 @@
   outline: 2px solid rgba(139, 92, 246, 0.6);
   outline-offset: 2px;
 }
-
 
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -1121,7 +1133,6 @@
     transition-duration: 0.01ms;
   }
 }
-
 
 @keyframes heartBeat {
   0%,
@@ -1148,10 +1159,6 @@
   }
 }
 
-
-
-
-
 /* ============================================
    SMOOTH TRANSITIONS - Apply to ALL elements
    ============================================ */
@@ -1168,21 +1175,17 @@
   margin-bottom: 0;
   flex-shrink: 0;
   /* ALWAYS have transition */
-  transition: height 0.45s cubic-bezier(0.4, 0, 0.2, 1),
-              min-height 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    height 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    min-height 0.45s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: height, min-height;
 }
 
 /* Cover Area - ALWAYS smooth */
 
-
 /* Cover Image Container - ALWAYS smooth */
 
-
-
-
 /* Cover Glow - ALWAYS smooth */
-
 
 /* Action Buttons - ALWAYS smooth */
 .player .actions {
@@ -1196,24 +1199,24 @@
   z-index: 10;
   pointer-events: none;
   /* ALWAYS have transition */
-  transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1),
-              visibility 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    visibility 0.45s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: opacity, visibility;
 }
 
 /* Mini Header - ALWAYS smooth */
 .player .miniHeader {
   position: absolute;
-  left: 100px;
-  top: 50%;
-  transform: translateY(-50%);
+  left: 0;
+  top: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: 4px;
   opacity: 0;
   pointer-events: none;
-  max-width: calc(100% - 180px);
+  width: 100%;
   z-index: 3;
   /* ALWAYS have transition */
   transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1245,9 +1248,10 @@
   min-height: 280px;
   overflow-y: auto;
   /* ALWAYS have transition */
-  transition: flex 0.45s cubic-bezier(0.4, 0, 0.2, 1),
-              max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1),
-              min-height 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    flex 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    min-height 0.45s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: flex, max-height, min-height;
 }
 
@@ -1260,22 +1264,19 @@
   overflow-y: auto;
   flex: 0 0 auto;
   /* ALWAYS have transition */
-  transition: height 0.45s cubic-bezier(0.4, 0, 0.2, 1),
-              max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1),
-              min-height 0.45s cubic-bezier(0.4, 0, 0.2, 1),
-              flex 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    height 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    min-height 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    flex 0.45s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: height, max-height, min-height, flex;
 }
-
-
-
 
 /* ============================================
    MUSIC PLAYER - BASE STRUCTURE
    ============================================ */
 
 .player .inner {
-  padding: 0 0.5rem 0.45rem;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -1288,10 +1289,10 @@
    HEADER AREA (Expandable/Collapsible)
    ============================================ */
 
-
 .player .header.is-collapsing {
-  transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-              min-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    min-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .player .header.collapsed {
@@ -1300,6 +1301,7 @@
   position: sticky;
   top: 0;
   z-index: 200;
+  left: 0;
 }
 
 /* ============================================
@@ -1319,23 +1321,24 @@
   flex-shrink: 0;
   background: #1a1f24;
   /* ALWAYS have transition */
-  transition: border-radius 0.45s cubic-bezier(0.4, 0, 0.2, 1),
-              box-shadow 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    border-radius 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.45s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: border-radius, box-shadow;
 }
 .player .header.is-collapsing .coverArea {
-  transition: border-radius 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-              box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    border-radius 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .player .header.collapsed .coverArea {
   border-radius: 0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border-bottom: 1.5px solid var(--border-200);
 }
 
 /* ============================================
    COVER IMAGE
    ============================================ */
-
 
 /* Now Playing */
 .player .coverImageContainer {
@@ -1356,8 +1359,6 @@
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-
-
 /* Now Playing */
 .player .cover {
   width: 100%;
@@ -1368,16 +1369,18 @@
   background: #1a1f24;
   display: block;
   /* ALWAYS have transition */
-  transition: border-radius 0.45s cubic-bezier(0.4, 0, 0.2, 1),
-              object-fit 0.45s ease-in-out,
-              box-shadow 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    border-radius 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    object-fit 0.45s ease-in-out,
+    box-shadow 0.45s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: border-radius, object-fit, box-shadow;
 }
 
 /* Mini Player */
 .player .header.is-collapsing .cover {
-  transition: border-radius 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-              object-fit 0.45s ease-in-out;
+  transition:
+    border-radius 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    object-fit 0.45s ease-in-out;
 }
 .player .header.collapsed .cover {
   border-radius: 50%;
@@ -1387,34 +1390,43 @@
   height: 100%;
 }
 
-
-
 /* Mini Player */
 .player[data-active-tab="playlist"] .header.collapsed .coverImageContainer,
 .player[data-active-tab="queue"] .header.collapsed .coverImageContainer {
-  left: 1rem;
-  top: 50%;
-  bottom: 50%;
-  
+  left: 1rem !important;
+  bottom: 1rem;
+
   position: absolute;
   width: 60px;
   height: 60px;
   inset: auto;
   border-radius: 50%;
   overflow: hidden;
-  border: 1.5px solid var(--border-200);  
+  border: 1.5px solid var(--border-200);
 }
-
 
 .player[data-active-tab="playlist"] .miniHeader,
 .player[data-active-tab="queue"] .miniHeader {
-  left: 90px;
+  width: calc(75% - 80px);
+  height: 100px;
+  align-items: center;
+  right: 0 !important;
+}
+
+.player[data-active-tab="playlist"] .coverArea,
+.player[data-active-tab="queue"] .coverArea {
+  background: transparent;
+  box-shadow: 0;
+}
+
+.player[data-active-tab="playlist"] .customShapeDivider,
+.player[data-active-tab="queue"] .customShapeDivider {
+  display: none;
 }
 
 /* ============================================
    COVER GLOW EFFECT
    ============================================ */
-
 
 .player .coverGlow {
   position: absolute;
@@ -1444,11 +1456,10 @@
    ACTION BUTTONS (Album Overlay)
    ============================================ */
 
-
-
 .player .header.is-collapsing .actions {
-  transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-              visibility 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    visibility 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .player .header.collapsed .actions {
@@ -1474,7 +1485,7 @@
 }
 
 .player .actionBtn::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   background: radial-gradient(circle at center, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
@@ -1504,7 +1515,6 @@
 /* ============================================
    MINI HEADER (Collapsed State)
    ============================================ */
-
 
 .player .header.is-collapsing .miniHeader {
   transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1538,7 +1548,6 @@
 /* ============================================
    MINI CONTROLS (Collapsed State)
    ============================================ */
-
 
 .player .header.is-collapsing .miniControls {
   transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1601,9 +1610,10 @@
   opacity: 0;
   visibility: hidden;
   transform: translateY(20px);
-  transition: opacity 0.45s cubic-bezier(0.34, 1.26, 0.64, 1),
-              transform 0.45s cubic-bezier(0.34, 1.26, 0.64, 1),
-              visibility 0s linear 0.45s;
+  transition:
+    opacity 0.45s cubic-bezier(0.34, 1.26, 0.64, 1),
+    transform 0.45s cubic-bezier(0.34, 1.26, 0.64, 1),
+    visibility 0s linear 0.45s;
 }
 
 .player .panel.active {
@@ -1611,9 +1621,10 @@
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
-  transition: opacity 0.45s cubic-bezier(0.34, 1.26, 0.64, 1) 0.1s,
-              transform 0.45s cubic-bezier(0.34, 1.26, 0.64, 1) 0.1s,
-              visibility 0s linear 0s;
+  transition:
+    opacity 0.45s cubic-bezier(0.34, 1.26, 0.64, 1) 0.1s,
+    transform 0.45s cubic-bezier(0.34, 1.26, 0.64, 1) 0.1s,
+    visibility 0s linear 0s;
 }
 
 /* ============================================
@@ -1641,7 +1652,6 @@
 
 /* List containers - default and collapsed states */
 
-
 .player .header.collapsed ~ .content .panel[data-tab="playlist"] .listContainer,
 .player .header.collapsed ~ .content .panel[data-tab="queue"] .listContainer {
   flex: 1;
@@ -1650,7 +1660,6 @@
 }
 
 /* List element itself */
-
 
 .player .header.collapsed ~ .content .panel[data-tab="playlist"] .list,
 .player .header.collapsed ~ .content .panel[data-tab="queue"] .list {
@@ -1850,31 +1859,31 @@
     height: 35vh;
     min-height: 240px;
   }
-  
+
   .player .header.collapsed {
     height: 80px;
     min-height: 80px;
   }
-  
+
   .player .header.collapsed .coverImageContainer {
     left: 12px !important;
     width: 56px;
     height: 56px;
   }
-  
+
   .player .miniHeader {
     left: 80px;
     max-width: calc(100% - 140px);
   }
-  
+
   .player .miniTitle {
     font-size: 14px;
   }
-  
+
   .player .miniArtist {
     font-size: 12px;
   }
-  
+
   .listContainer.expandHeight {
     height: calc(100svh - 80px) !important;
     margin-top: 80px !important;
