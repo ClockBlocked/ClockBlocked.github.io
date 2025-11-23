@@ -1250,12 +1250,80 @@ renderList(container, items, options = {}) {
 
 
 const musicPlayer = {
+  refs: {},
+
+  cacheDOM: function() {
+    const root = document.getElementById('music-player');
+    
+    if (!root) { console.warn("Music Player Root not found"); return; }
+
+    this.refs = {
+      root: root,
+      
+      drawer: {
+        closeBtn: root.querySelector('#music-player-close'),
+        scroller: root.querySelector('.musicPlayerScroller'),
+        curtain: root.querySelector('.musicPlayerCurtain'),
+        handle: root.querySelector('.musicPlayerDragHandle'),
+        inner: root.querySelector('.musicPlayerInner'),
+        content: root.querySelector('.musicPlayerContent')
+      },
+      
+      display: {
+        cover: root.querySelector('#music-player-cover'),
+        title: root.querySelector('#music-player-title'),
+        artist: root.querySelector('#music-player-artist'),
+        album: root.querySelector('#music-player-album'),
+        currentTime: root.querySelector('#music-player-current-time'),
+        totalTime: root.querySelector('#music-player-total-time'),
+        coverWrapper: root.querySelector('.musicPlayerCoverWrapper'),
+        coverGlow: root.querySelector('.musicPlayerCoverGlow'),
+        songInfo: root.querySelector('.musicPlayerInfo'),
+        songDetails: root.querySelector('.musicPlayerDetails')
+      },
+
+      controls: {
+        play: root.querySelector('#music-player-play'),
+        prev: root.querySelector('#music-player-prev'),
+        next: root.querySelector('#music-player-next'),
+        shuffle: root.querySelector('#music-player-shuffle'),
+        repeat: root.querySelector('#music-player-repeat'),
+        favoriteBtn: root.querySelector('#music-player-favorite'),
+        queueBtn: root.querySelector('#music-player-queue'),
+        progress: {
+          bar: root.querySelector('#music-player-progress-bar'),
+          fill: root.querySelector('#music-player-progress-fill'),
+          thumb: root.querySelector('#music-player-progress-thumb'),
+          buffer: root.querySelector('#music-player-progress-buffer')
+        }
+      },
+      
+      lists: {
+        queue: root.querySelector('#music-player-queue-list'),
+        recent: root.querySelector('#music-player-recent-list'),
+        queueCount: root.querySelector('#queue-count'),
+        recentCount: root.querySelector('#recent-count')
+      },
+
+      tabs: {
+        all: root.querySelectorAll('.musicPlayerTab'),
+        wrapper: root.querySelector('.musicPlayerTabsWrapper'),
+        slider: root.querySelector('.musicPlayerTabSlider')
+      },
+
+      panels: {
+        all: root.querySelectorAll('.musicPlayerPanel'),
+        nowPlaying: root.querySelector('.musicPlayerNowPlaying')
+      }
+    };
+  },
+
   mainPlayer: {
     inactivityTimer: null,
     lastInteractionTime: null,
 
     open: () => {
-      const drawer = QUERY(MUSIC_PLAYER.root);
+      const drawer = musicPlayer.refs.root;
       if (!drawer) {
         console.warn("Music player drawer not found");
         return;
@@ -1270,8 +1338,8 @@ const musicPlayer = {
 
       appState.isPopupVisible = true;
 
-      musicPlayer.mainPlayer.switchTab(MUSIC_PLAYER.tabs.playing);
-      musicPlayer.mainPlayer.updateTabContent(MUSIC_PLAYER.tabs.playing);
+      musicPlayer.mainPlayer.switchTab('playing');
+      musicPlayer.mainPlayer.updateTabContent('playing');
 
       document.body.style.overflow = "hidden";
 
@@ -1281,7 +1349,7 @@ const musicPlayer = {
     },
 
     close: () => {
-      const drawer = QUERY(MUSIC_PLAYER.root);
+      const drawer = musicPlayer.refs.root;
       if (!drawer) {
         console.warn("Music player drawer not found");
         return;
@@ -1296,12 +1364,12 @@ const musicPlayer = {
         drawer.classList.remove("closing");
         appState.isPopupVisible = false;
         document.body.style.overflow = "";
-        musicPlayer.mainPlayer.switchTab(MUSIC_PLAYER.tabs.playing);
+        musicPlayer.mainPlayer.switchTab('playing');
       }, 550);
     },
 
     toggle: () => {
-      const drawer = QUERY(MUSIC_PLAYER.root);
+      const drawer = musicPlayer.refs.root;
       if (!drawer) return;
 
       const isOpen = drawer.classList.contains("open");
@@ -1316,11 +1384,11 @@ const musicPlayer = {
     switchTab: (tabName) => {
       appState.currentTab = tabName;
 
-      QUERY_ALL(".player .dotIndicator").forEach((dot) => {
+      document.querySelectorAll(".player .dotIndicator").forEach((dot) => {
         dot.classList.toggle("active", dot.dataset.tab === tabName);
       });
 
-      QUERY_ALL(".player .panel").forEach((content) => {
+      document.querySelectorAll(".player .panel").forEach((content) => {
         content.classList.toggle("active", content.dataset.tab === tabName);
       });
 
@@ -1336,8 +1404,8 @@ const musicPlayer = {
       musicPlayer.mainPlayer.lastInteractionTime = Date.now();
 
       musicPlayer.mainPlayer.inactivityTimer = setTimeout(() => {
-        if (appState.currentTab !== MUSIC_PLAYER.tabs.playing) {
-          musicPlayer.mainPlayer.switchTab(MUSIC_PLAYER.tabs.playing);
+        if (appState.currentTab !== 'playing') {
+          musicPlayer.mainPlayer.switchTab('playing');
         }
       }, 30000);
     },
@@ -1350,22 +1418,22 @@ const musicPlayer = {
     },
 
     resetInactivityTimer: () => {
-      const drawer = QUERY(MUSIC_PLAYER.root);
+      const drawer = musicPlayer.refs.root;
       if (drawer && drawer.classList.contains("open")) {
-        if (appState.currentTab !== MUSIC_PLAYER.tabs.playing) {
+        if (appState.currentTab !== 'playing') {
           musicPlayer.mainPlayer.startInactivityTimer();
         }
       }
     },
 
     updateTabContent: (tabName) => {
-      if (tabName === MUSIC_PLAYER.tabs.recent) musicPlayer.mainPlayer.updateRecentTab();
-      else if (tabName === MUSIC_PLAYER.tabs.queue) musicPlayer.mainPlayer.updateQueueTab();
+      if (tabName === 'recent') musicPlayer.mainPlayer.updateRecentTab();
+      else if (tabName === 'queue') musicPlayer.mainPlayer.updateQueueTab();
     },
 
     updateQueueTab: () => {
-      const queueList = QUERY(MUSIC_PLAYER.queueList);
-      const queueCount = QUERY(MUSIC_PLAYER.queueCount);
+      const queueList = musicPlayer.refs.lists.queue;
+      const queueCount = musicPlayer.refs.lists.queueCount;
 
       listRenderer.renderList(queueList, appState.queue.items, {
         source: "queue",
@@ -1383,8 +1451,8 @@ const musicPlayer = {
     },
 
     updateRecentTab: () => {
-      const recentList = QUERY(MUSIC_PLAYER.recentList);
-      const recentCount = QUERY(MUSIC_PLAYER.recentCount);
+      const recentList = musicPlayer.refs.lists.recent;
+      const recentCount = musicPlayer.refs.lists.recentCount;
 
       listRenderer.renderList(recentList, appState.recentlyPlayed.slice(0, 20), {
         source: "recent",
@@ -1398,43 +1466,53 @@ const musicPlayer = {
     },
 
     init: () => {
-      const closeBtn = QUERY(MUSIC_PLAYER.close);
+      musicPlayer.cacheDOM();
+      
+      const closeBtn = musicPlayer.refs.drawer.closeBtn;
       if (closeBtn) {
         closeBtn.addEventListener("click", () => musicPlayer.mainPlayer.close());
       }
-      QUERY_ALL(`${MUSIC_PLAYER.root} .tab`).forEach((tab) => {
+      
+      document.querySelectorAll(`${musicPlayer.refs.root} .tab`).forEach((tab) => {
         tab.addEventListener("click", () => {
           const tabName = tab.dataset.tab;
           if (tabName) musicPlayer.mainPlayer.switchTab(tabName);
         });
       });
-      const queueBtn = QUERY(MUSIC_PLAYER.queueBtn);
+      
+      const queueBtn = musicPlayer.refs.controls.queueBtn;
       if (queueBtn) {
-        queueBtn.addEventListener("click", () => musicPlayer.mainPlayer.switchTab(MUSIC_PLAYER.tabs.queue));
+        queueBtn.addEventListener("click", () => musicPlayer.mainPlayer.switchTab('queue'));
       }
+      
       musicPlayer.mainPlayer.preventHorizontalScroll();
       musicPlayer.mainPlayer.initDrawerDrag();
-      const favoriteBtn = QUERY(MUSIC_PLAYER.favoriteBtn);
+      
+      const favoriteBtn = musicPlayer.refs.controls.favoriteBtn;
       if (favoriteBtn) {
         favoriteBtn.addEventListener("click", () => {
           favoriteBtn.classList.toggle("favorited");
         });
       }
-      const scrollEl = QUERY(`${MUSIC_PLAYER.root} .scrollableContent`);
-      const coverEl = QUERY(MUSIC_PLAYER.albumArtwork);
+      
+      const scrollEl = musicPlayer.refs.drawer.scroller;
+      const coverEl = musicPlayer.refs.display.cover;
       const compactHeader = document.getElementById("compactHeader");
       const compactCover = document.getElementById("compactCover");
       const compactTitle = document.getElementById("compactTitle");
       const compactArtist = document.getElementById("compactArtist");
-      const contentCard = QUERY(`${MUSIC_PLAYER.root} .contentCard`);
+      const contentCard = musicPlayer.refs.root.querySelector('.contentCard');
+      
       let coverRect = null;
       let targetLeft = 16;
       let targetTop = 12;
       let targetSize = 56;
+      
       function recalc() {
         if (!coverEl) return;
         coverRect = coverEl.getBoundingClientRect();
       }
+      
       function onScroll() {
         if (!scrollEl || !coverEl || !compactHeader) return;
         const s = scrollEl.scrollTop;
@@ -1444,7 +1522,7 @@ const musicPlayer = {
         t = Math.max(0, Math.min(1, t));
         if (!coverRect) recalc();
         const cRect = coverRect;
-        const parentRect = QUERY(`${MUSIC_PLAYER.root} .inner`).getBoundingClientRect();
+        const parentRect = musicPlayer.refs.drawer.inner.getBoundingClientRect();
         const initLeft = cRect.left - parentRect.left;
         const initTop = cRect.top - parentRect.top;
         const deltaX = targetLeft - initLeft;
@@ -1462,30 +1540,33 @@ const musicPlayer = {
           contentCard.classList.remove("collapsed");
         }
       }
+      
       if (scrollEl) {
         scrollEl.addEventListener("scroll", onScroll, { passive: true });
         window.addEventListener("resize", () => {
           recalc();
           onScroll();
         });
-        $byId("music-player-cover")?.addEventListener("load", () => {
+        musicPlayer.refs.display.cover?.addEventListener("load", () => {
           recalc();
           onScroll();
         });
         recalc();
         onScroll();
       }
+      
       const compactClickArea = document.getElementById("compactHeader");
       if (compactClickArea) {
         compactClickArea.addEventListener("click", () => {
-          QUERY(`${MUSIC_PLAYER.root} .scroller`)?.scrollTo({ top: 0, behavior: "smooth" });
+          musicPlayer.refs.drawer.scroller?.scrollTo({ top: 0, behavior: "smooth" });
         });
       }
       
       musicPlayer.state.init();
     },
+    
     preventHorizontalScroll: () => {
-      const scroller = QUERY(MUSIC_PLAYER.scroller);
+      const scroller = musicPlayer.refs.drawer.scroller;
       if (!scroller) return;
       let startX = 0;
       let scrollLeft = 0;
@@ -1512,10 +1593,11 @@ const musicPlayer = {
         }
       });
     },
+    
     initDrawerDrag: () => {
-      const drawer = QUERY(MUSIC_PLAYER.root);
+      const drawer = musicPlayer.refs.root;
       if (!drawer) return;
-      const handle = drawer.querySelector(".dragHandle");
+      const handle = musicPlayer.refs.drawer.handle;
       if (!handle) return;
       let dragging = false;
       let startY = 0;
@@ -1554,6 +1636,7 @@ const musicPlayer = {
       handle.addEventListener("pointerdown", onPointerDown);
       handle.addEventListener("touchstart", onPointerDown, { passive: false });
     },
+    
     initialize: () => {
       window.addEventListener("playerstatechange", (event) => {
         if (event.detail.song) {
@@ -1766,7 +1849,7 @@ const musicPlayer = {
       });
       
       PubSub.subscribe(PLAYER_EVENTS.RECENTLY_PLAYED_CHANGED, (data) => {
-        if (appState.currentTab === MUSIC_PLAYER.tabs.recent) {
+        if (appState.currentTab === 'recent') {
           musicPlayer.mainPlayer.updateRecentTab();
         }
         musicPlayer.ui.updateHomeBentoGrid();
@@ -1883,10 +1966,10 @@ const musicPlayer = {
       let timeChange = 0;
       switch (e.key) {
         case "ArrowRight":
-          timeChange = MUSIC_PLAYER.skipTimes.forward;
+          timeChange = 10;
           break;
         case "ArrowLeft":
-          timeChange = MUSIC_PLAYER.skipTimes.rewind;
+          timeChange = -10;
           break;
         case "PageUp":
           timeChange = 10;
@@ -1922,7 +2005,7 @@ const musicPlayer = {
     },
     
     updateBufferDisplay: () => {
-      const buffer = QUERY(MUSIC_PLAYER.progressBuffer);
+      const buffer = musicPlayer.refs.controls.progress.buffer;
       if (!buffer || !appState.audio) return;
       if (!appState.audio.buffered || appState.audio.buffered.length === 0) {
         buffer.style.width = "0%";
@@ -1942,48 +2025,48 @@ const musicPlayer = {
       buffer.style.width = (bufferProgress * 100).toFixed(2) + "%";
     },
     
-  bindSeekBar: () => {
-    const bar = $byId(IDS.progressBar);
-    const thumb = $byId(IDS.progressThumb);
-    const ui = musicPlayer.ui;
-    if (!bar || !thumb) return;
+    bindSeekBar: () => {
+      const bar = musicPlayer.refs.controls.progress.bar;
+      const thumb = musicPlayer.refs.controls.progress.thumb;
+      const ui = musicPlayer.ui;
+      if (!bar || !thumb) return;
 
-    const onPointerDown = (e) => {
-        e.preventDefault();
-        bar.setPointerCapture?.(e.pointerId ?? 1);
-        ui.isScrubbing = true;
-        ui.wasPlayingBeforeScrub = !!appState.isPlaying;
-        if (ui.wasPlayingBeforeScrub) appState.audio.pause();
-        ui.seekFromEvent(e, bar);
-        bar.classList.add('is-dragging');
-        const moveTarget = bar;
-        moveTarget.addEventListener('pointermove', onPointerMove, { passive: false });
-        moveTarget.addEventListener('pointerup', onPointerUp, { once: true });
-        window.addEventListener('pointercancel', onPointerUp, { once: true });
-    };
+      const onPointerDown = (e) => {
+          e.preventDefault();
+          bar.setPointerCapture?.(e.pointerId ?? 1);
+          ui.isScrubbing = true;
+          ui.wasPlayingBeforeScrub = !!appState.isPlaying;
+          if (ui.wasPlayingBeforeScrub) appState.audio.pause();
+          ui.seekFromEvent(e, bar);
+          bar.classList.add('is-dragging');
+          const moveTarget = bar;
+          moveTarget.addEventListener('pointermove', onPointerMove, { passive: false });
+          moveTarget.addEventListener('pointerup', onPointerUp, { once: true });
+          window.addEventListener('pointercancel', onPointerUp, { once: true });
+      };
 
-    const onPointerMove = (e) => {
-        if (!ui.isScrubbing) return;
-        e.preventDefault();
-        ui.seekFromEvent(e, bar);
-    };
+      const onPointerMove = (e) => {
+          if (!ui.isScrubbing) return;
+          e.preventDefault();
+          ui.seekFromEvent(e, bar);
+      };
 
-    const onPointerUp = (e) => {
-        ui.seekFromEvent(e, bar, true);
-        ui.isScrubbing = false;
-        bar.classList.remove('is-dragging', 'is-hovering');
-        if (ui.wasPlayingBeforeScrub) appState.audio.play();
-        bar.releasePointerCapture?.(e.pointerId ?? 1);
-        bar.removeEventListener('pointermove', onPointerMove);
-    };
+      const onPointerUp = (e) => {
+          ui.seekFromEvent(e, bar, true);
+          ui.isScrubbing = false;
+          bar.classList.remove('is-dragging', 'is-hovering');
+          if (ui.wasPlayingBeforeScrub) appState.audio.play();
+          bar.releasePointerCapture?.(e.pointerId ?? 1);
+          bar.removeEventListener('pointermove', onPointerMove);
+      };
 
-    const onEnter = () => bar.classList.add('is-hovering');
-    const onLeave = () => { if (!ui.isScrubbing) bar.classList.remove('is-hovering'); };
+      const onEnter = () => bar.classList.add('is-hovering');
+      const onLeave = () => { if (!ui.isScrubbing) bar.classList.remove('is-hovering'); };
 
-    bar.addEventListener('pointerdown', onPointerDown, { passive: false });
-    bar.addEventListener('pointerenter', onEnter);
-    bar.addEventListener('pointerleave', onLeave);
-},
+      bar.addEventListener('pointerdown', onPointerDown, { passive: false });
+      bar.addEventListener('pointerenter', onEnter);
+      bar.addEventListener('pointerleave', onLeave);
+    },
     
     seekFromEvent(e, bar, finalize = false) {
       const rect = bar.getBoundingClientRect();
@@ -2011,10 +2094,10 @@ const musicPlayer = {
     },
     
     setProgressUI(percent, currentTime) {
-      const fill = QUERY(MUSIC_PLAYER.progressFill);
-      const thumb = QUERY(MUSIC_PLAYER.progressThumb);
-      const currentTimeElement = QUERY(MUSIC_PLAYER.currentTime);
-      const bar = QUERY(MUSIC_PLAYER.progressBar);
+      const fill = musicPlayer.refs.controls.progress.fill;
+      const thumb = musicPlayer.refs.controls.progress.thumb;
+      const currentTimeElement = musicPlayer.refs.display.currentTime;
+      const bar = musicPlayer.refs.controls.progress.bar;
 
       if (fill) {
         fill.style.width = `${percent}%`;
@@ -2045,7 +2128,7 @@ const musicPlayer = {
 
       musicPlayer.ui.setProgressUI(percent, currentTime);
 
-      const totalTimeElement = QUERY(MUSIC_PLAYER.totalTime);
+      const totalTimeElement = musicPlayer.refs.display.totalTime;
       if (totalTimeElement) {
         totalTimeElement.textContent = utils.formatTime(duration);
       }
@@ -2061,7 +2144,7 @@ const musicPlayer = {
 
       appState.duration = audio.duration;
 
-      const totalTimeElement = QUERY(MUSIC_PLAYER.totalTime);
+      const totalTimeElement = musicPlayer.refs.display.totalTime;
       if (totalTimeElement) {
         totalTimeElement.textContent = utils.formatTime(audio.duration);
       }
@@ -2128,14 +2211,14 @@ const musicPlayer = {
 
       const coverUrl = appState.currentSong.cover || utils.getAlbumImageUrl(appState.currentSong.album);
 
-      const cover = QUERY(MUSIC_PLAYER.albumArtwork);
+      const cover = musicPlayer.refs.display.cover;
       if (cover && coverUrl) {
         cover.src = coverUrl;
       }
 
-      const titleEl = QUERY(MUSIC_PLAYER.songName);
-      const artistEl = QUERY(MUSIC_PLAYER.artistName);
-      const albumEl = QUERY(MUSIC_PLAYER.albumName);
+      const titleEl = musicPlayer.refs.display.title;
+      const artistEl = musicPlayer.refs.display.artist;
+      const albumEl = musicPlayer.refs.display.album;
 
       if (titleEl && appState.currentSong.title) {
         titleEl.textContent = appState.currentSong.title;
@@ -2154,19 +2237,19 @@ const musicPlayer = {
       if (compactTitle && appState.currentSong.title) compactTitle.textContent = appState.currentSong.title;
       if (compactArtist && appState.currentArtist) compactArtist.textContent = appState.currentArtist;
 
-      const playBtn = QUERY(MUSIC_PLAYER.play);
-      const drawer = QUERY(MUSIC_PLAYER.root);
+      const playBtn = musicPlayer.refs.controls.play;
+      const drawer = musicPlayer.refs.root;
       if (playBtn) {
         const playIcon = playBtn.querySelector(".playIcon");
         const pauseIcon = playBtn.querySelector(".pauseIcon");
         if (appState.isPlaying) {
           playIcon?.style.setProperty("display", "none");
           pauseIcon?.style.setProperty("display", "block");
-          drawer?.classList.add(MUSIC_PLAYER.classes.playing);
+          drawer?.classList.add('isPlaying');
         } else {
           playIcon?.style.setProperty("display", "block");
           pauseIcon?.style.setProperty("display", "none");
-          drawer?.classList.remove(MUSIC_PLAYER.classes.playing);
+          drawer?.classList.remove('isPlaying');
         }
       }
 
@@ -2178,17 +2261,17 @@ const musicPlayer = {
       if (!song) return;
       
       const coverUrl = song.cover || utils.getAlbumImageUrl(song.album);
-      const cover = QUERY(MUSIC_PLAYER.albumArtwork);
+      const cover = musicPlayer.refs.display.cover;
       if (cover && coverUrl) cover.src = coverUrl;
       
       const updateText = (selector, text) => {
-        const el = QUERY(selector);
+        const el = selector;
         if (el && text) el.textContent = text;
       };
       
-      updateText(MUSIC_PLAYER.songName, song.title);
-      updateText(MUSIC_PLAYER.artistName, song.artist);
-      updateText(MUSIC_PLAYER.albumName, song.album);
+      updateText(musicPlayer.refs.display.title, song.title);
+      updateText(musicPlayer.refs.display.artist, song.artist);
+      updateText(musicPlayer.refs.display.album, song.album);
       
       const compactCover = document.getElementById("compactCover");
       const compactTitle = document.getElementById("compactTitle");
@@ -2201,23 +2284,23 @@ const musicPlayer = {
     updateNavbar: () => {
       if (!appState.currentSong) return;
 
-      const navbarNowPlaying = QUERY(NAVBAR.nowPlaying);
-      const navbarAlbumArt = QUERY(`${NAVBAR.nowPlaying} .albumArtwork img`);
-      const navbarSongName = QUERY(`${NAVBAR.nowPlaying} .songName`);
-      const navbarArtistName = QUERY(`${NAVBAR.nowPlaying} .artistName`);
+      const navbarNowPlaying = document.querySelector('#now-playing-area');
+      const navbarAlbumArt = document.querySelector(`${navbarNowPlaying} .albumArtwork img`);
+      const navbarSongName = document.querySelector(`${navbarNowPlaying} .songName`);
+      const navbarArtistName = document.querySelector(`${navbarNowPlaying} .artistName`);
 
       if (!navbarNowPlaying) {
         return;
       }
 
-      navbarNowPlaying.classList.add(CLASSES.hasSong);
+      navbarNowPlaying.classList.add('hasSong');
 
       const coverUrl = appState.currentSong.cover || utils.getAlbumImageUrl(appState.currentSong.album);
       if (navbarAlbumArt) {
         navbarAlbumArt.src = coverUrl;
         navbarAlbumArt.style.opacity = "1";
 
-        const svgPlaceholder = QUERY(`${NAVBAR.nowPlaying} .albumArtwork svg`);
+        const svgPlaceholder = document.querySelector(`${navbarNowPlaying} .albumArtwork svg`);
         if (svgPlaceholder) {
           svgPlaceholder.style.opacity = "0";
         }
@@ -2234,25 +2317,25 @@ const musicPlayer = {
     
     updateNavbarUI: (song) => {
       if (!song) {
-        QUERY(NAVBAR.nowPlaying)?.classList.remove(CLASSES.hasSong);
+        document.querySelector('#now-playing-area')?.classList.remove('hasSong');
         return;
       }
       
-      const navbarNowPlaying = QUERY(NAVBAR.nowPlaying);
-      const navbarAlbumArt = QUERY(`${NAVBAR.nowPlaying} .albumArtwork img`);
-      const navbarSongName = QUERY(`${NAVBAR.nowPlaying} .songName`);
-      const navbarArtistName = QUERY(`${NAVBAR.nowPlaying} .artistName`);
+      const navbarNowPlaying = document.querySelector('#now-playing-area');
+      const navbarAlbumArt = document.querySelector(`${navbarNowPlaying} .albumArtwork img`);
+      const navbarSongName = document.querySelector(`${navbarNowPlaying} .songName`);
+      const navbarArtistName = document.querySelector(`${navbarNowPlaying} .artistName`);
       
       if (!navbarNowPlaying) return;
       
-      navbarNowPlaying.classList.add(CLASSES.hasSong);
+      navbarNowPlaying.classList.add('hasSong');
       
       const coverUrl = song.cover || utils.getAlbumImageUrl(song.album);
       if (navbarAlbumArt) {
         navbarAlbumArt.src = coverUrl;
         navbarAlbumArt.style.opacity = "1";
         
-        const svgPlaceholder = QUERY(`${NAVBAR.nowPlaying} .albumArtwork svg`);
+        const svgPlaceholder = document.querySelector(`${navbarNowPlaying} .albumArtwork svg`);
         if (svgPlaceholder) svgPlaceholder.style.opacity = "0";
       }
       
@@ -2261,8 +2344,8 @@ const musicPlayer = {
     },
     
     updatePlayPauseUI: (isPlaying) => {
-      const playBtn = QUERY(MUSIC_PLAYER.play);
-      const navbarPlayBtn = QUERY(NAVBAR.playPause);
+      const playBtn = musicPlayer.refs.controls.play;
+      const navbarPlayBtn = document.querySelector('#navbar-play-pause');
       
       if (playBtn) {
         const playIcon = playBtn.querySelector(".playIcon");
@@ -2276,14 +2359,14 @@ const musicPlayer = {
         }
       }
       
-      const navbarPlayIndicator = QUERY(`${NAVBAR.nowPlaying} #play-indicator`);
+      const navbarPlayIndicator = document.querySelector(`#now-playing-area #play-indicator`);
       if (navbarPlayIndicator) {
         navbarPlayIndicator.classList.toggle("playing", isPlaying);
       }
       
       if (navbarPlayBtn) {
-        const navbarPlayIcon = QUERY(NAVBAR.play);
-        const navbarPauseIcon = QUERY(NAVBAR.pause);
+        const navbarPlayIcon = document.querySelector('#navbar-play-icon');
+        const navbarPauseIcon = document.querySelector('#navbar-pause-icon');
         if (isPlaying) {
           navbarPlayIcon?.classList.add("hidden");
           navbarPauseIcon?.classList.remove("hidden");
@@ -2293,7 +2376,7 @@ const musicPlayer = {
         }
       }
       
-      QUERY(MUSIC_PLAYER.root)?.classList.toggle(MUSIC_PLAYER.classes.playing, isPlaying);
+      musicPlayer.refs.root?.classList.toggle('isPlaying', isPlaying);
     },
     
     updateProgressUI: (currentTime, duration) => {
@@ -2302,25 +2385,25 @@ const musicPlayer = {
       const percent = duration > 0 ? (currentTime / duration) * 100 : 0;
       musicPlayer.ui.setProgressUI(percent, currentTime);
       
-      const totalTimeElement = QUERY(MUSIC_PLAYER.totalTime);
+      const totalTimeElement = musicPlayer.refs.display.totalTime;
       if (totalTimeElement) {
         totalTimeElement.textContent = utils.formatTime(duration);
       }
     },
     
     updateShuffleUI: (shuffleMode) => {
-      const shuffleBtn = QUERY(MUSIC_PLAYER.shuffleBtn);
+      const shuffleBtn = musicPlayer.refs.controls.shuffle;
       if (shuffleBtn) {
-        shuffleBtn.classList.toggle(CLASSES.active, shuffleMode);
+        shuffleBtn.classList.toggle('active', shuffleMode);
         shuffleBtn.setAttribute("aria-pressed", shuffleMode);
       }
     },
     
     updateRepeatUI: (repeatMode) => {
-      const repeatBtn = QUERY(MUSIC_PLAYER.repeatBtn);
+      const repeatBtn = musicPlayer.refs.controls.repeat;
       if (repeatBtn) {
-        repeatBtn.classList.toggle(CLASSES.active, repeatMode !== REPEAT_MODES.OFF);
-        repeatBtn.setAttribute("aria-pressed", repeatMode !== REPEAT_MODES.OFF);
+        repeatBtn.classList.toggle('active', repeatMode !== window.REPEAT_MODES.OFF);
+        repeatBtn.setAttribute("aria-pressed", repeatMode !== window.REPEAT_MODES.OFF);
       }
     },
     
@@ -2348,13 +2431,13 @@ const musicPlayer = {
     },
     
     updateHomeBentoGrid: () => {
-      const dynamicContent = $byId(IDS.dynamicContent);
+      const dynamicContent = document.getElementById('dynamic-content');
       if (!dynamicContent) return;
       
       const bentoGrid = dynamicContent.querySelector('.bento-grid');
       if (!bentoGrid) return;
       
-      const recentlyPlayedSection = $byId(IDS.recentlyPlayedSection);
+      const recentlyPlayedSection = document.getElementById('recently-played-section');
       if (recentlyPlayedSection && appState.recentlyPlayed && appState.recentlyPlayed.length > 0) {
         const recentTracksHtml = render.homeSection.recentlyPlayed(
           appState.recentlyPlayed.slice(0, 5),
@@ -2414,8 +2497,8 @@ const musicPlayer = {
     },
     
     updateRecentTab: () => {
-      const recentList = QUERY(MUSIC_PLAYER.recentList);
-      const recentCount = QUERY(MUSIC_PLAYER.recentCount);
+      const recentList = musicPlayer.refs.lists.recent;
+      const recentCount = musicPlayer.refs.lists.recentCount;
 
       listRenderer.renderList(recentList, appState.recentlyPlayed.slice(0, 20), {
         source: "recent",
@@ -2429,338 +2512,330 @@ const musicPlayer = {
     }
   },
   
-state: {
-  currentTab: 0,
-  isCollapsed: false,
-  isTransitioning: false,
-  isDraggingHeader: false,
-  dragStartY: 0,
-  dragDistance: 0,
-  transitionTimeout: null,
-  
-  init() {
-    musicPlayer.state.cacheDOMElements();
-    musicPlayer.state.injectRequiredHTML();
-    musicPlayer.state.setupObservers();
-    musicPlayer.state.collapsibles.init();
-  },
-  
-  cacheDOMElements() {
-    this.player = QUERY(MUSIC_PLAYER.root);
-    this.header = QUERY('.player .header');
-    this.coverArea = QUERY('.player .coverArea');
-    this.cover = QUERY('#music-player-cover');
-    this.panels = QUERY_ALL('.player .panel');
-    this.dotIndicators = QUERY_ALL('.dotIndicator');
-  },
-  
-  injectRequiredHTML() {
-    if (!this.coverArea || !this.cover) return;
+  state: {
+    currentTab: 0,
+    isCollapsed: false,
+    isTransitioning: false,
+    isDraggingHeader: false,
+    dragStartY: 0,
+    dragDistance: 0,
+    transitionTimeout: null,
     
-    // Wrap cover image in container
-    if (!this.cover.parentElement.classList.contains('coverImageContainer')) {
-      const imageContainer = document.createElement('div');
-      imageContainer.className = 'coverImageContainer';
-      this.cover.parentNode.insertBefore(imageContainer, this.cover);
-      imageContainer.appendChild(this.cover);
-    }
-    
-    // Add glow effect
-    const existingGlow = this.coverArea.querySelector('.coverGlow');
-    if (!existingGlow) {
-      const glow = document.createElement('div');
-      glow.className = 'coverGlow';
-      this.coverArea.insertBefore(glow, this.coverArea.firstChild);
-    }
-    
-    // Wrap lists in containers
-    this.panels.forEach(panel => {
-      const list = panel.querySelector('.list');
-      if (list && !list.parentElement.classList.contains('listContainer')) {
-        const listContainer = document.createElement('div');
-        listContainer.className = 'listContainer';
-        list.parentNode.insertBefore(listContainer, list);
-        listContainer.appendChild(list);
-      }
-    });
-    
-    // Create mini header and controls
-    musicPlayer.state.updateMiniHeaderElements();
-  },
-
-  setupObservers() {
-    const mutationObserver = new MutationObserver(() => {
-      musicPlayer.state.collapsibles.addListItemInteractions();
-    });
-    
-    this.panels.forEach(panel => {
-      mutationObserver.observe(panel, {
-        childList: true,
-        subtree: true
-      });
-    });
-    
-    musicPlayer.state.collapsibles.addListItemInteractions();
-  },
-  
-  handleTabChange(tabName) {
-    if (tabName === MUSIC_PLAYER.tabs.playlist || tabName === MUSIC_PLAYER.tabs.queue) {
-      if (!this.isCollapsed && !this.isTransitioning) {
-        this.collapseHeader();
-      }
-    } else if (tabName === MUSIC_PLAYER.tabs.playing) {
-      if (this.isCollapsed && !this.isTransitioning) {
-        this.expandHeader();
-      }
-    }
-  },
-
-  updateListHeights: function() {
-    const header = this.header;
-    const recentList = document.getElementById('music-player-recent-list');
-    const queueList = document.getElementById('music-player-queue-list');
-    
-    if (!header || !recentList || !queueList) return;
-    
-    const isCollapsed = header.classList.contains('collapsed');
-    const headerHeight = header.offsetHeight;
-    const viewportHeight = window.innerHeight;
-    
-    if (isCollapsed) {
-      const availableHeight = viewportHeight - headerHeight - 100;
-      recentList.style.height = `${availableHeight}px`;
-      queueList.style.height = `${availableHeight}px`;
-    } else {
-      recentList.style.height = '500px';
-      queueList.style.height = '500px';
-    }
-  },
-
-  collapseHeader() {
-    if (musicPlayer.state.isCollapsed || musicPlayer.state.isTransitioning || !this.header) return;
-    
-    musicPlayer.state.isCollapsed = true;
-    musicPlayer.state.isTransitioning = true;
-    
-    const listContainers = QUERY_ALL('.listContainer');
-    
-    requestAnimationFrame(() => {
-      this.header.classList.add('is-collapsing');
-      
-      requestAnimationFrame(() => {
-        this.header.classList.add('collapsed');
-        this.header.classList.remove('is-collapsing');
-        
-        // ADD expandHeight class to listContainers
-        listContainers.forEach(container => {
-          container.classList.add('expandHeight');
-        });
-        
-        this.updateListHeights();
-        
-        clearTimeout(musicPlayer.state.transitionTimeout);
-        musicPlayer.state.transitionTimeout = setTimeout(() => {
-          musicPlayer.state.isTransitioning = false;
-        }, 550);
-      });
-    });
-  },
-
-  expandHeader() {
-    if (!musicPlayer.state.isCollapsed || musicPlayer.state.isTransitioning || !this.header) return;
-    
-    musicPlayer.state.isCollapsed = false;
-    musicPlayer.state.isTransitioning = true;
-    
-    const listContainers = QUERY_ALL('.listContainer');
-    
-    requestAnimationFrame(() => {
-      this.header.classList.add('is-collapsing');
-      
-      requestAnimationFrame(() => {
-        this.header.classList.remove('collapsed');
-        this.header.classList.remove('is-collapsing');
-        
-        // REMOVE expandHeight class from listContainers
-        listContainers.forEach(container => {
-          container.classList.remove('expandHeight');
-        });
-        
-        this.updateListHeights();
-        
-        clearTimeout(musicPlayer.state.transitionTimeout);
-        musicPlayer.state.transitionTimeout = setTimeout(() => {
-          musicPlayer.state.isTransitioning = false;
-        }, 550);
-      });
-    });
-  },
-
-  updateMiniHeaderElements() {
-    if (!this.coverArea) return;
-    
-    const titleElement = QUERY('#music-player-title');
-    const artistElement = QUERY('#music-player-artist');
-    
-    let miniHeader = this.coverArea.querySelector('.miniHeader');
-    if (!miniHeader) {
-      miniHeader = document.createElement('div');
-      miniHeader.className = 'miniHeader';
-      this.coverArea.appendChild(miniHeader);
-    }
-    
-    const title = titleElement ? titleElement.textContent : '';
-    const artist = artistElement ? artistElement.textContent : '';
-    
-    miniHeader.innerHTML = `
-      <div class="miniTitle">${musicPlayer.state.escapeHTML(title)}</div>
-      <div class="miniArtist">${musicPlayer.state.escapeHTML(artist)}</div>
-    `;
-    
-    let miniControls = this.coverArea.querySelector('.miniControls');
-    if (!miniControls) {
-      miniControls = document.createElement('div');
-      miniControls.className = 'miniControls';
-      this.coverArea.appendChild(miniControls);
-    }
-    
-    const isPaused = !this.player || !this.player.classList.contains('isPlaying');
-    const playIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-14 9V3z"/></svg>';
-    const pauseIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>';
-    
-    miniControls.innerHTML = `
-      <button class="miniControlBtn" onclick="musicPlayer.playback.togglePlayPause()">
-        ${isPaused ? playIcon : pauseIcon}
-      </button>
-    `;
-  },
-  
-  escapeHTML(str) {
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
-  },
-
-  collapsibles: {
-    init: function() {
-      this.setupTabListeners();
-      this.setupActionButtonListeners();
-      this.updateActiveTabState();
-      this.addListItemInteractions();
+    init() {
+      musicPlayer.state.cacheDOMElements();
+      musicPlayer.state.injectRequiredHTML();
+      musicPlayer.state.setupObservers();
+      musicPlayer.state.collapsibles.init();
     },
     
-    setupTabListeners: function() {
-      const dotIndicators = document.querySelectorAll('.dotIndicator');
-      const player = document.getElementById('music-player');
+    cacheDOMElements() {
+      this.player = musicPlayer.refs.root;
+      this.header = musicPlayer.refs.root.querySelector('.player .header');
+      this.coverArea = musicPlayer.refs.root.querySelector('.player .coverArea');
+      this.cover = musicPlayer.refs.display.cover;
+      this.panels = musicPlayer.refs.root.querySelectorAll('.player .panel');
+      this.dotIndicators = musicPlayer.refs.root.querySelectorAll('.dotIndicator');
+    },
+    
+    injectRequiredHTML() {
+      if (!this.coverArea || !this.cover) return;
       
-      dotIndicators.forEach(indicator => {
-        indicator.addEventListener('click', (e) => {
-          const tab = e.target.closest('.dotIndicator').dataset.tab;
+      if (!this.cover.parentElement.classList.contains('coverImageContainer')) {
+        const imageContainer = document.createElement('div');
+        imageContainer.className = 'coverImageContainer';
+        this.cover.parentNode.insertBefore(imageContainer, this.cover);
+        imageContainer.appendChild(this.cover);
+      }
+      
+      const existingGlow = this.coverArea.querySelector('.coverGlow');
+      if (!existingGlow) {
+        const glow = document.createElement('div');
+        glow.className = 'coverGlow';
+        this.coverArea.insertBefore(glow, this.coverArea.firstChild);
+      }
+      
+      this.panels.forEach(panel => {
+        const list = panel.querySelector('.list');
+        if (list && !list.parentElement.classList.contains('listContainer')) {
+          const listContainer = document.createElement('div');
+          listContainer.className = 'listContainer';
+          list.parentNode.insertBefore(listContainer, list);
+          listContainer.appendChild(list);
+        }
+      });
+      
+      musicPlayer.state.updateMiniHeaderElements();
+    },
+
+    setupObservers() {
+      const mutationObserver = new MutationObserver(() => {
+        musicPlayer.state.collapsibles.addListItemInteractions();
+      });
+      
+      this.panels.forEach(panel => {
+        mutationObserver.observe(panel, {
+          childList: true,
+          subtree: true
+        });
+      });
+      
+      musicPlayer.state.collapsibles.addListItemInteractions();
+    },
+    
+    handleTabChange(tabName) {
+      if (tabName === 'playlist' || tabName === 'queue') {
+        if (!this.isCollapsed && !this.isTransitioning) {
+          this.collapseHeader();
+        }
+      } else if (tabName === 'playing') {
+        if (this.isCollapsed && !this.isTransitioning) {
+          this.expandHeader();
+        }
+      }
+    },
+
+    updateListHeights: function() {
+      const header = this.header;
+      const recentList = musicPlayer.refs.lists.recent;
+      const queueList = musicPlayer.refs.lists.queue;
+      
+      if (!header || !recentList || !queueList) return;
+      
+      const isCollapsed = header.classList.contains('collapsed');
+      const headerHeight = header.offsetHeight;
+      const viewportHeight = window.innerHeight;
+      
+      if (isCollapsed) {
+        const availableHeight = viewportHeight - headerHeight - 100;
+        recentList.style.height = `${availableHeight}px`;
+        queueList.style.height = `${availableHeight}px`;
+      } else {
+        recentList.style.height = '500px';
+        queueList.style.height = '500px';
+      }
+    },
+
+    collapseHeader() {
+      if (musicPlayer.state.isCollapsed || musicPlayer.state.isTransitioning || !this.header) return;
+      
+      musicPlayer.state.isCollapsed = true;
+      musicPlayer.state.isTransitioning = true;
+      
+      const listContainers = musicPlayer.refs.root.querySelectorAll('.listContainer');
+      
+      requestAnimationFrame(() => {
+        this.header.classList.add('is-collapsing');
+        
+        requestAnimationFrame(() => {
+          this.header.classList.add('collapsed');
+          this.header.classList.remove('is-collapsing');
           
-          // Update active classes on indicators
-          dotIndicators.forEach(dot => dot.classList.remove('active'));
-          e.target.closest('.dotIndicator').classList.add('active');
-          
-          // Update active classes on panels
-          const panels = QUERY_ALL('.player .panel');
-          panels.forEach(panel => {
-            if (panel.dataset.tab === tab) {
-              panel.classList.add('active');
-            } else {
-              panel.classList.remove('active');
-            }
+          listContainers.forEach(container => {
+            container.classList.add('expandHeight');
           });
           
-          setTimeout(() => {
-            if (player && tab) {
-              player.setAttribute('data-active-tab', tab);
+          this.updateListHeights();
+          
+          clearTimeout(musicPlayer.state.transitionTimeout);
+          musicPlayer.state.transitionTimeout = setTimeout(() => {
+            musicPlayer.state.isTransitioning = false;
+          }, 550);
+        });
+      });
+    },
+
+    expandHeader() {
+      if (!musicPlayer.state.isCollapsed || musicPlayer.state.isTransitioning || !this.header) return;
+      
+      musicPlayer.state.isCollapsed = false;
+      musicPlayer.state.isTransitioning = true;
+      
+      const listContainers = musicPlayer.refs.root.querySelectorAll('.listContainer');
+      
+      requestAnimationFrame(() => {
+        this.header.classList.add('is-collapsing');
+        
+        requestAnimationFrame(() => {
+          this.header.classList.remove('collapsed');
+          this.header.classList.remove('is-collapsing');
+          
+          listContainers.forEach(container => {
+            container.classList.remove('expandHeight');
+          });
+          
+          this.updateListHeights();
+          
+          clearTimeout(musicPlayer.state.transitionTimeout);
+          musicPlayer.state.transitionTimeout = setTimeout(() => {
+            musicPlayer.state.isTransitioning = false;
+          }, 550);
+        });
+      });
+    },
+
+    updateMiniHeaderElements() {
+      if (!this.coverArea) return;
+      
+      const titleElement = musicPlayer.refs.display.title;
+      const artistElement = musicPlayer.refs.display.artist;
+      
+      let miniHeader = this.coverArea.querySelector('.miniHeader');
+      if (!miniHeader) {
+        miniHeader = document.createElement('div');
+        miniHeader.className = 'miniHeader';
+        this.coverArea.appendChild(miniHeader);
+      }
+      
+      const title = titleElement ? titleElement.textContent : '';
+      const artist = artistElement ? artistElement.textContent : '';
+      
+      miniHeader.innerHTML = `
+        <div class="miniTitle">${musicPlayer.state.escapeHTML(title)}</div>
+        <div class="miniArtist">${musicPlayer.state.escapeHTML(artist)}</div>
+      `;
+      
+      let miniControls = this.coverArea.querySelector('.miniControls');
+      if (!miniControls) {
+        miniControls = document.createElement('div');
+        miniControls.className = 'miniControls';
+        this.coverArea.appendChild(miniControls);
+      }
+      
+      const isPaused = !this.player || !this.player.classList.contains('isPlaying');
+      const playIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-14 9V3z"/></svg>';
+      const pauseIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>';
+      
+      miniControls.innerHTML = `
+        <button class="miniControlBtn" onclick="musicPlayer.playback.togglePlayPause()">
+          ${isPaused ? playIcon : pauseIcon}
+        </button>
+      `;
+    },
+    
+    escapeHTML(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    },
+
+    collapsibles: {
+      init: function() {
+        this.setupTabListeners();
+        this.setupActionButtonListeners();
+        this.updateActiveTabState();
+        this.addListItemInteractions();
+      },
+      
+      setupTabListeners: function() {
+        const dotIndicators = document.querySelectorAll('.dotIndicator');
+        const player = musicPlayer.refs.root;
+        
+        dotIndicators.forEach(indicator => {
+          indicator.addEventListener('click', (e) => {
+            const tab = e.target.closest('.dotIndicator').dataset.tab;
+            
+            dotIndicators.forEach(dot => dot.classList.remove('active'));
+            e.target.closest('.dotIndicator').classList.add('active');
+            
+            const panels = musicPlayer.refs.root.querySelectorAll('.player .panel');
+            panels.forEach(panel => {
+              if (panel.dataset.tab === tab) {
+                panel.classList.add('active');
+              } else {
+                panel.classList.remove('active');
+              }
+            });
+            
+            setTimeout(() => {
+              if (player && tab) {
+                player.setAttribute('data-active-tab', tab);
+                musicPlayer.state.handleTabChange(tab);
+              }
+            }, 100);
+          });
+        });
+      },
+      
+      setupActionButtonListeners: function() {
+        const player = musicPlayer.refs.root;
+        
+        const queueButton = musicPlayer.refs.controls.queueBtn;
+        if (queueButton) {
+          queueButton.addEventListener('click', () => {
+            const dotIndicators = document.querySelectorAll('.dotIndicator');
+            dotIndicators.forEach(dot => {
+              if (dot.dataset.tab === 'queue') {
+                dot.click();
+              }
+            });
+          });
+        }
+        
+        const recentButton = document.querySelector('[data-tab="playlist"]');
+        if (recentButton) {
+          recentButton.addEventListener('click', () => {
+            const dotIndicators = document.querySelectorAll('.dotIndicator');
+            dotIndicators.forEach(dot => {
+              if (dot.dataset.tab === 'playlist') {
+                dot.click();
+              }
+            });
+          });
+        }
+      },
+      
+      updateActiveTabState: function() {
+        const player = musicPlayer.refs.root;
+        if (!player) return;
+        
+        const observer = new MutationObserver((mutations) => {
+          mutations.forEach((mutation) => {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'data-active-tab') {
+              const tab = player.getAttribute('data-active-tab');
               musicPlayer.state.handleTabChange(tab);
             }
-          }, 100);
-        });
-      });
-    },
-    
-    setupActionButtonListeners: function() {
-      const player = document.getElementById('music-player');
-      
-      const queueButton = document.getElementById('music-player-queue');
-      if (queueButton) {
-        queueButton.addEventListener('click', () => {
-          const dotIndicators = document.querySelectorAll('.dotIndicator');
-          dotIndicators.forEach(dot => {
-            if (dot.dataset.tab === 'queue') {
-              dot.click();
-            }
           });
         });
-      }
-      
-      const recentButton = document.querySelector('[data-tab="playlist"]');
-      if (recentButton) {
-        recentButton.addEventListener('click', () => {
-          const dotIndicators = document.querySelectorAll('.dotIndicator');
-          dotIndicators.forEach(dot => {
-            if (dot.dataset.tab === 'playlist') {
-              dot.click();
-            }
-          });
+        
+        observer.observe(player, {
+          attributes: true,
+          attributeFilter: ['data-active-tab']
         });
-      }
-    },
-    
-    updateActiveTabState: function() {
-      const player = document.getElementById('music-player');
-      if (!player) return;
+      },
       
-      const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-          if (mutation.type === 'attributes' && mutation.attributeName === 'data-active-tab') {
-            const tab = player.getAttribute('data-active-tab');
-            musicPlayer.state.handleTabChange(tab);
+      forceUpdateTab: function(tabName) {
+        const player = musicPlayer.refs.root;
+        if (player && ['playing', 'queue', 'playlist'].includes(tabName)) {
+          player.setAttribute('data-active-tab', tabName);
+          musicPlayer.state.handleTabChange(tabName);
+        }
+      },
+      
+      addListItemInteractions: function() {
+        const listItems = document.querySelectorAll('.list-item');
+        
+        listItems.forEach(item => {
+          const artwork = item.querySelector('.item-artwork');
+          if (!artwork) return;
+          
+          let wrapper = artwork.parentElement;
+          if (!wrapper.classList.contains('item-artwork-wrapper')) {
+            wrapper = document.createElement('div');
+            wrapper.className = 'item-artwork-wrapper';
+            artwork.parentNode.insertBefore(wrapper, artwork);
+            wrapper.appendChild(artwork);
+          }
+          
+          if (!wrapper.querySelector('.item-play-overlay')) {
+            const overlay = document.createElement('div');
+            overlay.className = 'item-play-overlay';
+            overlay.innerHTML = '<svg viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>';
+            wrapper.appendChild(overlay);
           }
         });
-      });
-      
-      observer.observe(player, {
-        attributes: true,
-        attributeFilter: ['data-active-tab']
-      });
+      },
     },
-    
-    forceUpdateTab: function(tabName) {
-      const player = document.getElementById('music-player');
-      if (player && ['playing', 'queue', 'playlist'].includes(tabName)) {
-        player.setAttribute('data-active-tab', tabName);
-        musicPlayer.state.handleTabChange(tabName);
-      }
-    },
-    
-    addListItemInteractions: function() {
-      const listItems = document.querySelectorAll('.list-item');
-      
-      listItems.forEach(item => {
-        const artwork = item.querySelector('.item-artwork');
-        if (!artwork) return;
-        
-        let wrapper = artwork.parentElement;
-        if (!wrapper.classList.contains('item-artwork-wrapper')) {
-          wrapper = document.createElement('div');
-          wrapper.className = 'item-artwork-wrapper';
-          artwork.parentNode.insertBefore(wrapper, artwork);
-          wrapper.appendChild(artwork);
-        }
-        
-        if (!wrapper.querySelector('.item-play-overlay')) {
-          const overlay = document.createElement('div');
-          overlay.className = 'item-play-overlay';
-          overlay.innerHTML = '<svg viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>';
-          wrapper.appendChild(overlay);
-        }
-      });
-    },
-  },
-}
+  }
 };
 
 
