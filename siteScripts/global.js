@@ -3552,13 +3552,6 @@ const clickables = {
     }
 };
 
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        clickables.init();
-    });
-} else {
-    clickables.init();
-}
 
 window.clickables = clickables;
 document.addEventListener('DOMContentLoaded', () => {
@@ -4115,18 +4108,21 @@ window.navigation = navigation;
 window.playlists = playlists;
 window.views = views;
 
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        clickables.init();
-    });
-} else {
-    clickables.init();
-}
+
 
 document.addEventListener('DOMContentLoaded', () => {
+    // 1. Initialize the Player FIRST (This runs cacheDOM)
+    musicPlayer.mainPlayer.init();
+    musicPlayer.mainPlayer.initialize();
+    
+    // 2. NOW it is safe to initialize clickables
+    clickables.init();
+    
+    // 3. Initialize the rest of the app
     app.initialize();
     
-    const progressBar = $byId(IDS.musicPlayerProgressBar);
+    // Safety check for the progress bar specifically
+    const progressBar = document.getElementById('music-player-progress-bar'); // Use standard JS here just for the listener
     if (progressBar) {
         progressBar.addEventListener('keydown', musicPlayer.ui.handleProgressBarKeyDown);
     }
@@ -4137,6 +4133,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }, 100);
 });
+
 
 export {
     appState,
