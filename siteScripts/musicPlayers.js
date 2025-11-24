@@ -8,22 +8,6 @@
  * 
  *     m.me/Chevrolay
  */
-import { 
-  MUSIC_PLAYER, 
-  QUERY, 
-  QUERY_ALL, 
-  $byId,
-  REPEAT_MODES,
-  CLASSES,
-  STORAGE_KEYS
-} from './index.js';
-import { utils } from './global.js';
-import { listRenderer } from './global.js';
-import { appState } from './global.js';
-import { storage } from './global.js';
-import { PubSub } from './global.js';
-import { PLAYER_EVENTS } from './global.js';
-import { notificationPlayer } from './global.js';
 ////////////////////////////////////////////////////////////
 
 
