@@ -14,3 +14,5 @@ export {
 } from './global.js';
 
 export { notifications } from './toasts.js';
+
+export { musicPlayer } from './musicPlayers.js';
