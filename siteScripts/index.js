@@ -8,7 +8,7 @@ export {
 } from './map.js';
 
 export { 
-  appState, storage, notificationPlayer, musicPlayer, dropdown, 
+  appState, storage, notificationPlayer, dropdown, 
   overlays, playlists, utils, app, pageLoader, 
   navigation, ACTION_GRID_ITEMS 
 } from './global.js';
