@@ -1024,7 +1024,7 @@ const musicPlayer = {
         onPlay: (song) => musicPlayer.ui.playSong(song),
         onQueue: (song) => appState.queue.add(song),
       });
-    }
+    },
     
     
     // Helpers
