@@ -1513,7 +1513,6 @@ updateMiniHeaderElements() {
 },
 
 
-
 import { 
   MUSIC_PLAYER, 
   QUERY, 
@@ -1521,14 +1520,15 @@ import {
   $byId,
   REPEAT_MODES,
   CLASSES,
-  STORAGE_KEYS
+  STORAGE_KEYS,
+  utils,
+  appState,
+  storage,
+  PubSub,
+  PLAYER_EVENTS,
+  notificationPlayer,
+  listRenderer
 } from './index.js';
-import { utils } from './global.js';
-import { appState } from './global.js';
-import { storage } from './global.js';
-import { PubSub, PLAYER_EVENTS } from './global.js';
-import { notificationPlayer } from './global.js';
-import { listRenderer } from './global.js';
 
 musicPlayer.initialize = () => {
   musicPlayer.mainPlayer.init();
