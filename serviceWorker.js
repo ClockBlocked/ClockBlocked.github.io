@@ -1,6 +1,6 @@
 // sw.js - Advanced Service Worker with Intelligent Caching & Lazy Loading
 const CACHE_VERSION = 'v1.2.0';
-const CACHE_PREFIX = 'music-player';
+const CACHE_PREFIX = 'myTunesMemory';
 
 // Dynamic cache names based on content type
 const CACHE_NAMES = {
@@ -16,15 +16,15 @@ const CACHE_NAMES = {
 // Static assets to cache immediately on install
 const STATIC_ASSETS = [
 //  '/',
-  '../index.html',
+  './index.html',
 //  '../siteScripts/global.js',
 //  '/musicPlayer.css',
-  '/manifest.json'
+  './manifest/manifest.json'
 ];
 
 // Map.js specific resources (lazy-loaded)
 const MAP_RESOURCES = [
-  '/map.js'
+  './siteScripts/map.js'
 ];
 
 // Cache size limits to prevent storage bloat
