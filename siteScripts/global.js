@@ -2518,7 +2518,7 @@ const handleDOMReady = () => {
 
 // Set up global references
 window.clickables = clickables;
-window.musicPlayer = musicPlayer;
+// window.musicPlayer = musicPlayer;
 window.navigation = navigation;
 window.playlists = playlists;
 window.views = views;
