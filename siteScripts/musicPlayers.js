@@ -53,7 +53,8 @@ const musicPlayer = {
       const isOpen = drawer.classList.contains("open");
       if (isOpen) {
         musicPlayer.mainPlayer.close();
-      } else {
+      }
+      else {
         musicPlayer.mainPlayer.open();
       }
     },
@@ -189,7 +190,8 @@ const musicPlayer = {
         compactHeader.style.pointerEvents = t > 0.5 ? "auto" : "none";
         if (t > 0.99) {
           contentCard.classList.add("collapsed");
-        } else {
+        }
+        else {
           contentCard.classList.remove("collapsed");
         }
       }
@@ -288,7 +290,8 @@ const musicPlayer = {
         window.removeEventListener("touchmove", onPointerMove);
         if (lastTranslate > 120) {
           musicPlayer.mainPlayer.close();
-        } else {
+        }
+        else {
           drawer.style.transform = "";
           drawer.style.opacity = "";
         }
@@ -327,7 +330,8 @@ const musicPlayer = {
       if (!appState.audio) return;
       if (appState.isPlaying) {
         musicPlayer.playback.pause();
-      } else {
+      }
+      else {
         musicPlayer.playback.play();
       }
     },
@@ -350,7 +354,8 @@ const musicPlayer = {
       const nextInAlbum = musicPlayer.ui.getNextInAlbum();
       if (nextInAlbum) {
         musicPlayer.ui.playSong(nextInAlbum);
-      } else {
+      }
+      else {
         if (appState.currentSong) {
           musicPlayer.ui.addToRecentlyPlayed(appState.currentSong);
         }
@@ -455,9 +460,11 @@ const musicPlayer = {
       toggle: () => {
         if (appState.repeatMode === window.REPEAT_MODES?.OFF) {
           appState.repeatMode = window.REPEAT_MODES?.ALL;
-        } else if (appState.repeatMode === window.REPEAT_MODES?.ALL) {
+        }
+        else if (appState.repeatMode === window.REPEAT_MODES?.ALL) {
           appState.repeatMode = window.REPEAT_MODES?.ONE;
-        } else {
+        }
+        else {
           appState.repeatMode = window.REPEAT_MODES?.OFF;
         }
         if (window.ui && ui.updateRepeatButton) {
@@ -551,7 +558,8 @@ const musicPlayer = {
           musicPlayer.ui.bindSeekBar();
         }, 100);
         musicPlayer.playback.dispatchPlayerStateChange();
-      } else {
+      }
+      else {
         musicPlayer.ui.addToRecentlyPlayed(songData);
         appState.setPlayingState(false);
         if (window.ui && ui.updatePlayPauseButtons) {
@@ -598,7 +606,8 @@ const musicPlayer = {
           });
           await appState.audio.play();
           return true;
-        } catch (error) {
+        }
+        catch (error) {
           continue;
         }
       }
@@ -859,7 +868,8 @@ const musicPlayer = {
           playIcon?.style.setProperty("display", "none");
           pauseIcon?.style.setProperty("display", "block");
           drawer?.classList.add(MUSIC_PLAYER.classes.playing);
-        } else {
+        }
+        else {
           playIcon?.style.setProperty("display", "block");
           pauseIcon?.style.setProperty("display", "none");
           drawer?.classList.remove(MUSIC_PLAYER.classes.playing);
@@ -943,7 +953,8 @@ const musicPlayer = {
         if (isPlaying) {
           playIcon.classList.remove("active");
           pauseIcon.classList.add("active");
-        } else {
+        }
+        else {
           playIcon.classList.add("active");
           pauseIcon.classList.remove("active");
         }
@@ -1018,7 +1029,8 @@ const musicPlayer = {
             try {
               const songData = JSON.parse(songDataStr);
               musicPlayer.ui.playSong(songData);
-            } catch (error) {
+            }
+            catch (error) {
               console.error('Error parsing song data:', error);
             }
           }
@@ -1045,7 +1057,8 @@ const musicPlayer = {
               const songData = JSON.parse(songDataStr);
               appState.favorites.toggle('songs', songData.id);
               btn.classList.toggle('active', appState.favorites.has('songs', songData.id));
-            } catch (error) {
+            }
+            catch (error) {
               console.error('Error toggling favorite:', error);
             }
           }
@@ -1134,13 +1147,14 @@ const musicPlayer = {
         if (!this.isCollapsed && !this.isTransitioning) {
           this.collapseHeader();
         }
-      } else if (tabName === MUSIC_PLAYER.tabs.playing) {
+      }
+      else if (tabName === MUSIC_PLAYER.tabs.playing) {
         if (this.isCollapsed && !this.isTransitioning) {
           this.expandHeader();
         }
       }
     },
-    updateListHeights: function() {
+    updateListHeights: function () {
       const header = this.header;
       const recentList = document.getElementById('music-player-recent-list');
       const queueList = document.getElementById('music-player-queue-list');
@@ -1152,7 +1166,8 @@ const musicPlayer = {
         const availableHeight = viewportHeight - headerHeight - 100;
         recentList.style.height = `${availableHeight}px`;
         queueList.style.height = `${availableHeight}px`;
-      } else {
+      }
+      else {
         recentList.style.height = '500px';
         queueList.style.height = '500px';
       }
@@ -1241,13 +1256,13 @@ const musicPlayer = {
       return div.innerHTML;
     },
     collapsibles: {
-      init: function() {
+      init: function () {
         this.setupTabListeners();
         this.setupActionButtonListeners();
         this.updateActiveTabState();
         this.addListItemInteractions();
       },
-      setupTabListeners: function() {
+      setupTabListeners: function () {
         const dotIndicators = document.querySelectorAll('.dotIndicator');
         const player = document.getElementById('music-player');
         dotIndicators.forEach(indicator => {
@@ -1261,7 +1276,8 @@ const musicPlayer = {
             panels.forEach(panel => {
               if (panel.dataset.tab === tab) {
                 panel.classList.add('active');
-              } else {
+              }
+              else {
                 panel.classList.remove('active');
               }
             });
@@ -1274,7 +1290,7 @@ const musicPlayer = {
           });
         });
       },
-      setupActionButtonListeners: function() {
+      setupActionButtonListeners: function () {
         const player = document.getElementById('music-player');
         const queueButton = document.getElementById('music-player-queue');
         if (queueButton) {
@@ -1299,7 +1315,7 @@ const musicPlayer = {
           });
         }
       },
-      updateActiveTabState: function() {
+      updateActiveTabState: function () {
         const player = document.getElementById('music-player');
         if (!player) return;
         const observer = new MutationObserver((mutations) => {
@@ -1315,14 +1331,14 @@ const musicPlayer = {
           attributeFilter: ['data-active-tab']
         });
       },
-      forceUpdateTab: function(tabName) {
+      forceUpdateTab: function (tabName) {
         const player = document.getElementById('music-player');
         if (player && ['playing', 'queue', 'playlist'].includes(tabName)) {
           player.setAttribute('data-active-tab', tabName);
           musicPlayer.state.handleTabChange(tabName);
         }
       },
-      addListItemInteractions: function() {
+      addListItemInteractions: function () {
         const listItems = document.querySelectorAll('.list-item');
         listItems.forEach(item => {
           const artwork = item.querySelector('.item-artwork');
@@ -1359,7 +1375,8 @@ const musicPlayer = {
     PLAYER_EVENTS,
     notificationPlayer,
     listRenderer
-  } from './index.js';
+  }
+  from './index.js';
   musicPlayer.initialize = () => {
     musicPlayer.mainPlayer.init();
     musicPlayer.mainPlayer.initialize();
