@@ -9,7 +9,7 @@
  *     m.me/Chevrolay
  */
 const musicPlayer = {
-  let musicPlayer = {};
+
   mainPlayer: {
     inactivityTimer: null,
     lastInteractionTime: null,
