@@ -2279,7 +2279,7 @@ updatePlayPauseUI(isPlaying) {
   if (root && MUSIC_PLAYER.classes && MUSIC_PLAYER.classes.playing) {
     root.classList.toggle(MUSIC_PLAYER.classes.playing, isPlaying);
   }
-}
+},
     
     updateProgressUI: (currentTime, duration) => {
       if (musicPlayer.ui.isScrubbing) return;
