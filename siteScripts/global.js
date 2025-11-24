@@ -2596,45 +2596,47 @@ state: {
     });
   },
 
-  updateMiniHeaderElements() {
-    if (!this.coverArea) return;
-    
-    const titleElement = QUERY('#music-player-title');
-    const artistElement = QUERY('#music-player-artist');
-    
-    let miniHeader = this.coverArea.querySelector('.miniHeader');
-    if (!miniHeader) {
-      miniHeader = document.createElement('div');
-      miniHeader.className = 'miniHeader';
-      this.coverArea.appendChild(miniHeader);
-    }
-    
-    const title = titleElement ? titleElement.textContent : '';
-    const artist = artistElement ? artistElement.textContent : '';
-    
-    miniHeader.innerHTML = `
-      <div class="miniTitle">${musicPlayer.state.escapeHTML(title)}</div>
-      <div class="miniArtist">${musicPlayer.state.escapeHTML(artist)}</div>
-    `;
-    
-    let miniControls = this.coverArea.querySelector('.miniControls');
-    if (!miniControls) {
-      miniControls = document.createElement('div');
-      miniControls.className = 'miniControls';
-      this.coverArea.appendChild(miniControls);
-    }
-    
-    const isPaused = !this.player || !this.player.classList.contains('isPlaying');
-    const playIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-14 9V3z"/></svg>';
-    const pauseIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>';
-    
-    miniControls.innerHTML = `
-      <button class="miniControlBtn" onclick="musicPlayer.playback.togglePlayPause()">
-        ${isPaused ? playIcon : pauseIcon}
-      </button>
-    `;
-  },
-  
+updateMiniHeaderElements() {
+  if (!this.coverArea) return;
+
+  const titleElement = QUERY('#music-player-title');
+  const artistElement = QUERY('#music-player-artist');
+
+  let miniHeader = this.coverArea.querySelector('.miniHeader');
+  if (!miniHeader) {
+    miniHeader = document.createElement('div');
+    miniHeader.className = 'miniHeader';
+    this.coverArea.appendChild(miniHeader);
+  }
+
+  const title = titleElement ? titleElement.textContent : '';
+  const artist = artistElement ? artistElement.textContent : '';
+
+  miniHeader.innerHTML = `
+    <div class="miniTitle">${musicPlayer.state.escapeHTML(title)}</div>
+    <div class="miniArtist">${musicPlayer.state.escapeHTML(artist)}</div>
+  `;
+
+  let miniControls = this.coverArea.querySelector('.miniControls');
+  if (!miniControls) {
+    miniControls = document.createElement('div');
+    miniControls.className = 'miniControls';
+    this.coverArea.appendChild(miniControls);
+  }
+
+  miniControls.innerHTML = `
+    <button class="miniControlBtn playPause" onclick="musicPlayer.playback.togglePlayPause()">
+      <svg class="play" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none">
+        <path d="M5 3l14 9-14 9V3z" />
+      </svg>
+
+      <svg class="pause" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none">
+        <path d="M6 4h4v16H6zM14 4h4v16h-4z" />
+      </svg>
+    </button>
+  `;
+},
+
   escapeHTML(str) {
     const div = document.createElement('div');
     div.textContent = str;
