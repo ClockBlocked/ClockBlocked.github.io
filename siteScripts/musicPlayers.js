@@ -8,9 +8,6 @@
  * 
  *     m.me/Chevrolay
  */
-////////////////////////////////////////////////////////////
-
-
 const musicPlayer = {
   let musicPlayer = {};
   mainPlayer: {
