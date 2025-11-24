@@ -4009,7 +4009,7 @@ const initializeApp = () => {
     }
     
     if (!window.appState || !window.appState.initialized) {
-        app.initialize();
+//        app.initialize();
     }
     
     // Initialize media session notifications
