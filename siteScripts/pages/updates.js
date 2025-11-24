@@ -1,8 +1,9 @@
 import {
-  appState, storage, notifications, musicPlayer, 
+  appState, storage, notifications, 
   utils, notificationPlayer
-} from '../index.js';
+} from '../global.js';
 
+import { musicPlayer } from '../musicPlayers.js';
 
 
 
