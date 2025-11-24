@@ -2260,41 +2260,26 @@ const musicPlayer = {
       if (navbarArtistName && song.artist) navbarArtistName.textContent = song.artist;
     },
     
-    updatePlayPauseUI: (isPlaying) => {
-      const playBtn = QUERY(MUSIC_PLAYER.play);
-      const navbarPlayBtn = QUERY(NAVBAR.playPause);
-      
-      if (playBtn) {
-        const playIcon = playBtn.querySelector(".playIcon");
-        const pauseIcon = playBtn.querySelector(".pauseIcon");
-        if (isPlaying) {
-          playIcon?.style.setProperty("display", "none");
-          pauseIcon?.style.setProperty("display", "block");
-        } else {
-          playIcon?.style.setProperty("display", "block");
-          pauseIcon?.style.setProperty("display", "none");
-        }
-      }
-      
-      const navbarPlayIndicator = QUERY(`${NAVBAR.nowPlaying} #play-indicator`);
-      if (navbarPlayIndicator) {
-        navbarPlayIndicator.classList.toggle("playing", isPlaying);
-      }
-      
-      if (navbarPlayBtn) {
-        const navbarPlayIcon = QUERY(NAVBAR.play);
-        const navbarPauseIcon = QUERY(NAVBAR.pause);
-        if (isPlaying) {
-          navbarPlayIcon?.classList.add("hidden");
-          navbarPauseIcon?.classList.remove("hidden");
-        } else {
-          navbarPlayIcon?.classList.remove("hidden");
-          navbarPauseIcon?.classList.add("hidden");
-        }
-      }
-      
-      QUERY(MUSIC_PLAYER.root)?.classList.toggle(MUSIC_PLAYER.classes.playing, isPlaying);
-    },
+updatePlayPauseUI(isPlaying) {
+  const buttons = document.querySelectorAll(".playPause");
+  buttons.forEach(btn => {
+    const playIcon = btn.querySelector(".play");
+    const pauseIcon = btn.querySelector(".pause");
+    if (!playIcon || !pauseIcon) return;
+    if (isPlaying) {
+      playIcon.classList.remove("active");
+      pauseIcon.classList.add("active");
+    } else {
+      playIcon.classList.add("active");
+      pauseIcon.classList.remove("active");
+    }
+  });
+
+  const root = document.querySelector(MUSIC_PLAYER.root);
+  if (root && MUSIC_PLAYER.classes && MUSIC_PLAYER.classes.playing) {
+    root.classList.toggle(MUSIC_PLAYER.classes.playing, isPlaying);
+  }
+}
     
     updateProgressUI: (currentTime, duration) => {
       if (musicPlayer.ui.isScrubbing) return;
