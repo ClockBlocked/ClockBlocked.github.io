@@ -1134,6 +1134,8 @@ const musicPlayer = {
     dragStartY: 0,
     dragDistance: 0,
     transitionTimeout: null,
+    
+    
     init() {
       musicPlayer.state.cacheDOMElements();
       musicPlayer.state.injectRequiredHTML();
@@ -1148,6 +1150,19 @@ const musicPlayer = {
       this.panels = QUERY_ALL('.player .panel');
       this.dotIndicators = QUERY_ALL('.dotIndicator');
     },
+    setupObservers() {
+      const mutationObserver = new MutationObserver(() => {
+        musicPlayer.state.collapsibles.addListItemInteractions();
+      });
+      this.panels.forEach(panel => {
+        mutationObserver.observe(panel, {
+          childList: true,
+          subtree: true
+        });
+      });
+      musicPlayer.state.collapsibles.addListItemInteractions();
+    },
+    
     injectRequiredHTML() {
       if (!this.coverArea || !this.cover) return;
       // Wrap cover image in container
@@ -1177,18 +1192,43 @@ const musicPlayer = {
       // Create mini header and controls
       musicPlayer.state.updateMiniHeaderElements();
     },
-    setupObservers() {
-      const mutationObserver = new MutationObserver(() => {
-        musicPlayer.state.collapsibles.addListItemInteractions();
-      });
-      this.panels.forEach(panel => {
-        mutationObserver.observe(panel, {
-          childList: true,
-          subtree: true
-        });
-      });
-      musicPlayer.state.collapsibles.addListItemInteractions();
+    updateMiniHeaderElements() {
+      if (!this.coverArea) return;
+      const titleElement = QUERY('#music-player-title');
+      const artistElement = QUERY('#music-player-artist');
+      let miniHeader = this.coverArea.querySelector('.miniHeader');
+      if (!miniHeader) {
+        miniHeader = document.createElement('div');
+        miniHeader.className = 'miniHeader';
+        this.coverArea.appendChild(miniHeader);
+      }
+      const title = titleElement ? titleElement.textContent : '';
+      const artist = artistElement ? artistElement.textContent : '';
+      miniHeader.innerHTML = `
+    <div class="miniTitle">${musicPlayer.state.escapeHTML(title)}</div>
+    <div class="miniArtist">${musicPlayer.state.escapeHTML(artist)}</div>
+  `;
+      let miniControls = this.coverArea.querySelector('.miniControls');
+      if (!miniControls) {
+        miniControls = document.createElement('div');
+        miniControls.className = 'miniControls';
+        this.coverArea.appendChild(miniControls);
+      }
+      miniControls.innerHTML = `
+    <button class="miniControlBtn playPause" onclick="musicPlayer.playback.togglePlayPause()">
+      <svg class="play" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none">
+        <path d="M5 3l14 9-14 9V3z" />
+      </svg>
+
+      <svg class="pause" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none">
+        <path d="M6 4h4v16H6zM14 4h4v16h-4z" />
+      </svg>
+    </button>
+  `;
     },
+    
+    //  Drawer Tabs (states)
+    // 'Now Playing',  'Recently Played',  'Up Next Queue'
     handleTabChange(tabName) {
       if (tabName === MUSIC_PLAYER.tabs.playlist || tabName === MUSIC_PLAYER.tabs.queue) {
         if (!this.isCollapsed && !this.isTransitioning) {
@@ -1263,40 +1303,8 @@ const musicPlayer = {
         });
       });
     },
-    updateMiniHeaderElements() {
-      if (!this.coverArea) return;
-      const titleElement = QUERY('#music-player-title');
-      const artistElement = QUERY('#music-player-artist');
-      let miniHeader = this.coverArea.querySelector('.miniHeader');
-      if (!miniHeader) {
-        miniHeader = document.createElement('div');
-        miniHeader.className = 'miniHeader';
-        this.coverArea.appendChild(miniHeader);
-      }
-      const title = titleElement ? titleElement.textContent : '';
-      const artist = artistElement ? artistElement.textContent : '';
-      miniHeader.innerHTML = `
-    <div class="miniTitle">${musicPlayer.state.escapeHTML(title)}</div>
-    <div class="miniArtist">${musicPlayer.state.escapeHTML(artist)}</div>
-  `;
-      let miniControls = this.coverArea.querySelector('.miniControls');
-      if (!miniControls) {
-        miniControls = document.createElement('div');
-        miniControls.className = 'miniControls';
-        this.coverArea.appendChild(miniControls);
-      }
-      miniControls.innerHTML = `
-    <button class="miniControlBtn playPause" onclick="musicPlayer.playback.togglePlayPause()">
-      <svg class="play" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none">
-        <path d="M5 3l14 9-14 9V3z" />
-      </svg>
-
-      <svg class="pause" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none">
-        <path d="M6 4h4v16H6zM14 4h4v16h-4z" />
-      </svg>
-    </button>
-  `;
-    },
+    
+    //  H E L P E R S
     escapeHTML(str) {
       const div = document.createElement('div');
       div.textContent = str;
