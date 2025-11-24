@@ -79,6 +79,358 @@
       gtag("js", new Date());
       gtag("config", "G-P0KCT8TSPW");
     </script>
+    
+    
+
+<script>
+(function() {
+  'use strict';
+  
+  if (!('serviceWorker' in navigator)) {
+    console.warn('Service Workers are not supported in this browser');
+    return;
+  }
+  
+  const SW_CONFIG = {
+    scriptUrl: '/sw.js',
+    scope: '/',
+    updateInterval: 60 * 60 * 1000
+  };
+  
+  const swManager = {
+    registration: null,
+    updateCheckInterval: null,
+    
+    async init() {
+      try {
+        this.registration = await navigator.serviceWorker.register(SW_CONFIG.scriptUrl, {
+          scope: SW_CONFIG.scope
+        });
+        
+        console.log('[SW Manager] Service worker registered successfully:', this.registration.scope);
+        
+        this.setupEventListeners();
+        this.startUpdateCheck();
+        this.setupMapLazyLoading();
+        this.logCacheSize();
+        
+      } catch (error) {
+        console.error('[SW Manager] Service worker registration failed:', error);
+      }
+    },
+    
+    setupEventListeners() {
+      this.registration.addEventListener('updatefound', () => {
+        const newWorker = this.registration.installing;
+        console.log('[SW Manager] New service worker found, installing...');
+        
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            this.handleUpdate(newWorker);
+          }
+        });
+      });
+      
+      navigator.serviceWorker.addEventListener('message', (event) => {
+        this.handleMessage(event.data);
+      });
+      
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        console.log('[SW Manager] Controller changed, reloading page...');
+        window.location.reload();
+      });
+    },
+    
+    handleUpdate(newWorker) {
+      console.log('[SW Manager] Update available');
+      
+      const shouldUpdate = confirm(
+        'A new version of the app is available. Would you like to update now?'
+      );
+      
+      if (shouldUpdate) {
+        newWorker.postMessage({ type: 'SKIP_WAITING' });
+      } else {
+        console.log('[SW Manager] Update deferred by user');
+      }
+    },
+    
+    handleMessage(data) {
+      console.log('[SW Manager] Message from service worker:', data);
+      
+      switch (data.type) {
+        case 'CACHE_UPDATED':
+          console.log('[SW Manager] Cache updated:', data.cacheName);
+          break;
+        
+        case 'OFFLINE_MODE':
+          console.log('[SW Manager] App is now in offline mode');
+          this.showOfflineNotification();
+          break;
+        
+        case 'ONLINE_MODE':
+          console.log('[SW Manager] App is back online');
+          this.hideOfflineNotification();
+          break;
+        
+        default:
+          console.log('[SW Manager] Unknown message type:', data.type);
+      }
+    },
+    
+    startUpdateCheck() {
+      this.updateCheckInterval = setInterval(() => {
+        if (this.registration) {
+          console.log('[SW Manager] Checking for service worker updates...');
+          this.registration.update();
+        }
+      }, SW_CONFIG.updateInterval);
+    },
+    
+    stopUpdateCheck() {
+      if (this.updateCheckInterval) {
+        clearInterval(this.updateCheckInterval);
+        this.updateCheckInterval = null;
+      }
+    },
+    
+    setupMapLazyLoading() {
+      const mapContainer = document.getElementById('map');
+      
+      if (!mapContainer) {
+        console.log('[SW Manager] Map container not found, skipping lazy load setup');
+        return;
+      }
+      
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            console.log('[SW Manager] Map container visible, lazy loading resources...');
+            this.lazyLoadMapResources();
+            observer.disconnect();
+          }
+        });
+      }, {
+        rootMargin: '50px'
+      });
+      
+      observer.observe(mapContainer);
+    },
+    
+    async lazyLoadMapResources() {
+      if (!this.registration || !this.registration.active) {
+        console.warn('[SW Manager] Service worker not ready for lazy loading');
+        return;
+      }
+      
+      try {
+        const response = await this.sendMessage({
+          type: 'LAZY_LOAD_MAP',
+          payload: {}
+        });
+        
+        if (response.success) {
+          console.log('[SW Manager] Map resources lazy loaded successfully');
+        } else {
+          console.error('[SW Manager] Failed to lazy load map resources:', response.error);
+        }
+      } catch (error) {
+        console.error('[SW Manager] Lazy load error:', error);
+      }
+    },
+    
+    sendMessage(message) {
+      return new Promise((resolve, reject) => {
+        if (!this.registration || !this.registration.active) {
+          reject(new Error('Service worker not active'));
+          return;
+        }
+        
+        const messageChannel = new MessageChannel();
+        
+        messageChannel.port1.onmessage = (event) => {
+          resolve(event.data);
+        };
+        
+        this.registration.active.postMessage(message, [messageChannel.port2]);
+        
+        setTimeout(() => {
+          reject(new Error('Service worker message timeout'));
+        }, 10000);
+      });
+    },
+    
+    async cacheUrls(urls, cacheName = null) {
+      try {
+        const response = await this.sendMessage({
+          type: 'CACHE_URLS',
+          payload: { urls, cacheName }
+        });
+        
+        if (response.success) {
+          console.log('[SW Manager] URLs cached successfully');
+        } else {
+          console.error('[SW Manager] Failed to cache URLs:', response.error);
+        }
+      } catch (error) {
+        console.error('[SW Manager] Cache URLs error:', error);
+      }
+    },
+    
+    async clearCache(cacheName) {
+      try {
+        const response = await this.sendMessage({
+          type: 'CLEAR_CACHE',
+          payload: { cacheName }
+        });
+        
+        if (response.success) {
+          console.log('[SW Manager] Cache cleared successfully');
+        } else {
+          console.error('[SW Manager] Failed to clear cache:', response.error);
+        }
+      } catch (error) {
+        console.error('[SW Manager] Clear cache error:', error);
+      }
+    },
+    
+    async clearAllCaches() {
+      try {
+        const response = await this.sendMessage({
+          type: 'CLEAR_ALL_CACHES',
+          payload: {}
+        });
+        
+        if (response.success) {
+          console.log('[SW Manager] All caches cleared successfully');
+        } else {
+          console.error('[SW Manager] Failed to clear all caches:', response.error);
+        }
+      } catch (error) {
+        console.error('[SW Manager] Clear all caches error:', error);
+      }
+    },
+    
+    async getCacheSize() {
+      try {
+        const response = await this.sendMessage({
+          type: 'GET_CACHE_SIZE',
+          payload: {}
+        });
+        
+        if (response.success) {
+          console.log('[SW Manager] Cache size:', response.size);
+          return response.size;
+        } else {
+          console.error('[SW Manager] Failed to get cache size:', response.error);
+        }
+      } catch (error) {
+        console.error('[SW Manager] Get cache size error:', error);
+      }
+      
+      return null;
+    },
+    
+    async logCacheSize() {
+      const size = await this.getCacheSize();
+      
+      if (size) {
+        console.log(`[SW Manager] Cache usage: ${(size.usage / 1024 / 1024).toFixed(2)} MB / ${(size.quota / 1024 / 1024).toFixed(2)} MB (${size.percentage}%)`);
+      }
+    },
+    
+    showOfflineNotification() {
+      let banner = document.getElementById('offline-banner');
+      
+      if (!banner) {
+        banner = document.createElement('div');
+        banner.id = 'offline-banner';
+        banner.style.cssText = `
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          background: #ff9800;
+          color: white;
+          text-align: center;
+          padding: 10px;
+          z-index: 10000;
+          font-family: sans-serif;
+          font-size: 14px;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        `;
+        banner.textContent = 'You are currently offline. Some features may be limited.';
+        document.body.insertBefore(banner, document.body.firstChild);
+      }
+      
+      banner.style.display = 'block';
+    },
+    
+    hideOfflineNotification() {
+      const banner = document.getElementById('offline-banner');
+      if (banner) {
+        banner.style.display = 'none';
+      }
+    },
+    
+    async unregister() {
+      if (this.registration) {
+        try {
+          await this.registration.unregister();
+          console.log('[SW Manager] Service worker unregistered');
+          this.stopUpdateCheck();
+        } catch (error) {
+          console.error('[SW Manager] Failed to unregister service worker:', error);
+        }
+      }
+    }
+  };
+  
+  window.addEventListener('online', () => {
+    console.log('[SW Manager] Network status: online');
+    swManager.hideOfflineNotification();
+  });
+  
+  window.addEventListener('offline', () => {
+    console.log('[SW Manager] Network status: offline');
+    swManager.showOfflineNotification();
+  });
+  
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      swManager.init();
+    });
+  } else {
+    swManager.init();
+  }
+  
+  window.swManager = swManager;
+  
+  window.addEventListener('beforeunload', () => {
+    swManager.stopUpdateCheck();
+  });
+  
+})();
+</script>
+
+<style>
+#offline-banner {
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+</style>    
+    
+    
   </head>
   <body>
     <div id="pageWrapper">
