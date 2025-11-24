@@ -10,22 +10,24 @@
  */
 
 // Import statements should be at the top if this is a module
+// --------- CORE FRAMEWORK IMPORTS ----------
 import {
-    MUSIC_PLAYER,
-    QUERY,
-    QUERY_ALL,
-    $byId,
-    REPEAT_MODES,
-    CLASSES,
-    STORAGE_KEYS,
-    utils,
-    appState,
-    storage,
-    PubSub,
-    PLAYER_EVENTS,
-    notificationPlayer,
-    listRenderer
-} from './index.js';
+  MUSIC_PLAYER,
+  QUERY,
+  QUERY_ALL,
+  $byId,
+  REPEAT_MODES,
+  CLASSES,
+  STORAGE_KEYS
+} from './map.js';
+
+// --------- APP ENGINE IMPORTS (direct, no index.js) ----------
+import { utils, appState, storage } from './global.js';
+import { PubSub, PLAYER_EVENTS, listRenderer } from './global.js';
+import { notificationPlayer } from './global.js';
+
+// --------- OTHER DIRECT MODULES ----------
+import { notifications } from './toasts.js';
 
 const musicPlayer = {
 
