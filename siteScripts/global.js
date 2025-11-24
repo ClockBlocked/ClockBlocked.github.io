@@ -2549,7 +2549,6 @@ export {
     appState,
     storage,
     notificationPlayer,
-    musicPlayer,
     dropdown,
     overlays,
     playlists,
