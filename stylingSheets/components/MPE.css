@@ -1895,7 +1895,6 @@
 
 
 
-
 .playPause {
   position: relative;
   display: inline-flex;
@@ -1906,18 +1905,31 @@
 .playPause svg {
   width: 1.5rem;
   height: 1.5rem;
-  visibility: hidden;
-  opacity: 0;
-  transition: opacity .18s ease;
   position: absolute;
   top: 0;
   left: 0;
+  transition: opacity .18s ease;
 }
 
-.playPause .play.active,
-.playPause .pause.active {
-  visibility: visible;
+.playPause .play {
   opacity: 1;
+  visibility: visible;
+}
+
+.playPause .pause {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.playPause .play.active {
+  opacity: 1;
+  visibility: visible;
+  position: relative;
+}
+
+.playPause .pause.active {
+  opacity: 1;
+  visibility: visible;
   position: relative;
 }
 
