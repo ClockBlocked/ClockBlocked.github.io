@@ -15,10 +15,10 @@ const CACHE_NAMES = {
 
 // Static assets to cache immediately on install
 const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/global.js',
-  '/musicPlayer.css',
+//  '/',
+  '../index.html',
+//  '../siteScripts/global.js',
+//  '/musicPlayer.css',
   '/manifest.json'
 ];
 
