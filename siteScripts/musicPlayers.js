@@ -322,7 +322,11 @@ const musicPlayer = {
       });
     },
   },
+  
+  
   playback: {
+    
+    // Status & Metadata of CURRENT song
     dispatchPlayerStateChange: () => {
       const detail = {
         song: appState.currentSong,
@@ -337,6 +341,8 @@ const musicPlayer = {
         detail
       }));
     },
+    
+    // Playback Controls
     togglePlayPause: () => {
       if (!appState.audio) return;
       if (appState.isPlaying) {
@@ -346,6 +352,7 @@ const musicPlayer = {
         musicPlayer.playback.play();
       }
     },
+    
     play: () => {
       if (!appState.currentSong || !appState.audio) return;
       appState.audio.play().catch((err) => {
@@ -356,6 +363,7 @@ const musicPlayer = {
       if (!appState.audio) return;
       appState.audio.pause();
     },
+    
     next: () => {
       const nextSong = appState.queue.getNext();
       if (nextSong) {
@@ -390,6 +398,7 @@ const musicPlayer = {
         musicPlayer.ui.playSong(prevInAlbum);
       }
     },
+    
     seekTo: (time) => {
       if (!appState.audio || isNaN(time) || time < 0) return;
       if (!isFinite(time)) return;
@@ -405,6 +414,7 @@ const musicPlayer = {
       const newTime = appState.audio.currentTime + seconds;
       musicPlayer.playback.seekTo(newTime);
     },
+    
     shuffle: {
       toggle: () => {
         appState.shuffleMode = !appState.shuffleMode;
@@ -490,10 +500,14 @@ const musicPlayer = {
       },
     },
   },
+  
+  
   ui: {
     isScrubbing: false,
     wasPlayingBeforeScrub: false,
     rafId: null,
+    
+    
     initialize: () => {
       if (appState.audio) return;
       appState.audio = new Audio();
@@ -539,6 +553,8 @@ const musicPlayer = {
         musicPlayer.playback.dispatchPlayerStateChange();
       });
     },
+    
+    // Load metadata
     playSong: async (songData) => {
       if (!songData) return;
       musicPlayer.ui.initialize();
@@ -624,6 +640,38 @@ const musicPlayer = {
       }
       return false;
     },
+    onMetadataLoaded() {
+      const audio = appState.audio;
+      if (!audio) return;
+      appState.duration = audio.duration;
+      const totalTimeElement = QUERY(MUSIC_PLAYER.totalTime);
+      if (totalTimeElement) {
+        totalTimeElement.textContent = utils.formatTime(audio.duration);
+      }
+      musicPlayer.ui.updateProgress();
+    },
+    updateBufferDisplay: () => {
+      const buffer = QUERY(MUSIC_PLAYER.progressBuffer);
+      if (!buffer || !appState.audio) return;
+      if (!appState.audio.buffered || appState.audio.buffered.length === 0) {
+        buffer.style.width = "0%";
+        return;
+      }
+      const duration = appState.audio.duration || 0;
+      if (duration === 0) {
+        buffer.style.width = "0%";
+        return;
+      }
+      let bufferedEnd = 0;
+      for (let i = 0; i < appState.audio.buffered.length; i++) {
+        const end = appState.audio.buffered.end(i);
+        if (end > bufferedEnd) bufferedEnd = end;
+      }
+      const bufferProgress = Math.min(1, bufferedEnd / duration);
+      buffer.style.width = (bufferProgress * 100).toFixed(2) + "%";
+    },
+    
+    // Progress Slider (seeking)
     handleProgressBarKeyDown: (e) => {
       const audio = appState.audio;
       if (!audio || !audio.duration) return;
@@ -667,26 +715,6 @@ const musicPlayer = {
         }
         e.preventDefault();
       }
-    },
-    updateBufferDisplay: () => {
-      const buffer = QUERY(MUSIC_PLAYER.progressBuffer);
-      if (!buffer || !appState.audio) return;
-      if (!appState.audio.buffered || appState.audio.buffered.length === 0) {
-        buffer.style.width = "0%";
-        return;
-      }
-      const duration = appState.audio.duration || 0;
-      if (duration === 0) {
-        buffer.style.width = "0%";
-        return;
-      }
-      let bufferedEnd = 0;
-      for (let i = 0; i < appState.audio.buffered.length; i++) {
-        const end = appState.audio.buffered.end(i);
-        if (end > bufferedEnd) bufferedEnd = end;
-      }
-      const bufferProgress = Math.min(1, bufferedEnd / duration);
-      buffer.style.width = (bufferProgress * 100).toFixed(2) + "%";
     },
     bindSeekBar: () => {
       const bar = $byId(IDS.progressBar);
@@ -753,6 +781,8 @@ const musicPlayer = {
         }
       }
     },
+    
+    // Progress Slider Updates
     setProgressUI(percent, currentTime) {
       const fill = QUERY(MUSIC_PLAYER.progressFill);
       const thumb = QUERY(MUSIC_PLAYER.progressThumb);
@@ -787,16 +817,17 @@ const musicPlayer = {
         notificationPlayer.positionState.update();
       }
     },
-    onMetadataLoaded() {
-      const audio = appState.audio;
-      if (!audio) return;
-      appState.duration = audio.duration;
+    updateProgressUI: (currentTime, duration) => {
+      if (musicPlayer.ui.isScrubbing) return;
+      const percent = duration > 0 ? (currentTime / duration) * 100 : 0;
+      musicPlayer.ui.setProgressUI(percent, currentTime);
       const totalTimeElement = QUERY(MUSIC_PLAYER.totalTime);
       if (totalTimeElement) {
-        totalTimeElement.textContent = utils.formatTime(audio.duration);
+        totalTimeElement.textContent = utils.formatTime(duration);
       }
-      musicPlayer.ui.updateProgress();
     },
+    
+    // Playback Events
     onPlay: () => {
       appState.setPlayingState(true);
     },
@@ -814,37 +845,10 @@ const musicPlayer = {
       }
       musicPlayer.playback.next();
     },
-    getNextInAlbum: () => {
-      if (!appState.currentSong || !window.music) return null;
-      const artist = window.music.find((a) => a.artist === appState.currentArtist);
-      const album = artist?.albums.find((al) => al.album === appState.currentAlbum);
-      if (!album) return null;
-      const currentIndex = album.songs.findIndex((s) => s.title === appState.currentSong.title);
-      const nextIndex = appState.shuffleMode ? Math.floor(Math.random() * album.songs.length) : (currentIndex + 1) % album.songs.length;
-      if (nextIndex !== currentIndex || appState.repeatMode === window.REPEAT_MODES?.ALL) {
-        return {
-          ...album.songs[nextIndex],
-          artist: artist.artist,
-          album: album.album,
-          cover: utils.getAlbumImageUrl(album.album),
-        };
-      }
-      return null;
-    },
-    getPreviousInAlbum: () => {
-      if (!appState.currentSong || !window.music) return null;
-      const artist = window.music.find((a) => a.artist === appState.currentArtist);
-      const album = artist?.albums.find((al) => al.album === appState.currentAlbum);
-      if (!album) return null;
-      const currentIndex = album.songs.findIndex((s) => s.title === appState.currentSong.title);
-      const prevIndex = (currentIndex - 1 + album.songs.length) % album.songs.length;
-      return {
-        ...album.songs[prevIndex],
-        artist: artist.artist,
-        album: album.album,
-        cover: utils.getAlbumImageUrl(album.album),
-      };
-    },
+    
+    
+    
+    // UI Updates
     updateNowPlaying: () => {
       if (!appState.currentSong) return;
       const coverUrl = appState.currentSong.cover || utils.getAlbumImageUrl(appState.currentSong.album);
@@ -908,6 +912,7 @@ const musicPlayer = {
       if (compactTitle && song.title) compactTitle.textContent = song.title;
       if (compactArtist && song.artist) compactArtist.textContent = song.artist;
     },
+    
     updateNavbar: () => {
       if (!appState.currentSong) return;
       const navbarNowPlaying = QUERY(NAVBAR.nowPlaying);
@@ -955,6 +960,7 @@ const musicPlayer = {
       if (navbarSongName && song.title) navbarSongName.textContent = song.title;
       if (navbarArtistName && song.artist) navbarArtistName.textContent = song.artist;
     },
+    
     updatePlayPauseUI(isPlaying) {
       const buttons = document.querySelectorAll(".playPause");
       buttons.forEach(btn => {
@@ -975,15 +981,7 @@ const musicPlayer = {
         root.classList.toggle(MUSIC_PLAYER.classes.playing, isPlaying);
       }
     },
-    updateProgressUI: (currentTime, duration) => {
-      if (musicPlayer.ui.isScrubbing) return;
-      const percent = duration > 0 ? (currentTime / duration) * 100 : 0;
-      musicPlayer.ui.setProgressUI(percent, currentTime);
-      const totalTimeElement = QUERY(MUSIC_PLAYER.totalTime);
-      if (totalTimeElement) {
-        totalTimeElement.textContent = utils.formatTime(duration);
-      }
-    },
+    
     updateShuffleUI: (shuffleMode) => {
       const shuffleBtn = QUERY(MUSIC_PLAYER.shuffleBtn);
       if (shuffleBtn) {
@@ -998,6 +996,70 @@ const musicPlayer = {
         repeatBtn.setAttribute("aria-pressed", repeatMode !== REPEAT_MODES.OFF);
       }
     },
+    
+    updateHomeBentoGrid: () => {
+      const dynamicContent = $byId(IDS.dynamicContent);
+      if (!dynamicContent) return;
+      const bentoGrid = dynamicContent.querySelector('.bento-grid');
+      if (!bentoGrid) return;
+      const recentlyPlayedSection = $byId(IDS.recentlyPlayedSection);
+      if (recentlyPlayedSection && appState.recentlyPlayed && appState.recentlyPlayed.length > 0) {
+        const recentTracksHtml = render.homeSection.recentlyPlayed(
+          appState.recentlyPlayed.slice(0, 5),
+          utils
+        );
+        recentlyPlayedSection.innerHTML = recentTracksHtml;
+        musicPlayer.ui.bindHomeBentoEvents(recentlyPlayedSection);
+      }
+    },
+    updateRecentTab: () => {
+      const recentList = QUERY(MUSIC_PLAYER.recentList);
+      const recentCount = QUERY(MUSIC_PLAYER.recentCount);
+      listRenderer.renderList(recentList, appState.recentlyPlayed.slice(0, 20), {
+        source: "recent",
+        type: "song",
+        showCountEl: recentCount,
+        emptyText: "No recently played songs",
+        subtext: "Start playing music to see them here",
+        onPlay: (song) => musicPlayer.ui.playSong(song),
+        onQueue: (song) => appState.queue.add(song),
+      });
+    }
+    
+    
+    // Helpers
+    getNextInAlbum: () => {
+      if (!appState.currentSong || !window.music) return null;
+      const artist = window.music.find((a) => a.artist === appState.currentArtist);
+      const album = artist?.albums.find((al) => al.album === appState.currentAlbum);
+      if (!album) return null;
+      const currentIndex = album.songs.findIndex((s) => s.title === appState.currentSong.title);
+      const nextIndex = appState.shuffleMode ? Math.floor(Math.random() * album.songs.length) : (currentIndex + 1) % album.songs.length;
+      if (nextIndex !== currentIndex || appState.repeatMode === window.REPEAT_MODES?.ALL) {
+        return {
+          ...album.songs[nextIndex],
+          artist: artist.artist,
+          album: album.album,
+          cover: utils.getAlbumImageUrl(album.album),
+        };
+      }
+      return null;
+    },
+    getPreviousInAlbum: () => {
+      if (!appState.currentSong || !window.music) return null;
+      const artist = window.music.find((a) => a.artist === appState.currentArtist);
+      const album = artist?.albums.find((al) => al.album === appState.currentAlbum);
+      if (!album) return null;
+      const currentIndex = album.songs.findIndex((s) => s.title === appState.currentSong.title);
+      const prevIndex = (currentIndex - 1 + album.songs.length) % album.songs.length;
+      return {
+        ...album.songs[prevIndex],
+        artist: artist.artist,
+        album: album.album,
+        cover: utils.getAlbumImageUrl(album.album),
+      };
+    },
+    
     addToRecentlyPlayed: (song) => {
       if (!song || !song.id) return;
       if (!appState.recentlyPlayed) appState.recentlyPlayed = [];
@@ -1014,21 +1076,6 @@ const musicPlayer = {
       });
       musicPlayer.ui.updateRecentTab();
       musicPlayer.ui.updateHomeBentoGrid();
-    },
-    updateHomeBentoGrid: () => {
-      const dynamicContent = $byId(IDS.dynamicContent);
-      if (!dynamicContent) return;
-      const bentoGrid = dynamicContent.querySelector('.bento-grid');
-      if (!bentoGrid) return;
-      const recentlyPlayedSection = $byId(IDS.recentlyPlayedSection);
-      if (recentlyPlayedSection && appState.recentlyPlayed && appState.recentlyPlayed.length > 0) {
-        const recentTracksHtml = render.homeSection.recentlyPlayed(
-          appState.recentlyPlayed.slice(0, 5),
-          utils
-        );
-        recentlyPlayedSection.innerHTML = recentTracksHtml;
-        musicPlayer.ui.bindHomeBentoEvents(recentlyPlayedSection);
-      }
     },
     bindHomeBentoEvents: (container) => {
       if (!container) return;
@@ -1076,20 +1123,9 @@ const musicPlayer = {
         });
       });
     },
-    updateRecentTab: () => {
-      const recentList = QUERY(MUSIC_PLAYER.recentList);
-      const recentCount = QUERY(MUSIC_PLAYER.recentCount);
-      listRenderer.renderList(recentList, appState.recentlyPlayed.slice(0, 20), {
-        source: "recent",
-        type: "song",
-        showCountEl: recentCount,
-        emptyText: "No recently played songs",
-        subtext: "Start playing music to see them here",
-        onPlay: (song) => musicPlayer.ui.playSong(song),
-        onQueue: (song) => appState.queue.add(song),
-      });
-    }
   },
+  
+  
   state: {
     currentTab: 0,
     isCollapsed: false,
@@ -1371,6 +1407,10 @@ const musicPlayer = {
       },
     },
   },
+  
+  
+  
+  
   import {
     MUSIC_PLAYER,
     QUERY,
