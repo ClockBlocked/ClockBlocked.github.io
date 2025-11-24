@@ -1,12 +1,34 @@
-import { 
-  DOM, QUERY, QUERY_ALL, IDS, CLASSES, ROUTES, THEMES, STORAGE_KEYS, 
-  ICONS, AUDIO_FORMATS, REPEAT_MODES, NOTIFICATION_TYPES, MUSIC_PLAYER, 
-  NAVBAR, $, $byId, notifications, musicPlayer
-} from './index.js';
 
-import { music } from "../../modules/library.js";
-import { render, create, encodeURIComponent } from "./utilities/index.js";
-import { homePage, views, pageLoader, navigation, ui, pageUpdates, deepLinkRouter } from "./pages/index.js";
+
+import {
+  DOM,
+  QUERY,
+  QUERY_ALL,
+  IDS,
+  CLASSES,
+  ROUTES,
+  THEMES,
+  STORAGE_KEYS,
+  ICONS,
+  AUDIO_FORMATS,
+  REPEAT_MODES,
+  NOTIFICATION_TYPES,
+  MUSIC_PLAYER,
+  NAVBAR,
+  $,
+  $byId
+} from './map.js';
+
+import { music } from '../modules/library.js';
+import { render, create } from './utilities/templates.js';
+import { encodeURIComponent } from './utilities/parsers.js';
+
+// Critical: import musicPlayer directly, NOT via index.js
+import { musicPlayer } from './musicPlayers.js';
+
+// Critical: import notifications directly
+import { notifications } from './toasts.js';
+
 
 const ACTION_GRID_ITEMS = [
   { id: 'play-next', icon: 'M9 5l7 7-7 7M15 5v14', label: 'Play Next' },
