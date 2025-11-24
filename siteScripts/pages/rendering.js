@@ -1,7 +1,7 @@
 import { appState, storage, notifications, musicPlayer, utils, ACTION_GRID_ITEMS, overlays } from "../index.js";
-import { ui, pageUpdates } from "./index.js";
-import { render, create } from "../utilities/index.js";
-import { deepLinkRouter } from "./index.js";
+import { ui, pageUpdates } from "./updates.js";
+import { render, create } from "../utilities/templates.js";
+import { deepLinkRouter } from "./router.js";
 
 
 
