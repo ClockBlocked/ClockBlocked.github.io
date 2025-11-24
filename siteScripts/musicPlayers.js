@@ -13,6 +13,8 @@ const musicPlayer = {
   mainPlayer: {
     inactivityTimer: null,
     lastInteractionTime: null,
+    
+    // Music Player Drawer
     open: () => {
       const drawer = QUERY(MUSIC_PLAYER.root);
       if (!drawer) {
@@ -58,6 +60,9 @@ const musicPlayer = {
         musicPlayer.mainPlayer.open();
       }
     },
+    
+    
+    // MP Drawer Tabs ( see musicPlayer.state )
     switchTab: (tabName) => {
       appState.currentTab = tabName;
       QUERY_ALL(".player .dotIndicator").forEach((dot) => {
@@ -70,6 +75,8 @@ const musicPlayer = {
       musicPlayer.mainPlayer.resetInactivityTimer();
       musicPlayer.state.handleTabChange(tabName);
     },
+    
+    // Brings user back to 'Now Playing' Tab (state)
     startInactivityTimer: () => {
       musicPlayer.mainPlayer.stopInactivityTimer();
       musicPlayer.mainPlayer.lastInteractionTime = Date.now();
@@ -93,6 +100,7 @@ const musicPlayer = {
         }
       }
     },
+    
     updateTabContent: (tabName) => {
       if (tabName === MUSIC_PLAYER.tabs.recent) musicPlayer.mainPlayer.updateRecentTab();
       else if (tabName === MUSIC_PLAYER.tabs.queue) musicPlayer.mainPlayer.updateQueueTab();
@@ -127,6 +135,9 @@ const musicPlayer = {
         onQueue: (song) => appState.queue.add(song),
       });
     },
+    
+    
+    // Interactions & Setup
     init: () => {
       const closeBtn = QUERY(MUSIC_PLAYER.close);
       if (closeBtn) {
