@@ -1889,3 +1889,49 @@
     margin-top: 80px !important;
   }
 }
+
+
+
+
+
+
+
+.playPause {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.playPause svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity .18s ease;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.playPause .play.active,
+.playPause .pause.active {
+  visibility: visible;
+  opacity: 1;
+  position: relative;
+}
+
+.miniControlBtn.playPause svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.nav-control-btn.playPause svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.controlBtn.primary.playPause svg {
+  width: 2.25rem;
+  height: 2.25rem;
+}
