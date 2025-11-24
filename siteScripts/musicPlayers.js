@@ -1442,5 +1442,3 @@ musicPlayer.initialize = () => {
   musicPlayer.mainPlayer.init();
   musicPlayer.mainPlayer.initialize();
 };
-
-export { musicPlayer };
