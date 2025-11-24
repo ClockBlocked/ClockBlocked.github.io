@@ -8,6 +8,25 @@
  * 
  *     m.me/Chevrolay
  */
+
+// Import statements should be at the top if this is a module
+import {
+    MUSIC_PLAYER,
+    QUERY,
+    QUERY_ALL,
+    $byId,
+    REPEAT_MODES,
+    CLASSES,
+    STORAGE_KEYS,
+    utils,
+    appState,
+    storage,
+    PubSub,
+    PLAYER_EVENTS,
+    notificationPlayer,
+    listRenderer
+} from './index.js';
+
 const musicPlayer = {
 
   mainPlayer: {
@@ -1415,30 +1434,13 @@ const musicPlayer = {
         });
       },
     },
-  },
-  
-  
-  
-  
-  import {
-    MUSIC_PLAYER,
-    QUERY,
-    QUERY_ALL,
-    $byId,
-    REPEAT_MODES,
-    CLASSES,
-    STORAGE_KEYS,
-    utils,
-    appState,
-    storage,
-    PubSub,
-    PLAYER_EVENTS,
-    notificationPlayer,
-    listRenderer
   }
-  from './index.js';
-  musicPlayer.initialize = () => {
-    musicPlayer.mainPlayer.init();
-    musicPlayer.mainPlayer.initialize();
-  };
 };
+
+// Initialize function
+musicPlayer.initialize = () => {
+  musicPlayer.mainPlayer.init();
+  musicPlayer.mainPlayer.initialize();
+};
+
+export { musicPlayer };
