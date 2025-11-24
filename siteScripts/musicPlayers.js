@@ -1135,7 +1135,7 @@ const musicPlayer = {
     dragDistance: 0,
     transitionTimeout: null,
     
-    
+    // S E T U P
     init() {
       musicPlayer.state.cacheDOMElements();
       musicPlayer.state.injectRequiredHTML();
@@ -1163,6 +1163,7 @@ const musicPlayer = {
       musicPlayer.state.collapsibles.addListItemInteractions();
     },
     
+    // UI Updates
     injectRequiredHTML() {
       if (!this.coverArea || !this.cover) return;
       // Wrap cover image in container
