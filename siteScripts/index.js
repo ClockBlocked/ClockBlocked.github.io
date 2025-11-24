@@ -10,7 +10,7 @@ export {
 export { 
   appState, storage, notificationPlayer, dropdown, 
   overlays, playlists, utils, app, pageLoader, 
-  navigation, ACTION_GRID_ITEMS, PLAYER_EVENTS, PubSub
+  navigation, ACTION_GRID_ITEMS, PLAYER_EVENTS, PubSub, listRenderer
 } from './global.js';
 
 export { notifications } from './toasts.js';
