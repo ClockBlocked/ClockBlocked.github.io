@@ -34,7 +34,7 @@ import { music } from '../modules/library.js';
 import { musicPlayer } from './musicPlayers.js';
 import { navigation } from './pages/rendering.js';
 import { views, homePage } from './pages/statics.js';
-import { navigation } from './pages/updates.js';
+import { ui } from './pages/updates.js';
 
 import { notifications } from './toasts.js';
 import { render, create } from './utilities/templates.js';
