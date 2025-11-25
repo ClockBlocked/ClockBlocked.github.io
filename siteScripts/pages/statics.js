@@ -681,8 +681,8 @@ export const homePage = {
 
         switch (view) {
           case "recent":
-            musicPlayer.playback.open();
-            setTimeout(() => musicPlayer.ui.switchTab("recent"), 50);
+            musicPlayer.mainPlayer.open();
+            setTimeout(() => musicPlayer.mainPlayer.switchTab("recent"), 50);
             break;
           case "albums":
             notifications.show("Albums view coming soon");
