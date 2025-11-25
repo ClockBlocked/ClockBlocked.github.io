@@ -30,7 +30,7 @@ import { musicPlayer } from './musicPlayers.js';
 import { notifications } from './toasts.js';
 
 import { navigation } from './pages/rendering.js';
-import { views } from './pages/statics.js';
+import { views, homePage } from './pages/statics.js';
 
 
 const ACTION_GRID_ITEMS = [
