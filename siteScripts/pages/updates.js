@@ -1,9 +1,11 @@
 import {
-  appState, storage, notifications, 
+  appState, storage,
   utils, notificationPlayer
 } from '../global.js';
 
 import { musicPlayer } from '../musicPlayers.js';
+
+import { notifications } from '../toasts.js';
 
 
 
