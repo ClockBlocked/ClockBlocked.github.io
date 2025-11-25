@@ -1,5 +1,5 @@
-import { getAlbumImageUrl } from './index.js';
-import { escapeForAttribute } from '../pages/index.js';
+import { getAlbumImageUrl } from './parsers.js';
+import { escapeForAttribute } from '../pages/rendering.js';
 
 
 
