@@ -1,6 +1,6 @@
-import { appState, storage, utils, notificationPlayer } from '../global.js';
-import { musicPlayer } from '../musicPlayers.js';
-import { notifications } from '../toasts.js';
+import { appState, storage, utils, notificationPlayer } from './global.js';
+import { musicPlayer } from './musicPlayers.js';
+import { notifications } from './toasts.js';
 
 export const syncs = {
   breadCrumbs: function(items, options = {}) {
