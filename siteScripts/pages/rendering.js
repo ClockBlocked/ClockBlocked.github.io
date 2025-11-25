@@ -3,6 +3,8 @@ import { ui, pageUpdates } from "./updates.js";
 import { render, create } from "../utilities/templates.js";
 import { deepLinkRouter } from "./router.js";
 
+import { musicPlayer } from '../musicPlayers.js';
+
 
 
 export const escapeForAttribute = function (str) {
