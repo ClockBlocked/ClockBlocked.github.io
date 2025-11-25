@@ -9,7 +9,6 @@ export function getAlbumImageUrl(albumName) {
   if (!albumName) return getDefaultAlbumImage();
   return `https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/Finalfinal/global/content/images/albumCovers/${albumName.toLowerCase().replace(/\s+/g, '')}.png`;
 }
-
 export function getArtistImageUrl(artistName) {
   if (!artistName) return getDefaultArtistImage();
   let normalizedName = normalizeNameForUrl(artistName);
@@ -19,7 +18,6 @@ export function getArtistImageUrl(artistName) {
 export function getDefaultArtistImage() {
   return 'https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/Finalfinal/global/content/images/artistPortraits/default-artist.png';
 }
-
 export function getDefaultAlbumImage() {
   return 'https://raw.githubusercontent.com/ClockBlocked/ClockBlocked.github.io/refs/heads/stable/global/content/images/albumCovers/placeholder.png';
 }
@@ -32,7 +30,6 @@ export function normalizeNameForUrl(name) {
     .replace(/\s+/g, '')
     .replace(/[^a-z0-9]/g, '');
 }
-
 export function normalizeForUrl(text) {
   return text
     .toString()
@@ -168,8 +165,7 @@ export function encodeURIComponent(str) {
     
     return result;
 }
-
-// Alternative simpler version for ASCII-only characters:
+// For ASCII-only characters:
 export function encodeURIComponentSimple(str) {
     const string = String(str);
     let result = '';
@@ -200,3 +196,7 @@ export function encodeURIComponentSimple(str) {
     
     return result;
 }
+
+export const escapeForAttribute = function (str) {
+  return str.replace(/&/g, "&amp;").replace(/'/g, "&#39;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+};
