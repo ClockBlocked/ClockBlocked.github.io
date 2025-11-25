@@ -1,5 +1,5 @@
-import { appState, storage, utils, ACTION_GRID_ITEMS, overlays } from "../global.js";
-import { render, create } from "../utilities/templates.js";
+import { appState, storage, utils, ACTION_GRID_ITEMS, overlays } from "./global.js";
+import { render, create } from "./templates.js";
 import { syncs } from "./background.js";
 import { pageManager } from "./builder.js";
 import { router } from "./router.js";
