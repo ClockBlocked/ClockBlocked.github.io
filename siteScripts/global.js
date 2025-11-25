@@ -2029,8 +2029,8 @@ const app = {
         app.resetUI();
         app.syncGlobalState();
 
-        deepLinkRouter.initialize();
-        deepLinkRouter.bindPopState();
+        router.initialize();
+        router.bindPopState();
     },
 
     resetUI: function() {
