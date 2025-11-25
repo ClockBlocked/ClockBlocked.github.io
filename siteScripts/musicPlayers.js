@@ -28,6 +28,7 @@ import { notificationPlayer } from './global.js';
 
 // --------- OTHER DIRECT MODULES ----------
 import { notifications } from './toasts.js';
+import { render } from './utilities/templates.js';
 
 const musicPlayer = {
 
