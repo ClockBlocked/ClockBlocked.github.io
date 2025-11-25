@@ -1,6 +1,6 @@
 import { render, create } from '../utilities/templates.js';
 
-export const uiManager = {
+export const syncs = {
   breadCrumbs: function(items, options = {}) {
     const {
       containerId = ".breadcrumb-list",
