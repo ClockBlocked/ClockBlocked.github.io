@@ -378,7 +378,7 @@ case "enhancedArtist":
     `;
   },
   
-  page: function(templateName, data) {
+page: function(templateName, data) {
     switch (templateName) {
       case "home":
         return `
@@ -389,7 +389,7 @@ case "enhancedArtist":
           <h2 class="text-2xl md:text-3xl font-bold mb-6 md:mb-8 px-4 text-white">Featured Artists</h2>
           <div id="featured-artists" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 px-4"></div>
         `;
-        
+
       case "allArtists":
         return `
           <div class="page-header px-4 sm:px-6 py-4">
@@ -419,82 +419,132 @@ case "enhancedArtist":
           </div>
           <div id="artists-grid" class="artists-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 px-4 sm:px-6"></div>
         `;
+
       case "home_bento":
         return `
-<div class="bg-gray-900 py-24 sm:py-32">
-  <div class="mx-auto max-w-2xl px-6 lg:max-w-7xl lg:px-8">
-    <h2 class="text-center text-base/7 font-semibold text-indigo-400">Listen faster</h2>
-    <p class="mx-auto mt-2 max-w-lg text-center text-4xl font-semibold tracking-tight text-balance text-white sm:text-5xl">Everything you need for your music</p>
-    <div class="mt-10 grid gap-4 sm:mt-16 lg:grid-cols-3 lg:grid-rows-2">
-      <div class="relative lg:row-span-2">
-        <div class="absolute inset-px rounded-lg bg-gray-800 lg:rounded-l-4xl"></div>
-        <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)] lg:rounded-l-[calc(2rem+1px)]">
-          <div class="px-8 pt-8 pb-3 sm:px-10 sm:pt-10 sm:pb-0">
-            <p class="mt-2 text-lg font-medium tracking-tight text-white max-lg:text-center">Recently Played</p>
-            <p class="mt-2 max-w-lg text-sm/6 text-gray-400 max-lg:text-center">Your most recent listening activity and favorite tracks.</p>
-          </div>
-          <div class="@container relative min-h-120 w-full grow max-lg:mx-auto max-lg:max-w-sm">
-            <div class="absolute inset-x-10 top-10 bottom-0 overflow-hidden rounded-t-[12cqw] border-x-[3cqw] border-t-[3cqw] border-gray-700 bg-gray-900 outline outline-white/20">
-              <div id="${data.IDS.recentlyPlayedSection}" class="size-full object-cover object-top"></div>
-            </div>
-          </div>
-        </div>
-        <div class="pointer-events-none absolute inset-px rounded-lg shadow-sm outline outline-white/15 lg:rounded-l-4xl"></div>
-      </div>
-      <div class="relative max-lg:row-start-1">
-        <div class="absolute inset-px rounded-lg bg-gray-800 max-lg:rounded-t-4xl"></div>
-        <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)] max-lg:rounded-t-[calc(2rem+1px)]">
-          <div class="px-8 pt-8 sm:px-10 sm:pt-10">
-            <p class="mt-2 text-lg font-medium tracking-tight text-white max-lg:text-center">Favorite Artists</p>
-            <p class="mt-2 max-w-lg text-sm/6 text-gray-400 max-lg:text-center">Artists you follow and listen to frequently.</p>
-          </div>
-          <div class="flex flex-1 items-center justify-center px-8 max-lg:pt-10 max-lg:pb-12 sm:px-10 lg:pb-2">
-            <div id="${data.IDS.favoriteArtistsSection}" class="w-full max-lg:max-w-xs"></div>
-          </div>
-        </div>
-        <div class="pointer-events-none absolute inset-px rounded-lg shadow-sm outline outline-white/15 max-lg:rounded-t-4xl"></div>
-      </div>
-      <div class="relative max-lg:row-start-3 lg:col-start-2 lg:row-start-2">
-        <div class="absolute inset-px rounded-lg bg-gray-800"></div>
-        <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)]">
-          <div class="px-8 pt-8 sm:px-10 sm:pt-10">
-            <p class="mt-2 text-lg font-medium tracking-tight text-white max-lg:text-center">Your Playlists</p>
-            <p class="mt-2 max-w-lg text-sm/6 text-gray-400 max-lg:text-center">Curated collections and personalized mixes.</p>
-          </div>
-          <div class="@container flex flex-1 items-center max-lg:py-6 lg:pb-2">
-            <div id="${data.IDS.playlistsSection}" class="h-[min(152px,40cqw)] object-cover"></div>
-          </div>
-        </div>
-        <div class="pointer-events-none absolute inset-px rounded-lg shadow-sm outline outline-white/15"></div>
-      </div>
-      <div class="relative lg:row-span-2">
-        <div class="absolute inset-px rounded-lg bg-gray-800 max-lg:rounded-b-4xl lg:rounded-r-4xl"></div>
-        <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)] max-lg:rounded-b-[calc(2rem+1px)] lg:rounded-r-[calc(2rem+1px)]">
-          <div class="px-8 pt-8 pb-3 sm:px-10 sm:pt-10 sm:pb-0">
-            <p class="mt-2 text-lg font-medium tracking-tight text-white max-lg:text-center">Discover Albums</p>
-            <p class="mt-2 max-w-lg text-sm/6 text-gray-400 max-lg:text-center">New releases and recommendations based on your taste.</p>
-          </div>
-          <div class="relative min-h-120 w-full grow">
-            <div class="absolute top-10 right-0 bottom-0 left-10 overflow-hidden rounded-tl-xl bg-gray-900/60 outline outline-white/10">
-              <div class="flex bg-gray-900 outline outline-white/5">
-                <div class="-mb-px flex text-sm/6 font-medium text-gray-400">
-                  <div class="border-r border-b border-r-white/10 border-b-white/20 bg-white/5 px-4 py-2 text-white">New Releases</div>
-                  <div class="border-r border-gray-600/10 px-4 py-2">For You</div>
+          <div class="bg-gray-900 py-24 sm:py-32">
+            <div class="mx-auto max-w-2xl px-6 lg:max-w-7xl lg:px-8">
+              <h2 class="text-center text-base/7 font-semibold text-indigo-400">Welcome back</h2>
+              <p class="mx-auto mt-2 max-w-lg text-center text-4xl font-semibold tracking-tight text-balance text-white sm:text-5xl">Your music at a glance</p>
+              <div class="mt-10 grid gap-4 sm:mt-16 lg:grid-cols-3 lg:grid-rows-2">
+                
+                <div class="relative lg:row-span-2">
+                  <div class="absolute inset-px rounded-lg bg-gray-800 lg:rounded-l-4xl"></div>
+                  <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)] lg:rounded-l-[calc(2rem+1px)] bento-card" data-loader="true">
+                    <div class="px-8 pt-8 pb-3 sm:px-10 sm:pt-10 sm:pb-0 card-header">
+                      <p class="mt-2 text-lg font-medium tracking-tight text-white max-lg:text-center card-title">Recently Played</p>
+                      <p class="mt-2 max-w-lg text-sm/6 text-gray-400 max-lg:text-center">Jump back into the tracks you have been listening to most recently.</p>
+                      <div class="mt-4 flex justify-center lg:justify-start">
+                        <a href="#" class="card-link inline-flex items-center text-sm font-medium text-indigo-400 hover:text-indigo-300" data-view="recent">
+                          View all
+                        </a>
+                      </div>
+                    </div>
+                    <div class="relative min-h-120 w-full grow card-content">
+                      <div class="absolute inset-x-6 top-6 bottom-6 overflow-hidden rounded-2xl border border-gray-700 bg-gray-900/60 outline outline-white/10">
+                        <div id="${data.IDS.recentlyPlayedSection}" class="h-full">
+                          <div class="skeleton-loader"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="pointer-events-none absolute inset-px rounded-lg shadow-sm outline outline-white/15 lg:rounded-l-4xl"></div>
                 </div>
-              </div>
-              <div class="px-6 pt-6 pb-14">
-                <div id="${data.IDS.randomAlbumsSection}"></div>
+
+                <div class="relative max-lg:row-start-1">
+                  <div class="absolute inset-px rounded-lg bg-gray-800 max-lg:rounded-t-4xl"></div>
+                  <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)] max-lg:rounded-t-[calc(2rem+1px)] bento-card" data-loader="true">
+                    <div class="px-8 pt-8 sm:px-10 sm:pt-10 card-header">
+                      <p class="mt-2 text-lg font-medium tracking-tight text-white max-lg:text-center card-title">Favorite Songs</p>
+                      <p class="mt-2 max-w-lg text-sm/6 text-gray-400 max-lg:text-center">Your most loved tracks in one place.</p>
+                    </div>
+                    <div class="flex flex-1 items-center justify-center px-8 max-lg:pt-8 max-lg:pb-10 sm:px-10 lg:pb-4 card-content">
+                      <div class="w-full">
+                        <div id="${data.IDS.favoriteSongsSection}">
+                          <div class="skeleton-loader"></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="px-8 pb-6 sm:px-10 sm:pb-8">
+                      <div class="flex justify-center">
+                        <a href="#" class="card-link inline-flex items-center text-sm font-medium text-indigo-400 hover:text-indigo-300" data-view="favorite-songs">
+                          View favorites
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="pointer-events-none absolute inset-px rounded-lg shadow-sm outline outline-white/15 max-lg:rounded-t-4xl"></div>
+                </div>
+
+                <div class="relative max-lg:row-start-3 lg:col-start-2 lg:row-start-2">
+                  <div class="absolute inset-px rounded-lg bg-gray-800"></div>
+                  <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)] bento-card" data-loader="true">
+                    <div class="px-8 pt-8 sm:px-10 sm:pt-10 card-header">
+                      <p class="mt-2 text-lg font-medium tracking-tight text-white max-lg:text-center card-title">Your Playlists</p>
+                      <p class="mt-2 max-w-lg text-sm/6 text-gray-400 max-lg:text-center">Curated mixes and collections you have created.</p>
+                    </div>
+                    <div class="@container flex flex-1 items-center max-lg:py-6 lg:pb-4 card-content">
+                      <div class="w-full px-8 pb-6 sm:px-10 sm:pb-8">
+                        <div id="${data.IDS.playlistsSection}">
+                          <div class="skeleton-loader"></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="px-8 pb-6 sm:px-10 sm:pb-8">
+                      <div class="flex justify-center">
+                        <a href="#" class="card-link inline-flex items-center text-sm font-medium text-indigo-400 hover:text-indigo-300" data-view="playlists">
+                          View playlists
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="pointer-events-none absolute inset-px rounded-lg shadow-sm outline outline-white/15"></div>
+                </div>
+
+                <div class="relative lg:row-span-2">
+                  <div class="absolute inset-px rounded-lg bg-gray-800 max-lg:rounded-b-4xl lg:rounded-r-4xl"></div>
+                  <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)] max-lg:rounded-b-[calc(2rem+1px)] lg:rounded-r-[calc(2rem+1px)] bento-card">
+                    <div class="px-8 pt-8 pb-3 sm:px-10 sm:pt-10 sm:pb-0 card-header">
+                      <p class="mt-2 text-lg font-medium tracking-tight text-white max-lg:text-center card-title">Discover & Artists</p>
+                      <p class="mt-2 max-w-lg text-sm/6 text-gray-400 max-lg:text-center">Explore new albums and revisit your favorite artists.</p>
+                    </div>
+                    <div class="relative min-h-120 w-full grow card-content">
+                      <div class="absolute top-10 right-0 bottom-0 left-10 overflow-hidden rounded-tl-xl bg-gray-900/60 outline outline-white/10">
+                        <div class="flex flex-col h-full bg-gray-900 outline outline-white/5">
+                          <div class="flex-1 border-b border-white/5 px-6 pt-6 pb-4">
+                            <div class="text-sm font-medium text-gray-300 mb-3">Discover albums</div>
+                            <div id="${data.IDS.randomAlbumsSection}">
+                              <div class="skeleton-loader"></div>
+                            </div>
+                            <div class="mt-4 flex justify-end">
+                              <a href="#" class="card-link inline-flex items-center text-xs font-medium text-indigo-400 hover:text-indigo-300" data-view="albums">
+                                Explore more albums
+                              </a>
+                            </div>
+                          </div>
+                          <div class="flex-1 px-6 pt-5 pb-6">
+                            <div class="text-sm font-medium text-gray-300 mb-3">Favorite artists</div>
+                            <div id="${data.IDS.favoriteArtistsSection}">
+                              <div class="skeleton-loader"></div>
+                            </div>
+                            <div class="mt-4 flex justify-end">
+                              <a href="#" class="card-link inline-flex items-center text-xs font-medium text-indigo-400 hover:text-indigo-300" data-view="favorite-artists">
+                                View all artists
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="pointer-events-none absolute inset-px rounded-lg shadow-sm outline outline-white/15 max-lg:rounded-b-4xl lg:rounded-r-4xl"></div>
+                </div>
+
               </div>
             </div>
           </div>
-        </div>
-        <div class="pointer-events-none absolute inset-px rounded-lg shadow-sm outline outline-white/15 max-lg:rounded-b-4xl lg:rounded-r-4xl"></div>
-      </div>
-    </div>
-  </div>
-</div>
         `;
-        
+
       default:
         return "";
     }
@@ -674,8 +724,9 @@ homeSection: {
     });
     html += `</div>`;
     return html;
-  }
-},  overlay: function(templateName, data) {
+  }},
+  
+  overlay: function(templateName, data) {
   switch(templateName) {
     case 'default':
       return `
