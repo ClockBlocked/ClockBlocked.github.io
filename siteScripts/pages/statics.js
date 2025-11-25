@@ -1,5 +1,5 @@
 import {
-  appState, storage, notifications, utils, 
+  appState, storage, utils, 
   navigation, playlists, overlays
 } from '../global.js';
 import { ui } from './updates.js';
@@ -7,7 +7,7 @@ import { render } from '../utilities/templates.js';
 
 import { musicPlayer } from '../musicPlayers.js';
 
-
+import { notifications } from '../toasts.js';
 
 
 export const homePage = {
