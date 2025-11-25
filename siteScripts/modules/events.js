@@ -1,4 +1,4 @@
-import { render, create } from '../utilities/templates.js';
+import { render, create } from './templates.js';
 import { syncs } from './background.js';
 import { pageManager } from './builder.js';
 
