@@ -12,38 +12,32 @@ export const render = {
         const totalSongs = getTotalSongs(data) || 0;
 
         return `
-<div class="similar-artist-card" data-artist-name="${artistName}">
-  <div class="similar-artist-image">
-    <img 
-      src="${artistImage}" 
-      alt="${artistName}" 
-      class="w-full h-full object-cover artist-avatar"
-    />
-    <div class="artist-image-overlay"></div>
+<div class="group relative bg-gray-800/50 backdrop-blur-xl rounded-2xl p-4 border border-white/10 hover:border-white/20 transition-all duration-300 cursor-pointer" data-artist-name="${artistName}">
+  <div class="relative overflow-hidden rounded-xl mb-3">
+    <img src="${artistImage}" alt="${artistName}" class="w-full aspect-square object-cover transition-transform duration-500 group-hover:scale-105"/>
+    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
   </div>
   
-  <div class="similar-artist-name">
-    ${artistName}
-  </div>
+  <div class="text-white font-semibold text-center truncate">${artistName}</div>
   
-  <div class="artist-popover">
-    <div class="popover-header">
-      <div class="popover-artist-name">${artistName}</div>
-    </div>
-    
-    <div class="popover-stats">
-      <div class="stat-item">
-        <span class="stat-value">${totalAlbums}</span>
-        <span class="stat-label">Albums</span>
+  <div class="absolute inset-0 bg-black/90 backdrop-blur-md rounded-2xl p-6 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+    <div class="flex flex-col h-full">
+      <div class="flex-1">
+        <div class="text-xl font-bold text-white mb-2">${artistName}</div>
       </div>
-      <div class="stat-item">
-        <span class="stat-value">${totalSongs}</span>
-        <span class="stat-label">Songs</span>
+      
+      <div class="flex gap-6 mb-4">
+        <div class="text-center">
+          <div class="text-2xl font-bold text-white">${totalAlbums}</div>
+          <div class="text-gray-400 text-sm">Albums</div>
+        </div>
+        <div class="text-center">
+          <div class="text-2xl font-bold text-white">${totalSongs}</div>
+          <div class="text-gray-400 text-sm">Songs</div>
+        </div>
       </div>
-    </div>
-    
-    <div class="popover-footer">
-      <button aria-label="Name" class="popover-button" data-artist-id="${artistId}">
+      
+      <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition-colors duration-200" data-artist-id="${artistId}">
         View Artist
       </button>
     </div>
@@ -52,177 +46,154 @@ export const render = {
       
       case "card":
         return `
-          <div class="artist-card rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 p-6 cursor-pointer hover:shadow-lg transition-all hover:bg-white/10" data-artist-id="${data.id}">
-            <div class="text-center">
-              <div class="artist-avatar w-32 h-32 mx-auto mb-4 rounded-full overflow-hidden bg-gradient-to-br from-blue-500 to-purple-600">
-                <img src="${data.cover}" alt="${data.artist}" class="w-full h-full object-cover">
-              </div>
-              <h3 class="text-lg font-bold mb-2 text-white">${data.artist}</h3>
-              <div class="genre-tag inline-block px-3 py-1 bg-blue-600/30 rounded-full text-xs font-medium mb-3 text-blue-200">${data.genre}</div>
-              <p class="text-sm opacity-70 text-gray-300">${data.albumCount} album${data.albumCount !== 1 ? 's' : ''}</p>
-            </div>
-          </div>
-        `;
+<div class="group bg-gradient-to-br from-gray-900/80 to-black/80 backdrop-blur-xl rounded-3xl p-6 border border-white/10 hover:border-white/20 transition-all duration-500 hover:scale-105 cursor-pointer" data-artist-id="${data.id}">
+  <div class="text-center">
+    <div class="relative w-32 h-32 mx-auto mb-4 rounded-2xl overflow-hidden bg-gradient-to-br from-blue-500/20 to-purple-600/20">
+      <img src="${data.cover}" alt="${data.artist}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+      <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+    </div>
+    <h3 class="text-lg font-bold mb-2 text-white truncate">${data.artist}</h3>
+    <div class="inline-flex px-3 py-1 bg-blue-500/20 rounded-full text-xs font-medium mb-3 text-blue-300 border border-blue-500/30">${data.genre}</div>
+    <p class="text-sm text-gray-400">${data.albumCount} album${data.albumCount !== 1 ? 's' : ''}</p>
+  </div>
+</div>`;
       
       case "header":
         return `
-          <div class="artist-header" id="artist-header">
-            <div class="content-wrapper">
-              <div class="artist-avatar">
-                <img src="${data.cover}" alt="${data.artist}">
-              </div>
-              <div class="artist-info">
-                <h1>${data.artist}</h1>
-                <div class="metadata-tags">
-                  <span>${data.genre}</span>
-                  <span>${data.albumCount} Albums</span>
-                  <span>${data.songCount} Songs</span>
-                </div>
-                <div class="action-buttons">
-                  <button aria-label="Name" class="play">Play All</button>
-                  <button aria-label="Name" class="follow"
-                          data-favorite-artists="${data.songData.id}">Favorite</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        `;
-      
-case "enhancedArtist":
-  return `
-<div class="artistPage">
-  <section class="fragments artist-hero">
-    <div class="artist-hero-bg"></div>
-    <div class="artist-hero-image">
-      <img id="artistBgImage" src="${data.cover}" alt="${data.artist}" />
-    </div>
-    
-    <div class="artist-hero-content">
-      <div class="artist-hero-flex">
-        <div class="artist-avatar-group">
-          <div class="artist-avatar-container">
-            <img id="artistAvatar" alt="${data.artist}" src="${data.cover}" />
-          </div>
-          <div class="artist-avatar-overlay">
-            <button id="artistPlay" class="artist-play-btn">
-              <svg viewBox="0 0 20 20" fill="currentColor">
-                <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/>
-              </svg>
-              Play All
-            </button>
-          </div>
+<div class="relative bg-gradient-to-b from-gray-900 to-black pb-8">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="flex items-end gap-8">
+      <div class="relative group">
+        <img src="${data.cover}" alt="${data.artist}" class="w-48 h-48 rounded-3xl shadow-2xl object-cover">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+      </div>
+      <div class="flex-1 pb-4">
+        <h1 class="text-6xl font-black text-white mb-4">${data.artist}</h1>
+        <div class="flex gap-4 mb-6 text-gray-300">
+          <span class="bg-gray-800/50 px-3 py-1 rounded-full text-sm">${data.genre}</span>
+          <span class="bg-gray-800/50 px-3 py-1 rounded-full text-sm">${data.albumCount} Albums</span>
+          <span class="bg-gray-800/50 px-3 py-1 rounded-full text-sm">${data.songCount} Songs</span>
         </div>
-
-        <div class="artist-info-section">
-          <div class="artist-badge">
-            <span class="artist-badge-dot"></span>
-            Artist
+        <div class="flex gap-3">
+          <button class="bg-green-500 hover:bg-green-600 text-white px-8 py-3 rounded-full font-semibold transition-colors duration-200 flex items-center gap-2">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"/></svg>
+            Play All
+          </button>
+          <button class="bg-gray-800 hover:bg-gray-700 text-white px-6 py-3 rounded-full font-medium transition-colors duration-200 border border-gray-700" data-favorite-artists="${data.songData.id}">
+            Favorite
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>`;
+      
+      case "enhancedArtist":
+        return `
+<div class="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
+  <section class="relative h-96 overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent z-10"></div>
+    <img id="artistBgImage" src="${data.cover}" alt="${data.artist}" class="w-full h-full object-cover scale-110 blur-sm"/>
+    
+    <div class="absolute inset-0 z-20 flex items-end pb-12">
+      <div class="max-w-7xl mx-auto w-full px-6">
+        <div class="flex items-end gap-8">
+          <div class="relative group">
+            <img id="artistAvatar" alt="${data.artist}" src="${data.cover}" class="w-64 h-64 rounded-3xl shadow-2xl object-cover"/>
+            <div class="absolute inset-0 bg-black/30 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+              <button class="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-full font-semibold transition-all duration-200 transform scale-90 group-hover:scale-100 flex items-center gap-3">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"/></svg>
+                Play All
+              </button>
+            </div>
           </div>
-          <h1 id="artistName" class="artist-title">
-            ${data.artist}
-          </h1>
-          <p id="artistTagline" class="artist-genre">${data.genre || 'Various Genres'}</p>
-          
-          <div class="artist-stats-row">
-            <div class="artist-stat">
-              <div id="artistAlbums" class="artist-stat-value">${data.albumCount}</div>
-              <div class="artist-stat-label">Albums</div>
-            </div>
-            <div class="artist-stat-divider"></div>
-            <div class="artist-stat">
-              <div id="artistTracks" class="artist-stat-value">${data.songCount}</div>
-              <div class="artist-stat-label">Tracks</div>
-            </div>
-            <div class="artist-stat-divider"></div>
-            <div class="artist-stat">
-              <div class="artist-stat-value">★</div>
-              <div class="artist-stat-label">Featured</div>
-            </div>
-          </div>
 
-          <div class="artist-actions">
-            <button id="artistShuffle" class="artist-action-btn">
-              <svg fill="currentColor" viewBox="0 0 20 20">
-                <path d="M5 4a2 2 0 00-2 2v6H0l4 4 4-4H5V6h3l1-2H5zM15 4h-3l-1 2h3v6h-3l-1 2h4a2 2 0 002-2V6a2 2 0 00-2-2z"/>
-              </svg>
-              Shuffle
-            </button>
-            <button id="artistFollow" class="artist-action-btn">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-              </svg>
-              Follow
-            </button>
-            <button class="artist-action-icon">
-              <svg fill="currentColor" viewBox="0 0 20 20">
-                <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"/>
-              </svg>
-            </button>
+          <div class="flex-1 pb-4">
+            <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-3 py-1 rounded-full text-sm text-white mb-4">
+              <span class="w-2 h-2 bg-green-400 rounded-full"></span>
+              Artist
+            </div>
+            <h1 id="artistName" class="text-7xl font-black text-white mb-4">${data.artist}</h1>
+            <p id="artistTagline" class="text-xl text-gray-300 mb-8">${data.genre || 'Various Genres'}</p>
+            
+            <div class="flex items-center gap-8 mb-8">
+              <div class="text-center">
+                <div class="text-3xl font-bold text-white">${data.albumCount}</div>
+                <div class="text-gray-400">Albums</div>
+              </div>
+              <div class="w-px h-12 bg-gray-600"></div>
+              <div class="text-center">
+                <div class="text-3xl font-bold text-white">${data.songCount}</div>
+                <div class="text-gray-400">Tracks</div>
+              </div>
+              <div class="w-px h-12 bg-gray-600"></div>
+              <div class="text-center">
+                <div class="text-3xl font-bold text-white">★</div>
+                <div class="text-gray-400">Featured</div>
+              </div>
+            </div>
+
+            <div class="flex gap-3">
+              <button class="bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-full font-medium transition-all duration-200 border border-white/20 flex items-center gap-2">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M6.59 12.83L4.4 15c-.58.58-1.59 1-2.4 1H0v-2h2c.29 0 .62-.06.83-.17l2.17-2.18 1.59 1.59zM16 8V6a4 4 0 00-4-4H4a4 4 0 00-4 4v2h16z"/></svg>
+                Shuffle
+              </button>
+              <button class="bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-full font-medium transition-all duration-200 border border-white/20 flex items-center gap-2">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/></svg>
+                Follow
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <div class="fragments artist-content">
-    <div class="artist-quick-stats">
-      <div class="artist-stat-card stat-blue">
-        <div class="stat-card-content">
+  <div class="max-w-7xl mx-auto px-6 -mt-16 relative z-30">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+      <div class="bg-gradient-to-br from-blue-500/10 to-blue-600/20 backdrop-blur-xl rounded-2xl p-6 border border-blue-500/20">
+        <div class="flex justify-between items-start">
           <div>
-            <div class="stat-card-label">Total Duration</div>
-            <div class="stat-card-value" id="totalDuration">Calculating...</div>
+            <div class="text-blue-300 text-sm font-medium mb-2">Total Duration</div>
+            <div class="text-2xl font-bold text-white" id="totalDuration">Calculating...</div>
           </div>
-          <div class="stat-card-icon stat-icon-blue">
-            <svg fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
-            </svg>
+          <div class="bg-blue-500/20 p-3 rounded-xl">
+            <svg class="w-6 h-6 text-blue-400" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"/></svg>
           </div>
         </div>
       </div>
 
-      <div class="artist-stat-card stat-purple">
-        <div class="stat-card-content">
+      <div class="bg-gradient-to-br from-purple-500/10 to-purple-600/20 backdrop-blur-xl rounded-2xl p-6 border border-purple-500/20">
+        <div class="flex justify-between items-start">
           <div>
-            <div class="stat-card-label">Latest Release</div>
-            <div class="stat-card-value" id="latestYear">2024</div>
+            <div class="text-purple-300 text-sm font-medium mb-2">Latest Release</div>
+            <div class="text-2xl font-bold text-white" id="latestYear">2024</div>
           </div>
-          <div class="stat-card-icon stat-icon-purple">
-            <svg fill="currentColor" viewBox="0 0 20 20">
-              <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
-              <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
-            </svg>
+          <div class="bg-purple-500/20 p-3 rounded-xl">
+            <svg class="w-6 h-6 text-purple-400" fill="currentColor" viewBox="0 0 20 20"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/><path d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
           </div>
         </div>
       </div>
 
-      <div class="artist-stat-card stat-pink">
-        <div class="stat-card-content">
+      <div class="bg-gradient-to-br from-pink-500/10 to-pink-600/20 backdrop-blur-xl rounded-2xl p-6 border border-pink-500/20">
+        <div class="flex justify-between items-start">
           <div>
-            <div class="stat-card-label">Popularity</div>
-            <div class="stat-card-value">Rising ↗</div>
+            <div class="text-pink-300 text-sm font-medium mb-2">Popularity</div>
+            <div class="text-2xl font-bold text-white">Rising ↗</div>
           </div>
-          <div class="stat-card-icon stat-icon-pink">
-            <svg fill="currentColor" viewBox="0 0 20 20">
-              <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
-            </svg>
+          <div class="bg-pink-500/20 p-3 rounded-xl">
+            <svg class="w-6 h-6 text-pink-400" fill="currentColor" viewBox="0 0 20 20"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg>
           </div>
         </div>
       </div>
     </div>
 
-    <section class="fragments albums">
+    <section class="mb-16">
       <div id="${IDS.albumsContainer}"></div>
     </section>
   </div>
-
-  <section class="fragments similar">
-    <div class="similar-rows" id="similarRows">
-      <div class="names-row left" data-speed="138" data-gap="40"></div>
-      <div class="names-row right" data-speed="178" data-gap="40"></div>
-      <div class="names-row left" data-speed="119" data-gap="40"></div>
-    </div>
-  </section>
-</div>`;        
+</div>`;
+        
       default:
         return "";
     }
@@ -232,70 +203,64 @@ case "enhancedArtist":
     switch (templateName) {
       case "card":
         return `
-          <div class="album-card">
-            <div class="albumFade" data-album-id="${data.albumId}">
-              <div class="gap-6 items-center md:items-start">
-                <div class="album-image relative flex-shrink-0">
-                  <img src="${data.cover}" alt="${data.album}" class="album-cover w-full h-full object-cover">
-                  <button aria-label="Name" class="play-album absolute bottom-4 right-4 bg-blue-600 hover:bg-blue-700 w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition transform hover:scale-105">
-                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                    </svg>
-                  </button>
-          <div class="albumMetadata">
-                  <h3 class="metaAlbumName">${data.album}</h3>
-                  <p class="metaAlbumYear">${data.year || 'Unknown year'} • ${data.songCount} Tracks</p>
-                </div>
-      
-                </div>
-              </div>
-            
-            <div class="songs-container" id="songs-container-${data.albumId}"></div>
-          </div></div>
-        `;
+<div class="group bg-gradient-to-br from-gray-900/80 to-black/80 backdrop-blur-xl rounded-3xl p-6 border border-white/10 hover:border-white/20 transition-all duration-500 hover:scale-105" data-album-id="${data.albumId}">
+  <div class="relative mb-4 rounded-2xl overflow-hidden">
+    <img src="${data.cover}" alt="${data.album}" class="w-full aspect-square object-cover transition-transform duration-500 group-hover:scale-105">
+    <button class="absolute bottom-4 right-4 bg-green-500 hover:bg-green-600 w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 transform translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100">
+      <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"/></svg>
+    </button>
+  </div>
+  
+  <div class="space-y-2">
+    <h3 class="text-lg font-bold text-white truncate">${data.album}</h3>
+    <p class="text-gray-400 text-sm">${data.year || 'Unknown year'} • ${data.songCount} Tracks</p>
+  </div>
+  
+  <div class="songs-container mt-4 hidden" id="songs-container-${data.albumId}"></div>
+</div>`;
       
       case "singleAlbumCard":
         return `
-          <div class="album-card p-0 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/5">
-            <div class="albumFade" data-album-id="${data.albumId}">
-              <div class="gap-6 items-center md:items-start">
-                <div class="album-image relative flex-shrink-0">
-                  <button aria-label="Name" class="play-album absolute bottom-4 right-4 bg-blue-600 hover:bg-blue-700 w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition transform hover:scale-105">
-                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                    </svg>
-                  </button>
-                  <h3 class="text-2xl font-bold mb-2 text-white">${data.album}</h3>
-                  <p class="text-sm opacity-70 mb-4 text-gray-300">${data.year || 'Unknown year'} • ${data.songCount} Tracks</p>
-                </div>
-              </div>
-            </div>
-            <div class="songs-container" id="songs-container-${data.albumId}"></div>
-          </div>
-        `;
+<div class="bg-gradient-to-br from-gray-900 to-black backdrop-blur-xl rounded-3xl p-8 border border-white/10">
+  <div class="flex flex-col md:flex-row gap-8 items-center" data-album-id="${data.albumId}">
+    <div class="relative flex-shrink-0">
+      <img src="${data.cover}" alt="${data.album}" class="w-64 h-64 rounded-2xl shadow-2xl object-cover">
+      <button class="absolute bottom-6 right-6 bg-green-500 hover:bg-green-600 w-16 h-16 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300">
+        <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"/></svg>
+      </button>
+    </div>
+    
+    <div class="flex-1 text-center md:text-left">
+      <h3 class="text-4xl font-black text-white mb-3">${data.album}</h3>
+      <p class="text-gray-400 text-lg mb-6">${data.year || 'Unknown year'} • ${data.songCount} Tracks</p>
+    </div>
+  </div>
+  
+  <div class="songs-container mt-8" id="songs-container-${data.albumId}"></div>
+</div>`;
 
       case "section":
         return `
-          <div class="albumSongListArea">
-            <div class="album-buttons">
-              <div class="album-selector">
-                ${data.albums.map((album, index) => `
-                  <button class="album-tab px-4 py-2 rounded-lg transition-all duration-300 ${index === 0 ? "active bg-accent-primary text-white" : "bg-gray-700 text-gray-300 hover:bg-gray-600"}" 
-                          data-album-index="${index}" 
-                          data-album-name="${album.album}">
-                    <div class="flex items-center gap-2">
-                      <span class="album-tab-title">${album.album}</span>
-                      <span class="album-tab-year text-xs opacity-75">${album.year || ""}</span>
-                    </div>
-                  </button>
-                `).join("")}
-              </div>
-            </div>
-            <div class="current-album-container">
-              <div id="current-album-display" class="transition-all duration-500 ease-in-out"></div>
-            </div>
-          </div>
-        `;
+<div class="bg-gradient-to-br from-gray-900/50 to-black/50 backdrop-blur-xl rounded-3xl p-6 border border-white/10">
+  <div class="flex flex-wrap gap-2 mb-8">
+    ${data.albums.map((album, index) => `
+      <button class="px-5 py-3 rounded-xl transition-all duration-300 font-medium ${
+        index === 0 
+          ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg" 
+          : "bg-gray-800/50 text-gray-300 hover:bg-gray-700/50 border border-gray-700/50"
+      }" data-album-index="${index}" data-album-name="${album.album}">
+        <div class="flex items-center gap-3">
+          <span class="font-semibold">${album.album}</span>
+          <span class="text-xs opacity-75 bg-black/30 px-2 py-1 rounded">${album.year || ""}</span>
+        </div>
+      </button>
+    `).join("")}
+  </div>
+  
+  <div class="current-album-container">
+    <div id="current-album-display" class="transition-all duration-500 ease-in-out"></div>
+  </div>
+</div>`;
         
       default:
         return "";
@@ -317,475 +282,417 @@ case "enhancedArtist":
     } = data;
     
     return `
-  <div class="song-item"
-       data-song="${escapeForAttribute(JSON.stringify(songData))}"
-       data-context="${context}"
-       role="button"
-       tabindex="0"
-       aria-label="Track ${trackNumber}: ${title} — ${duration}">
-
-    <div class="cell index-play" aria-hidden="false">
-      <span class="track-number">
-        ${showTrackNumber ? trackNumber : '♪'}
-      </span>
-
-      <button aria-label="Name" class="play-button"
-              data-action="play"
-              title="Play"
-              aria-label="Play ${title}"
-              tabindex="-1">
-        <svg class="global lightGray small" viewBox="0 0 384 512" aria-hidden="true">
-          <path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80L0 432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/>
-        </svg>
-      </button>
-    </div>
-
-    <div class="cell title" title="${title}">
-      <span class="song-title">${title}</span>
-    </div>
-
-    <div class="cell duration" aria-label="Duration ${duration}">
-      <span>${duration}</span>
-    </div>
-
-    <div class="cell heart">
-      <button aria-label="Name" class="action-btn favorite-btn ${isFavorite ? 'favorited' : ''}"
-              data-action="favorite"
-              data-song-id="${songData.id}"
-              data-favorite-songs="${data.songData.id}"
-              title="${isFavorite ? 'Remove from favorites' : 'Add to favorites'}"
-              aria-pressed="${isFavorite ? 'true' : 'false'}"
-              aria-label="Toggle favorite for ${title}">
-        <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
-             style="fill: ${isFavorite ? '#ef4444' : 'none'};" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round"
-                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-        </svg>
-      </button>
-    </div>
-
-    <div class="cell more">
-      <button aria-label="Name" class="action-btn more-btn"
-              data-action="more"
-              title="More options"
-              aria-label="More options for ${title}">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M12 8a2 2 0 1 0-2-2 2 2 0 0 0 2 2zm0 2a2 2 0 1 0 2 2 2 2 0 0 0-2-2zm0 6a2 2 0 1 0 2 2 2 2 0 0 0-2-2z"/>
-        </svg>
-      </button>
-    </div>
+<div class="group flex items-center gap-4 p-4 rounded-2xl bg-gray-800/30 hover:bg-gray-700/50 border border-transparent hover:border-white/10 transition-all duration-300 cursor-pointer"
+     data-song="${escapeForAttribute(JSON.stringify(songData))}"
+     data-context="${context}">
+  
+  <div class="flex items-center justify-center w-8">
+    <span class="text-gray-400 group-hover:opacity-0 transition-opacity duration-200 text-sm font-medium">
+      ${showTrackNumber ? trackNumber : '♪'}
+    </span>
+    <button class="absolute opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-green-500 hover:bg-green-600 w-8 h-8 rounded-full flex items-center justify-center">
+      <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"/></svg>
+    </button>
   </div>
-    `;
+
+  <div class="flex-1 min-w-0">
+    <div class="text-white font-medium truncate">${title}</div>
+    ${showArtist ? `<div class="text-gray-400 text-sm truncate">${artist}</div>` : ''}
+  </div>
+
+  <div class="text-gray-400 text-sm font-medium">${duration}</div>
+
+  <button class="p-2 rounded-full transition-all duration-200 ${
+    isFavorite 
+      ? 'text-red-500 hover:text-red-400' 
+      : 'text-gray-400 hover:text-white opacity-0 group-hover:opacity-100'
+  }" data-action="favorite" data-song-id="${songData.id}">
+    <svg class="w-5 h-5" fill="${isFavorite ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="${isFavorite ? '0' : '2'}" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+    </svg>
+  </button>
+
+  <button class="p-2 rounded-full text-gray-400 hover:text-white opacity-0 group-hover:opacity-100 transition-all duration-200" data-action="more">
+    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M12 8a2 2 0 1 0-2-2 2 2 0 0 0 2 2zm0 2a2 2 0 1 0 2 2 2 2 0 0 0-2-2zm0 6a2 2 0 1 0 2 2 2 2 0 0 0-2-2z"/>
+    </svg>
+  </button>
+</div>`;
   },
   
-page: function(templateName, data) {
+  page: function(templateName, data) {
     switch (templateName) {
       case "home":
         return `
-          <div class="text-center py-8 md:py-12">
-            <h1 class="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">Discover Amazing Music</h1>
-            <p class="text-lg md:text-xl text-gray-400 mb-8 md:mb-12 max-w-2xl mx-auto">Explore artists, albums, and songs from your personal library with an immersive listening experience</p>
-          </div>
-          <h2 class="text-2xl md:text-3xl font-bold mb-6 md:mb-8 px-4 text-white">Featured Artists</h2>
-          <div id="featured-artists" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 px-4"></div>
-        `;
-
+<div class="max-w-7xl mx-auto px-6">
+  <div class="text-center py-16">
+    <h1 class="text-6xl md:text-7xl font-black bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-6">Discover Amazing Music</h1>
+    <p class="text-xl md:text-2xl text-gray-400 mb-12 max-w-3xl mx-auto leading-relaxed">Explore artists, albums, and songs from your personal library with an immersive listening experience</p>
+  </div>
+  
+  <h2 class="text-4xl font-bold mb-12 text-white">Featured Artists</h2>
+  <div id="featured-artists" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-8"></div>
+</div>`;
+        
       case "allArtists":
         return `
-          <div class="page-header px-4 sm:px-6 py-4">
-            <div class="filter-controls mb-6 flex flex-wrap gap-4 items-center">
-              <div class="search-wrapper relative flex-grow max-w-md">
-                <input type="text" id="artist-search" 
-                      class="w-full bg-gray-800 border border-gray-700 rounded-lg py-2 px-4 pl-10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                      placeholder="Search artists...">
-                <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
-                </svg>
-              </div>
-              <div id="genre-filters" class="genre-filters flex flex-wrap gap-2"></div>
-              <div class="view-toggle ml-auto">
-                <button aria-label="Name" id="grid-view-btn" class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-white transition-colors">
-                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
-                  </svg>
-                </button>
-                <button aria-label="Name" id="list-view-btn" class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-white transition-colors">
-                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
-          <div id="artists-grid" class="artists-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 px-4 sm:px-6"></div>
-        `;
+<div class="max-w-7xl mx-auto px-6">
+  <div class="py-8">
+    <div class="flex flex-col lg:flex-row gap-6 items-start lg:items-center justify-between mb-8">
+      <div class="relative flex-1 max-w-2xl">
+        <input type="text" id="artist-search" 
+              class="w-full bg-gray-800/50 backdrop-blur-xl border border-gray-700 rounded-2xl py-4 px-12 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300"
+              placeholder="Search artists...">
+        <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"/>
+        </svg>
+      </div>
+      
+      <div id="genre-filters" class="flex flex-wrap gap-2"></div>
+      
+      <div class="flex gap-2 bg-gray-800/50 backdrop-blur-xl rounded-2xl p-2 border border-gray-700">
+        <button id="grid-view-btn" class="p-3 rounded-xl bg-blue-500 text-white transition-all duration-200">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+        </button>
+        <button id="list-view-btn" class="p-3 rounded-xl text-gray-400 hover:text-white transition-all duration-200">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <div id="artists-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-6 pb-12"></div>
+</div>`;
 
       case "home_bento":
         return `
-          <div class="bg-gray-900 py-24 sm:py-32">
-            <div class="mx-auto max-w-2xl px-6 lg:max-w-7xl lg:px-8">
-              <h2 class="text-center text-base/7 font-semibold text-indigo-400">Welcome back</h2>
-              <p class="mx-auto mt-2 max-w-lg text-center text-4xl font-semibold tracking-tight text-balance text-white sm:text-5xl">Your music at a glance</p>
-              <div class="mt-10 grid gap-4 sm:mt-16 lg:grid-cols-3 lg:grid-rows-2">
-                
-                <div class="relative lg:row-span-2">
-                  <div class="absolute inset-px rounded-lg bg-gray-800 lg:rounded-l-4xl"></div>
-                  <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)] lg:rounded-l-[calc(2rem+1px)] bento-card" data-loader="true">
-                    <div class="px-8 pt-8 pb-3 sm:px-10 sm:pt-10 sm:pb-0 card-header">
-                      <p class="mt-2 text-lg font-medium tracking-tight text-white max-lg:text-center card-title">Recently Played</p>
-                      <p class="mt-2 max-w-lg text-sm/6 text-gray-400 max-lg:text-center">Jump back into the tracks you have been listening to most recently.</p>
-                      <div class="mt-4 flex justify-center lg:justify-start">
-                        <a href="#" class="card-link inline-flex items-center text-sm font-medium text-indigo-400 hover:text-indigo-300" data-view="recent">
-                          View all
-                        </a>
-                      </div>
-                    </div>
-                    <div class="relative min-h-120 w-full grow card-content">
-                      <div class="absolute inset-x-6 top-6 bottom-6 overflow-hidden rounded-2xl border border-gray-700 bg-gray-900/60 outline outline-white/10">
-                        <div id="${data.IDS.recentlyPlayedSection}" class="h-full">
-                          <div class="skeleton-loader"></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="pointer-events-none absolute inset-px rounded-lg shadow-sm outline outline-white/15 lg:rounded-l-4xl"></div>
-                </div>
-
-                <div class="relative max-lg:row-start-1">
-                  <div class="absolute inset-px rounded-lg bg-gray-800 max-lg:rounded-t-4xl"></div>
-                  <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)] max-lg:rounded-t-[calc(2rem+1px)] bento-card" data-loader="true">
-                    <div class="px-8 pt-8 sm:px-10 sm:pt-10 card-header">
-                      <p class="mt-2 text-lg font-medium tracking-tight text-white max-lg:text-center card-title">Favorite Songs</p>
-                      <p class="mt-2 max-w-lg text-sm/6 text-gray-400 max-lg:text-center">Your most loved tracks in one place.</p>
-                    </div>
-                    <div class="flex flex-1 items-center justify-center px-8 max-lg:pt-8 max-lg:pb-10 sm:px-10 lg:pb-4 card-content">
-                      <div class="w-full">
-                        <div id="${data.IDS.favoriteSongsSection}">
-                          <div class="skeleton-loader"></div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="px-8 pb-6 sm:px-10 sm:pb-8">
-                      <div class="flex justify-center">
-                        <a href="#" class="card-link inline-flex items-center text-sm font-medium text-indigo-400 hover:text-indigo-300" data-view="favorite-songs">
-                          View favorites
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="pointer-events-none absolute inset-px rounded-lg shadow-sm outline outline-white/15 max-lg:rounded-t-4xl"></div>
-                </div>
-
-                <div class="relative max-lg:row-start-3 lg:col-start-2 lg:row-start-2">
-                  <div class="absolute inset-px rounded-lg bg-gray-800"></div>
-                  <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)] bento-card" data-loader="true">
-                    <div class="px-8 pt-8 sm:px-10 sm:pt-10 card-header">
-                      <p class="mt-2 text-lg font-medium tracking-tight text-white max-lg:text-center card-title">Your Playlists</p>
-                      <p class="mt-2 max-w-lg text-sm/6 text-gray-400 max-lg:text-center">Curated mixes and collections you have created.</p>
-                    </div>
-                    <div class="@container flex flex-1 items-center max-lg:py-6 lg:pb-4 card-content">
-                      <div class="w-full px-8 pb-6 sm:px-10 sm:pb-8">
-                        <div id="${data.IDS.playlistsSection}">
-                          <div class="skeleton-loader"></div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="px-8 pb-6 sm:px-10 sm:pb-8">
-                      <div class="flex justify-center">
-                        <a href="#" class="card-link inline-flex items-center text-sm font-medium text-indigo-400 hover:text-indigo-300" data-view="playlists">
-                          View playlists
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="pointer-events-none absolute inset-px rounded-lg shadow-sm outline outline-white/15"></div>
-                </div>
-
-                <div class="relative lg:row-span-2">
-                  <div class="absolute inset-px rounded-lg bg-gray-800 max-lg:rounded-b-4xl lg:rounded-r-4xl"></div>
-                  <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)] max-lg:rounded-b-[calc(2rem+1px)] lg:rounded-r-[calc(2rem+1px)] bento-card">
-                    <div class="px-8 pt-8 pb-3 sm:px-10 sm:pt-10 sm:pb-0 card-header">
-                      <p class="mt-2 text-lg font-medium tracking-tight text-white max-lg:text-center card-title">Discover & Artists</p>
-                      <p class="mt-2 max-w-lg text-sm/6 text-gray-400 max-lg:text-center">Explore new albums and revisit your favorite artists.</p>
-                    </div>
-                    <div class="relative min-h-120 w-full grow card-content">
-                      <div class="absolute top-10 right-0 bottom-0 left-10 overflow-hidden rounded-tl-xl bg-gray-900/60 outline outline-white/10">
-                        <div class="flex flex-col h-full bg-gray-900 outline outline-white/5">
-                          <div class="flex-1 border-b border-white/5 px-6 pt-6 pb-4">
-                            <div class="text-sm font-medium text-gray-300 mb-3">Discover albums</div>
-                            <div id="${data.IDS.randomAlbumsSection}">
-                              <div class="skeleton-loader"></div>
-                            </div>
-                            <div class="mt-4 flex justify-end">
-                              <a href="#" class="card-link inline-flex items-center text-xs font-medium text-indigo-400 hover:text-indigo-300" data-view="albums">
-                                Explore more albums
-                              </a>
-                            </div>
-                          </div>
-                          <div class="flex-1 px-6 pt-5 pb-6">
-                            <div class="text-sm font-medium text-gray-300 mb-3">Favorite artists</div>
-                            <div id="${data.IDS.favoriteArtistsSection}">
-                              <div class="skeleton-loader"></div>
-                            </div>
-                            <div class="mt-4 flex justify-end">
-                              <a href="#" class="card-link inline-flex items-center text-xs font-medium text-indigo-400 hover:text-indigo-300" data-view="favorite-artists">
-                                View all artists
-                              </a>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="pointer-events-none absolute inset-px rounded-lg shadow-sm outline outline-white/15 max-lg:rounded-b-4xl lg:rounded-r-4xl"></div>
-                </div>
-
+<div class="max-w-7xl mx-auto px-6 py-8">
+  <div class="bento-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-min">
+    <div class="bento-card bg-gradient-to-br from-gray-900/80 to-black/80 backdrop-blur-xl rounded-3xl p-6 border border-white/10">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold text-white">Recently Played</h2>
+        <a href="#" class="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors duration-200" data-view="recent">View All</a>
+      </div>
+      <div id="${data.IDS.recentlyPlayedSection}" class="card-content">
+        <div class="space-y-3">
+          ${Array(3).fill().map(() => `
+            <div class="flex items-center gap-3 animate-pulse">
+              <div class="w-12 h-12 bg-gray-700 rounded-xl"></div>
+              <div class="flex-1 space-y-2">
+                <div class="h-4 bg-gray-700 rounded w-3/4"></div>
+                <div class="h-3 bg-gray-700 rounded w-1/2"></div>
               </div>
             </div>
-          </div>
-        `;
-
+          `).join('')}
+        </div>
+      </div>
+    </div>
+    
+    <div class="bento-card bg-gradient-to-br from-gray-900/80 to-black/80 backdrop-blur-xl rounded-3xl p-6 border border-white/10 md:col-span-2">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold text-white">Discover Albums</h2>
+        <a href="#" class="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors duration-200" data-view="albums">Explore More</a>
+      </div>
+      <div id="${data.IDS.randomAlbumsSection}" class="card-content">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          ${Array(4).fill().map(() => `
+            <div class="animate-pulse">
+              <div class="aspect-square bg-gray-700 rounded-2xl mb-3"></div>
+              <div class="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>
+              <div class="h-3 bg-gray-700 rounded w-1/2"></div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+    
+    <div class="bento-card bg-gradient-to-br from-gray-900/80 to-black/80 backdrop-blur-xl rounded-3xl p-6 border border-white/10">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold text-white">Favorite Artists</h2>
+        <a href="#" class="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors duration-200" data-view="favorite-artists">View All</a>
+      </div>
+      <div id="${data.IDS.favoriteArtistsSection}" class="card-content">
+        <div class="space-y-4">
+          ${Array(3).fill().map(() => `
+            <div class="flex items-center gap-3 animate-pulse">
+              <div class="w-12 h-12 bg-gray-700 rounded-full"></div>
+              <div class="flex-1">
+                <div class="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>
+                <div class="h-3 bg-gray-700 rounded w-1/2"></div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+    
+    <div class="bento-card bg-gradient-to-br from-gray-900/80 to-black/80 backdrop-blur-xl rounded-3xl p-6 border border-white/10">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold text-white">Your Playlists</h2>
+        <a href="#" class="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors duration-200" data-view="playlists">View All</a>
+      </div>
+      <div id="${data.IDS.playlistsSection}" class="card-content">
+        <div class="space-y-3">
+          ${Array(3).fill().map(() => `
+            <div class="flex items-center gap-3 animate-pulse">
+              <div class="w-12 h-12 bg-gray-700 rounded-xl"></div>
+              <div class="flex-1">
+                <div class="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>
+                <div class="h-3 bg-gray-700 rounded w-1/2"></div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+    
+    <div class="bento-card bg-gradient-to-br from-gray-900/80 to-black/80 backdrop-blur-xl rounded-3xl p-6 border border-white/10">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold text-white">Favorite Songs</h2>
+        <a href="#" class="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors duration-200" data-view="favorite-songs">View All</a>
+      </div>
+      <div id="${data.IDS.favoriteSongsSection}" class="card-content">
+        <div class="space-y-3">
+          ${Array(3).fill().map(() => `
+            <div class="flex items-center gap-3 animate-pulse">
+              <div class="w-12 h-12 bg-gray-700 rounded-xl"></div>
+              <div class="flex-1">
+                <div class="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>
+                <div class="h-3 bg-gray-700 rounded w-1/2"></div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>`;
+        
       default:
         return "";
     }
   },
 
-homeSection: {
-  recentlyPlayed: (tracks, utils) => {
-    let html = `<div class="recent-tracks animate-fade-in">`;
-    tracks.forEach((track, index) => {
-      html += `
-        <div class="modern-track-item" data-song='${JSON.stringify(track).replace(/"/g, "&quot;")}' style="animation-delay: ${index * 100}ms;">
-          <div class="track-artwork-container">
-            <img src="${utils.getAlbumImageUrl(track.album)}" alt="${track.title}" class="track-artwork">
-            <div class="track-play-overlay">
-              <button class="track-play-btn">
-                ${window.ICONS.play}
+  homeSection: {
+    recentlyPlayed: (tracks, utils) => {
+      let html = `<div class="space-y-3">`;
+      tracks.forEach((track, index) => {
+        html += `
+          <div class="group flex items-center gap-4 p-4 rounded-2xl bg-gray-800/30 hover:bg-gray-700/50 border border-transparent hover:border-white/10 transition-all duration-300 cursor-pointer" style="animation-delay: ${index * 100}ms;">
+            <div class="relative">
+              <img src="${utils.getAlbumImageUrl(track.album)}" alt="${track.title}" class="w-14 h-14 rounded-xl object-cover">
+              <div class="absolute inset-0 bg-black/40 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+                <button class="bg-green-500 hover:bg-green-600 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 transform scale-90 group-hover:scale-100">
+                  <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"/></svg>
+                </button>
+              </div>
+            </div>
+            
+            <div class="flex-1 min-w-0">
+              <div class="text-white font-medium truncate">${track.title}</div>
+              <div class="text-gray-400 text-sm truncate" data-artist="${track.artist}">${track.artist}</div>
+            </div>
+            
+            <div class="text-gray-400 text-sm font-medium">3:24</div>
+            
+            <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              <button class="p-2 rounded-full text-gray-400 hover:text-white transition-colors duration-200">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+              </button>
+              <button class="p-2 rounded-full text-gray-400 hover:text-white transition-colors duration-200">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
               </button>
             </div>
           </div>
-          <div class="track-content">
-            <div class="track-main-info">
-              <div class="track-title-text">${track.title}</div>
-              <div class="track-artist-text" data-artist="${track.artist}">${track.artist}</div>
+        `;
+      });
+      html += `</div>`;
+      return html;
+    },
+
+    playlists: (playlists) => {
+      let html = `<div class="grid grid-cols-1 gap-4">`;
+      playlists.forEach((playlist, index) => {
+        html += `
+          <div class="group flex items-center gap-4 p-4 rounded-2xl bg-gray-800/30 hover:bg-gray-700/50 border border-transparent hover:border-white/10 transition-all duration-300 cursor-pointer" style="animation-delay: ${index * 100}ms;">
+            <div class="relative">
+              <div class="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center">
+                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v2H3v-2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/></svg>
+              </div>
+              <div class="absolute inset-0 bg-black/40 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+                <button class="bg-green-500 hover:bg-green-600 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 transform scale-90 group-hover:scale-100">
+                  <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"/></svg>
+                </button>
+              </div>
             </div>
-            <div class="track-meta">
-              <span class="track-duration">3:24</span>
+            
+            <div class="flex-1 min-w-0">
+              <div class="text-white font-medium truncate">${playlist.name}</div>
+              <div class="text-gray-400 text-sm">${playlist.songs?.length || 0} track${playlist.songs?.length !== 1 ? "s" : ""}</div>
+            </div>
+            
+            <button class="p-2 rounded-full text-gray-400 hover:text-white opacity-0 group-hover:opacity-100 transition-all duration-200">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+            </button>
+          </div>
+        `;
+      });
+      html += `</div>`;
+      return html;
+    },
+
+    favoriteArtists: (artists, utils) => {
+      let html = `<div class="grid grid-cols-1 gap-4">`;
+      artists.forEach((artistName, index) => {
+        html += `
+          <div class="group flex items-center gap-4 p-4 rounded-2xl bg-gray-800/30 hover:bg-gray-700/50 border border-transparent hover:border-white/10 transition-all duration-300 cursor-pointer" style="animation-delay: ${index * 100}ms;">
+            <div class="relative">
+              <img src="${utils.getArtistImageUrl(artistName)}" alt="${artistName}" class="w-14 h-14 rounded-full object-cover">
+              <div class="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+                <button class="bg-green-500 hover:bg-green-600 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 transform scale-90 group-hover:scale-100">
+                  <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"/></svg>
+                </button>
+              </div>
+            </div>
+            
+            <div class="flex-1 min-w-0">
+              <div class="text-white font-medium truncate">${artistName}</div>
+              <div class="text-gray-400 text-sm">Artist</div>
+            </div>
+            
+            <button class="p-2 rounded-full text-gray-400 hover:text-white opacity-0 group-hover:opacity-100 transition-all duration-200">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            </button>
+          </div>
+        `;
+      });
+      html += `</div>`;
+      return html;
+    },
+
+    randomAlbums: (albums, utils) => {
+      let html = `<div class="grid grid-cols-2 md:grid-cols-4 gap-6">`;
+      albums.forEach((album, index) => {
+        html += `
+          <div class="group cursor-pointer" style="animation-delay: ${index * 100}ms;" data-artist="${album.artist}" data-album="${album.album}">
+            <div class="relative mb-4 rounded-2xl overflow-hidden">
+              <img src="${utils.getAlbumImageUrl(album.album)}" alt="${album.album}" class="w-full aspect-square object-cover transition-transform duration-500 group-hover:scale-105">
+              <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                <button class="bg-green-500 hover:bg-green-600 w-14 h-14 rounded-full flex items-center justify-center transition-all duration-200 transform scale-90 group-hover:scale-100" data-artist="${album.artist}" data-album="${album.album}">
+                  <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="space-y-1">
+              <div class="text-white font-medium truncate">${album.album}</div>
+              <div class="text-gray-400 text-sm truncate" data-artist="${album.artist}">${album.artist}</div>
             </div>
           </div>
-          <div class="track-actions">
-            <button class="track-action-btn track-favorite-btn" title="Add to favorites">
-              <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-              </svg>
-            </button>
-            <button class="track-action-btn track-more-btn" title="More options">
-              <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
-              </svg>
-            </button>
+        `;
+      });
+      html += `</div>`;
+      return html;
+    },
+
+    favoriteSongs: (songs, utils) => {
+      let html = `<div class="space-y-3">`;
+      songs.forEach((song, index) => {
+        html += `
+          <div class="group flex items-center gap-4 p-4 rounded-2xl bg-gray-800/30 hover:bg-gray-700/50 border border-transparent hover:border-white/10 transition-all duration-300 cursor-pointer" style="animation-delay: ${index * 100}ms;">
+            <div class="relative">
+              <img src="${utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="w-14 h-14 rounded-xl object-cover">
+              <div class="absolute inset-0 bg-black/40 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+                <button class="bg-green-500 hover:bg-green-600 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 transform scale-90 group-hover:scale-100">
+                  <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"/></svg>
+                </button>
+              </div>
+            </div>
+            
+            <div class="flex-1 min-w-0">
+              <div class="text-white font-medium truncate">${song.title}</div>
+              <div class="text-gray-400 text-sm truncate" data-artist="${song.artist}">${song.artist}</div>
+            </div>
+            
+            <div class="text-gray-400 text-sm font-medium">3:24</div>
+            
+            <div class="flex gap-1">
+              <button class="p-2 rounded-full text-red-500 hover:text-red-400 transition-colors duration-200" data-song-id="${song.id}">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+              </button>
+              <button class="p-2 rounded-full text-gray-400 hover:text-white opacity-0 group-hover:opacity-100 transition-all duration-200">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+              </button>
+            </div>
           </div>
-        </div>
-      `;
-    });
-    html += `</div>`;
-    return html;
+        `;
+      });
+      html += `</div>`;
+      return html;
+    }
   },
 
-  playlists: (playlists) => {
-    let html = `<div class="playlists-list animate-fade-in">`;
-    playlists.forEach((playlist, index) => {
-      html += `
-        <div class="modern-playlist-card" data-playlist-id="${playlist.id}" style="animation-delay: ${index * 100}ms;">
-          <div class="playlist-artwork-container">
-            <div class="playlist-icon-wrapper">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-                <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v2H3v-2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
-              </svg>
-            </div>
-            <div class="playlist-play-overlay">
-              <button class="playlist-play-btn">
-                ${window.ICONS.play}
-              </button>
-            </div>
-          </div>
-          <div class="playlist-content">
-            <div class="playlist-main-info">
-              <div class="playlist-name-text">${playlist.name}</div>
-              <div class="playlist-tracks-text">${playlist.songs?.length || 0} track${playlist.songs?.length !== 1 ? "s" : ""}</div>
-            </div>
-          </div>
-          <div class="playlist-actions">
-            <button class="playlist-action-btn playlist-more-btn" title="More options">
-              <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
-              </svg>
-            </button>
-          </div>
-        </div>
-      `;
-    });
-    html += `</div>`;
-    return html;
-  },
-
-  favoriteArtists: (artists, utils) => {
-    let html = `<div class="modern-artist-grid animate-fade-in">`;
-    artists.forEach((artistName, index) => {
-      html += `
-        <div class="modern-artist-card" data-artist="${artistName}" style="animation-delay: ${index * 100}ms;">
-          <div class="artist-artwork-container">
-            <img src="${utils.getArtistImageUrl(artistName)}" alt="${artistName}" class="artist-avatar-image">
-            <div class="artist-play-overlay">
-              <button class="artist-play-btn">
-                ${window.ICONS.play}
-              </button>
-            </div>
-            <div class="artist-gradient-overlay"></div>
-          </div>
-          <div class="artist-content">
-            <div class="artist-name-text">${artistName}</div>
-            <div class="artist-label">Artist</div>
-          </div>
-          <div class="artist-actions">
-            <button class="artist-action-btn artist-follow-btn" title="Follow artist">
-              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-              </svg>
-            </button>
-          </div>
-        </div>
-      `;
-    });
-    html += `</div>`;
-    return html;
-  },
-
-  randomAlbums: (albums, utils) => {
-    let html = `<div class="album-grid animate-fade-in">`;
-    albums.forEach((album, index) => {
-      html += `
-        <div class="album-card" style="animation-delay: ${index * 100}ms;" data-artist="${album.artist}" data-album="${album.album}">
-          <div style="position: relative;">
-            <img src="${utils.getAlbumImageUrl(album.album)}" alt="${album.album}" class="album-cover">
-            <div class="album-overlay">
-              <button class="album-play-btn" data-artist="${album.artist}" data-album="${album.album}">
-                ${window.ICONS.play}
-              </button>
-            </div>
-          </div>
-          <div class="album-info">
-            <div class="album-title">${album.album}</div>
-            <div class="album-artist" data-artist="${album.artist}">${album.artist}</div>
-          </div>
-        </div>
-      `;
-    });
-    html += `</div>`;
-    return html;
-  },
-
-  favoriteSongs: (songs, utils) => {
-    let html = `<div class="favorite-tracks animate-fade-in">`;
-    songs.forEach((song, index) => {
-      html += `
-        <div class="modern-favorite-item" data-song='${JSON.stringify(song).replace(/"/g, "&quot;")}' style="animation-delay: ${index * 100}ms;">
-          <div class="favorite-artwork-container">
-            <img src="${utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="favorite-artwork">
-            <div class="favorite-play-overlay">
-              <button class="favorite-play-btn">
-                ${window.ICONS.play}
-              </button>
-            </div>
-          </div>
-          <div class="favorite-content">
-            <div class="favorite-main-info">
-              <div class="favorite-title-text">${song.title}</div>
-              <div class="favorite-artist-text" data-artist="${song.artist}">${song.artist}</div>
-            </div>
-            <div class="favorite-meta">
-              <span class="favorite-duration">3:24</span>
-            </div>
-          </div>
-          <div class="favorite-actions">
-            <button class="favorite-action-btn favorite-heart-btn active" data-song-id="${song.id}" title="Remove from favorites">
-              <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-              </svg>
-            </button>
-            <button class="favorite-action-btn favorite-more-btn" title="More options">
-              <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
-              </svg>
-            </button>
-          </div>
-        </div>
-      `;
-    });
-    html += `</div>`;
-    return html;
-  }},
-  
   overlay: function(templateName, data) {
-  switch(templateName) {
-    case 'default':
-      return `
-        <div class="close" data-close>&times;</div>
-        <div class="content">${data.content}</div>
-      `;
-    case 'dialog':
-      return `
-        <div class="header">${data.message}</div>
-        <div class="actions">
-          ${data.cancelText ? `<button class="btn muted" data-cancel>${data.cancelText}</button>` : ''}
-          <button class="btn ${data.danger ? "danger" : "primary"}" data-ok>${data.okText}</button>
-        </div>
-      `;
-    case 'prompt':
-      return `
-          <div class="modal-header">
-            <h3>${data.message}</h3>
-            <button class="modal-close" data-close>×</button>
+    switch(templateName) {
+      case 'default':
+        return `
+          <div class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center bg-gray-800 hover:bg-gray-700 rounded-full cursor-pointer transition-colors duration-200" data-close>&times;</div>
+          <div class="p-6">${data.content}</div>
+        `;
+      case 'dialog':
+        return `
+          <div class="p-6 border-b border-gray-700">
+            <div class="text-lg font-semibold text-white">${data.message}</div>
+          </div>
+          <div class="flex gap-3 p-6 justify-end">
+            ${data.cancelText ? `<button class="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-xl font-medium transition-colors duration-200" data-cancel>${data.cancelText}</button>` : ''}
+            <button class="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-medium transition-colors duration-200" data-ok>${data.okText}</button>
+          </div>
+        `;
+      case 'prompt':
+        return `
+          <div class="p-6 border-b border-gray-700">
+            <div class="flex justify-between items-center">
+              <h3 class="text-xl font-bold text-white">${data.message}</h3>
+              <button class="w-8 h-8 flex items-center justify-center bg-gray-800 hover:bg-gray-700 rounded-full transition-colors duration-200" data-close>×</button>
+            </div>
           </div>
           
-          <div class="modal-body">
-            <input type="text" class="status-input" placeholder="${data.placeholder}" value="${data.value}">
+          <div class="p-6">
+            <input type="text" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" placeholder="${data.placeholder}" value="${data.value}">
           </div>
           
-          <div class="modal-footer">
-            <button class="btn-secondary" data-cancel>${data.cancelText}</button>
-            <button class="create-playlist-btn btn-primary" data-ok>${data.okText}</button>
+          <div class="flex gap-3 p-6 justify-end">
+            <button class="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-xl font-medium transition-colors duration-200" data-cancel>${data.cancelText}</button>
+            <button class="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-medium transition-colors duration-200" data-ok>${data.okText}</button>
           </div>
-      `;
-    case 'viewer':
-      return `
-        <div class="viewer-container">
-          <button class="viewer-close" data-close aria-label="Close">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-            </svg>
-          </button>
-          <div class="viewer-content">
-            ${data.content}
+        `;
+      case 'viewer':
+        return `
+          <div class="relative w-full h-full bg-black">
+            <button class="absolute top-4 right-4 z-50 w-10 h-10 flex items-center justify-center bg-gray-800 hover:bg-gray-700 rounded-full transition-colors duration-200" data-close aria-label="Close">
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+            <div class="w-full h-full flex items-center justify-center p-8">
+              ${data.content}
+            </div>
           </div>
-        </div>
-      `;
-    default:
-      return '';
-  }
-},
+        `;
+      default:
+        return '';
+    }
+  },
 
   notification: function(data) {
     const { type, iconHtml, title, message } = data;
     return `
-      <div role="status" aria-live="polite" class="toast-item toast-${type}">
-        <div class="toast-progress"></div>
-        <div class="toast-icon">${iconHtml}</div>
-        <div class="toast-content">
-          ${title ? `<strong>${title}</strong>` : ''}
-          ${message}
+      <div class="flex items-center gap-4 p-4 bg-gray-800/90 backdrop-blur-xl rounded-2xl border border-gray-700 shadow-2xl min-w-80 max-w-md">
+        <div class="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-${type === 'success' ? 'green' : type === 'error' ? 'red' : 'blue'}-500/20 text-${type === 'success' ? 'green' : type === 'error' ? 'red' : 'blue'}-400">
+          ${iconHtml}
         </div>
-        <div class="toast-actions"></div>
+        <div class="flex-1 min-w-0">
+          ${title ? `<div class="font-semibold text-white text-sm mb-1">${title}</div>` : ''}
+          <div class="text-gray-300 text-sm">${message}</div>
+        </div>
       </div>
     `;
   },
@@ -795,32 +702,27 @@ homeSection: {
     const isQueue = type === 'queue';
 
     return `
-      <li class="songItem" data-index="${index}" data-song='${JSON.stringify(song).replace(/"/g, "&quot;")}'>
-        <div class="songContent">
-          <img src="${utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="songCover">
-          <div class="songInfo">
-            <div class="songTitle">${song.title}</div>
-            <div class="artistName">${song.artist}</div>
-          </div>
-          <div class="songActions">
-            <button class="playButton" data-action="play" title="Play now">
-              <svg class="SVGimg" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-              </svg>
-            </button>
-            ${isQueue 
-              ? `<button class="removeButton" data-action="remove" title="Remove from queue">
-                   <svg class="SVGimg" fill="currentColor" viewBox="0 0 20 20">
-                     <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                   </svg>
-                 </button>`
-              : `<button class="queueButton" data-action="queue" title="Add to queue">
-                   <svg class="SVGimg" fill="currentColor" viewBox="0 0 20 20">
-                     <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
-                   </svg>
-                 </button>`
-            }
-          </div>
+      <li class="flex items-center gap-4 p-4 rounded-2xl bg-gray-800/30 hover:bg-gray-700/50 border border-transparent hover:border-white/10 transition-all duration-300 cursor-pointer group" data-index="${index}" data-song='${JSON.stringify(song).replace(/"/g, "&quot;")}'>
+        <img src="${utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="w-12 h-12 rounded-xl object-cover">
+        
+        <div class="flex-1 min-w-0">
+          <div class="text-white font-medium truncate">${song.title}</div>
+          <div class="text-gray-400 text-sm truncate">${song.artist}</div>
+        </div>
+        
+        <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <button class="p-2 rounded-full bg-green-500 hover:bg-green-600 text-white transition-colors duration-200" data-action="play">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"/></svg>
+          </button>
+          
+          ${isQueue 
+            ? `<button class="p-2 rounded-full bg-red-500 hover:bg-red-600 text-white transition-colors duration-200" data-action="remove">
+                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"/></svg>
+               </button>`
+            : `<button class="p-2 rounded-full bg-blue-500 hover:bg-blue-600 text-white transition-colors duration-200" data-action="queue">
+                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zm14 0a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/></svg>
+               </button>`
+          }
         </div>
       </li>
     `;
@@ -828,27 +730,62 @@ homeSection: {
 
   desktopPlayerSidebar: function() {
     return `
-      <div class="player-sidebar-header"><span class="player-sidebar-title">Now Playing</span></div>
-      <div class="player-sidebar-album">
-        <div class="player-sidebar-album-art"><img id="sidebar-album-art" src="" alt="Album Cover"></div>
-        <div class="player-sidebar-info">
-          <div class="player-sidebar-song" id="sidebar-song-name">No song playing</div>
-          <div class="player-sidebar-artist" id="sidebar-artist-name">Select a song to start</div>
-          <div class="player-sidebar-album-name" id="sidebar-album-name"></div>
-        </div>
+      <div class="p-6 border-b border-gray-700">
+        <div class="text-lg font-semibold text-white">Now Playing</div>
       </div>
-      <div class="player-sidebar-controls">
-        <div class="player-sidebar-progress"><div class="progress" id="sidebar-music-progress"><div class="time"><span id="sidebar-current-time">0:00</span><span id="sidebar-total-time">0:00</span></div><div class="bar"><div class="buffer" id="sidebar-progress-buffer"></div><div class="fill" id="sidebar-progress-fill" style="width:0%"></div></div></div></div>
-        <div class="player-sidebar-buttons">
-          <button class="sidebar-control-btn previous" id="sidebar-prev"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M8.445 14.832A1 1 0 0010 14v-2.798l5.445 3.63A1 1 0 0017 14V6a1 1 0 00-1.555-.832L10 8.798V6a1 1 0 00-1.555-.832l-5.89 4a1 1 0 000 1.664l5.89 4z"></path></svg></button>
-          <button class="sidebar-control-btn play-pause" id="sidebar-play-pause"><svg id="sidebar-play-icon" class="w-7 h-7" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm-2-9a1 1 0 012 0v4a1 1 0 01-2 0V9zm4 0a1 1 0 112 0v4a1 1 0 11-2 0V9z" clip-rule="evenodd"></path></svg><svg id="sidebar-pause-icon" class="w-7 h-7 hidden" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6 4a1 1 0 011 1v10a1 1 0 11-2 0V5a1 1 0 011-1zm6 0a1 1 0 011 1v10a1 1 0 11-2 0V5a1 1 0 011-1z" clip-rule="evenodd"></path></svg></button>
-          <button class="sidebar-control-btn next" id="sidebar-next"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l5.89-4a1 1 0 000-1.664l-5.89-4A1 1 0 0010 6v2.798L4.555 5.168z"></path></svg></button>
+      
+      <div class="p-6">
+        <div class="text-center mb-6">
+          <img id="sidebar-album-art" src="" alt="Album Cover" class="w-48 h-48 rounded-2xl mx-auto shadow-2xl object-cover">
         </div>
-        <div class="player-sidebar-actions">
-          <button class="sidebar-action-btn" id="sidebar-shuffle" title="Shuffle"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 00-1.05 9.294A1 1 0 004.05 15.606l2.828 2.829a1 1 0 001.415-1.415l-2.829-2.828a5 5 0 117.071-7.07l2.829 2.828a1 1 0 101.415-1.415l-2.828-2.828A7.001 7.001 0 004 2z" clip-rule="evenodd"></path></svg></button>
-          <button class="sidebar-action-btn" id="sidebar-favorite" title="Favorite"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg></button>
-          <button class="sidebar-action-btn" id="sidebar-repeat" title="Repeat"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 00-1.05 9.294A1 1 0 004.05 15.606l2.828 2.829a1 1 0 001.415-1.415l-2.829-2.828a5 5 0 117.071-7.07l2.829 2.828a1 1 0 101.415-1.415l-2.828-2.828A7.001 7.001 0 004 2z" clip-rule="evenodd"></path></svg></button>
-          <button class="sidebar-action-btn" id="sidebar-queue" title="Queue"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm1 4a1 1 0 100 2h4a1 1 0 100-2H4z"></path></svg></button>
+        
+        <div class="text-center mb-8">
+          <div class="text-xl font-bold text-white mb-2" id="sidebar-song-name">No song playing</div>
+          <div class="text-gray-400 mb-1" id="sidebar-artist-name">Select a song to start</div>
+          <div class="text-gray-500 text-sm" id="sidebar-album-name"></div>
+        </div>
+        
+        <div class="space-y-4">
+          <div class="space-y-2">
+            <div class="flex justify-between text-sm text-gray-400">
+              <span id="sidebar-current-time">0:00</span>
+              <span id="sidebar-total-time">0:00</span>
+            </div>
+            <div class="relative h-1 bg-gray-700 rounded-full overflow-hidden">
+              <div class="absolute inset-0 bg-gray-600" id="sidebar-progress-buffer"></div>
+              <div class="absolute inset-0 bg-green-500" id="sidebar-progress-fill" style="width:0%"></div>
+            </div>
+          </div>
+          
+          <div class="flex justify-center items-center gap-4">
+            <button class="p-3 rounded-full bg-gray-700 hover:bg-gray-600 text-white transition-colors duration-200" id="sidebar-prev">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M8.445 14.832A1 1 0 0010 14v-2.798l5.445 3.63A1 1 0 0017 14V6a1 1 0 00-1.555-.832L10 8.798V6a1 1 0 00-1.555-.832l-5.89 4a1 1 0 000 1.664l5.89 4z"/></svg>
+            </button>
+            
+            <button class="p-4 rounded-full bg-green-500 hover:bg-green-600 text-white transition-colors duration-200" id="sidebar-play-pause">
+              <svg id="sidebar-play-icon" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"/></svg>
+              <svg id="sidebar-pause-icon" class="w-6 h-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M5 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1H6a1 1 0 01-1-1V4zM11 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg>
+            </button>
+            
+            <button class="p-3 rounded-full bg-gray-700 hover:bg-gray-600 text-white transition-colors duration-200" id="sidebar-next">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l5.89-4a1 1 0 000-1.664l-5.89-4A1 1 0 0010 6v2.798L4.555 5.168z"/></svg>
+            </button>
+          </div>
+          
+          <div class="flex justify-center gap-3">
+            <button class="p-2 rounded-full text-gray-400 hover:text-white transition-colors duration-200" id="sidebar-shuffle">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M6.59 12.83L4.4 15c-.58.58-1.59 1-2.4 1H0v-2h2c.29 0 .62-.06.83-.17l2.17-2.18 1.59 1.59zM16 8V6a4 4 0 00-4-4H4a4 4 0 00-4 4v2h16z"/></svg>
+            </button>
+            <button class="p-2 rounded-full text-gray-400 hover:text-white transition-colors duration-200" id="sidebar-favorite">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+            </button>
+            <button class="p-2 rounded-full text-gray-400 hover:text-white transition-colors duration-200" id="sidebar-repeat">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M5 4a1 1 0 00-1 1v2a1 1 0 001 1h2a1 1 0 001-1V6a1 1 0 00-1-1H5zm0 8a1 1 0 00-1 1v2a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 00-1-1H5zm6-6a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1h-2a1 1 0 01-1-1V6zm0 8a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1h-2a1 1 0 01-1-1v-2z"/></svg>
+            </button>
+            <button class="p-2 rounded-full text-gray-400 hover:text-white transition-colors duration-200" id="sidebar-queue">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm1 4a1 1 0 100 2h8a1 1 0 100-2H4z"/></svg>
+            </button>
+          </div>
         </div>
       </div>
     `;
@@ -856,12 +793,10 @@ homeSection: {
 
   bentoMusicPlayerCard: function() {
     return `
-      <div class="card-header">
-        <h2 class="card-title">Now Playing</h2>
-        <button class="expand-player-btn" title="Expand Player">
-          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h4a1 1 0 010 2H6.414l2.293 2.293a1 1 0 11-1.414 1.414L5 6.414V8a1 1 0 01-2 0V4zm9 1a1 1 0 010-2h4a1 1 0 011 1v4a1 1 0 01-2 0V6.414l-2.293 2.293a1 1 0 11-1.414-1.414L13.586 5H12zm-9 7a1 1 0 012 0v1.586l2.293-2.293a1 1 0 111.414 1.414L6.414 15H8a1 1 0 010 2H4a1 1 0 01-1-1v-4zm13-1a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 010-2h1.586l-2.293-2.293a1 1 0 111.414-1.414L15 13.586V12a1 1 0 011-1z" clip-rule="evenodd" />
-          </svg>
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold text-white">Now Playing</h2>
+        <button class="p-2 rounded-full bg-gray-700 hover:bg-gray-600 text-gray-400 hover:text-white transition-colors duration-200">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h4a1 1 0 010 2H6.414l2.293 2.293a1 1 0 11-1.414 1.414L5 6.414V8a1 1 0 01-2 0V4zm9 1a1 1 0 010-2h4a1 1 0 011 1v4a1 1 0 01-2 0V6.414l-2.293 2.293a1 1 0 11-1.414-1.414L13.586 5H12zm-9 7a1 1 0 012 0v1.586l2.293-2.293a1 1 0 111.414 1.414L6.414 15H8a1 1 0 010 2H4a1 1 0 01-1-1v-4zm13-1a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 010-2h1.586l-2.293-2.293a1 1 0 111.414-1.414L15 13.586V12a1 1 0 011-1z"/></svg>
         </button>
       </div>
     `;
@@ -869,13 +804,13 @@ homeSection: {
 
   actionPopover: function(actions) {
     return `
-      <div class="popover-grid">
+      <div class="grid grid-cols-2 gap-2 p-2">
         ${actions.map(action => `
-          <button class="popover-action-btn" data-action="${action.id}">
-            <svg class="popover-icon" viewBox="0 0 24 24">
-              <path d="${action.icon}"/>
+          <button class="flex items-center gap-3 p-3 rounded-xl bg-gray-800 hover:bg-gray-700 text-white transition-colors duration-200" data-action="${action.id}">
+            <svg class="w-5 h-5 text-gray-400" viewBox="0 0 24 24">
+              <path d="${action.icon}" fill="currentColor"/>
             </svg>
-            <span class="popover-label">${action.label}</span>
+            <span class="text-sm font-medium">${action.label}</span>
           </button>
         `).join('')}
       </div>
@@ -884,15 +819,15 @@ homeSection: {
 
   favoriteArtistsModal: function() {
     return `
-      <div class="modal-content slide-in">
-        <div class="modal-header">
+      <div class="bg-gradient-to-br from-gray-900 to-black backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl w-full max-w-2xl mx-4">
+        <div class="flex justify-between items-center p-6 border-b border-gray-700">
           <div>
-            <h2 class="modal-title">Favorite Artists</h2>
-            <div class="artist-count">0 artists</div>
+            <h2 class="text-2xl font-bold text-white">Favorite Artists</h2>
+            <div class="text-gray-400 text-sm mt-1">0 artists</div>
           </div>
-          <button class="close-btn">&times;</button>
+          <button class="w-10 h-10 flex items-center justify-center bg-gray-800 hover:bg-gray-700 rounded-xl transition-colors duration-200">&times;</button>
         </div>
-        <div class="artists-list"></div>
+        <div class="p-6 artists-list"></div>
       </div>
     `;
   },
@@ -900,11 +835,13 @@ homeSection: {
   emptyState: function(data) {
     const { title, subtitle, icon } = data;
     return `
-      <div class="empty-state">
-        <div class="empty-icon">${icon || '♡'}</div>
-        <h3 class="empty-title">${title}</h3>
-        <p class="empty-text">${subtitle}</p>
-        ${data.subtext ? `<p class="empty-subtext">${data.subtext}</p>` : ''}
+      <div class="text-center py-16 px-6">
+        <div class="w-16 h-16 bg-gray-800 rounded-2xl flex items-center justify-center text-gray-400 text-2xl mx-auto mb-4">
+          ${icon || '♡'}
+        </div>
+        <h3 class="text-xl font-bold text-white mb-2">${title}</h3>
+        <p class="text-gray-400 mb-4">${subtitle}</p>
+        ${data.subtext ? `<p class="text-gray-500 text-sm">${data.subtext}</p>` : ''}
       </div>
     `;
   },
