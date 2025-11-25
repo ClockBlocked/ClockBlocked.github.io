@@ -1,0 +1,357 @@
+{
+  "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+  "name": "myTunes Music",
+  "short_name": "myTunes",
+  "description": "Stream & share all of your favorite music.",
+  "version": "1.0.0",
+  "manifest_version": 3,
+
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "id": "mytunes-music-pwa",
+
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "orientation": "any",
+
+  "theme_color": "#1a1a2e",
+  "background_color": "#0f0f1a",
+
+  "categories": ["entertainment", "music", "lifestyle"],
+  "iarc_rating_id": "",
+
+  "dir": "ltr",
+  "lang": "en-US",
+
+  "prefer_related_applications": false,
+  "related_applications": [
+    {
+      "platform": "play",
+      "url": "https://play.google.com/store/apps/details?id=com.mytunes.music",
+      "id": "com.mytunes.music"
+    },
+    {
+      "platform": "itunes",
+      "url": "https://apps.apple.com/app/mytunes-music/id000000000"
+    }
+  ],
+
+  "icons": [
+    {
+      "src": "ios/16.png",
+      "sizes": "16x16",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "ios/32.png",
+      "sizes": "32x32",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "android/android-launchericon-48-48.png",
+      "sizes": "48x48",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "android/android-launchericon-72-72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "android/android-launchericon-96-96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "ios/120.png",
+      "sizes": "120x120",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "android/android-launchericon-144-144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "ios/152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "ios/167.png",
+      "sizes": "167x167",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "ios/180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "android/android-launchericon-192-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "ios/256.png",
+      "sizes": "256x256",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "android/android-launchericon-512-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "ios/1024.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/monochrome-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "monochrome"
+    }
+  ],
+
+  "screenshots": [
+    {
+      "src": "screenshots/desktop-home.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "myTunes Home - Desktop View"
+    },
+    {
+      "src": "screenshots/desktop-player.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Now Playing - Desktop View"
+    },
+    {
+      "src": "screenshots/mobile-home.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "myTunes Home - Mobile View"
+    },
+    {
+      "src": "screenshots/mobile-player.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Now Playing - Mobile View"
+    }
+  ],
+
+  "shortcuts": [
+    {
+      "name": "Now Playing",
+      "short_name": "Playing",
+      "description": "View currently playing track",
+      "url": "/now-playing?source=shortcut",
+      "icons": [
+        {
+          "src": "icons/shortcut-now-playing.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "My Library",
+      "short_name": "Library",
+      "description": "Browse your music library",
+      "url": "/library?source=shortcut",
+      "icons": [
+        {
+          "src": "icons/shortcut-library.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Search",
+      "short_name": "Search",
+      "description": "Search for music",
+      "url": "/search?source=shortcut",
+      "icons": [
+        {
+          "src": "icons/shortcut-search.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Playlists",
+      "short_name": "Playlists",
+      "description": "View your playlists",
+      "url": "/playlists?source=shortcut",
+      "icons": [
+        {
+          "src": "icons/shortcut-playlists.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+
+  "share_target": {
+    "action": "/share-handler",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "audio",
+          "accept": ["audio/*", ".mp3", ".m4a", ".wav", ".flac", ".ogg", ".aac", ".wma"]
+        },
+        {
+          "name": "playlist",
+          "accept": [".m3u", ".m3u8", ".pls", ".xspf"]
+        }
+      ]
+    }
+  },
+
+  "file_handlers": [
+    {
+      "action": "/open-audio",
+      "accept": {
+        "audio/mpeg": [".mp3"],
+        "audio/mp4": [".m4a", ".mp4"],
+        "audio/wav": [".wav"],
+        "audio/flac": [".flac"],
+        "audio/ogg": [".ogg"],
+        "audio/aac": [".aac"],
+        "audio/x-ms-wma": [".wma"]
+      },
+      "icons": [
+        {
+          "src": "icons/audio-file-handler.png",
+          "sizes": "256x256",
+          "type": "image/png"
+        }
+      ],
+      "launch_type": "single-client"
+    },
+    {
+      "action": "/open-playlist",
+      "accept": {
+        "audio/x-mpegurl": [".m3u", ".m3u8"],
+        "audio/x-scpls": [".pls"],
+        "application/xspf+xml": [".xspf"]
+      },
+      "icons": [
+        {
+          "src": "icons/playlist-file-handler.png",
+          "sizes": "256x256",
+          "type": "image/png"
+        }
+      ],
+      "launch_type": "single-client"
+    }
+  ],
+
+  "protocol_handlers": [
+    {
+      "protocol": "web+mytunes",
+      "url": "/protocol?uri=%s"
+    },
+    {
+      "protocol": "web+music",
+      "url": "/protocol?uri=%s"
+    }
+  ],
+
+  "launch_handler": {
+    "client_mode": ["navigate-existing", "auto"]
+  },
+
+  "handle_links": "preferred",
+
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+
+  "widgets": [
+    {
+      "name": "Now Playing Widget",
+      "short_name": "Now Playing",
+      "description": "Shows current track with playback controls",
+      "tag": "now-playing",
+      "ms_ac_template": "widgets/now-playing-template.json",
+      "data": "widgets/now-playing-data.json",
+      "type": "application/json",
+      "screenshots": [
+        {
+          "src": "widgets/screenshots/now-playing-light.png",
+          "sizes": "600x400",
+          "label": "Now Playing Widget - Light Mode"
+        }
+      ],
+      "icons": [
+        {
+          "src": "widgets/icons/now-playing.png",
+          "sizes": "44x44"
+        }
+      ],
+      "backgrounds": [
+        {
+          "src": "widgets/backgrounds/gradient-dark.png",
+          "sizes": "600x400"
+        }
+      ]
+    }
+  ],
+
+  "serviceworker": {
+    "src": "/service-worker.js",
+    "scope": "/",
+    "type": "module",
+    "update_via_cache": "none"
+  },
+
+  "permissions_policy": {
+    "autoplay": ["self"],
+    "fullscreen": ["self"],
+    "picture-in-picture": ["self"],
+    "sync-xhr": [],
+    "microphone": ["self"],
+    "geolocation": []
+  }
+}
