@@ -29,6 +29,7 @@ import { musicPlayer } from './musicPlayers.js';
 // Critical: import notifications directly
 import { notifications } from './toasts.js';
 
+import { navigation } from './pages/rendering.js';
 import { views } from './pages/statics.js';
 
 
