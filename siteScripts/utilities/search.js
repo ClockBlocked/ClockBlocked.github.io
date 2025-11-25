@@ -1,8 +1,9 @@
-import { appState, utils, notifications, navigation } from '../global.js';
+import { appState, utils, navigation } from '../global.js';
 import { ROUTES } from '../map.js';
 
 import { musicPlayer } from '../musicPlayers.js';
 
+import { notifications } from '../toasts.js';
 
 class MusicSearch {
   constructor() {
