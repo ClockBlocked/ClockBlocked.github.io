@@ -1,5 +1,16 @@
+/**
+*
+*   Wm. Cole Hanson
+*  
+* Chevrolay@Outlook.com
+*
+*   m.me/Chevrolay
+*
+**/
 
 
+////////////////////////////////////////////////////////
+////////////////////////////  I N D E X  ///////////////
 import {
   DOM,
   QUERY,
@@ -20,18 +31,13 @@ import {
 } from './map.js';
 
 import { music } from '../modules/library.js';
-import { render, create } from './utilities/templates.js';
-import { encodeURIComponent } from './utilities/parsers.js';
-
-// Critical: import musicPlayer directly, NOT via index.js
 import { musicPlayer } from './musicPlayers.js';
-
-// Critical: import notifications directly
-import { notifications } from './toasts.js';
-
 import { navigation } from './pages/rendering.js';
 import { views, homePage } from './pages/statics.js';
 
+import { notifications } from './toasts.js';
+import { render, create } from './utilities/templates.js';
+import { encodeURIComponent } from './utilities/parsers.js';
 
 const ACTION_GRID_ITEMS = [
   { id: 'play-next', icon: 'M9 5l7 7-7 7M15 5v14', label: 'Play Next' },
@@ -49,8 +55,26 @@ const TOAST_ICONS = {
   [NOTIFICATION_TYPES.INFO]: '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"/></svg>',
 };
 
-const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
+const PLAYER_EVENTS = {
+  STATE_CHANGE: 'player:state-change',
+  PLAYBACK_STATE: 'player:playback-state',
+  CURRENT_SONG: 'player:current-song',
+  TIME_UPDATE: 'player:time-update',
+  VOLUME_CHANGE: 'player:volume-change',
+  QUEUE_CHANGE: 'player:queue-change',
+  FAVORITES_CHANGE: 'player:favorites-change',
+  REPEAT_MODE: 'player:repeat-mode',
+  SHUFFLE_MODE: 'player:shuffle-mode',
+  RECENTLY_PLAYED_CHANGED: 'recently-played:changed'
+};
 
+const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
+//////////////////////////////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////////////////
+////////////////////////////  M E S S E N G E R  ///////
 const PubSub = {
   events: new Map(),
 
@@ -88,20 +112,12 @@ const PubSub = {
     }
   }
 };
+//////////////////////////////////////////////////////////////////////
 
-const PLAYER_EVENTS = {
-  STATE_CHANGE: 'player:state-change',
-  PLAYBACK_STATE: 'player:playback-state',
-  CURRENT_SONG: 'player:current-song',
-  TIME_UPDATE: 'player:time-update',
-  VOLUME_CHANGE: 'player:volume-change',
-  QUEUE_CHANGE: 'player:queue-change',
-  FAVORITES_CHANGE: 'player:favorites-change',
-  REPEAT_MODE: 'player:repeat-mode',
-  SHUFFLE_MODE: 'player:shuffle-mode',
-  RECENTLY_PLAYED_CHANGED: 'recently-played:changed'
-};
 
+
+////////////////////////////////////////////////////////
+//////////////////////////////  C O R E  ///////////////
 const appState = {
   audio: null,
   currentSong: null,
@@ -324,7 +340,12 @@ const appState = {
     }
   }
 };
+//////////////////////////////////////////////////////////////////////
 
+
+
+////////////////////////////////////////////////////////
+///////////////////////  D E P E N D E N C I E S   /////
 const utils = {
   getAlbumImageUrl: (albumName) => {
     if (!albumName) return utils.getDefaultAlbumImage();
@@ -443,6 +464,7 @@ const utils = {
   }
 };
 
+
 const storage = {
   save: (key, data) => {
     try {
@@ -493,7 +515,12 @@ const storage = {
     });
   }
 };
+//////////////////////////////////////////////////////////////////////
 
+
+
+////////////////////////////////////////////////////////
+////////////////////////////  UI & Interactions  ///////
 const dropdown = {
   toggle: (e) => {
     e?.preventDefault();
@@ -537,6 +564,7 @@ const dropdown = {
     trigger.classList.remove(CLASSES.active);
   }
 };
+
 
 const overlays = {
   open: (id, content, type = 'default') => {
@@ -717,6 +745,9 @@ const overlays = {
     }
   }
 };
+//////////////////////////////////////////////////////////////////////
+
+
 
 
 const notificationPlayer = {
