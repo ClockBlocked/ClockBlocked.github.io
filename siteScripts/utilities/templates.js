@@ -1,8 +1,6 @@
 import { getAlbumImageUrl } from './parsers.js';
 import { escapeForAttribute } from '../pages/rendering.js';
 
-
-
 export const render = {
   artist: function(templateName, data) {
     switch(templateName) {
@@ -101,7 +99,6 @@ case "enhancedArtist":
     
     <div class="artist-hero-content">
       <div class="artist-hero-flex">
-        <!-- Artist Avatar -->
         <div class="artist-avatar-group">
           <div class="artist-avatar-container">
             <img id="artistAvatar" alt="${data.artist}" src="${data.cover}" />
@@ -116,7 +113,6 @@ case "enhancedArtist":
           </div>
         </div>
 
-        <!-- Artist Info -->
         <div class="artist-info-section">
           <div class="artist-badge">
             <span class="artist-badge-dot"></span>
@@ -127,7 +123,6 @@ case "enhancedArtist":
           </h1>
           <p id="artistTagline" class="artist-genre">${data.genre || 'Various Genres'}</p>
           
-          <!-- Stats Row -->
           <div class="artist-stats-row">
             <div class="artist-stat">
               <div id="artistAlbums" class="artist-stat-value">${data.albumCount}</div>
@@ -145,7 +140,6 @@ case "enhancedArtist":
             </div>
           </div>
 
-          <!-- Action Buttons -->
           <div class="artist-actions">
             <button id="artistShuffle" class="artist-action-btn">
               <svg fill="currentColor" viewBox="0 0 20 20">
@@ -170,10 +164,7 @@ case "enhancedArtist":
     </div>
   </section>
 
-  <!-- Main Content -->
   <div class="fragments artist-content">
-    
-    <!-- Quick Stats Grid -->
     <div class="artist-quick-stats">
       <div class="artist-stat-card stat-blue">
         <div class="stat-card-content">
@@ -219,7 +210,6 @@ case "enhancedArtist":
       </div>
     </div>
 
-    <!-- Albums Section -->
     <section class="fragments albums">
       <div id="${IDS.albumsContainer}"></div>
     </section>
@@ -232,8 +222,7 @@ case "enhancedArtist":
       <div class="names-row left" data-speed="119" data-gap="40"></div>
     </div>
   </section>
-</div>
-`;        
+</div>`;        
       default:
         return "";
     }
@@ -335,7 +324,6 @@ case "enhancedArtist":
        tabindex="0"
        aria-label="Track ${trackNumber}: ${title} — ${duration}">
 
-    <!-- 1) LEFT: Track # (replaced by Play on hover) -->
     <div class="cell index-play" aria-hidden="false">
       <span class="track-number">
         ${showTrackNumber ? trackNumber : '♪'}
@@ -346,24 +334,20 @@ case "enhancedArtist":
               title="Play"
               aria-label="Play ${title}"
               tabindex="-1">
-        <!-- Play Icon -->
         <svg class="global lightGray small" viewBox="0 0 384 512" aria-hidden="true">
           <path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80L0 432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/>
         </svg>
       </button>
     </div>
 
-    <!-- 2) Song Name -->
     <div class="cell title" title="${title}">
       <span class="song-title">${title}</span>
     </div>
 
-    <!-- 3) Duration -->
     <div class="cell duration" aria-label="Duration ${duration}">
       <span>${duration}</span>
     </div>
 
-    <!-- 4) Heart -->
     <div class="cell heart">
       <button aria-label="Name" class="action-btn favorite-btn ${isFavorite ? 'favorited' : ''}"
               data-action="favorite"
@@ -380,7 +364,6 @@ case "enhancedArtist":
       </button>
     </div>
 
-    <!-- 5) More (three dots) -->
     <div class="cell more">
       <button aria-label="Name" class="action-btn more-btn"
               data-action="more"
@@ -392,7 +375,6 @@ case "enhancedArtist":
       </button>
     </div>
   </div>
-
     `;
   },
   
@@ -439,57 +421,78 @@ case "enhancedArtist":
         `;
       case "home_bento":
         return `
-        <div class="bento-grid">
-            <div class="bento-card" data-loader="true">
-              <div class="card-header">
-                <h2 class="card-title">Recently Played</h2>
-                <a href="#" class="card-link" data-view="recent">View All</a>
-              </div>
-              <div id="${data.IDS.recentlyPlayedSection}" class="card-content">
-                <div class="skeleton-loader"></div>
-              </div>
+<div class="bg-gray-900 py-24 sm:py-32">
+  <div class="mx-auto max-w-2xl px-6 lg:max-w-7xl lg:px-8">
+    <h2 class="text-center text-base/7 font-semibold text-indigo-400">Listen faster</h2>
+    <p class="mx-auto mt-2 max-w-lg text-center text-4xl font-semibold tracking-tight text-balance text-white sm:text-5xl">Everything you need for your music</p>
+    <div class="mt-10 grid gap-4 sm:mt-16 lg:grid-cols-3 lg:grid-rows-2">
+      <div class="relative lg:row-span-2">
+        <div class="absolute inset-px rounded-lg bg-gray-800 lg:rounded-l-4xl"></div>
+        <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)] lg:rounded-l-[calc(2rem+1px)]">
+          <div class="px-8 pt-8 pb-3 sm:px-10 sm:pt-10 sm:pb-0">
+            <p class="mt-2 text-lg font-medium tracking-tight text-white max-lg:text-center">Recently Played</p>
+            <p class="mt-2 max-w-lg text-sm/6 text-gray-400 max-lg:text-center">Your most recent listening activity and favorite tracks.</p>
+          </div>
+          <div class="@container relative min-h-120 w-full grow max-lg:mx-auto max-lg:max-w-sm">
+            <div class="absolute inset-x-10 top-10 bottom-0 overflow-hidden rounded-t-[12cqw] border-x-[3cqw] border-t-[3cqw] border-gray-700 bg-gray-900 outline outline-white/20">
+              <div id="${data.IDS.recentlyPlayedSection}" class="size-full object-cover object-top"></div>
             </div>
-            
-            <div class="bento-card bento-span-2" data-loader="true">
-              <div class="card-header">
-                <h2 class="card-title">Discover Albums</h2>
-                <a href="#" class="card-link" data-view="albums">Explore More</a>
+          </div>
+        </div>
+        <div class="pointer-events-none absolute inset-px rounded-lg shadow-sm outline outline-white/15 lg:rounded-l-4xl"></div>
+      </div>
+      <div class="relative max-lg:row-start-1">
+        <div class="absolute inset-px rounded-lg bg-gray-800 max-lg:rounded-t-4xl"></div>
+        <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)] max-lg:rounded-t-[calc(2rem+1px)]">
+          <div class="px-8 pt-8 sm:px-10 sm:pt-10">
+            <p class="mt-2 text-lg font-medium tracking-tight text-white max-lg:text-center">Favorite Artists</p>
+            <p class="mt-2 max-w-lg text-sm/6 text-gray-400 max-lg:text-center">Artists you follow and listen to frequently.</p>
+          </div>
+          <div class="flex flex-1 items-center justify-center px-8 max-lg:pt-10 max-lg:pb-12 sm:px-10 lg:pb-2">
+            <div id="${data.IDS.favoriteArtistsSection}" class="w-full max-lg:max-w-xs"></div>
+          </div>
+        </div>
+        <div class="pointer-events-none absolute inset-px rounded-lg shadow-sm outline outline-white/15 max-lg:rounded-t-4xl"></div>
+      </div>
+      <div class="relative max-lg:row-start-3 lg:col-start-2 lg:row-start-2">
+        <div class="absolute inset-px rounded-lg bg-gray-800"></div>
+        <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)]">
+          <div class="px-8 pt-8 sm:px-10 sm:pt-10">
+            <p class="mt-2 text-lg font-medium tracking-tight text-white max-lg:text-center">Your Playlists</p>
+            <p class="mt-2 max-w-lg text-sm/6 text-gray-400 max-lg:text-center">Curated collections and personalized mixes.</p>
+          </div>
+          <div class="@container flex flex-1 items-center max-lg:py-6 lg:pb-2">
+            <div id="${data.IDS.playlistsSection}" class="h-[min(152px,40cqw)] object-cover"></div>
+          </div>
+        </div>
+        <div class="pointer-events-none absolute inset-px rounded-lg shadow-sm outline outline-white/15"></div>
+      </div>
+      <div class="relative lg:row-span-2">
+        <div class="absolute inset-px rounded-lg bg-gray-800 max-lg:rounded-b-4xl lg:rounded-r-4xl"></div>
+        <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)] max-lg:rounded-b-[calc(2rem+1px)] lg:rounded-r-[calc(2rem+1px)]">
+          <div class="px-8 pt-8 pb-3 sm:px-10 sm:pt-10 sm:pb-0">
+            <p class="mt-2 text-lg font-medium tracking-tight text-white max-lg:text-center">Discover Albums</p>
+            <p class="mt-2 max-w-lg text-sm/6 text-gray-400 max-lg:text-center">New releases and recommendations based on your taste.</p>
+          </div>
+          <div class="relative min-h-120 w-full grow">
+            <div class="absolute top-10 right-0 bottom-0 left-10 overflow-hidden rounded-tl-xl bg-gray-900/60 outline outline-white/10">
+              <div class="flex bg-gray-900 outline outline-white/5">
+                <div class="-mb-px flex text-sm/6 font-medium text-gray-400">
+                  <div class="border-r border-b border-r-white/10 border-b-white/20 bg-white/5 px-4 py-2 text-white">New Releases</div>
+                  <div class="border-r border-gray-600/10 px-4 py-2">For You</div>
+                </div>
               </div>
-              <div id="${data.IDS.randomAlbumsSection}" class="card-content">
-                <div class="skeleton-loader"></div>
-              </div>
-            </div>
-            
-            <div class="bento-card" data-loader="true">
-              <div class="card-header">
-                <h2 class="card-title">Favorite Artists</h2>
-                <a href="#" class="card-link" data-view="favorite-artists">View All</a>
-              </div>
-              <div id="${data.IDS.favoriteArtistsSection}" class="card-content">
-                <div class="skeleton-loader"></div>
-              </div>
-            </div>
-            
-            <div class="bento-card" data-loader="true">
-              <div class="card-header">
-                <h2 class="card-title">Your Playlists</h2>
-                <a href="#" class="card-link" data-view="playlists">View All</a>
-              </div>
-              <div id="${data.IDS.playlistsSection}" class="card-content">
-                <div class="skeleton-loader"></div>
-              </div>
-            </div>
-            
-            <div class="bento-card" data-loader="true">
-              <div class="card-header">
-                <h2 class="card-title">Favorite Songs</h2>
-                <a href="#" class="card-link" data-view="favorite-songs">View All</a>
-              </div>
-              <div id="${data.IDS.favoriteSongsSection}" class="card-content">
-                <div class="skeleton-loader"></div>
+              <div class="px-6 pt-6 pb-14">
+                <div id="${data.IDS.randomAlbumsSection}"></div>
               </div>
             </div>
           </div>
+        </div>
+        <div class="pointer-events-none absolute inset-px rounded-lg shadow-sm outline outline-white/15 max-lg:rounded-b-4xl lg:rounded-r-4xl"></div>
+      </div>
+    </div>
+  </div>
+</div>
         `;
         
       default:
@@ -737,7 +740,7 @@ homeSection: {
   },
 
   playerListItem: function(data) {
-    const { song, index, type, utils } = data; // type can be 'queue' or 'recent'
+    const { song, index, type, utils } = data;
     const isQueue = type === 'queue';
 
     return `
@@ -855,7 +858,6 @@ homeSection: {
     `;
   },
 };
-
 
 export function create(htmlString) {
   const div = document.createElement('div');
