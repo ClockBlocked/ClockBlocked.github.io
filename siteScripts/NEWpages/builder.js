@@ -1,5 +1,5 @@
 import { render, create } from '../utilities/templates.js';
-import { uiManager } from './ui-manager.js';
+import { syncs } from './background.js';
 
 export const pageManager = {
   initialize: function() {
