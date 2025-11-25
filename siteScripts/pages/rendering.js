@@ -1,11 +1,11 @@
-import { appState, storage, notifications, utils, ACTION_GRID_ITEMS, overlays } from "../global.js";
+import { appState, storage, utils, ACTION_GRID_ITEMS, overlays } from "../global.js";
 import { ui, pageUpdates } from "./updates.js";
 import { render, create } from "../utilities/templates.js";
 import { deepLinkRouter } from "./router.js";
 
 import { musicPlayer } from '../musicPlayers.js';
 
-
+import { notifications } from '../toasts.js';
 
 export const escapeForAttribute = function (str) {
   return str.replace(/&/g, "&amp;").replace(/'/g, "&#39;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
