@@ -1,5 +1,8 @@
-import { getAlbumImageUrl } from './parsers.js';
-import { escapeForAttribute } from '../pages/rendering.js';
+// import { getAlbumImageUrl } from './parsers.js';
+
+// import { escapeForAttribute } from '../pages/rendering.js';
+
+import { escapeForAttribute, getAlbumImageUrl } from './parsers.js';
 
 export const render = {
   artist: function(templateName, data) {
