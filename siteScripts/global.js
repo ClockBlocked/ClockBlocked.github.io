@@ -32,9 +32,9 @@ import {
 
 import { music } from '../modules/library.js';
 import { musicPlayer } from './musicPlayers.js';
-import { navigation } from './pages/rendering.js';
-import { views, homePage } from './pages/statics.js';
-import { ui } from './pages/updates.js';
+import { navigation } from './pages/paths.js';
+import { pageManager } from './pages/builder.js';
+import { syncs } from './pages/background.js';
 
 import { notifications } from './toasts.js';
 import { render, create } from './utilities/templates.js';
