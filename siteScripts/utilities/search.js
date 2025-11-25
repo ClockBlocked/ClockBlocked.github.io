@@ -1,6 +1,6 @@
-import { appState, utils, navigation } from '../global.js';
+import { appState, utils } from '../global.js';
 import { ROUTES } from '../map.js';
-
+import { navigation } from '../pages/rendering.js';
 import { musicPlayer } from '../musicPlayers.js';
 
 import { notifications } from '../toasts.js';
