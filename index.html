@@ -1257,15 +1257,15 @@
     <!-- pageWrapper -->
 
     <!-- D E P E N D E N C I E S -->
-    <script type="module" src="./siteScripts/map.js"></script>
-    <script type="module" src="./siteScripts/utilities/overlays.js"></script>
+    <script type="module" src="./siteScripts/modules/map.js"></script>
+    <script type="module" src="./siteScripts/modules/overlays.js"></script>
     <script type="module" src="./modules/library.js"></script>
-    <script type="module" src="./siteScripts/utilities/search.js"></script>
+    <script type="module" src="./siteScripts/modules/search.js"></script>
 
     <!-- P R I M A R Y  Script -->
     <script type="module">
       import { music } from "./modules/library.js";
-      import { app } from "./siteScripts/global.js";
+      import { app } from "./siteScripts/modules/global.js";
       window.music = music;
       document.addEventListener("DOMContentLoaded", async () => {
         await app.initialize();
