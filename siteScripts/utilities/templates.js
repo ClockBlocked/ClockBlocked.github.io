@@ -18,12 +18,12 @@ export const render = {
     <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
   </div>
   
-  <div class="text-white font-semibold text-center truncate">${artistName}</div>
+  <div class="text-white font-semibold text-center truncate cursor-pointer" onclick="appState.router.navigateToArtist('${artistName}')">${artistName}</div>
   
   <div class="absolute inset-0 bg-black/90 backdrop-blur-md rounded-2xl p-6 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
     <div class="flex flex-col h-full">
       <div class="flex-1">
-        <div class="text-xl font-bold text-white mb-2">${artistName}</div>
+        <div class="text-xl font-bold text-white mb-2 cursor-pointer" onclick="appState.router.navigateToArtist('${artistName}')">${artistName}</div>
       </div>
       
       <div class="flex gap-6 mb-4">
@@ -37,7 +37,7 @@ export const render = {
         </div>
       </div>
       
-      <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition-colors duration-200" data-artist-id="${artistId}">
+      <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition-colors duration-200" data-artist-id="${artistId}" onclick="appState.router.navigateToArtist('${artistName}')">
         View Artist
       </button>
     </div>
@@ -46,13 +46,13 @@ export const render = {
       
       case "card":
         return `
-<div class="group bg-gradient-to-br from-gray-900/80 to-black/80 backdrop-blur-xl rounded-3xl p-6 border border-white/10 hover:border-white/20 transition-all duration-500 hover:scale-105 cursor-pointer" data-artist-id="${data.id}">
+<div class="group bg-gradient-to-br from-gray-900/80 to-black/80 backdrop-blur-xl rounded-3xl p-6 border border-white/10 hover:border-white/20 transition-all duration-500 hover:scale-105 cursor-pointer" data-artist-id="${data.id}" onclick="appState.router.navigateToArtist('${data.artist}')">
   <div class="text-center">
     <div class="relative w-32 h-32 mx-auto mb-4 rounded-2xl overflow-hidden bg-gradient-to-br from-blue-500/20 to-purple-600/20">
       <img src="${data.cover}" alt="${data.artist}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
       <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
     </div>
-    <h3 class="text-lg font-bold mb-2 text-white truncate">${data.artist}</h3>
+    <h3 class="text-lg font-bold mb-2 text-white truncate cursor-pointer" onclick="appState.router.navigateToArtist('${data.artist}')">${data.artist}</h3>
     <div class="inline-flex px-3 py-1 bg-blue-500/20 rounded-full text-xs font-medium mb-3 text-blue-300 border border-blue-500/30">${data.genre}</div>
     <p class="text-sm text-gray-400">${data.albumCount} album${data.albumCount !== 1 ? 's' : ''}</p>
   </div>
@@ -282,7 +282,7 @@ export const render = {
     } = data;
     
     return `
-<div class="group flex items-center gap-4 p-4 rounded-2xl bg-gray-800/30 hover:bg-gray-700/50 border border-transparent hover:border-white/10 transition-all duration-300 cursor-pointer"
+<div class="group flex items-center gap-4 p-4 rounded-2xl bg-gray-800/30 hover:bg-gray-700/50 border border-transparent hover:border-white/10 transition-all duration-300 cursor-pointer song-item"
      data-song="${escapeForAttribute(JSON.stringify(songData))}"
      data-context="${context}">
   
@@ -290,19 +290,19 @@ export const render = {
     <span class="text-gray-400 group-hover:opacity-0 transition-opacity duration-200 text-sm font-medium">
       ${showTrackNumber ? trackNumber : '♪'}
     </span>
-    <button class="absolute opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-green-500 hover:bg-green-600 w-8 h-8 rounded-full flex items-center justify-center">
+    <button class="absolute opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-green-500 hover:bg-green-600 w-8 h-8 rounded-full flex items-center justify-center play-button" data-action="play">
       <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"/></svg>
     </button>
   </div>
 
   <div class="flex-1 min-w-0">
-    <div class="text-white font-medium truncate">${title}</div>
-    ${showArtist ? `<div class="text-gray-400 text-sm truncate">${artist}</div>` : ''}
+    <div class="text-white font-medium truncate song-title">${title}</div>
+    ${showArtist ? `<div class="text-gray-400 text-sm truncate cursor-pointer hover:text-white transition-colors duration-200 artist-name" data-artist="${artist}">${artist}</div>` : ''}
   </div>
 
-  <div class="text-gray-400 text-sm font-medium">${duration}</div>
+  <div class="text-gray-400 text-sm font-medium song-duration">${duration}</div>
 
-  <button class="p-2 rounded-full transition-all duration-200 ${
+  <button class="p-2 rounded-full transition-all duration-200 favorite-button ${
     isFavorite 
       ? 'text-red-500 hover:text-red-400' 
       : 'text-gray-400 hover:text-white opacity-0 group-hover:opacity-100'
@@ -312,9 +312,9 @@ export const render = {
     </svg>
   </button>
 
-  <button class="p-2 rounded-full text-gray-400 hover:text-white opacity-0 group-hover:opacity-100 transition-all duration-200" data-action="more">
+  <button class="p-2 rounded-full text-gray-400 hover:text-white opacity-0 group-hover:opacity-100 transition-all duration-200 more-button" data-action="more">
     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M12 8a2 2 0 1 0-2-2 2 2 0 0 0 2 2zm0 2a2 2 0 1 0 2 2 2 2 0 0 0-2-2zm0 6a2 2 0 1 0 2 2 2 2 0 0 0-2-2z"/>
+      <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
     </svg>
   </button>
 </div>`;
@@ -478,31 +478,32 @@ export const render = {
       let html = `<div class="space-y-3">`;
       tracks.forEach((track, index) => {
         html += `
-          <div class="group flex items-center gap-4 p-4 rounded-2xl bg-gray-800/30 hover:bg-gray-700/50 border border-transparent hover:border-white/10 transition-all duration-300 cursor-pointer" style="animation-delay: ${index * 100}ms;">
-            <div class="relative">
-              <img src="${utils.getAlbumImageUrl(track.album)}" alt="${track.title}" class="w-14 h-14 rounded-xl object-cover">
-              <div class="absolute inset-0 bg-black/40 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
-                <button class="bg-green-500 hover:bg-green-600 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 transform scale-90 group-hover:scale-100">
-                  <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"/></svg>
-                </button>
-              </div>
+          <div class="song-item group flex items-center gap-4 p-4 rounded-2xl bg-gray-800/30 hover:bg-gray-700/50 border border-transparent hover:border-white/10 transition-all duration-300 cursor-pointer" data-song='${JSON.stringify(track).replace(/"/g, "&quot;")}' style="animation-delay: ${index * 100}ms;">
+            <div class="flex items-center justify-center w-8">
+              <span class="text-gray-400 group-hover:opacity-0 transition-opacity duration-200 text-sm font-medium">${index + 1}</span>
+              <button class="absolute opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-green-500 hover:bg-green-600 w-8 h-8 rounded-full flex items-center justify-center play-button" data-action="play">
+                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"/></svg>
+              </button>
             </div>
-            
+
             <div class="flex-1 min-w-0">
-              <div class="text-white font-medium truncate">${track.title}</div>
-              <div class="text-gray-400 text-sm truncate" data-artist="${track.artist}">${track.artist}</div>
+              <div class="text-white font-medium truncate song-title">${track.title}</div>
+              <div class="text-gray-400 text-sm truncate cursor-pointer hover:text-white transition-colors duration-200 artist-name" data-artist="${track.artist}">${track.artist}</div>
             </div>
-            
-            <div class="text-gray-400 text-sm font-medium">3:24</div>
-            
-            <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-              <button class="p-2 rounded-full text-gray-400 hover:text-white transition-colors duration-200">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-              </button>
-              <button class="p-2 rounded-full text-gray-400 hover:text-white transition-colors duration-200">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
-              </button>
-            </div>
+
+            <div class="text-gray-400 text-sm font-medium song-duration">3:24</div>
+
+            <button class="p-2 rounded-full text-gray-400 hover:text-white opacity-0 group-hover:opacity-100 transition-all duration-200 favorite-button" data-action="favorite" data-song-id="${track.id}">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+              </svg>
+            </button>
+
+            <button class="p-2 rounded-full text-gray-400 hover:text-white opacity-0 group-hover:opacity-100 transition-all duration-200 more-button" data-action="more">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+              </svg>
+            </button>
           </div>
         `;
       });
@@ -514,7 +515,7 @@ export const render = {
       let html = `<div class="grid grid-cols-1 gap-4">`;
       playlists.forEach((playlist, index) => {
         html += `
-          <div class="group flex items-center gap-4 p-4 rounded-2xl bg-gray-800/30 hover:bg-gray-700/50 border border-transparent hover:border-white/10 transition-all duration-300 cursor-pointer" style="animation-delay: ${index * 100}ms;">
+          <div class="group flex items-center gap-4 p-4 rounded-2xl bg-gray-800/30 hover:bg-gray-700/50 border border-transparent hover:border-white/10 transition-all duration-300 cursor-pointer" data-playlist-id="${playlist.id}" style="animation-delay: ${index * 100}ms;">
             <div class="relative">
               <div class="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center">
                 <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v2H3v-2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/></svg>
@@ -545,7 +546,7 @@ export const render = {
       let html = `<div class="grid grid-cols-1 gap-4">`;
       artists.forEach((artistName, index) => {
         html += `
-          <div class="group flex items-center gap-4 p-4 rounded-2xl bg-gray-800/30 hover:bg-gray-700/50 border border-transparent hover:border-white/10 transition-all duration-300 cursor-pointer" style="animation-delay: ${index * 100}ms;">
+          <div class="group flex items-center gap-4 p-4 rounded-2xl bg-gray-800/30 hover:bg-gray-700/50 border border-transparent hover:border-white/10 transition-all duration-300 cursor-pointer" data-artist="${artistName}" style="animation-delay: ${index * 100}ms;" onclick="appState.router.navigateToArtist('${artistName}')">
             <div class="relative">
               <img src="${utils.getArtistImageUrl(artistName)}" alt="${artistName}" class="w-14 h-14 rounded-full object-cover">
               <div class="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
@@ -556,7 +557,7 @@ export const render = {
             </div>
             
             <div class="flex-1 min-w-0">
-              <div class="text-white font-medium truncate">${artistName}</div>
+              <div class="text-white font-medium truncate cursor-pointer" onclick="appState.router.navigateToArtist('${artistName}')">${artistName}</div>
               <div class="text-gray-400 text-sm">Artist</div>
             </div>
             
@@ -585,7 +586,7 @@ export const render = {
             </div>
             <div class="space-y-1">
               <div class="text-white font-medium truncate">${album.album}</div>
-              <div class="text-gray-400 text-sm truncate" data-artist="${album.artist}">${album.artist}</div>
+              <div class="text-gray-400 text-sm truncate cursor-pointer hover:text-white transition-colors duration-200" data-artist="${album.artist}" onclick="appState.router.navigateToArtist('${album.artist}')">${album.artist}</div>
             </div>
           </div>
         `;
@@ -598,31 +599,30 @@ export const render = {
       let html = `<div class="space-y-3">`;
       songs.forEach((song, index) => {
         html += `
-          <div class="group flex items-center gap-4 p-4 rounded-2xl bg-gray-800/30 hover:bg-gray-700/50 border border-transparent hover:border-white/10 transition-all duration-300 cursor-pointer" style="animation-delay: ${index * 100}ms;">
-            <div class="relative">
-              <img src="${utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="w-14 h-14 rounded-xl object-cover">
-              <div class="absolute inset-0 bg-black/40 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
-                <button class="bg-green-500 hover:bg-green-600 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 transform scale-90 group-hover:scale-100">
-                  <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"/></svg>
-                </button>
-              </div>
+          <div class="song-item group flex items-center gap-4 p-4 rounded-2xl bg-gray-800/30 hover:bg-gray-700/50 border border-transparent hover:border-white/10 transition-all duration-300 cursor-pointer" data-song='${JSON.stringify(song).replace(/"/g, "&quot;")}' style="animation-delay: ${index * 100}ms;">
+            <div class="flex items-center justify-center w-8">
+              <span class="text-gray-400 group-hover:opacity-0 transition-opacity duration-200 text-sm font-medium">${index + 1}</span>
+              <button class="absolute opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-green-500 hover:bg-green-600 w-8 h-8 rounded-full flex items-center justify-center play-button" data-action="play">
+                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"/></svg>
+              </button>
             </div>
-            
+
             <div class="flex-1 min-w-0">
-              <div class="text-white font-medium truncate">${song.title}</div>
-              <div class="text-gray-400 text-sm truncate" data-artist="${song.artist}">${song.artist}</div>
+              <div class="text-white font-medium truncate song-title">${song.title}</div>
+              <div class="text-gray-400 text-sm truncate cursor-pointer hover:text-white transition-colors duration-200 artist-name" data-artist="${song.artist}">${song.artist}</div>
             </div>
-            
-            <div class="text-gray-400 text-sm font-medium">3:24</div>
-            
-            <div class="flex gap-1">
-              <button class="p-2 rounded-full text-red-500 hover:text-red-400 transition-colors duration-200" data-song-id="${song.id}">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-              </button>
-              <button class="p-2 rounded-full text-gray-400 hover:text-white opacity-0 group-hover:opacity-100 transition-all duration-200">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
-              </button>
-            </div>
+
+            <div class="text-gray-400 text-sm font-medium song-duration">3:24</div>
+
+            <button class="p-2 rounded-full text-red-500 hover:text-red-400 transition-colors duration-200 favorite-button" data-action="favorite" data-song-id="${song.id}">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+            </button>
+
+            <button class="p-2 rounded-full text-gray-400 hover:text-white opacity-0 group-hover:opacity-100 transition-all duration-200 more-button" data-action="more">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+              </svg>
+            </button>
           </div>
         `;
       });
@@ -702,28 +702,35 @@ export const render = {
     const isQueue = type === 'queue';
 
     return `
-      <li class="flex items-center gap-4 p-4 rounded-2xl bg-gray-800/30 hover:bg-gray-700/50 border border-transparent hover:border-white/10 transition-all duration-300 cursor-pointer group" data-index="${index}" data-song='${JSON.stringify(song).replace(/"/g, "&quot;")}'>
-        <img src="${utils.getAlbumImageUrl(song.album)}" alt="${song.title}" class="w-12 h-12 rounded-xl object-cover">
-        
-        <div class="flex-1 min-w-0">
-          <div class="text-white font-medium truncate">${song.title}</div>
-          <div class="text-gray-400 text-sm truncate">${song.artist}</div>
-        </div>
-        
-        <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-          <button class="p-2 rounded-full bg-green-500 hover:bg-green-600 text-white transition-colors duration-200" data-action="play">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"/></svg>
+      <li class="song-item flex items-center gap-4 p-4 rounded-2xl bg-gray-800/30 hover:bg-gray-700/50 border border-transparent hover:border-white/10 transition-all duration-300 cursor-pointer group" data-index="${index}" data-song='${JSON.stringify(song).replace(/"/g, "&quot;")}'>
+        <div class="flex items-center justify-center w-8">
+          <span class="text-gray-400 group-hover:opacity-0 transition-opacity duration-200 text-sm font-medium">${index + 1}</span>
+          <button class="absolute opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-green-500 hover:bg-green-600 w-8 h-8 rounded-full flex items-center justify-center play-button" data-action="play">
+            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"/></svg>
           </button>
-          
-          ${isQueue 
-            ? `<button class="p-2 rounded-full bg-red-500 hover:bg-red-600 text-white transition-colors duration-200" data-action="remove">
-                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"/></svg>
-               </button>`
-            : `<button class="p-2 rounded-full bg-blue-500 hover:bg-blue-600 text-white transition-colors duration-200" data-action="queue">
-                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zm14 0a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/></svg>
-               </button>`
-          }
         </div>
+
+        <div class="flex-1 min-w-0">
+          <div class="text-white font-medium truncate song-title">${song.title}</div>
+          <div class="text-gray-400 text-sm truncate cursor-pointer hover:text-white transition-colors duration-200 artist-name" data-artist="${song.artist}">${song.artist}</div>
+        </div>
+
+        <div class="text-gray-400 text-sm font-medium song-duration">3:24</div>
+
+        <button class="p-2 rounded-full text-gray-400 hover:text-white opacity-0 group-hover:opacity-100 transition-all duration-200 favorite-button" data-action="favorite" data-song-id="${song.id}">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+          </svg>
+        </button>
+
+        ${isQueue 
+          ? `<button class="p-2 rounded-full text-red-400 hover:text-red-300 opacity-0 group-hover:opacity-100 transition-all duration-200" data-action="remove">
+               <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"/></svg>
+             </button>`
+          : `<button class="p-2 rounded-full text-gray-400 hover:text-white opacity-0 group-hover:opacity-100 transition-all duration-200" data-action="queue">
+               <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zm14 0a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/></svg>
+             </button>`
+        }
       </li>
     `;
   },
