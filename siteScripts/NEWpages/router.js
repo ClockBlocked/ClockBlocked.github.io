@@ -20,58 +20,26 @@ export const router = {
     };
   },
 
-  initialize: function() {
-    if (window.deepLinkHandled) return;
-    window.deepLinkHandled = true;
-
-    const pathInfo = this.parseCurrentPath();
-
-    if (pathInfo.fullPath !== '/' && pathInfo.route && pathInfo.route !== 'home') {
-      const checkInitialized = setInterval(() => {
-        if (window.appState?.router && window.music && window.navigation) {
-          clearInterval(checkInitialized);
-          setTimeout(() => {
-            this.resolveRoute(pathInfo);
-          }, 100);
-        }
-      }, 100);
-
-      setTimeout(() => {
-        clearInterval(checkInitialized);
-        if (!window.appState?.router) {
-          window.location.href = '/';
-        }
-      }, 5000);
-    }
-
-    this.bindPopState();
-  },
-
-  bindPopState: function() {
-    window.addEventListener('popstate', (event) => {
-      const pathInfo = this.parseCurrentPath();
-      this.resolveRoute(pathInfo);
-    });
-  },
-
   resolveRoute: function(pathInfo) {
     const { route, params } = pathInfo;
 
-    if (!window.appState?.router) return;
+    if (!window.appState?.router) {
+      return;
+    }
 
     const routeHandlers = {
-      '': () => { this.navigateToHome(); },
-      'home': () => { this.navigateToHome(); },
-      'artist': () => { this.navigateToArtist(params[0]); },
-      'artists': () => { this.navigateToAllArtists(); },
-      'album': () => { this.navigateToAlbum(params[0], params[1]); },
-      'playlist': () => { this.navigateToPlaylist(params[0]); },
-      'favorites': () => { this.navigateToFavorites(params[0]); },
-      'search': () => { this.navigateToSearch(params[0]); },
+      '': function() { this.navigateToHome(); },
+      'home': function() { this.navigateToHome(); },
+      'artist': function() { this.navigateToArtist(params[0]); },
+      'artists': function() { this.navigateToAllArtists(); },
+      'album': function() { this.navigateToAlbum(params[0], params[1]); },
+      'playlist': function() { this.navigateToPlaylist(params[0]); },
+      'favorites': function() { this.navigateToFavorites(params[0]); },
+      'search': function() { this.navigateToSearch(params[0]); },
     };
 
     const handler = routeHandlers[route] || routeHandlers[''];
-    handler.call(this);
+    return handler.call(this);
   },
 
   navigateToHome: function() {
@@ -112,8 +80,8 @@ export const router = {
 
     if (window.appState?.router && window.music) {
       const artistData = window.music.find(a => a.artist === decodedArtist);
-      if (artistData && window.pageManager?.loadArtistPage) {
-        window.pageManager.loadArtistPage(artistData, decodedAlbum);
+      if (artistData && window.navigation?.pages?.loadArtistPage) {
+        window.navigation.pages.loadArtistPage(artistData, decodedAlbum);
       } else {
         this.navigateToHome();
       }
@@ -133,11 +101,11 @@ export const router = {
 
   navigateToFavorites: function(type) {
     const favoriteType = type || 'songs';
-    if (window.pageManager) {
+    if (window.views) {
       const handlers = {
-        'songs': () => { window.pageManager.showFavoriteSongs(); },
-        'artists': () => { window.pageManager.showFavoriteArtists(); },
-        'albums': () => { window.pageManager.showFavoriteAlbums?.(); },
+        'songs': function() { window.views.showFavoriteSongs(); },
+        'artists': function() { window.views.showFavoriteArtists(); },
+        'albums': function() { window.views.showFavoriteAlbums?.(); },
       };
       const handler = handlers[favoriteType];
       if (handler) handler();
@@ -149,5 +117,37 @@ export const router = {
       const decodedQuery = query;
       window.appState.router.openSearchDialog?.(decodedQuery);
     }
-  }
+  },
+
+  initialize: function() {
+    if (window.deepLinkHandled) return;
+    window.deepLinkHandled = true;
+
+    const pathInfo = this.parseCurrentPath();
+
+    if (pathInfo.fullPath !== '/' && pathInfo.route && pathInfo.route !== 'home') {
+      const checkInitialized = setInterval(() => {
+        if (window.appState?.router && window.music && window.navigation) {
+          clearInterval(checkInitialized);
+          setTimeout(() => {
+            this.resolveRoute(pathInfo);
+          }, 100);
+        }
+      }, 100);
+
+      setTimeout(() => {
+        clearInterval(checkInitialized);
+        if (!window.appState?.router) {
+          window.location.href = '/';
+        }
+      }, 5000);
+    }
+  },
+
+  bindPopState: function() {
+    window.addEventListener('popstate', (event) => {
+      const pathInfo = this.parseCurrentPath();
+      this.resolveRoute(pathInfo);
+    });
+  },
 };
