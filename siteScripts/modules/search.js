@@ -1,13 +1,13 @@
-import { appState, utils } from '../global.js';
-import { ROUTES } from '../map.js';
+import { appState, utils } from './global.js';
+import { ROUTES } from './map.js';
 
 // import { navigation } from '../pages/rendering.js';
-import { navigation } from '../pages/paths.js';
+import { navigation } from './paths.js';
 
 
-import { musicPlayer } from '../musicPlayers.js';
+import { musicPlayer } from './musicPlayers.js';
 
-import { notifications } from '../toasts.js';
+import { notifications } from './toasts.js';
 
 class MusicSearch {
   constructor() {
