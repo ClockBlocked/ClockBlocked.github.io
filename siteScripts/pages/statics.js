@@ -1,8 +1,8 @@
 import {
-  appState, storage, utils, 
-  navigation, playlists, overlays
+  appState, storage, utils, playlists, overlays
 } from '../global.js';
 import { ui } from './updates.js';
+import { navigation } from './rendering.js';
 import { render } from '../utilities/templates.js';
 
 import { musicPlayer } from '../musicPlayers.js';
