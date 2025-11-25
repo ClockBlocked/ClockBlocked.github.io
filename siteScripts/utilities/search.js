@@ -1,5 +1,5 @@
-import { appState, musicPlayer, utils, notifications, navigation } from '../index.js';
-import { ROUTES } from '../index.js';
+import { appState, musicPlayer, utils, notifications, navigation } from '../global.js';
+import { ROUTES } from '../map.js';
 
 
 
