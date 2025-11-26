@@ -2091,8 +2091,8 @@ const playlists = {
         appState.playlists.push(playlist);
         storage.save(STORAGE_KEYS.PLAYLISTS, appState.playlists);
 
-        if (typeof homePage?.renderPlaylists === "function") {
-            homePage.renderPlaylists();
+        if (typeof pageManager?.renderPlaylists === "function") {
+            pageManager.renderPlaylists();
         }
 
         notifications.notify({ type: NOTIFICATION_TYPES.SUCCESS, message: `Created playlist "${playlist.name}"` });
