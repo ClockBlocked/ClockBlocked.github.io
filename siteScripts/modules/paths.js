@@ -3,6 +3,7 @@ import { render, create } from "./templates.js";
 import { syncs } from "./background.js";
 import { pageManager } from "./builder.js";
 import { router } from "./router.js";
+import { pageLoader } from './router.js';
 
 export const navigation = {
   initialize: function() {
