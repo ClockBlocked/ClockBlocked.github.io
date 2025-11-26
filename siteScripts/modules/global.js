@@ -2579,7 +2579,7 @@ window.clickables = clickables;
 // window.musicPlayer = musicPlayer;
 window.navigation = navigation;
 window.playlists = playlists;
-window.views = views;
+// window.views = views;
 
 window.MyTunesApp = {
     initialize: app.initialize,
