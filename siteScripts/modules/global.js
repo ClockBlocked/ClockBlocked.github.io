@@ -1723,10 +1723,10 @@ const clickables = {
                 if (typeof dropdown !== 'undefined' && dropdown.close) {
                     dropdown.close();
                 }
-                if (typeof views !== 'undefined' && views.showFavoriteSongs) {
-                    views.showFavoriteSongs();
+                if (typeof pageManager !== 'undefined' && pageManager.showFavoriteSongs) {
+                    pageManager.showFavoriteSongs();
                 } else {
-                    console.error('views.showFavoriteSongs not available');
+                    console.error('pageManager.showFavoriteSongs not available');
                 }
             };
             favoriteSongs.addEventListener('click', favoriteSongsHandler);
@@ -1740,10 +1740,10 @@ const clickables = {
                 if (typeof dropdown !== 'undefined' && dropdown.close) {
                     dropdown.close();
                 }
-                if (typeof views !== 'undefined' && views.showFavoriteArtists) {
-                    views.showFavoriteArtists();
+                if (typeof pageManager !== 'undefined' && pageManager.showFavoriteArtists) {
+                    pageManager.showFavoriteArtists();
                 } else {
-                    console.error('views.showFavoriteArtists not available');
+                    console.error('pageManager.showFavoriteArtists not available');
                 }
             };
             favoriteArtists.addEventListener('click', favoriteArtistsHandler);
@@ -2186,7 +2186,7 @@ const playlists = {
     showAll: () => {
         if (appState.playlists.length === 0) {
             overlays.viewer.playlists(
-                views.renderEmptyState(
+                pageManager.renderEmptyState(
                     "No Playlists", 
                     "You haven't created any playlists yet.", 
                     "Create your first playlist to organize your music."
