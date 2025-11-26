@@ -1,6 +1,6 @@
-import { escapeForAttribute } from "../../pages/rendering.js";
+import { escapeForAttribute } from "../parsers.js";
 
-import { artistPopOvers } from "./artist/popovers.js";
+import { artistPopOvers } from "./artist/popOvers.js";
 import { artistCard } from "./artist/card.js";
 import { artistHeader } from "./artist/header.js";
 import { enhancedArtist } from "./artist/enhancedArtist.js";
