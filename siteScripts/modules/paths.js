@@ -48,7 +48,7 @@ export const navigation = {
             break;
           }
         }
-        if (!matchedRoute) pageManager.loadHomePage();
+        if (!matchedRoute) pageManager.renderHomePage(); // FIXED: Changed to renderHomePage
       },
 
       navigateTo: function (routeName, params = {}) {
@@ -81,11 +81,11 @@ export const navigation = {
       closeSearchDialog: function () {},
     };
 
-    // Fix the route handlers - bind them properly
+    // Fix the route handlers to use the correct method names from pageManager
     router.routes = {
       [ROUTES.HOME]: {
         pattern: /^\/$/,
-        handler: (params) => pageManager.loadHomePage()
+        handler: (params) => pageManager.renderHomePage() // FIXED: Changed to renderHomePage
       },
       [ROUTES.ARTIST]: {
         pattern: /^\/artist\/(.+)$/,
@@ -96,7 +96,7 @@ export const navigation = {
             return a.artist === decodedArtistName;
           });
           if (artistData) {
-            pageManager.loadArtistPage(artistData);
+            pageManager.loadArtistPage(artistData); // This one is correct
           } else {
             router.navigateTo(ROUTES.HOME);
           }
@@ -104,7 +104,7 @@ export const navigation = {
       },
       [ROUTES.ALL_ARTISTS]: {
         pattern: /^\/artists$/,
-        handler: (params) => pageManager.loadAllArtistsPage()
+        handler: (params) => pageManager.loadAllArtistsPage() // This one is correct
       },
     };
 
