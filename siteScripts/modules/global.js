@@ -30,7 +30,7 @@ import {
   $byId
 } from './map.js';
 
-import { music } from '../modules/library.js';
+import { music } from '../../modules/library.js';
 import { musicPlayer } from './musicPlayers.js';
 import { navigation } from './paths.js';
 import { pageManager } from './builder.js';
