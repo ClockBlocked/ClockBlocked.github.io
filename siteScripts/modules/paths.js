@@ -5,6 +5,7 @@ import { pageManager } from "./builder.js";
 import { router } from "./router.js";
 import { pageLoader } from './router.js';
 
+
 export const navigation = {
   initialize: function() {
     pageLoader.init();
@@ -41,7 +42,7 @@ export const navigation = {
           const match = path.match(route.pattern);
           if (match) {
             const params = {};
-            if (key === ROUTES.ARTIST) params.artist = router.decodeName(match[1]);
+            if (key === ROUTES.ARTIST) params.artist = this.decodeName(match[1]);
             route.handler(params);
             matchedRoute = true;
             break;
@@ -57,7 +58,7 @@ export const navigation = {
             url = "/";
             break;
           case ROUTES.ARTIST:
-            url = "/artist/" + router.encodeName(params.artist);
+            url = "/artist/" + this.encodeName(params.artist);
             break;
           case ROUTES.ALL_ARTISTS:
             url = "/artists";
@@ -80,14 +81,15 @@ export const navigation = {
       closeSearchDialog: function () {},
     };
 
+    // Fix the route handlers - bind them properly
     router.routes = {
       [ROUTES.HOME]: {
         pattern: /^\/$/,
-        handler: pageManager.loadHomePage,
+        handler: (params) => pageManager.loadHomePage()
       },
       [ROUTES.ARTIST]: {
         pattern: /^\/artist\/(.+)$/,
-        handler: function (params) {
+        handler: (params) => {
           const artistName = params.artist || utils.getParameterByName("artist", window.location.href);
           const decodedArtistName = artistName ? router.decodeName(artistName) : "";
           const artistData = window.music?.find(function (a) {
@@ -96,13 +98,13 @@ export const navigation = {
           if (artistData) {
             pageManager.loadArtistPage(artistData);
           } else {
-            appState.router.navigateTo(ROUTES.HOME);
+            router.navigateTo(ROUTES.HOME);
           }
-        },
+        }
       },
       [ROUTES.ALL_ARTISTS]: {
         pattern: /^\/artists$/,
-        handler: pageManager.loadAllArtistsPage,
+        handler: (params) => pageManager.loadAllArtistsPage()
       },
     };
 
