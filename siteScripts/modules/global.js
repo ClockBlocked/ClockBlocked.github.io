@@ -2025,7 +2025,7 @@ const app = {
         musicPlayer.ui.initialize();
 
         navigation.initialize();
-        homePage.initialize();
+        pageManager.initialize();
 
         app.resetUI();
         app.syncGlobalState();
