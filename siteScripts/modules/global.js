@@ -289,7 +289,7 @@ const appState = {
         }
       });
       if (type === "songs" && appState.currentSong && appState.currentSong.id === id) {
-        ui.updateFavoriteButton();
+        syncs.updateFavoriteButton();
       }
     }
   },
@@ -304,7 +304,7 @@ const appState = {
         appState.queue.items.push(song);
       }
       storage.save(STORAGE_KEYS.QUEUE, appState.queue.items);
-      ui.updateCounts();
+      syncs.updateCounts();
       PubSub.publish('queue:changed', { action: 'add', song, position });
       notifications.notify({ message: `Added "${song.title}" to queue` });
     },
@@ -313,7 +313,7 @@ const appState = {
       if (index >= 0 && index < appState.queue.items.length) {
         const removed = appState.queue.items.splice(index, 1)[0];
         storage.save(STORAGE_KEYS.QUEUE, appState.queue.items);
-        ui.updateCounts();
+        syncs.updateCounts();
         PubSub.publish('queue:changed', { action: 'remove', index, song: removed });
         return removed;
       }
@@ -323,7 +323,7 @@ const appState = {
     clear: function() {
       appState.queue.items = [];
       storage.save(STORAGE_KEYS.QUEUE, appState.queue.items);
-      ui.updateCounts();
+      syncs.updateCounts();
       PubSub.publish('queue:changed', { action: 'clear' });
     },
 
@@ -549,7 +549,7 @@ const dropdown = {
 
     if (!menu || !trigger) return;
 
-    ui.updateCounts();
+    syncs.updateCounts();
     menu.classList.add(CLASSES.show);
     trigger.classList.add(CLASSES.active);
     musicPlayer.mainPlayer.close();
@@ -1569,8 +1569,8 @@ const clickables = {
                 e.stopPropagation();
                 if (typeof appState !== 'undefined' && appState.currentSong && appState.favorites) {
                     appState.favorites.toggle('songs', appState.currentSong.id);
-                    if (typeof ui !== 'undefined' && ui.updateFavoriteButton) {
-                        ui.updateFavoriteButton();
+                    if (typeof ui !== 'undefined' && syncs.updateFavoriteButton) {
+                        syncs.updateFavoriteButton();
                     }
                 } else {
                     console.error('appState.favorites not available');
@@ -2039,7 +2039,7 @@ const app = {
         if (nowPlayingArea) {
             nowPlayingArea.classList.remove(CLASSES.hasSong);
         }
-        ui.updateCounts();
+        syncs.updateCounts();
     },
 
     syncGlobalState: function() {
