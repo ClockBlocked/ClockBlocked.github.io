@@ -1,4 +1,4 @@
-import { appState, storage, utils, playlists, overlays, ACTION_GRID_ITEMS } from '../global.js';
+import { appState, storage, utils, playlists, overlays, ACTION_GRID_ITEMS } from './global.js';
 import { render, create } from './templates.js';
 import { syncs } from './background.js';
 import { musicPlayer } from './musicPlayers.js';
