@@ -40,6 +40,7 @@ import { notifications } from './toasts.js';
 import { render, create } from './templates.js';
 import { encodeURIComponent } from './parsers.js';
 import { router } from './router.js';
+import { pageLoader } from './router.js';
 
 const ACTION_GRID_ITEMS = [
   { id: 'play-next', icon: 'M9 5l7 7-7 7M15 5v14', label: 'Play Next' },
