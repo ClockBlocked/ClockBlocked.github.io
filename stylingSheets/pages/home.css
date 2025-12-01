@@ -2,7 +2,7 @@
   text-align: center;
   padding: 2rem 1rem 3rem;
 }
-@media (min-width: 768px) {
+@media (min-width: 48rem) {
   .home-page-header { padding: 3rem 1rem 4rem; }
 }
 .h-title {
@@ -30,13 +30,13 @@
   width: 100%;
   max-width: 100%;
 }
-@media (min-width: 768px) {
+@media (min-width: 48rem) {
   .bento-grid { 
     grid-template-columns: repeat(2, minmax(0, 1fr)); 
     padding: 0 1.5rem 2.5rem; 
   }
 }
-@media (min-width: 1024px) {
+@media (min-width: 64rem) {
   .bento-grid { 
     grid-template-columns: repeat(3, minmax(0, 1fr)); 
     padding: 0 1.5rem 2.5rem;
@@ -45,7 +45,7 @@
 .bento-span-2 {
   grid-column: span 1;
 }
-@media (min-width: 768px) {
+@media (min-width: 48rem) {
   .bento-span-2 { grid-column: span 2; }
 }
 
@@ -54,21 +54,21 @@
   background: var(--background-400);
   border-radius: 1rem;
   padding: 1.5rem;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,0.12);
+  backdrop-filter: blur(0.625rem);
+  border: 0.0625rem solid rgba(255,255,255,0.12);
   box-shadow:
-    0 4px 6px -1px rgba(0,0,0,0.18),
-    0 2px 4px -1px rgba(0,0,0,0.12);
+    0 0.25rem 0.375rem -0.0625rem rgba(0,0,0,0.18),
+    0 0.125rem 0.25rem -0.0625rem rgba(0,0,0,0.12);
   transition: transform .22s ease, box-shadow .22s ease;
   width: 100%;
   max-width: 100%;
-  min-height: 250px;
+  min-height: 15.625rem;
 }
 .bento-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-0.25rem);
   box-shadow:
-    0 12px 18px -6px rgba(0,0,0,0.22),
-    0 6px 10px -4px rgba(0,0,0,0.12);
+    0 0.75rem 1.125rem -0.375rem rgba(0,0,0,0.22),
+    0 0.375rem 0.625rem -0.25rem rgba(0,0,0,0.12);
 }
 
 /* Card header */
@@ -78,7 +78,7 @@
   justify-content: space-between;
   margin: 0 0 1rem;
   padding: 0 0 .5rem;
-  border-bottom: 1px solid rgba(255,255,255,0.12);
+  border-bottom: 0.0625rem solid rgba(255,255,255,0.12);
 }
 .card-title {
   font-size: 1.125rem;
@@ -94,11 +94,11 @@
 
 
 /**
-.card-content { min-height: 200px; }
+.card-content { min-height: 12.5rem; }
 
 
 .skeleton-loader {
-  height: 200px;
+  height: 12.5rem;
   border-radius: .5rem;
   background: linear-gradient(90deg, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0.06) 75%);
   background-size: 200% 100%;
@@ -121,7 +121,7 @@
 
 .album-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
   gap: 1rem;
 }
 .album-grid > .album-card {
@@ -130,7 +130,7 @@
   position: relative;
   transition: transform .18s ease;
   
-  border-radius: 15px !important;
+  border-radius: 0.9375rem !important;
 }
 .album-cover-wrap { position: relative; }
 .album-cover {
@@ -152,7 +152,7 @@
 .album-play-btn {
   width: 3rem; height: 3rem;
   display: flex; align-items: center; justify-content: center;
-  border: none; border-radius: 999px;
+  border: none; border-radius: 62.4375rem;
   color: #fff; background: rgba(59,130,246,.95);
   transition: transform .18s ease, background .18s ease;
 }
@@ -174,14 +174,14 @@
 /**
 .artist-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px,1fr));
+  grid-template-columns: repeat(auto-fit, minmax(6.25rem,1fr));
   gap: 1rem;
 }
 .artist-card { text-align: center; cursor: pointer; transition: transform .18s ease; }
-.artist-card:hover { transform: translateY(-2px); }
+.artist-card:hover { transform: translateY(-0.125rem); }
 .artist-image { position: relative; display: inline-block; }
 .artist-avatar {
-  width: 72px; height: 72px; border-radius: 999px; object-fit: cover;
+  width: 4.5rem; height: 4.5rem; border-radius: 62.4375rem; object-fit: cover;
 }
 .artist-name {
   margin-top: .5rem; font-size: .9rem; font-weight: 600;
