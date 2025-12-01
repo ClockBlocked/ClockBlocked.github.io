@@ -28,10 +28,10 @@
   --gh-accent-info: #6cb6ff;
   
   /* Effects */
-  --gh-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
-  --gh-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.3);
-  --gh-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.4);
-  --gh-shadow-xl: 0 12px 48px rgba(0, 0, 0, 0.5);
+  --gh-shadow-sm: 0 0.0625rem 0.1875rem rgba(0, 0, 0, 0.12);
+  --gh-shadow-md: 0 0.25rem 1rem rgba(0, 0, 0, 0.3);
+  --gh-shadow-lg: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.4);
+  --gh-shadow-xl: 0 0.75rem 3rem rgba(0, 0, 0, 0.5);
   
   /* Animations */
   --gh-duration-fast: 150ms;
@@ -41,11 +41,11 @@
   --gh-easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
   
   /* Layout */
-  --gh-radius-sm: 4px;
-  --gh-radius-md: 6px;
-  --gh-radius-lg: 8px;
-  --gh-radius-xl: 12px;
-  --gh-radius-full: 9999px;
+  --gh-radius-sm: 0.25rem;
+  --gh-radius-md: 0.375rem;
+  --gh-radius-lg: 0.5rem;
+  --gh-radius-xl: 0.75rem;
+  --gh-radius-full: 624.9375rem;
   
   /* Z-Index Scale */
   --gh-z-dropdown: 1000;
@@ -76,7 +76,7 @@
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(0.25rem);
   z-index: var(--gh-z-backdrop);
   opacity: 0;
   transition: opacity var(--gh-duration-normal) var(--gh-easing-default);
@@ -88,28 +88,28 @@
 
 .gh-glass {
   background: rgba(34, 39, 46, 0.8);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(0.75rem);
+  -webkit-backdrop-filter: blur(0.75rem);
 }
 
 .gh-glow {
-  box-shadow: 0 0 20px rgba(83, 155, 245, 0.3);
+  box-shadow: 0 0 1.25rem rgba(83, 155, 245, 0.3);
 }
 
 /* ===== Base Floating Element ===== */
 .gh-floating {
   position: absolute;
   background: var(--gh-bg-primary);
-  border: 1px solid var(--gh-border-default);
+  border: 0.0625rem solid var(--gh-border-default);
   border-radius: var(--gh-radius-md);
   box-shadow: var(--gh-shadow-md);
   color: var(--gh-text-secondary);
-  font-size: 13px;
+  font-size: 0.8125rem;
   line-height: 1.5;
   z-index: var(--gh-z-popover);
   opacity: 0;
   visibility: hidden;
-  transform: scale(0.95) translateY(-4px);
+  transform: scale(0.95) translateY(-0.25rem);
   transition: all var(--gh-duration-fast) var(--gh-easing-default);
   pointer-events: none;
 }
@@ -123,15 +123,15 @@
 
 /* ===== Tooltip Styles ===== */
 .gh-tooltip {
-  padding: 6px 10px;
-  max-width: 250px;
-  font-size: 12px;
+  padding: 0.375rem 0.625rem;
+  max-width: 15.625rem;
+  font-size: 0.75rem;
   z-index: var(--gh-z-tooltip);
 }
 
 .gh-tooltip.gh-tooltip-rich {
-  padding: 10px 12px;
-  max-width: 320px;
+  padding: 0.625rem 0.75rem;
+  max-width: 20rem;
 }
 
 /* Tooltip Arrow */
@@ -141,71 +141,71 @@
   position: absolute;
   width: 0;
   height: 0;
-  border: 6px solid transparent;
+  border: 0.375rem solid transparent;
 }
 
 .gh-tooltip[data-placement="top"]::before {
-  bottom: -12px;
-  left: calc(50% - 6px);
+  bottom: -0.75rem;
+  left: calc(50% - 0.375rem);
   border-top-color: var(--gh-border-default);
 }
 
 .gh-tooltip[data-placement="top"]::after {
-  bottom: -11px;
-  left: calc(50% - 6px);
+  bottom: -0.6875rem;
+  left: calc(50% - 0.375rem);
   border-top-color: var(--gh-bg-primary);
 }
 
 .gh-tooltip[data-placement="bottom"]::before {
-  top: -12px;
-  left: calc(50% - 6px);
+  top: -0.75rem;
+  left: calc(50% - 0.375rem);
   border-bottom-color: var(--gh-border-default);
 }
 
 .gh-tooltip[data-placement="bottom"]::after {
-  top: -11px;
-  left: calc(50% - 6px);
+  top: -0.6875rem;
+  left: calc(50% - 0.375rem);
   border-bottom-color: var(--gh-bg-primary);
 }
 
 .gh-tooltip[data-placement="left"]::before {
-  right: -12px;
-  top: calc(50% - 6px);
+  right: -0.75rem;
+  top: calc(50% - 0.375rem);
   border-left-color: var(--gh-border-default);
 }
 
 .gh-tooltip[data-placement="left"]::after {
-  right: -11px;
-  top: calc(50% - 6px);
+  right: -0.6875rem;
+  top: calc(50% - 0.375rem);
   border-left-color: var(--gh-bg-primary);
 }
 
 .gh-tooltip[data-placement="right"]::before {
-  left: -12px;
-  top: calc(50% - 6px);
+  left: -0.75rem;
+  top: calc(50% - 0.375rem);
   border-right-color: var(--gh-border-default);
 }
 
 .gh-tooltip[data-placement="right"]::after {
-  left: -11px;
-  top: calc(50% - 6px);
+  left: -0.6875rem;
+  top: calc(50% - 0.375rem);
   border-right-color: var(--gh-bg-primary);
 }
 
 /* ===== Popover Styles ===== */
 .gh-popover {
-  padding: 12px;
-  min-width: 200px;
-  max-width: 360px;
+  padding: 0.75rem;
+  min-width: 12.5rem;
+  max-width: 22.5rem;
   z-index: var(--gh-z-popover);
 }
 
 .gh-popover-header {
   font-weight: 600;
   color: var(--gh-text-primary);
-  margin-bottom: 8px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--gh-border-muted);
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 0.0625rem solid var(--gh-border-muted);
 }
 
 .gh-popover-content {
@@ -213,30 +213,30 @@
 }
 
 .gh-popover-footer {
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid var(--gh-border-muted);
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 0.0625rem solid var(--gh-border-muted);
   display: flex;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 /* ===== Dropdown Menu Styles ===== */
 .gh-dropdown {
-  min-width: 180px;
-  max-width: 280px;
-  padding: 4px;
-  max-height: 320px;
+  min-width: 11.25rem;
+  max-width: 17.5rem;
+  padding: 0.25rem;
+  max-height: 20rem;
   overflow-y: auto;
   z-index: var(--gh-z-dropdown);
 }
 
 .gh-dropdown-item {
-  padding: 8px 12px;
+  padding: 0.5rem 0.75rem;
   border-radius: var(--gh-radius-sm);
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
   color: var(--gh-text-secondary);
   transition: all var(--gh-duration-fast) var(--gh-easing-default);
   position: relative;
@@ -263,24 +263,24 @@
 }
 
 .gh-dropdown-divider {
-  height: 1px;
+  height: 0.0625rem;
   background: var(--gh-border-muted);
-  margin: 4px 0;
+  margin: 0.25rem 0;
 }
 
 .gh-dropdown-header {
-  padding: 6px 12px;
-  font-size: 11px;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.6875rem;
   font-weight: 600;
   color: var(--gh-text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.0312rem;
 }
 
 /* Icon support */
 .gh-dropdown-item-icon {
-  width: 16px;
-  height: 16px;
+  width: 1rem;
+  height: 1rem;
   flex-shrink: 0;
 }
 
@@ -289,7 +289,7 @@
 }
 
 .gh-dropdown-item-shortcut {
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: var(--gh-text-muted);
   margin-left: auto;
 }
@@ -301,7 +301,7 @@
   left: 50%;
   transform: translate(-50%, -50%) scale(0.9);
   background: var(--gh-bg-primary);
-  border: 1px solid var(--gh-border-default);
+  border: 0.0625rem solid var(--gh-border-default);
   border-radius: var(--gh-radius-lg);
   box-shadow: var(--gh-shadow-xl);
   z-index: var(--gh-z-modal);
@@ -319,15 +319,15 @@
   transform: translate(-50%, -50%) scale(1);
 }
 
-.gh-modal-sm { width: 90%; max-width: 400px; }
-.gh-modal-md { width: 90%; max-width: 560px; }
-.gh-modal-lg { width: 90%; max-width: 720px; }
-.gh-modal-xl { width: 90%; max-width: 960px; }
-.gh-modal-full { width: calc(100% - 32px); height: calc(100% - 32px); max-width: none; }
+.gh-modal-sm { width: 90%; max-width: 25rem; }
+.gh-modal-md { width: 90%; max-width: 35rem; }
+.gh-modal-lg { width: 90%; max-width: 45rem; }
+.gh-modal-xl { width: 90%; max-width: 60rem; }
+.gh-modal-full { width: calc(100% - 2rem); height: calc(100% - 2rem); max-width: none; }
 
 .gh-modal-header {
-  padding: 20px 24px;
-  border-bottom: 1px solid var(--gh-border-muted);
+  padding: 1.25rem 1.5rem;
+  border-bottom: 0.0625rem solid var(--gh-border-muted);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -335,14 +335,14 @@
 }
 
 .gh-modal-title {
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--gh-text-primary);
 }
 
 .gh-modal-close {
-  width: 32px;
-  height: 32px;
+  width: 2rem;
+  height: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -360,35 +360,35 @@
 }
 
 .gh-modal-body {
-  padding: 24px;
+  padding: 1.5rem;
   overflow-y: auto;
   flex: 1;
   color: var(--gh-text-secondary);
 }
 
 .gh-modal-footer {
-  padding: 16px 24px;
-  border-top: 1px solid var(--gh-border-muted);
+  padding: 1rem 1.5rem;
+  border-top: 0.0625rem solid var(--gh-border-muted);
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
+  gap: 0.75rem;
   flex-shrink: 0;
 }
 
 /* ===== Dialog Styles ===== */
 .gh-dialog {
   width: 90%;
-  max-width: 400px;
+  max-width: 25rem;
 }
 
 .gh-dialog-icon {
-  width: 48px;
-  height: 48px;
+  width: 3rem;
+  height: 3rem;
   border-radius: var(--gh-radius-full);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 16px;
+  margin: 0 auto 1rem;
 }
 
 .gh-dialog-icon.gh-dialog-success {
@@ -413,14 +413,14 @@
 
 .gh-dialog-content {
   text-align: center;
-  padding: 0 12px;
+  padding: 0 0.75rem;
 }
 
 .gh-dialog-title {
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: 600;
   color: var(--gh-text-primary);
-  margin-bottom: 8px;
+  margin-bottom: 0.5rem;
 }
 
 .gh-dialog-message {
@@ -431,26 +431,26 @@
 /* ===== Toast Notification Styles ===== */
 .gh-toast-container {
   position: fixed;
-  top: 20px;
-  right: 20px;
+  top: 1.25rem;
+  right: 1.25rem;
   z-index: var(--gh-z-toast);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0.75rem;
   pointer-events: none;
 }
 
 .gh-toast {
   background: var(--gh-bg-primary);
-  border: 1px solid var(--gh-border-default);
+  border: 0.0625rem solid var(--gh-border-default);
   border-radius: var(--gh-radius-md);
   box-shadow: var(--gh-shadow-lg);
-  padding: 12px 16px;
-  min-width: 300px;
-  max-width: 420px;
+  padding: 0.75rem 1rem;
+  min-width: 18.75rem;
+  max-width: 26.25rem;
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: 0.75rem;
   position: relative;
   pointer-events: auto;
   animation: slideInRight var(--gh-duration-normal) var(--gh-easing-bounce);
@@ -462,10 +462,10 @@
 }
 
 .gh-toast-icon {
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
   flex-shrink: 0;
-  margin-top: 2px;
+  margin-top: 0.125rem;
 }
 
 .gh-toast-content {
@@ -475,28 +475,28 @@
 .gh-toast-title {
   font-weight: 600;
   color: var(--gh-text-primary);
-  margin-bottom: 4px;
+  margin-bottom: 0.25rem;
 }
 
 .gh-toast-message {
   color: var(--gh-text-secondary);
-  font-size: 13px;
+  font-size: 0.8125rem;
   line-height: 1.5;
 }
 
 .gh-toast-actions {
   display: flex;
-  gap: 8px;
-  margin-top: 8px;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
 }
 
 .gh-toast-action {
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--gh-accent-primary);
   background: none;
   border: none;
-  padding: 4px 8px;
+  padding: 0.25rem 0.5rem;
   border-radius: var(--gh-radius-sm);
   cursor: pointer;
   transition: all var(--gh-duration-fast) var(--gh-easing-default);
@@ -508,10 +508,10 @@
 
 .gh-toast-close {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 24px;
-  height: 24px;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 1.5rem;
+  height: 1.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -533,7 +533,7 @@
   position: absolute;
   bottom: 0;
   left: 0;
-  height: 3px;
+  height: 0.1875rem;
   background: var(--gh-accent-primary);
   border-radius: 0 0 var(--gh-radius-md) var(--gh-radius-md);
   transition: width linear;
@@ -560,11 +560,11 @@
   left: 0;
   right: 0;
   background: var(--gh-bg-secondary);
-  border-bottom: 1px solid var(--gh-border-default);
-  padding: 12px 20px;
+  border-bottom: 0.0625rem solid var(--gh-border-default);
+  padding: 0.75rem 1.25rem;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 1rem;
   z-index: var(--gh-z-sticky);
   transform: translateY(-100%);
   transition: transform var(--gh-duration-normal) var(--gh-easing-default);
@@ -575,8 +575,8 @@
 }
 
 .gh-banner-icon {
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
   flex-shrink: 0;
 }
 
@@ -584,7 +584,7 @@
   flex: 1;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .gh-banner-title {
@@ -594,18 +594,18 @@
 
 .gh-banner-message {
   color: var(--gh-text-secondary);
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 
 .gh-banner-actions {
   display: flex;
-  gap: 8px;
+  gap: 0.5rem;
   margin-left: auto;
 }
 
 .gh-banner-dismiss {
-  width: 28px;
-  height: 28px;
+  width: 1.75rem;
+  height: 1.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -631,34 +631,34 @@
 /* ===== Search Modal Styles ===== */
 .gh-search-modal {
   width: 90%;
-  max-width: 640px;
-  max-height: 480px;
+  max-width: 40rem;
+  max-height: 30rem;
 }
 
 .gh-search-input-wrapper {
   position: relative;
-  margin-bottom: 20px;
+  margin-bottom: 1.25rem;
 }
 
 .gh-search-icon {
   position: absolute;
-  left: 16px;
+  left: 1rem;
   top: 50%;
   transform: translateY(-50%);
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
   color: var(--gh-text-muted);
   pointer-events: none;
 }
 
 .gh-search-input {
   width: 100%;
-  padding: 12px 48px 12px 48px;
+  padding: 0.75rem 3rem 0.75rem 3rem;
   background: var(--gh-bg-secondary);
-  border: 2px solid var(--gh-border-default);
+  border: 0.125rem solid var(--gh-border-default);
   border-radius: var(--gh-radius-md);
   color: var(--gh-text-primary);
-  font-size: 16px;
+  font-size: 1rem;
   outline: none;
   transition: all var(--gh-duration-fast) var(--gh-easing-default);
 }
@@ -674,11 +674,11 @@
 
 .gh-search-clear {
   position: absolute;
-  right: 12px;
+  right: 0.75rem;
   top: 50%;
   transform: translateY(-50%);
-  width: 28px;
-  height: 28px;
+  width: 1.75rem;
+  height: 1.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -703,20 +703,20 @@
 }
 
 .gh-search-results {
-  max-height: 320px;
+  max-height: 20rem;
   overflow-y: auto;
-  margin: -8px;
-  padding: 8px;
+  margin: -0.5rem;
+  padding: 0.5rem;
 }
 
 .gh-search-result {
-  padding: 12px 16px;
+  padding: 0.75rem 1rem;
   border-radius: var(--gh-radius-md);
   cursor: pointer;
   transition: all var(--gh-duration-fast) var(--gh-easing-default);
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .gh-search-result:hover {
@@ -729,8 +729,8 @@
 }
 
 .gh-search-result-icon {
-  width: 32px;
-  height: 32px;
+  width: 2rem;
+  height: 2rem;
   border-radius: var(--gh-radius-md);
   background: var(--gh-bg-tertiary);
   display: flex;
@@ -747,11 +747,11 @@
 .gh-search-result-title {
   font-weight: 600;
   color: var(--gh-text-primary);
-  margin-bottom: 2px;
+  margin-bottom: 0.125rem;
 }
 
 .gh-search-result-description {
-  font-size: 12px;
+  font-size: 0.75rem;
   color: var(--gh-text-muted);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -765,39 +765,39 @@
 
 .gh-search-shortcuts {
   display: flex;
-  gap: 8px;
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--gh-border-muted);
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 0.0625rem solid var(--gh-border-muted);
 }
 
 .gh-search-shortcut {
   display: flex;
   align-items: center;
-  gap: 4px;
-  font-size: 11px;
+  gap: 0.25rem;
+  font-size: 0.6875rem;
   color: var(--gh-text-muted);
 }
 
 .gh-kbd {
-  padding: 2px 6px;
+  padding: 0.125rem 0.375rem;
   background: var(--gh-bg-tertiary);
-  border: 1px solid var(--gh-border-default);
+  border: 0.0625rem solid var(--gh-border-default);
   border-radius: var(--gh-radius-sm);
   font-family: monospace;
-  font-size: 10px;
+  font-size: 0.625rem;
   color: var(--gh-text-secondary);
 }
 
 /* ===== Form Modal Styles ===== */
 .gh-form-group {
-  margin-bottom: 20px;
+  margin-bottom: 1.25rem;
 }
 
 .gh-form-label {
   display: block;
-  margin-bottom: 6px;
-  font-size: 13px;
+  margin-bottom: 0.375rem;
+  font-size: 0.8125rem;
   font-weight: 600;
   color: var(--gh-text-primary);
 }
@@ -806,12 +806,12 @@
 .gh-form-select,
 .gh-form-textarea {
   width: 100%;
-  padding: 8px 12px;
+  padding: 0.5rem 0.75rem;
   background: var(--gh-bg-secondary);
-  border: 1px solid var(--gh-border-default);
+  border: 0.0625rem solid var(--gh-border-default);
   border-radius: var(--gh-radius-md);
   color: var(--gh-text-primary);
-  font-size: 14px;
+  font-size: 0.875rem;
   outline: none;
   transition: all var(--gh-duration-fast) var(--gh-easing-default);
 }
@@ -821,7 +821,7 @@
 .gh-form-textarea:focus {
   border-color: var(--gh-accent-primary);
   background: var(--gh-bg-primary);
-  box-shadow: 0 0 0 3px rgba(83, 155, 245, 0.1);
+  box-shadow: 0 0 0 0.1875rem rgba(83, 155, 245, 0.1);
 }
 
 .gh-form-input::placeholder,
@@ -830,19 +830,19 @@
 }
 
 .gh-form-textarea {
-  min-height: 100px;
+  min-height: 6.25rem;
   resize: vertical;
 }
 
 .gh-form-helper {
-  margin-top: 4px;
-  font-size: 12px;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
   color: var(--gh-text-muted);
 }
 
 .gh-form-error {
-  margin-top: 4px;
-  font-size: 12px;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
   color: var(--gh-accent-danger);
 }
 
@@ -850,33 +850,33 @@
 .gh-form-radio {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
   cursor: pointer;
 }
 
 .gh-form-checkbox input[type="checkbox"],
 .gh-form-radio input[type="radio"] {
-  width: 16px;
-  height: 16px;
+  width: 1rem;
+  height: 1rem;
   accent-color: var(--gh-accent-primary);
   cursor: pointer;
 }
 
 /* ===== Button Styles ===== */
 .gh-btn {
-  padding: 8px 8px;
+  padding: 0.5rem 0.5rem;
   background: /*var(--gh-bg-secondary);*/ rgba(100, 117, 135, 1);
-  border: 1px solid var(--gh-border-default);
+  border: 0.0625rem solid var(--gh-border-default);
   border-radius: var(--gh-radius-md);
   color: var(--gh-text-primary);
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
   transition: all var(--gh-duration-fast) var(--gh-easing-default);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 0.5rem;
   position: relative;
   overflow: hidden;
 }
@@ -950,7 +950,7 @@
 @keyframes slideInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(1.25rem);
   }
   to {
     opacity: 1;
@@ -961,7 +961,7 @@
 @keyframes slideInDown {
   from {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(-1.25rem);
   }
   to {
     opacity: 1;
@@ -1002,23 +1002,23 @@
 
 @keyframes bounce {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+  50% { transform: translateY(-0.625rem); }
 }
 
 @keyframes shimmer {
-  0% { background-position: -1000px 0; }
-  100% { background-position: 1000px 0; }
+  0% { background-position: -62.5rem 0; }
+  100% { background-position: 62.5rem 0; }
 }
 
 /* ===== Context Menu Styles ===== */
 .gh-context-menu {
   position: fixed;
   background: var(--gh-bg-primary);
-  border: 1px solid var(--gh-border-default);
+  border: 0.0625rem solid var(--gh-border-default);
   border-radius: var(--gh-radius-md);
   box-shadow: var(--gh-shadow-lg);
-  padding: 4px;
-  min-width: 200px;
+  padding: 0.25rem;
+  min-width: 12.5rem;
   z-index: var(--gh-z-dropdown);
   opacity: 0;
   visibility: hidden;
@@ -1033,12 +1033,12 @@
 }
 
 .gh-context-menu-item {
-  padding: 8px 12px;
+  padding: 0.5rem 0.75rem;
   border-radius: var(--gh-radius-sm);
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 0.75rem;
   color: var(--gh-text-secondary);
   transition: all var(--gh-duration-fast) var(--gh-easing-default);
 }
@@ -1054,9 +1054,9 @@
 }
 
 .gh-context-menu-divider {
-  height: 1px;
+  height: 0.0625rem;
   background: var(--gh-border-muted);
-  margin: 4px 0;
+  margin: 0.25rem 0;
 }
 
 /* ===== Tabs Component ===== */
@@ -1067,23 +1067,23 @@
 
 .gh-tabs-list {
   display: flex;
-  gap: 4px;
-  border-bottom: 1px solid var(--gh-border-muted);
+  gap: 0.25rem;
+  border-bottom: 0.0625rem solid var(--gh-border-muted);
   padding-bottom: 0;
 }
 
 .gh-tab {
-  padding: 8px 16px;
+  padding: 0.5rem 1rem;
   background: transparent;
   border: none;
-  border-bottom: 2px solid transparent;
+  border-bottom: 0.125rem solid transparent;
   color: var(--gh-text-muted);
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
   transition: all var(--gh-duration-fast) var(--gh-easing-default);
   position: relative;
-  margin-bottom: -1px;
+  margin-bottom: -0.0625rem;
 }
 
 .gh-tab:hover {
@@ -1097,19 +1097,19 @@
 }
 
 .gh-tab-panel {
-  padding: 20px 0;
+  padding: 1.25rem 0;
   animation: fadeIn var(--gh-duration-normal) var(--gh-easing-default);
 }
 
 /* ===== Accordion Component ===== */
 .gh-accordion {
-  border: 1px solid var(--gh-border-default);
+  border: 0.0625rem solid var(--gh-border-default);
   border-radius: var(--gh-radius-md);
   overflow: hidden;
 }
 
 .gh-accordion-item {
-  border-bottom: 1px solid var(--gh-border-muted);
+  border-bottom: 0.0625rem solid var(--gh-border-muted);
 }
 
 .gh-accordion-item:last-child {
@@ -1118,11 +1118,11 @@
 
 .gh-accordion-header {
   width: 100%;
-  padding: 16px 20px;
+  padding: 1rem 1.25rem;
   background: var(--gh-bg-primary);
   border: none;
   color: var(--gh-text-primary);
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 600;
   text-align: left;
   cursor: pointer;
@@ -1141,8 +1141,8 @@
 }
 
 .gh-accordion-icon {
-  width: 16px;
-  height: 16px;
+  width: 1rem;
+  height: 1rem;
   transition: transform var(--gh-duration-fast) var(--gh-easing-default);
 }
 
@@ -1157,18 +1157,18 @@
 }
 
 .gh-accordion-content.gh-show {
-  max-height: 500px;
+  max-height: 31.25rem;
 }
 
 .gh-accordion-body {
-  padding: 16px 20px;
+  padding: 1rem 1.25rem;
   color: var(--gh-text-secondary);
 }
 
 /* ===== Progress Indicators ===== */
 .gh-progress {
   width: 100%;
-  height: 8px;
+  height: 0.5rem;
   background: var(--gh-bg-secondary);
   border-radius: var(--gh-radius-full);
   overflow: hidden;
@@ -1212,40 +1212,40 @@
 
 /* ===== Spinner/Loader ===== */
 .gh-spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid var(--gh-border-muted);
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 0.1875rem solid var(--gh-border-muted);
   border-top-color: var(--gh-accent-primary);
   border-radius: var(--gh-radius-full);
   animation: spin 0.8s linear infinite;
 }
 
 .gh-spinner-sm {
-  width: 20px;
-  height: 20px;
-  border-width: 2px;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-width: 0.125rem;
 }
 
 .gh-spinner-lg {
-  width: 60px;
-  height: 60px;
-  border-width: 4px;
+  width: 3.75rem;
+  height: 3.75rem;
+  border-width: 0.25rem;
 }
 
 /* ===== Badge/Chip Component ===== */
 .gh-badge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px 8px;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
   background: var(--gh-bg-secondary);
-  border: 1px solid var(--gh-border-default);
+  border: 0.0625rem solid var(--gh-border-default);
   border-radius: var(--gh-radius-full);
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 600;
   color: var(--gh-text-secondary);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.0312rem;
 }
 
 .gh-badge-primary {
@@ -1274,21 +1274,21 @@
 
 /* ===== Alert Component ===== */
 .gh-alert {
-  padding: 12px 16px;
+  padding: 0.75rem 1rem;
   background: var(--gh-bg-secondary);
-  border: 1px solid var(--gh-border-default);
+  border: 0.0625rem solid var(--gh-border-default);
   border-radius: var(--gh-radius-md);
   display: flex;
   align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
 }
 
 .gh-alert-icon {
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
   flex-shrink: 0;
-  margin-top: 2px;
+  margin-top: 0.125rem;
 }
 
 .gh-alert-content {
@@ -1298,12 +1298,12 @@
 .gh-alert-title {
   font-weight: 600;
   color: var(--gh-text-primary);
-  margin-bottom: 4px;
+  margin-bottom: 0.25rem;
 }
 
 .gh-alert-description {
   color: var(--gh-text-secondary);
-  font-size: 13px;
+  font-size: 0.8125rem;
   line-height: 1.5;
 }
 
@@ -1358,27 +1358,27 @@
 }
 
 .gh-skeleton-text {
-  height: 16px;
-  margin-bottom: 8px;
+  height: 1rem;
+  margin-bottom: 0.5rem;
   border-radius: var(--gh-radius-sm);
 }
 
 .gh-skeleton-title {
-  height: 24px;
+  height: 1.5rem;
   width: 60%;
-  margin-bottom: 12px;
+  margin-bottom: 0.75rem;
   border-radius: var(--gh-radius-sm);
 }
 
 .gh-skeleton-avatar {
-  width: 48px;
-  height: 48px;
+  width: 3rem;
+  height: 3rem;
   border-radius: var(--gh-radius-full);
 }
 
 .gh-skeleton-button {
-  height: 36px;
-  width: 120px;
+  height: 2.25rem;
+  width: 7.5rem;
   border-radius: var(--gh-radius-md);
 }
 
@@ -1412,16 +1412,16 @@
 }
 
 /* ===== Responsive Utilities ===== */
-@media (max-width: 640px) {
+@media (max-width: 40rem) {
   .gh-modal {
     width: 95%;
-    margin: 16px;
+    margin: 1rem;
   }
   
   .gh-toast-container {
-    left: 10px;
-    right: 10px;
-    top: 10px;
+    left: 0.625rem;
+    right: 0.625rem;
+    top: 0.625rem;
   }
   
   .gh-toast {
