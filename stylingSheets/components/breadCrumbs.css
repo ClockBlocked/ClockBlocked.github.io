@@ -16,11 +16,11 @@
 }
 
 .breadcrumb-wrapper.scrolled {
-  border-bottom: 1px solid var(--border-400, #ddd);
-/**  box-shadow: 0 2px 4px rgba(0,0,0,0.1);**/
+  border-bottom: 0.0625rem solid var(--border-400, #ddd);
+/**  box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.1);**/
   background: color-mix(in srgb, var(--background-550) 75%, transparent);
-  backdrop-filter: blur(10px) saturate(180%);
-  -webkit-backdrop-filter: blur(10px) saturate(180%);
+  backdrop-filter: blur(0.625rem) saturate(180%);
+  -webkit-backdrop-filter: blur(0.625rem) saturate(180%);
 }
 
 /* Row: horizontal, scrollable, edge-fade */
@@ -35,8 +35,8 @@
   -ms-overflow-style: none;
   position: relative;
   padding: 0.25rem 0;
-  mask-image: linear-gradient(90deg, transparent 0, black 24px, black calc(100% - 24px), transparent 100%);
-  -webkit-mask-image: linear-gradient(90deg, transparent 0, black 24px, black calc(100% - 24px), transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, black 1.5rem, black calc(100% - 1.5rem), transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, black 1.5rem, black calc(100% - 1.5rem), transparent 100%);
 }
 .breadcrumb-list::-webkit-scrollbar { display: none; }
 
@@ -53,7 +53,7 @@
   display: inline-block;
   opacity: 0.55;
   margin: 0 0.25rem;
-  transform: translateY(1px);
+  transform: translateY(0.0625rem);
 }
 
 /* Links: pill hover, truncated label */
@@ -102,8 +102,8 @@
 
 /* Accessibility focus */
 .breadcrumb-link:focus-visible {
-  outline: 2px solid color-mix(in oklab, currentColor 65%, white 0%);
-  outline-offset: 2px;
+  outline: 0.125rem solid color-mix(in oklab, currentColor 65%, white 0%);
+  outline-offset: 0.125rem;
 }
 
 /* Subtle de-emphasis for non-current links */
@@ -111,7 +111,7 @@
 .breadcrumb-item:not([aria-current="page"]) .breadcrumb-link:hover { opacity: 1; }
 
 /* Compact on small screens */
-@media (max-width: 640px) {
+@media (max-width: 40rem) {
   .breadcrumb-list { gap: 0.125rem; }
   .breadcrumb-link { max-width: 16ch; padding: 0.25rem 0.45rem; }
 }
@@ -140,7 +140,7 @@
   content: "›";
   opacity: .55;
   margin: 0 .45rem;
-  transform: translateY(1px);
+  transform: translateY(0.0625rem);
 }
 
 .breadcrumb-link {

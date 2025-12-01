@@ -36,7 +36,7 @@
   background-color: var(--accent-primary, #3b82f6);
   color: white;
   padding: 0.5rem 1.5rem;
-  border-radius: 9999px;
+  border-radius: 624.9375rem;
   transition: background-color 0.2s;
   display: flex;
   align-items: center;
@@ -121,7 +121,7 @@
   display: none;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48rem) {
   .album-name {
     display: block;
   }

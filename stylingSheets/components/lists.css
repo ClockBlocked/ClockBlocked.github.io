@@ -54,22 +54,22 @@
   --info: #58a6ff;
 
   /* Spacing */
-  --space-xs: 4px;
-  --space-sm: 8px;
-  --space-md: 16px;
-  --space-lg: 24px;
-  --space-xl: 32px;
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
 
   /* Border Radius */
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 12px;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.75rem;
   --radius-round: 50%;
 
   /* Shadows */
-  --shadow-sm: 0 2px 10px rgba(1, 4, 9, 0.5);
-  --shadow-md: 0 5px 15px rgba(1, 4, 9, 0.5);
-  --shadow-lg: 0 10px 30px rgba(1, 4, 9, 0.8);
+  --shadow-sm: 0 0.125rem 0.625rem rgba(1, 4, 9, 0.5);
+  --shadow-md: 0 0.3125rem 0.9375rem rgba(1, 4, 9, 0.5);
+  --shadow-lg: 0 0.625rem 1.875rem rgba(1, 4, 9, 0.8);
 
   /* Transitions */
   --transition-fast: 0.2s;
@@ -161,12 +161,12 @@
 
 .modal {
   background: var(--bg-secondary);
-  border: 1px solid var(--border-primary);
-  border-radius: 12px;
-  width: 480px;
+  border: 0.0625rem solid var(--border-primary);
+  border-radius: 0.75rem;
+  width: 30rem;
   max-width: 90%;
-  box-shadow: 0 8px 24px var(--shadow);
-  transform: translateY(-20px);
+  box-shadow: 0 0.5rem 1.5rem var(--shadow);
+  transform: translateY(-1.25rem);
   transition: transform 0.3s;
 }
 .modal-overlay.active .modal {
@@ -177,11 +177,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 24px;
-  border-bottom: 1px solid var(--border-secondary);
+  padding: 1rem 1.5rem;
+  border-bottom: 0.0625rem solid var(--border-secondary);
 }
 .modal-header h3 {
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 600;
 }
 
@@ -189,15 +189,15 @@
   background: none;
   border: none;
   color: var(--text-secondary);
-  font-size: 24px;
+  font-size: 1.5rem;
   cursor: pointer;
   padding: 0;
-  width: 32px;
-  height: 32px;
+  width: 2rem;
+  height: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
+  border-radius: 0.375rem;
   transition: all 0.2s;
 }
 .modal-close:hover {
@@ -206,31 +206,31 @@
 }
 
 .modal-body {
-  padding: 24px;
+  padding: 1.5rem;
 }
 
 .modal-footer {
   display: flex;
-  gap: 8px;
+  gap: 0.5rem;
   justify-content: flex-end;
-  padding: 16px 24px;
-  border-top: 1px solid var(--border-secondary);
+  padding: 1rem 1.5rem;
+  border-top: 0.0625rem solid var(--border-secondary);
 }
 
 .status-emoji-picker {
   display: flex;
-  gap: 8px;
-  margin-bottom: 16px;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
   flex-wrap: wrap;
 }
 
 .emoji-btn {
-  width: 40px;
-  height: 40px;
-  border: 1px solid var(--border-primary);
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 0.0625rem solid var(--border-primary);
   background: var(--bg-tertiary);
-  border-radius: 6px;
-  font-size: 20px;
+  border-radius: 0.375rem;
+  font-size: 1.25rem;
   cursor: pointer;
   transition: all 0.2s;
 }
@@ -242,27 +242,27 @@
 .status-input {
   width: 100%;
   background: var(--input-bg);
-  border: 1px solid var(--input-border);
-  border-radius: 6px;
-  padding: 8px 12px;
+  border: 0.0625rem solid var(--input-border);
+  border-radius: 0.375rem;
+  padding: 0.5rem 0.75rem;
   color: var(--text-primary);
-  font-size: 14px;
-  margin-bottom: 16px;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
 }
 .status-options label {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
   color: var(--text-secondary);
-  font-size: 14px;
+  font-size: 0.875rem;
   cursor: pointer;
 }
 
 .btn-primary,
 .btn-secondary {
-  padding: 6px 16px;
-  border-radius: 6px;
-  font-size: 14px;
+  padding: 0.375rem 1rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
@@ -280,7 +280,7 @@
 .btn-secondary {
   background: var(--btn-bg);
   color: var(--text-primary);
-  border: 1px solid var(--btn-border);
+  border: 0.0625rem solid var(--btn-border);
 }
 .btn-secondary:hover {
   background: var(--btn-hover);
@@ -307,7 +307,7 @@
     display: none;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48rem) {
     .mobile-only {
         display: none;
     }
@@ -320,19 +320,19 @@
 /* Unified Triggers for Desktop/Tablet - uses your existing variables */
 .unified-triggers {
     position: fixed;
-    top: 20px;
-    right: 20px;
+    top: 1.25rem;
+    right: 1.25rem;
     z-index: var(--z-nav);
     display: flex;
-    gap: 12px;
+    gap: 0.75rem;
 }
 
 .unified-trigger {
-    width: 48px;
-    height: 48px;
+    width: 3rem;
+    height: 3rem;
     border-radius: var(--radius-lg);
     background: var(--background-500);
-    border: 1px solid var(--border-200);
+    border: 0.0625rem solid var(--border-200);
     color: var(--text-200);
     display: flex;
     align-items: center;
@@ -345,7 +345,7 @@
 .unified-trigger:hover {
     background: var(--background-600);
     border-color: var(--border-accent);
-    transform: translateY(-2px);
+    transform: translateY(-0.125rem);
     box-shadow: var(--shadow-lg);
     color: var(--text-100);
 }
@@ -355,25 +355,25 @@
 }
 
 .unified-trigger svg {
-    width: 20px;
-    height: 20px;
+    width: 1.25rem;
+    height: 1.25rem;
 }
 
 /* Tablet/Desktop responsive adjustments for existing drawer */
-@media (min-width: 768px) and (max-width: 1023px) {
+@media (min-width: 48rem) and (max-width: 63.9375rem) {
     /* Tablet: Centered modal-style drawer */
     .drawer {
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 20px;
+        padding: 1.25rem;
     }
     
     .drawerScroller {
         height: auto;
         max-height: 80vh;
         width: 100%;
-        max-width: 600px;
+        max-width: 37.5rem;
         overflow-y: auto;
         scroll-snap-type: none;
     }
@@ -405,20 +405,20 @@
 }
 
 /* Desktop responsive adjustments */
-@media (min-width: 1024px) {
+@media (min-width: 64rem) {
     /* Desktop: Larger centered modal */
     .drawer {
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 40px;
+        padding: 2.5rem;
     }
     
     .drawerScroller {
         height: auto;
         max-height: 85vh;
         width: 100%;
-        max-width: 700px;
+        max-width: 43.75rem;
         overflow-y: auto;
         scroll-snap-type: none;
     }
@@ -491,7 +491,7 @@
 }
 
 /* Fix tablet popover behavior - prevent immediate closing */
-@media (min-width: 768px) {
+@media (min-width: 48rem) {
     .drawer::backdrop {
         background: rgba(0, 0, 0, 0.5);
         backdrop-filter: var(--blur-md);
@@ -529,7 +529,7 @@
 }
 
 /* Animation fixes for tablet/desktop */
-@media (min-width: 768px) {
+@media (min-width: 48rem) {
     .drawer:popover-open,
     .music-drawer:popover-open {
         animation: fadeIn 0.3s ease;
@@ -562,7 +562,7 @@
     align-items: center;
     justify-content: space-between;
     padding: var(--space-md);
-    border-bottom: 1px solid var(--border-200);
+    border-bottom: 0.0625rem solid var(--border-200);
 }
 
 .bento-card.music-player-card .card-title {
@@ -579,13 +579,13 @@
 
 .bento-card.music-player-card .expand-player-btn,
 .bento-card.music-player-card .minimize-player-btn {
-    width: 32px;
-    height: 32px;
+    width: 2rem;
+    height: 2rem;
     display: flex;
     align-items: center;
     justify-content: center;
     background: var(--background-400);
-    border: 1px solid var(--border-200);
+    border: 0.0625rem solid var(--border-200);
     border-radius: var(--radius-sm);
     color: var(--text-300);
     cursor: pointer;
@@ -609,19 +609,19 @@
 .unified-trigger.playing::after {
     content: '';
     position: absolute;
-    top: -2px;
-    right: -2px;
-    width: 8px;
-    height: 8px;
+    top: -0.125rem;
+    right: -0.125rem;
+    width: 0.5rem;
+    height: 0.5rem;
     background: var(--accent-success);
     border-radius: 50%;
-    border: 2px solid var(--background-canvas);
+    border: 0.125rem solid var(--background-canvas);
 }
 
 /* Focus states using your existing variables */
 .unified-trigger:focus-visible {
-    outline: 2px solid var(--accent-primary);
-    outline-offset: 2px;
+    outline: 0.125rem solid var(--accent-primary);
+    outline-offset: 0.125rem;
 }
 
 /* Reduced motion support */
@@ -637,11 +637,11 @@
 /* High contrast support */
 @media (prefers-contrast: high) {
     .unified-trigger {
-        border-width: 2px;
+        border-width: 0.125rem;
     }
     
     .drawer .drawerContent {
-        border-width: 2px;
+        border-width: 0.125rem;
     }
 }
 
@@ -657,7 +657,7 @@
 }
 
 /* Mobile Layout (Default) - preserves existing navbar styles */
-@media (max-width: 767px) {
+@media (max-width: 47.9375rem) {
     /* Your existing navbar styles from navbarPlayer.css are preserved */
     
     /* Hide desktop/tablet triggers */
@@ -668,7 +668,7 @@
     /* Dropdown menu positioning for mobile - respects existing variables */
     .dropdown-menu {
         position: fixed;
-        bottom: calc(45px + 1rem + 16px); /* Based on your navbar height + bottom + padding */
+        bottom: calc(2.8125rem + 1rem + 1rem); /* Based on your navbar height + bottom + padding */
         left: 4vw; /* Matches your navbar width calculation */
         right: 4vw;
         max-height: 70vh;
@@ -683,7 +683,7 @@
 }
 
 /* Tablet Layout */
-@media (min-width: 768px) and (max-width: 1023px) {
+@media (min-width: 48rem) and (max-width: 63.9375rem) {
     /* Hide navbar on tablet */
     #navbar {
         display: none !important;
@@ -702,14 +702,14 @@
     /* Dropdown menu positioning for tablet */
     .dropdown-menu {
         position: fixed;
-        top: 80px;
-        right: 20px;
+        top: 5rem;
+        right: 1.25rem;
         left: auto;
         bottom: auto;
-        width: 320px;
-        max-height: calc(100vh - 120px);
+        width: 20rem;
+        max-height: calc(100vh - 7.5rem);
         box-shadow: var(--shadow-xl);
-        transform: translateY(-10px) scale(0.95);
+        transform: translateY(-0.625rem) scale(0.95);
         opacity: 0;
         transition: all var(--transition-smooth);
         pointer-events: none;
@@ -724,7 +724,7 @@
 }
 
 /* Desktop Layout */
-@media (min-width: 1024px) {
+@media (min-width: 64rem) {
     /* Hide navbar on desktop */
     #navbar {
         display: none !important;
@@ -747,14 +747,14 @@
     /* Dropdown menu positioning for desktop */
     .dropdown-menu {
         position: fixed;
-        top: 80px;
+        top: 5rem;
         right: var(--space-xl);
         left: auto;
         bottom: auto;
-        width: 360px;
-        max-height: calc(100vh - 120px);
+        width: 22.5rem;
+        max-height: calc(100vh - 7.5rem);
         box-shadow: var(--shadow-2xl);
-        transform: translateY(-10px) scale(0.95);
+        transform: translateY(-0.625rem) scale(0.95);
         opacity: 0;
         transition: all var(--transition-smooth);
         pointer-events: none;
@@ -783,8 +783,8 @@
     }
     
     .drawer.bento-embedded .cover {
-        width: 160px;
-        max-width: 160px;
+        width: 10rem;
+        max-width: 10rem;
         margin-bottom: var(--space-md);
     }
     
@@ -809,13 +809,13 @@
     }
     
     .drawer.bento-embedded .controls .btn {
-        width: 36px;
-        height: 36px;
+        width: 2.25rem;
+        height: 2.25rem;
     }
     
     .drawer.bento-embedded .controls .btn.primary {
-        width: 48px;
-        height: 48px;
+        width: 3rem;
+        height: 3rem;
     }
     
     .drawer.bento-embedded .actions {
@@ -823,35 +823,35 @@
     }
     
     .drawer.bento-embedded .actions .action {
-        width: 32px;
-        height: 32px;
+        width: 2rem;
+        height: 2rem;
     }
 }
 
 /* Ultra-wide Desktop Layout */
-@media (min-width: 1440px) {
+@media (min-width: 90rem) {
     .unified-triggers {
         top: var(--space-2xl);
         right: var(--space-2xl);
-        gap: 18px;
+        gap: 1.125rem;
     }
     
     .unified-trigger {
-        width: 52px;
-        height: 52px;
+        width: 3.25rem;
+        height: 3.25rem;
     }
     
     .dropdown-menu {
-        top: 96px;
+        top: 6rem;
         right: var(--space-2xl);
-        width: 380px;
+        width: 23.75rem;
     }
 }
 
 /* Landscape Mobile Layout */
-@media (max-width: 767px) and (orientation: landscape) {
+@media (max-width: 47.9375rem) and (orientation: landscape) {
     .dropdown-menu {
-        bottom: calc(45px + 16px); /* Your navbar height + spacing */
+        bottom: calc(2.8125rem + 1rem); /* Your navbar height + spacing */
         max-height: 60vh;
     }
 }
@@ -867,8 +867,8 @@
 
 /* Accessibility Improvements */
 .unified-trigger:focus-visible {
-    outline: 3px solid var(--accent-primary);
-    outline-offset: 2px;
+    outline: 0.1875rem solid var(--accent-primary);
+    outline-offset: 0.125rem;
 }
 
 /* Preserve existing scroll behavior */
@@ -881,7 +881,7 @@
 }
 
 /* CRITICAL FIX: Prevent popover from closing immediately on tablet/desktop */
-@media (min-width: 768px) {
+@media (min-width: 48rem) {
     /* Ensure the drawer stays open when clicked inside */
     .drawer:popover-open,
     .music-drawer:popover-open {
@@ -938,7 +938,7 @@
   gap: var(--space-md);
   padding: var(--space-md);
   background: var(--background-400);
-  border: 1px solid var(--border-200);
+  border: 0.0625rem solid var(--border-200);
   border-radius: var(--radius-lg);
   cursor: pointer;
   transition: all var(--transition-fast);
@@ -958,7 +958,7 @@
 .modern-track-item:hover {
   background: var(--background-500);
   border-color: var(--border-accent);
-  transform: translateY(-2px);
+  transform: translateY(-0.125rem);
   box-shadow: var(--shadow-lg);
 }
 
@@ -972,8 +972,8 @@
 }
 
 .track-artwork {
-  width: 56px;
-  height: 56px;
+  width: 3.5rem;
+  height: 3.5rem;
   border-radius: var(--radius-md);
   object-fit: cover;
   box-shadow: var(--shadow-sm);
@@ -990,7 +990,7 @@
   border-radius: var(--radius-md);
   opacity: 0;
   transition: all var(--transition-fast);
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(0.25rem);
 }
 
 .modern-track-item:hover .track-play-overlay {
@@ -998,8 +998,8 @@
 }
 
 .track-play-btn {
-  width: 32px;
-  height: 32px;
+  width: 2rem;
+  height: 2rem;
   background: var(--accent-primary);
   border: none;
   border-radius: 50%;
@@ -1080,8 +1080,8 @@
 }
 
 .track-action-btn {
-  width: 36px;
-  height: 36px;
+  width: 2.25rem;
+  height: 2.25rem;
   background: transparent;
   border: none;
   border-radius: var(--radius-sm);
@@ -1124,7 +1124,7 @@
   gap: var(--space-md);
   padding: var(--space-md);
   background: var(--background-400);
-  border: 1px solid var(--border-200);
+  border: 0.0625rem solid var(--border-200);
   border-radius: var(--radius-lg);
   cursor: pointer;
   transition: all var(--transition-fast);
@@ -1144,7 +1144,7 @@
 .modern-playlist-card:hover {
   background: var(--background-500);
   border-color: var(--border-accent);
-  transform: translateY(-2px);
+  transform: translateY(-0.125rem);
   box-shadow: var(--shadow-lg);
 }
 
@@ -1158,8 +1158,8 @@
 }
 
 .playlist-icon-wrapper {
-  width: 56px;
-  height: 56px;
+  width: 3.5rem;
+  height: 3.5rem;
   background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
   border-radius: var(--radius-md);
   display: flex;
@@ -1180,7 +1180,7 @@
   border-radius: var(--radius-md);
   opacity: 0;
   transition: all var(--transition-fast);
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(0.25rem);
 }
 
 .modern-playlist-card:hover .playlist-play-overlay {
@@ -1188,8 +1188,8 @@
 }
 
 .playlist-play-btn {
-  width: 32px;
-  height: 32px;
+  width: 2rem;
+  height: 2rem;
   background: var(--accent-primary);
   border: none;
   border-radius: 50%;
@@ -1250,8 +1250,8 @@
 }
 
 .playlist-action-btn {
-  width: 36px;
-  height: 36px;
+  width: 2.25rem;
+  height: 2.25rem;
   background: transparent;
   border: none;
   border-radius: var(--radius-sm);
@@ -1272,13 +1272,13 @@
 /* Modern Artist Grid */
 .modern-artist-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(11.25rem, 1fr));
   gap: var(--space-lg);
 }
 
 .modern-artist-card {
   background: var(--background-400);
-  border: 1px solid var(--border-200);
+  border: 0.0625rem solid var(--border-200);
   border-radius: var(--radius-xl);
   padding: var(--space-lg);
   cursor: pointer;
@@ -1300,7 +1300,7 @@
 .modern-artist-card:hover {
   background: var(--background-500);
   border-color: var(--border-accent);
-  transform: translateY(-8px);
+  transform: translateY(-0.5rem);
   box-shadow: var(--shadow-xl);
 }
 
@@ -1314,8 +1314,8 @@
 }
 
 .artist-avatar-image {
-  width: 120px;
-  height: 120px;
+  width: 7.5rem;
+  height: 7.5rem;
   border-radius: 50%;
   object-fit: cover;
   margin: 0 auto;
@@ -1352,7 +1352,7 @@
   border-radius: 50%;
   opacity: 0;
   transition: all var(--transition-base);
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(0.25rem);
 }
 
 .modern-artist-card:hover .artist-play-overlay {
@@ -1360,8 +1360,8 @@
 }
 
 .artist-play-btn {
-  width: 48px;
-  height: 48px;
+  width: 3rem;
+  height: 3rem;
   background: var(--accent-primary);
   border: none;
   border-radius: 50%;
@@ -1396,7 +1396,7 @@
   font-size: 0.85rem;
   color: var(--text-300);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.0312rem;
   font-weight: 500;
 }
 
@@ -1412,10 +1412,10 @@
 }
 
 .artist-action-btn {
-  width: 36px;
-  height: 36px;
+  width: 2.25rem;
+  height: 2.25rem;
   background: var(--background-600);
-  border: 1px solid var(--border-200);
+  border: 0.0625rem solid var(--border-200);
   border-radius: 50%;
   color: var(--text-300);
   cursor: pointer;
@@ -1451,7 +1451,7 @@
   gap: var(--space-md);
   padding: var(--space-md);
   background: var(--background-400);
-  border: 1px solid var(--border-200);
+  border: 0.0625rem solid var(--border-200);
   border-radius: var(--radius-lg);
   cursor: pointer;
   transition: all var(--transition-fast);
@@ -1471,7 +1471,7 @@
 .modern-favorite-item:hover {
   background: var(--background-500);
   border-color: var(--border-accent);
-  transform: translateY(-2px);
+  transform: translateY(-0.125rem);
   box-shadow: var(--shadow-lg);
 }
 
@@ -1485,8 +1485,8 @@
 }
 
 .favorite-artwork {
-  width: 56px;
-  height: 56px;
+  width: 3.5rem;
+  height: 3.5rem;
   border-radius: var(--radius-md);
   object-fit: cover;
   box-shadow: var(--shadow-sm);
@@ -1503,7 +1503,7 @@
   border-radius: var(--radius-md);
   opacity: 0;
   transition: all var(--transition-fast);
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(0.25rem);
 }
 
 .modern-favorite-item:hover .favorite-play-overlay {
@@ -1511,8 +1511,8 @@
 }
 
 .favorite-play-btn {
-  width: 32px;
-  height: 32px;
+  width: 2rem;
+  height: 2rem;
   background: var(--accent-primary);
   border: none;
   border-radius: 50%;
@@ -1593,8 +1593,8 @@
 }
 
 .favorite-action-btn {
-  width: 36px;
-  height: 36px;
+  width: 2.25rem;
+  height: 2.25rem;
   background: transparent;
   border: none;
   border-radius: var(--radius-sm);
@@ -1627,9 +1627,9 @@
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .modern-artist-grid {
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(8.75rem, 1fr));
     gap: var(--space-md);
   }
   
@@ -1638,13 +1638,13 @@
   }
   
   .artist-avatar-image {
-    width: 80px;
-    height: 80px;
+    width: 5rem;
+    height: 5rem;
   }
   
   .artist-play-btn {
-    width: 36px;
-    height: 36px;
+    width: 2.25rem;
+    height: 2.25rem;
   }
   
   .modern-track-item,
@@ -1655,13 +1655,13 @@
   
   .track-artwork,
   .favorite-artwork {
-    width: 48px;
-    height: 48px;
+    width: 3rem;
+    height: 3rem;
   }
   
   .playlist-icon-wrapper {
-    width: 48px;
-    height: 48px;
+    width: 3rem;
+    height: 3rem;
   }
   
   .track-actions,
@@ -1671,9 +1671,9 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30rem) {
   .modern-artist-grid {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
     gap: var(--space-sm);
   }
   
