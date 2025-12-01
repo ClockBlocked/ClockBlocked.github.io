@@ -173,10 +173,10 @@ svg.lightYellow path {
 /*//////////////////////////  F I L T E R E D  ///////*/
 /*////////////////////////////////////////////////////*/
 svg.shadow {
-    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+    filter: drop-shadow(0 0.0625rem 0.125rem rgba(0, 0, 0, 0.1));
 }
 svg.blur {
-    filter: blur(0.5px);
+    filter: blur(0.0312rem);
 }
 svg.brightness {
     filter: brightness(1.2);
@@ -362,22 +362,22 @@ svg.bgPink {
 }
 
 svg.border {
-    border: 1px solid #e5e7eb;
+    border: 0.0625rem solid #e5e7eb;
 }
 svg.borderDark {
-    border: 1px solid #374151;
+    border: 0.0625rem solid #374151;
 }
 svg.borderLight {
-    border: 1px solid #f3f4f6;
+    border: 0.0625rem solid #f3f4f6;
 }
 svg.borderThick {
-    border: 2px solid #6b7280;
+    border: 0.125rem solid #6b7280;
 }
 svg.borderDashed {
-    border: 1px dashed #9ca3af;
+    border: 0.0625rem dashed #9ca3af;
 }
 svg.borderDotted {
-    border: 1px dotted #9ca3af;
+    border: 0.0625rem dotted #9ca3af;
 }
 svg.icon-beat-fade {
     animation: beatFade var(--beat-fade-duration, 1.5s) ease-in-out infinite;
@@ -400,9 +400,9 @@ svg.icon-beat-fade {
 }
 @keyframes bounce {
     0%, 20%, 53%, 80%, 100% { transform: translate3d(0, 0, 0); }
-    40%, 43% { transform: translate3d(0, -30px, 0); }
-    70% { transform: translate3d(0, -15px, 0); }
-    90% { transform: translate3d(0, -4px, 0); }
+    40%, 43% { transform: translate3d(0, -1.875rem, 0); }
+    70% { transform: translate3d(0, -0.9375rem, 0); }
+    90% { transform: translate3d(0, -0.25rem, 0); }
 }
 @keyframes ping {
     75%, 100% {
@@ -424,7 +424,7 @@ svg.icon-beat-fade {
     to { opacity: 1; }
 }
 @keyframes slideIn {
-    from { transform: translateY(-10px); opacity: 0; }
+    from { transform: translateY(-0.625rem); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
 }
 @keyframes zoomIn {
@@ -443,4 +443,4 @@ svg.icon-beat-fade {
     }
 }
 /*////////////////////////////////////////////////////*/
-
+
