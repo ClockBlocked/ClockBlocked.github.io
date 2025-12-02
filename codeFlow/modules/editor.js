@@ -8,82 +8,144 @@ class CodeEditor {
         this.editorSettings = {
             fontSize: 14,
             wordWrap: 'on',
-            minimap: true,
-            theme: 'dark-dimmed'
+            minimap: false,
+            theme: 'dracula',
+            lineNumbers: true,
+            lineWrapping: true,
+            autoCloseBrackets: true,
+            matchBrackets: true,
+            indentUnit: 2,
+            tabSize: 2
         };
+        this.isInitialized = false;
     }
 
-    initialize() {
-        // Create default file
-        this.files = [{
-            id: this.generateId(),
-            filename: 'script.js',
-            language: 'javascript',
-            content: '// Start coding here...\nconsole.log("Hello, World!");',
-            size: 0
-        }];
+    async initialize() {
+        console.log('Initializing editor...');
+        
+        // Create default file if none exist
+        if (this.files.length === 0) {
+            this.files = [{
+                id: this.generateId(),
+                filename: 'script.js',
+                language: 'javascript',
+                content: '// Start coding here...\nconsole.log("Hello, World!");',
+                size: 0
+            }];
+        }
 
         // Initialize editor
         this.initEditor();
+        
+        // Render UI components
         this.renderFileTabs();
         this.renderFileTree();
         this.updateEditorStatus();
+        
+        this.isInitialized = true;
+        console.log('Editor initialized successfully');
     }
 
     initEditor() {
         const editorElement = document.getElementById('editor-instance');
-        if (!editorElement) return;
+        if (!editorElement) {
+            console.error('Editor element not found');
+            return;
+        }
 
-        // Create CodeMirror editor
-        this.editor = CodeMirror.fromTextArea(
-            document.getElementById('code-editor'),
-            {
-                value: this.files[this.currentFileIndex].content,
-                mode: this.getLanguageMode('javascript'),
-                theme: 'dracula',
-                lineNumbers: true,
-                lineWrapping: true,
-                tabSize: 2,
-                indentUnit: 2,
-                smartIndent: true,
-                electricChars: true,
-                autoCloseBrackets: true,
-                matchBrackets: true,
-                autoCloseTags: true,
-                showCursorWhenSelecting: true,
-                styleActiveLine: true,
+        // Clear existing editor
+        if (this.editor) {
+            this.editor.toTextArea();
+            this.editor = null;
+        }
+
+        // Create textarea for CodeMirror
+        const textarea = document.getElementById('code-editor');
+        if (!textarea) {
+            console.error('Code editor textarea not found');
+            return;
+        }
+
+        // Set initial content
+        textarea.value = this.files[this.currentFileIndex]?.content || '';
+
+        try {
+            // Initialize CodeMirror
+            this.editor = CodeMirror.fromTextArea(textarea, {
+                value: this.files[this.currentFileIndex]?.content || '',
+                mode: this.getLanguageMode(this.files[this.currentFileIndex]?.language || 'javascript'),
+                theme: this.editorSettings.theme,
+                lineNumbers: this.editorSettings.lineNumbers,
+                lineWrapping: this.editorSettings.lineWrapping,
+                autoCloseBrackets: this.editorSettings.autoCloseBrackets,
+                matchBrackets: this.editorSettings.matchBrackets,
+                indentUnit: this.editorSettings.indentUnit,
+                tabSize: this.editorSettings.tabSize,
+                scrollbarStyle: 'simple',
                 foldGutter: true,
-                gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
+                gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
                 extraKeys: {
-                    'Ctrl-Space': 'autocomplete',
-                    'Ctrl-S': () => this.saveSnippet(),
-                    'Tab': 'indentMore',
-                    'Shift-Tab': 'indentLess',
-                    'Ctrl-/': 'toggleComment',
-                    'Shift-Ctrl-/': 'toggleComment'
+                    "Ctrl-Space": "autocomplete",
+                    "Tab": function(cm) {
+                        if (cm.somethingSelected()) {
+                            cm.indentSelection("add");
+                        } else {
+                            cm.replaceSelection("  ", "end");
+                        }
+                    },
+                    "Shift-Tab": "indentLess"
                 }
-            }
-        );
+            });
 
-        // Set editor size
-        this.editor.setSize('100%', '100%');
+            // Set editor size
+            this.editor.setSize('100%', '100%');
 
-        // Listen for changes
-        this.editor.on('change', () => {
-            this.updateCurrentFileContent();
-            this.updateEditorStatus();
-        });
+            // Listen for changes
+            this.editor.on('change', () => {
+                this.updateCurrentFileContent();
+                this.updateEditorStatus();
+            });
 
-        // Listen for cursor activity
-        this.editor.on('cursorActivity', () => {
-            this.updateEditorStatus();
-        });
+            // Listen for cursor activity
+            this.editor.on('cursorActivity', () => {
+                this.updateEditorStatus();
+            });
 
-        // Apply settings
-        this.applySettings();
+            // Handle focus
+            this.editor.on('focus', () => {
+                editorElement.classList.add('focused');
+            });
+
+            this.editor.on('blur', () => {
+                editorElement.classList.remove('focused');
+            });
+
+            console.log('CodeMirror editor created successfully');
+
+        } catch (error) {
+            console.error('Failed to create CodeMirror editor:', error);
+            
+            // Fallback to simple textarea
+            textarea.style.display = 'block';
+            textarea.style.width = '100%';
+            textarea.style.height = '100%';
+            textarea.style.fontFamily = 'var(--font-mono)';
+            textarea.style.fontSize = '14px';
+            textarea.style.backgroundColor = 'var(--bg-primary)';
+            textarea.style.color = 'var(--text-primary)';
+            textarea.style.border = 'none';
+            textarea.style.padding = 'var(--space-3)';
+            textarea.style.resize = 'none';
+            
+            textarea.addEventListener('input', () => {
+                this.updateCurrentFileContent();
+                this.updateEditorStatus();
+            });
+        }
     }
 
     loadSnippet(snippet) {
+        console.log('Loading snippet:', snippet);
         this.currentSnippet = snippet;
         this.files = JSON.parse(JSON.stringify(snippet.files || []));
         
@@ -98,21 +160,24 @@ class CodeEditor {
         }
 
         // Update form fields
-        document.getElementById('snippet-title').value = snippet.title || '';
-        document.getElementById('snippet-description').value = snippet.description || '';
-        document.getElementById('snippet-public').checked = snippet.isPublic !== false;
-        document.getElementById('snippet-tags').value = snippet.tags ? snippet.tags.join(', ') : '';
+        const titleInput = document.getElementById('snippet-title');
+        const descriptionInput = document.getElementById('snippet-description');
+        const publicInput = document.getElementById('snippet-public');
+        const tagsInput = document.getElementById('snippet-tags');
+        
+        if (titleInput) titleInput.value = snippet.title || '';
+        if (descriptionInput) descriptionInput.value = snippet.description || '';
+        if (publicInput) publicInput.checked = snippet.isPublic !== false;
+        if (tagsInput) tagsInput.value = snippet.tags ? snippet.tags.join(', ') : '';
 
-        // Initialize editor if not already initialized
-        if (!this.editor) {
-            this.initEditor();
-        } else {
+        // Initialize or update editor
+        if (this.isInitialized) {
             this.switchToFile(0);
+            this.renderFileTabs();
+            this.renderFileTree();
+        } else {
+            this.initialize();
         }
-
-        this.renderFileTabs();
-        this.renderFileTree();
-        this.updateEditorStatus();
     }
 
     renderFileTabs() {
@@ -121,10 +186,12 @@ class CodeEditor {
 
         container.innerHTML = this.files.map((file, index) => `
             <button class="file-tab ${index === this.currentFileIndex ? 'active' : ''}" 
-                    onclick="editor.switchToFile(${index})">
-                <i class="fas fa-file"></i>
-                <span>${file.filename}</span>
-                <span class="tab-close" onclick="event.stopPropagation(); editor.removeFile(${index})">
+                    onclick="editor.switchToFile(${index})"
+                    title="${file.filename}">
+                <i class="fas fa-file-code"></i>
+                <span class="tab-filename">${this.truncateFilename(file.filename, 15)}</span>
+                <span class="tab-close" onclick="event.stopPropagation(); editor.removeFile(${index})" 
+                      title="Close ${file.filename}">
                     <i class="fas fa-times"></i>
                 </span>
             </button>
@@ -137,9 +204,22 @@ class CodeEditor {
 
         container.innerHTML = this.files.map((file, index) => `
             <div class="file-item ${index === this.currentFileIndex ? 'active' : ''}" 
-                 onclick="editor.switchToFile(${index})">
-                <i class="fas fa-file file-icon"></i>
-                <span>${file.filename}</span>
+                 onclick="editor.switchToFile(${index})"
+                 title="${file.filename}">
+                <i class="fas fa-file-code file-icon"></i>
+                <span class="file-name">${this.truncateFilename(file.filename, 20)}</span>
+                <div class="file-actions" style="margin-left: auto; display: flex; gap: 4px;">
+                    <button class="file-action-btn" onclick="event.stopPropagation(); editor.renameFile(${index})" 
+                            title="Rename">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    ${this.files.length > 1 ? `
+                        <button class="file-action-btn" onclick="event.stopPropagation(); editor.removeFile(${index})" 
+                                title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    ` : ''}
+                </div>
             </div>
         `).join('');
     }
@@ -156,14 +236,26 @@ class CodeEditor {
         // Update editor content
         const file = this.files[index];
         if (this.editor) {
-            this.editor.setValue(file.content);
+            this.editor.setValue(file.content || '');
             this.editor.setOption('mode', this.getLanguageMode(file.language));
+            
+            // Refresh editor to ensure proper rendering
+            setTimeout(() => {
+                this.editor.refresh();
+            }, 0);
         }
 
         // Update UI
         this.renderFileTabs();
         this.renderFileTree();
         this.updateEditorStatus();
+        
+        // Focus editor
+        if (this.editor) {
+            setTimeout(() => {
+                this.editor.focus();
+            }, 100);
+        }
     }
 
     updateCurrentFileContent() {
@@ -177,6 +269,12 @@ class CodeEditor {
     addNewFile() {
         const filename = prompt('Enter filename (with extension):', 'newfile.js');
         if (!filename) return;
+
+        // Validate filename
+        if (!filename.trim()) {
+            alert('Please enter a valid filename');
+            return;
+        }
 
         // Check for duplicate filenames
         if (this.files.some(f => f.filename === filename)) {
@@ -197,11 +295,21 @@ class CodeEditor {
 
         this.files.push(newFile);
         this.switchToFile(this.files.length - 1);
+        
+        // Show success message
+        app.showToast(`Created ${filename}`, 'success');
     }
 
     renameFile(index) {
-        const newName = prompt('Enter new filename:', this.files[index].filename);
-        if (!newName) return;
+        const currentName = this.files[index].filename;
+        const newName = prompt('Enter new filename:', currentName);
+        if (!newName || newName === currentName) return;
+
+        // Validate new name
+        if (!newName.trim()) {
+            alert('Please enter a valid filename');
+            return;
+        }
 
         // Check for duplicate filenames
         if (this.files.some((f, i) => i !== index && f.filename === newName)) {
@@ -218,6 +326,8 @@ class CodeEditor {
         if (index === this.currentFileIndex && this.editor) {
             this.editor.setOption('mode', this.getLanguageMode(this.files[index].language));
         }
+        
+        app.showToast(`Renamed to ${newName}`, 'success');
     }
 
     removeFile(index) {
@@ -226,19 +336,23 @@ class CodeEditor {
             return;
         }
 
-        if (!confirm(`Are you sure you want to delete "${this.files[index].filename}"?`)) {
+        const filename = this.files[index].filename;
+        if (!confirm(`Are you sure you want to delete "${filename}"?`)) {
             return;
         }
 
+        const wasActive = index === this.currentFileIndex;
         this.files.splice(index, 1);
 
         // Adjust current file index if needed
-        if (this.currentFileIndex >= index && this.currentFileIndex > 0) {
+        if (wasActive) {
+            this.currentFileIndex = Math.max(0, Math.min(this.currentFileIndex, this.files.length - 1));
+            this.switchToFile(this.currentFileIndex);
+        } else if (this.currentFileIndex > index) {
             this.currentFileIndex--;
         }
 
-        // Update UI
-        this.switchToFile(this.currentFileIndex);
+        app.showToast(`Deleted ${filename}`, 'success');
     }
 
     async saveSnippet() {
@@ -247,23 +361,45 @@ class CodeEditor {
             this.updateCurrentFileContent();
 
             // Get form values
-            const title = document.getElementById('snippet-title').value.trim();
-            const description = document.getElementById('snippet-description').value.trim();
-            const isPublic = document.getElementById('snippet-public').checked;
-            const tags = document.getElementById('snippet-tags').value
+            const titleInput = document.getElementById('snippet-title');
+            const descriptionInput = document.getElementById('snippet-description');
+            const publicInput = document.getElementById('snippet-public');
+            const tagsInput = document.getElementById('snippet-tags');
+            
+            if (!titleInput || !descriptionInput || !publicInput || !tagsInput) {
+                throw new Error('Form elements not found');
+            }
+
+            const title = titleInput.value.trim();
+            const description = descriptionInput.value.trim();
+            const isPublic = publicInput.checked;
+            const tags = tagsInput.value
                 .split(',')
                 .map(tag => tag.trim())
                 .filter(tag => tag.length > 0);
 
             // Validate
             if (!title) {
-                alert('Please enter a title for your snippet');
+                app.showToast('Please enter a title for your snippet', 'error');
+                titleInput.focus();
                 return;
             }
 
             if (this.files.length === 0) {
-                alert('Please add at least one file');
+                app.showToast('Please add at least one file', 'error');
                 return;
+            }
+
+            // Validate each file
+            for (const file of this.files) {
+                if (!file.filename.trim()) {
+                    app.showToast('All files must have a filename', 'error');
+                    return;
+                }
+                if (!file.content && file.content !== '') {
+                    app.showToast('File content cannot be undefined', 'error');
+                    return;
+                }
             }
 
             // Calculate language stats
@@ -326,7 +462,7 @@ class CodeEditor {
 
         } catch (error) {
             console.error('Error saving snippet:', error);
-            app.showToast('Error saving snippet', 'error');
+            app.showToast('Error saving snippet: ' + error.message, 'error');
             app.showProgress(100);
         }
     }
@@ -368,7 +504,7 @@ class CodeEditor {
             charCountEl.textContent = `${charCount} char${charCount !== 1 ? 's' : ''}`;
         }
 
-        if (languageDisplayEl) {
+        if (languageDisplayEl && currentFile) {
             languageDisplayEl.textContent = currentFile.language || 'Text';
         }
     }
@@ -377,22 +513,47 @@ class CodeEditor {
         if (!this.editor) return;
 
         this.editor.setOption('lineWrapping', this.editorSettings.wordWrap === 'on');
-        this.editor.setOption('fontSize', this.editorSettings.fontSize);
+        this.editor.setOption('theme', this.editorSettings.theme);
         
-        // Note: CodeMirror doesn't have a minimap feature by default
-        // You would need a separate minimap implementation
+        // Refresh editor to apply settings
+        setTimeout(() => {
+            this.editor.refresh();
+        }, 0);
     }
 
     toggleSidebar() {
         const sidebar = document.getElementById('file-sidebar');
         if (sidebar) {
             sidebar.classList.toggle('hidden');
+            // Refresh editor after sidebar toggle
+            if (this.editor) {
+                setTimeout(() => {
+                    this.editor.refresh();
+                }, 300);
+            }
         }
     }
 
     // Utility methods
     generateId() {
-        return Math.random().toString(36).substr(2, 9);
+        return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    }
+
+    truncateFilename(filename, maxLength) {
+        if (filename.length <= maxLength) return filename;
+        
+        const extensionIndex = filename.lastIndexOf('.');
+        if (extensionIndex === -1) {
+            return filename.substring(0, maxLength - 3) + '...';
+        }
+        
+        const name = filename.substring(0, extensionIndex);
+        const extension = filename.substring(extensionIndex);
+        const maxNameLength = maxLength - extension.length - 3;
+        
+        if (name.length <= maxNameLength) return filename;
+        
+        return name.substring(0, maxNameLength) + '...' + extension;
     }
 
     detectLanguage(filename) {
@@ -400,30 +561,31 @@ class CodeEditor {
         
         const languageMap = {
             'js': 'javascript',
-            'jsx': 'jsx',
-            'ts': 'typescript',
-            'tsx': 'tsx',
-            'html': 'html',
-            'htm': 'html',
+            'jsx': 'javascript',
+            'ts': 'javascript',
+            'tsx': 'javascript',
+            'html': 'htmlmixed',
+            'htm': 'htmlmixed',
             'css': 'css',
-            'scss': 'scss',
+            'scss': 'css',
             'sass': 'sass',
-            'less': 'less',
-            'json': 'json',
+            'less': 'css',
+            'json': 'javascript',
             'md': 'markdown',
             'py': 'python',
             'rb': 'ruby',
             'php': 'php',
-            'java': 'java',
-            'c': 'c',
-            'cpp': 'cpp',
-            'cs': 'csharp',
+            'java': 'clike',
+            'c': 'clike',
+            'cpp': 'clike',
+            'cs': 'clike',
             'go': 'go',
             'rs': 'rust',
             'swift': 'swift',
-            'kt': 'kotlin',
+            'kt': 'clike',
             'sql': 'sql',
             'sh': 'shell',
+            'bash': 'shell',
             'yml': 'yaml',
             'yaml': 'yaml',
             'xml': 'xml',
@@ -436,13 +598,13 @@ class CodeEditor {
     getLanguageMode(language) {
         const modeMap = {
             'javascript': 'javascript',
-            'jsx': 'jsx',
+            'jsx': 'javascript',
             'typescript': 'javascript',
-            'tsx': 'jsx',
+            'tsx': 'javascript',
             'html': 'htmlmixed',
             'css': 'css',
             'scss': 'css',
-            'sass': 'sass',
+            'sass': 'css',
             'less': 'css',
             'json': 'javascript',
             'markdown': 'markdown',
@@ -460,7 +622,8 @@ class CodeEditor {
             'sql': 'sql',
             'shell': 'shell',
             'yaml': 'yaml',
-            'xml': 'xml'
+            'xml': 'xml',
+            'text': 'text'
         };
 
         return modeMap[language] || 'text';
@@ -469,22 +632,50 @@ class CodeEditor {
     getDefaultContent(language) {
         const defaults = {
             'javascript': '// JavaScript file\nconsole.log("Hello, World!");',
-            'jsx': '// React component\nimport React from "react";\n\nexport default function App() {\n  return (\n    <div>\n      <h1>Hello, World!</h1>\n    </div>\n  );\n}',
-            'typescript': '// TypeScript file\nconst message: string = "Hello, World!";\nconsole.log(message);',
-            'html': '<!DOCTYPE html>\n<html>\n<head>\n    <title>Document</title>\n</head>\n<body>\n    <h1>Hello, World!</h1>\n</body>\n</html>',
+            'htmlmixed': '<!DOCTYPE html>\n<html>\n<head>\n    <title>Document</title>\n</head>\n<body>\n    <h1>Hello, World!</h1>\n</body>\n</html>',
             'css': '/* CSS file */\nbody {\n    margin: 0;\n    padding: 0;\n    font-family: sans-serif;\n}',
             'markdown': '# Markdown File\n\nStart writing your markdown here...',
             'python': '# Python file\nprint("Hello, World!")',
-            'java': '// Java file\npublic class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, World!");\n    }\n}',
             'php': '<?php\n// PHP file\necho "Hello, World!";\n?>',
             'sql': '-- SQL file\nSELECT * FROM users;',
-            'json': '{\n  "key": "value"\n}'
+            'text': 'Text file\nStart typing here...'
         };
 
         return defaults[language] || `// ${language} file\nStart coding here...`;
     }
 
-    // Search functionality
+    // Format code
+    formatCode() {
+        if (!this.editor) return;
+
+        const currentFile = this.files[this.currentFileIndex];
+        
+        // Simple formatting for JavaScript
+        if (currentFile.language === 'javascript') {
+            try {
+                const code = this.editor.getValue();
+                const formatted = code
+                    .replace(/\s*{\s*/g, ' { ')
+                    .replace(/\s*}\s*/g, ' } ')
+                    .replace(/\s*\(\s*/g, ' (')
+                    .replace(/\s*\)\s*/g, ') ')
+                    .replace(/\s*,\s*/g, ', ')
+                    .replace(/\s*;\s*/g, '; ')
+                    .replace(/\s+$/gm, '')
+                    .replace(/^\s+/gm, '');
+                
+                this.editor.setValue(formatted);
+                app.showToast('Code formatted', 'success');
+            } catch (error) {
+                console.error('Error formatting code:', error);
+                app.showToast('Error formatting code', 'error');
+            }
+        } else {
+            app.showToast('Formatting not available for this language', 'info');
+        }
+    }
+
+    // Find and replace
     findInFiles(searchTerm) {
         const results = [];
         
@@ -506,31 +697,12 @@ class CodeEditor {
         return results;
     }
 
-    // Format code
-    formatCode() {
-        if (!this.editor) return;
-
-        const currentFile = this.files[this.currentFileIndex];
-        
-        // Simple formatting for JavaScript
-        if (currentFile.language === 'javascript') {
-            try {
-                const formatted = prettier.format(this.editor.getValue(), {
-                    parser: 'babel',
-                    plugins: prettierPlugins
-                });
-                this.editor.setValue(formatted);
-            } catch (error) {
-                console.error('Error formatting code:', error);
-            }
-        }
-    }
-
     // Insert snippet
     insertSnippet(snippetText) {
         if (!this.editor) return;
 
         const cursor = this.editor.getCursor();
         this.editor.replaceRange(snippetText, cursor);
+        this.editor.focus();
     }
 }
