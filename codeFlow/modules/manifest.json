@@ -1,0 +1,37 @@
+{
+  "name": "GitHub Gists Clone",
+  "short_name": "GistClone",
+  "description": "A self-contained snippet management system",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d1117",
+  "theme_color": "#0d1117",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["development", "productivity"],
+  "shortcuts": [
+    {
+      "name": "New Snippet",
+      "short_name": "New",
+      "description": "Create a new code snippet",
+      "url": "/new"
+    },
+    {
+      "name": "My Snippets",
+      "short_name": "Snippets",
+      "description": "View all snippets",
+      "url": "/"
+    }
+  ]
+}
