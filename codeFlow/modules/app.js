@@ -1,3 +1,297 @@
+// Update the snippet viewer rendering to fix display issues
+renderSnippetViewer(id) {
+    const snippet = this.state.snippets.find(s => s.id === id);
+    if (!snippet) {
+        return `
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-exclamation-circle"></i>
+                </div>
+                <h3 class="empty-title">Snippet not found</h3>
+                <p class="empty-description">
+                    The snippet you're looking for doesn't exist or has been deleted.
+                </p>
+                <button class="btn btn-primary" onclick="app.navigateTo('home')">
+                    Back to Snippets
+                </button>
+            </div>
+        `;
+    }
+
+    // Calculate display properties
+    const hasMultipleFiles = snippet.files.length > 1;
+    const shouldShowSidebar = hasMultipleFiles && window.innerWidth > 768;
+
+    return `
+        <div class="page">
+            <div class="viewer-container" style="height: ${hasMultipleFiles ? '70vh' : 'auto'};">
+                <div class="viewer-header">
+                    <h1 class="viewer-title">${snippet.title}</h1>
+                    ${snippet.description ? `
+                        <p class="viewer-description">${snippet.description}</p>
+                    ` : ''}
+                    
+                    <div class="viewer-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-user"></i>
+                            <span>${this.state.currentUser.username}</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="far fa-clock"></i>
+                            <span>Created ${this.formatDate(snippet.createdAt)}</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-sync"></i>
+                            <span>Updated ${this.formatTimeAgo(snippet.updatedAt)}</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas ${snippet.isPublic ? 'fa-globe' : 'fa-lock'}"></i>
+                            <span>${snippet.isPublic ? 'Public' : 'Private'}</span>
+                        </div>
+                    </div>
+                    
+                    ${snippet.tags && snippet.tags.length > 0 ? `
+                        <div class="tag-container">
+                            ${snippet.tags.map(tag => `
+                                <span class="tag">${tag}</span>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+                
+                <div class="viewer-body">
+                    ${shouldShowSidebar ? `
+                        <div class="viewer-sidebar" id="viewer-sidebar">
+                            <div class="file-tree">
+                                ${snippet.files.map((file, index) => `
+                                    <div class="file-item ${index === 0 ? 'active' : ''}" 
+                                         data-file-index="${index}"
+                                         onclick="app.selectViewerFile(${index})">
+                                        <i class="fas fa-file-code file-icon"></i>
+                                        <span>${file.filename}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    <div class="code-viewer" ${!shouldShowSidebar ? 'style="width: 100%;"' : ''}>
+                        <div class="code-container">
+                            <div class="code-header">
+                                <div class="code-filename">
+                                    <i class="fas fa-file-code"></i>
+                                    <span id="current-filename">${snippet.files[0]?.filename || 'Untitled'}</span>
+                                </div>
+                                <div class="code-actions">
+                                    <button class="btn-icon" onclick="app.copyCurrentFileContent('${id}')" title="Copy code">
+                                        <i class="far fa-copy"></i>
+                                    </button>
+                                    <button class="btn-icon" onclick="app.downloadCurrentFile('${id}')" title="Download file">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                    ${!shouldShowSidebar && hasMultipleFiles ? `
+                                        <button class="btn-icon" onclick="app.showFileSelector('${id}')" title="Select file">
+                                            <i class="fas fa-list"></i>
+                                        </button>
+                                    ` : ''}
+                                </div>
+                            </div>
+                            <div class="code-content">
+                                <pre id="code-display"><code class="language-${snippet.files[0]?.language || 'text'}" id="code-content">${this.escapeHtml(snippet.files[0]?.content || '')}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="viewer-actions">
+                <button class="btn btn-primary" onclick="app.editSnippet('${snippet.id}')">
+                    <i class="fas fa-edit"></i> Edit
+                </button>
+                <button class="btn btn-secondary" onclick="app.forkSnippet('${snippet.id}')">
+                    <i class="fas fa-code-branch"></i> Fork
+                </button>
+                <button class="btn btn-secondary" onclick="app.shareSnippet('${snippet.id}')">
+                    <i class="fas fa-share"></i> Share
+                </button>
+                <button class="btn btn-secondary" onclick="app.downloadSnippet('${snippet.id}')">
+                    <i class="fas fa-download"></i> Download ZIP
+                </button>
+                <button class="btn btn-danger" onclick="app.deleteSnippet('${snippet.id}')">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+initializeViewer(id) {
+    const snippet = this.state.snippets.find(s => s.id === id);
+    if (!snippet) return;
+
+    // Store current snippet ID for reference
+    this.currentViewingSnippetId = id;
+    
+    // Highlight syntax for first file
+    this.highlightCode();
+    
+    // Initialize file selector for mobile
+    if (window.innerWidth <= 768 && snippet.files.length > 1) {
+        this.initializeMobileFileSelector(snippet);
+    }
+}
+
+highlightCode() {
+    // Wait for DOM to be ready
+    setTimeout(() => {
+        const codeElement = document.getElementById('code-content');
+        if (codeElement) {
+            // Remove existing Prism classes
+            codeElement.className = '';
+            
+            // Get language from filename or use 'text' as default
+            const snippet = this.state.snippets.find(s => s.id === this.currentViewingSnippetId);
+            if (snippet && snippet.files.length > 0) {
+                const file = snippet.files[0];
+                const language = file.language || 'text';
+                codeElement.className = `language-${language}`;
+            }
+            
+            // Apply Prism highlighting
+            Prism.highlightAll();
+        }
+    }, 100);
+}
+
+selectViewerFile(index) {
+    const snippet = this.state.snippets.find(s => s.id === this.currentViewingSnippetId);
+    if (!snippet || !snippet.files[index]) return;
+
+    const file = snippet.files[index];
+    
+    // Update filename display
+    const filenameElement = document.getElementById('current-filename');
+    if (filenameElement) {
+        filenameElement.textContent = file.filename;
+    }
+    
+    // Update code content
+    const codeElement = document.getElementById('code-content');
+    if (codeElement) {
+        codeElement.textContent = file.content;
+        codeElement.className = `language-${file.language || 'text'}`;
+        
+        // Re-highlight syntax
+        Prism.highlightElement(codeElement);
+    }
+    
+    // Update active file in sidebar
+    document.querySelectorAll('.file-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    
+    const selectedItem = document.querySelector(`.file-item[data-file-index="${index}"]`);
+    if (selectedItem) {
+        selectedItem.classList.add('active');
+    }
+    
+    // Scroll to top of code viewer
+    const codeViewer = document.querySelector('.code-content');
+    if (codeViewer) {
+        codeViewer.scrollTop = 0;
+    }
+}
+
+copyCurrentFileContent(snippetId) {
+    const snippet = this.state.snippets.find(s => s.id === snippetId);
+    if (!snippet) return;
+
+    const filenameElement = document.getElementById('current-filename');
+    const currentFilename = filenameElement ? filenameElement.textContent : snippet.files[0].filename;
+    
+    const file = snippet.files.find(f => f.filename === currentFilename) || snippet.files[0];
+    if (!file) return;
+
+    navigator.clipboard.writeText(file.content)
+        .then(() => this.showToast('Code copied to clipboard', 'success'))
+        .catch(() => this.showToast('Failed to copy code', 'error'));
+}
+
+downloadCurrentFile(snippetId) {
+    const snippet = this.state.snippets.find(s => s.id === snippetId);
+    if (!snippet) return;
+
+    const filenameElement = document.getElementById('current-filename');
+    const currentFilename = filenameElement ? filenameElement.textContent : snippet.files[0].filename;
+    
+    const file = snippet.files.find(f => f.filename === currentFilename) || snippet.files[0];
+    if (!file) return;
+
+    const blob = new Blob([file.content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = file.filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+showFileSelector(snippetId) {
+    const snippet = this.state.snippets.find(s => s.id === snippetId);
+    if (!snippet || snippet.files.length <= 1) return;
+
+    const fileList = snippet.files.map((file, index) => 
+        `${index + 1}. ${file.filename} (${file.language || 'text'})`
+    ).join('\n');
+    
+    const selection = prompt(`Select a file:\n\n${fileList}\n\nEnter file number:`, '1');
+    if (!selection) return;
+    
+    const index = parseInt(selection) - 1;
+    if (index >= 0 && index < snippet.files.length) {
+        this.selectViewerFile(index);
+    }
+}
+
+initializeMobileFileSelector(snippet) {
+    if (snippet.files.length <= 1) return;
+
+    // Create a file selector dropdown for mobile
+    const codeHeader = document.querySelector('.code-header');
+    if (codeHeader) {
+        const select = document.createElement('select');
+        select.className = 'file-selector';
+        select.style.marginRight = '8px';
+        select.style.padding = '4px 8px';
+        select.style.borderRadius = '4px';
+        select.style.backgroundColor = 'var(--bg-tertiary)';
+        select.style.color = 'var(--text-primary)';
+        select.style.border = '1px solid var(--border-color)';
+        
+        snippet.files.forEach((file, index) => {
+            const option = document.createElement('option');
+            option.value = index;
+            option.textContent = file.filename;
+            if (index === 0) option.selected = true;
+            select.appendChild(option);
+        });
+        
+        select.addEventListener('change', (e) => {
+            this.selectViewerFile(parseInt(e.target.value));
+        });
+        
+        codeHeader.insertBefore(select, codeHeader.querySelector('.code-actions'));
+    }
+}
+
+
+
+
+
+
+
 // Main Application Controller
 class GistApp {
     constructor() {
@@ -341,120 +635,304 @@ class GistApp {
         `;
     }
 
-    renderSnippetViewer(id) {
-        const snippet = this.state.snippets.find(s => s.id === id);
-        if (!snippet) {
-            return `
-                <div class="empty-state">
-                    <div class="empty-icon">
-                        <i class="fas fa-exclamation-circle"></i>
-                    </div>
-                    <h3 class="empty-title">Snippet not found</h3>
-                    <p class="empty-description">
-                        The snippet you're looking for doesn't exist or has been deleted.
-                    </p>
-                    <button class="btn btn-primary" onclick="app.navigateTo('home')">
-                        Back to Snippets
-                    </button>
-                </div>
-            `;
-        }
 
+//  N E W
+
+// Update the snippet viewer rendering to fix display issues
+renderSnippetViewer(id) {
+    const snippet = this.state.snippets.find(s => s.id === id);
+    if (!snippet) {
         return `
-            <div class="page">
-                <div class="viewer-container">
-                    <div class="viewer-header">
-                        <h1 class="viewer-title">${snippet.title}</h1>
-                        <p class="viewer-description">${snippet.description || 'No description'}</p>
-                        
-                        <div class="viewer-meta">
-                            <div class="meta-item">
-                                <i class="fas fa-user"></i>
-                                <span>${this.state.currentUser.username}</span>
-                            </div>
-                            <div class="meta-item">
-                                <i class="far fa-clock"></i>
-                                <span>Created ${this.formatDate(snippet.createdAt)}</span>
-                            </div>
-                            <div class="meta-item">
-                                <i class="fas fa-sync"></i>
-                                <span>Updated ${this.formatTimeAgo(snippet.updatedAt)}</span>
-                            </div>
-                            <div class="meta-item">
-                                <i class="fas ${snippet.isPublic ? 'fa-globe' : 'fa-lock'}"></i>
-                                <span>${snippet.isPublic ? 'Public' : 'Private'}</span>
-                            </div>
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-exclamation-circle"></i>
+                </div>
+                <h3 class="empty-title">Snippet not found</h3>
+                <p class="empty-description">
+                    The snippet you're looking for doesn't exist or has been deleted.
+                </p>
+                <button class="btn btn-primary" onclick="app.navigateTo('home')">
+                    Back to Snippets
+                </button>
+            </div>
+        `;
+    }
+
+    // Calculate display properties
+    const hasMultipleFiles = snippet.files.length > 1;
+    const shouldShowSidebar = hasMultipleFiles && window.innerWidth > 768;
+
+    return `
+        <div class="page">
+            <div class="viewer-container" style="height: ${hasMultipleFiles ? '70vh' : 'auto'};">
+                <div class="viewer-header">
+                    <h1 class="viewer-title">${snippet.title}</h1>
+                    ${snippet.description ? `
+                        <p class="viewer-description">${snippet.description}</p>
+                    ` : ''}
+                    
+                    <div class="viewer-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-user"></i>
+                            <span>${this.state.currentUser.username}</span>
                         </div>
-                        
-                        ${snippet.tags && snippet.tags.length > 0 ? `
-                            <div class="tag-container">
-                                ${snippet.tags.map(tag => `
-                                    <span class="tag">${tag}</span>
-                                `).join('')}
-                            </div>
-                        ` : ''}
+                        <div class="meta-item">
+                            <i class="far fa-clock"></i>
+                            <span>Created ${this.formatDate(snippet.createdAt)}</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-sync"></i>
+                            <span>Updated ${this.formatTimeAgo(snippet.updatedAt)}</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas ${snippet.isPublic ? 'fa-globe' : 'fa-lock'}"></i>
+                            <span>${snippet.isPublic ? 'Public' : 'Private'}</span>
+                        </div>
                     </div>
                     
-                    <div class="viewer-body">
+                    ${snippet.tags && snippet.tags.length > 0 ? `
+                        <div class="tag-container">
+                            ${snippet.tags.map(tag => `
+                                <span class="tag">${tag}</span>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+                
+                <div class="viewer-body">
+                    ${shouldShowSidebar ? `
                         <div class="viewer-sidebar" id="viewer-sidebar">
                             <div class="file-tree">
                                 ${snippet.files.map((file, index) => `
                                     <div class="file-item ${index === 0 ? 'active' : ''}" 
                                          data-file-index="${index}"
                                          onclick="app.selectViewerFile(${index})">
-                                        <i class="fas fa-file file-icon"></i>
+                                        <i class="fas fa-file-code file-icon"></i>
                                         <span>${file.filename}</span>
                                     </div>
                                 `).join('')}
                             </div>
                         </div>
-                        
-                        <div class="code-viewer">
-                            ${snippet.files.map((file, index) => `
-                                <div class="code-container ${index === 0 ? '' : 'hidden'}" id="file-content-${index}">
-                                    <div class="code-header">
-                                        <div class="code-filename">
-                                            <i class="fas fa-file"></i>
-                                            <span>${file.filename}</span>
-                                        </div>
-                                        <div class="code-actions">
-                                            <button class="btn-icon" onclick="app.copyFileContent('${file.id}')">
-                                                <i class="far fa-copy"></i>
-                                            </button>
-                                            <button class="btn-icon" onclick="app.downloadFile('${file.id}', '${file.filename}')">
-                                                <i class="fas fa-download"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="code-content">
-                                        <pre><code class="language-${file.language}">${this.escapeHtml(file.content)}</code></pre>
-                                    </div>
+                    ` : ''}
+                    
+                    <div class="code-viewer" ${!shouldShowSidebar ? 'style="width: 100%;"' : ''}>
+                        <div class="code-container">
+                            <div class="code-header">
+                                <div class="code-filename">
+                                    <i class="fas fa-file-code"></i>
+                                    <span id="current-filename">${snippet.files[0]?.filename || 'Untitled'}</span>
                                 </div>
-                            `).join('')}
+                                <div class="code-actions">
+                                    <button class="btn-icon" onclick="app.copyCurrentFileContent('${id}')" title="Copy code">
+                                        <i class="far fa-copy"></i>
+                                    </button>
+                                    <button class="btn-icon" onclick="app.downloadCurrentFile('${id}')" title="Download file">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                    ${!shouldShowSidebar && hasMultipleFiles ? `
+                                        <button class="btn-icon" onclick="app.showFileSelector('${id}')" title="Select file">
+                                            <i class="fas fa-list"></i>
+                                        </button>
+                                    ` : ''}
+                                </div>
+                            </div>
+                            <div class="code-content">
+                                <pre id="code-display"><code class="language-${snippet.files[0]?.language || 'text'}" id="code-content">${this.escapeHtml(snippet.files[0]?.content || '')}</code></pre>
+                            </div>
                         </div>
                     </div>
                 </div>
-                
-                <div class="viewer-actions" style="margin-top: var(--space-4); display: flex; gap: var(--space-2);">
-                    <button class="btn btn-primary" onclick="app.editSnippet('${snippet.id}')">
-                        <i class="fas fa-edit"></i> Edit
-                    </button>
-                    <button class="btn btn-secondary" onclick="app.forkSnippet('${snippet.id}')">
-                        <i class="fas fa-code-branch"></i> Fork
-                    </button>
-                    <button class="btn btn-secondary" onclick="app.shareSnippet('${snippet.id}')">
-                        <i class="fas fa-share"></i> Share
-                    </button>
-                    <button class="btn btn-secondary" onclick="app.downloadSnippet('${snippet.id}')">
-                        <i class="fas fa-download"></i> Download ZIP
-                    </button>
-                    <button class="btn btn-danger" onclick="app.deleteSnippet('${snippet.id}')">
-                        <i class="fas fa-trash"></i> Delete
-                    </button>
-                </div>
             </div>
-        `;
+            
+            <div class="viewer-actions">
+                <button class="btn btn-primary" onclick="app.editSnippet('${snippet.id}')">
+                    <i class="fas fa-edit"></i> Edit
+                </button>
+                <button class="btn btn-secondary" onclick="app.forkSnippet('${snippet.id}')">
+                    <i class="fas fa-code-branch"></i> Fork
+                </button>
+                <button class="btn btn-secondary" onclick="app.shareSnippet('${snippet.id}')">
+                    <i class="fas fa-share"></i> Share
+                </button>
+                <button class="btn btn-secondary" onclick="app.downloadSnippet('${snippet.id}')">
+                    <i class="fas fa-download"></i> Download ZIP
+                </button>
+                <button class="btn btn-danger" onclick="app.deleteSnippet('${snippet.id}')">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+initializeViewer(id) {
+    const snippet = this.state.snippets.find(s => s.id === id);
+    if (!snippet) return;
+
+    // Store current snippet ID for reference
+    this.currentViewingSnippetId = id;
+    
+    // Highlight syntax for first file
+    this.highlightCode();
+    
+    // Initialize file selector for mobile
+    if (window.innerWidth <= 768 && snippet.files.length > 1) {
+        this.initializeMobileFileSelector(snippet);
     }
+}
+
+highlightCode() {
+    // Wait for DOM to be ready
+    setTimeout(() => {
+        const codeElement = document.getElementById('code-content');
+        if (codeElement) {
+            // Remove existing Prism classes
+            codeElement.className = '';
+            
+            // Get language from filename or use 'text' as default
+            const snippet = this.state.snippets.find(s => s.id === this.currentViewingSnippetId);
+            if (snippet && snippet.files.length > 0) {
+                const file = snippet.files[0];
+                const language = file.language || 'text';
+                codeElement.className = `language-${language}`;
+            }
+            
+            // Apply Prism highlighting
+            Prism.highlightAll();
+        }
+    }, 100);
+}
+
+selectViewerFile(index) {
+    const snippet = this.state.snippets.find(s => s.id === this.currentViewingSnippetId);
+    if (!snippet || !snippet.files[index]) return;
+
+    const file = snippet.files[index];
+    
+    // Update filename display
+    const filenameElement = document.getElementById('current-filename');
+    if (filenameElement) {
+        filenameElement.textContent = file.filename;
+    }
+    
+    // Update code content
+    const codeElement = document.getElementById('code-content');
+    if (codeElement) {
+        codeElement.textContent = file.content;
+        codeElement.className = `language-${file.language || 'text'}`;
+        
+        // Re-highlight syntax
+        Prism.highlightElement(codeElement);
+    }
+    
+    // Update active file in sidebar
+    document.querySelectorAll('.file-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    
+    const selectedItem = document.querySelector(`.file-item[data-file-index="${index}"]`);
+    if (selectedItem) {
+        selectedItem.classList.add('active');
+    }
+    
+    // Scroll to top of code viewer
+    const codeViewer = document.querySelector('.code-content');
+    if (codeViewer) {
+        codeViewer.scrollTop = 0;
+    }
+}
+
+copyCurrentFileContent(snippetId) {
+    const snippet = this.state.snippets.find(s => s.id === snippetId);
+    if (!snippet) return;
+
+    const filenameElement = document.getElementById('current-filename');
+    const currentFilename = filenameElement ? filenameElement.textContent : snippet.files[0].filename;
+    
+    const file = snippet.files.find(f => f.filename === currentFilename) || snippet.files[0];
+    if (!file) return;
+
+    navigator.clipboard.writeText(file.content)
+        .then(() => this.showToast('Code copied to clipboard', 'success'))
+        .catch(() => this.showToast('Failed to copy code', 'error'));
+}
+
+downloadCurrentFile(snippetId) {
+    const snippet = this.state.snippets.find(s => s.id === snippetId);
+    if (!snippet) return;
+
+    const filenameElement = document.getElementById('current-filename');
+    const currentFilename = filenameElement ? filenameElement.textContent : snippet.files[0].filename;
+    
+    const file = snippet.files.find(f => f.filename === currentFilename) || snippet.files[0];
+    if (!file) return;
+
+    const blob = new Blob([file.content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = file.filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+showFileSelector(snippetId) {
+    const snippet = this.state.snippets.find(s => s.id === snippetId);
+    if (!snippet || snippet.files.length <= 1) return;
+
+    const fileList = snippet.files.map((file, index) => 
+        `${index + 1}. ${file.filename} (${file.language || 'text'})`
+    ).join('\n');
+    
+    const selection = prompt(`Select a file:\n\n${fileList}\n\nEnter file number:`, '1');
+    if (!selection) return;
+    
+    const index = parseInt(selection) - 1;
+    if (index >= 0 && index < snippet.files.length) {
+        this.selectViewerFile(index);
+    }
+}
+
+initializeMobileFileSelector(snippet) {
+    if (snippet.files.length <= 1) return;
+
+    // Create a file selector dropdown for mobile
+    const codeHeader = document.querySelector('.code-header');
+    if (codeHeader) {
+        const select = document.createElement('select');
+        select.className = 'file-selector';
+        select.style.marginRight = '8px';
+        select.style.padding = '4px 8px';
+        select.style.borderRadius = '4px';
+        select.style.backgroundColor = 'var(--bg-tertiary)';
+        select.style.color = 'var(--text-primary)';
+        select.style.border = '1px solid var(--border-color)';
+        
+        snippet.files.forEach((file, index) => {
+            const option = document.createElement('option');
+            option.value = index;
+            option.textContent = file.filename;
+            if (index === 0) option.selected = true;
+            select.appendChild(option);
+        });
+        
+        select.addEventListener('change', (e) => {
+            this.selectViewerFile(parseInt(e.target.value));
+        });
+        
+        codeHeader.insertBefore(select, codeHeader.querySelector('.code-actions'));
+    }
+}
+
+//  N E W 
+
+
+
+
+
+
 
     renderEditor(id = null) {
         const isEditing = id !== null;
