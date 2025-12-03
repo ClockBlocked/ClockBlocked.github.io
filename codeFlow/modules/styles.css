@@ -2014,3 +2014,44 @@ code[class*="language-"] {
         padding: 8px;
     }
 }
+
+
+
+
+
+
+
+.file-tabs {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    padding: 0 4px;
+    scrollbar-width: thin;
+}
+
+.file-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 6px 6px 0 0;
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid transparent;
+    border-bottom: none;
+    cursor: pointer;
+    white-space: nowrap;
+    font-size: 13px;
+}
+
+.file-tab.active {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+.file-tab .file-name {
+    max-width: 140px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
