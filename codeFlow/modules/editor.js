@@ -20,50 +20,108 @@ class CodeEditor {
         console.log('Editor initialized successfully');
     }
 
-    initEditor() {
-        const editorElement = document.getElementById('editor-instance');
-        if (!editorElement) { console.error('Editor element not found'); return; }
-        if (this.editor) { this.editor.toTextArea(); this.editor = null; }
-        const textarea = document.getElementById('code-editor');
-        if (!textarea) { console.error('Code editor textarea not found'); return; }
-        textarea.value = this.files[this.currentFileIndex]?.content || '';
-        try {
-            this.editor = CodeMirror.fromTextArea(textarea, {
-                value: this.files[this.currentFileIndex]?.content || '',
-                mode: this.getLanguageMode(this.files[this.currentFileIndex]?.language || 'javascript'),
-                theme: 'github-dark-dimmed',
-                lineNumbers: this.editorSettings.lineNumbers,
-                lineWrapping: this.editorSettings.lineWrapping,
-                autoCloseBrackets: this.editorSettings.autoCloseBrackets,
-                matchBrackets: this.editorSettings.matchBrackets,
-                indentUnit: this.editorSettings.indentUnit,
-                tabSize: this.editorSettings.tabSize,
-                scrollbarStyle: 'simple',
-                foldGutter: true,
-                gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
-                extraKeys: { "Ctrl-Space": "autocomplete", "Tab": function(cm) { if (cm.somethingSelected()) cm.indentSelection("add"); else cm.replaceSelection("  ", "end"); }, "Shift-Tab": "indentLess" }
-            });
-            this.editor.setSize('100%', '100%');
-            this.editor.on('change', () => { this.updateCurrentFileContent(); this.updateEditorStatus(); });
-            this.editor.on('cursorActivity', () => this.updateEditorStatus());
-            this.editor.on('focus', () => editorElement.classList.add('focused'));
-            this.editor.on('blur', () => editorElement.classList.remove('focused'));
-            console.log('CodeMirror editor created successfully');
-        } catch (error) {
-            console.error('Failed to create CodeMirror editor:', error);
-            textarea.style.display = 'block';
-            textarea.style.width = '100%';
-            textarea.style.height = '100%';
-            textarea.style.fontFamily = 'var(--font-mono)';
-            textarea.style.fontSize = '14px';
-            textarea.style.backgroundColor = 'var(--bg-primary)';
-            textarea.style.color = 'var(--text-primary)';
-            textarea.style.border = 'none';
-            textarea.style.padding = 'var(--space-3)';
-            textarea.style.resize = 'none';
-            textarea.addEventListener('input', () => { this.updateCurrentFileContent(); this.updateEditorStatus(); });
-        }
+initEditor() {
+    const editorElement = document.getElementById('editor-instance');
+    if (!editorElement) {
+        console.error('Editor element not found');
+        return;
     }
+
+    // Clear existing editor
+    if (this.editor) {
+        this.editor.toTextArea();
+        this.editor = null;
+    }
+
+    // Create textarea for CodeMirror
+    const textarea = document.getElementById('code-editor');
+    if (!textarea) {
+        console.error('Code editor textarea not found');
+        return;
+    }
+
+    // Set initial content
+    const currentFile = this.files[this.currentFileIndex];
+    textarea.value = currentFile?.content || '';
+
+    try {
+        // Initialize CodeMirror with GitHub-like theme
+        this.editor = CodeMirror.fromTextArea(textarea, {
+            value: currentFile?.content || '',
+            mode: this.getLanguageMode(currentFile?.language || 'javascript'),
+            theme: 'dracula', // GitHub-like dark theme
+            lineNumbers: true,
+            lineWrapping: this.editorSettings.wordWrap === 'on',
+            autoCloseBrackets: true,
+            matchBrackets: true,
+            indentUnit: this.editorSettings.indentUnit,
+            tabSize: this.editorSettings.tabSize,
+            scrollbarStyle: 'overlay',
+            foldGutter: true,
+            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+            extraKeys: {
+                "Ctrl-Space": "autocomplete",
+                "Tab": function(cm) {
+                    if (cm.somethingSelected()) {
+                        cm.indentSelection("add");
+                    } else {
+                        cm.replaceSelection("  ", "end");
+                    }
+                },
+                "Shift-Tab": "indentLess",
+                "Ctrl-S": function(cm) {
+                    editor.saveSnippet();
+                }
+            }
+        });
+
+        // Set editor size to fill container
+        this.editor.setSize('100%', '100%');
+
+        // Listen for changes
+        this.editor.on('change', () => {
+            this.updateCurrentFileContent();
+            this.updateEditorStatus();
+        });
+
+        // Listen for cursor activity
+        this.editor.on('cursorActivity', () => {
+            this.updateEditorStatus();
+        });
+
+        // Update status on mode change
+        this.editor.on('optionChange', (instance, option) => {
+            if (option === 'mode') {
+                this.updateEditorStatus();
+            }
+        });
+
+        // Set initial status
+        this.updateEditorStatus();
+
+        console.log('CodeMirror editor created successfully with syntax highlighting');
+
+    } catch (error) {
+        console.error('Failed to create CodeMirror editor:', error);
+        
+        // Fallback to simple textarea with syntax highlighting classes
+        textarea.style.display = 'block';
+        textarea.style.width = '100%';
+        textarea.style.height = '100%';
+        textarea.style.fontFamily = 'var(--font-mono)';
+        textarea.style.fontSize = '14px';
+        textarea.style.backgroundColor = 'var(--bg-primary)';
+        textarea.style.color = 'var(--text-primary)';
+        textarea.style.border = 'none';
+        textarea.style.padding = 'var(--space-3)';
+        textarea.style.resize = 'none';
+        
+        textarea.addEventListener('input', () => {
+            this.updateCurrentFileContent();
+            this.updateEditorStatus();
+        });
+    }
+}
 
     loadSnippet(snippet) {
         console.log('Loading snippet:', snippet);
@@ -109,21 +167,45 @@ class CodeEditor {
         `).join('');
     }
 
-    switchToFile(index) {
-        if (index < 0 || index >= this.files.length) return;
-        this.updateCurrentFileContent();
-        this.currentFileIndex = index;
-        const file = this.files[index];
-        if (this.editor) {
-            this.editor.setValue(file.content || '');
-            this.editor.setOption('mode', this.getLanguageMode(file.language));
-            setTimeout(() => this.editor.refresh(), 0);
-        }
-        this.renderFileTabs();
-        this.renderFileTree();
-        this.updateEditorStatus();
-        if (this.editor) setTimeout(() => this.editor.focus(), 100);
+switchToFile(index) {
+    if (index < 0 || index >= this.files.length) return;
+
+    // Save current file content
+    this.updateCurrentFileContent();
+
+    // Update current file index
+    this.currentFileIndex = index;
+
+    // Update editor content
+    const file = this.files[index];
+    if (this.editor) {
+        this.editor.setValue(file.content || '');
+        
+        // Set the correct language mode
+        const languageMode = this.getLanguageMode(file.language);
+        this.editor.setOption('mode', languageMode);
+        
+        // Refresh editor to ensure proper rendering
+        setTimeout(() => {
+            if (this.editor) {
+                this.editor.refresh();
+                this.updateEditorStatus();
+            }
+        }, 0);
     }
+
+    // Update UI
+    this.renderFileTabs();
+    this.renderFileTree();
+    this.updateEditorStatus();
+    
+    // Focus editor
+    if (this.editor) {
+        setTimeout(() => {
+            this.editor.focus();
+        }, 100);
+    }
+}
 
     updateCurrentFileContent() {
         if (!this.editor || this.currentFileIndex >= this.files.length) return;
@@ -290,28 +372,103 @@ class CodeEditor {
         return name.substring(0, maxNameLength) + '...' + extension;
     }
 
-    detectLanguageFromFilename(filename) {
-        const extension = filename.split('.').pop().toLowerCase();
-        const languageMap = {
-            'js': 'javascript', 'jsx': 'javascript', 'ts': 'javascript', 'tsx': 'javascript', 'html': 'htmlmixed', 'htm': 'htmlmixed',
-            'css': 'css', 'scss': 'css', 'sass': 'sass', 'less': 'css', 'json': 'javascript', 'md': 'markdown', 'py': 'python',
-            'rb': 'ruby', 'php': 'php', 'java': 'clike', 'c': 'clike', 'cpp': 'clike', 'cs': 'clike', 'go': 'go', 'rs': 'rust',
-            'swift': 'swift', 'kt': 'clike', 'sql': 'sql', 'sh': 'shell', 'bash': 'shell', 'yml': 'yaml', 'yaml': 'yaml',
-            'xml': 'xml', 'svg': 'xml', 'txt': 'text', 'text': 'text'
-        };
-        return languageMap[extension] || 'text';
-    }
+    detectLanguage(filename) {
+    const extension = filename.split('.').pop().toLowerCase();
+    
+    const languageMap = {
+        'js': 'javascript',
+        'jsx': 'javascript',
+        'ts': 'typescript',
+        'tsx': 'typescript',
+        'mjs': 'javascript',
+        'cjs': 'javascript',
+        'html': 'htmlmixed',
+        'htm': 'htmlmixed',
+        'xhtml': 'htmlmixed',
+        'css': 'css',
+        'scss': 'css',
+        'sass': 'css',
+        'less': 'css',
+        'json': 'javascript',
+        'json5': 'javascript',
+        'md': 'markdown',
+        'markdown': 'markdown',
+        'py': 'python',
+        'pyw': 'python',
+        'rb': 'ruby',
+        'php': 'php',
+        'phtml': 'php',
+        'java': 'clike',
+        'c': 'clike',
+        'h': 'clike',
+        'cpp': 'clike',
+        'cc': 'clike',
+        'cxx': 'clike',
+        'hpp': 'clike',
+        'cs': 'clike',
+        'go': 'go',
+        'rs': 'rust',
+        'swift': 'swift',
+        'kt': 'kotlin',
+        'kts': 'kotlin',
+        'sql': 'sql',
+        'sh': 'shell',
+        'bash': 'shell',
+        'zsh': 'shell',
+        'yml': 'yaml',
+        'yaml': 'yaml',
+        'xml': 'xml',
+        'svg': 'xml',
+        'txt': 'text',
+        'text': 'text',
+        'log': 'text',
+        'ini': 'properties',
+        'toml': 'properties',
+        'cfg': 'properties',
+        'conf': 'properties'
+    };
 
-    getLanguageMode(language) {
-        const modeMap = {
-            'javascript': 'javascript', 'jsx': 'javascript', 'typescript': 'javascript', 'tsx': 'javascript',
-            'html': 'htmlmixed', 'css': 'css', 'scss': 'css', 'sass': 'css', 'less': 'css', 'json': 'javascript',
-            'markdown': 'markdown', 'python': 'python', 'ruby': 'ruby', 'php': 'php', 'java': 'clike',
-            'c': 'clike', 'cpp': 'clike', 'csharp': 'clike', 'go': 'go', 'rust': 'rust', 'swift': 'swift',
-            'kotlin': 'clike', 'sql': 'sql', 'shell': 'shell', 'yaml': 'yaml', 'xml': 'xml', 'text': 'text'
-        };
-        return modeMap[language] || 'text';
-    }
+    return languageMap[extension] || 'text';
+}
+
+getLanguageMode(language) {
+    const modeMap = {
+        'javascript': 'javascript',
+        'typescript': 'javascript',
+        'jsx': 'javascript',
+        'tsx': 'javascript',
+        'html': 'htmlmixed',
+        'htmlmixed': 'htmlmixed',
+        'css': 'css',
+        'scss': 'css',
+        'sass': 'css',
+        'less': 'css',
+        'json': 'javascript',
+        'markdown': 'markdown',
+        'python': 'python',
+        'ruby': 'ruby',
+        'php': 'php',
+        'java': 'clike',
+        'c': 'clike',
+        'cpp': 'clike',
+        'csharp': 'clike',
+        'c#': 'clike',
+        'go': 'go',
+        'rust': 'rust',
+        'swift': 'swift',
+        'kotlin': 'clike',
+        'sql': 'sql',
+        'shell': 'shell',
+        'bash': 'shell',
+        'yaml': 'yaml',
+        'xml': 'xml',
+        'text': 'text',
+        'plaintext': 'text',
+        'properties': 'properties'
+    };
+
+    return modeMap[language] || 'text';
+}
 
     getDefaultContent(language) {
         const defaults = {
