@@ -1,0 +1,689 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap");
+
+:root {
+  --github-canvas-default: #22272e;
+  --github-canvas-overlay: #2d333b;
+  --github-canvas-inset: #1c2128;
+  --github-canvas-subtle: #2d333b;
+  --github-border-default: #444c56;
+  --github-border-muted: #373e47;
+  --github-neutral-emphasis: #768390;
+  --github-neutral-muted: #636e7b;
+  --github-fg-default: #adbac7;
+  --github-fg-muted: #768390;
+  --github-fg-subtle: #545d68;
+  --github-accent-fg: #539bf5;
+  --github-accent-emphasis: #4184e4;
+  --github-success-fg: #57ab5a;
+  --github-danger-fg: #e5534b;
+  --github-warning-fg: #c69026;
+  --github-btn-primary-bg: #347d39;
+  --github-btn-primary-hover: #46954a;
+  --github-btn-secondary-bg: #373e47;
+  --github-btn-secondary-hover: #444c56;
+}
+
+html {
+  font-size: 14px;
+}
+
+body {
+  background-color: var(--github-canvas-default);
+  color: var(--github-fg-default);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* CodeMirror GitHub Dark Dimmed Theme */
+.CodeMirror {
+  background: var(--github-canvas-overlay) !important;
+  color: var(--github-fg-default) !important;
+  border: 1px solid var(--github-border-default) !important;
+  border-radius: 8px !important;
+  font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace !important;
+  font-size: 13px !important;
+  line-height: 1.45 !important;
+}
+
+.CodeMirror-focused {
+  border-color: var(--github-accent-emphasis) !important;
+  box-shadow: 0 0 0 2px rgba(65, 132, 228, 0.3) !important;
+}
+
+.CodeMirror-cursor {
+  border-left: 2px solid var(--github-fg-default) !important;
+}
+
+.CodeMirror-gutters {
+  background: var(--github-canvas-inset) !important;
+  border-right: 1px solid var(--github-border-muted) !important;
+  padding-right: 8px !important;
+}
+
+.CodeMirror-linenumber {
+  color: var(--github-fg-muted) !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 12px !important;
+  min-width: 2.5em !important;
+  text-align: right !important;
+}
+
+.CodeMirror-activeline-background {
+  background: rgba(173, 186, 199, 0.05) !important;
+}
+
+.CodeMirror-selected {
+  background: rgba(83, 155, 245, 0.15) !important;
+}
+
+.CodeMirror-line::selection,
+.CodeMirror-line > span::selection,
+.CodeMirror-line > span > span::selection {
+  background: rgba(83, 155, 245, 0.15) !important;
+}
+
+/* Syntax Highlighting - GitHub Dark Dimmed */
+.cm-comment {
+  color: #768390 !important;
+  font-style: italic !important;
+}
+
+.cm-keyword {
+  color: #ff7b72 !important;
+  font-weight: 500 !important;
+}
+
+.cm-string {
+  color: #a5d6ff !important;
+}
+
+.cm-string-2 {
+  color: #96d0ff !important;
+}
+
+.cm-number {
+  color: #79c0ff !important;
+}
+
+.cm-variable {
+  color: var(--github-fg-default) !important;
+}
+
+.cm-variable-2 {
+  color: #ffa657 !important;
+}
+
+.cm-variable-3 {
+  color: #d2a8ff !important;
+}
+
+.cm-def {
+  color: #ffa657 !important;
+  font-weight: 500 !important;
+}
+
+.cm-operator {
+  color: #ff7b72 !important;
+}
+
+.cm-bracket {
+  color: var(--github-fg-default) !important;
+}
+
+.cm-tag {
+  color: #7ee787 !important;
+}
+
+.cm-attribute {
+  color: #79c0ff !important;
+}
+
+.cm-property {
+  color: #79c0ff !important;
+}
+
+.cm-builtin {
+  color: #ffa657 !important;
+}
+
+.cm-atom {
+  color: #79c0ff !important;
+}
+
+.cm-meta {
+  color: #768390 !important;
+}
+
+.cm-link {
+  color: #539bf5 !important;
+  text-decoration: underline !important;
+}
+
+.cm-error {
+  background: rgba(229, 83, 75, 0.15) !important;
+  border-bottom: 2px solid #e5534b !important;
+}
+
+/* Enhanced Prism Theme for File Viewer */
+pre[class*="language-"] {
+  background: var(--github-canvas-overlay) !important;
+  color: var(--github-fg-default) !important;
+  font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace !important;
+  font-size: 13px !important;
+  line-height: 1.5 !important;
+  margin: 0 !important;
+  overflow: auto !important;
+  padding: 0 !important;
+}
+
+code[class*="language-"] {
+  background: transparent !important;
+  color: var(--github-fg-default) !important;
+  font-family: inherit !important;
+  font-size: inherit !important;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: #768390 !important;
+  font-style: italic !important;
+}
+
+.token.punctuation {
+  color: var(--github-fg-default) !important;
+}
+
+.token.property,
+.token.tag,
+.token.constant,
+.token.symbol,
+.token.deleted {
+  color: #7ee787 !important;
+}
+
+.token.boolean,
+.token.number {
+  color: #79c0ff !important;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+  color: #a5d6ff !important;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string,
+.token.variable {
+  color: #ff7b72 !important;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.function,
+.token.class-name {
+  color: #ffa657 !important;
+}
+
+.token.keyword {
+  color: #ff7b72 !important;
+  font-weight: 500 !important;
+}
+
+.token.regex,
+.token.important {
+  color: #d2a8ff !important;
+}
+
+.token.important,
+.token.bold {
+  font-weight: bold !important;
+}
+
+.token.italic {
+  font-style: italic !important;
+}
+
+.token.entity {
+  cursor: help !important;
+}
+
+/* File type colors */
+.file-type-html {
+  color: #e34c26 !important;
+}
+
+.file-type-css {
+  color: #1572b6 !important;
+}
+
+.file-type-js,
+.file-type-javascript {
+  color: #f1e05a !important;
+}
+
+.file-type-ts,
+.file-type-typescript {
+  color: #2b7489 !important;
+}
+
+.file-type-json {
+  color: #f1e05a !important;
+}
+
+.file-type-md,
+.file-type-markdown {
+  color: #083fa1 !important;
+}
+
+.file-type-py,
+.file-type-python {
+  color: #3572a5 !important;
+}
+
+.file-type-php {
+  color: #4f5d95 !important;
+}
+
+.file-type-java {
+  color: #b07219 !important;
+}
+
+.file-type-cpp {
+  color: #f34b7d !important;
+}
+
+.file-type-c {
+  color: #555555 !important;
+}
+
+.file-type-cs {
+  color: #239120 !important;
+}
+
+.file-type-rb,
+.file-type-ruby {
+  color: #701516 !important;
+}
+
+.file-type-go {
+  color: #00add8 !important;
+}
+
+.file-type-rs,
+.file-type-rust {
+  color: #dea584 !important;
+}
+
+.file-type-yml,
+.file-type-yaml {
+  color: #cb171e !important;
+}
+
+.file-type-xml {
+  color: #0060ac !important;
+}
+
+.file-type-sql {
+  color: #e38c00 !important;
+}
+
+/* Enhanced scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--github-canvas-default);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--github-border-default);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--github-neutral-muted);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--github-canvas-default);
+}
+
+/* Improved animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Enhanced focus states */
+button:focus,
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 2px solid var(--github-accent-emphasis);
+  outline-offset: 2px;
+}
+
+/* Improved table styling */
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+thead th {
+  position: sticky;
+  top: 0;
+  background: var(--github-canvas-overlay);
+  z-index: 10;
+}
+
+tbody tr {
+  border-top: 1px solid var(--github-border-muted);
+}
+
+tbody tr:hover {
+  background: rgba(173, 186, 199, 0.05);
+}
+
+/* Line numbers alignment */
+#lineNumbers div,
+.CodeMirror-linenumber {
+  min-height: 20px;
+  line-height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 8px;
+}
+
+/* Context menu styling */
+#contextMenu {
+  background: var(--github-canvas-overlay);
+  border: 1px solid var(--github-border-default);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(1, 4, 9, 0.15), 0 0 0 1px rgba(1, 4, 9, 0.1);
+  backdrop-filter: blur(12px);
+}
+
+#contextMenu button:first-child {
+  border-top-left-radius: 7px;
+  border-top-right-radius: 7px;
+}
+
+#contextMenu button:last-child {
+  border-bottom-left-radius: 7px;
+  border-bottom-right-radius: 7px;
+}
+
+/* Modal improvements */
+.modal-backdrop {
+  backdrop-filter: blur(4px);
+  background: rgba(1, 4, 9, 0.4);
+}
+
+/* Repository card hover effect */
+.repo-card {
+  transition: all 0.2s ease;
+  border: 1px solid var(--github-border-default);
+}
+
+.repo-card:hover {
+  border-color: var(--github-accent-fg);
+  box-shadow: 0 4px 12px rgba(83, 155, 245, 0.1);
+  transform: translateY(-1px);
+}
+
+/* Tag styling improvements */
+.tag {
+  background: rgba(83, 155, 245, 0.1);
+  border: 1px solid rgba(83, 155, 245, 0.3);
+  color: var(--github-accent-fg);
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.tag:hover {
+  background: rgba(83, 155, 245, 0.15);
+  border-color: rgba(83, 155, 245, 0.4);
+}
+
+/* File list enhancements */
+.file-list-item {
+  transition: background-color 0.15s ease;
+}
+
+.file-list-item:hover {
+  background: rgba(173, 186, 199, 0.05);
+}
+
+.file-name-link {
+  transition: color 0.15s ease;
+}
+
+.file-name-link:hover {
+  color: var(--github-accent-fg);
+}
+
+/* Button hover effects */
+button {
+  transition: all 0.15s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(52, 125, 57, 0.2);
+}
+
+.btn-secondary:hover {
+  background: var(--github-btn-secondary-hover);
+}
+
+/* Loading overlay improvements */
+#loadingOverlay {
+  backdrop-filter: blur(8px);
+  background: rgba(34, 39, 46, 0.8);
+}
+
+/* Notification improvements */
+.notification {
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+  html {
+    font-size: 13px;
+  }
+  
+  .CodeMirror {
+    font-size: 12px !important;
+  }
+  
+  #codeContent {
+    font-size: 12px;
+  }
+  
+  .modal-container {
+    margin: 1rem;
+    max-width: calc(100vw - 2rem);
+  }
+  
+  .flex-col-mobile {
+    flex-direction: column;
+  }
+  
+  .space-x-mobile > * + * {
+    margin-left: 0;
+    margin-top: 0.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .hidden-mobile {
+    display: none !important;
+  }
+  
+  .table-container {
+    overflow-x: auto;
+  }
+  
+  .breadcrumb {
+    flex-wrap: wrap;
+  }
+}
+
+/* Dark mode enhancements */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --github-border-default: #6e7681;
+    --github-border-muted: #545d68;
+    --github-fg-muted: #8b949e;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  
+  .CodeMirror,
+  pre[class*="language-"] {
+    background: white !important;
+    color: black !important;
+    border: 1px solid #ddd !important;
+  }
+}
+
+/* Selection improvements */
+::selection {
+  background: rgba(83, 155, 245, 0.2);
+  color: inherit;
+}
+
+::-moz-selection {
+  background: rgba(83, 155, 245, 0.2);
+  color: inherit;
+}
+
+/* Focus trap for modals */
+.modal-focus-trap {
+  position: relative;
+}
+
+.modal-focus-trap:before,
+.modal-focus-trap:after {
+  content: '';
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Improved table responsiveness */
+.table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-wrapper::-webkit-scrollbar {
+  height: 6px;
+}
+
+/* Enhanced border radius */
+.rounded-github {
+  border-radius: 8px;
+}
+
+.rounded-github-sm {
+  border-radius: 6px;
+}
+
+.rounded-github-lg {
+  border-radius: 12px;
+}
+
+/* Improved spacing utilities */
+.space-y-github > * + * {
+  margin-top: 1rem;
+}
+
+.space-x-github > * + * {
+  margin-left: 1rem;
+}
+
+/* Enhanced shadows */
+.shadow-github {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.shadow-github-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.shadow-github-xl {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
