@@ -1832,3 +1832,185 @@ pre[class*="language-"] {
     outline: none;
     border-color: var(--accent-blue);
 }
+
+
+
+
+
+
+
+
+/* GitHub Dark Dimmed Syntax Highlighting Fixes */
+pre[class*="language-"] {
+    background: #0d1117 !important;
+    color: #c9d1d9 !important;
+    border-radius: 6px;
+    border: 1px solid #30363d;
+    overflow: auto;
+    margin: 0;
+    font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    tab-size: 2;
+}
+
+code[class*="language-"] {
+    background: transparent !important;
+    color: #c9d1d9 !important;
+    font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    text-shadow: none !important;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+    color: #8b949e !important;
+}
+
+.token.punctuation {
+    color: #c9d1d9 !important;
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+    color: #79c0ff !important;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+    color: #a5d6ff !important;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+    color: #c9d1d9 !important;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+    color: #ff7b72 !important;
+}
+
+.token.function,
+.token.class-name {
+    color: #d2a8ff !important;
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+    color: #ffa657 !important;
+}
+
+/* Line Numbers */
+.line-numbers .line-numbers-rows {
+    border-right: 1px solid #30363d;
+    padding-right: 12px;
+}
+
+.line-numbers-rows > span:before {
+    color: #6e7681 !important;
+}
+
+/* CodeMirror GitHub-like Theme */
+.CodeMirror {
+    background: #0d1117 !important;
+    color: #c9d1d9 !important;
+    font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    height: 100%;
+}
+
+.CodeMirror-gutters {
+    background: #0d1117 !important;
+    border-right: 1px solid #30363d !important;
+}
+
+.CodeMirror-linenumber {
+    color: #6e7681 !important;
+    padding: 0 8px;
+}
+
+.CodeMirror-cursor {
+    border-left: 2px solid #f0f6fc !important;
+}
+
+.CodeMirror-selected {
+    background: rgba(88, 166, 255, 0.2) !important;
+}
+
+/* Editor container fixes */
+.editor-wrapper {
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+}
+
+#editor-instance {
+    width: 100%;
+    height: 100%;
+    min-height: 400px;
+}
+
+/* Snippet preview fixes */
+.snippet-preview pre {
+    margin: 0;
+    padding: 12px;
+    background: #0d1117 !important;
+    border-radius: 4px;
+    max-height: 150px;
+    overflow: hidden;
+}
+
+.snippet-preview code {
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+/* Viewer code container */
+.code-content pre {
+    margin: 0;
+    padding: 16px;
+    background: #0d1117 !important;
+    border-radius: 0;
+    min-height: 200px;
+}
+
+.code-content code {
+    display: block;
+    white-space: pre;
+    overflow-x: auto;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+    pre[class*="language-"] {
+        font-size: 12px;
+        padding: 10px;
+    }
+    
+    .CodeMirror {
+        font-size: 12px;
+    }
+    
+    .snippet-preview pre {
+        padding: 8px;
+    }
+}
