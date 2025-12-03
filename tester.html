@@ -1,0 +1,2315 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Untitled</title>
+    <link rel="stylesheet" href="./style.css">
+
+  </head>
+    
+  <body>
+  <!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Explorer - GitHub Clone</title>
+
+  <!-- TailwindCSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Preline UI -->
+  <link rel="stylesheet" href="https://preline.co/assets/css/main.min.css">
+  <script async defer src="https://preline.co/assets/js/hs-ui.bundle.js"></script>
+
+  <!-- Flowbite -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Syntax Highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+
+  <!-- Additional Libraries -->
+  <script src="https://unpkg.com/@floating-ui/dom@1.5.4/dist/floating-ui.dom.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            github: {
+              'canvas-default': '#22272e',
+              'tableHeader': '#363c45',
+              'canvas-overlay': '#2d333b',
+              'canvas-inset': '#1c2128',
+              'canvas-subtle': '#2d333b',
+              'border-default': '#444c56',
+              'border-muted': '#373e47',
+              'neutral-emphasis': '#768390',
+              'neutral-muted': '#636e7b',
+              'fg-default': '#adbac7',
+              'fg-muted': '#768390',
+              'fg-subtle': '#545d68',
+              'accent-fg': '#539bf5',
+              'accent-emphasis': '#4184e4',
+              'success-fg': '#57ab5a',
+              'danger-fg': '#e5534b',
+              'warning-fg': '#c69026',
+              'btn-primary-bg': '#347d39',
+              'btn-primary-hover': '#46954a',
+              'btn-secondary-bg': '#373e47',
+              'btn-secondary-hover': '#444c56'
+            }
+          },
+          fontFamily: {
+            'sans': ['Inter', 'system-ui', 'sans-serif'],
+            'mono': ['JetBrains Mono', 'SFMono-Regular', 'Consolas', 'monospace']
+          },
+          animation: {
+            'fade-in': 'fadeIn 0.2s ease-out',
+            'fade-out': 'fadeOut 0.2s ease-in',
+            'slide-up': 'slideUp 0.3s ease-out',
+            'slide-down': 'slideDown 0.3s ease-out',
+            'scale-in': 'scaleIn 0.2s ease-out',
+            'spin-slow': 'spin 1.5s linear infinite',
+            'pulse-soft': 'pulseSoft 2s ease-in-out infinite',
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': {
+                opacity: '0'
+              },
+              '100%': {
+                opacity: '1'
+              }
+            },
+            fadeOut: {
+              '0%': {
+                opacity: '1'
+              },
+              '100%': {
+                opacity: '0'
+              }
+            },
+            slideUp: {
+              '0%': {
+                transform: 'translateY(20px)',
+                opacity: '0'
+              },
+              '100%': {
+                transform: 'translateY(0)',
+                opacity: '1'
+              }
+            },
+            slideDown: {
+              '0%': {
+                transform: 'translateY(-20px)',
+                opacity: '0'
+              },
+              '100%': {
+                transform: 'translateY(0)',
+                opacity: '1'
+              }
+            },
+            scaleIn: {
+              '0%': {
+                transform: 'scale(0.95)',
+                opacity: '0'
+              },
+              '100%': {
+                transform: 'scale(1)',
+                opacity: '1'
+              }
+            },
+            pulseSoft: {
+              '0%, 100%': {
+                opacity: '1'
+              },
+              '50%': {
+                opacity: '0.7'
+              }
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body class="bg-github-canvas-default text-github-fg-default font-sans">
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="fixed inset-0 bg-github-canvas-default/90 backdrop-blur-sm z-50 hidden items-center justify-center">
+    <div class="flex flex-col items-center space-y-4">
+      <div class="relative">
+        <div class="w-8 h-8 border-2 border-github-accent-fg border-t-transparent rounded-full animate-spin"></div>
+        <div class="absolute inset-0 w-8 h-8 border-2 border-github-accent-fg/30 rounded-full animate-pulse-soft"></div>
+      </div>
+      <p class="text-github-fg-muted text-sm font-medium" id="loadingText">Loading...</p>
+    </div>
+  </div>
+
+  <!-- Page Container -->
+  <div id="pageContainer" class="min-h-screen flex flex-col">
+    <!-- Repository Header -->
+    <header class="bg-github-canvas-overlay border-b border-github-border-default sticky top-0 z-40 backdrop-blur-md bg-github-canvas-overlay/95">
+      <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Repository Title -->
+        <div class="flex items-center justify-between py-4">
+          <div class="flex items-center space-x-3">
+            <div class="flex items-center space-x-2">
+              <svg class="w-5 h-5 text-github-fg-muted" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z" />
+              </svg>
+              <a href="#" class="text-github-accent-fg hover:underline text-xl font-semibold">
+                GitCodr
+              </a>
+            </div>
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-github-canvas-subtle border border-github-border-default text-github-fg-muted">
+              New
+            </span>
+          </div>
+
+          <!-- Repository Actions -->
+          <div class="flex items-center space-x-2">
+            <button class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
+              <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.751 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z" />
+              </svg>
+              Star
+            </button>
+            <button class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
+              <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M5 5.372v.878c0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75v-.878a2.25 2.25 0 1 1 1.5 0v.878a2.25 2.25 0 0 1-2.25 2.25h-1.5v2.128a2.251 2.251 0 1 1-1.5 0V8.5h-1.5A2.25 2.25 0 0 1 3.5 6.25v-.878a2.25 2.25 0 1 1 1.5 0ZM5 3.25a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Zm6.75.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm-3 8.75a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Z" />
+              </svg>
+              Fork
+            </button>
+          </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="flex space-x-6 border-b border-github-border-muted -mb-px">
+          <a href="#" class="flex items-center space-x-2 px-1 py-3 border-b-2 border-orange-400 text-sm font-semibold text-github-fg-default">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z" />
+            </svg>
+            <span>Code</span>
+          </a>
+          <a href="#" class="flex items-center space-x-2 px-1 py-3 border-b-2 border-transparent text-sm font-medium text-github-fg-muted hover:text-github-fg-default hover:border-github-border-default transition-colors">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" />
+              <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Z" />
+            </svg>
+            <span>Issues</span>
+            <span class="bg-github-canvas-subtle text-github-fg-default text-xs px-1.5 py-0.5 rounded-full">12</span>
+          </a>
+          <a href="#" class="flex items-center space-x-2 px-1 py-3 border-b-2 border-transparent text-sm font-medium text-github-fg-muted hover:text-github-fg-default hover:border-github-border-default transition-colors">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M1.5 3.25a2.25 2.25 0 1 1 3 2.122v5.256a2.251 2.251 0 1 1-1.5 0V5.372A2.25 2.25 0 0 1 1.5 3.25Zm5.677-.177L9.573.677A.25.25 0 0 1 10 .854V2.5h1A2.5 2.5 0 0 1 13.5 5v5.628a2.251 2.251 0 1 1-1.5 0V5a1 1 0 0 0-1-1h-1v1.646a.25.25 0 0 1-.427.177L7.177 3.427a.25.25 0 0 1 0-.354ZM3.75 2.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm0 9.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm8.25.75a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Z" />
+            </svg>
+            <span>Pull requests</span>
+            <span class="bg-github-canvas-subtle text-github-fg-default text-xs px-1.5 py-0.5 rounded-full">3</span>
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1">
+      <!-- Repository Selector View -->
+      <div id="repoSelectorView" class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6 hidden">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold text-github-fg-default">Your Repositories</h2>
+          <button onclick="showCreateRepoModal()" class="inline-flex items-center px-4 py-2 bg-github-btn-primary-bg hover:bg-github-btn-primary-hover text-white rounded-md text-sm font-medium transition-colors">
+            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M7.75 2a.75.75 0 0 1 .75.75V7h4.25a.75.75 0 0 1 0 1.5H8.5v4.25a.75.75 0 0 1-1.5 0V8.5H2.75a.75.75 0 0 1 0-1.5H7V2.75A.75.75 0 0 1 7.75 2Z" />
+            </svg>
+            New repository
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="repoList">
+          <!-- Repositories will be populated here -->
+        </div>
+      </div>
+
+      <!-- File Explorer View -->
+      <div id="explorerView" class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <!-- Explorer Header -->
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center space-x-3">
+            <!-- Branch Selector -->
+            <div class="relative">
+              <button id="branchSelector" class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
+                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M9.5 3.25a2.25 2.25 0 1 1 3 2.122V6A2.5 2.5 0 0 1 10 8.5H6a1 1 0 0 0-1 1v1.128a2.251 2.251 0 1 1-1.5 0V5.372a2.25 2.25 0 1 1 1.5 0v1.836A2.493 2.493 0 0 1 6 7h4a1 1 0 0 0 1-1v-.628A2.25 2.25 0 0 1 9.5 3.25Zm-6 0a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Zm8.25-.75a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5ZM4.25 12a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Z" />
+                </svg>
+                <span id="currentBranch">main</span>
+                <svg class="w-4 h-4 ml-1 text-github-fg-muted" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M12.78 5.22a.749.749 0 0 1 0 1.06l-4.25 4.25a.749.749 0 0 1-1.06 0L3.22 6.28a.749.749 0 1 1 1.06-1.06L8 8.939l3.72-3.719a.749.749 0 0 1 1.06 0Z" />
+                </svg>
+              </button>
+              <div id="branchDropdown" class="hidden absolute z-10 mt-1 w-56 bg-github-canvas-overlay border border-github-border-default rounded-md shadow-lg">
+                <div class="p-1">
+                  <input type="text" placeholder="Find or create branch..." class="w-full px-2 py-1 mb-1 bg-github-canvas-inset border border-github-border-default rounded text-sm text-github-fg-default">
+                  <div class="max-h-60 overflow-y-auto">
+                    <div class="px-2 py-1 text-sm text-github-fg-default hover:bg-github-canvas-subtle cursor-pointer">main</div>
+                    <div class="px-2 py-1 text-sm text-github-fg-default hover:bg-github-canvas-subtle cursor-pointer">develop</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Path Breadcrumb -->
+            <nav class="flex items-center space-x-1 text-sm" id="pathBreadcrumb">
+              <a href="#" onclick="showRepoSelector()" class="text-github-accent-fg hover:underline font-semibold">Repositories</a>
+              <span class="text-github-fg-muted">/</span>
+              <a href="#" class="text-github-accent-fg hover:underline font-semibold" id="currentRepoName">GHClone</a>
+            </nav>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex items-center space-x-2">
+            <button onclick="showCreateFileModal()" class="inline-flex items-center px-3 py-1.5 bg-github-btn-primary-bg hover:bg-github-btn-primary-hover text-white rounded-md text-sm font-medium transition-colors">
+              <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M7.75 2a.75.75 0 0 1 .75.75V7h4.25a.75.75 0 0 1 0 1.5H8.5v4.25a.75.75 0 0 1-1.5 0V8.5H2.75a.75.75 0 0 1 0-1.5H7V2.75A.75.75 0 0 1 7.75 2Z" />
+              </svg>
+              New
+            </button>
+            <button class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
+              <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M2.75 14A1.75 1.75 0 0 1 1 12.25v-2.5a.75.75 0 0 1 1.5 0v2.5c0 .138.112.25.25.25h10.5a.25.25 0 0 0 .25-.25v-2.5a.75.75 0 0 1 1.5 0v2.5A1.75 1.75 0 0 1 13.25 14Z" />
+                <path d="M7.25 7.689V2a.75.75 0 0 1 1.5 0v5.689l1.97-1.969a.749.749 0 1 1 1.06 1.06l-3.25 3.25a.749.749 0 0 1-1.06 0L4.22 6.78a.749.749 0 1 1 1.06-1.06l1.97 1.969Z" />
+              </svg>
+              Code
+            </button>
+          </div>
+        </div>
+
+        <!-- File List Container -->
+        <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg overflow-hidden">
+          <!-- Latest Commit Info -->
+          <div class="px-4 py-3 border-b border-github-border-muted bg-github-canvas-overlay">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <img src="https://github.com/ClockBlocked.png" alt="ClockBlocked" class="w-6 h-6 rounded-full">
+                <div class="flex items-center space-x-2">
+                  <span class="text-github-fg-default font-medium">Name</span>
+                  <a href="#" class="text-github-fg-default hover:text-github-accent-fg">Initial commit</a>
+                </div>
+              </div>
+              <div class="flex items-center space-x-4 text-sm text-github-fg-muted">
+                <span>2 days ago</span>
+                <span class="font-mono">Date</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- File List Table -->
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead class="bg-github-tableHeader">
+                <tr>
+                  <th class="px-4 py-2 text-left text-sm font-medium text-github-fg-default">Name</th>
+                  <th class="px-4 py-2 text-left text-sm font-medium text-github-fg-default">Last commit message</th>
+                  <th class="px-4 py-2 text-right text-sm font-medium text-github-fg-default">Updated</th>
+                </tr>
+              </thead>
+              <tbody id="fileListBody" class="divide-y divide-github-border-muted">
+                <!-- Files will be populated here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Repository Info -->
+        <div class="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="lg:col-span-2">
+            <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg p-6">
+              <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold text-github-fg-default">README.md</h2>
+                <button class="text-github-fg-muted hover:text-github-fg-default">
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M8 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z" />
+                  </svg>
+                </button>
+              </div>
+              <div class="prose prose-invert max-w-none" id="readmeContent">
+                <h1>GitHub Personal Clone</h1>
+                <p>A professional file explorer and editor interface that mimics GitHub's design and functionality.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-6">
+            <!-- About Section -->
+            <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg p-4">
+              <h3 class="font-semibold text-github-fg-default mb-3">About</h3>
+              <p class="text-sm text-github-fg-muted mb-4" id="repoDescriptionn">GitHub Personal Clone</p>
+              <div class="space-y-2 text-sm">
+                <div class="flex items-center space-x-2">
+                  <svg class="w-4 h-4 text-github-fg-muted" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z" />
+                  </svg>
+                  <span class="text-github-fg-muted">No description, website, or topics provided.</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Languages -->
+            <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg p-4">
+              <h3 class="font-semibold text-github-fg-default mb-3">Languages</h3>
+              <div class="space-y-2">
+                <div class="flex items-center justify-between text-sm">
+                  <div class="flex items-center space-x-2">
+                    <div class="w-3 h-3 rounded-full bg-orange-500"></div>
+                    <span class="text-github-fg-default">HTML</span>
+                  </div>
+                  <span class="text-github-fg-muted">47.2%</span>
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                  <div class="flex items-center space-x-2">
+                    <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+                    <span class="text-github-fg-default">JavaScript</span>
+                  </div>
+                  <span class="text-github-fg-muted">43.8%</span>
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                  <div class="flex items-center space-x-2">
+                    <div class="w-3 h-3 rounded-full bg-blue-500"></div>
+                    <span class="text-github-fg-default">CSS</span>
+                  </div>
+                  <span class="text-github-fg-muted">7.0%</span>
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                  <div class="flex items-center space-x-2">
+                    <div class="w-3 h-3 rounded-full bg-purple-500"></div>
+                    <span class="text-github-fg-default">PHP</span>
+                  </div>
+                  <span class="text-github-fg-muted">2.0%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- File Viewer -->
+      <div id="fileViewer" class="hidden max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <!-- Viewer Header -->
+        <div class="flex items-center justify-between mb-4">
+          <nav class="flex items-center space-x-1 text-sm">
+            <button onclick="showExplorer()" class="text-github-accent-fg hover:underline font-semibold">GHClone</button>
+            <span class="text-github-fg-muted">/</span>
+            <span id="currentFileName" class="text-github-fg-default font-semibold"></span>
+          </nav>
+
+          <div class="flex items-center space-x-2">
+            <button onclick="editFile()" class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
+              <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z" />
+              </svg>
+              Edit
+            </button>
+            <button onclick="downloadCurrentFile()" class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
+              <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M2.75 14A1.75 1.75 0 0 1 1 12.25v-2.5a.75.75 0 0 1 1.5 0v2.5c0 .138.112.25.25.25h10.5a.25.25 0 0 0 .25-.25v-2.5a.75.75 0 0 1 1.5 0v2.5A1.75 1.75 0 0 1 13.25 14Z" />
+                <path d="M7.25 7.689V2a.75.75 0 0 1 1.5 0v5.689l1.97-1.969a.749.749 0 1 1 1.06 1.06l-3.25 3.25a.749.749 0 0 1-1.06 0L4.22 6.78a.749.749 0 1 1 1.06-1.06l1.97 1.969Z" />
+              </svg>
+              Download
+            </button>
+            <button onclick="showDeleteFileModal()" class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-danger-fg bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
+              <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M11 1.75V3h2.25a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5H5V1.75C5 .784 5.784 0 6.75 0h2.5C10.216 0 11 .784 11 1.75ZM4.496 6.675l.66 6.6a.25.25 0 0 0 .249.225h5.19a.25.25 0 0 0 .249-.225l.66-6.6a.75.75 0 0 1 1.492.149l-.66 6.6A1.748 1.748 0 0 1 10.595 15h-5.19a1.748 1.748 0 0 1-1.741-1.575l-.66-6.6a.75.75 0 1 1 1.492-.15ZM6.5 1.75V3h3V1.75a.25.25 0 0 0-.25-.25h-2.5a.25.25 0 0 0-.25.25Z" />
+              </svg>
+              Delete
+            </button>
+          </div>
+        </div>
+
+        <!-- File Info Bar -->
+        <div class="bg-github-canvas-overlay border border-github-border-default rounded-t-lg px-4 py-2 flex items-center justify-between text-sm">
+          <div class="flex items-center space-x-4 text-github-fg-muted">
+            <span id="fileLinesCount">0 lines</span>
+            <span>•</span>
+            <span id="fileSize">0 KB</span>
+            <span>•</span>
+            <span id="fileLanguagee">Text</span>
+          </div>
+          <div class="flex items-center space-x-1">
+            <button class="p-2 rounded hover:bg-github-canvas-subtle text-github-fg-muted hover:text-github-fg-default transition-colors">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M8 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z" />
+              </svg>
+            </button>
+            <button class="p-2 rounded hover:bg-github-canvas-subtle text-github-fg-muted hover:text-github-fg-default transition-colors">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2zm2.354 5.146a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Code Viewer -->
+        <div class="bg-github-canvas-overlay border-x border-b border-github-border-default rounded-b-lg overflow-hidden">
+          <div class="flex">
+            <div id="lineNumbers" class="bg-github-canvas-inset border-r border-github-border-muted p-4 text-right text-github-fg-muted font-mono text-sm leading-5 select-none min-w-[3rem]">
+              <!-- Line numbers will be generated here -->
+            </div>
+            <div class="flex-1 overflow-auto">
+              <pre id="codeContent" class="p-4 text-sm font-mono leading-5 overflow-auto"><code id="codeBlock" class="language-javascript">// File content will appear here</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- File Details -->
+        <div class="mt-6 bg-github-canvas-overlay border border-github-border-default rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-github-fg-default mb-4">File Details</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-github-fg-muted">Created:</span>
+                <span class="text-github-fg-default" id="fileCreated">2 days ago</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-github-fg-muted">Modified:</span>
+                <span class="text-github-fg-default" id="fileModified">2 days ago</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-github-fg-muted">Language:</span>
+                <span class="text-github-fg-default" id="fileLanguage">JavaScript</span>
+              </div>
+            </div>
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-github-fg-muted">Category:</span>
+                <span class="text-github-fg-default" id="fileCategory">Component</span>
+              </div>
+              <div>
+                <span class="text-github-fg-muted block mb-2">Tags:</span>
+                <div class="flex flex-wrap gap-1" id="fileTags">
+                  <!-- Tags will be populated here -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- File Editor -->
+      <div id="fileEditor" class="hidden max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <!-- Editor Header -->
+        <div class="flex items-center justify-between mb-4">
+          <nav class="flex items-center space-x-1 text-sm">
+            <button onclick="showFileViewer()" class="text-github-accent-fg hover:underline font-semibold">GHClone</button>
+            <span class="text-github-fg-muted">/</span>
+            <span id="editingFileName" class="text-github-fg-default font-semibold"></span>
+          </nav>
+
+          <div class="flex items-center space-x-2">
+            <button onclick="saveFile()" class="inline-flex items-center px-3 py-1.5 bg-github-btn-primary-bg hover:bg-github-btn-primary-hover text-white rounded-md text-sm font-medium transition-colors">
+              <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z" />
+              </svg>
+              Save changes
+            </button>
+            <button onclick="showFileViewer()" class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
+              Cancel
+            </button>
+          </div>
+        </div>
+
+        <!-- Editor Tabs -->
+        <div class="flex border-b border-github-border-default mb-4">
+          <button class="px-4 py-2 border-b-2 border-orange-400 text-sm font-medium text-github-fg-default">
+            <svg class="w-4 h-4 inline mr-2" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z" />
+            </svg>
+            Edit file
+          </button>
+          <button onclick="previewFile()" class="px-4 py-2 border-b-2 border-transparent text-sm font-medium text-github-fg-muted hover:text-github-fg-default">
+            <svg class="w-4 h-4 inline mr-2" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M8 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z" />
+            </svg>
+            Preview
+          </button>
+        </div>
+
+        <!-- Editor Container -->
+        <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg overflow-hidden">
+          <div class="flex">
+            <div id="editorLineNumbers" class="bg-github-canvas-inset border-r border-github-border-muted p-4 text-right text-github-fg-muted font-mono text-sm leading-6 select-none min-w-[3rem]">
+              <!-- Line numbers will be generated here -->
+            </div>
+            <div class="flex-1">
+              <textarea id="codeEditor" class="w-full h-96 p-4 bg-transparent border-none resize-none text-sm font-mono leading-6 text-github-fg-default focus:outline-none" placeholder="Enter your code here..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Commit Form -->
+        <div class="mt-6 bg-github-canvas-overlay border border-github-border-default rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-github-fg-default mb-4">Commit changes</h3>
+          <div class="space-y-4">
+            <div>
+              <input type="text" id="commitTitle" placeholder="Update filename.ext" class="w-full px-3 py-2 bg-github-canvas-inset border border-github-border-default rounded-md text-github-fg-default placeholder-github-fg-muted focus:outline-none focus:ring-2 focus:ring-github-accent-emphasis focus:border-transparent">
+            </div>
+            <div>
+              <textarea id="commitDescription" rows="4" placeholder="Add an optional extended description..." class="w-full px-3 py-2 bg-github-canvas-inset border border-github-border-default rounded-md text-github-fg-default placeholder-github-fg-muted focus:outline-none focus:ring-2 focus:ring-github-accent-emphasis focus:border-transparent resize-none"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Create File Modal -->
+  <div id="createFileModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg shadow-2xl w-full max-w-2xl animate-scale-in">
+      <div class="px-6 py-4 border-b border-github-border-default">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-semibold text-github-fg-default">Create new file</h3>
+          <button onclick="hideCreateFileModal()" class="text-github-fg-muted hover:text-github-fg-default transition-colors">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="p-6 space-y-6">
+        <!-- File Name Input -->
+        <div>
+          <label class="block text-sm font-medium text-github-fg-default mb-2">Name your file...</label>
+          <div class="flex items-center bg-github-canvas-inset border border-github-border-default rounded-md overflow-hidden focus-within:ring-2 focus-within:ring-github-accent-emphasis focus-within:border-transparent">
+            <span class="px-3 py-2 bg-github-canvas-subtle border-r border-github-border-default text-github-fg-muted text-sm font-mono" id="currentPathPrefix">GHClone/</span>
+            <input type="text" id="newFileName" placeholder="filename.ext" class="flex-1 px-3 py-2 bg-transparent border-none text-github-fg-default placeholder-github-fg-muted focus:outline-none text-sm">
+          </div>
+          <p class="mt-1 text-xs text-github-fg-muted">The file extension will determine syntax highlighting</p>
+        </div>
+
+        <!-- Category Input -->
+        <div>
+          <label class="block text-sm font-medium text-github-fg-default mb-2">Category (optional)</label>
+          <input type="text" id="fileCategoryInput" maxlength="15" placeholder="e.g., Component, Utility, Config" class="w-full px-3 py-2 bg-github-canvas-inset border border-github-border-default rounded-md text-github-fg-default placeholder-github-fg-muted focus:outline-none focus:ring-2 focus:ring-github-accent-emphasis focus:border-transparent">
+          <p class="mt-1 text-xs text-github-fg-muted">Maximum 15 characters</p>
+        </div>
+
+        <!-- Tags Input -->
+        <div>
+          <label class="block text-sm font-medium text-github-fg-default mb-2">Tags (optional)</label>
+          <div class="space-y-2">
+            <div id="selectedTags" class="flex flex-wrap gap-2 min-h-[2rem]">
+              <!-- Selected tags will appear here -->
+            </div>
+            <div class="flex items-center space-x-2">
+              <input type="text" id="tagInput" placeholder="Add a tag..." class="flex-1 px-3 py-2 bg-github-canvas-inset border border-github-border-default rounded-md text-github-fg-default placeholder-github-fg-muted focus:outline-none focus:ring-2 focus:ring-github-accent-emphasis focus:border-transparent text-sm">
+              <button onclick="addTag()" class="px-3 py-2 bg-github-accent-emphasis hover:bg-github-accent-fg text-white rounded-md text-sm font-medium transition-colors">
+                Add
+              </button>
+            </div>
+          </div>
+          <p class="mt-1 text-xs text-github-fg-muted">Press Enter or click Add to add tags</p>
+        </div>
+
+        <!-- Initial Content -->
+        <div>
+          <label class="block text-sm font-medium text-github-fg-default mb-2">Initial content (optional)</label>
+          <textarea id="initialContent" rows="6" placeholder="Start typing or paste your code here..." class="w-full px-3 py-2 bg-github-canvas-inset border border-github-border-default rounded-md text-github-fg-default placeholder-github-fg-muted focus:outline-none focus:ring-2 focus:ring-github-accent-emphasis focus:border-transparent resize-none font-mono text-sm"></textarea>
+        </div>
+      </div>
+
+      <div class="px-6 py-4 border-t border-github-border-default bg-github-canvas-subtle flex items-center justify-end space-x-3">
+        <button onclick="hideCreateFileModal()" class="px-4 py-2 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
+          Cancel
+        </button>
+        <button onclick="createFile()" class="px-4 py-2 bg-github-btn-primary-bg hover:bg-github-btn-primary-hover text-white rounded-md text-sm font-medium transition-colors">
+          Create file
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Repository Modal -->
+  <div id="createRepoModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg shadow-2xl w-full max-w-2xl animate-scale-in">
+      <div class="px-6 py-4 border-b border-github-border-default">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-semibold text-github-fg-default">Create new repository</h3>
+          <button onclick="hideCreateRepoModal()" class="text-github-fg-muted hover:text-github-fg-default transition-colors">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="p-6 space-y-6">
+        <!-- Repository Name Input -->
+        <div>
+          <label class="block text-sm font-medium text-github-fg-default mb-2">Repository name</label>
+          <input type="text" id="newRepoName" placeholder="repository-name" class="w-full px-3 py-2 bg-github-canvas-inset border border-github-border-default rounded-md text-github-fg-default placeholder-github-fg-muted focus:outline-none focus:ring-2 focus:ring-github-accent-emphasis focus:border-transparent">
+          <p class="mt-1 text-xs text-github-fg-muted">Great repository names are short and memorable.</p>
+        </div>
+
+        <!-- Description Input -->
+        <div>
+          <label class="block text-sm font-medium text-github-fg-default mb-2">Description (optional)</label>
+          <textarea id="repoDescription" rows="3" placeholder="A short description of your repository" class="w-full px-3 py-2 bg-github-canvas-inset border border-github-border-default rounded-md text-github-fg-default placeholder-github-fg-muted focus:outline-none focus:ring-2 focus:ring-github-accent-emphasis focus:border-transparent resize-none"></textarea>
+        </div>
+
+        <!-- Visibility Options -->
+        <div>
+          <label class="block text-sm font-medium text-github-fg-default mb-2">Visibility</label>
+          <div class="space-y-2">
+            <div class="flex items-center space-x-3 p-3 border border-github-border-default rounded-md">
+              <input type="radio" id="visibilityPublic" name="visibility" value="public" checked class="text-github-accent-fg focus:ring-github-accent-fg">
+              <div>
+                <label for="visibilityPublic" class="block text-sm font-medium text-github-fg-default">Public</label>
+                <p class="text-xs text-github-fg-muted">Anyone on the internet can see this repository.</p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-3 p-3 border border-github-border-default rounded-md">
+              <input type="radio" id="visibilityPrivate" name="visibility" value="private" class="text-github-accent-fg focus:ring-github-accent-fg">
+              <div>
+                <label for="visibilityPrivate" class="block text-sm font-medium text-github-fg-default">Private</label>
+                <p class="text-xs text-github-fg-muted">You choose who can see and commit to this repository.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Initialize Options -->
+        <div>
+          <div class="flex items-center space-x-3">
+            <input type="checkbox" id="initReadme" class="text-github-accent-fg focus:ring-github-accent-fg">
+            <label for="initReadme" class="text-sm font-medium text-github-fg-default">Initialize this repository with a README</label>
+          </div>
+          <div class="flex items-center space-x-3 mt-2">
+            <input type="checkbox" id="initGitignore" class="text-github-accent-fg focus:ring-github-accent-fg">
+            <label for="initGitignore" class="text-sm font-medium text-github-fg-default">Add .gitignore</label>
+          </div>
+          <div class="flex items-center space-x-3 mt-2">
+            <input type="checkbox" id="initLicense" class="text-github-accent-fg focus:ring-github-accent-fg">
+            <label for="initLicense" class="text-sm font-medium text-github-fg-default">Add a license</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-6 py-4 border-t border-github-border-default bg-github-canvas-subtle flex items-center justify-end space-x-3">
+        <button onclick="hideCreateRepoModal()" class="px-4 py-2 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
+          Cancel
+        </button>
+        <button onclick="createRepository()" class="px-4 py-2 bg-github-btn-primary-bg hover:bg-github-btn-primary-hover text-white rounded-md text-sm font-medium transition-colors">
+          Create repository
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete File Modal -->
+  <div id="deleteFileModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg shadow-2xl w-full max-w-md animate-scale-in">
+      <div class="px-6 py-4 border-b border-github-border-default">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-semibold text-github-fg-default">Delete file</h3>
+          <button onclick="hideDeleteFileModal()" class="text-github-fg-muted hover:text-github-fg-default transition-colors">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="p-6">
+        <p class="text-github-fg-default mb-4">Are you sure you want to delete <span id="fileToDeleteName" class="font-semibold">filename.ext</span>? This action cannot be undone.</p>
+        <div class="flex items-center justify-end space-x-3">
+          <button onclick="hideDeleteFileModal()" class="px-4 py-2 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
+            Cancel
+          </button>
+          <button onclick="confirmDeleteFile()" class="px-4 py-2 bg-github-danger-fg hover:bg-red-600 text-white rounded-md text-sm font-medium transition-colors">
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rename File Modal -->
+  <div id="renameFileModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg shadow-2xl w-full max-w-md animate-scale-in">
+      <div class="px-6 py-4 border-b border-github-border-default">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-semibold text-github-fg-default">Rename file</h3>
+          <button onclick="hideRenameFileModal()" class="text-github-fg-muted hover:text-github-fg-default transition-colors">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="p-6">
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-github-fg-default mb-2">New name</label>
+          <input type="text" id="newFileNameInput" class="w-full px-3 py-2 bg-github-canvas-inset border border-github-border-default rounded-md text-github-fg-default placeholder-github-fg-muted focus:outline-none focus:ring-2 focus:ring-github-accent-emphasis focus:border-transparent">
+        </div>
+        <div class="flex items-center justify-end space-x-3">
+          <button onclick="hideRenameFileModal()" class="px-4 py-2 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
+            Cancel
+          </button>
+          <button onclick="confirmRenameFile()" class="px-4 py-2 bg-github-btn-primary-bg hover:bg-github-btn-primary-hover text-white rounded-md text-sm font-medium transition-colors">
+            Rename
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    // Current state
+    let currentState = {
+      repository: null,
+      branch: 'main',
+      path: '',
+      currentFile: null,
+      selectedTags: [],
+      files: [],
+      repositories: []
+    };
+
+    // Initialize the app
+    document.addEventListener('DOMContentLoaded', function() {
+      setupEventListeners();
+      loadRepositories();
+      setupKeyboardShortcuts();
+      setupDragAndDrop();
+      setupContextMenu();
+      
+      // Show welcome message
+      setTimeout(() => {
+        showSuccessMessage('Welcome to GitHub Clone File Explorer!');
+      }, 1000);
+    });
+
+    // Setup event listeners
+    function setupEventListeners() {
+      // Tag input enter key
+      document.getElementById('tagInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          addTag();
+        }
+      });
+      
+      // Code editor line numbers sync
+      const codeEditor = document.getElementById('codeEditor');
+      if (codeEditor) {
+        codeEditor.addEventListener('input', updateEditorLineNumbers);
+        codeEditor.addEventListener('scroll', syncEditorScroll);
+      }
+      
+      // Branch selector
+      document.getElementById('branchSelector').addEventListener('click', function(e) {
+        e.stopPropagation();
+        document.getElementById('branchDropdown').classList.toggle('hidden');
+      });
+      
+      // Close branch dropdown when clicking outside
+      document.addEventListener('click', function() {
+        document.getElementById('branchDropdown').classList.add('hidden');
+      });
+    }
+
+    // Load repositories from backend
+    function loadRepositories() {
+      showLoading('Loading repositories...');
+      
+      fetch('api.php?action=list_repositories')
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            currentState.repositories = data.repositories;
+            renderRepositoryList();
+            hideLoading();
+          } else {
+            throw new Error(data.error || 'Failed to load repositories');
+          }
+        })
+        .catch(error => {
+          hideLoading();
+          showErrorMessage(error.message);
+        });
+    }
+
+    // Render repository list
+    function renderRepositoryList() {
+      const repoList = document.getElementById('repoList');
+      repoList.innerHTML = '';
+      
+      currentState.repositories.forEach(repo => {
+        const repoCard = document.createElement('div');
+        repoCard.className = 'bg-github-canvas-overlay border border-github-border-default rounded-lg p-4 hover:border-github-accent-fg transition-colors cursor-pointer';
+        repoCard.innerHTML = `
+          <div class="flex items-start justify-between">
+            <div>
+              <h3 class="text-lg font-semibold text-github-accent-fg mb-1">${repo.name}</h3>
+              <p class="text-sm text-github-fg-muted mb-2">${repo.description || 'No description'}</p>
+              <div class="flex items-center space-x-4 text-xs text-github-fg-muted">
+                <span>${formatDate(repo.created)}</span>
+                <span>${repo.defaultBranch}</span>
+              </div>
+            </div>
+            <button onclick="event.stopPropagation();deleteRepository('${repo.name}')" class="text-github-danger-fg hover:text-red-500">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M11 1.75V3h2.25a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5H5V1.75C5 .784 5.784 0 6.75 0h2.5C10.216 0 11 .784 11 1.75ZM4.496 6.675l.66 6.6a.25.25 0 0 0 .249.225h5.19a.25.25 0 0 0 .249-.225l.66-6.6a.75.75 0 0 1 1.492.149l-.66 6.6A1.748 1.748 0 0 1 10.595 15h-5.19a1.748 1.748 0 0 1-1.741-1.575l-.66-6.6a.75.75 0 1 1 1.492-.15ZM6.5 1.75V3h3V1.75a.25.25 0 0 0-.25-.25h-2.5a.25.25 0 0 0-.25.25Z"/>
+              </svg>
+            </button>
+          </div>
+        `;
+        
+        repoCard.addEventListener('click', () => openRepository(repo.name));
+        repoList.appendChild(repoCard);
+      });
+      
+      // Show repository selector if no repository is selected
+      if (!currentState.repository) {
+        showRepoSelector();
+      }
+    }
+
+    // Open a repository
+    function openRepository(repoName) {
+      showLoading(`Opening repository ${repoName}...`);
+      currentState.repository = repoName;
+      currentState.path = '';
+      
+      fetch(`api.php?action=list_directory&path=${encodeURIComponent(repoName + '/branches/main')}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            currentState.files = data.items;
+            renderFileList();
+            updateBreadcrumb();
+            document.getElementById('currentRepoName').textContent = repoName;
+            
+            // Load repository metadata
+            fetch(`api.php?action=get_metadata&path=${encodeURIComponent(repoName)}&itemName=repository.json`)
+              .then(response => response.json())
+              .then(metaData => {
+                if (metaData.success) {
+                  document.getElementById('repoDescription').textContent = metaData.metadata.description || 'No description';
+                }
+              });
+            
+            hideLoading();
+            showExplorer();
+          } else {
+            throw new Error(data.error || 'Failed to load repository');
+          }
+        })
+        .catch(error => {
+          hideLoading();
+          showErrorMessage(error.message);
+        });
+    }
+
+    // Render file list
+    function renderFileList() {
+      const tbody = document.getElementById('fileListBody');
+      tbody.innerHTML = '';
+      
+      currentState.files.forEach(file => {
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-github-canvas-subtle transition-colors cursor-pointer';
+        const fileIcon = getFileIcon(file.name, file.type);
+        
+        row.innerHTML = `
+          <td class="px-4 py-3">
+            <div class="flex items-center space-x-3">
+              ${fileIcon}
+              <span class="text-github-accent-fg hover:underline font-medium" onclick="viewFile('${file.name}')">${file.name}</span>
+            </div>
+          </td>
+          <td class="px-4 py-3 text-github-fg-muted text-sm max-w-md truncate">
+            ${file.lastCommit}
+          </td>
+          <td class="px-4 py-3 text-github-fg-muted text-sm text-right">
+            ${formatDate(file.lastModified)}
+          </td>
+        `;
+        
+        // Add context menu event
+        row.addEventListener('contextmenu', (e) => {
+          e.preventDefault();
+          showContextMenu(e.clientX, e.clientY, file.name, file.type);
+        });
+        
+        tbody.appendChild(row);
+      });
+    }
+
+    // Get file icon based on type/extension
+    function getFileIcon(filename, type) {
+      if (type === 'folder') {
+        return `<svg class="w-4 h-4 text-github-accent-fg" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M1.75 1A1.75 1.75 0 0 0 0 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0 0 16 13.25v-8.5A1.75 1.75 0 0 0 14.25 3H7.5a.25.25 0 0 1-.2-.1l-.9-1.2C6.07 1.26 5.55 1 5 1H1.75Z"/>
+                </svg>`;
+      }
+      
+      const ext = filename.split('.').pop().toLowerCase();
+      const iconColor = getLanguageColor(ext);
+      
+      return `<svg class="w-4 h-4" style="color: ${iconColor}" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"/>
+              </svg>`;
+    }
+
+    // Get language color
+    function getLanguageColor(ext) {
+      const colors = {
+        'html': '#e34c26',
+        'css': '#1572b6',
+        'js': '#f1e05a',
+        'javascript': '#f1e05a',
+        'md': '#083fa1',
+        'markdown': '#083fa1',
+        'json': '#f1e05a',
+        'php': '#4f5d95',
+        'py': '#3572a5',
+        'python': '#3572a5'
+      };
+      return colors[ext] || '#7d8590';
+    }
+
+    // View a file
+    function viewFile(filename) {
+      const file = currentState.files.find(f => f.name === filename);
+      if (!file) return;
+      
+      currentState.currentFile = file;
+      
+      if (file.type === 'folder') {
+        // Navigate into folder
+        currentState.path += (currentState.path ? '/' : '') + filename;
+        showLoading(`Loading directory ${filename}...`);
+        
+        fetch(`api.php?action=list_directory&path=${encodeURIComponent(getFullPath())}`)
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              currentState.files = data.items;
+              renderFileList();
+              updateBreadcrumb();
+              hideLoading();
+            } else {
+              throw new Error(data.error || 'Failed to load directory');
+            }
+          })
+          .catch(error => {
+            hideLoading();
+            showErrorMessage(error.message);
+          });
+      } else {
+        // View file content
+        showLoading(`Loading file ${filename}...`);
+        
+        fetch(`api.php?action=read_file&path=${encodeURIComponent(getFullPath())}&filename=${encodeURIComponent(filename)}`)
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              // Update file viewer
+              document.getElementById('currentFileName').textContent = filename;
+              document.getElementById('fileLinesCount').textContent = `${data.content.split('\n').length} lines`;
+              document.getElementById('fileSize').textContent = formatFileSize(data.size);
+              document.getElementById('fileCreated').textContent = formatDate(data.lastModified);
+              document.getElementById('fileModified').textContent = formatDate(data.lastModified);
+              
+              // Determine language
+              const ext = filename.split('.').pop().toLowerCase();
+              const language = getLanguageName(ext);
+              document.getElementById('fileLanguage').textContent = language;
+              
+              // Update code content
+              const codeBlock = document.getElementById('codeBlock');
+              codeBlock.textContent = data.content;
+              codeBlock.className = `language-${language}`;
+              
+              // Generate line numbers
+              const lines = data.content.split('\n');
+              const lineNumbers = document.getElementById('lineNumbers');
+              lineNumbers.innerHTML = lines.map((_, i) => `<div>${i + 1}</div>`).join('');
+              
+              // Apply syntax highlighting
+              if (window.Prism) {
+                Prism.highlightElement(codeBlock);
+              }
+              
+              // Load metadata if available
+              fetch(`api.php?action=get_metadata&path=${encodeURIComponent(getFullPath())}&itemName=${encodeURIComponent(filename)}`)
+                .then(response => response.json())
+                .then(metaData => {
+                  if (metaData.success) {
+                    document.getElementById('fileCategory').textContent = metaData.metadata.category || 'General';
+                    
+                    // Update tags
+                    const tagsContainer = document.getElementById('fileTags');
+                    if (metaData.metadata.tags && metaData.metadata.tags.length > 0) {
+                      tagsContainer.innerHTML = metaData.metadata.tags.map(tag => `
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-github-accent-emphasis/20 border border-github-accent-emphasis/30 text-github-accent-fg">
+                          ${tag}
+                        </span>
+                      `).join('');
+                    } else {
+                      tagsContainer.innerHTML = '<span class="text-github-fg-muted text-sm">No tags</span>';
+                    }
+                  }
+                });
+              
+              hideLoading();
+              showFileViewer();
+            } else {
+              throw new Error(data.error || 'Failed to load file');
+            }
+          })
+          .catch(error => {
+            hideLoading();
+            showErrorMessage(error.message);
+          });
+      }
+    }
+
+    // Edit current file
+    function editFile() {
+      if (!currentState.currentFile) return;
+      
+      showLoading('Loading editor...');
+      
+      fetch(`api.php?action=read_file&path=${encodeURIComponent(getFullPath())}&filename=${encodeURIComponent(currentState.currentFile.name)}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            document.getElementById('editingFileName').textContent = currentState.currentFile.name;
+            document.getElementById('codeEditor').value = data.content;
+            document.getElementById('commitTitle').value = `Update ${currentState.currentFile.name}`;
+            
+            // Load metadata for category and tags
+            fetch(`api.php?action=get_metadata&path=${encodeURIComponent(getFullPath())}&itemName=${encodeURIComponent(currentState.currentFile.name)}`)
+              .then(response => response.json())
+              .then(metaData => {
+                if (metaData.success) {
+                  document.getElementById('fileCategoryInput').value = metaData.metadata.category || '';
+                  currentState.selectedTags = metaData.metadata.tags || [];
+                  updateSelectedTags();
+                }
+              });
+            
+            hideLoading();
+            showFileEditor();
+          } else {
+            throw new Error(data.error || 'Failed to load file for editing');
+          }
+        })
+        .catch(error => {
+          hideLoading();
+          showErrorMessage(error.message);
+        });
+    }
+
+    // Save file changes
+    function saveFile() {
+      if (!currentState.currentFile) return;
+      
+      const newContent = document.getElementById('codeEditor').value;
+      const commitTitle = document.getElementById('commitTitle').value.trim();
+      const commitDescription = document.getElementById('commitDescription').value.trim();
+      
+      if (!commitTitle) {
+        showErrorMessage('Please enter a commit message');
+        return;
+      }
+      
+      showLoading('Saving changes...');
+      
+      const formData = new FormData();
+      formData.append('action', 'save_file');
+      formData.append('path', getFullPath());
+      formData.append('filename', currentState.currentFile.name);
+      formData.append('content', newContent);
+      
+      // Include metadata
+      const metadata = {
+        category: document.getElementById('fileCategoryInput').value.trim(),
+        tags: currentState.selectedTags,
+        lastModified: new Date().toISOString()
+      };
+      formData.append('metadata', JSON.stringify(metadata));
+      
+      fetch('api.php', {
+        method: 'POST',
+        body: formData
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Update file in current state
+            const fileIndex = currentState.files.findIndex(f => f.name === currentState.currentFile.name);
+            if (fileIndex !== -1) {
+              currentState.files[fileIndex].lastModified = Date.now();
+            }
+            
+            // Clear commit form
+            document.getElementById('commitDescription').value = '';
+            
+            hideLoading();
+            showSuccessMessage(`File "${currentState.currentFile.name}" saved successfully!`);
+            
+            // Return to file viewer
+            setTimeout(() => {
+              viewFile(currentState.currentFile.name);
+            }, 500);
+          } else {
+            throw new Error(data.error || 'Failed to save file');
+          }
+        })
+        .catch(error => {
+          hideLoading();
+          showErrorMessage(error.message);
+        });
+    }
+
+    // Create a new file
+    function createFile() {
+      const fileName = document.getElementById('newFileName').value.trim();
+      const category = document.getElementById('fileCategoryInput').value.trim() || 'General';
+      const content = document.getElementById('initialContent').value;
+      
+      if (!fileName) {
+        showErrorMessage('Please enter a file name');
+        return;
+      }
+      
+      if (!isValidFilename(fileName)) {
+        showErrorMessage('Invalid file name. Please use only letters, numbers, dots, underscores and hyphens.');
+        return;
+      }
+      
+      showLoading('Creating file...');
+      
+      const formData = new FormData();
+      formData.append('action', 'save_file');
+      formData.append('path', getFullPath());
+      formData.append('filename', fileName);
+      formData.append('content', content || `// ${fileName}\n// Created on ${new Date().toLocaleDateString()}\n\n`);
+      
+      // Include metadata
+      const metadata = {
+        category: category,
+        tags: currentState.selectedTags,
+        created: new Date().toISOString(),
+        lastModified: new Date().toISOString()
+      };
+      formData.append('metadata', JSON.stringify(metadata));
+      
+      fetch('api.php', {
+        method: 'POST',
+        body: formData
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Add new file to current state
+            currentState.files.push({
+              name: fileName,
+              type: 'file',
+              size: data.size,
+              lastModified: Date.now(),
+              lastCommit: 'Initial commit'
+            });
+            
+            renderFileList();
+            hideCreateFileModal();
+            hideLoading();
+            showSuccessMessage(`File "${fileName}" created successfully!`);
+          } else {
+            throw new Error(data.error || 'Failed to create file');
+          }
+        })
+        .catch(error => {
+          hideLoading();
+          showErrorMessage(error.message);
+        });
+    }
+
+    // Create a new repository
+    function createRepository() {
+      const repoName = document.getElementById('newRepoName').value.trim();
+      const description = document.getElementById('repoDescription').value.trim();
+      const isPublic = document.getElementById('visibilityPublic').checked;
+      const initReadme = document.getElementById('initReadme').checked;
+      
+      if (!repoName) {
+        showErrorMessage('Please enter a repository name');
+        return;
+      }
+      
+      if (!isValidFilename(repoName)) {
+        showErrorMessage('Invalid repository name. Please use only letters, numbers, hyphens and underscores.');
+        return;
+      }
+      
+      showLoading('Creating repository...');
+      
+      const formData = new FormData();
+      formData.append('action', 'create_repository');
+      formData.append('repositoryName', repoName);
+      formData.append('description', description);
+      
+      fetch('api.php', {
+        method: 'POST',
+        body: formData
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Add new repository to current state
+            currentState.repositories.push({
+              name: repoName,
+              description: description,
+              created: new Date().toISOString(),
+              lastModified: new Date().toISOString(),
+              defaultBranch: 'main',
+              branches: ['main']
+            });
+            
+            renderRepositoryList();
+            hideCreateRepoModal();
+            hideLoading();
+            showSuccessMessage(`Repository "${repoName}" created successfully!`);
+            
+            // Open the new repository
+            setTimeout(() => openRepository(repoName), 500);
+          } else {
+            throw new Error(data.error || 'Failed to create repository');
+          }
+        })
+        .catch(error => {
+          hideLoading();
+          showErrorMessage(error.message);
+        });
+    }
+
+    // Delete a repository
+    function deleteRepository(repoName) {
+      if (!confirm(`Are you sure you want to delete the repository "${repoName}"? This action cannot be undone.`)) {
+        return;
+      }
+      
+      showLoading(`Deleting repository ${repoName}...`);
+      
+      fetch(`api.php?action=delete&path=&itemName=${encodeURIComponent(repoName)}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Remove repository from current state
+            currentState.repositories = currentState.repositories.filter(r => r.name !== repoName);
+            
+            // If we're currently viewing this repository, go back to repository selector
+            if (currentState.repository === repoName) {
+              currentState.repository = null;
+              showRepoSelector();
+            }
+            
+            renderRepositoryList();
+            hideLoading();
+            showSuccessMessage(`Repository "${repoName}" deleted successfully!`);
+          } else {
+            throw new Error(data.error || 'Failed to delete repository');
+          }
+        })
+        .catch(error => {
+          hideLoading();
+          showErrorMessage(error.message);
+        });
+    }
+
+    // Delete current file
+    function deleteCurrentFile() {
+      if (!currentState.currentFile) return;
+      
+      showLoading(`Deleting file ${currentState.currentFile.name}...`);
+      
+      fetch(`api.php?action=delete&path=${encodeURIComponent(getFullPath())}&itemName=${encodeURIComponent(currentState.currentFile.name)}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Remove file from current state
+            currentState.files = currentState.files.filter(f => f.name !== currentState.currentFile.name);
+            
+            renderFileList();
+            hideDeleteFileModal();
+            hideLoading();
+            showSuccessMessage(`File "${currentState.currentFile.name}" deleted successfully!`);
+            
+            // Return to explorer
+            setTimeout(() => showExplorer(), 500);
+          } else {
+            throw new Error(data.error || 'Failed to delete file');
+          }
+        })
+        .catch(error => {
+          hideLoading();
+          showErrorMessage(error.message);
+        });
+    }
+
+    // Rename current file
+    function renameCurrentFile(newName) {
+      if (!currentState.currentFile) return;
+      
+      if (!newName) {
+        showErrorMessage('Please enter a new name');
+        return;
+      }
+      
+      if (!isValidFilename(newName)) {
+        showErrorMessage('Invalid file name. Please use only letters, numbers, dots, underscores and hyphens.');
+        return;
+      }
+      
+      showLoading(`Renaming file to ${newName}...`);
+      
+      fetch(`api.php?action=rename&path=${encodeURIComponent(getFullPath())}&oldName=${encodeURIComponent(currentState.currentFile.name)}&newName=${encodeURIComponent(newName)}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Update file in current state
+            const fileIndex = currentState.files.findIndex(f => f.name === currentState.currentFile.name);
+            if (fileIndex !== -1) {
+              currentState.files[fileIndex].name = newName;
+              currentState.files[fileIndex].lastModified = Date.now();
+            }
+            
+            // Update current file reference
+            currentState.currentFile.name = newName;
+            
+            renderFileList();
+            hideRenameFileModal();
+            hideLoading();
+            showSuccessMessage(`File renamed to "${newName}" successfully!`);
+            
+            // Update viewer if we're currently viewing this file
+            if (document.getElementById('fileViewer').classList.contains('hidden') === false) {
+              document.getElementById('currentFileName').textContent = newName;
+              document.getElementById('editingFileName').textContent = newName;
+            }
+          } else {
+            throw new Error(data.error || 'Failed to rename file');
+          }
+        })
+        .catch(error => {
+          hideLoading();
+          showErrorMessage(error.message);
+        });
+    }
+
+    // Download current file
+    function downloadCurrentFile() {
+      if (!currentState.currentFile) return;
+      
+      window.location.href = `api.php?action=download&path=${encodeURIComponent(getFullPath())}&filename=${encodeURIComponent(currentState.currentFile.name)}`;
+    }
+
+    // Preview file in editor
+    function previewFile() {
+      const content = document.getElementById('codeEditor').value;
+      const ext = currentState.currentFile.name.split('.').pop().toLowerCase();
+      
+      if (ext === 'md' || ext === 'markdown') {
+        // Convert markdown to HTML
+        fetch('api.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            action: 'preview_markdown',
+            content: content
+          })
+        })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              const previewWindow = window.open('', '_blank');
+              previewWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                  <title>Preview: ${currentState.currentFile.name}</title>
+                  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.1.0/github-markdown.min.css">
+                  <style>
+                    .markdown-body {
+                      box-sizing: border-box;
+                      min-width: 200px;
+                      max-width: 980px;
+                      margin: 0 auto;
+                      padding: 45px;
+                    }
+                    
+                    @media (max-width: 767px) {
+                      .markdown-body {
+                        padding: 15px;
+                      }
+                    }
+                  </style>
+                </head>
+                <body class="markdown-body">
+                  ${data.html}
+                </body>
+                </html>
+              `);
+              previewWindow.document.close();
+            } else {
+              throw new Error(data.error || 'Failed to preview markdown');
+            }
+          })
+          .catch(error => {
+            showErrorMessage(error.message);
+          });
+      } else {
+        // For other file types, just show the content in a new tab
+        const previewWindow = window.open('', '_blank');
+        previewWindow.document.write(`
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>Preview: ${currentState.currentFile.name}</title>
+            <style>
+              pre {
+                padding: 16px;
+                overflow: auto;
+                font-size: 85%;
+                line-height: 1.45;
+                background-color: #2d333b;
+                border-radius: 6px;
+                color: #adbac7;
+              }
+            </style>
+          </head>
+          <body>
+            <pre>${content}</pre>
+          </body>
+          </html>
+        `);
+        previewWindow.document.close();
+      }
+    }
+
+    // Get full path for API calls
+    function getFullPath() {
+      let fullPath = currentState.repository;
+      
+      if (currentState.branch) {
+        fullPath += '/branches/' + currentState.branch;
+      }
+      
+      if (currentState.path) {
+        fullPath += '/' + currentState.path;
+      }
+      
+      return fullPath;
+    }
+
+    // Update breadcrumb navigation
+    function updateBreadcrumb() {
+      const breadcrumb = document.getElementById('pathBreadcrumb');
+      breadcrumb.innerHTML = '';
+      
+      // Add repository link
+      let html = `
+        <a href="#" onclick="showRepoSelector()" class="text-github-accent-fg hover:underline font-semibold">Repositories</a>
+        <span class="text-github-fg-muted">/</span>
+        <a href="#" onclick="navigateToRoot()" class="text-github-accent-fg hover:underline font-semibold">${currentState.repository}</a>
+      `;
+      
+      // Add path segments
+      if (currentState.path) {
+        const segments = currentState.path.split('/');
+        let currentPath = '';
+        
+        segments.forEach((segment, index) => {
+          currentPath += (currentPath ? '/' : '') + segment;
+          html += `
+            <span class="text-github-fg-muted">/</span>
+            <a href="#" onclick="navigateToPath('${currentPath}')" class="text-github-accent-fg hover:underline font-semibold">${segment}</a>
+          `;
+        });
+      }
+      
+      breadcrumb.innerHTML = html;
+    }
+
+    // Navigate to root of repository
+    function navigateToRoot() {
+      currentState.path = '';
+      showLoading('Loading repository root...');
+      
+      fetch(`api.php?action=list_directory&path=${encodeURIComponent(currentState.repository + '/branches/main')}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            currentState.files = data.items;
+            renderFileList();
+            updateBreadcrumb();
+            hideLoading();
+          } else {
+            throw new Error(data.error || 'Failed to load repository root');
+          }
+        })
+        .catch(error => {
+          hideLoading();
+          showErrorMessage(error.message);
+        });
+    }
+
+    // Navigate to specific path
+    function navigateToPath(path) {
+      currentState.path = path;
+      showLoading(`Loading directory ${path}...`);
+      
+      fetch(`api.php?action=list_directory&path=${encodeURIComponent(currentState.repository + '/branches/main/' + path)}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            currentState.files = data.items;
+            renderFileList();
+            updateBreadcrumb();
+            hideLoading();
+          } else {
+            throw new Error(data.error || `Failed to load path ${path}`);
+          }
+        })
+        .catch(error => {
+          hideLoading();
+          showErrorMessage(error.message);
+        });
+    }
+
+    // Tag management
+    function addTag() {
+      const input = document.getElementById('tagInput');
+      const tag = input.value.trim();
+      
+      if (tag && !currentState.selectedTags.includes(tag)) {
+        currentState.selectedTags.push(tag);
+        updateSelectedTags();
+        input.value = '';
+      }
+    }
+
+    function removeTag(tag) {
+      currentState.selectedTags = currentState.selectedTags.filter(t => t !== tag);
+      updateSelectedTags();
+    }
+
+    function updateSelectedTags() {
+      const container = document.getElementById('selectedTags');
+      container.innerHTML = currentState.selectedTags.map(tag => `
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-github-accent-emphasis/20 border border-github-accent-emphasis/30 text-github-accent-fg">
+          ${tag}
+          <button onclick="removeTag('${tag}')" class="ml-1.5 w-3.5 h-3.5 rounded-full hover:bg-github-accent-emphasis/30 flex items-center justify-center">
+            <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z"/>
+            </svg>
+          </button>
+        </span>
+      `).join('');
+    }
+
+    // Get language name from extension
+    function getLanguageName(ext) {
+      const languages = {
+        'html': 'HTML',
+        'htm': 'HTML',
+        'css': 'CSS',
+        'js': 'JavaScript',
+        'javascript': 'JavaScript',
+        'ts': 'TypeScript',
+        'typescript': 'TypeScript',
+        'json': 'JSON',
+        'md': 'Markdown',
+        'markdown': 'Markdown',
+        'php': 'PHP',
+        'py': 'Python',
+        'python': 'Python',
+        'java': 'Java',
+        'cpp': 'C++',
+        'c': 'C',
+        'cs': 'C#',
+        'rb': 'Ruby',
+        'go': 'Go',
+        'rs': 'Rust',
+        'yml': 'YAML',
+        'yaml': 'YAML',
+        'xml': 'XML',
+        'sql': 'SQL'
+      };
+      return languages[ext] || 'Text';
+    }
+
+    // Validate filename
+    function isValidFilename(filename) {
+      if (empty(filename) || strlen(filename) > 255) {
+        return false;
+      }
+      
+      // Check for invalid characters
+      if (preg_match('/[<>:"|?*\\\\\/]/', filename)) {
+        return false;
+      }
+      
+      // Check for reserved names (Windows)
+      const reserved = ['CON', 'PRN', 'AUX', 'NUL', 'COM1', 'COM2', 'COM3', 'COM4', 'COM5', 'COM6', 'COM7', 'COM8', 'COM9', 'LPT1', 'LPT2', 'LPT3', 'LPT4', 'LPT5', 'LPT6', 'LPT7', 'LPT8', 'LPT9'];
+      const nameWithoutExt = pathinfo(filename, PATHINFO_FILENAME);
+      
+      if (in_array(strtoupper(nameWithoutExt), reserved)) {
+        return false;
+      }
+      
+      return true;
+    }
+
+    // Format file size
+    function formatFileSize(bytes) {
+      if (typeof bytes !== 'number') return '0 KB';
+      
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      if (bytes === 0) return '0 Bytes';
+      const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+      return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
+    }
+
+    // Format date
+    function formatDate(timestamp) {
+      if (!timestamp) return 'Unknown';
+      
+      const date = new Date(timestamp);
+      return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+    }
+
+    // Update editor line numbers
+    function updateEditorLineNumbers() {
+      const editor = document.getElementById('codeEditor');
+      const lineNumbers = document.getElementById('editorLineNumbers');
+      if (!editor || !lineNumbers) return;
+      
+      const lines = editor.value.split('\n');
+      lineNumbers.innerHTML = lines.map((_, i) => `<div>${i + 1}</div>`).join('');
+    }
+
+    // Sync editor scroll with line numbers
+    function syncEditorScroll() {
+      const editor = document.getElementById('codeEditor');
+      const lineNumbers = document.getElementById('editorLineNumbers');
+      if (editor && lineNumbers) {
+        lineNumbers.scrollTop = editor.scrollTop;
+      }
+    }
+
+    // View management
+    function showRepoSelector() {
+      showLoading('Loading repositories...');
+      document.getElementById('explorerView').classList.add('hidden');
+      document.getElementById('fileViewer').classList.add('hidden');
+      document.getElementById('fileEditor').classList.add('hidden');
+      document.getElementById('repoSelectorView').classList.remove('hidden');
+      hideLoading();
+    }
+
+    function showExplorer() {
+      showLoading('Loading file explorer...');
+      document.getElementById('fileViewer').classList.add('hidden');
+      document.getElementById('fileEditor').classList.add('hidden');
+      document.getElementById('repoSelectorView').classList.add('hidden');
+      document.getElementById('explorerView').classList.remove('hidden');
+      hideLoading();
+    }
+
+    function showFileViewer() {
+      showLoading('Opening file viewer...');
+      document.getElementById('explorerView').classList.add('hidden');
+      document.getElementById('fileEditor').classList.add('hidden');
+      document.getElementById('repoSelectorView').classList.add('hidden');
+      document.getElementById('fileViewer').classList.remove('hidden');
+      hideLoading();
+    }
+
+    function showFileEditor() {
+      showLoading('Loading editor...');
+      document.getElementById('explorerView').classList.add('hidden');
+      document.getElementById('fileViewer').classList.add('hidden');
+      document.getElementById('repoSelectorView').classList.add('hidden');
+      document.getElementById('fileEditor').classList.remove('hidden');
+      updateEditorLineNumbers();
+      hideLoading();
+    }
+
+    // Modal management
+    function showCreateFileModal() {
+      document.getElementById('createFileModal').classList.remove('hidden');
+      document.getElementById('createFileModal').classList.add('flex');
+      document.getElementById('currentPathPrefix').textContent = currentState.repository + (currentState.path ? '/' + currentState.path : '') + '/';
+      document.getElementById('newFileName').focus();
+    }
+
+    function hideCreateFileModal() {
+      document.getElementById('createFileModal').classList.add('hidden');
+      document.getElementById('createFileModal').classList.remove('flex');
+      // Reset form
+      document.getElementById('newFileName').value = '';
+      document.getElementById('fileCategoryInput').value = '';
+      document.getElementById('tagInput').value = '';
+      document.getElementById('initialContent').value = '';
+      currentState.selectedTags = [];
+      updateSelectedTags();
+    }
+
+    function showCreateRepoModal() {
+      document.getElementById('createRepoModal').classList.remove('hidden');
+      document.getElementById('createRepoModal').classList.add('flex');
+      document.getElementById('newRepoName').focus();
+    }
+
+    function hideCreateRepoModal() {
+      document.getElementById('createRepoModal').classList.add('hidden');
+      document.getElementById('createRepoModal').classList.remove('flex');
+      // Reset form
+      document.getElementById('newRepoName').value = '';
+      document.getElementById('repoDescription').value = '';
+      document.getElementById('visibilityPublic').checked = true;
+      document.getElementById('initReadme').checked = false;
+      document.getElementById('initGitignore').checked = false;
+      document.getElementById('initLicense').checked = false;
+    }
+
+    function showDeleteFileModal() {
+      if (!currentState.currentFile) return;
+      
+      document.getElementById('fileToDeleteName').textContent = currentState.currentFile.name;
+      document.getElementById('deleteFileModal').classList.remove('hidden');
+      document.getElementById('deleteFileModal').classList.add('flex');
+    }
+
+    function hideDeleteFileModal() {
+      document.getElementById('deleteFileModal').classList.add('hidden');
+      document.getElementById('deleteFileModal').classList.remove('flex');
+    }
+
+    function confirmDeleteFile() {
+      deleteCurrentFile();
+      hideDeleteFileModal();
+    }
+
+    function showRenameFileModal() {
+      if (!currentState.currentFile) return;
+      
+      document.getElementById('newFileNameInput').value = currentState.currentFile.name;
+      document.getElementById('renameFileModal').classList.remove('hidden');
+      document.getElementById('renameFileModal').classList.add('flex');
+    }
+
+    function hideRenameFileModal() {
+      document.getElementById('renameFileModal').classList.add('hidden');
+      document.getElementById('renameFileModal').classList.remove('flex');
+    }
+
+    function confirmRenameFile() {
+      const newName = document.getElementById('newFileNameInput').value.trim();
+      renameCurrentFile(newName);
+      hideRenameFileModal();
+    }
+
+    // Loading functions
+    function showLoading(text = 'Loading...') {
+      const overlay = document.getElementById('loadingOverlay');
+      const loadingText = document.getElementById('loadingText');
+      loadingText.textContent = text;
+      overlay.classList.remove('hidden');
+      overlay.classList.add('flex');
+    }
+
+    function hideLoading() {
+      const overlay = document.getElementById('loadingOverlay');
+      overlay.classList.add('hidden');
+      overlay.classList.remove('flex');
+    }
+
+    // Notification functions
+    function showSuccessMessage(message) {
+      // Create success notification
+      const notification = document.createElement('div');
+      notification.className = 'fixed top-4 right-4 bg-github-success-fg text-white px-4 py-3 rounded-lg shadow-lg z-50 animate-slide-down';
+      notification.innerHTML = `
+        <div class="flex items-center space-x-2">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"/>
+          </svg>
+          <span>${message}</span>
+        </div>
+      `;
+      document.body.appendChild(notification);
+      
+      // Remove after 3 seconds
+      setTimeout(() => {
+        notification.style.animation = 'fadeOut 0.3s ease-in';
+        setTimeout(() => {
+          if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+          }
+        }, 300);
+      }, 3000);
+    }
+
+    function showErrorMessage(message) {
+      // Create error notification
+      const notification = document.createElement('div');
+      notification.className = 'fixed top-4 right-4 bg-github-danger-fg text-white px-4 py-3 rounded-lg shadow-lg z-50 animate-slide-down';
+      notification.innerHTML = `
+        <div class="flex items-center space-x-2">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8.485.293a1 1 0 0 1 1.414 0l.707.707a1 1 0 0 1 0 1.414L8 7.414l2.606 2.606a1 1 0 0 1 0 1.414l-.707.707a1 1 0 0 1-1.414 0L8 9.414l-2.606 2.606a1 1 0 0 1-1.414 0l-.707-.707a1 1 0 0 1 0-1.414L6.586 8 4.293 5.707a1 1 0 0 1 0-1.414l.707-.707a1 1 0 0 1 1.414 0L8 6.586 8.485.293Z"/>
+          </svg>
+          <span>${message}</span>
+        </div>
+      `;
+      document.body.appendChild(notification);
+      
+      // Remove after 5 seconds
+      setTimeout(() => {
+        notification.style.animation = 'fadeOut 0.3s ease-in';
+        setTimeout(() => {
+          if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+          }
+        }, 300);
+      }, 5000);
+    }
+
+    // Context menu functionality
+    function setupContextMenu() {
+      const fileListBody = document.getElementById('fileListBody');
+      fileListBody.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        const row = e.target.closest('tr');
+        if (!row) return;
+        
+        const fileName = row.querySelector('.text-github-accent-fg').textContent;
+        const file = currentState.files.find(f => f.name === fileName);
+        if (!file) return;
+        
+        showContextMenu(e.clientX, e.clientY, fileName, file.type);
+      });
+      
+      // Hide context menu on click elsewhere
+      document.addEventListener('click', hideContextMenu);
+    }
+
+    function showContextMenu(x, y, fileName, fileType) {
+      hideContextMenu(); // Hide any existing menu
+      
+      const menu = document.createElement('div');
+      menu.id = 'contextMenu';
+      menu.className = 'fixed bg-github-canvas-overlay border border-github-border-default rounded-lg shadow-2xl py-2 z-50 min-w-[160px]';
+      menu.style.left = `${x}px`;
+      menu.style.top = `${y}px`;
+      
+      let html = `
+        <button onclick="viewFileFromContext('${fileName}')" class="w-full text-left px-4 py-2 text-sm text-github-fg-default hover:bg-github-canvas-subtle flex items-center space-x-2">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z"/>
+          </svg>
+          <span>View</span>
+        </button>
+      `;
+      
+      if (fileType === 'file') {
+        html += `
+          <button onclick="editFileFromContext('${fileName}')" class="w-full text-left px-4 py-2 text-sm text-github-fg-default hover:bg-github-canvas-subtle flex items-center space-x-2">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Z"/>
+            </svg>
+            <span>Edit</span>
+          </button>
+          <button onclick="downloadFileFromContext('${fileName}')" class="w-full text-left px-4 py-2 text-sm text-github-fg-default hover:bg-github-canvas-subtle flex items-center space-x-2">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M2.75 14A1.75 1.75 0 0 1 1 12.25v-2.5a.75.75 0 0 1 1.5 0v2.5c0 .138.112.25.25.25h10.5a.25.25 0 0 0 .25-.25v-2.5a.75.75 0 0 1 1.5 0v2.5A1.75 1.75 0 0 1 13.25 14Z"/>
+              <path d="M7.25 7.689V2a.75.75 0 0 1 1.5 0v5.689l1.97-1.969a.749.749 0 1 1 1.06 1.06l-3.25 3.25a.749.749 0 0 1-1.06 0L4.22 6.78a.749.749 0 1 1 1.06-1.06l1.97 1.969Z"/>
+            </svg>
+            <span>Download</span>
+          </button>
+        `;
+      }
+      
+      html += `
+        <button onclick="renameFileFromContext('${fileName}')" class="w-full text-left px-4 py-2 text-sm text-github-fg-default hover:bg-github-canvas-subtle flex items-center space-x-2">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Z"/>
+          </svg>
+          <span>Rename</span>
+        </button>
+        <div class="border-t border-github-border-muted my-1"></div>
+        <button onclick="deleteFileFromContext('${fileName}')" class="w-full text-left px-4 py-2 text-sm text-github-danger-fg hover:bg-github-canvas-subtle flex items-center space-x-2">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M11 1.75V3h2.25a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5H5V1.75C5 .784 5.784 0 6.75 0h2.5C10.216 0 11 .784 11 1.75ZM4.496 6.675l.66 6.6a.25.25 0 0 0 .249.225h5.19a.25.25 0 0 0 .249-.225l.66-6.6a.75.75 0 0 1 1.492.149l-.66 6.6A1.748 1.748 0 0 1 10.595 15h-5.19a1.748 1.748 0 0 1-1.741-1.575l-.66-6.6a.75.75 0 1 1 1.492-.15ZM6.5 1.75V3h3V1.75a.25.25 0 0 0-.25-.25h-2.5a.25.25 0 0 0-.25.25Z"/>
+          </svg>
+          <span>Delete</span>
+        </button>
+      `;
+      
+      menu.innerHTML = html;
+      document.body.appendChild(menu);
+      
+      // Adjust position if menu goes off screen
+      const rect = menu.getBoundingClientRect();
+      if (rect.right > window.innerWidth) {
+        menu.style.left = `${x - rect.width}px`;
+      }
+      if (rect.bottom > window.innerHeight) {
+        menu.style.top = `${y - rect.height}px`;
+      }
+    }
+
+    function hideContextMenu() {
+      const menu = document.getElementById('contextMenu');
+      if (menu) {
+        menu.remove();
+      }
+    }
+
+    function viewFileFromContext(fileName) {
+      hideContextMenu();
+      viewFile(fileName);
+    }
+
+    function editFileFromContext(fileName) {
+      hideContextMenu();
+      currentState.currentFile = currentState.files.find(f => f.name === fileName);
+      editFile();
+    }
+
+    function downloadFileFromContext(fileName) {
+      hideContextMenu();
+      currentState.currentFile = currentState.files.find(f => f.name === fileName);
+      downloadCurrentFile();
+    }
+
+    function renameFileFromContext(fileName) {
+      hideContextMenu();
+      currentState.currentFile = currentState.files.find(f => f.name === fileName);
+      showRenameFileModal();
+    }
+
+    function deleteFileFromContext(fileName) {
+      hideContextMenu();
+      currentState.currentFile = currentState.files.find(f => f.name === fileName);
+      showDeleteFileModal();
+    }
+
+    // Keyboard shortcuts
+    function setupKeyboardShortcuts() {
+      document.addEventListener('keydown', function(e) {
+        // Ctrl/Cmd + N - New file
+        if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+          e.preventDefault();
+          showCreateFileModal();
+        }
+        
+        // Ctrl/Cmd + Shift + N - New repository
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'N') {
+          e.preventDefault();
+          showCreateRepoModal();
+        }
+        
+        // Ctrl/Cmd + S - Save file (when editing)
+        if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+          const editor = document.getElementById('fileEditor');
+          if (!editor.classList.contains('hidden')) {
+            e.preventDefault();
+            saveFile();
+          }
+        }
+        
+        // Escape - Close modals/return to explorer
+        if (e.key === 'Escape') {
+          const modal = document.getElementById('createFileModal');
+          if (!modal.classList.contains('hidden')) {
+            hideCreateFileModal();
+          } else {
+            const repoModal = document.getElementById('createRepoModal');
+            if (!repoModal.classList.contains('hidden')) {
+              hideCreateRepoModal();
+            } else {
+              const deleteModal = document.getElementById('deleteFileModal');
+              if (!deleteModal.classList.contains('hidden')) {
+                hideDeleteFileModal();
+              } else {
+                const renameModal = document.getElementById('renameFileModal');
+                if (!renameModal.classList.contains('hidden')) {
+                  hideRenameFileModal();
+                } else {
+                  showExplorer();
+                }
+              }
+            }
+          }
+        }
+        
+        // Ctrl/Cmd + F - Focus search
+        if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+          e.preventDefault();
+          const searchInput = document.querySelector('input[placeholder="Search files..."]');
+          if (searchInput) {
+            searchInput.focus();
+          }
+        }
+      });
+    }
+
+    // Drag and drop functionality
+    function setupDragAndDrop() {
+      const dropZone = document.getElementById('explorerView');
+      
+      dropZone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        dropZone.classList.add('drag-over');
+      });
+      
+      dropZone.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+      });
+      
+      dropZone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+        
+        const files = Array.from(e.dataTransfer.files);
+        if (files.length === 0) return;
+        
+        showLoading(`Uploading ${files.length} file(s)...`);
+        
+        const formData = new FormData();
+        formData.append('action', 'upload');
+        formData.append('path', getFullPath());
+        
+        files.forEach((file, index) => {
+          formData.append(`file${index}`, file);
+        });
+        
+        fetch('api.php', {
+          method: 'POST',
+          body: formData
+        })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              // Refresh file list
+              fetch(`api.php?action=list_directory&path=${encodeURIComponent(getFullPath())}`)
+                .then(response => response.json())
+                .then(listData => {
+                  if (listData.success) {
+                    currentState.files = listData.items;
+                    renderFileList();
+                    hideLoading();
+                    showSuccessMessage(`${files.length} file(s) uploaded successfully!`);
+                  } else {
+                    throw new Error(listData.error || 'Failed to refresh file list');
+                  }
+                });
+            } else {
+              throw new Error(data.error || 'Failed to upload files');
+            }
+          })
+          .catch(error => {
+            hideLoading();
+            showErrorMessage(error.message);
+          });
+      });
+    }
+  </script>
+
+  <style>
+    /* Additional animations and effects */
+    .drag-over {
+      background: rgba(83, 155, 245, 0.1);
+      border: 2px dashed #539bf5;
+    }
+
+    /* Smooth scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--github-canvas-default);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--github-border-default);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--github-neutral-muted);
+    }
+
+    /* Code editor enhancements */
+    #codeEditor {
+      font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      tab-size: 4;
+      -moz-tab-size: 4;
+    }
+
+    /* Line number alignment */
+    #lineNumbers div,
+    #editorLineNumbers div {
+      height: 20px;
+      line-height: 20px;
+    }
+
+    /* Responsive improvements */
+    @media (max-width: 768px) {
+      .max-w-screen-xl {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+
+      .hidden-mobile {
+        display: none !important;
+      }
+
+      .flex-col-mobile {
+        flex-direction: column !important;
+      }
+
+      .space-y-mobile>*+* {
+        margin-top: 0.5rem !important;
+        margin-left: 0 !important;
+      }
+    }
+
+    /* Enhanced hover effects */
+    .file-list-item:hover .file-name-link {
+      color: var(--github-accent-fg);
+    }
+
+    /* Loading spinner enhancement */
+    @keyframes shimmer {
+      0% {
+        background-position: -200px 0;
+      }
+
+      100% {
+        background-position: calc(200px + 100%) 0;
+      }
+    }
+
+    .loading-shimmer {
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      background-size: 200px 100%;
+      animation: shimmer 1.5s infinite;
+    }
+
+    /* Enhanced syntax highlighting */
+    .token.comment {
+      color: #6e7681;
+    }
+
+    .token.string {
+      color: #a5d6ff;
+    }
+
+    .token.keyword {
+      color: #ff7b72;
+    }
+
+    .token.function {
+      color: #d2a8ff;
+    }
+
+    .token.number {
+      color: #79c0ff;
+    }
+
+    /* File type indicators */
+    .file-type-html {
+      color: #e34c26;
+    }
+
+    .file-type-css {
+      color: #1572b6;
+    }
+
+    .file-type-js {
+      color: #f1e05a;
+    }
+
+    .file-type-md {
+      color: #083fa1;
+    }
+
+    .file-type-json {
+      color: #f1e05a;
+    }
+
+    .file-type-php {
+      color: #4f5d95;
+    }
+
+    .file-type-py {
+      color: #3572a5;
+    }
+
+    /* Enhanced focus states */
+    button:focus,
+    input:focus,
+    textarea:focus {
+      outline: 2px solid var(--github-accent-emphasis);
+      outline-offset: 2px;
+    }
+
+    /* Improved modal animations */
+    @keyframes modalSlideIn {
+      from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .animate-modal-in {
+      animation: modalSlideIn 0.2s ease-out;
+    }
+  </style>
+</body>
+</html>
+    
+  </body>
+  
+</html>
