@@ -641,4 +641,4 @@ highlightAllCodeBlocks() {
 
 export {
   highlightAllCodeBlocks
-}
+};
