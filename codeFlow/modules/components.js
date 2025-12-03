@@ -638,7 +638,3 @@ highlightAllCodeBlocks() {
     }, 100);
 }  
 }
-
-export {
-  highlightAllCodeBlocks
-};
