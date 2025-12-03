@@ -616,4 +616,25 @@ class Components {
       container.appendChild(listItem);
     });
   }
+  
+  
+highlightAllCodeBlocks() {
+    setTimeout(() => {
+        // Highlight all code blocks with Prism
+        document.querySelectorAll('pre code[class*="language-"]:not(.language-):not([data-pristine])').forEach((el) => {
+            const language = el.className.replace('language-', '');
+            if (language && window.Prism && window.Prism.languages[language]) {
+                Prism.highlightElement(el);
+            }
+        });
+        
+        // Apply line numbers
+        document.querySelectorAll('pre.line-numbers:not([data-pristine])').forEach((el) => {
+            if (window.Prism && window.Prism.plugins && window.Prism.plugins.lineNumbers) {
+                window.Prism.plugins.lineNumbers.highlight(el);
+                el.setAttribute('data-pristine', 'true');
+            }
+        });
+    }, 100);
+}  
 }
