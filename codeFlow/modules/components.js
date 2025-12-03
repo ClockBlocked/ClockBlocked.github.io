@@ -5,24 +5,14 @@ class Components {
         this.isShowingToast = false;
     }
 
-    // Toast Notification System
     showToast(message, type = 'info', duration = 3000) {
-        const toast = {
-            id: Date.now(),
-            message: message,
-            type: type,
-            duration: duration
-        };
-
+        const toast = { id: Date.now(), message: message, type: type, duration: duration };
         this.toastQueue.push(toast);
         this.processToastQueue();
     }
 
     processToastQueue() {
-        if (this.isShowingToast || this.toastQueue.length === 0) {
-            return;
-        }
-
+        if (this.isShowingToast || this.toastQueue.length === 0) return;
         this.isShowingToast = true;
         const toast = this.toastQueue.shift();
         this.displayToast(toast);
@@ -30,13 +20,7 @@ class Components {
 
     displayToast(toast) {
         const container = document.getElementById('toast-container');
-        if (!container) {
-            console.error('Toast container not found');
-            this.isShowingToast = false;
-            this.processToastQueue();
-            return;
-        }
-
+        if (!container) { this.isShowingToast = false; this.processToastQueue(); return; }
         const toastElement = document.createElement('div');
         toastElement.className = `toast toast-${toast.type}`;
         toastElement.innerHTML = `
@@ -44,128 +28,73 @@ class Components {
                 <div class="toast-title">${this.getToastTitle(toast.type)}</div>
                 <div class="toast-message">${toast.message}</div>
             </div>
-            <button class="toast-close" onclick="this.parentElement.remove()">
-                <i class="fas fa-times"></i>
-            </button>
+            <button class="toast-close" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
         `;
-
         container.appendChild(toastElement);
-
-        // Auto remove after duration
         setTimeout(() => {
             if (toastElement.parentNode) {
                 toastElement.style.opacity = '0';
                 toastElement.style.transform = 'translateX(100%)';
-                
                 setTimeout(() => {
-                    if (toastElement.parentNode) {
-                        toastElement.parentNode.removeChild(toastElement);
-                    }
+                    if (toastElement.parentNode) toastElement.parentNode.removeChild(toastElement);
+                    this.isShowingToast = false;
+                    this.processToastQueue();
                 }, 300);
-            }
-            
-            this.isShowingToast = false;
-            this.processToastQueue();
+            } else { this.isShowingToast = false; this.processToastQueue(); }
         }, toast.duration);
     }
 
     getToastTitle(type) {
-        const titles = {
-            'success': 'Success',
-            'error': 'Error',
-            'warning': 'Warning',
-            'info': 'Info'
-        };
+        const titles = { 'success': 'Success', 'error': 'Error', 'warning': 'Warning', 'info': 'Info' };
         return titles[type] || 'Notification';
     }
 
-    // Modal System
     showModal(options) {
-        const {
-            title,
-            content,
-            confirmText = 'Confirm',
-            cancelText = 'Cancel',
-            onConfirm,
-            onCancel,
-            showCancel = true,
-            size = 'md'
-        } = options;
-
-        // Remove existing modal
-        this.closeModal();
-
-        const modalOverlay = document.createElement('div');
-        modalOverlay.className = 'modal-overlay';
-        modalOverlay.id = 'modal-overlay';
-
-        const modalSizeClass = `modal-${size}`;
-        
-        modalOverlay.innerHTML = `
-            <div class="modal ${modalSizeClass}">
-                <div class="modal-header">
-                    <h3 class="modal-title">${title}</h3>
-                    <button class="modal-close" onclick="components.closeModal()">
-                        <i class="fas fa-times"></i>
-                    </button>
+        return new Promise((resolve) => {
+            const { title, content, confirmText = 'Confirm', cancelText = 'Cancel', showCancel = true, size = 'md' } = options;
+            this.closeModal();
+            const modalOverlay = document.createElement('div');
+            modalOverlay.className = 'modal-overlay';
+            modalOverlay.id = 'modal-overlay';
+            const modalSizeClass = `modal-${size}`;
+            modalOverlay.innerHTML = `
+                <div class="modal ${modalSizeClass}">
+                    <div class="modal-header">
+                        <h3 class="modal-title">${title}</h3>
+                        <button class="modal-close" onclick="components.closeModal()"><i class="fas fa-times"></i></button>
+                    </div>
+                    <div class="modal-body">${content}</div>
+                    <div class="modal-footer">
+                        ${showCancel ? `<button class="btn btn-secondary" id="modal-cancel">${cancelText}</button>` : ''}
+                        <button class="btn btn-primary" id="modal-confirm">${confirmText}</button>
+                    </div>
                 </div>
-                <div class="modal-body">
-                    ${content}
-                </div>
-                <div class="modal-footer">
-                    ${showCancel ? `
-                        <button class="btn btn-secondary" onclick="components.closeModal()">
-                            ${cancelText}
-                        </button>
-                    ` : ''}
-                    <button class="btn btn-primary" id="modal-confirm">
-                        ${confirmText}
-                    </button>
-                </div>
-            </div>
-        `;
-
-        document.body.appendChild(modalOverlay);
-
-        // Add event listeners
-        const confirmBtn = document.getElementById('modal-confirm');
-        if (confirmBtn && onConfirm) {
-            confirmBtn.addEventListener('click', () => {
-                onConfirm();
-                this.closeModal();
-            });
-        }
-
-        // Close on overlay click
-        modalOverlay.addEventListener('click', (e) => {
-            if (e.target === modalOverlay) {
-                if (onCancel) onCancel();
-                this.closeModal();
-            }
+            `;
+            document.body.appendChild(modalOverlay);
+            const confirmBtn = document.getElementById('modal-confirm');
+            const cancelBtn = document.getElementById('modal-cancel');
+            if (confirmBtn) confirmBtn.addEventListener('click', () => { this.closeModal(); resolve(true); });
+            if (cancelBtn) cancelBtn.addEventListener('click', () => { this.closeModal(); resolve(false); });
+            const closeOnEscape = (e) => { if (e.key === 'Escape') { this.closeModal(); resolve(false); document.removeEventListener('keydown', closeOnEscape); } };
+            document.addEventListener('keydown', closeOnEscape);
+            modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) { this.closeModal(); resolve(false); } });
+            setTimeout(() => { const input = modalOverlay.querySelector('input'); if (input) input.focus(); }, 100);
         });
-
-        // Close on Escape key
-        const closeOnEscape = (e) => {
-            if (e.key === 'Escape') {
-                if (onCancel) onCancel();
-                this.closeModal();
-                document.removeEventListener('keydown', closeOnEscape);
-            }
-        };
-        document.addEventListener('keydown', closeOnEscape);
     }
 
     closeModal() {
         const existingModal = document.getElementById('modal-overlay');
-        if (existingModal) {
-            existingModal.remove();
-        }
+        if (existingModal) existingModal.remove();
     }
 
-    // Loading Overlay
+    showConfirm(options) {
+        return new Promise((resolve) => {
+            this.showModal({ ...options, onConfirm: () => resolve(true), onCancel: () => resolve(false) });
+        });
+    }
+
     showLoadingOverlay(message = 'Loading...') {
         this.closeLoadingOverlay();
-
         const overlay = document.createElement('div');
         overlay.className = 'loading-overlay';
         overlay.id = 'loading-overlay';
@@ -179,26 +108,12 @@ class Components {
                 <div class="loading-message">${message}</div>
             </div>
         `;
-
         document.body.appendChild(overlay);
     }
 
     closeLoadingOverlay() {
         const existingOverlay = document.getElementById('loading-overlay');
-        if (existingOverlay) {
-            existingOverlay.remove();
-        }
-    }
-
-    // Confirm Dialog
-    showConfirm(options) {
-        return new Promise((resolve) => {
-            this.showModal({
-                ...options,
-                onConfirm: () => resolve(true),
-                onCancel: () => resolve(false)
-            });
-        });
+        if (existingOverlay) existingOverlay.remove();
     }
 
     // Dropdown Component
@@ -675,3 +590,6 @@ class Components {
         });
     }
 }
+
+
+
