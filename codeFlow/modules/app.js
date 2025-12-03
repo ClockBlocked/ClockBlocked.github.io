@@ -1,4 +1,3 @@
-import { highlightAllCodeBlocks } from './components.js';
 
 
 class GistApp {
