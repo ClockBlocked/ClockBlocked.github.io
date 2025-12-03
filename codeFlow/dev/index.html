@@ -7,7 +7,7 @@
   <title>File Explorer - GitHub Clone</title>
 
   <link rel="stylesheet" href="./styles.css" />
-  
+
   <!-- TailwindCSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
@@ -671,13 +671,20 @@
 
   <script src="./primary.js"></script>
   
-  
-  
-    <!-- Eruda -->
-    <!-- D E B U G G I N G -->
-    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-    <script>
-      eruda.init();
-    </script>
+  <script>
+    // Fallback in case external script doesn't load
+    if (typeof showCreateRepoModal === 'undefined') {
+      console.error('script_fixed.js failed to load. Loading inline...');
+      // Minimal fallback functions
+      window.showCreateRepoModal = function() {
+        document.getElementById('createRepoModal').classList.remove('hidden');
+        document.getElementById('createRepoModal').classList.add('flex');
+      };
+      window.hideCreateRepoModal = function() {
+        document.getElementById('createRepoModal').classList.add('hidden');
+        document.getElementById('createRepoModal').classList.remove('flex');
+      };
+    }
+  </script>
 </body>
 </html>
