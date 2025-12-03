@@ -225,7 +225,7 @@ switchToFile(index) {
         const filename = document.getElementById('new-filename').value.trim();
         if (!filename) { app.showToast('Please enter a filename', 'error'); return; }
         if (this.files.some(f => f.filename === filename)) { app.showToast('A file with this name already exists!', 'error'); return; }
-        const language = this.detectLanguageFromFilename(filename);
+        const language = this.detectLanguage(filename);
         const newFile = { id: this.generateId(), filename: filename, language: language, content: this.getDefaultContent(language), size: 0 };
         this.files.push(newFile);
         this.switchToFile(this.files.length - 1);
@@ -246,7 +246,7 @@ switchToFile(index) {
         if (!newName.trim()) { app.showToast('Please enter a valid filename', 'error'); return; }
         if (this.files.some((f, i) => i !== index && f.filename === newName)) { app.showToast('A file with this name already exists!', 'error'); return; }
         this.files[index].filename = newName;
-        this.files[index].language = this.detectLanguageFromFilename(newName);
+        this.files[index].language = this.detectLanguage(newName);
         this.renderFileTabs();
         this.renderFileTree();
         if (index === this.currentFileIndex && this.editor) this.editor.setOption('mode', this.getLanguageMode(this.files[index].language));
