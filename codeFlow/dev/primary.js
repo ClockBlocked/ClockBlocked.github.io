@@ -620,6 +620,30 @@ function renderFileList() {
   });
 }
 
+// Add this function to adjust code block height
+function adjustCodeBlockHeight() {
+  const codeContent = document.getElementById('codeContent');
+  const lineNumbers = document.getElementById('lineNumbers');
+  const codeBlock = document.getElementById('codeBlock');
+  
+  if (codeContent && lineNumbers && codeBlock) {
+    // Calculate optimal height based on content
+    const lineCount = codeBlock.textContent.split('\n').length;
+    const minHeight = Math.max(500, Math.min(800, lineCount * 18)); // 18px per line
+    
+    // Apply heights
+    codeContent.style.minHeight = `${minHeight}px`;
+    lineNumbers.style.minHeight = `${minHeight}px`;
+    
+    // Adjust line numbers
+    lineNumbers.innerHTML = Array.from({length: lineCount})
+      .map((_, i) => `<div style="line-height: 1.3; font-size: 13px;">${i + 1}</div>`)
+      .join('');
+  }
+}
+
+
+
 
 
 function displayFileContent(filename, fileData) {
@@ -664,7 +688,7 @@ function displayFileContent(filename, fileData) {
     } else {
       fileTags.innerHTML = '<span class="text-github-fg-muted text-sm">No tags</span>';
     }
-  }
+  }  setTimeout (adjustCodeBlockHeight, 50);
 }
 
 function editFile() {
