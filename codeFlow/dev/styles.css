@@ -876,3 +876,12 @@ code[class*="language-"] {
 #fileViewer .p-4 {
   padding: 12px 16px !important;
 }
+
+
+
+
+#initialContentEditor {
+  height: 250px; max-height: 400px;
+  overflow: hidden; overflow-y: auto;
+  width: 100%; padding: 1rem; margin: auto;
+}
