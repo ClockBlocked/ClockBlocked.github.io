@@ -1,4 +1,12 @@
-// Global state
+/**
+ * 
+      ©   2 0 2 5
+   
+      Cole Hanson
+  Chevrolay@Outlook.com
+     m.me/Chevrolay
+ * 
+ */
 let currentState = {
   repository: null,
   branch: 'main',
@@ -12,7 +20,7 @@ let currentState = {
 let codeEditor = null;
 let initialContentEditor = null;
 
-// LocalStorageManager object literal
+
 const LocalStorageManager = {
   getRepositories: function() {
     return JSON.parse(localStorage.getItem('gitcodr_repositories') || '[]');
@@ -132,7 +140,6 @@ function formatFileSize(bytes) {
   const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
   return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
 }
-
 function formatDate(timestamp) {
   if (!timestamp) return 'Unknown';
   const date = new Date(timestamp);
@@ -158,7 +165,6 @@ function getLanguageColor(ext) {
   };
   return colors[ext] || '#7d8590';
 }
-
 function getLanguageName(ext) {
   const languages = {
     'html': 'HTML', 'htm': 'HTML', 'css': 'CSS', 'js': 'JavaScript', 'javascript': 'JavaScript',
@@ -169,7 +175,6 @@ function getLanguageName(ext) {
   };
   return languages[ext] || 'Text';
 }
-
 function getFileIcon(filename, type) {
   if (type === 'folder') {
     return `<svg class="w-4 h-4 text-github-accent-fg" fill="currentColor" viewBox="0 0 16 16"><path d="M1.75 1A1.75 1.75 0 0 0 0 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0 0 16 13.25v-8.5A1.75 1.75 0 0 0 14.25 3H7.5a.25.25 0 0 1-.2-.1l-.9-1.2C6.07 1.26 5.55 1 5 1H1.75Z"/></svg>`;
@@ -193,7 +198,6 @@ function updateSelectedTags() {
     </span>
   `).join('');
 }
-
 function updateBreadcrumb() {
   const breadcrumb = document.getElementById('pathBreadcrumb');
   if (!breadcrumb) return;
@@ -219,7 +223,6 @@ function updateBreadcrumb() {
   
   breadcrumb.innerHTML = html;
 }
-
 function updateEditorMode(editor, fileName) {
   if (!editor || !fileName) return;
   const ext = fileName.split('.').pop().toLowerCase();
@@ -232,7 +235,6 @@ function updateEditorMode(editor, fileName) {
   const mode = modeMap[ext] || 'text';
   editor.setOption('mode', mode);
 }
-
 function updateCommitMessage() {
   if (!currentState.currentFile) return;
   const commitTitle = document.getElementById('commitTitle');
@@ -250,7 +252,6 @@ function showLoading(text = 'Loading...') {
     overlay.classList.add('flex');
   }
 }
-
 function hideLoading() {
   const overlay = document.getElementById('loadingOverlay');
   if (overlay) {
@@ -270,7 +271,6 @@ function showSuccessMessage(message) {
     setTimeout(() => notification.parentNode?.removeChild(notification), 300);
   }, 3000);
 }
-
 function showErrorMessage(message) {
   const notification = document.createElement('div');
   notification.className = 'fixed top-4 right-4 bg-github-danger-fg text-white px-4 py-3 rounded-lg shadow-lg z-50 animate-slide-down';
@@ -282,12 +282,10 @@ function showErrorMessage(message) {
     setTimeout(() => notification.parentNode?.removeChild(notification), 300);
   }, 5000);
 }
-
 function hideContextMenu() {
   const menu = document.getElementById('contextMenu');
   if (menu) menu.remove();
 }
-
 function showContextMenu(x, y, fileName, fileType) {
   hideContextMenu();
   
@@ -313,24 +311,6 @@ function showContextMenu(x, y, fileName, fileType) {
   if (rect.bottom > window.innerHeight) menu.style.top = `${y - rect.height}px`;
 }
 
-/**
-function showRepoSelector() {
-  document.getElementById('explorerView').classList.add('hidden');
-  document.getElementById('fileViewer').classList.add('hidden');
-  document.getElementById('fileEditor').classList.add('hidden');
-  document.getElementById('repoSelectorView').classList.remove('hidden');
-}
-
-
-
-function showExplorer() {
-  document.getElementById('fileViewer').classList.add('hidden');
-  document.getElementById('fileEditor').classList.add('hidden');
-  document.getElementById('repoSelectorView').classList.add('hidden');
-  document.getElementById('explorerView').classList.remove('hidden');
-}
-**/
-
 
 function showFileViewer() {
   document.getElementById('explorerView').classList.add('hidden');
@@ -338,7 +318,6 @@ function showFileViewer() {
   document.getElementById('repoSelectorView').classList.add('hidden');
   document.getElementById('fileViewer').classList.remove('hidden');
 }
-
 function showFileEditor() {
   document.getElementById('explorerView').classList.add('hidden');
   document.getElementById('fileViewer').classList.add('hidden');
@@ -351,7 +330,6 @@ function showCreateRepoModal() {
   document.getElementById('createRepoModal').classList.add('flex');
   document.getElementById('newRepoName').focus();
 }
-
 function hideCreateRepoModal() {
   document.getElementById('createRepoModal').classList.add('hidden');
   document.getElementById('createRepoModal').classList.remove('flex');
@@ -367,7 +345,6 @@ function showCreateFileModal() {
   document.getElementById('currentPathPrefix').textContent = currentState.repository + (currentState.path ? '/' + currentState.path : '') + '/';
   document.getElementById('newFileName').focus();
 }
-
 function hideCreateFileModal() {
   document.getElementById('createFileModal').classList.add('hidden');
   document.getElementById('createFileModal').classList.remove('flex');
@@ -385,7 +362,6 @@ function showDeleteFileModal() {
   document.getElementById('deleteFileModal').classList.remove('hidden');
   document.getElementById('deleteFileModal').classList.add('flex');
 }
-
 function hideDeleteFileModal() {
   document.getElementById('deleteFileModal').classList.add('hidden');
   document.getElementById('deleteFileModal').classList.remove('flex');
@@ -395,7 +371,6 @@ function confirmDeleteFile() {
   deleteCurrentFile();
   hideDeleteFileModal();
 }
-
 function deleteCurrentFile() {
   if (!currentState.currentFile) return;
   showLoading(`Deleting file ${currentState.currentFile.name}...`);
@@ -505,7 +480,6 @@ function createRepository() {
     }
   }, 300);
 }
-
 function deleteRepository(repoName) {
   if (!confirm(`Are you sure you want to delete the repository "${repoName}"? This action cannot be undone.`)) return;
   
@@ -589,42 +563,6 @@ function createFile() {
 }
 
 
-/**
-function openRepository(repoName) {
-  showLoading(`Opening repository ${repoName}...`);
-  currentState.repository = repoName;
-  currentState.path = '';
-  
-  setTimeout(() => {
-    try {
-      currentState.files = LocalStorageManager.listFiles(repoName, '');
-      renderFileList();
-      updateBreadcrumb();
-      
-      // Add null checks for all DOM elements
-      const currentRepoName = document.getElementById('currentRepoName');
-      const repoNameInViewer = document.getElementById('repoNameInViewer');
-      const repoNameInEditor = document.getElementById('repoNameInEditor');
-      
-      if (currentRepoName) currentRepoName.textContent = repoName;
-      if (repoNameInViewer) repoNameInViewer.textContent = repoName;
-      if (repoNameInEditor) repoNameInEditor.textContent = repoName;
-      
-      const repo = LocalStorageManager.getRepository(repoName);
-      if (repo) {
-        const repoDescription = document.getElementById('repoDescription');
-        if (repoDescription) repoDescription.textContent = repo.description || 'No description provided.';
-      }
-      
-      hideLoading();
-      showExplorer();
-    } catch (error) {
-      hideLoading();
-      showErrorMessage('Failed to open repository: ' + error.message);
-    }
-  }, 500);
-}
-**/
 
 
 function loadRepositories() {
@@ -682,52 +620,6 @@ function renderFileList() {
   });
 }
 
-/**
-function viewFile(filename) {
-  const file = currentState.files.find(f => f.name === filename);
-  if (!file) return;
-  
-  currentState.currentFile = file;
-  
-  if (file.type === 'folder') {
-    currentState.path += (currentState.path ? '/' : '') + filename;
-    showLoading(`Loading directory ${filename}...`);
-    
-    setTimeout(() => {
-      try {
-        const pathPrefix = currentState.path ? currentState.path + '/' : '';
-        currentState.files = LocalStorageManager.listFiles(currentState.repository, pathPrefix);
-        renderFileList();
-        updateBreadcrumb();
-        hideLoading();
-      } catch (error) {
-        hideLoading();
-        showErrorMessage('Failed to load directory: ' + error.message);
-      }
-    }, 300);
-  } else {
-    showLoading(`Loading file ${filename}...`);
-    
-    setTimeout(() => {
-      try {
-        const filePath = (currentState.path ? currentState.path + '/' : '') + filename;
-        const fileData = LocalStorageManager.getFile(currentState.repository, filePath);
-        
-        if (fileData) {
-          displayFileContent(filename, fileData);
-          hideLoading();
-          showFileViewer();
-        } else {
-          throw new Error('File not found');
-        }
-      } catch (error) {
-        hideLoading();
-        showErrorMessage('Failed to load file: ' + error.message);
-      }
-    }, 300);
-  }
-}
-**/
 
 
 function displayFileContent(filename, fileData) {
@@ -1090,17 +982,7 @@ function setupKeyboardShortcuts() {
   document.addEventListener('click', hideContextMenu);
 }
 
-/**
-function initializeApp() {
-  setupEventListeners();
-  setupButtonEventListeners();
-  loadRepositories();
-  setupKeyboardShortcuts();
-  setupCodeEditors();
-  
-  setTimeout(() => showSuccessMessage('Welcome to GitHub Clone!'), 1000);
-}
-**/
+
 
 // Expose all functions to global scope
 window.showCreateRepoModal = showCreateRepoModal;
