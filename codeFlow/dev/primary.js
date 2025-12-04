@@ -1119,3 +1119,401 @@ window.downloadFileFromContext = downloadFileFromContext;
 window.deleteFileFromContext = deleteFileFromContext;
 
 document.addEventListener('DOMContentLoaded', initializeApp);
+
+
+
+
+
+
+// Add to global state
+let recentFiles = JSON.parse(localStorage.getItem('gitcodr_recent_files') || '[]');
+let isPageTransition = false;
+
+// Progress Bar Functions
+function startPageTransition() {
+  isPageTransition = true;
+  
+  // Show progress bar
+  const progressBar = document.getElementById('loadingProgressBar');
+  if (progressBar) {
+    progressBar.style.width = '10%';
+    progressBar.style.transition = 'width 0.1s ease';
+  }
+  
+  // Simulate realistic loading with random progress increments
+  let progress = 10;
+  const interval = setInterval(() => {
+    if (progress >= 90) {
+      clearInterval(interval);
+      return;
+    }
+    
+    // Random increment between 3-8%
+    const increment = 3 + Math.random() * 5;
+    progress = Math.min(90, progress + increment);
+    
+    if (progressBar) {
+      progressBar.style.width = `${progress}%`;
+      
+      // Randomly add small glow pulses
+      if (Math.random() > 0.7) {
+        progressBar.style.boxShadow = '0 0 15px rgba(220, 38, 38, 0.7), 0 0 25px rgba(220, 38, 38, 0.4)';
+        setTimeout(() => {
+          if (progressBar) {
+            progressBar.style.boxShadow = '0 0 10px rgba(220, 38, 38, 0.5), 0 0 20px rgba(220, 38, 38, 0.3)';
+          }
+        }, 150);
+      }
+    }
+  }, 50 + Math.random() * 100); // Random interval between 50-150ms
+}
+
+function completePageTransition() {
+  const progressBar = document.getElementById('loadingProgressBar');
+  if (progressBar) {
+    progressBar.style.width = '100%';
+    progressBar.style.transition = 'width 0.3s ease';
+    
+    // Add completion glow
+    progressBar.style.boxShadow = '0 0 20px rgba(220, 38, 38, 0.8), 0 0 35px rgba(220, 38, 38, 0.5)';
+    
+    setTimeout(() => {
+      if (progressBar) {
+        progressBar.style.width = '0%';
+        progressBar.style.boxShadow = '0 0 10px rgba(220, 38, 38, 0.5), 0 0 20px rgba(220, 38, 38, 0.3)';
+      }
+      isPageTransition = false;
+    }, 300);
+  }
+}
+
+// Skeleton Loading Functions
+function showSkeletonLoading(viewId) {
+  const view = document.getElementById(viewId);
+  if (!view) return;
+  
+  // Save original content
+  view.dataset.originalContent = view.innerHTML;
+  
+  // Create skeleton based on view type
+  let skeletonHTML = '';
+  
+  if (viewId === 'explorerView') {
+    skeletonHTML = `
+      <div class="space-y-4">
+        <!-- Breadcrumb skeleton -->
+        <div class="flex items-center space-x-2">
+          <div class="skeleton-item h-4 w-16"></div>
+          <div class="skeleton-item h-4 w-4"></div>
+          <div class="skeleton-item h-4 w-24"></div>
+        </div>
+        
+        <!-- File table skeleton -->
+        <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg overflow-hidden">
+          <div class="p-4 border-b border-github-border-muted">
+            <div class="flex items-center space-x-3">
+              <div class="skeleton-item h-6 w-6 rounded-full"></div>
+              <div class="skeleton-item h-4 w-32"></div>
+            </div>
+          </div>
+          ${Array.from({length: 8}).map(() => `
+            <div class="p-4 border-b border-github-border-muted last:border-b-0">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                  <div class="skeleton-item h-4 w-4"></div>
+                  <div class="skeleton-item h-4 w-48"></div>
+                </div>
+                <div class="skeleton-item h-4 w-24"></div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+        
+        <!-- README skeleton -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
+          <div class="lg:col-span-2">
+            <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg p-6">
+              ${Array.from({length: 5}).map(() => `
+                <div class="mb-4">
+                  <div class="skeleton-item h-4 w-full mb-2"></div>
+                  <div class="skeleton-item h-4 w-3/4"></div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+          <div class="space-y-6">
+            <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg p-4">
+              ${Array.from({length: 4}).map(() => `
+                <div class="skeleton-item h-4 w-full mb-2"></div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  } else if (viewId === 'repoSelectorView') {
+    skeletonHTML = `
+      <div class="space-y-6">
+        <!-- Header skeleton -->
+        <div class="flex items-center justify-between">
+          <div class="skeleton-item h-8 w-40"></div>
+          <div class="skeleton-item h-10 w-40"></div>
+        </div>
+        
+        <!-- Repository grid skeleton -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          ${Array.from({length: 6}).map(() => `
+            <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg p-4">
+              <div class="flex items-start justify-between">
+                <div class="flex-1 space-y-3">
+                  <div class="skeleton-item h-6 w-32"></div>
+                  <div class="skeleton-item h-4 w-full"></div>
+                  <div class="skeleton-item h-4 w-24"></div>
+                </div>
+                <div class="skeleton-item h-4 w-4"></div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  } else if (viewId === 'fileViewer') {
+    skeletonHTML = `
+      <div class="space-y-6">
+        <!-- Header skeleton -->
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <div class="skeleton-item h-4 w-24"></div>
+            <div class="skeleton-item h-4 w-4"></div>
+            <div class="skeleton-item h-4 w-32"></div>
+          </div>
+          <div class="flex items-center space-x-2">
+            <div class="skeleton-item h-10 w-24"></div>
+            <div class="skeleton-item h-10 w-24"></div>
+          </div>
+        </div>
+        
+        <!-- Code viewer skeleton -->
+        <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg overflow-hidden">
+          <div class="p-4 border-b border-github-border-muted">
+            <div class="flex items-center space-x-4">
+              ${Array.from({length: 4}).map(() => `
+                <div class="skeleton-item h-4 w-16"></div>
+              `).join('')}
+            </div>
+          </div>
+          <div class="flex">
+            <div class="w-16 p-4 border-r border-github-border-muted">
+              ${Array.from({length: 20}).map(() => `
+                <div class="skeleton-item h-4 w-full mb-1"></div>
+              `).join('')}
+            </div>
+            <div class="flex-1 p-4">
+              ${Array.from({length: 20}).map(() => `
+                <div class="skeleton-item h-4 w-full mb-1"></div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  
+  view.innerHTML = skeletonHTML;
+}
+
+function hideSkeletonLoading(viewId) {
+  const view = document.getElementById(viewId);
+  if (!view || !view.dataset.originalContent) return;
+  
+  view.innerHTML = view.dataset.originalContent;
+  delete view.dataset.originalContent;
+}
+
+// Recent Files Management
+function addToRecentFiles(fileName, repoName, filePath) {
+  const existingIndex = recentFiles.findIndex(f => 
+    f.filePath === filePath && f.repoName === repoName
+  );
+  
+  if (existingIndex !== -1) {
+    recentFiles.splice(existingIndex, 1);
+  }
+  
+  recentFiles.unshift({
+    fileName,
+    repoName,
+    filePath,
+    timestamp: Date.now()
+  });
+  
+  // Keep only last 10 files
+  if (recentFiles.length > 10) {
+    recentFiles = recentFiles.slice(0, 10);
+  }
+  
+  localStorage.setItem('gitcodr_recent_files', JSON.stringify(recentFiles));
+  updateRecentFilesUI();
+}
+
+function updateRecentFilesUI() {
+  const recentFilesList = document.getElementById('recentFilesList');
+  const recentFilesCount = document.getElementById('recentFilesCount');
+  
+  if (recentFilesList) {
+    if (recentFiles.length === 0) {
+      recentFilesList.innerHTML = `
+        <div class="text-center py-4 text-github-fg-muted text-sm">
+          No recent files
+        </div>
+      `;
+    } else {
+      recentFilesList.innerHTML = recentFiles.map(file => `
+        <button onclick="openRecentFile('${file.repoName}', '${file.filePath}', '${file.fileName}')" 
+                class="w-full flex items-center justify-between p-2 rounded hover:bg-github-canvas-subtle text-left group">
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center space-x-2">
+              <svg class="w-3 h-3 text-github-fg-muted flex-shrink-0" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"/>
+              </svg>
+              <span class="text-sm text-github-fg-default truncate">${file.fileName}</span>
+            </div>
+            <div class="text-xs text-github-fg-muted truncate mt-1">${file.repoName}</div>
+          </div>
+          <svg class="w-4 h-4 text-github-fg-muted opacity-0 group-hover:opacity-100 transition-opacity" 
+               fill="currentColor" viewBox="0 0 16 16">
+            <path d="M4.22 11.78a.75.75 0 0 1 0-1.06L9.44 5.5H5.75a.75.75 0 0 1 0-1.5h5.5a.75.75 0 0 1 .75.75v5.5a.75.75 0 0 1-1.5 0V6.56l-5.22 5.22a.75.75 0 0 1-1.06 0Z"/>
+          </svg>
+        </button>
+      `).join('');
+    }
+  }
+  
+  if (recentFilesCount) {
+    recentFilesCount.textContent = recentFiles.length.toString();
+  }
+}
+
+function openRecentFile(repoName, filePath, fileName) {
+  hideRecentFilesPopover();
+  
+  // Start loading animation
+  startPageTransition();
+  showSkeletonLoading('explorerView');
+  
+  // Simulate loading delay
+  setTimeout(() => {
+    // Open the repository
+    currentState.repository = repoName;
+    
+    // Extract path from filePath
+    const pathParts = filePath.split('/');
+    if (pathParts.length > 1) {
+      currentState.path = pathParts.slice(0, -1).join('/');
+    } else {
+      currentState.path = '';
+    }
+    
+    // Load files
+    try {
+      currentState.files = LocalStorageManager.listFiles(repoName, currentState.path ? currentState.path + '/' : '');
+      renderFileList();
+      updateBreadcrumb();
+      
+      // Update UI elements
+      const currentRepoName = document.getElementById('currentRepoName');
+      const repoNameInViewer = document.getElementById('repoNameInViewer');
+      const repoNameInEditor = document.getElementById('repoNameInEditor');
+      
+      if (currentRepoName) currentRepoName.textContent = repoName;
+      if (repoNameInViewer) repoNameInViewer.textContent = repoName;
+      if (repoNameInEditor) repoNameInEditor.textContent = repoName;
+      
+      // Show the file
+      viewFile(fileName);
+      
+      // Complete loading
+      completePageTransition();
+      hideSkeletonLoading('explorerView');
+      updateStats();
+    } catch (error) {
+      showErrorMessage('Failed to open recent file: ' + error.message);
+      completePageTransition();
+      hideSkeletonLoading('explorerView');
+    }
+  }, 300 + Math.random() * 300); // Random delay between 300-600ms
+}
+
+// Navbar Functions
+function toggleFloatingNavbar() {
+  const navbar = document.getElementById('floatingNavbar');
+  if (navbar) {
+    // Toggle based on scroll position or always show
+    navbar.classList.toggle('hidden');
+  }
+}
+
+function showRecentFilesPopover() {
+  const popover = document.getElementById('recentFilesPopover');
+  if (popover) {
+    popover.classList.add('show');
+    document.addEventListener('click', handleOutsideClick);
+  }
+}
+
+function hideRecentFilesPopover() {
+  const popover = document.getElementById('recentFilesPopover');
+  if (popover) {
+    popover.classList.remove('show');
+    document.removeEventListener('click', handleOutsideClick);
+  }
+}
+
+function showQuickActionsMenu() {
+  const menu = document.getElementById('quickActionsMenu');
+  if (menu) {
+    menu.classList.add('show');
+    document.addEventListener('click', handleOutsideClick);
+  }
+}
+
+function hideQuickActionsMenu() {
+  const menu = document.getElementById('quickActionsMenu');
+  if (menu) {
+    menu.classList.remove('show');
+    document.removeEventListener('click', handleOutsideClick);
+  }
+}
+
+function handleOutsideClick(event) {
+  const recentFilesBtn = document.getElementById('recentFilesBtn');
+  const recentFilesPopover = document.getElementById('recentFilesPopover');
+  const quickActionsBtn = document.getElementById('quickActionsBtn');
+  const quickActionsMenu = document.getElementById('quickActionsMenu');
+  
+  if (recentFilesBtn && recentFilesPopover && 
+      !recentFilesBtn.contains(event.target) && 
+      !recentFilesPopover.contains(event.target)) {
+    hideRecentFilesPopover();
+  }
+  
+  if (quickActionsBtn && quickActionsMenu && 
+      !quickActionsBtn.contains(event.target) && 
+      !quickActionsMenu.contains(event.target)) {
+    hideQuickActionsMenu();
+  }
+}
+
+function toggleTheme() {
+  const html = document.documentElement;
+  const themeIcon = document.getElementById('themeIcon');
+  
+  if (html.getAttribute('data-theme') === 'dark') {
+    html.setAttribute('data-theme', 'light');
+    if (themeIcon) {
+      themeIcon.innerHTML = `<path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0Zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13ZM.5 8a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1H1a.5.5 0 0 1-.5-.5Zm13 0a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5Z"/>`;
+    }
+  } else {
+    html.setAttribute('data-theme', 'dark');
+    if (themeIcon) {
+      themeIcon.innerHTML = `<path d="M8 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6Zm0 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0Zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13ZM.5 8a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1H1a.5.5 0 0 1-.5-.5Zm13 0a.5.5
