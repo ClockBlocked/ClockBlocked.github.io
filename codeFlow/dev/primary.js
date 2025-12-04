@@ -1,3 +1,4 @@
+// Global state
 let currentState = {
   repository: null,
   branch: 'main',
@@ -11,6 +12,569 @@ let currentState = {
 let codeEditor = null;
 let initialContentEditor = null;
 
+// Expose all functions to global scope immediately
+window.showCreateRepoModal = function() {
+  document.getElementById('createRepoModal').classList.remove('hidden');
+  document.getElementById('createRepoModal').classList.add('flex');
+  document.getElementById('newRepoName').focus();
+};
+
+window.hideCreateRepoModal = function() {
+  document.getElementById('createRepoModal').classList.add('hidden');
+  document.getElementById('createRepoModal').classList.remove('flex');
+  document.getElementById('newRepoName').value = '';
+  document.getElementById('repoDescriptionInput').value = '';
+  document.getElementById('visibilityPublic').checked = true;
+  document.getElementById('initReadme').checked = true;
+};
+
+window.showCreateFileModal = function() {
+  document.getElementById('createFileModal').classList.remove('hidden');
+  document.getElementById('createFileModal').classList.add('flex');
+  document.getElementById('currentPathPrefix').textContent = currentState.repository + (currentState.path ? '/' + currentState.path : '') + '/';
+  document.getElementById('newFileName').focus();
+};
+
+window.hideCreateFileModal = function() {
+  document.getElementById('createFileModal').classList.add('hidden');
+  document.getElementById('createFileModal').classList.remove('flex');
+  document.getElementById('newFileName').value = '';
+  document.getElementById('fileCategoryInput').value = '';
+  document.getElementById('tagInput').value = '';
+  if (initialContentEditor) {
+    initialContentEditor.setValue('');
+  }
+  currentState.selectedTags = [];
+  updateSelectedTags();
+};
+
+window.showDeleteFileModal = function() {
+  if (!currentState.currentFile) return;
+  
+  document.getElementById('fileToDeleteName').textContent = currentState.currentFile.name;
+  document.getElementById('deleteFileModal').classList.remove('hidden');
+  document.getElementById('deleteFileModal').classList.add('flex');
+};
+
+window.hideDeleteFileModal = function() {
+  document.getElementById('deleteFileModal').classList.add('hidden');
+  document.getElementById('deleteFileModal').classList.remove('flex');
+};
+
+window.confirmDeleteFile = function() {
+  deleteCurrentFile();
+  hideDeleteFileModal();
+};
+
+window.createRepository = function() {
+  const repoName = document.getElementById('newRepoName').value.trim();
+  const description = document.getElementById('repoDescriptionInput').value.trim();
+  const initReadme = document.getElementById('initReadme').checked;
+  
+  if (!repoName) {
+    showErrorMessage('Please enter a repository name');
+    return;
+  }
+  
+  if (!isValidFilename(repoName)) {
+    showErrorMessage('Invalid repository name. Please use only letters, numbers, hyphens and underscores.');
+    return;
+  }
+  
+  const existingRepo = LocalStorageManager.getRepository(repoName);
+  if (existingRepo) {
+    showErrorMessage('Repository already exists');
+    return;
+  }
+  
+  showLoading('Creating repository...');
+  
+  setTimeout(() => {
+    try {
+      const repo = {
+        name: repoName,
+        description: description,
+        created: Date.now(),
+        lastModified: Date.now(),
+        defaultBranch: 'main',
+        branches: ['main'],
+        visibility: document.getElementById('visibilityPublic').checked ? 'public' : 'private'
+      };
+      
+      LocalStorageManager.saveRepository(repo);
+      
+      if (initReadme) {
+        const readmeContent = `# ${repoName}\n\n${description ? description + '\n\n' : ''}## Getting Started\n\nThis repository was created with GitHub Clone.\n`;
+        const readmeData = {
+          content: readmeContent,
+          category: 'Documentation',
+          tags: ['readme'],
+          created: Date.now(),
+          lastModified: Date.now(),
+          lastCommit: 'Initial commit',
+          size: new Blob([readmeContent]).size
+        };
+        
+        LocalStorageManager.saveFile(repoName, 'README.md', readmeData);
+      }
+      
+      currentState.repositories.push(repo);
+      renderRepositoryList();
+      hideCreateRepoModal();
+      hideLoading();
+      showSuccessMessage(`Repository "${repoName}" created successfully!`);
+      
+      setTimeout(() => openRepository(repoName), 500);
+    } catch (error) {
+      hideLoading();
+      showErrorMessage('Failed to create repository: ' + error.message);
+    }
+  }, 300);
+};
+
+window.createFile = function() {
+  const fileName = document.getElementById('newFileName').value.trim();
+  const category = document.getElementById('fileCategoryInput').value.trim() || 'General';
+  const content = initialContentEditor ? initialContentEditor.getValue() : '';
+  
+  if (!fileName) {
+    showErrorMessage('Please enter a file name');
+    return;
+  }
+  
+  if (!isValidFilename(fileName)) {
+    showErrorMessage('Invalid file name. Please use only letters, numbers, dots, underscores and hyphens.');
+    return;
+  }
+  
+  showLoading('Creating file...');
+  
+  setTimeout(() => {
+    try {
+      const filePath = (currentState.path ? currentState.path + '/' : '') + fileName;
+      const existingFile = LocalStorageManager.getFile(currentState.repository, filePath);
+      
+      if (existingFile) {
+        hideLoading();
+        showErrorMessage('File already exists');
+        return;
+      }
+      
+      const fileData = {
+        content: content || `// ${fileName}\n// Created on ${new Date().toLocaleDateString()}\n\n`,
+        category: category,
+        tags: currentState.selectedTags,
+        created: Date.now(),
+        lastModified: Date.now(),
+        lastCommit: 'Initial commit',
+        size: new Blob([content]).size
+      };
+      
+      LocalStorageManager.saveFile(currentState.repository, filePath, fileData);
+      
+      currentState.files.push({
+        name: fileName,
+        type: 'file',
+        path: filePath,
+        lastModified: fileData.lastModified,
+        lastCommit: fileData.lastCommit
+      });
+      
+      renderFileList();
+      hideCreateFileModal();
+      hideLoading();
+      showSuccessMessage(`File "${fileName}" created successfully!`);
+    } catch (error) {
+      hideLoading();
+      showErrorMessage('Failed to create file: ' + error.message);
+    }
+  }, 300);
+};
+
+window.deleteRepository = function(repoName) {
+  if (!confirm(`Are you sure you want to delete the repository "${repoName}"? This action cannot be undone.`)) {
+    return;
+  }
+  
+  showLoading(`Deleting repository ${repoName}...`);
+  
+  setTimeout(() => {
+    try {
+      LocalStorageManager.deleteRepository(repoName);
+      currentState.repositories = currentState.repositories.filter(r => r.name !== repoName);
+      
+      if (currentState.repository === repoName) {
+        currentState.repository = null;
+        showRepoSelector();
+      }
+      
+      renderRepositoryList();
+      hideLoading();
+      showSuccessMessage(`Repository "${repoName}" deleted successfully!`);
+    } catch (error) {
+      hideLoading();
+      showErrorMessage('Failed to delete repository: ' + error.message);
+    }
+  }, 300);
+};
+
+window.openRepository = function(repoName) {
+  showLoading(`Opening repository ${repoName}...`);
+  currentState.repository = repoName;
+  currentState.path = '';
+  
+  setTimeout(() => {
+    try {
+      currentState.files = LocalStorageManager.listFiles(repoName, '');
+      renderFileList();
+      updateBreadcrumb();
+      document.getElementById('currentRepoName').textContent = repoName;
+      document.getElementById('repoNameInViewer').textContent = repoName;
+      document.getElementById('repoNameInEditor').textContent = repoName;
+      
+      const repo = LocalStorageManager.getRepository(repoName);
+      if (repo) {
+        document.getElementById('repoDescription').textContent = repo.description || 'No description provided.';
+      }
+      
+      hideLoading();
+      showExplorer();
+    } catch (error) {
+      hideLoading();
+      showErrorMessage('Failed to open repository: ' + error.message);
+    }
+  }, 500);
+};
+
+window.addTag = function() {
+  const input = document.getElementById('tagInput');
+  const tag = input.value.trim();
+  
+  if (tag && !currentState.selectedTags.includes(tag)) {
+    currentState.selectedTags.push(tag);
+    updateSelectedTags();
+    input.value = '';
+  }
+};
+
+window.removeTag = function(tag) {
+  currentState.selectedTags = currentState.selectedTags.filter(t => t !== tag);
+  updateSelectedTags();
+};
+
+window.showRepoSelector = function() {
+  document.getElementById('explorerView').classList.add('hidden');
+  document.getElementById('fileViewer').classList.add('hidden');
+  document.getElementById('fileEditor').classList.add('hidden');
+  document.getElementById('repoSelectorView').classList.remove('hidden');
+};
+
+window.showExplorer = function() {
+  document.getElementById('fileViewer').classList.add('hidden');
+  document.getElementById('fileEditor').classList.add('hidden');
+  document.getElementById('repoSelectorView').classList.add('hidden');
+  document.getElementById('explorerView').classList.remove('hidden');
+};
+
+window.showFileViewer = function() {
+  document.getElementById('explorerView').classList.add('hidden');
+  document.getElementById('fileEditor').classList.add('hidden');
+  document.getElementById('repoSelectorView').classList.add('hidden');
+  document.getElementById('fileViewer').classList.remove('hidden');
+};
+
+window.showFileEditor = function() {
+  document.getElementById('explorerView').classList.add('hidden');
+  document.getElementById('fileViewer').classList.add('hidden');
+  document.getElementById('repoSelectorView').classList.add('hidden');
+  document.getElementById('fileEditor').classList.remove('hidden');
+};
+
+window.navigateToRoot = function() {
+  currentState.path = '';
+  showLoading('Loading repository root...');
+  
+  setTimeout(() => {
+    try {
+      currentState.files = LocalStorageManager.listFiles(currentState.repository, '');
+      renderFileList();
+      updateBreadcrumb();
+      hideLoading();
+    } catch (error) {
+      hideLoading();
+      showErrorMessage('Failed to load repository root: ' + error.message);
+    }
+  }, 300);
+};
+
+window.navigateToPath = function(path) {
+  currentState.path = path;
+  showLoading(`Loading directory ${path}...`);
+  
+  setTimeout(() => {
+    try {
+      const pathPrefix = path ? path + '/' : '';
+      currentState.files = LocalStorageManager.listFiles(currentState.repository, pathPrefix);
+      renderFileList();
+      updateBreadcrumb();
+      hideLoading();
+    } catch (error) {
+      hideLoading();
+      showErrorMessage(`Failed to load path ${path}: ` + error.message);
+    }
+  }, 300);
+};
+
+window.viewFile = function(filename) {
+  const file = currentState.files.find(f => f.name === filename);
+  if (!file) return;
+  
+  currentState.currentFile = file;
+  
+  if (file.type === 'folder') {
+    currentState.path += (currentState.path ? '/' : '') + filename;
+    showLoading(`Loading directory ${filename}...`);
+    
+    setTimeout(() => {
+      try {
+        const pathPrefix = currentState.path ? currentState.path + '/' : '';
+        currentState.files = LocalStorageManager.listFiles(currentState.repository, pathPrefix);
+        renderFileList();
+        updateBreadcrumb();
+        hideLoading();
+      } catch (error) {
+        hideLoading();
+        showErrorMessage('Failed to load directory: ' + error.message);
+      }
+    }, 300);
+  } else {
+    showLoading(`Loading file ${filename}...`);
+    
+    setTimeout(() => {
+      try {
+        const filePath = (currentState.path ? currentState.path + '/' : '') + filename;
+        const fileData = LocalStorageManager.getFile(currentState.repository, filePath);
+        
+        if (fileData) {
+          displayFileContent(filename, fileData);
+          hideLoading();
+          showFileViewer();
+        } else {
+          throw new Error('File not found');
+        }
+      } catch (error) {
+        hideLoading();
+        showErrorMessage('Failed to load file: ' + error.message);
+      }
+    }, 300);
+  }
+};
+
+window.editFile = function() {
+  if (!currentState.currentFile) return;
+  
+  showLoading('Loading editor...');
+  
+  setTimeout(() => {
+    try {
+      const filePath = (currentState.path ? currentState.path + '/' : '') + currentState.currentFile.name;
+      const fileData = LocalStorageManager.getFile(currentState.repository, filePath);
+      
+      if (fileData) {
+        document.getElementById('editingFileName').textContent = currentState.currentFile.name;
+        document.getElementById('commitTitle').value = `Update ${currentState.currentFile.name}`;
+        
+        if (codeEditor) {
+          codeEditor.setValue(fileData.content);
+          updateEditorMode(codeEditor, currentState.currentFile.name);
+        }
+        
+        document.getElementById('fileCategoryInput').value = fileData.category || '';
+        currentState.selectedTags = fileData.tags || [];
+        updateSelectedTags();
+        
+        hideLoading();
+        showFileEditor();
+      } else {
+        throw new Error('File not found');
+      }
+    } catch (error) {
+      hideLoading();
+      showErrorMessage('Failed to load file for editing: ' + error.message);
+    }
+  }, 300);
+};
+
+window.saveFile = function() {
+  if (!currentState.currentFile) return;
+  
+  const commitTitle = document.getElementById('commitTitle').value.trim();
+  const commitDescription = document.getElementById('commitDescription').value.trim();
+  
+  if (!commitTitle) {
+    showErrorMessage('Please enter a commit message');
+    return;
+  }
+  
+  showLoading('Saving changes...');
+  
+  setTimeout(() => {
+    try {
+      const filePath = (currentState.path ? currentState.path + '/' : '') + currentState.currentFile.name;
+      const content = codeEditor ? codeEditor.getValue() : '';
+      
+      const fileData = {
+        content: content,
+        category: document.getElementById('fileCategoryInput').value.trim() || 'General',
+        tags: currentState.selectedTags,
+        lastModified: Date.now(),
+        created: LocalStorageManager.getFile(currentState.repository, filePath)?.created || Date.now(),
+        lastCommit: commitTitle,
+        size: new Blob([content]).size
+      };
+      
+      LocalStorageManager.saveFile(currentState.repository, filePath, fileData);
+      
+      const fileIndex = currentState.files.findIndex(f => f.name === currentState.currentFile.name);
+      if (fileIndex !== -1) {
+        currentState.files[fileIndex].lastModified = fileData.lastModified;
+        currentState.files[fileIndex].lastCommit = commitTitle;
+      }
+      
+      document.getElementById('commitDescription').value = '';
+      
+      hideLoading();
+      showSuccessMessage(`File "${currentState.currentFile.name}" saved successfully!`);
+      
+      setTimeout(() => {
+        viewFile(currentState.currentFile.name);
+      }, 500);
+    } catch (error) {
+      hideLoading();
+      showErrorMessage('Failed to save file: ' + error.message);
+    }
+  }, 300);
+};
+
+window.downloadCurrentFile = function() {
+  if (!currentState.currentFile) return;
+  
+  try {
+    const filePath = (currentState.path ? currentState.path + '/' : '') + currentState.currentFile.name;
+    const fileData = LocalStorageManager.getFile(currentState.repository, filePath);
+    
+    if (fileData) {
+      const blob = new Blob([fileData.content], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = currentState.currentFile.name;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      showSuccessMessage(`File "${currentState.currentFile.name}" downloaded successfully!`);
+    }
+  } catch (error) {
+    showErrorMessage('Failed to download file: ' + error.message);
+  }
+};
+
+window.previewFile = function() {
+  if (!codeEditor || !currentState.currentFile) return;
+  
+  const content = codeEditor.getValue();
+  const ext = currentState.currentFile.name.split('.').pop().toLowerCase();
+  
+  if (ext === 'md' || ext === 'markdown') {
+    const previewWindow = window.open('', '_blank');
+    previewWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Preview: ${currentState.currentFile.name}</title>
+        <meta charset="utf-8">
+        <style>
+          body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #24292f;
+            background-color: #ffffff;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 45px;
+          }
+          @media (max-width: 767px) {
+            body { padding: 15px; }
+          }
+          h1, h2, h3, h4, h5, h6 { margin-top: 24px; margin-bottom: 16px; font-weight: 600; line-height: 1.25; }
+          h1 { font-size: 2em; border-bottom: 1px solid #eaecef; padding-bottom: .3em; }
+          h2 { font-size: 1.5em; border-bottom: 1px solid #eaecef; padding-bottom: .3em; }
+          p { margin-bottom: 16px; }
+          code { background-color: rgba(175,184,193,0.2); padding: 2px 4px; border-radius: 3px; font-size: 85%; }
+          pre { background-color: #f6f8fa; padding: 16px; overflow: auto; border-radius: 6px; }
+          blockquote { padding: 0 1em; color: #6a737d; border-left: 0.25em solid #dfe2e5; margin: 0 0 16px 0; }
+        </style>
+      </head>
+      <body>
+        <pre>${content.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>
+      </body>
+      </html>
+    `);
+    previewWindow.document.close();
+  } else {
+    const previewWindow = window.open('', '_blank');
+    previewWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Preview: ${currentState.currentFile.name}</title>
+        <style>
+          body { 
+            font-family: 'JetBrains Mono', monospace; 
+            background: #22272e; 
+            color: #adbac7; 
+            margin: 0; 
+            padding: 16px; 
+          }
+          pre { margin: 0; white-space: pre-wrap; }
+        </style>
+      </head>
+      <body>
+        <pre>${content.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>
+      </body>
+      </html>
+    `);
+    previewWindow.document.close();
+  }
+};
+
+// Additional functions for context menu
+window.viewFileFromContext = function(fileName) {
+  hideContextMenu();
+  viewFile(fileName);
+};
+
+window.editFileFromContext = function(fileName) {
+  hideContextMenu();
+  currentState.currentFile = currentState.files.find(f => f.name === fileName);
+  editFile();
+};
+
+window.downloadFileFromContext = function(fileName) {
+  hideContextMenu();
+  currentState.currentFile = currentState.files.find(f => f.name === fileName);
+  downloadCurrentFile();
+};
+
+window.deleteFileFromContext = function(fileName) {
+  hideContextMenu();
+  currentState.currentFile = currentState.files.find(f => f.name === fileName);
+  showDeleteFileModal();
+};
+
+// LocalStorageManager class
 class LocalStorageManager {
   static getRepositories() {
     return JSON.parse(localStorage.getItem('gitcodr_repositories') || '[]');
@@ -70,15 +634,6 @@ class LocalStorageManager {
     this.saveRepositoryFiles(repoName, repoData);
   }
 
-  static renameFile(repoName, oldPath, newPath) {
-    const repoData = this.getRepositoryFiles(repoName);
-    if (repoData[oldPath]) {
-      repoData[newPath] = repoData[oldPath];
-      delete repoData[oldPath];
-      this.saveRepositoryFiles(repoName, repoData);
-    }
-  }
-
   static listFiles(repoName, pathPrefix = '') {
     const repoData = this.getRepositoryFiles(repoName);
     const files = [];
@@ -123,6 +678,7 @@ class LocalStorageManager {
 
 function initializeApp() {
   setupEventListeners();
+  setupButtonEventListeners();
   loadRepositories();
   setupKeyboardShortcuts();
   setupCodeEditors();
@@ -130,6 +686,104 @@ function initializeApp() {
   setTimeout(() => {
     showSuccessMessage('Welcome to GitHub Clone!');
   }, 1000);
+}
+
+function setupButtonEventListeners() {
+  // Use setTimeout to ensure DOM is ready
+  setTimeout(() => {
+    // Repository modal buttons
+    const createRepoBtn = document.querySelector('button[onclick*="showCreateRepoModal"]');
+    if (createRepoBtn) {
+      createRepoBtn.onclick = showCreateRepoModal;
+    }
+    
+    // File modal buttons  
+    const createFileBtn = document.querySelector('button[onclick*="showCreateFileModal"]');
+    if (createFileBtn) {
+      createFileBtn.onclick = showCreateFileModal;
+    }
+    
+    // Setup all other button handlers
+    setupModalHandlers();
+    setupActionHandlers();
+    setupNavigationHandlers();
+  }, 100);
+}
+
+function setupModalHandlers() {
+  const handlers = [
+    { selector: '#createRepoModal button[onclick*="hideCreateRepoModal"]', handler: hideCreateRepoModal },
+    { selector: '#createFileModal button[onclick*="hideCreateFileModal"]', handler: hideCreateFileModal },
+    { selector: '#deleteFileModal button[onclick*="hideDeleteFileModal"]', handler: hideDeleteFileModal },
+    { selector: '#createRepoModal button[onclick*="createRepository"]', handler: createRepository },
+    { selector: '#createFileModal button[onclick*="createFile"]', handler: createFile },
+    { selector: '#deleteFileModal button[onclick*="confirmDeleteFile"]', handler: confirmDeleteFile },
+    { selector: 'button[onclick*="addTag"]', handler: addTag }
+  ];
+
+  handlers.forEach(({ selector, handler }) => {
+    const element = document.querySelector(selector);
+    if (element) {
+      element.onclick = handler;
+    }
+  });
+}
+
+function setupActionHandlers() {
+  const handlers = [
+    { selector: 'button[onclick*="editFile"]', handler: editFile },
+    { selector: 'button[onclick*="downloadCurrentFile"]', handler: downloadCurrentFile },
+    { selector: 'button[onclick*="showDeleteFileModal"]', handler: showDeleteFileModal },
+    { selector: 'button[onclick*="saveFile"]', handler: saveFile },
+    { selector: 'button[onclick*="previewFile"]', handler: previewFile }
+  ];
+
+  handlers.forEach(({ selector, handler }) => {
+    const element = document.querySelector(selector);
+    if (element) {
+      element.onclick = handler;
+    }
+  });
+}
+
+function setupNavigationHandlers() {
+  const handlers = [
+    { selector: 'a[onclick*="showRepoSelector"]', handler: (e) => { e.preventDefault(); showRepoSelector(); }},
+    { selector: 'button[onclick*="showExplorer"]', handler: showExplorer },
+    { selector: 'button[onclick*="showFileViewer"]', handler: showFileViewer }
+  ];
+
+  handlers.forEach(({ selector, handler }) => {
+    const elements = document.querySelectorAll(selector);
+    elements.forEach(element => {
+      element.onclick = handler;
+    });
+  });
+}
+
+function setupEventListeners() {
+  document.getElementById('tagInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addTag();
+    }
+  });
+  
+  document.getElementById('branchSelector').addEventListener('click', function(e) {
+    e.stopPropagation();
+    document.getElementById('branchDropdown').classList.toggle('hidden');
+  });
+  
+  document.addEventListener('click', function() {
+    document.getElementById('branchDropdown').classList.add('hidden');
+  });
+
+  document.getElementById('newFileName').addEventListener('input', function(e) {
+    const fileName = e.target.value;
+    if (fileName && initialContentEditor) {
+      updateEditorMode(initialContentEditor, fileName);
+    }
+  });
 }
 
 function setupCodeEditors() {
@@ -218,31 +872,6 @@ function updateCommitMessage() {
   if (commitTitle && !commitTitle.value.trim()) {
     commitTitle.value = `Update ${currentState.currentFile.name}`;
   }
-}
-
-function setupEventListeners() {
-  document.getElementById('tagInput').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      addTag();
-    }
-  });
-  
-  document.getElementById('branchSelector').addEventListener('click', function(e) {
-    e.stopPropagation();
-    document.getElementById('branchDropdown').classList.toggle('hidden');
-  });
-  
-  document.addEventListener('click', function() {
-    document.getElementById('branchDropdown').classList.add('hidden');
-  });
-
-  document.getElementById('newFileName').addEventListener('input', function(e) {
-    const fileName = e.target.value;
-    if (fileName && initialContentEditor) {
-      updateEditorMode(initialContentEditor, fileName);
-    }
-  });
 }
 
 function loadRepositories() {
@@ -871,14 +1500,6 @@ function previewFile() {
   }
 }
 
-function getFullPath() {
-  let fullPath = currentState.repository;
-  if (currentState.path) {
-    fullPath += '/' + currentState.path;
-  }
-  return fullPath;
-}
-
 function updateBreadcrumb() {
   const breadcrumb = document.getElementById('pathBreadcrumb');
   breadcrumb.innerHTML = '';
@@ -1314,25 +1935,34 @@ function setupKeyboardShortcuts() {
   });
 }
 
-document.addEventListener('DOMContentLoaded', initializeApp);value = `Update ${currentState.currentFile.name}`;
-        
-        if (codeEditor) {
-          codeEditor.setValue(fileData.content);
-          updateEditorMode(codeEditor, currentState.currentFile.name);
-        }
-        
-        document.getElementById('fileCategoryInput').value = fileData.category || '';
-        currentState.selectedTags = fileData.tags || [];
-        updateSelectedTags();
-        
-        hideLoading();
-        showFileEditor();
-      } else {
-        throw new Error('File not found');
-      }
-    } catch (error) {
-      hideLoading();
-      showErrorMessage('Failed to load file for editing: ' + error.message);
-    }
-  }, 300);
-}
+// Expose all functions to global scope
+window.showCreateRepoModal = showCreateRepoModal;
+window.hideCreateRepoModal = hideCreateRepoModal;
+window.showCreateFileModal = showCreateFileModal;
+window.hideCreateFileModal = hideCreateFileModal;
+window.showDeleteFileModal = showDeleteFileModal;
+window.hideDeleteFileModal = hideDeleteFileModal;
+window.createRepository = createRepository;
+window.createFile = createFile;
+window.confirmDeleteFile = confirmDeleteFile;
+window.deleteRepository = deleteRepository;
+window.openRepository = openRepository;
+window.viewFile = viewFile;
+window.editFile = editFile;
+window.saveFile = saveFile;
+window.downloadCurrentFile = downloadCurrentFile;
+window.previewFile = previewFile;
+window.showRepoSelector = showRepoSelector;
+window.showExplorer = showExplorer;
+window.showFileViewer = showFileViewer;
+window.showFileEditor = showFileEditor;
+window.navigateToRoot = navigateToRoot;
+window.navigateToPath = navigateToPath;
+window.addTag = addTag;
+window.removeTag = removeTag;
+window.viewFileFromContext = viewFileFromContext;
+window.editFileFromContext = editFileFromContext;
+window.downloadFileFromContext = downloadFileFromContext;
+window.deleteFileFromContext = deleteFileFromContext;
+
+document.addEventListener('DOMContentLoaded', initializeApp);
