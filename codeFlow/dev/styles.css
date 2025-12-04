@@ -758,8 +758,8 @@ button {
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
   z-index: 1001;
   opacity: 0;
-  transform: translateY(-10px);
-  transition: opacity 0.2s, transform 0.2s;
+  transform: translateY(-20px);
+  transition: opacity 0.35s, transform 0.35s;
   pointer-events: none;
 }
 
@@ -780,8 +780,8 @@ button {
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
   z-index: 1001;
   opacity: 0;
-  transform: translateY(-10px);
-  transition: opacity 0.2s, transform 0.2s;
+  transform: translateY(-20px);
+  transition: opacity 0.35s, transform 0.35s;
   pointer-events: none;
 }
 
