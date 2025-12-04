@@ -313,6 +313,7 @@ function showContextMenu(x, y, fileName, fileType) {
   if (rect.bottom > window.innerHeight) menu.style.top = `${y - rect.height}px`;
 }
 
+/**
 function showRepoSelector() {
   document.getElementById('explorerView').classList.add('hidden');
   document.getElementById('fileViewer').classList.add('hidden');
@@ -320,12 +321,16 @@ function showRepoSelector() {
   document.getElementById('repoSelectorView').classList.remove('hidden');
 }
 
+
+
 function showExplorer() {
   document.getElementById('fileViewer').classList.add('hidden');
   document.getElementById('fileEditor').classList.add('hidden');
   document.getElementById('repoSelectorView').classList.add('hidden');
   document.getElementById('explorerView').classList.remove('hidden');
 }
+**/
+
 
 function showFileViewer() {
   document.getElementById('explorerView').classList.add('hidden');
@@ -583,6 +588,8 @@ function createFile() {
   }, 300);
 }
 
+
+/**
 function openRepository(repoName) {
   showLoading(`Opening repository ${repoName}...`);
   currentState.repository = repoName;
@@ -617,6 +624,8 @@ function openRepository(repoName) {
     }
   }, 500);
 }
+**/
+
 
 function loadRepositories() {
   showLoading('Loading repositories...');
@@ -673,6 +682,7 @@ function renderFileList() {
   });
 }
 
+/**
 function viewFile(filename) {
   const file = currentState.files.find(f => f.name === filename);
   if (!file) return;
@@ -717,6 +727,8 @@ function viewFile(filename) {
     }, 300);
   }
 }
+**/
+
 
 function displayFileContent(filename, fileData) {
   const currentFileName = document.getElementById('currentFileName');
@@ -1078,6 +1090,7 @@ function setupKeyboardShortcuts() {
   document.addEventListener('click', hideContextMenu);
 }
 
+/**
 function initializeApp() {
   setupEventListeners();
   setupButtonEventListeners();
@@ -1087,6 +1100,7 @@ function initializeApp() {
   
   setTimeout(() => showSuccessMessage('Welcome to GitHub Clone!'), 1000);
 }
+**/
 
 // Expose all functions to global scope
 window.showCreateRepoModal = showCreateRepoModal;
@@ -1119,7 +1133,6 @@ window.downloadFileFromContext = downloadFileFromContext;
 window.deleteFileFromContext = deleteFileFromContext;
 
 document.addEventListener('DOMContentLoaded', initializeApp);
-
 
 
 
@@ -1516,4 +1529,253 @@ function toggleTheme() {
   } else {
     html.setAttribute('data-theme', 'dark');
     if (themeIcon) {
-      themeIcon.innerHTML = `<path d="M8 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6Zm0 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0Zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13ZM.5 8a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1H1a.5.5 0 0 1-.5-.5Zm13 0a.5.5
+      themeIcon.innerHTML = `<path d="M8 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6Zm0 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0Zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13ZM.5 8a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1H1a.5.5 0 0 1-.5-.5Zm13 0a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5Z"/>`;
+    }
+  }
+}
+
+function updateStats() {
+  const statsText = document.getElementById('statsText');
+  if (statsText && currentState.repository) {
+    try {
+      const files = LocalStorageManager.listFiles(currentState.repository, '');
+      const totalFiles = files.filter(f => f.type === 'file').length;
+      const totalSize = files.reduce((sum, file) => sum + (file.size || 0), 0);
+      const sizeText = formatFileSize(totalSize);
+      statsText.textContent = `${totalFiles} files • ${sizeText}`;
+    } catch (error) {
+      statsText.textContent = '0 files';
+    }
+  }
+}
+
+// Modified viewFile function to add to recent files
+function viewFile(filename) {
+  const file = currentState.files.find(f => f.name === filename);
+  if (!file) return;
+  
+  currentState.currentFile = file;
+  
+  // Start loading animation
+  startPageTransition();
+  showSkeletonLoading('fileViewer');
+  
+  if (file.type === 'folder') {
+    currentState.path += (currentState.path ? '/' : '') + filename;
+    
+    setTimeout(() => {
+      try {
+        const pathPrefix = currentState.path ? currentState.path + '/' : '';
+        currentState.files = LocalStorageManager.listFiles(currentState.repository, pathPrefix);
+        renderFileList();
+        updateBreadcrumb();
+        completePageTransition();
+        hideSkeletonLoading('fileViewer');
+        updateStats();
+      } catch (error) {
+        hideLoading();
+        showErrorMessage('Failed to load directory: ' + error.message);
+        completePageTransition();
+        hideSkeletonLoading('fileViewer');
+      }
+    }, 300 + Math.random() * 300);
+  } else {
+    setTimeout(() => {
+      try {
+        const filePath = (currentState.path ? currentState.path + '/' : '') + filename;
+        const fileData = LocalStorageManager.getFile(currentState.repository, filePath);
+        
+        if (fileData) {
+          // Add to recent files
+          addToRecentFiles(filename, currentState.repository, filePath);
+          
+          displayFileContent(filename, fileData);
+          completePageTransition();
+          hideSkeletonLoading('fileViewer');
+          showFileViewer();
+          updateStats();
+        } else {
+          throw new Error('File not found');
+        }
+      } catch (error) {
+        hideLoading();
+        showErrorMessage('Failed to load file: ' + error.message);
+        completePageTransition();
+        hideSkeletonLoading('fileViewer');
+      }
+    }, 300 + Math.random() * 300);
+  }
+}
+
+// Modified openRepository function
+function openRepository(repoName) {
+  // Start loading animation
+  startPageTransition();
+  showSkeletonLoading('explorerView');
+  
+  currentState.repository = repoName;
+  currentState.path = '';
+  
+  setTimeout(() => {
+    try {
+      currentState.files = LocalStorageManager.listFiles(repoName, '');
+      renderFileList();
+      updateBreadcrumb();
+      
+      // Add null checks for all DOM elements
+      const currentRepoName = document.getElementById('currentRepoName');
+      const repoNameInViewer = document.getElementById('repoNameInViewer');
+      const repoNameInEditor = document.getElementById('repoNameInEditor');
+      
+      if (currentRepoName) currentRepoName.textContent = repoName;
+      if (repoNameInViewer) repoNameInViewer.textContent = repoName;
+      if (repoNameInEditor) repoNameInEditor.textContent = repoName;
+      
+      const repo = LocalStorageManager.getRepository(repoName);
+      if (repo) {
+        const repoDescription = document.getElementById('repoDescription');
+        if (repoDescription) repoDescription.textContent = repo.description || 'No description provided.';
+      }
+      
+      // Complete loading animation
+      completePageTransition();
+      hideSkeletonLoading('explorerView');
+      showExplorer();
+      updateStats();
+    } catch (error) {
+      hideLoading();
+      showErrorMessage('Failed to open repository: ' + error.message);
+      completePageTransition();
+      hideSkeletonLoading('explorerView');
+    }
+  }, 500 + Math.random() * 300);
+}
+
+// Modified showRepoSelector function
+function showRepoSelector() {
+  startPageTransition();
+  showSkeletonLoading('repoSelectorView');
+  
+  setTimeout(() => {
+    document.getElementById('explorerView').classList.add('hidden');
+    document.getElementById('fileViewer').classList.add('hidden');
+    document.getElementById('fileEditor').classList.add('hidden');
+    document.getElementById('repoSelectorView').classList.remove('hidden');
+    
+    completePageTransition();
+    hideSkeletonLoading('repoSelectorView');
+    updateStats();
+  }, 300 + Math.random() * 200);
+}
+
+// Modified showExplorer function
+function showExplorer() {
+  if (currentState.repository) {
+    startPageTransition();
+    showSkeletonLoading('explorerView');
+    
+    setTimeout(() => {
+      document.getElementById('fileViewer').classList.add('hidden');
+      document.getElementById('fileEditor').classList.add('hidden');
+      document.getElementById('repoSelectorView').classList.add('hidden');
+      document.getElementById('explorerView').classList.remove('hidden');
+      
+      completePageTransition();
+      hideSkeletonLoading('explorerView');
+      updateStats();
+    }, 300 + Math.random() * 200);
+  }
+}
+
+// Initialize navbar event listeners
+function setupNavbarEventListeners() {
+  const recentFilesBtn = document.getElementById('recentFilesBtn');
+  const quickActionsBtn = document.getElementById('quickActionsBtn');
+  
+  if (recentFilesBtn) {
+    recentFilesBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const popover = document.getElementById('recentFilesPopover');
+      if (popover && popover.classList.contains('show')) {
+        hideRecentFilesPopover();
+      } else {
+        showRecentFilesPopover();
+        hideQuickActionsMenu();
+      }
+    });
+  }
+  
+  if (quickActionsBtn) {
+    quickActionsBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const menu = document.getElementById('quickActionsMenu');
+      if (menu && menu.classList.contains('show')) {
+        hideQuickActionsMenu();
+      } else {
+        showQuickActionsMenu();
+        hideRecentFilesPopover();
+      }
+    });
+  }
+  
+  // Show navbar on scroll
+  let lastScrollTop = 0;
+  window.addEventListener('scroll', () => {
+    const navbar = document.getElementById('floatingNavbar');
+    if (navbar) {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      
+      if (scrollTop > lastScrollTop && scrollTop > 100) {
+        // Scrolling down, hide navbar
+        navbar.style.transform = 'translateX(-50%) translateY(-100px)';
+        navbar.style.opacity = '0';
+      } else {
+        // Scrolling up or at top, show navbar
+        navbar.style.transform = 'translateX(-50%) translateY(0)';
+        navbar.style.opacity = '1';
+      }
+      
+      lastScrollTop = scrollTop;
+    }
+  });
+}
+
+// Update initializeApp function
+function initializeApp() {
+  setupEventListeners();
+  setupButtonEventListeners();
+  setupKeyboardShortcuts();
+  setupCodeEditors();
+  setupNavbarEventListeners();
+  
+  // Show navbar
+  const navbar = document.getElementById('floatingNavbar');
+  if (navbar) navbar.classList.remove('hidden');
+  
+  // Load recent files
+  updateRecentFilesUI();
+  
+  // Load repositories with loading animation
+  startPageTransition();
+  showSkeletonLoading('repoSelectorView');
+  
+  setTimeout(() => {
+    loadRepositories();
+    completePageTransition();
+    hideSkeletonLoading('repoSelectorView');
+    
+    setTimeout(() => {
+      showSuccessMessage('Welcome to GitHub Clone!');
+    }, 1000);
+  }, 500 + Math.random() * 300);
+}
+
+// Add new functions to global scope
+window.startPageTransition = startPageTransition;
+window.completePageTransition = completePageTransition;
+window.showRecentFilesPopover = showRecentFilesPopover;
+window.hideRecentFilesPopover = hideRecentFilesPopover;
+window.showQuickActionsMenu = showQuickActionsMenu;
+window.hideQuickActionsMenu = hideQuickActionsMenu;
+window.toggleTheme = toggleTheme;
+window.openRecentFile = openRecentFile;
