@@ -599,7 +599,8 @@ function openRepository(repoName) {
       
       const repo = LocalStorageManager.getRepository(repoName);
       if (repo) {
-        document.getElementById('repoDescription').textContent = repo.description || 'No description provided.';
+        const repoDescription = document.getElementById('repoDescription');
+        if (repoDescription) repoDescription.textContent = repo.description || 'No description provided.';
       }
       
       hideLoading();
@@ -712,34 +713,47 @@ function viewFile(filename) {
 }
 
 function displayFileContent(filename, fileData) {
-  document.getElementById('currentFileName').textContent = filename;
-  document.getElementById('fileLinesCount').textContent = `${fileData.content.split('\n').length} lines`;
-  document.getElementById('fileSize').textContent = formatFileSize(new Blob([fileData.content]).size);
-  document.getElementById('fileCreated').textContent = formatDate(fileData.created);
-  document.getElementById('fileModified').textContent = formatDate(fileData.lastModified);
+  const currentFileName = document.getElementById('currentFileName');
+  const fileLinesCount = document.getElementById('fileLinesCount');
+  const fileSize = document.getElementById('fileSize');
+  const fileCreated = document.getElementById('fileCreated');
+  const fileModified = document.getElementById('fileModified');
+  const fileLanguageDisplay = document.getElementById('fileLanguageDisplay');
+  const fileLanguage = document.getElementById('fileLanguage');
+  const fileCategory = document.getElementById('fileCategory');
+  const fileTags = document.getElementById('fileTags');
+  
+  if (currentFileName) currentFileName.textContent = filename;
+  if (fileLinesCount) fileLinesCount.textContent = `${fileData.content.split('\n').length} lines`;
+  if (fileSize) fileSize.textContent = formatFileSize(new Blob([fileData.content]).size);
+  if (fileCreated) fileCreated.textContent = formatDate(fileData.created);
+  if (fileModified) fileModified.textContent = formatDate(fileData.lastModified);
   
   const ext = filename.split('.').pop().toLowerCase();
   const language = getLanguageName(ext);
-  document.getElementById('fileLanguageDisplay').textContent = language;
-  document.getElementById('fileLanguage').textContent = language;
+  if (fileLanguageDisplay) fileLanguageDisplay.textContent = language;
+  if (fileLanguage) fileLanguage.textContent = language;
   
   const codeBlock = document.getElementById('codeBlock');
-  codeBlock.textContent = fileData.content;
-  codeBlock.className = `language-${language.toLowerCase()}`;
+  if (codeBlock) {
+    codeBlock.textContent = fileData.content;
+    codeBlock.className = `language-${language.toLowerCase()}`;
+  }
   
   const lines = fileData.content.split('\n');
   const lineNumbers = document.getElementById('lineNumbers');
-  lineNumbers.innerHTML = lines.map((_, i) => `<div>${i + 1}</div>`).join('');
+  if (lineNumbers) lineNumbers.innerHTML = lines.map((_, i) => `<div>${i + 1}</div>`).join('');
   
-  if (window.Prism) Prism.highlightElement(codeBlock);
+  if (window.Prism && codeBlock) Prism.highlightElement(codeBlock);
   
-  document.getElementById('fileCategory').textContent = fileData.category || 'General';
+  if (fileCategory) fileCategory.textContent = fileData.category || 'General';
   
-  const tagsContainer = document.getElementById('fileTags');
-  if (fileData.tags && fileData.tags.length > 0) {
-    tagsContainer.innerHTML = fileData.tags.map(tag => `<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-github-accent-emphasis/20 border border-github-accent-emphasis/30 text-github-accent-fg">${tag}</span>`).join('');
-  } else {
-    tagsContainer.innerHTML = '<span class="text-github-fg-muted text-sm">No tags</span>';
+  if (fileTags) {
+    if (fileData.tags && fileData.tags.length > 0) {
+      fileTags.innerHTML = fileData.tags.map(tag => `<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-github-accent-emphasis/20 border border-github-accent-emphasis/30 text-github-accent-fg">${tag}</span>`).join('');
+    } else {
+      fileTags.innerHTML = '<span class="text-github-fg-muted text-sm">No tags</span>';
+    }
   }
 }
 
@@ -753,15 +767,19 @@ function editFile() {
       const fileData = LocalStorageManager.getFile(currentState.repository, filePath);
       
       if (fileData) {
-        document.getElementById('editingFileName').textContent = currentState.currentFile.name;
-        document.getElementById('commitTitle').value = `Update ${currentState.currentFile.name}`;
+        const editingFileName = document.getElementById('editingFileName');
+        const commitTitle = document.getElementById('commitTitle');
+        const fileCategoryInput = document.getElementById('fileCategoryInput');
+        
+        if (editingFileName) editingFileName.textContent = currentState.currentFile.name;
+        if (commitTitle) commitTitle.value = `Update ${currentState.currentFile.name}`;
         
         if (codeEditor) {
           codeEditor.setValue(fileData.content);
           updateEditorMode(codeEditor, currentState.currentFile.name);
         }
         
-        document.getElementById('fileCategoryInput').value = fileData.category || '';
+        if (fileCategoryInput) fileCategoryInput.value = fileData.category || '';
         currentState.selectedTags = fileData.tags || [];
         updateSelectedTags();
         
@@ -780,10 +798,10 @@ function editFile() {
 function saveFile() {
   if (!currentState.currentFile) return;
   
-  const commitTitle = document.getElementById('commitTitle').value.trim();
-  const commitDescription = document.getElementById('commitDescription').value.trim();
+  const commitTitle = document.getElementById('commitTitle');
+  const commitDescription = document.getElementById('commitDescription');
   
-  if (!commitTitle) {
+  if (!commitTitle || !commitTitle.value.trim()) {
     showErrorMessage('Please enter a commit message');
     return;
   }
@@ -794,14 +812,15 @@ function saveFile() {
     try {
       const filePath = (currentState.path ? currentState.path + '/' : '') + currentState.currentFile.name;
       const content = codeEditor ? codeEditor.getValue() : '';
+      const fileCategoryInput = document.getElementById('fileCategoryInput');
       
       const fileData = {
         content: content,
-        category: document.getElementById('fileCategoryInput').value.trim() || 'General',
+        category: fileCategoryInput ? fileCategoryInput.value.trim() || 'General' : 'General',
         tags: currentState.selectedTags,
         lastModified: Date.now(),
         created: LocalStorageManager.getFile(currentState.repository, filePath)?.created || Date.now(),
-        lastCommit: commitTitle,
+        lastCommit: commitTitle.value.trim(),
         size: new Blob([content]).size
       };
       
@@ -810,10 +829,10 @@ function saveFile() {
       const fileIndex = currentState.files.findIndex(f => f.name === currentState.currentFile.name);
       if (fileIndex !== -1) {
         currentState.files[fileIndex].lastModified = fileData.lastModified;
-        currentState.files[fileIndex].lastCommit = commitTitle;
+        currentState.files[fileIndex].lastCommit = fileData.lastCommit;
       }
       
-      document.getElementById('commitDescription').value = '';
+      if (commitDescription) commitDescription.value = '';
       hideLoading();
       showSuccessMessage(`File "${currentState.currentFile.name}" saved successfully!`);
       setTimeout(() => viewFile(currentState.currentFile.name), 500);
@@ -924,11 +943,13 @@ function setupEventListeners() {
   const branchSelector = document.getElementById('branchSelector');
   if (branchSelector) branchSelector.addEventListener('click', function(e) {
     e.stopPropagation();
-    document.getElementById('branchDropdown').classList.toggle('hidden');
+    const branchDropdown = document.getElementById('branchDropdown');
+    if (branchDropdown) branchDropdown.classList.toggle('hidden');
   });
   
   document.addEventListener('click', function() {
-    document.getElementById('branchDropdown').classList.add('hidden');
+    const branchDropdown = document.getElementById('branchDropdown');
+    if (branchDropdown) branchDropdown.classList.add('hidden');
   });
 
   const newFileName = document.getElementById('newFileName');
@@ -951,7 +972,8 @@ function setupCodeEditors() {
       tabSize: 2,
       lineWrapping: false,
       extraKeys: { "Ctrl-S": function(cm) {
-        if (!document.getElementById('fileEditor').classList.contains('hidden')) saveFile();
+        const fileEditor = document.getElementById('fileEditor');
+        if (fileEditor && !fileEditor.classList.contains('hidden')) saveFile();
       }}
     };
 
@@ -967,8 +989,8 @@ function setupCodeEditors() {
       if (initialContentContainer) {
         initialContentEditor = CodeMirror(initialContentContainer, {...editorConfig, lineNumbers: false});
         initialContentEditor.on('change', function() {
-          const fileName = document.getElementById('newFileName').value;
-          if (fileName) updateEditorMode(initialContentEditor, fileName);
+          const fileName = document.getElementById('newFileName');
+          if (fileName && fileName.value) updateEditorMode(initialContentEditor, fileName.value);
         });
       }
     }, 100);
@@ -1030,15 +1052,16 @@ function setupKeyboardShortcuts() {
     if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'N') { e.preventDefault(); showCreateRepoModal(); }
     if ((e.ctrlKey || e.metaKey) && e.key === 's') {
       const editor = document.getElementById('fileEditor');
-      if (!editor.classList.contains('hidden')) { e.preventDefault(); saveFile(); }
+      if (editor && !editor.classList.contains('hidden')) { e.preventDefault(); saveFile(); }
     }
     
     if (e.key === 'Escape') {
       const modals = ['createFileModal', 'createRepoModal', 'deleteFileModal'];
       for (const modalId of modals) {
         const modal = document.getElementById(modalId);
-        if (!modal.classList.contains('hidden')) {
-          modal.querySelector('button[onclick*="hide"]').click();
+        if (modal && !modal.classList.contains('hidden')) {
+          const hideBtn = modal.querySelector('button[onclick*="hide"]');
+          if (hideBtn) hideBtn.click();
           return;
         }
       }
