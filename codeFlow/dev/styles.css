@@ -750,7 +750,7 @@ button {
 /* Recent Files Popover */
 #recentFilesPopover {
   position: absolute;
-  top: calc(100% + 8px);
+  bottom: calc(100% + 8px);
   width: 320px;
   background: #2d333b;
   border: 1px solid #444c56;
@@ -758,7 +758,7 @@ button {
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
   z-index: 1001;
   opacity: 0;
-  transform: translateY(-20px);
+  transform: translateY(20px);
   transition: opacity 0.35s, transform 0.35s;
   pointer-events: none;
 }
@@ -772,7 +772,7 @@ button {
 /* Quick Actions Menu */
 #quickActionsMenu {
   position: absolute;
-  top: calc(100% + 8px);
+  bottom: calc(100% + 8px);
   width: 200px;
   background: #2d333b;
   border: 1px solid #444c56;
@@ -780,7 +780,7 @@ button {
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
   z-index: 1001;
   opacity: 0;
-  transform: translateY(-20px);
+  transform: translateY(20px);
   transition: opacity 0.35s, transform 0.35s;
   pointer-events: none;
 }
