@@ -739,7 +739,7 @@ button {
   background: rgba(45, 51, 59, 0.95);
   backdrop-filter: blur(10px);
   border: 1px solid #444c56;
-  border-radius: 12px;
+  border-radius: 10px;
   z-index: 1000;
   display: flex;
   align-items: center;
