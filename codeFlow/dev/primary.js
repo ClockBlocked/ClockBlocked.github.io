@@ -881,10 +881,16 @@ function setupCodeEditors() {
       indentUnit: 2,
       tabSize: 2,
       lineWrapping: false,
-      extraKeys: { "Ctrl-S": function(cm) {
-        const fileEditor = document.getElementById('fileEditor');
-        if (fileEditor && !fileEditor.classList.contains('hidden')) saveFile();
-      }}
+      viewportMargin: Infinity, // Allow scrolling
+      lineHeight: 1.3, // Tighter line spacing
+      fontSize: 13, // Smaller font
+      fontFamily: "'JetBrains Mono', monospace",
+      extraKeys: { 
+        "Ctrl-S": function(cm) {
+          const fileEditor = document.getElementById('fileEditor');
+          if (fileEditor && !fileEditor.classList.contains('hidden')) saveFile();
+        }
+      }
     };
 
     setTimeout(() => {
@@ -894,10 +900,19 @@ function setupCodeEditors() {
       if (editorContainer) {
         codeEditor = CodeMirror(editorContainer, editorConfig);
         codeEditor.on('change', updateCommitMessage);
+        
+        // Force refresh to apply styles
+        setTimeout(() => {
+          if (codeEditor) codeEditor.refresh();
+        }, 100);
       }
       
       if (initialContentContainer) {
-        initialContentEditor = CodeMirror(initialContentContainer, {...editorConfig, lineNumbers: false});
+        initialContentEditor = CodeMirror(initialContentContainer, {
+          ...editorConfig,
+          lineNumbers: false,
+          height: '192px' // Specific height for create modal
+        });
         initialContentEditor.on('change', function() {
           const fileName = document.getElementById('newFileName');
           if (fileName && fileName.value) updateEditorMode(initialContentEditor, fileName.value);
