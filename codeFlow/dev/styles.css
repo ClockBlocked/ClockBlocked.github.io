@@ -857,8 +857,8 @@ code[class*="language-"] {
 
 /* Make the entire code container taller */
 #fileViewer > .bg-github-canvas-overlay.border-x.border-b.border-github-border-default.rounded-b-lg.overflow-hidden {
-  min-height: 600px;
-  max-height: 80vh;
+  min-height: 200px;
+  max-height: 400px;
 }
 
 /* Line numbers container */
@@ -878,7 +878,9 @@ code[class*="language-"] {
 }
 
 
-
+#fileViewer {
+  overflow: hidden;
+}
 
 #initialContentEditor {
   height: 250px; max-height: 400px;
