@@ -593,9 +593,15 @@ function openRepository(repoName) {
       currentState.files = LocalStorageManager.listFiles(repoName, '');
       renderFileList();
       updateBreadcrumb();
-      document.getElementById('currentRepoName').textContent = repoName;
-      document.getElementById('repoNameInViewer').textContent = repoName;
-      document.getElementById('repoNameInEditor').textContent = repoName;
+      
+      // Add null checks for all DOM elements
+      const currentRepoName = document.getElementById('currentRepoName');
+      const repoNameInViewer = document.getElementById('repoNameInViewer');
+      const repoNameInEditor = document.getElementById('repoNameInEditor');
+      
+      if (currentRepoName) currentRepoName.textContent = repoName;
+      if (repoNameInViewer) repoNameInViewer.textContent = repoName;
+      if (repoNameInEditor) repoNameInEditor.textContent = repoName;
       
       const repo = LocalStorageManager.getRepository(repoName);
       if (repo) {
