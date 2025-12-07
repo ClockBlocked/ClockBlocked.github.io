@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>File Explorer - GitHub Clone</title>
 
-  <link rel="stylesheet" href="./global.css" />
+  <link rel="stylesheet" href="./styles.css" />
 
   <!-- TailwindCSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -20,9 +20,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
 
   <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
   <!-- CodeMirror for Live Syntax Highlighting -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
@@ -58,48 +57,46 @@
         extend: {
           colors: {
             github: {
-              'canvas-default': '#0d1117',
-              'canvas-overlay': '#161b22',
-              'canvas-inset': '#21262d',
-              'canvas-subtle': '#30363d',
-              'border-default': '#30363d',
-              'border-muted': '#21262d',
-              'neutral-emphasis': '#6e7681',
-              'neutral-muted': '#656d76',
-              'fg-default': '#e6edf3',
-              'fg-muted': '#7d8590',
-              'fg-subtle': '#656d76',
-              'accent-fg': '#2f81f7',
-              'accent-emphasis': '#1f6feb',
-              'success-fg': '#3fb950',
-              'danger-fg': '#f85149',
-              'warning-fg': '#d29922',
-              'btn-primary-bg': '#238636',
-              'btn-primary-hover': '#2ea043',
-              'btn-secondary-bg': '#21262d',
-              'btn-secondary-hover': '#30363d'
+              'canvas-default': '#22272e',
+              'tableHeader': '#2d333b',
+              'canvas-overlay': '#2d333b',
+              'canvas-inset': '#1c2128',
+              'canvas-subtle': '#2d333b',
+              'border-default': '#444c56',
+              'border-muted': '#373e47',
+              'neutral-emphasis': '#768390',
+              'neutral-muted': '#636e7b',
+              'fg-default': '#adbac7',
+              'fg-muted': '#768390',
+              'fg-subtle': '#545d68',
+              'accent-fg': '#539bf5',
+              'accent-emphasis': '#4184e4',
+              'success-fg': '#57ab5a',
+              'danger-fg': '#e5534b',
+              'warning-fg': '#c69026',
+              'btn-primary-bg': '#347d39',
+              'btn-primary-hover': '#46954a',
+              'btn-secondary-bg': '#373e47',
+              'btn-secondary-hover': '#444c56'
             }
           },
           fontFamily: {
-            'sans': ['Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'],
+            'sans': ['Inter', 'system-ui', 'sans-serif'],
             'mono': ['JetBrains Mono', 'SFMono-Regular', 'Consolas', 'monospace']
           },
           animation: {
-            'fade-in': 'fadeIn 0.3s ease-out',
+            'fade-in': 'fadeIn 0.2s ease-out',
             'fade-out': 'fadeOut 0.2s ease-in',
-            'slide-up': 'slideUp 0.4s ease-out',
-            'slide-down': 'slideDown 0.4s ease-out',
-            'scale-in': 'scaleIn 0.3s ease-out',
-            'spin-slow': 'spin 2s linear infinite',
+            'slide-up': 'slideUp 0.3s ease-out',
+            'slide-down': 'slideDown 0.3s ease-out',
+            'scale-in': 'scaleIn 0.2s ease-out',
+            'spin-slow': 'spin 1.5s linear infinite',
             'pulse-soft': 'pulseSoft 2s ease-in-out infinite',
-            'bounce-subtle': 'bounceSubtle 0.6s ease-out',
-            'glow': 'glow 2s ease-in-out infinite alternate',
-            'shimmer': 'shimmer 2s ease-in-out infinite',
           },
           keyframes: {
             fadeIn: {
-              '0%': { opacity: '0', transform: 'translateY(-8px)' },
-              '100%': { opacity: '1', transform: 'translateY(0)' }
+              '0%': { opacity: '0' },
+              '100%': { opacity: '1' }
             },
             fadeOut: {
               '0%': { opacity: '1' },
@@ -117,26 +114,10 @@
               '0%': { transform: 'scale(0.95)', opacity: '0' },
               '100%': { transform: 'scale(1)', opacity: '1' }
             },
-            bounceSubtle: {
-              '0%': { transform: 'translateY(-4px)' },
-              '50%': { transform: 'translateY(0)' },
-              '100%': { transform: 'translateY(-2px)' }
-            },
             pulseSoft: {
               '0%, 100%': { opacity: '1' },
-              '50%': { opacity: '0.8' }
-            },
-            glow: {
-              '0%': { boxShadow: '0 0 5px rgba(47, 129, 247, 0.3)' },
-              '100%': { boxShadow: '0 0 20px rgba(47, 129, 247, 0.6), 0 0 30px rgba(47, 129, 247, 0.4)' }
-            },
-            shimmer: {
-              '0%': { backgroundPosition: '-200% 0' },
-              '100%': { backgroundPosition: '200% 0' }
+              '50%': { opacity: '0.7' }
             }
-          },
-          backdropBlur: {
-            xs: '2px'
           }
         }
       }
@@ -144,815 +125,678 @@
   </script>
 </head>
 
-<body class="bg-github-canvas-default text-github-fg-default font-sans overflow-x-hidden">
-  <!-- Modern Loading Progress Bar -->
-  <div id="loadingProgressBar" class="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-github-accent-emphasis via-github-accent-fg to-purple-500 transform scale-x-0 origin-left transition-transform duration-300 ease-out z-[9999]"></div>
-
+<body class="bg-github-canvas-default text-github-fg-default font-sans">
   <!-- Loading Overlay -->
-  <div id="loadingOverlay" class="fixed inset-0 bg-github-canvas-default/95 backdrop-blur-sm z-[9998] hidden items-center justify-center">
-    <div class="flex flex-col items-center space-y-6">
+  <div id="loadingOverlay" class="fixed inset-0 bg-github-canvas-default/90 backdrop-blur-sm z-50 hidden items-center justify-center">
+    <div class="flex flex-col items-center space-y-4">
       <div class="relative">
-        <div class="w-12 h-12 border-3 border-github-accent-fg border-t-transparent rounded-full animate-spin"></div>
-        <div class="absolute inset-0 w-12 h-12 border-3 border-github-accent-fg/20 rounded-full animate-pulse-soft"></div>
+        <div class="w-8 h-8 border-2 border-github-accent-fg border-t-transparent rounded-full animate-spin"></div>
+        <div class="absolute inset-0 w-8 h-8 border-2 border-github-accent-fg/30 rounded-full animate-pulse-soft"></div>
       </div>
-      <p class="text-github-fg-muted text-sm font-medium animate-pulse-soft" id="loadingText">Loading...</p>
+      <p class="text-github-fg-muted text-sm font-medium" id="loadingText">Loading...</p>
     </div>
   </div>
 
-  <!-- Modern Sticky Top Navigation -->
-  <nav id="topNavbar" class="fixed top-0 left-0 right-0 h-16 bg-github-canvas-overlay/90 backdrop-blur-xl border-b border-github-border-default z-[1000] transition-all duration-300">
-    <div class="h-full flex items-center px-4">
-      <!-- Logo/Brand -->
-      <div class="flex items-center space-x-3 mr-6">
-        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-github-accent-fg to-purple-500 flex items-center justify-center">
-          <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M8 0c4.42 0 8 3.58 8 8 0 3.54-2.29 6.53-5.47 7.59-.4-.07-.55-.17-.55-.38 0-.19.01-.82.01-1.49 2.01.37 2.53-.49 2.69-.94.09-.23.48-.94.82-1.13.28-.15.68-.52-.01-.53-.63-.01-1.08.58-1.23.82-.72 1.21-1.87.87-2.33.66-.07-.52-.28-.87-.51-1.07 1.78-.2 3.64-.89 3.64-3.95 0-.87-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.21-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.21.73.90.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.31-.55.38C2.29 14.53 0 11.54 0 8c0-4.42 3.58-8 8-8Z"/>
-          </svg>
-        </div>
-        <span class="text-lg font-bold bg-gradient-to-r from-github-fg-default to-github-fg-muted bg-clip-text text-transparent">GitExplorer</span>
-      </div>
-
-      <!-- Horizontally Scrolling Menu -->
-      <div class="flex-1 relative">
-        <div id="horizontalMenu" class="flex items-center space-x-1 overflow-x-auto scrollbar-hide pb-1" style="scrollbar-width: none; -ms-overflow-style: none;">
-          
-          <!-- Quick Actions -->
-          <div class="relative flex-shrink-0">
-            <button id="quickActionsBtn" class="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium text-github-fg-muted hover:text-github-fg-default hover:bg-github-canvas-subtle/50 transition-all duration-200 whitespace-nowrap">
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M8 1a.5.5 0 0 1 .5.5v6h6a.5.5 0 0 1 0 1h-6v6a.5.5 0 0 1-1 0v-6h-6a.5.5 0 0 1 0-1h6v-6A.5.5 0 0 1 8 1Z"/>
-              </svg>
-              <span>Quick Actions</span>
-              <svg class="w-3 h-3 transition-transform duration-200" id="quickActionsIcon" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
-              </svg>
-            </button>
-            <!-- Dropdown will be positioned here -->
-          </div>
-
-          <!-- Repository Selector -->
-          <div class="relative flex-shrink-0">
-            <button id="repoSelectorBtn" class="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium text-github-fg-muted hover:text-github-fg-default hover:bg-github-canvas-subtle/50 transition-all duration-200 whitespace-nowrap">
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8Z"/>
-              </svg>
-              <span id="currentRepoNameNav">Repositories</span>
-              <span id="repoCountBadge" class="bg-github-accent-emphasis text-white text-xs px-1.5 py-0.5 rounded-full hidden">0</span>
-            </button>
-          </div>
-
-          <!-- Recent Files -->
-          <div class="relative flex-shrink-0">
-            <button id="recentFilesBtn" class="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium text-github-fg-muted hover:text-github-fg-default hover:bg-github-canvas-subtle/50 transition-all duration-200 whitespace-nowrap">
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M2 1.75C2 .784 2.784 0 3.75 0h6.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0 1 13.25 16h-9.5A1.75 1.75 0 0 1 2 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h9.5a.25.25 0 0 0 .25-.25V6h-2.75A1.75 1.75 0 0 1 9 4.25V1.5Zm6.75.062V4.25c0 .138.112.25.25.25h2.688l-.011-.013-2.914-2.914-.013-.011Z"/>
-              </svg>
-              <span>Recent Files</span>
-              <span id="recentFilesCount" class="bg-github-accent-emphasis text-white text-xs px-1.5 py-0.5 rounded-full">0</span>
-            </button>
-          </div>
-
-          <!-- Search -->
-          <div class="relative flex-shrink-0">
-            <button id="searchBtn" class="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium text-github-fg-muted hover:text-github-fg-default hover:bg-github-canvas-subtle/50 transition-all duration-200 whitespace-nowrap">
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-              </svg>
-              <span>Search</span>
-              <kbd class="hidden sm:inline-block px-2 py-0.5 text-xs font-mono border border-github-border-default rounded">⌘K</kbd>
-            </button>
-          </div>
-
-          <!-- File Actions -->
-          <div class="relative flex-shrink-0">
-            <button id="fileActionsBtn" class="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium text-github-fg-muted hover:text-github-fg-default hover:bg-github-canvas-subtle/50 transition-all duration-200 whitespace-nowrap">
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
-                <path d="M6.5 3a.5.5 0 0 1 .5.5v1.5a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1.5a.5.5 0 0 1 .5-.5h3zm0-1h-3A1.5 1.5 0 0 0 2 3.5v1.5A1.5 1.5 0 0 0 3.5 6h3A1.5 1.5 0 0 0 8 4.5v-1.5A1.5 1.5 0 0 0 6.5 2z"/>
-              </svg>
-              <span>File Actions</span>
-            </button>
-          </div>
-
-          <!-- Settings -->
-          <div class="relative flex-shrink-0">
-            <button id="settingsBtn" class="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium text-github-fg-muted hover:text-github-fg-default hover:bg-github-canvas-subtle/50 transition-all duration-200 whitespace-nowrap">
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/>
-                <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.292-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.292c.415.764-.42 1.6-1.185 1.184l-.292-.159a1.873 1.873 0 0 0-2.692 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.693-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.292A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z"/>
-              </svg>
-              <span>Settings</span>
-            </button>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- Right side actions -->
-      <div class="flex items-center space-x-2 ml-4">
-        <button id="notificationsBtn" class="p-2 rounded-lg text-github-fg-muted hover:text-github-fg-default hover:bg-github-canvas-subtle/50 transition-all duration-200 relative">
-          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zM8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z"/>
-          </svg>
-          <span class="absolute top-1 right-1 w-2 h-2 bg-github-accent-fg rounded-full"></span>
-        </button>
-        
-        <button onclick="toggleTheme()" class="p-2 rounded-lg text-github-fg-muted hover:text-github-fg-default hover:bg-github-canvas-subtle/50 transition-all duration-200">
-          <svg id="themeIcon" class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M8 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"/>
-          </svg>
-        </button>
-
-        <!-- Stats Indicator -->
-        <div id="statsIndicator" class="px-3 py-2 rounded-lg bg-github-canvas-subtle/50 border border-github-border-muted">
-          <span id="statsText" class="text-sm font-medium text-github-fg-muted">0 files</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Dropdown Menus Container -->
-    <div class="absolute top-full left-0 right-0 z-10">
-      <!-- Quick Actions Dropdown -->
-      <div id="quickActionsDropdown" class="absolute left-4 mt-2 w-64 bg-github-canvas-overlay border border-github-border-default rounded-xl shadow-2xl backdrop-blur-xl opacity-0 scale-95 pointer-events-none transition-all duration-200 transform-gpu">
-        <div class="p-3">
-          <div class="space-y-1">
-            <button onclick="showCreateFileModal()" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm text-github-fg-default hover:bg-github-canvas-subtle transition-colors">
-              <div class="w-8 h-8 rounded-lg bg-github-success-fg/20 flex items-center justify-center">
-                <svg class="w-4 h-4 text-github-success-fg" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M7.75 2a.75.75 0 0 1 .75.75V7h4.25a.75.75 0 0 1 0 1.5H8.5v4.25a.75.75 0 0 1-1.5 0V8.5H2.75a.75.75 0 0 1 0-1.5H7V2.75A.75.75 0 0 1 7.75 2Z"/>
-                </svg>
-              </div>
-              <div class="flex-1 text-left">
-                <div class="font-medium">New File</div>
-                <div class="text-xs text-github-fg-muted">Create a new file</div>
-              </div>
-            </button>
-            <button onclick="showCreateRepoModal()" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm text-github-fg-default hover:bg-github-canvas-subtle transition-colors">
-              <div class="w-8 h-8 rounded-lg bg-github-accent-fg/20 flex items-center justify-center">
-                <svg class="w-4 h-4 text-github-accent-fg" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8Z"/>
-                </svg>
-              </div>
-              <div class="flex-1 text-left">
-                <div class="font-medium">New Repository</div>
-                <div class="text-xs text-github-fg-muted">Create a new repository</div>
-              </div>
-            </button>
-            <div class="border-t border-github-border-muted my-2"></div>
-            <button onclick="navigateToRoot()" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm text-github-fg-default hover:bg-github-canvas-subtle transition-colors">
-              <div class="w-8 h-8 rounded-lg bg-github-warning-fg/20 flex items-center justify-center">
-                <svg class="w-4 h-4 text-github-warning-fg" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M8.543 2.232a.75.75 0 0 0-1.085 0l-5.25 5.5A.75.75 0 0 0 2.75 9H4v4a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1a1 1 0 1 1 2 0v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V9h1.25a.75.75 0 0 0 .543-1.268l-5.25-5.5Z"/>
-                </svg>
-              </div>
-              <div class="flex-1 text-left">
-                <div class="font-medium">Go to Root</div>
-                <div class="text-xs text-github-fg-muted">Navigate to repository root</div>
-              </div>
-            </button>
-            <button onclick="showRepoSelector()" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm text-github-fg-default hover:bg-github-canvas-subtle transition-colors">
-              <div class="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center">
-                <svg class="w-4 h-4 text-purple-400" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M1 2.75A2.75 2.75 0 0 1 3.75 0h8.5A2.75 2.75 0 0 1 15 2.75v10.5A2.75 2.75 0 0 1 12.25 16h-8.5A2.75 2.75 0 0 1 1 13.25V2.75Z"/>
-                </svg>
-              </div>
-              <div class="flex-1 text-left">
-                <div class="font-medium">Repository List</div>
-                <div class="text-xs text-github-fg-muted">View all repositories</div>
-              </div>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Recent Files Dropdown -->
-      <div id="recentFilesDropdown" class="absolute left-64 mt-2 w-80 bg-github-canvas-overlay border border-github-border-default rounded-xl shadow-2xl backdrop-blur-xl opacity-0 scale-95 pointer-events-none transition-all duration-200 transform-gpu">
-        <div class="p-4">
-          <h4 class="text-sm font-semibold text-github-fg-default mb-3">Recently Opened</h4>
-          <div id="recentFilesList" class="space-y-2 max-h-64 overflow-y-auto">
-            <!-- Recent files will be populated here -->
-          </div>
-        </div>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Main Page Container -->
-  <div id="pageContainer" class="min-h-screen pt-16">
-
-    <!-- Repository Selector View -->
-    <div id="repoSelectorView" class="container mx-auto px-6 py-8 max-w-7xl">
-      <!-- Header Section -->
-      <div class="text-center mb-12">
-        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-github-accent-fg to-purple-500 mb-6 animate-bounce-subtle">
-          <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M8 0c4.42 0 8 3.58 8 8 0 3.54-2.29 6.53-5.47 7.59-.4-.07-.55-.17-.55-.38 0-.19.01-.82.01-1.49 2.01.37 2.53-.49 2.69-.94.09-.23.48-.94.82-1.13.28-.15.68-.52-.01-.53-.63-.01-1.08.58-1.23.82-.72 1.21-1.87.87-2.33.66-.07-.52-.28-.87-.51-1.07 1.78-.2 3.64-.89 3.64-3.95 0-.87-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.21-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.21.73.90.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.31-.55.38C2.29 14.53 0 11.54 0 8c0-4.42 3.58-8 8-8Z"/>
-          </svg>
-        </div>
-        <h1 class="text-4xl font-bold bg-gradient-to-r from-github-fg-default to-github-fg-muted bg-clip-text text-transparent mb-4">
-          Your Repositories
-        </h1>
-        <p class="text-lg text-github-fg-muted max-w-2xl mx-auto">
-          Manage and explore your code repositories with our modern, intuitive interface
-        </p>
-      </div>
-
-      <!-- Action Bar -->
-      <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8">
-        <div class="flex items-center space-x-4">
-          <button onclick="showCreateRepoModal()" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-github-btn-primary-bg to-github-btn-primary-hover text-white rounded-lg font-medium hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200">
-            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M7.75 2a.75.75 0 0 1 .75.75V7h4.25a.75.75 0 0 1 0 1.5H8.5v4.25a.75.75 0 0 1-1.5 0V8.5H2.75a.75.75 0 0 1 0-1.5H7V2.75A.75.75 0 0 1 7.75 2Z"/>
-            </svg>
-            New Repository
-          </button>
-          <button id="refreshReposBtn" class="inline-flex items-center px-4 py-2 border border-github-border-default rounded-lg font-medium text-github-fg-default hover:bg-github-canvas-subtle transition-all duration-200">
-            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
-              <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
-              <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
-            </svg>
-            Refresh
-          </button>
-        </div>
-        
+  <!-- Top Horizontal Menu Bar -->
+  <div id="topMenuBar" class="fixed top-0 left-0 right-0 bg-github-canvas-overlay/95 backdrop-blur-md border-b border-github-border-default z-50">
+    <div class="overflow-x-auto scrollbar-hide">
+      <div class="flex items-center space-x-6 px-6 py-3 min-w-max">
+        <!-- Quick Actions Section -->
         <div class="flex items-center space-x-4">
           <div class="relative">
-            <input type="text" id="repoSearchInput" placeholder="Search repositories..." class="w-64 px-4 py-2 pl-10 bg-github-canvas-inset border border-github-border-default rounded-lg text-github-fg-default placeholder-github-fg-muted focus:outline-none focus:ring-2 focus:ring-github-accent-emphasis focus:border-transparent">
-            <svg class="absolute left-3 top-2.5 w-4 h-4 text-github-fg-muted" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-            </svg>
-          </div>
-          <select id="sortRepositories" class="px-4 py-2 bg-github-canvas-inset border border-github-border-default rounded-lg text-github-fg-default focus:outline-none focus:ring-2 focus:ring-github-accent-emphasis">
-            <option value="name">Sort by Name</option>
-            <option value="created">Sort by Created</option>
-            <option value="modified">Sort by Modified</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Repositories Grid -->
-      <div id="repositoriesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Repository cards will be populated here -->
-      </div>
-
-      <!-- Empty State -->
-      <div id="emptyRepositories" class="text-center py-16 hidden">
-        <div class="w-24 h-24 mx-auto mb-6 rounded-2xl bg-github-canvas-subtle/50 flex items-center justify-center">
-          <svg class="w-12 h-12 text-github-fg-muted" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8Z"/>
-          </svg>
-        </div>
-        <h3 class="text-2xl font-semibold text-github-fg-default mb-2">No repositories yet</h3>
-        <p class="text-github-fg-muted mb-6">Create your first repository to get started</p>
-        <button onclick="showCreateRepoModal()" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-github-btn-primary-bg to-github-btn-primary-hover text-white rounded-lg font-medium hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200">
-          <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M7.75 2a.75.75 0 0 1 .75.75V7h4.25a.75.75 0 0 1 0 1.5H8.5v4.25a.75.75 0 0 1-1.5 0V8.5H2.75a.75.75 0 0 1 0-1.5H7V2.75A.75.75 0 0 1 7.75 2Z"/>
-          </svg>
-          Create Repository
-        </button>
-      </div>
-    </div>
-
-    <!-- File Explorer View -->
-    <div id="explorerView" class="hidden container mx-auto px-6 py-6 max-w-7xl">
-      <!-- Repository Header -->
-      <div class="bg-gradient-to-r from-github-canvas-overlay to-github-canvas-subtle border border-github-border-default rounded-xl p-6 mb-6 shadow-xl">
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <div class="flex items-center space-x-4">
-            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-github-accent-fg to-purple-500 flex items-center justify-center animate-glow">
-              <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8Z"/>
+            <button id="topQuickActionsBtn" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-github-canvas-subtle transition-colors">
+              <svg class="w-4 h-4 text-github-fg-muted" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M5.75 2a.75.75 0 0 1 .75.75V4h3.5V2.75a.75.75 0 0 1 1.5 0V4h.25A2.25 2.25 0 0 1 14 6.25v5.5A2.25 2.25 0 0 1 11.75 14H4.25A2.25 2.25 0 0 1 2 11.75v-5.5A2.25 2.25 0 0 1 4.25 4H5V2.75A.75.75 0 0 1 5.75 2Zm-.75 5.75a.75.75 0 0 0-1.5 0v.25c0 .414.336.75.75.75h3.5a.75.75 0 0 0 0-1.5H5ZM11 10a1 1 0 1 0-2 0 1 1 0 0 0 2 0Z"/>
               </svg>
-            </div>
-            <div>
-              <h1 class="text-2xl font-bold text-github-fg-default" id="currentRepoName">Repository</h1>
-              <p class="text-github-fg-muted" id="repoDescription">No description provided.</p>
-            </div>
-          </div>
-          
-          <div class="flex items-center space-x-3">
-            <div class="flex items-center space-x-2 px-3 py-1.5 bg-github-canvas-inset rounded-lg border border-github-border-muted">
-              <svg class="w-4 h-4 text-github-success-fg" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Z"/>
-              </svg>
-              <span class="text-sm font-medium text-github-fg-default" id="branchName">main</span>
-            </div>
-            <button onclick="showCreateFileModal()" class="inline-flex items-center px-4 py-2 bg-github-btn-primary-bg hover:bg-github-btn-primary-hover text-white rounded-lg text-sm font-medium transition-all duration-200 hover:-translate-y-0.5">
-              <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M7.75 2a.75.75 0 0 1 .75.75V7h4.25a.75.75 0 0 1 0 1.5H8.5v4.25a.75.75 0 0 1-1.5 0V8.5H2.75a.75.75 0 0 1 0-1.5H7V2.75A.75.75 0 0 1 7.75 2Z"/>
-              </svg>
-              Add File
+              <span class="text-sm font-medium text-github-fg-default">Actions</span>
             </button>
+            <div id="topQuickActionsMenu" class="absolute top-full left-0 mt-2 w-56 bg-github-canvas-overlay border border-github-border-default rounded-lg shadow-xl z-10 opacity-0 transform scale-95 transition-all duration-200 pointer-events-none">
+              <div class="p-2">
+                <button onclick="showCreateFileModal()" class="w-full flex items-center space-x-2 px-3 py-2 rounded hover:bg-github-canvas-subtle text-sm text-github-fg-default">
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M7.75 2a.75.75 0 0 1 .75.75V7h4.25a.75.75 0 0 1 0 1.5H8.5v4.25a.75.75 0 0 1-1.5 0V8.5H2.75a.75.75 0 0 1 0-1.5H7V2.75A.75.75 0 0 1 7.75 2Z"/>
+                  </svg>
+                  <span>New File</span>
+                </button>
+                <button onclick="showCreateRepoModal()" class="w-full flex items-center space-x-2 px-3 py-2 rounded hover:bg-github-canvas-subtle text-sm text-github-fg-default">
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z"/>
+                  </svg>
+                  <span>New Repository</span>
+                </button>
+                <div class="border-t border-github-border-muted my-1"></div>
+                <button onclick="navigateToRoot()" class="w-full flex items-center space-x-2 px-3 py-2 rounded hover:bg-github-canvas-subtle text-sm text-github-fg-default">
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M8.543 2.232a.75.75 0 0 0-1.085 0l-5.25 5.5A.75.75 0 0 0 2.75 9H4v4a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1a1 1 0 1 1 2 0v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V9h1.25a.75.75 0 0 0 .543-1.268l-5.25-5.5Z"/>
+                  </svg>
+                  <span>Go to Root</span>
+                </button>
+                <button onclick="showRepoSelector()" class="w-full flex items-center space-x-2 px-3 py-2 rounded hover:bg-github-canvas-subtle text-sm text-github-fg-default">
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M1 2.75A2.75 2.75 0 0 1 3.75 0h8.5A2.75 2.75 0 0 1 15 2.75v10.5A2.75 2.75 0 0 1 12.25 16h-8.5A2.75 2.75 0 0 1 1 13.25V2.75ZM3.75 1.5c-.69 0-1.25.56-1.25 1.25v10.5c0 .69.56 1.25 1.25 1.25h8.5c.69 0 1.25-.56 1.25-1.25V2.75c0-.69-.56-1.25-1.25-1.25h-8.5Z"/>
+                  </svg>
+                  <span>Repository List</span>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
         
-        <!-- Breadcrumb Navigation -->
-        <div class="mt-4 pt-4 border-t border-github-border-muted">
-          <nav class="flex items-center space-x-2 text-sm" id="pathBreadcrumb">
-            <a href="#" onclick="showRepoSelector()" class="text-github-accent-fg hover:underline font-medium">Repositories</a>
-            <span class="text-github-fg-muted">/</span>
-            <span class="text-github-fg-default font-medium">Loading...</span>
-          </nav>
-        </div>
-      </div>
-
-      <!-- File List Container -->
-      <div class="bg-github-canvas-overlay border border-github-border-default rounded-xl shadow-xl overflow-hidden">
-        <!-- File List Header -->
-        <div class="bg-gradient-to-r from-github-canvas-subtle to-github-canvas-overlay px-6 py-4 border-b border-github-border-muted">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center space-x-4">
-              <h3 class="text-lg font-semibold text-github-fg-default">Files</h3>
-              <div id="selectedTags" class="flex flex-wrap gap-2">
-                <!-- Tags will be populated here -->
-              </div>
-            </div>
-            <div class="flex items-center space-x-2">
-              <button class="p-2 text-github-fg-muted hover:text-github-fg-default hover:bg-github-canvas-subtle rounded-lg transition-colors">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- File List Table -->
-        <div class="overflow-x-auto">
-          <table class="w-full">
-            <thead class="bg-github-canvas-inset border-b border-github-border-muted">
-              <tr>
-                <th class="text-left px-6 py-3 text-xs font-semibold text-github-fg-muted uppercase tracking-wide">Name</th>
-                <th class="text-left px-6 py-3 text-xs font-semibold text-github-fg-muted uppercase tracking-wide hidden lg:table-cell">Last commit</th>
-                <th class="text-left px-6 py-3 text-xs font-semibold text-github-fg-muted uppercase tracking-wide hidden md:table-cell">Modified</th>
-                <th class="text-left px-6 py-3 text-xs font-semibold text-github-fg-muted uppercase tracking-wide hidden sm:table-cell">Size</th>
-                <th class="text-right px-6 py-3 text-xs font-semibold text-github-fg-muted uppercase tracking-wide">Actions</th>
-              </tr>
-            </thead>
-            <tbody id="fileList" class="divide-y divide-github-border-muted">
-              <!-- Files will be populated here -->
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Empty State for File List -->
-        <div id="emptyFileList" class="hidden text-center py-16">
-          <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-github-canvas-subtle/50 flex items-center justify-center">
-            <svg class="w-8 h-8 text-github-fg-muted" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"/>
+        <!-- Navigation Links -->
+        <div class="flex items-center space-x-6">
+          <button onclick="showRepoSelector()" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-github-canvas-subtle transition-colors">
+            <svg class="w-4 h-4 text-github-fg-muted" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z"/>
             </svg>
-          </div>
-          <h3 class="text-xl font-medium text-github-fg-default mb-2">This directory is empty</h3>
-          <p class="text-github-fg-muted">Add some files to get started</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- File Viewer -->
-    <div id="fileViewer" class="hidden container mx-auto px-6 py-6 max-w-7xl">
-      <!-- File Header -->
-      <div class="bg-gradient-to-r from-github-canvas-overlay to-github-canvas-subtle border border-github-border-default rounded-xl p-6 mb-6 shadow-xl">
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <div class="flex items-center space-x-4">
-            <button onclick="showExplorer()" class="p-2 text-github-fg-muted hover:text-github-fg-default hover:bg-github-canvas-subtle rounded-lg transition-all duration-200">
-              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+            <span class="text-sm font-medium text-github-fg-default">Repositories</span>
+          </button>
+          
+          <div class="relative">
+            <button id="topRecentFilesBtn" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-github-canvas-subtle transition-colors">
+              <svg class="w-4 h-4 text-github-fg-muted" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z"/>
               </svg>
+              <span class="text-sm font-medium text-github-fg-default">Recent</span>
+              <span id="topRecentFilesCount" class="bg-github-accent-emphasis text-white text-xs px-1.5 py-0.5 rounded-full">0</span>
             </button>
-            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-github-accent-fg to-purple-500 flex items-center justify-center">
-              <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"/>
-              </svg>
-            </div>
-            <div>
-              <h1 class="text-xl font-bold text-github-fg-default" id="currentFileName">filename.ext</h1>
-              <p class="text-github-fg-muted">
-                <span id="repoNameInViewer">Repository</span> • 
-                <span id="fileSizeDisplay">0 KB</span> • 
-                <span id="fileLanguageDisplay">Text</span>
-              </p>
+            <div id="topRecentFilesPopover" class="absolute top-full left-0 mt-2 w-80 bg-github-canvas-overlay border border-github-border-default rounded-lg shadow-xl z-10 opacity-0 transform scale-95 transition-all duration-200 pointer-events-none">
+              <div class="p-3">
+                <h4 class="text-sm font-semibold text-github-fg-default mb-2">Recently Opened</h4>
+                <div id="topRecentFilesList" class="space-y-1 max-h-64 overflow-y-auto">
+                  <!-- Recent files will be populated here -->
+                </div>
+              </div>
             </div>
           </div>
           
+          <button id="topStatsBtn" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-github-canvas-subtle transition-colors">
+            <svg class="w-4 h-4 text-github-fg-muted" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M1.75 16A1.75 1.75 0 0 1 0 14.25V1.75C0 .784.784 0 1.75 0h8.5C11.216 0 12 .784 12 1.75v12.5c0 .085-.006.168-.018.25h2.268a.25.25 0 0 0 .25-.25V8.285a.25.25 0 0 0-.111-.208l-1.055-.703a.749.749 0 1 1 .832-1.248l1.055.703c.487.325.78.871.78 1.456v5.965A1.75 1.75 0 0 1 14.25 16h-3.5a.75.75 0 0 1-.197-.026c-.099.017-.2.026-.303.026h-3a.75.75 0 0 1-.75-.75V14h-1v1.25a.75.75 0 0 1-.75.75Zm-.25-1.75c0 .138.112.25.25.25H4v-1.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 .75.75v1.25h2.25a.25.25 0 0 0 .25-.25V1.75a.25.25 0 0 0-.25-.25h-8.5a.25.25 0 0 0-.25.25Z"/>
+            </svg>
+            <span id="topStatsText" class="text-sm font-medium text-github-fg-default">0 files</span>
+          </button>
+        </div>
+        
+        <!-- Right Side Actions -->
+        <div class="flex items-center space-x-3 ml-auto">
+          <div class="h-6 w-px bg-github-border-default"></div>
+          <button onclick="toggleTheme()" class="p-2 rounded-lg hover:bg-github-canvas-subtle transition-colors">
+            <svg id="topThemeIcon" class="w-4 h-4 text-github-fg-muted" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M8 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6Zm0 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0Zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13ZM.5 8a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1H1a.5.5 0 0 1-.5-.5Zm13 0a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5Z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page Container -->
+  <div id="pageContainer" class="min-h-screen flex flex-col pt-16">
+    <!-- Repository Header -->
+    <header class="bg-github-canvas-overlay border-b border-github-border-default sticky top-0 z-40 backdrop-blur-md bg-github-canvas-overlay/95">
+      <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between py-4">
           <div class="flex items-center space-x-3">
-            <button onclick="editFile()" class="inline-flex items-center px-4 py-2 bg-github-btn-primary-bg hover:bg-github-btn-primary-hover text-white rounded-lg text-sm font-medium transition-all duration-200 hover:-translate-y-0.5">
+            <div class="flex items-center space-x-2">
+              <svg class="w-5 h-5 text-github-fg-muted" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z" />
+              </svg>
+              <a href="#" class="text-github-accent-fg hover:underline text-xl font-semibold">
+                GitCodr
+              </a>
+            </div>
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-github-canvas-subtle border border-github-border-default text-github-fg-muted">
+              Local
+            </span>
+          </div>
+
+          <div class="flex items-center space-x-2">
+            <button class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
               <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Z"/>
+                <path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.751 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z" />
+              </svg>
+              Star
+            </button>
+            <button class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
+              <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M5 5.372v.878c0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75v-.878a2.25 2.25 0 1 1 1.5 0v.878a2.25 2.25 0 0 1-2.25 2.25h-1.5v2.128a2.251 2.251 0 1 1-1.5 0V8.5h-1.5A2.25 2.25 0 0 1 3.5 6.25v-.878a2.25 2.25 0 1 1 1.5 0ZM5 3.25a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Zm6.75.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm-3 8.75a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Z" />
+              </svg>
+              Fork
+            </button>
+          </div>
+        </div>
+
+        <nav class="flex space-x-6 border-b border-github-border-muted -mb-px">
+          <a href="#" class="flex items-center space-x-2 px-1 py-3 border-b-2 border-orange-400 text-sm font-semibold text-github-fg-default">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z" />
+            </svg>
+            <span>Code</span>
+          </a>
+          <a href="#" class="flex items-center space-x-2 px-1 py-3 border-b-2 border-transparent text-sm font-medium text-github-fg-muted hover:text-github-fg-default hover:border-github-border-default transition-colors">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" />
+              <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Z" />
+            </svg>
+            <span>Issues</span>
+            <span class="bg-github-canvas-subtle text-github-fg-default text-xs px-1.5 py-0.5 rounded-full">0</span>
+          </a>
+          <a href="#" class="flex items-center space-x-2 px-1 py-3 border-b-2 border-transparent text-sm font-medium text-github-fg-muted hover:text-github-fg-default hover:border-github-border-default transition-colors">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M1.5 3.25a2.25 2.25 0 1 1 3 2.122v5.256a2.251 2.251 0 1 1-1.5 0V5.372A2.25 2.25 0 0 1 1.5 3.25Zm5.677-.177L9.573.677A.25.25 0 0 1 10 .854V2.5h1A2.5 2.5 0 0 1 13.5 5v5.628a2.251 2.251 0 1 1-1.5 0V5a1 1 0 0 0-1-1h-1v1.646a.25.25 0 0 1-.427.177L7.177 3.427a.25.25 0 0 1 0-.354ZM3.75 2.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm0 9.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm8.25.75a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Z" />
+            </svg>
+            <span>Pull requests</span>
+            <span class="bg-github-canvas-subtle text-github-fg-default text-xs px-1.5 py-0.5 rounded-full">0</span>
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1">
+      <!-- Repository Selector View -->
+      <div id="repoSelectorView" class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold text-github-fg-default">Your Repositories</h2>
+          <button onclick="showCreateRepoModal()" class="inline-flex items-center px-4 py-2 bg-github-btn-primary-bg hover:bg-github-btn-primary-hover text-white rounded-md text-sm font-medium transition-colors">
+            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M7.75 2a.75.75 0 0 1 .75.75V7h4.25a.75.75 0 0 1 0 1.5H8.5v4.25a.75.75 0 0 1-1.5 0V8.5H2.75a.75.75 0 0 1 0-1.5H7V2.75A.75.75 0 0 1 7.75 2Z" />
+            </svg>
+            New repository
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="repoList">
+        </div>
+      </div>
+
+      <!-- File Explorer View -->
+      <div id="explorerView" class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6 hidden">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center space-x-3">
+            <div class="relative">
+              <button id="branchSelector" class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
+                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M9.5 3.25a2.25 2.25 0 1 1 3 2.122V6A2.5 2.5 0 0 1 10 8.5H6a1 1 0 0 0-1 1v1.128a2.251 2.251 0 1 1-1.5 0V5.372a2.25 2.25 0 1 1 1.5 0v1.836A2.493 2.493 0 0 1 6 7h4a1 1 0 0 0 1-1v-.628A2.25 2.25 0 0 1 9.5 3.25Zm-6 0a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Zm8.25-.75a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5ZM4.25 12a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Z" />
+                </svg>
+                <span id="currentBranch">main</span>
+                <svg class="w-4 h-4 ml-1 text-github-fg-muted" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M12.78 5.22a.749.749 0 0 1 0 1.06l-4.25 4.25a.749.749 0 0 1-1.06 0L3.22 6.28a.749.749 0 1 1 1.06-1.06L8 8.939l3.72-3.719a.749.749 0 0 1 1.06 0Z" />
+                </svg>
+              </button>
+              <div id="branchDropdown" class="hidden absolute z-10 mt-1 w-56 bg-github-canvas-overlay border border-github-border-default rounded-md shadow-lg">
+                <div class="p-1">
+                  <input type="text" placeholder="Find or create branch..." class="w-full px-2 py-1 mb-1 bg-github-canvas-inset border border-github-border-default rounded text-sm text-github-fg-default">
+                  <div class="max-h-60 overflow-y-auto">
+                    <div class="px-2 py-1 text-sm text-github-fg-default hover:bg-github-canvas-subtle cursor-pointer">main</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <nav class="flex items-center space-x-1 text-sm" id="pathBreadcrumb">
+              <a href="#" onclick="showRepoSelector()" class="text-github-accent-fg hover:underline font-semibold">Repositories</a>
+              <span class="text-github-fg-muted">/</span>
+              <a href="#" class="text-github-accent-fg hover:underline font-semibold" id="currentRepoName">Repository</a>
+            </nav>
+          </div>
+
+          <div class="flex items-center space-x-2">
+            <button onclick="showCreateFileModal()" class="inline-flex items-center px-3 py-1.5 bg-github-btn-primary-bg hover:bg-github-btn-primary-hover text-white rounded-md text-sm font-medium transition-colors">
+              <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M7.75 2a.75.75 0 0 1 .75.75V7h4.25a.75.75 0 0 1 0 1.5H8.5v4.25a.75.75 0 0 1-1.5 0V8.5H2.75a.75.75 0 0 1 0-1.5H7V2.75A.75.75 0 0 1 7.75 2Z" />
+              </svg>
+              New
+            </button>
+            <button class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
+              <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M2.75 14A1.75 1.75 0 0 1 1 12.25v-2.5a.75.75 0 0 1 1.5 0v2.5c0 .138.112.25.25.25h10.5a.25.25 0 0 0 .25-.25v-2.5a.75.75 0 0 1 1.5 0v2.5A1.75 1.75 0 0 1 13.25 14Z" />
+                <path d="M7.25 7.689V2a.75.75 0 0 1 1.5 0v5.689l1.97-1.969a.749.749 0 1 1 1.06 1.06l-3.25 3.25a.749.749 0 0 1-1.06 0L4.22 6.78a.749.749 0 1 1 1.06-1.06l1.97 1.969Z" />
+              </svg>
+              Code
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg overflow-hidden">
+          <div class="px-4 py-3 border-b border-github-border-muted bg-github-canvas-overlay">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <img src="https://github.com/github.png" alt="User" class="w-6 h-6 rounded-full">
+                <div class="flex items-center space-x-2">
+                  <span class="text-github-fg-default font-medium">You</span>
+                  <span class="text-github-fg-default">Initial commit</span>
+                </div>
+              </div>
+              <div class="flex items-center space-x-4 text-sm text-github-fg-muted">
+                <span id="lastCommitTime">now</span>
+                <span class="font-mono" id="commitHash">abc123</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead class="bg-github-tableHeader">
+                <tr>
+                  <th class="px-4 py-2 text-left text-sm font-medium text-github-fg-default">Name</th>
+                  <th class="px-4 py-2 text-left text-sm font-medium text-github-fg-default">Last commit message</th>
+                  <th class="px-4 py-2 text-right text-sm font-medium text-github-fg-default">Updated</th>
+                </tr>
+              </thead>
+              <tbody id="fileListBody" class="divide-y divide-github-border-muted">
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="lg:col-span-2">
+            <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg p-6">
+              <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold text-github-fg-default">README.md</h2>
+                <button class="text-github-fg-muted hover:text-github-fg-default">
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M8 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z" />
+                  </svg>
+                </button>
+              </div>
+              <div class="prose prose-invert max-w-none" id="readmeContent">
+                <h1>GitHub Clone</h1>
+                <p>A professional file explorer and editor interface that mimics GitHub's design and functionality with local storage.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-6">
+            <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg p-4">
+              <h3 class="font-semibold text-github-fg-default mb-3">About</h3>
+              <p class="text-sm text-github-fg-muted mb-4" id="repoDescription">GitHub Clone with Local Storage</p>
+              <div class="space-y-2 text-sm">
+                <div class="flex items-center space-x-2">
+                  <svg class="w-4 h-4 text-github-fg-muted" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z" />
+                  </svg>
+                  <span class="text-github-fg-muted">Local file management system</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg p-4">
+              <h3 class="font-semibold text-github-fg-default mb-3">Languages</h3>
+              <div class="space-y-2" id="languageStats">
+                <div class="flex items-center justify-between text-sm">
+                  <div class="flex items-center space-x-2">
+                    <div class="w-3 h-3 rounded-full bg-orange-500"></div>
+                    <span class="text-github-fg-default">HTML</span>
+                  </div>
+                  <span class="text-github-fg-muted">47.2%</span>
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                  <div class="flex items-center space-x-2">
+                    <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+                    <span class="text-github-fg-default">JavaScript</span>
+                  </div>
+                  <span class="text-github-fg-muted">43.8%</span>
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                  <div class="flex items-center space-x-2">
+                    <div class="w-3 h-3 rounded-full bg-blue-500"></div>
+                    <span class="text-github-fg-default">CSS</span>
+                  </div>
+                  <span class="text-github-fg-muted">7.0%</span>
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                  <div class="flex items-center space-x-2">
+                    <div class="w-3 h-3 rounded-full bg-purple-500"></div>
+                    <span class="text-github-fg-default">Other</span>
+                  </div>
+                  <span class="text-github-fg-muted">2.0%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- File Viewer -->
+      <div id="fileViewer" class="hidden max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex items-center justify-between mb-4">
+          <nav class="flex items-center space-x-1 text-sm">
+            <button onclick="showExplorer()" class="text-github-accent-fg hover:underline font-semibold" id="repoNameInViewer">Repository</button>
+            <span class="text-github-fg-muted">/</span>
+            <span id="currentFileName" class="text-github-fg-default font-semibold"></span>
+          </nav>
+
+          <div class="flex items-center space-x-2">
+            <button onclick="editFile()" class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
+              <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z" />
               </svg>
               Edit
             </button>
-            <button onclick="downloadFile()" class="inline-flex items-center px-4 py-2 border border-github-border-default rounded-lg text-sm font-medium text-github-fg-default hover:bg-github-canvas-subtle transition-all duration-200">
+            <button onclick="downloadCurrentFile()" class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
               <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
-                <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                <path d="M2.75 14A1.75 1.75 0 0 1 1 12.25v-2.5a.75.75 0 0 1 1.5 0v2.5c0 .138.112.25.25.25h10.5a.25.25 0 0 0 .25-.25v-2.5a.75.75 0 0 1 1.5 0v2.5A1.75 1.75 0 0 1 13.25 14Z" />
+                <path d="M7.25 7.689V2a.75.75 0 0 1 1.5 0v5.689l1.97-1.969a.749.749 0 1 1 1.06 1.06l-3.25 3.25a.749.749 0 0 1-1.06 0L4.22 6.78a.749.749 0 1 1 1.06-1.06l1.97 1.969Z" />
               </svg>
               Download
             </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- File Content Container -->
-      <div class="bg-github-canvas-overlay border border-github-border-default rounded-xl shadow-xl overflow-hidden">
-        <!-- Content Header -->
-        <div class="bg-github-canvas-inset px-6 py-4 border-b border-github-border-muted flex items-center justify-between">
-          <div class="flex items-center space-x-4">
-            <span class="text-sm font-medium text-github-fg-default">File Content</span>
-            <div class="flex items-center space-x-2">
-              <span class="text-xs px-2 py-1 bg-github-canvas-subtle rounded-md text-github-fg-muted" id="lineCount">0 lines</span>
-              <span class="text-xs px-2 py-1 bg-github-canvas-subtle rounded-md text-github-fg-muted" id="charCount">0 characters</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Code Display -->
-        <div class="relative">
-          <div id="codeBlock" class="flex overflow-hidden">
-            <!-- Line Numbers -->
-            <div id="lineNumbers" class="bg-github-canvas-inset border-r border-github-border-muted px-4 py-4 text-github-fg-muted font-mono text-sm select-none">
-              <!-- Line numbers will be populated here -->
-            </div>
-            <!-- Code Content -->
-            <div id="codeContent" class="flex-1 p-4 overflow-x-auto">
-              <pre><code id="codeDisplay" class="font-mono text-sm leading-relaxed"><!-- Code will be displayed here --></code></pre>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- File Editor -->
-    <div id="fileEditor" class="hidden container mx-auto px-6 py-6 max-w-7xl">
-      <!-- Editor Header -->
-      <div class="bg-gradient-to-r from-github-canvas-overlay to-github-canvas-subtle border border-github-border-default rounded-xl p-6 mb-6 shadow-xl">
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <div class="flex items-center space-x-4">
-            <button onclick="cancelEdit()" class="p-2 text-github-fg-muted hover:text-github-fg-default hover:bg-github-canvas-subtle rounded-lg transition-all duration-200">
-              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
-              </svg>
-            </button>
-            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-github-success-fg to-green-400 flex items-center justify-center">
-              <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Z"/>
-              </svg>
-            </div>
-            <div>
-              <h1 class="text-xl font-bold text-github-fg-default">Edit File</h1>
-              <p class="text-github-fg-muted">
-                <span id="repoNameInEditor">Repository</span> • 
-                <span id="currentFileNameEditor">filename.ext</span>
-              </p>
-            </div>
-          </div>
-          
-          <div class="flex items-center space-x-3">
-            <button onclick="saveFile()" class="inline-flex items-center px-4 py-2 bg-github-btn-primary-bg hover:bg-github-btn-primary-hover text-white rounded-lg text-sm font-medium transition-all duration-200 hover:-translate-y-0.5">
+            <button onclick="showDeleteFileModal()" class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-danger-fg bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
               <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M2 1a1 1 0 0 1 1-1h9.586a1 1 0 0 1 .707.293l2.414 2.414a1 1 0 0 1 .293.707V15a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V1zm5 3.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-2 3v5a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-5a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5z"/>
+                <path d="M11 1.75V3h2.25a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5H5V1.75C5 .784 5.784 0 6.75 0h2.5C10.216 0 11 .784 11 1.75ZM4.496 6.675l.66 6.6a.25.25 0 0 0 .249.225h5.19a.25.25 0 0 0 .249-.225l.66-6.6a.75.75 0 0 1 1.492.149l-.66 6.6A1.748 1.748 0 0 1 10.595 15h-5.19a1.748 1.748 0 0 1-1.741-1.575l-.66-6.6a.75.75 0 1 1 1.492-.15ZM6.5 1.75V3h3V1.75a.25.25 0 0 0-.25-.25h-2.5a.25.25 0 0 0-.25.25Z" />
               </svg>
-              Save Changes
+              Delete
             </button>
-            <button onclick="cancelEdit()" class="inline-flex items-center px-4 py-2 border border-github-border-default rounded-lg text-sm font-medium text-github-fg-default hover:bg-github-canvas-subtle transition-all duration-200">
+          </div>
+        </div>
+
+        <div class="bg-github-canvas-overlay border border-github-border-default rounded-t-lg px-4 py-2 flex items-center justify-between text-sm">
+          <div class="flex items-center space-x-4 text-github-fg-muted">
+            <span id="fileLinesCount">0 lines</span>
+            <span>•</span>
+            <span id="fileSize">0 KB</span>
+            <span>•</span>
+            <span id="fileLanguageDisplay">Text</span>
+          </div>
+          <div class="flex items-center space-x-1">
+            <button class="p-2 rounded hover:bg-github-canvas-subtle text-github-fg-muted hover:text-github-fg-default transition-colors">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M8 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-github-canvas-overlay border-x border-b border-github-border-default rounded-b-lg overflow-hidden">
+          <div class="flex">
+            <div id="lineNumbers" class="bg-github-canvas-inset border-r border-github-border-muted p-4 text-right text-github-fg-muted font-mono text-sm leading-5 select-none min-w-[3rem]">
+            </div>
+            <div class="flex-1 overflow-auto">
+              <pre id="codeContent" class="p-4 text-sm font-mono leading-5 overflow-auto"><code id="codeBlock" class="language-javascript"></code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 bg-github-canvas-overlay border border-github-border-default rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-github-fg-default mb-4">File Details</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-github-fg-muted">Created:</span>
+                <span class="text-github-fg-default" id="fileCreated">now</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-github-fg-muted">Modified:</span>
+                <span class="text-github-fg-default" id="fileModified">now</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-github-fg-muted">Language:</span>
+                <span class="text-github-fg-default" id="fileLanguage">JavaScript</span>
+              </div>
+            </div>
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-github-fg-muted">Category:</span>
+                <span class="text-github-fg-default" id="fileCategory">General</span>
+              </div>
+              <div>
+                <span class="text-github-fg-muted block mb-2">Tags:</span>
+                <div class="flex flex-wrap gap-1" id="fileTags">
+                  <span class="text-github-fg-muted text-sm">No tags</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- File Editor -->
+      <div id="fileEditor" class="hidden max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex items-center justify-between mb-4">
+          <nav class="flex items-center space-x-1 text-sm">
+            <button onclick="showFileViewer()" class="text-github-accent-fg hover:underline font-semibold" id="repoNameInEditor">Repository</button>
+            <span class="text-github-fg-muted">/</span>
+            <span id="editingFileName" class="text-github-fg-default font-semibold"></span>
+          </nav>
+
+          <div class="flex items-center space-x-2">
+            <button onclick="saveFile()" class="inline-flex items-center px-3 py-1.5 bg-github-btn-primary-bg hover:bg-github-btn-primary-hover text-white rounded-md text-sm font-medium transition-colors">
+              <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z" />
+              </svg>
+              Save changes
+            </button>
+            <button onclick="showFileViewer()" class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
               Cancel
             </button>
           </div>
         </div>
-      </div>
 
-      <!-- Editor Container -->
-      <div class="bg-github-canvas-overlay border border-github-border-default rounded-xl shadow-xl overflow-hidden">
-        <!-- Editor Toolbar -->
-        <div class="bg-github-canvas-inset px-6 py-3 border-b border-github-border-muted flex items-center justify-between">
-          <div class="flex items-center space-x-4">
-            <span class="text-sm font-medium text-github-fg-default">Code Editor</span>
-            <div class="flex items-center space-x-2">
-              <button id="wrapTextBtn" class="text-xs px-3 py-1 bg-github-canvas-subtle hover:bg-github-canvas-default rounded-md text-github-fg-muted hover:text-github-fg-default transition-colors">
-                Wrap: Off
-              </button>
-              <span class="text-xs px-2 py-1 bg-github-canvas-subtle rounded-md text-github-fg-muted" id="editorLineCount">0 lines</span>
+        <div class="flex border-b border-github-border-default mb-4">
+          <button class="px-4 py-2 border-b-2 border-orange-400 text-sm font-medium text-github-fg-default">
+            <svg class="w-4 h-4 inline mr-2" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z" />
+            </svg>
+            Edit file
+          </button>
+          <button onclick="previewFile()" class="px-4 py-2 border-b-2 border-transparent text-sm font-medium text-github-fg-muted hover:text-github-fg-default">
+            <svg class="w-4 h-4 inline mr-2" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M8 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z" />
+            </svg>
+            Preview
+          </button>
+        </div>
+
+        <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg overflow-hidden">
+          <div id="codeEditorContainer" class="h-96"></div>
+        </div>
+
+        <div class="mt-6 bg-github-canvas-overlay border border-github-border-default rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-github-fg-default mb-4">Commit changes</h3>
+          <div class="space-y-4">
+            <div>
+              <input type="text" id="commitTitle" placeholder="Update filename.ext" class="w-full px-3 py-2 bg-github-canvas-inset border border-github-border-default rounded-md text-github-fg-default placeholder-github-fg-muted focus:outline-none focus:ring-2 focus:ring-github-accent-emphasis focus:border-transparent">
+            </div>
+            <div>
+              <textarea id="commitDescription" rows="4" placeholder="Add an optional extended description..." class="w-full px-3 py-2 bg-github-canvas-inset border border-github-border-default rounded-md text-github-fg-default placeholder-github-fg-muted focus:outline-none focus:ring-2 focus:ring-github-accent-emphasis focus:border-transparent resize-none"></textarea>
             </div>
           </div>
-          <div class="flex items-center space-x-2">
-            <span class="text-xs text-github-fg-muted" id="cursorPosition">Ln 1, Col 1</span>
-          </div>
-        </div>
-
-        <!-- CodeMirror Editor -->
-        <div id="editorContainer" class="relative">
-          <textarea id="initialContentEditor" class="hidden"></textarea>
         </div>
       </div>
-    </div>
-  </div>
-
-  <!-- Modals -->
-  
-  <!-- Create Repository Modal -->
-  <div id="createRepoModal" class="fixed inset-0 z-[9999] hidden items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-    <div class="bg-github-canvas-overlay border border-github-border-default rounded-2xl shadow-2xl w-full max-w-md mx-auto animate-scale-in">
-      <div class="px-6 py-5 border-b border-github-border-default">
-        <div class="flex items-center justify-between">
-          <h3 class="text-lg font-semibold text-github-fg-default">Create new repository</h3>
-          <button onclick="hideCreateRepoModal()" class="text-github-fg-muted hover:text-github-fg-default transition-colors rounded-lg p-1">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z"/>
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      <form onsubmit="createRepository(event)" class="p-6 space-y-5">
-        <div>
-          <label for="repoName" class="block text-sm font-medium text-github-fg-default mb-2">Repository name *</label>
-          <input type="text" id="repoName" required class="w-full px-3 py-2.5 bg-github-canvas-inset border border-github-border-default rounded-lg text-github-fg-default placeholder-github-fg-muted focus:outline-none focus:ring-2 focus:ring-github-accent-emphasis focus:border-transparent" placeholder="my-awesome-project">
-        </div>
-        <div>
-          <label for="repoDescription" class="block text-sm font-medium text-github-fg-default mb-2">Description</label>
-          <textarea id="repoDescription" rows="3" class="w-full px-3 py-2.5 bg-github-canvas-inset border border-github-border-default rounded-lg text-github-fg-default placeholder-github-fg-muted focus:outline-none focus:ring-2 focus:ring-github-accent-emphasis focus:border-transparent resize-none" placeholder="A brief description of your repository"></textarea>
-        </div>
-        <div>
-          <label for="repoTags" class="block text-sm font-medium text-github-fg-default mb-2">Tags (comma-separated)</label>
-          <input type="text" id="repoTags" class="w-full px-3 py-2.5 bg-github-canvas-inset border border-github-border-default rounded-lg text-github-fg-default placeholder-github-fg-muted focus:outline-none focus:ring-2 focus:ring-github-accent-emphasis focus:border-transparent" placeholder="javascript, react, frontend">
-        </div>
-        <div class="flex items-center justify-end space-x-3 pt-4">
-          <button type="button" onclick="hideCreateRepoModal()" class="px-4 py-2.5 border border-github-border-default rounded-lg text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-all duration-200">
-            Cancel
-          </button>
-          <button type="submit" class="px-4 py-2.5 bg-gradient-to-r from-github-btn-primary-bg to-github-btn-primary-hover text-white rounded-lg text-sm font-medium hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200">
-            Create Repository
-          </button>
-        </div>
-      </form>
-    </div>
+    </main>
   </div>
 
   <!-- Create File Modal -->
-  <div id="createFileModal" class="fixed inset-0 z-[9999] hidden items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-    <div class="bg-github-canvas-overlay border border-github-border-default rounded-2xl shadow-2xl w-full max-w-2xl mx-auto animate-scale-in">
-      <div class="px-6 py-5 border-b border-github-border-default">
+  <div id="createFileModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg shadow-2xl w-full max-w-2xl animate-scale-in">
+      <div class="px-6 py-4 border-b border-github-border-default">
         <div class="flex items-center justify-between">
           <h3 class="text-lg font-semibold text-github-fg-default">Create new file</h3>
-          <button onclick="hideCreateFileModal()" class="text-github-fg-muted hover:text-github-fg-default transition-colors rounded-lg p-1">
+          <button onclick="hideCreateFileModal()" class="text-github-fg-muted hover:text-github-fg-default transition-colors">
             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z"/>
+              <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z" />
             </svg>
           </button>
         </div>
       </div>
 
-      <form onsubmit="createFile(event)" class="p-6">
-        <div class="space-y-5">
-          <div>
-            <label for="fileName" class="block text-sm font-medium text-github-fg-default mb-2">File name *</label>
-            <input type="text" id="fileName" required class="w-full px-3 py-2.5 bg-github-canvas-inset border border-github-border-default rounded-lg text-github-fg-default placeholder-github-fg-muted focus:outline-none focus:ring-2 focus:ring-github-accent-emphasis focus:border-transparent" placeholder="index.html">
+      <div class="p-6 space-y-6">
+        <div>
+          <label class="block text-sm font-medium text-github-fg-default mb-2">Name your file...</label>
+          <div class="flex items-center bg-github-canvas-inset border border-github-border-default rounded-md overflow-hidden focus-within:ring-2 focus-within:ring-github-accent-emphasis focus-within:border-transparent">
+            <span class="px-3 py-2 bg-github-canvas-subtle border-r border-github-border-default text-github-fg-muted text-sm font-mono" id="currentPathPrefix">Repository/</span>
+            <input type="text" id="newFileName" placeholder="filename.ext" class="flex-1 px-3 py-2 bg-transparent border-none text-github-fg-default placeholder-github-fg-muted focus:outline-none text-sm">
           </div>
-          <div>
-            <label for="initialContent" class="block text-sm font-medium text-github-fg-default mb-2">Initial content</label>
-            <div class="border border-github-border-default rounded-lg overflow-hidden">
-              <textarea id="initialContent" rows="12" class="w-full px-4 py-3 bg-github-canvas-inset text-github-fg-default font-mono text-sm leading-relaxed placeholder-github-fg-muted focus:outline-none resize-none" placeholder="Start typing your code..."></textarea>
+          <p class="mt-1 text-xs text-github-fg-muted">The file extension will determine syntax highlighting</p>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-github-fg-default mb-2">Category (optional)</label>
+          <input type="text" id="fileCategoryInput" maxlength="15" placeholder="e.g., Component, Utility, Config" class="w-full px-3 py-2 bg-github-canvas-inset border border-github-border-default rounded-md text-github-fg-default placeholder-github-fg-muted focus:outline-none focus:ring-2 focus:ring-github-accent-emphasis focus:border-transparent">
+          <p class="mt-1 text-xs text-github-fg-muted">Maximum 15 characters</p>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-github-fg-default mb-2">Tags (optional)</label>
+          <div class="space-y-2">
+            <div id="selectedTags" class="flex flex-wrap gap-2 min-h-[2rem]">
+            </div>
+            <div class="flex items-center space-x-2">
+              <input type="text" id="tagInput" placeholder="Add a tag..." class="flex-1 px-3 py-2 bg-github-canvas-inset border border-github-border-default rounded-md text-github-fg-default placeholder-github-fg-muted focus:outline-none focus:ring-2 focus:ring-github-accent-emphasis focus:border-transparent text-sm">
+              <button onclick="addTag()" class="px-3 py-2 bg-github-accent-emphasis hover:bg-github-accent-fg text-white rounded-md text-sm font-medium transition-colors">
+                Add
+              </button>
             </div>
           </div>
+          <p class="mt-1 text-xs text-github-fg-muted">Press Enter or click Add to add tags</p>
         </div>
-        <div class="flex items-center justify-end space-x-3 pt-6">
-          <button type="button" onclick="hideCreateFileModal()" class="px-4 py-2.5 border border-github-border-default rounded-lg text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-all duration-200">
-            Cancel
-          </button>
-          <button type="submit" class="px-4 py-2.5 bg-gradient-to-r from-github-btn-primary-bg to-github-btn-primary-hover text-white rounded-lg text-sm font-medium hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200">
-            Create File
-          </button>
+
+        <div>
+          <label class="block text-sm font-medium text-github-fg-default mb-2">Initial content (optional)</label>
+          <div id="initialContentEditor" class="border border-github-border-default rounded-sm h-20"></div>
         </div>
-      </form>
+      </div>
+
+      <div class="px-6 py-4 border-t border-github-border-default bg-github-canvas-subtle flex items-center justify-end space-x-3">
+        <button onclick="hideCreateFileModal()" class="px-4 py-2 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
+          Cancel
+        </button>
+        <button onclick="createFile()" class="px-4 py-2 bg-github-btn-primary-bg hover:bg-github-btn-primary-hover text-white rounded-md text-sm font-medium transition-colors">
+          Create file
+        </button>
+      </div>
     </div>
   </div>
 
-  <!-- Delete Repository Modal -->
-  <div id="deleteRepoModal" class="fixed inset-0 z-[9999] hidden items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-    <div class="bg-github-canvas-overlay border border-github-border-default rounded-2xl shadow-2xl w-full max-w-md mx-auto animate-scale-in">
-      <div class="px-6 py-5 border-b border-github-border-default">
+  <!-- Create Repository Modal -->
+  <div id="createRepoModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg shadow-2xl w-full max-w-2xl animate-scale-in">
+      <div class="px-6 py-4 border-b border-github-border-default">
         <div class="flex items-center justify-between">
-          <h3 class="text-lg font-semibold text-github-fg-default">Delete repository</h3>
-          <button onclick="hideDeleteRepoModal()" class="text-github-fg-muted hover:text-github-fg-default transition-colors rounded-lg p-1">
+          <h3 class="text-lg font-semibold text-github-fg-default">Create new repository</h3>
+          <button onclick="hideCreateRepoModal()" class="text-github-fg-muted hover:text-github-fg-default transition-colors">
             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z"/>
+              <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z" />
             </svg>
           </button>
         </div>
       </div>
 
-      <div class="p-6">
-        <div class="flex items-start space-x-4 mb-5">
-          <div class="w-12 h-12 rounded-lg bg-github-danger-fg/20 flex items-center justify-center flex-shrink-0">
-            <svg class="w-6 h-6 text-github-danger-fg" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
-              <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/>
-            </svg>
-          </div>
-          <div>
-            <h4 class="text-lg font-semibold text-github-fg-default mb-2">Are you sure?</h4>
-            <p class="text-github-fg-default mb-4">This will permanently delete the repository <span id="repoToDeleteName" class="font-semibold text-github-danger-fg">repository-name</span> and all of its files. This action cannot be undone.</p>
+      <div class="p-6 space-y-6">
+        <div>
+          <label class="block text-sm font-medium text-github-fg-default mb-2">Repository name</label>
+          <input type="text" id="newRepoName" placeholder="repository-name" class="w-full px-3 py-2 bg-github-canvas-inset border border-github-border-default rounded-md text-github-fg-default placeholder-github-fg-muted focus:outline-none focus:ring-2 focus:ring-github-accent-emphasis focus:border-transparent">
+          <p class="mt-1 text-xs text-github-fg-muted">Great repository names are short and memorable.</p>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-github-fg-default mb-2">Description (optional)</label>
+          <textarea id="repoDescriptionInput" rows="3" placeholder="A short description of your repository" class="w-full px-3 py-2 bg-github-canvas-inset border border-github-border-default rounded-md text-github-fg-default placeholder-github-fg-muted focus:outline-none focus:ring-2 focus:ring-github-accent-emphasis focus:border-transparent resize-none"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-github-fg-default mb-2">Visibility</label>
+          <div class="space-y-2">
+            <div class="flex items-center space-x-3 p-3 border border-github-border-default rounded-md">
+              <input type="radio" id="visibilityPublic" name="visibility" value="public" checked class="text-github-accent-fg focus:ring-github-accent-fg">
+              <div>
+                <label for="visibilityPublic" class="block text-sm font-medium text-github-fg-default">Public</label>
+                <p class="text-xs text-github-fg-muted">Anyone can see this repository locally.</p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-3 p-3 border border-github-border-default rounded-md">
+              <input type="radio" id="visibilityPrivate" name="visibility" value="private" class="text-github-accent-fg focus:ring-github-accent-fg">
+              <div>
+                <label for="visibilityPrivate" class="block text-sm font-medium text-github-fg-default">Private</label>
+                <p class="text-xs text-github-fg-muted">Only you can see this repository.</p>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="flex items-center justify-end space-x-3">
-          <button onclick="hideDeleteRepoModal()" class="px-4 py-2.5 border border-github-border-default rounded-lg text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-all duration-200">
-            Cancel
-          </button>
-          <button onclick="confirmDeleteRepository()" class="px-4 py-2.5 bg-github-danger-fg hover:bg-red-600 text-white rounded-lg text-sm font-medium transition-all duration-200">
-            Delete Repository
-          </button>
+
+        <div>
+          <div class="flex items-center space-x-3">
+            <input type="checkbox" id="initReadme" checked class="text-github-accent-fg focus:ring-github-accent-fg">
+            <label for="initReadme" class="text-sm font-medium text-github-fg-default">Initialize this repository with a README</label>
+          </div>
         </div>
+      </div>
+
+      <div class="px-6 py-4 border-t border-github-border-default bg-github-canvas-subtle flex items-center justify-end space-x-3">
+        <button onclick="hideCreateRepoModal()" class="px-4 py-2 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
+          Cancel
+        </button>
+        <button onclick="createRepository()" class="px-4 py-2 bg-github-btn-primary-bg hover:bg-github-btn-primary-hover text-white rounded-md text-sm font-medium transition-colors">
+          Create repository
+        </button>
       </div>
     </div>
   </div>
 
   <!-- Delete File Modal -->
-  <div id="deleteFileModal" class="fixed inset-0 z-[9999] hidden items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-    <div class="bg-github-canvas-overlay border border-github-border-default rounded-2xl shadow-2xl w-full max-w-md mx-auto animate-scale-in">
-      <div class="px-6 py-5 border-b border-github-border-default">
+  <div id="deleteFileModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg shadow-2xl w-full max-w-md animate-scale-in">
+      <div class="px-6 py-4 border-b border-github-border-default">
         <div class="flex items-center justify-between">
           <h3 class="text-lg font-semibold text-github-fg-default">Delete file</h3>
-          <button onclick="hideDeleteFileModal()" class="text-github-fg-muted hover:text-github-fg-default transition-colors rounded-lg p-1">
+          <button onclick="hideDeleteFileModal()" class="text-github-fg-muted hover:text-github-fg-default transition-colors">
             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z"/>
+              <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z" />
             </svg>
           </button>
         </div>
       </div>
 
       <div class="p-6">
-        <div class="flex items-start space-x-4 mb-5">
-          <div class="w-12 h-12 rounded-lg bg-github-danger-fg/20 flex items-center justify-center flex-shrink-0">
-            <svg class="w-6 h-6 text-github-danger-fg" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
-              <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/>
-            </svg>
-          </div>
-          <div>
-            <h4 class="text-lg font-semibold text-github-fg-default mb-2">Delete file?</h4>
-            <p class="text-github-fg-default">Are you sure you want to delete <span id="fileToDeleteName" class="font-semibold text-github-danger-fg">filename.ext</span>? This action cannot be undone.</p>
-          </div>
-        </div>
+        <p class="text-github-fg-default mb-4">Are you sure you want to delete <span id="fileToDeleteName" class="font-semibold">filename.ext</span>? This action cannot be undone.</p>
         <div class="flex items-center justify-end space-x-3">
-          <button onclick="hideDeleteFileModal()" class="px-4 py-2.5 border border-github-border-default rounded-lg text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-all duration-200">
+          <button onclick="hideDeleteFileModal()" class="px-4 py-2 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
             Cancel
           </button>
-          <button onclick="confirmDeleteFile()" class="px-4 py-2.5 bg-github-danger-fg hover:bg-red-600 text-white rounded-lg text-sm font-medium transition-all duration-200">
-            Delete File
+          <button onclick="confirmDeleteFile()" class="px-4 py-2 bg-github-danger-fg hover:bg-red-600 text-white rounded-md text-sm font-medium transition-colors">
+            Delete
           </button>
         </div>
       </div>
     </div>
   </div>
+  
+  
+  
+<!-- Loading Progress Bar -->
+<div id="loadingProgressBar"></div>
 
-  <!-- Success/Error Notifications -->
-  <div id="notificationContainer" class="fixed top-20 right-4 z-[9999] space-y-3">
-    <!-- Notifications will be dynamically inserted here -->
-  </div>
+  
+  
+  
+  
 
-  <!-- Scripts -->
-  <script src="./core.js"></script>
+  <script src="./primary.js"></script>
   
   <script>
-    // Enhanced script loading verification
-    (function() {
-      let retryCount = 0;
-      const maxRetries = 3;
-      
-      function verifyScriptLoading() {
-        if (typeof showCreateRepoModal === 'undefined' && retryCount < maxRetries) {
-          console.warn('primary.js functions not loaded, retry attempt:', retryCount + 1);
-          retryCount++;
-          
-          // Try to reload the script
-          const script = document.createElement('script');
-          script.src = './primary.js';
-          script.onload = function() {
-            console.log('Script reloaded successfully');
-          };
-          script.onerror = function() {
-            console.error('Script reload failed, using fallbacks');
-            loadFallbackFunctions();
-          };
-          document.head.appendChild(script);
-          
-          setTimeout(verifyScriptLoading, 1000);
-        } else if (typeof showCreateRepoModal === 'undefined') {
-          console.error('primary.js failed to load after retries. Loading inline fallbacks...');
-          loadFallbackFunctions();
-        } else {
-          console.log('primary.js loaded successfully');
-        }
-      }
-      
-      function loadFallbackFunctions() {
-        // Comprehensive fallback functions
-        window.showCreateRepoModal = function() {
-          const modal = document.getElementById('createRepoModal');
-          if (modal) {
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            console.log('Using fallback showCreateRepoModal');
-          }
-        };
-        
-        window.hideCreateRepoModal = function() {
-          const modal = document.getElementById('createRepoModal');
-          if (modal) {
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-          }
-        };
-        
-        window.showCreateFileModal = function() {
-          const modal = document.getElementById('createFileModal');
-          if (modal) {
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            console.log('Using fallback showCreateFileModal');
-          }
-        };
-        
-        window.hideCreateFileModal = function() {
-          const modal = document.getElementById('createFileModal');
-          if (modal) {
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-          }
-        };
-        
-        window.showDeleteFileModal = function(fileName) {
-          const modal = document.getElementById('deleteFileModal');
-          if (modal) {
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            console.log('Using fallback showDeleteFileModal for:', fileName);
-          }
-        };
-        
-        window.hideDeleteFileModal = function() {
-          const modal = document.getElementById('deleteFileModal');
-          if (modal) {
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-          }
-        };
-        
-        window.showDeleteRepoModal = function(repoName) {
-          const modal = document.getElementById('deleteRepoModal');
-          if (modal) {
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            console.log('Using fallback showDeleteRepoModal for:', repoName);
-          }
-        };
-        
-        window.hideDeleteRepoModal = function() {
-          const modal = document.getElementById('deleteRepoModal');
-          if (modal) {
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-          }
-        };
-        
-        window.toggleTheme = function() {
-          const html = document.documentElement;
-          html.classList.toggle('dark');
-          localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
-          console.log('Using fallback theme toggle');
-        };
-        
-        window.createRepository = function(event) {
-          event.preventDefault();
-          alert('Repository creation is temporarily unavailable. Please refresh the page.');
-        };
-        
-        window.createFile = function(event) {
-          event.preventDefault();
-          alert('File creation is temporarily unavailable. Please refresh the page.');
-        };
-        
-        window.openRepository = function(repoName) {
-          alert('Repository opening is temporarily unavailable. Please refresh the page.');
-        };
-        
-        window.viewFile = function(fileName) {
-          alert('File viewing is temporarily unavailable. Please refresh the page.');
-        };
-        
-        // Basic initialization
-        const savedTheme = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        
-        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-          document.documentElement.classList.add('dark');
-        }
-        
-        console.log('Fallback functions loaded');
-      }
-      
-      // Start verification after a short delay
-      setTimeout(verifyScriptLoading, 500);
-    })();
+    // Fallback in case external script doesn't load
+    if (typeof showCreateRepoModal === 'undefined') {
+      console.error('script_fixed.js failed to load. Loading inline...');
+      // Minimal fallback functions
+      window.showCreateRepoModal = function() {
+        document.getElementById('createRepoModal').classList.remove('hidden');
+        document.getElementById('createRepoModal').classList.add('flex');
+      };
+      window.hideCreateRepoModal = function() {
+        document.getElementById('createRepoModal').classList.add('hidden');
+        document.getElementById('createRepoModal').classList.remove('flex');
+      };
+    }
   </script>
+  
+  
+    <!-- Eruda -->
+    <!-- D E B U G G I N G -->
+    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+    <script>
+      eruda.init();
+    </script>
+  
 </body>
 </html>
