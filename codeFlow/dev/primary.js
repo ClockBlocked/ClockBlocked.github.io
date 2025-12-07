@@ -688,7 +688,9 @@ function displayFileContent(filename, fileData) {
     } else {
       fileTags.innerHTML = '<span class="text-github-fg-muted text-sm">No tags</span>';
     }
-  }  setTimeout (adjustCodeBlockHeight, 50);
+  }
+  
+  setTimeout(adjustCodeBlockHeight, 50);
 }
 
 function editFile() {
@@ -1062,10 +1064,16 @@ document.addEventListener('DOMContentLoaded', initializeApp);
 // Add to global state
 let recentFiles = JSON.parse(localStorage.getItem('gitcodr_recent_files') || '[]');
 let isPageTransition = false;
+let progressInterval = null;
 
-// Progress Bar Functions
+// Enhanced Progress Bar Functions
 function startPageTransition() {
   isPageTransition = true;
+  
+  // Clear any existing interval
+  if (progressInterval) {
+    clearInterval(progressInterval);
+  }
   
   // Show progress bar
   const progressBar = document.getElementById('loadingProgressBar');
@@ -1076,9 +1084,10 @@ function startPageTransition() {
   
   // Simulate realistic loading with random progress increments
   let progress = 10;
-  const interval = setInterval(() => {
-    if (progress >= 90) {
-      clearInterval(interval);
+  progressInterval = setInterval(() => {
+    if (progress >= 90 || !isPageTransition) {
+      clearInterval(progressInterval);
+      progressInterval = null;
       return;
     }
     
@@ -1103,6 +1112,12 @@ function startPageTransition() {
 }
 
 function completePageTransition() {
+  // Clear any running interval
+  if (progressInterval) {
+    clearInterval(progressInterval);
+    progressInterval = null;
+  }
+  
   const progressBar = document.getElementById('loadingProgressBar');
   if (progressBar) {
     progressBar.style.width = '100%';
@@ -1118,6 +1133,8 @@ function completePageTransition() {
       }
       isPageTransition = false;
     }, 300);
+  } else {
+    isPageTransition = false;
   }
 }
 
@@ -1326,6 +1343,9 @@ function updateRecentFilesUI() {
   if (recentFilesCount) {
     recentFilesCount.textContent = recentFiles.length.toString();
   }
+  
+  // Also update top menu recent files
+  updateTopRecentFilesUI();
 }
 
 function openRecentFile(repoName, filePath, fileName) {
@@ -1468,6 +1488,9 @@ function updateStats() {
       statsText.textContent = '0 files';
     }
   }
+  
+  // Also update top menu stats
+  updateTopMenuStats();
 }
 
 // Modified viewFile function to add to recent files
@@ -1608,57 +1631,131 @@ function showExplorer() {
   }
 }
 
-// Initialize navbar event listeners
+// Initialize navbar event listeners for top menu bar
 function setupNavbarEventListeners() {
-  const recentFilesBtn = document.getElementById('recentFilesBtn');
-  const quickActionsBtn = document.getElementById('quickActionsBtn');
+  const topRecentFilesBtn = document.getElementById('topRecentFilesBtn');
+  const topQuickActionsBtn = document.getElementById('topQuickActionsBtn');
   
-  if (recentFilesBtn) {
-    recentFilesBtn.addEventListener('click', (e) => {
+  if (topRecentFilesBtn) {
+    topRecentFilesBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      const popover = document.getElementById('recentFilesPopover');
-      if (popover && popover.classList.contains('show')) {
-        hideRecentFilesPopover();
+      const popover = document.getElementById('topRecentFilesPopover');
+      if (popover && popover.classList.contains('opacity-100')) {
+        hideTopRecentFilesPopover();
       } else {
-        showRecentFilesPopover();
-        hideQuickActionsMenu();
+        showTopRecentFilesPopover();
+        hideTopQuickActionsMenu();
       }
     });
   }
   
-  if (quickActionsBtn) {
-    quickActionsBtn.addEventListener('click', (e) => {
+  if (topQuickActionsBtn) {
+    topQuickActionsBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      const menu = document.getElementById('quickActionsMenu');
-      if (menu && menu.classList.contains('show')) {
-        hideQuickActionsMenu();
+      const menu = document.getElementById('topQuickActionsMenu');
+      if (menu && menu.classList.contains('opacity-100')) {
+        hideTopQuickActionsMenu();
       } else {
-        showQuickActionsMenu();
-        hideRecentFilesPopover();
+        showTopQuickActionsMenu();
+        hideTopRecentFilesPopover();
       }
     });
   }
   
-  // Show navbar on scroll
-  let lastScrollTop = 0;
-  window.addEventListener('scroll', () => {
-    const navbar = document.getElementById('floatingNavbar');
-    if (navbar) {
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      
-      if (scrollTop > lastScrollTop && scrollTop > 100) {
-        // Scrolling down, hide navbar
-        navbar.style.transform = 'translateX(-50%) translateY(-100px)';
-        navbar.style.opacity = '0';
-      } else {
-        // Scrolling up or at top, show navbar
-        navbar.style.transform = 'translateX(-50%) translateY(0)';
-        navbar.style.opacity = '1';
-      }
-      
-      lastScrollTop = scrollTop;
+  // Close dropdowns when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('#topQuickActionsBtn') && !e.target.closest('#topQuickActionsMenu')) {
+      hideTopQuickActionsMenu();
+    }
+    if (!e.target.closest('#topRecentFilesBtn') && !e.target.closest('#topRecentFilesPopover')) {
+      hideTopRecentFilesPopover();
     }
   });
+  
+  // Update stats in top menu
+  updateTopMenuStats();
+}
+
+// Top menu bar functions
+function showTopRecentFilesPopover() {
+  updateTopRecentFilesUI();
+  const popover = document.getElementById('topRecentFilesPopover');
+  if (popover) {
+    popover.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+    popover.classList.add('opacity-100', 'scale-100', 'pointer-events-auto');
+  }
+}
+
+function hideTopRecentFilesPopover() {
+  const popover = document.getElementById('topRecentFilesPopover');
+  if (popover) {
+    popover.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
+    popover.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+  }
+}
+
+function showTopQuickActionsMenu() {
+  const menu = document.getElementById('topQuickActionsMenu');
+  if (menu) {
+    menu.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+    menu.classList.add('opacity-100', 'scale-100', 'pointer-events-auto');
+  }
+}
+
+function hideTopQuickActionsMenu() {
+  const menu = document.getElementById('topQuickActionsMenu');
+  if (menu) {
+    menu.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
+    menu.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+  }
+}
+
+function updateTopRecentFilesUI() {
+  const topRecentFilesList = document.getElementById('topRecentFilesList');
+  const topRecentFilesCount = document.getElementById('topRecentFilesCount');
+  
+  if (topRecentFilesList) {
+    if (recentFiles.length === 0) {
+      topRecentFilesList.innerHTML = `
+        <div class="text-center py-4 text-github-fg-muted text-sm">
+          <svg class="w-8 h-8 mx-auto mb-2" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z"/>
+          </svg>
+          <p>No recent files</p>
+        </div>
+      `;
+    } else {
+      topRecentFilesList.innerHTML = recentFiles.map(file => `
+        <div class="flex items-center space-x-3 p-2 hover:bg-github-canvas-subtle rounded cursor-pointer" 
+             onclick="openRecentFile('${file.filePath}', '${file.repoName}')">
+          <svg class="w-4 h-4 text-github-accent-fg flex-shrink-0" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"/>
+          </svg>
+          <div class="flex-1 min-w-0">
+            <div class="text-sm font-medium text-github-fg-default truncate">${file.fileName}</div>
+            <div class="text-xs text-github-fg-muted truncate">${file.repoName} • ${formatDate(file.timestamp)}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+  }
+  
+  if (topRecentFilesCount) {
+    topRecentFilesCount.textContent = recentFiles.length;
+  }
+}
+
+function updateTopMenuStats() {
+  const topStatsText = document.getElementById('topStatsText');
+  if (topStatsText) {
+    if (currentState.repository && currentState.files.length > 0) {
+      const fileCount = currentState.files.filter(f => f.type === 'file').length;
+      const folderCount = currentState.files.filter(f => f.type === 'folder').length;
+      topStatsText.textContent = `${fileCount} files${folderCount > 0 ? ', ' + folderCount + ' folders' : ''}`;
+    } else {
+      topStatsText.textContent = '0 files';
+    }
+  }
 }
 
 // Update initializeApp function
@@ -1669,12 +1766,9 @@ function initializeApp() {
   setupCodeEditors();
   setupNavbarEventListeners();
   
-  // Show navbar
-  const navbar = document.getElementById('floatingNavbar');
-  if (navbar) navbar.classList.remove('hidden');
-  
   // Load recent files
   updateRecentFilesUI();
+  updateTopRecentFilesUI();
   
   // Load repositories with loading animation
   startPageTransition();
@@ -1694,9 +1788,10 @@ function initializeApp() {
 // Add new functions to global scope
 window.startPageTransition = startPageTransition;
 window.completePageTransition = completePageTransition;
-window.showRecentFilesPopover = showRecentFilesPopover;
-window.hideRecentFilesPopover = hideRecentFilesPopover;
-window.showQuickActionsMenu = showQuickActionsMenu;
-window.hideQuickActionsMenu = hideQuickActionsMenu;
+window.showTopRecentFilesPopover = showTopRecentFilesPopover;
+window.hideTopRecentFilesPopover = hideTopRecentFilesPopover;
+window.showTopQuickActionsMenu = showTopQuickActionsMenu;
+window.hideTopQuickActionsMenu = hideTopQuickActionsMenu;
+window.updateTopMenuStats = updateTopMenuStats;
 window.toggleTheme = toggleTheme;
 window.openRecentFile = openRecentFile;
