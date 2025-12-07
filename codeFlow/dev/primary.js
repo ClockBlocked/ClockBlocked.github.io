@@ -671,14 +671,27 @@ function displayFileContent(filename, fileData) {
   const codeBlock = document.getElementById('codeBlock');
   if (codeBlock) {
     codeBlock.textContent = fileData.content;
-    codeBlock.className = `language-${language.toLowerCase()}`;
+    
+    // IMPORTANT FIX: Use proper Prism language class
+    const prismLang = getPrismLanguage(ext);
+    codeBlock.className = `language-${prismLang}`;
+    
+    // Remove existing classes
+    codeBlock.removeAttribute('class');
+    codeBlock.className = `language-${prismLang}`;
   }
   
   const lines = fileData.content.split('\n');
   const lineNumbers = document.getElementById('lineNumbers');
   if (lineNumbers) lineNumbers.innerHTML = lines.map((_, i) => `<div>${i + 1}</div>`).join('');
   
-  if (window.Prism && codeBlock) Prism.highlightElement(codeBlock);
+  // Wait a bit for DOM to update, then highlight
+  setTimeout(() => {
+    if (window.Prism && codeBlock) {
+      // Force re-highlight
+      Prism.highlightElement(codeBlock);
+    }
+  }, 50);
   
   if (fileCategory) fileCategory.textContent = fileData.category || 'General';
   
@@ -690,7 +703,43 @@ function displayFileContent(filename, fileData) {
     }
   }
   
-  setTimeout(adjustCodeBlockHeight, 50);
+  // Adjust code block height after everything is loaded
+  setTimeout(adjustCodeBlockHeight, 100);
+}
+
+// Add this helper function
+function getPrismLanguage(ext) {
+  const languageMap = {
+    'js': 'javascript',
+    'javascript': 'javascript',
+    'ts': 'typescript',
+    'typescript': 'typescript',
+    'html': 'html',
+    'htm': 'html',
+    'css': 'css',
+    'scss': 'css',
+    'sass': 'css',
+    'less': 'css',
+    'json': 'json',
+    'md': 'markdown',
+    'markdown': 'markdown',
+    'py': 'python',
+    'python': 'python',
+    'php': 'php',
+    'sql': 'sql',
+    'yml': 'yaml',
+    'yaml': 'yaml',
+    'xml': 'xml',
+    'java': 'java',
+    'cpp': 'cpp',
+    'c': 'c',
+    'cs': 'csharp',
+    'rb': 'ruby',
+    'rust': 'rust',
+    'go': 'go'
+  };
+  
+  return languageMap[ext] || 'text';
 }
 
 function editFile() {
@@ -1067,77 +1116,113 @@ let isPageTransition = false;
 let progressInterval = null;
 
 // Enhanced Progress Bar Functions
-function startPageTransition() {
+function startPageTransition(estimatedDuration = 1000) {
   isPageTransition = true;
   
-  // Clear any existing interval
-  if (progressInterval) {
-    clearInterval(progressInterval);
-  }
-  
-  // Show progress bar
   const progressBar = document.getElementById('loadingProgressBar');
   if (progressBar) {
     progressBar.style.width = '10%';
     progressBar.style.transition = 'width 0.1s ease';
+    progressBar.style.opacity = '1';
   }
   
-  // Simulate realistic loading with random progress increments
+  // Store the interval so we can clear it
+  if (window.progressInterval) clearInterval(window.progressInterval);
+  
   let progress = 10;
-  progressInterval = setInterval(() => {
-    if (progress >= 90 || !isPageTransition) {
-      clearInterval(progressInterval);
-      progressInterval = null;
+  window.progressInterval = setInterval(() => {
+    if (progress >= 90) {
+      clearInterval(window.progressInterval);
       return;
     }
     
-    // Random increment between 3-8%
-    const increment = 3 + Math.random() * 5;
+    // Slower, more realistic progress
+    const increment = 2 + Math.random() * 3;
     progress = Math.min(90, progress + increment);
     
     if (progressBar) {
       progressBar.style.width = `${progress}%`;
-      
-      // Randomly add small glow pulses
-      if (Math.random() > 0.7) {
-        progressBar.style.boxShadow = '0 0 15px rgba(220, 38, 38, 0.7), 0 0 25px rgba(220, 38, 38, 0.4)';
-        setTimeout(() => {
-          if (progressBar) {
-            progressBar.style.boxShadow = '0 0 10px rgba(220, 38, 38, 0.5), 0 0 20px rgba(220, 38, 38, 0.3)';
-          }
-        }, 150);
-      }
     }
-  }, 50 + Math.random() * 100); // Random interval between 50-150ms
+  }, estimatedDuration / 30); // Divide by 30 for smoother progress
 }
 
 function completePageTransition() {
-  // Clear any running interval
-  if (progressInterval) {
-    clearInterval(progressInterval);
-    progressInterval = null;
+  // Clear any existing interval
+  if (window.progressInterval) {
+    clearInterval(window.progressInterval);
   }
   
   const progressBar = document.getElementById('loadingProgressBar');
   if (progressBar) {
+    // Jump to 100%
     progressBar.style.width = '100%';
     progressBar.style.transition = 'width 0.3s ease';
     
     // Add completion glow
     progressBar.style.boxShadow = '0 0 20px rgba(220, 38, 38, 0.8), 0 0 35px rgba(220, 38, 38, 0.5)';
     
+    // Hide after a delay
     setTimeout(() => {
       if (progressBar) {
         progressBar.style.width = '0%';
-        progressBar.style.boxShadow = '0 0 10px rgba(220, 38, 38, 0.5), 0 0 20px rgba(220, 38, 38, 0.3)';
+        progressBar.style.boxShadow = 'none';
+        progressBar.style.opacity = '0';
+        progressBar.style.transition = 'width 0s, opacity 0.3s';
       }
       isPageTransition = false;
-    }, 300);
-  } else {
-    isPageTransition = false;
+      
+      // Reset transition after hiding
+      setTimeout(() => {
+        if (progressBar) {
+          progressBar.style.transition = 'width 0.1s ease';
+          progressBar.style.opacity = '1';
+        }
+      }, 300);
+    }, 400);
   }
 }
 
+// Update functions that use page transitions to ensure they complete
+function openRepository(repoName) {
+  // Start loading animation with estimated duration
+  startPageTransition(800);
+  showSkeletonLoading('explorerView');
+  
+  currentState.repository = repoName;
+  currentState.path = '';
+  
+  setTimeout(() => {
+    try {
+      currentState.files = LocalStorageManager.listFiles(repoName, '');
+      renderFileList();
+      updateBreadcrumb();
+      
+      const currentRepoName = document.getElementById('currentRepoName');
+      const repoNameInViewer = document.getElementById('repoNameInViewer');
+      const repoNameInEditor = document.getElementById('repoNameInEditor');
+      
+      if (currentRepoName) currentRepoName.textContent = repoName;
+      if (repoNameInViewer) repoNameInViewer.textContent = repoName;
+      if (repoNameInEditor) repoNameInEditor.textContent = repoName;
+      
+      const repo = LocalStorageManager.getRepository(repoName);
+      if (repo) {
+        const repoDescription = document.getElementById('repoDescription');
+        if (repoDescription) repoDescription.textContent = repo.description || 'No description provided.';
+      }
+      
+      // Complete loading animation AFTER everything is loaded
+      completePageTransition();
+      hideSkeletonLoading('explorerView');
+      showExplorer();
+      updateStats();
+    } catch (error) {
+      showErrorMessage('Failed to open repository: ' + error.message);
+      completePageTransition();
+      hideSkeletonLoading('explorerView');
+    }
+  }, 600); // Match this to the progress bar timing
+}
 // Skeleton Loading Functions
 function showSkeletonLoading(viewId) {
   const view = document.getElementById(viewId);
@@ -1495,16 +1580,40 @@ function updateStats() {
 
 // Modified viewFile function to add to recent files
 function viewFile(filename) {
-  const file = currentState.files.find(f => f.name === filename);
-  if (!file) return;
+  // Check if we have a valid repository context
+  if (!currentState.repository) {
+    showErrorMessage('No repository selected');
+    return;
+  }
   
-  currentState.currentFile = file;
+  // Find file in current state - ensure it's the right file
+  const file = currentState.files.find(f => f.name === filename);
+  if (!file) {
+    // Try to reload files and find again
+    try {
+      const pathPrefix = currentState.path ? currentState.path + '/' : '';
+      currentState.files = LocalStorageManager.listFiles(currentState.repository, pathPrefix);
+      const refreshedFile = currentState.files.find(f => f.name === filename);
+      
+      if (!refreshedFile) {
+        showErrorMessage(`File "${filename}" not found`);
+        return;
+      }
+      
+      currentState.currentFile = refreshedFile;
+    } catch (error) {
+      showErrorMessage('Failed to find file: ' + error.message);
+      return;
+    }
+  } else {
+    currentState.currentFile = file;
+  }
   
   // Start loading animation
   startPageTransition();
   showSkeletonLoading('fileViewer');
   
-  if (file.type === 'folder') {
+  if (currentState.currentFile.type === 'folder') {
     currentState.path += (currentState.path ? '/' : '') + filename;
     
     setTimeout(() => {
@@ -1517,12 +1626,11 @@ function viewFile(filename) {
         hideSkeletonLoading('fileViewer');
         updateStats();
       } catch (error) {
-        hideLoading();
         showErrorMessage('Failed to load directory: ' + error.message);
         completePageTransition();
         hideSkeletonLoading('fileViewer');
       }
-    }, 300 + Math.random() * 300);
+    }, 300);
   } else {
     setTimeout(() => {
       try {
@@ -1542,58 +1650,14 @@ function viewFile(filename) {
           throw new Error('File not found');
         }
       } catch (error) {
-        hideLoading();
         showErrorMessage('Failed to load file: ' + error.message);
         completePageTransition();
         hideSkeletonLoading('fileViewer');
       }
-    }, 300 + Math.random() * 300);
+    }, 300);
   }
 }
 
-// Modified openRepository function
-function openRepository(repoName) {
-  // Start loading animation
-  startPageTransition();
-  showSkeletonLoading('explorerView');
-  
-  currentState.repository = repoName;
-  currentState.path = '';
-  
-  setTimeout(() => {
-    try {
-      currentState.files = LocalStorageManager.listFiles(repoName, '');
-      renderFileList();
-      updateBreadcrumb();
-      
-      // Add null checks for all DOM elements
-      const currentRepoName = document.getElementById('currentRepoName');
-      const repoNameInViewer = document.getElementById('repoNameInViewer');
-      const repoNameInEditor = document.getElementById('repoNameInEditor');
-      
-      if (currentRepoName) currentRepoName.textContent = repoName;
-      if (repoNameInViewer) repoNameInViewer.textContent = repoName;
-      if (repoNameInEditor) repoNameInEditor.textContent = repoName;
-      
-      const repo = LocalStorageManager.getRepository(repoName);
-      if (repo) {
-        const repoDescription = document.getElementById('repoDescription');
-        if (repoDescription) repoDescription.textContent = repo.description || 'No description provided.';
-      }
-      
-      // Complete loading animation
-      completePageTransition();
-      hideSkeletonLoading('explorerView');
-      showExplorer();
-      updateStats();
-    } catch (error) {
-      hideLoading();
-      showErrorMessage('Failed to open repository: ' + error.message);
-      completePageTransition();
-      hideSkeletonLoading('explorerView');
-    }
-  }, 500 + Math.random() * 300);
-}
 
 // Modified showRepoSelector function
 function showRepoSelector() {
@@ -1612,11 +1676,28 @@ function showRepoSelector() {
   }, 300 + Math.random() * 200);
 }
 
-// Modified showExplorer function
+// Add this function to reset state properly
+function resetFileViewerState() {
+  const codeBlock = document.getElementById('codeBlock');
+  if (codeBlock) {
+    codeBlock.textContent = '';
+    codeBlock.className = '';
+  }
+  
+  const lineNumbers = document.getElementById('lineNumbers');
+  if (lineNumbers) lineNumbers.innerHTML = '';
+  
+  currentState.currentFile = null;
+}
+
+// Call this when switching views
 function showExplorer() {
   if (currentState.repository) {
-    startPageTransition();
+    startPageTransition(500);
     showSkeletonLoading('explorerView');
+    
+    // Reset file viewer state
+    resetFileViewerState();
     
     setTimeout(() => {
       document.getElementById('fileViewer').classList.add('hidden');
@@ -1627,7 +1708,7 @@ function showExplorer() {
       completePageTransition();
       hideSkeletonLoading('explorerView');
       updateStats();
-    }, 300 + Math.random() * 200);
+    }, 400);
   }
 }
 
