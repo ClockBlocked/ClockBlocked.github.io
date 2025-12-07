@@ -1,0 +1,295 @@
+.file-type-php { 
+  color: #4f5d95 !important; 
+  text-shadow: 0 0 8px rgba(79, 93, 149, 0.3);
+}
+
+.file-type-java { 
+  color: #b07219 !important; 
+  text-shadow: 0 0 8px rgba(176, 114, 25, 0.3);
+}
+
+.file-type-cpp { 
+  color: #f34b7d !important; 
+  text-shadow: 0 0 8px rgba(243, 75, 125, 0.3);
+}
+
+.file-type-c { 
+  color: #555555 !important; 
+  text-shadow: 0 0 8px rgba(85, 85, 85, 0.3);
+}
+
+.file-type-cs { 
+  color: #239120 !important; 
+  text-shadow: 0 0 8px rgba(35, 145, 32, 0.3);
+}
+
+.file-type-rb,
+.file-type-ruby { 
+  color: #701516 !important; 
+  text-shadow: 0 0 8px rgba(112, 21, 22, 0.3);
+}
+
+.file-type-go { 
+  color: #00add8 !important; 
+  text-shadow: 0 0 8px rgba(0, 173, 216, 0.3);
+}
+
+.file-type-rs,
+.file-type-rust { 
+  color: #dea584 !important; 
+  text-shadow: 0 0 8px rgba(222, 165, 132, 0.3);
+}
+
+.file-type-yml,
+.file-type-yaml { 
+  color: #cb171e !important; 
+  text-shadow: 0 0 8px rgba(203, 23, 30, 0.3);
+}
+
+.file-type-xml { 
+  color: #0060ac !important; 
+  text-shadow: 0 0 8px rgba(0, 96, 172, 0.3);
+}
+
+.file-type-sql { 
+  color: #e38c00 !important; 
+  text-shadow: 0 0 8px rgba(227, 140, 0, 0.3);
+}
+
+/* Enhanced Modern Scrollbars */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--github-canvas-default);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, var(--github-border-default), var(--github-neutral-muted));
+  border-radius: 10px;
+  border: 2px solid var(--github-canvas-default);
+  transition: all 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, var(--github-neutral-muted), var(--github-accent-fg));
+  box-shadow: 0 0 10px var(--glow-primary);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--github-canvas-default);
+}
+
+/* Firefox Scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--github-border-default) var(--github-canvas-default);
+}
+
+/* Hide scrollbar utility */
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Enhanced Focus States */
+button:focus,
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--glow-primary);
+  border-color: var(--github-accent-emphasis);
+  transition: all 0.2s ease;
+}
+
+/* Modern Input Styling */
+input, textarea, select {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  background: var(--github-canvas-inset);
+  border: 1px solid var(--github-border-default);
+  position: relative;
+}
+
+input:hover, textarea:hover, select:hover {
+  border-color: var(--github-border-muted);
+  background: rgba(33, 38, 45, 0.8);
+}
+
+input:focus, textarea:focus, select:focus {
+  background: var(--github-canvas-overlay);
+  border-color: var(--github-accent-emphasis);
+  box-shadow: 
+    0 0 0 3px var(--glow-primary),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Enhanced Modal Styling */
+.modal-backdrop {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  background: rgba(13, 17, 23, 0.8);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enhanced Notification System */
+.notification {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: 
+    0 12px 24px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transform: translateX(100%);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+}
+
+.notification.show {
+  transform: translateX(0);
+}
+
+.notification::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+}
+
+.notification.success::before {
+  background: var(--github-success-fg);
+  box-shadow: 0 0 12px var(--glow-success);
+}
+
+.notification.error::before {
+  background: var(--github-danger-fg);
+  box-shadow: 0 0 12px var(--glow-danger);
+}
+
+.notification.info::before {
+  background: var(--github-accent-fg);
+  box-shadow: 0 0 12px var(--glow-primary);
+}
+
+/* Responsive Design Improvements */
+@media (max-width: 768px) {
+  html {
+    font-size: 13px;
+  }
+  
+  #topNavbar {
+    height: 60px;
+    padding: 0 16px;
+  }
+  
+  #horizontalMenu {
+    gap: 8px;
+  }
+  
+  .CodeMirror {
+    font-size: 12px !important;
+  }
+  
+  #codeContent {
+    font-size: 12px;
+  }
+  
+  .container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  
+  /* Hide some elements on mobile */
+  .hidden-mobile {
+    display: none !important;
+  }
+  
+  .table-container {
+    overflow-x: auto;
+    border-radius: 8px;
+  }
+}
+
+@media (max-width: 640px) {
+  .text-responsive {
+    font-size: 0.875rem;
+  }
+  
+  /* Adjust dropdown positioning on mobile */
+  #quickActionsDropdown,
+  #recentFilesDropdown {
+    position: fixed;
+    top: 60px;
+    left: 16px;
+    right: 16px;
+    width: auto;
+    border-radius: 12px;
+  }
+}
+
+/* Dark mode enhancements */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print,
+  #topNavbar,
+  #loadingProgressBar,
+  #loadingOverlay,
+  #notificationContainer {
+    display: none !important;
+  }
+  
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  
+  .CodeMirror,
+  pre[class*="language-"] {
+    background: white !important;
+    color: black !important;
+    border: 1px solid #ddd !important;
+    box-shadow: none !important;
+  }
+}
+
+/* Selection improvements */
+::selection {
+  background: var(--glow-primary);
+  color: var(--github-fg-default);
+  text-shadow: none;
+}
+
+::-moz-selection {
+  background: var(--glow-primary);
+  color: var(--github-fg-default);
+  text-shadow: none;
+}
