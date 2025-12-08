@@ -10,9 +10,6 @@ let currentState = {
 
 let codeEditor = null;
 let initialContentEditor = null;
-let recentFiles = JSON.parse(localStorage.getItem('gitcodr_recent_files') || '[]');
-let isPageTransition = false;
-let progressInterval = null;
 
 const LocalStorageManager = {
   getRepositories: function() {
@@ -123,7 +120,76 @@ const LocalStorageManager = {
   }
 };
 
-const Utilities = {
+const LoadingManager = {
+  showProgressBar: function() {
+    let progressBar = document.getElementById('loadingProgressBar');
+    if (!progressBar) {
+      progressBar = document.createElement('div');
+      progressBar.id = 'loadingProgressBar';
+      progressBar.className = 'fixed top-0 left-0 w-full h-1 bg-github-accent-fg z-50 animate-pulse';
+      document.body.appendChild(progressBar);
+    } else {
+      progressBar.classList.remove('hidden');
+    }
+  },
+  hideProgressBar: function() {
+    const progressBar = document.getElementById('loadingProgressBar');
+    if (progressBar) {
+      progressBar.classList.add('hidden');
+    }
+  },
+  showSkeleton: function(elementId, type = 'list') {
+    const element = document.getElementById(elementId);
+    if (!element) return;
+    
+    if (type === 'list') {
+      element.innerHTML = `
+        <div class="space-y-3">
+          ${Array.from({length: 5}).map(() => `
+            <div class="animate-pulse">
+              <div class="h-4 bg-github-canvas-subtle rounded w-3/4"></div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    } else if (type === 'card') {
+      element.innerHTML = `
+        <div class="animate-pulse space-y-4">
+          <div class="h-4 bg-github-canvas-subtle rounded w-1/2"></div>
+          <div class="h-3 bg-github-canvas-subtle rounded w-3/4"></div>
+          <div class="h-3 bg-github-canvas-subtle rounded w-1/4"></div>
+        </div>
+      `;
+    }
+  },
+  hideSkeleton: function(elementId) {
+    const element = document.getElementById(elementId);
+    if (element) {
+      const skeleton = element.querySelector('.animate-pulse');
+      if (skeleton) skeleton.remove();
+    }
+  },
+  showLoading: function(text = 'Loading...') {
+    this.showProgressBar();
+    const overlay = document.getElementById('loadingOverlay');
+    const loadingText = document.getElementById('loadingText');
+    if (overlay && loadingText) {
+      loadingText.textContent = text;
+      overlay.classList.remove('hidden');
+      overlay.classList.add('flex');
+    }
+  },
+  hideLoading: function() {
+    this.hideProgressBar();
+    const overlay = document.getElementById('loadingOverlay');
+    if (overlay) {
+      overlay.classList.add('hidden');
+      overlay.classList.remove('flex');
+    }
+  }
+};
+
+const FileManager = {
   isValidFilename: function(filename) {
     if (!filename || filename.length > 255) return false;
     if (/[<>:"|?*\\\/]/.test(filename)) return false;
@@ -189,6 +255,85 @@ const Utilities = {
       'txt': 'text', 'text': 'text'
     };
     return languageMap[ext] || 'text';
+  },
+  adjustCodeBlockHeight: function() {
+    const codeContent = document.getElementById('codeContent');
+    const lineNumbers = document.getElementById('lineNumbers');
+    const codeBlock = document.getElementById('codeBlock');
+    if (codeContent && lineNumbers && codeBlock) {
+      const content = codeBlock.textContent || '';
+      const lineCount = content.split('\n').length;
+      const minHeight = Math.max(500, Math.min(800, lineCount * 18));
+      codeContent.style.minHeight = `${minHeight}px`;
+      lineNumbers.style.minHeight = `${minHeight}px`;
+      lineNumbers.innerHTML = Array.from({length: lineCount})
+        .map((_, i) => `<div style="line-height: 1.3; font-size: 13px;">${i + 1}</div>`)
+        .join('');
+    }
+  }
+};
+
+const Router = {
+  showFileViewer: function() {
+    document.getElementById('explorerView').classList.add('hidden');
+    document.getElementById('fileEditor').classList.add('hidden');
+    document.getElementById('repoSelectorView').classList.add('hidden');
+    document.getElementById('fileViewer').classList.remove('hidden');
+  },
+  showFileEditor: function() {
+    document.getElementById('explorerView').classList.add('hidden');
+    document.getElementById('fileViewer').classList.add('hidden');
+    document.getElementById('repoSelectorView').classList.add('hidden');
+    document.getElementById('fileEditor').classList.remove('hidden');
+  },
+  showExplorer: function() {
+    if (currentState.repository) {
+      document.getElementById('fileViewer').classList.add('hidden');
+      document.getElementById('fileEditor').classList.add('hidden');
+      document.getElementById('repoSelectorView').classList.add('hidden');
+      document.getElementById('explorerView').classList.remove('hidden');
+    }
+  },
+  showRepoSelector: function() {
+    document.getElementById('explorerView').classList.add('hidden');
+    document.getElementById('fileViewer').classList.add('hidden');
+    document.getElementById('fileEditor').classList.add('hidden');
+    document.getElementById('repoSelectorView').classList.remove('hidden');
+  },
+  navigateToRoot: function() {
+    currentState.path = '';
+    LoadingManager.showLoading('Loading repository root...');
+    LoadingManager.showSkeleton('fileListBody', 'list');
+    setTimeout(() => {
+      try {
+        currentState.files = LocalStorageManager.listFiles(currentState.repository, '');
+        UI.renderFileList();
+        UI.updateBreadcrumb();
+        LoadingManager.hideLoading();
+        LoadingManager.hideSkeleton('fileListBody');
+      } catch (error) {
+        LoadingManager.hideLoading();
+        Notifications.showErrorMessage('Failed to load repository root: ' + error.message);
+      }
+    }, 300);
+  },
+  navigateToPath: function(path) {
+    currentState.path = path;
+    LoadingManager.showLoading(`Loading directory ${path}...`);
+    LoadingManager.showSkeleton('fileListBody', 'list');
+    setTimeout(() => {
+      try {
+        const pathPrefix = path ? path + '/' : '';
+        currentState.files = LocalStorageManager.listFiles(currentState.repository, pathPrefix);
+        UI.renderFileList();
+        UI.updateBreadcrumb();
+        LoadingManager.hideLoading();
+        LoadingManager.hideSkeleton('fileListBody');
+      } catch (error) {
+        LoadingManager.hideLoading();
+        Notifications.showErrorMessage(`Failed to load path ${path}: ` + error.message);
+      }
+    }, 300);
   }
 };
 
@@ -199,7 +344,7 @@ const UI = {
     container.innerHTML = currentState.selectedTags.map(tag => `
       <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-github-accent-emphasis/20 border border-github-accent-emphasis/30 text-github-accent-fg">
         ${tag}
-        <button onclick="TagManager.removeTag('${tag}')" class="ml-1.5 w-3.5 h-3.5 rounded-full hover:bg-github-accent-emphasis/30 flex items-center justify-center">
+        <button onclick="removeTag('${tag}')" class="ml-1.5 w-3.5 h-3.5 rounded-full hover:bg-github-accent-emphasis/30 flex items-center justify-center">
           <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 16 16"><path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z"/></svg>
         </button>
       </span>
@@ -245,19 +390,76 @@ const UI = {
       commitTitle.value = `Update ${currentState.currentFile.name}`;
     }
   },
-  adjustCodeBlockHeight: function() {
-    const codeContent = document.getElementById('codeContent');
-    const lineNumbers = document.getElementById('lineNumbers');
-    const codeBlock = document.getElementById('codeBlock');
-    if (codeContent && lineNumbers && codeBlock) {
-      const content = codeBlock.textContent || '';
-      const lineCount = content.split('\n').length;
-      const minHeight = Math.max(500, Math.min(800, lineCount * 18));
-      codeContent.style.minHeight = `${minHeight}px`;
-      lineNumbers.style.minHeight = `${minHeight}px`;
-      lineNumbers.innerHTML = Array.from({length: lineCount})
-        .map((_, i) => `<div style="line-height: 1.3; font-size: 13px;">${i + 1}</div>`)
-        .join('');
+  updateRecentFilesUI: function() {
+    const recentFiles = RecentFiles.getRecentFiles();
+    const recentFilesList = document.getElementById('recentFilesList');
+    const recentFilesCount = document.getElementById('recentFilesCount');
+    const topRecentFilesList = document.getElementById('topRecentFilesList');
+    const topRecentFilesCount = document.getElementById('topRecentFilesCount');
+    
+    if (recentFilesList) {
+      if (recentFiles.length === 0) {
+        recentFilesList.innerHTML = `
+          <div class="text-center py-4 text-github-fg-muted text-sm">
+            No recent files
+          </div>
+        `;
+      } else {
+        recentFilesList.innerHTML = recentFiles.map(file => `
+          <button onclick="RecentFiles.openRecentFile('${file.repoName}', '${file.filePath}', '${file.fileName}')" 
+                  class="w-full flex items-center justify-between p-2 rounded hover:bg-github-canvas-subtle text-left group">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center space-x-2">
+                <svg class="w-3 h-3 text-github-fg-muted flex-shrink-0" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"/>
+                </svg>
+                <span class="text-sm text-github-fg-default truncate">${file.fileName}</span>
+              </div>
+              <div class="text-xs text-github-fg-muted truncate mt-1">${file.repoName}</div>
+            </div>
+            <svg class="w-4 h-4 text-github-fg-muted opacity-0 group-hover:opacity-100 transition-opacity" 
+                 fill="currentColor" viewBox="0 0 16 16">
+              <path d="M4.22 11.78a.75.75 0 0 1 0-1.06L9.44 5.5H5.75a.75.75 0 0 1 0-1.5h5.5a.75.75 0 0 1 .75.75v5.5a.75.75 0 0 1-1.5 0V6.56l-5.22 5.22a.75.75 0 0 1-1.06 0Z"/>
+            </svg>
+          </button>
+        `).join('');
+      }
+    }
+    
+    if (topRecentFilesList) {
+      if (recentFiles.length === 0) {
+        topRecentFilesList.innerHTML = `
+          <div class="text-center py-4 text-github-fg-muted text-sm">
+            No recent files
+          </div>
+        `;
+      } else {
+        topRecentFilesList.innerHTML = recentFiles.map(file => `
+          <button onclick="RecentFiles.openRecentFile('${file.repoName}', '${file.filePath}', '${file.fileName}')" 
+                  class="w-full flex items-center justify-between p-2 rounded hover:bg-github-canvas-subtle text-left group">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center space-x-2">
+                <svg class="w-3 h-3 text-github-fg-muted flex-shrink-0" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"/>
+                </svg>
+                <span class="text-sm text-github-fg-default truncate">${file.fileName}</span>
+              </div>
+              <div class="text-xs text-github-fg-muted truncate mt-1">${file.repoName}</div>
+            </div>
+            <svg class="w-4 h-4 text-github-fg-muted opacity-0 group-hover:opacity-100 transition-opacity" 
+                 fill="currentColor" viewBox="0 0 16 16">
+              <path d="M4.22 11.78a.75.75 0 0 1 0-1.06L9.44 5.5H5.75a.75.75 0 0 1 0-1.5h5.5a.75.75 0 0 1 .75.75v5.5a.75.75 0 0 1-1.5 0V6.56l-5.22 5.22a.75.75 0 0 1-1.06 0Z"/>
+            </svg>
+          </button>
+        `).join('');
+      }
+    }
+    
+    if (recentFilesCount) {
+      recentFilesCount.textContent = recentFiles.length.toString();
+    }
+    if (topRecentFilesCount) {
+      topRecentFilesCount.textContent = recentFiles.length.toString();
     }
   },
   updateStats: function() {
@@ -268,7 +470,7 @@ const UI = {
         const files = LocalStorageManager.listFiles(currentState.repository, '');
         const totalFiles = files.filter(f => f.type === 'file').length;
         const totalSize = files.reduce((sum, file) => sum + (file.size || 0), 0);
-        const sizeText = Utilities.formatFileSize(totalSize);
+        const sizeText = FileManager.formatFileSize(totalSize);
         const displayText = `${totalFiles} files • ${sizeText}`;
         if (statsText) statsText.textContent = displayText;
         if (topStatsText) topStatsText.textContent = displayText;
@@ -277,6 +479,65 @@ const UI = {
         if (topStatsText) topStatsText.textContent = '0 files';
       }
     }
+  },
+  hideContextMenu: function() {
+    const menu = document.getElementById('contextMenu');
+    if (menu) menu.remove();
+  },
+  showContextMenu: function(x, y, fileName, fileType) {
+    this.hideContextMenu();
+    const menu = document.createElement('div');
+    menu.id = 'contextMenu';
+    menu.className = 'fixed bg-github-canvas-overlay border border-github-border-default rounded-lg shadow-2xl py-2 z-50 min-w-[160px]';
+    menu.style.left = `${x}px`;
+    menu.style.top = `${y}px`;
+    let html = `<button onclick="ContextMenu.viewFileFromContext('${fileName}')" class="w-full text-left px-4 py-2 text-sm text-github-fg-default hover:bg-github-canvas-subtle flex items-center space-x-2"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16"><path d="M8 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z"/></svg><span>View</span></button>`;
+    if (fileType === 'file') {
+      html += `<button onclick="ContextMenu.editFileFromContext('${fileName}')" class="w-full text-left px-4 py-2 text-sm text-github-fg-default hover:bg-github-canvas-subtle flex items-center space-x-2"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16"><path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Z"/></svg><span>Edit</span></button><button onclick="ContextMenu.downloadFileFromContext('${fileName}')" class="w-full text-left px-4 py-2 text-sm text-github-fg-default hover:bg-github-canvas-subtle flex items-center space-x-2"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16"><path d="M2.75 14A1.75 1.75 0 0 1 1 12.25v-2.5a.75.75 0 0 1 1.5 0v2.5c0 .138.112.25.25.25h10.5a.25.25 0 0 0 .25-.25v-2.5a.75.75 0 0 1 1.5 0v2.5A1.75 1.75 0 0 1 13.25 14Z"/><path d="M7.25 7.689V2a.75.75 0 0 1 1.5 0v5.689l1.97-1.969a.749.749 0 1 1 1.06 1.06l-3.25 3.25a.749.749 0 0 1-1.06 0L4.22 6.78a.749.749 0 1 1 1.06-1.06l1.97 1.969Z"/></svg><span>Download</span></button>`;
+    }
+    html += `<div class="border-t border-github-border-muted my-1"></div><button onclick="ContextMenu.deleteFileFromContext('${fileName}')" class="w-full text-left px-4 py-2 text-sm text-github-danger-fg hover:bg-github-canvas-subtle flex items-center space-x-2"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16"><path d="M11 1.75V3h2.25a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5H5V1.75C5 .784 5.784 0 6.75 0h2.5C10.216 0 11 .784 11 1.75ZM4.496 6.675l.66 6.6a.25.25 0 0 0 .249.225h5.19a.25.25 0 0 0 .249-.225l.66-6.6a.75.75 0 0 1 1.492.149l-.66 6.6A1.748 1.748 0 0 1 10.595 15h-5.19a1.748 1.748 0 0 1-1.741-1.575l-.66-6.6a.75.75 0 1 1 1.492-.15ZM6.5 1.75V3h3V1.75a.25.25 0 0 0-.25-.25h-2.5a.25.25 0 0 0-.25.25Z"/></svg><span>Delete</span></button>`;
+    menu.innerHTML = html;
+    document.body.appendChild(menu);
+    const rect = menu.getBoundingClientRect();
+    if (rect.right > window.innerWidth) menu.style.left = `${x - rect.width}px`;
+    if (rect.bottom > window.innerHeight) menu.style.top = `${y - rect.height}px`;
+  },
+  renderRepositoryList: function() {
+    const repoList = document.getElementById('repoList');
+    if (!repoList) return;
+    repoList.innerHTML = '';
+    if (currentState.repositories.length === 0) {
+      repoList.innerHTML = `<div class="col-span-full text-center py-12"><svg class="w-12 h-12 mx-auto text-github-fg-muted mb-4" fill="currentColor" viewBox="0 0 16 16"><path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z"/></svg><h3 class="text-lg font-medium text-github-fg-default mb-2">No repositories yet</h3><p class="text-github-fg-muted mb-4">Create your first repository to get started</p><button onclick="ModalManager.showCreateRepoModal()" class="inline-flex items-center px-4 py-2 bg-github-btn-primary-bg hover:bg-github-btn-primary-hover text-white rounded-md text-sm font-medium transition-colors"><svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16"><path d="M7.75 2a.75.75 0 0 1 .75.75V7h4.25a.75.75 0 0 1 0 1.5H8.5v4.25a.75.75 0 0 1-1.5 0V8.5H2.75a.75.75 0 0 1 0-1.5H7V2.75A.75.75 0 0 1 7.75 2Z"/></svg>Create repository</button></div>`;
+      return;
+    }
+    currentState.repositories.forEach(repo => {
+      const repoCard = document.createElement('div');
+      repoCard.className = 'bg-github-canvas-overlay border border-github-border-default rounded-lg p-4 hover:border-github-accent-fg transition-colors cursor-pointer';
+      repoCard.innerHTML = `<div class="flex items-start justify-between"><div class="flex-1"><h3 class="text-lg font-semibold text-github-accent-fg mb-1">${repo.name}</h3><p class="text-sm text-github-fg-muted mb-2">${repo.description || 'No description'}</p><div class="flex items-center space-x-4 text-xs text-github-fg-muted"><span>${FileManager.formatDate(repo.created)}</span><span class="flex items-center space-x-1"><div class="w-3 h-3 rounded-full bg-github-accent-fg"></div><span>${repo.defaultBranch || 'main'}</span></span></div></div><button onclick="event.stopPropagation();RepositoryManager.deleteRepository('${repo.name}')" class="text-github-danger-fg hover:text-red-500 p-1"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16"><path d="M11 1.75V3h2.25a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5H5V1.75C5 .784 5.784 0 6.75 0h2.5C10.216 0 11 .784 11 1.75ZM4.496 6.675l.66 6.6a.25.25 0 0 0 .249.225h5.19a.25.25 0 0 0 .249-.225l.66-6.6a.75.75 0 0 1 1.492.149l-.66 6.6A1.748 1.748 0 0 1 10.595 15h-5.19a1.748 1.748 0 0 1-1.741-1.575l-.66-6.6a.75.75 0 1 1 1.492-.15ZM6.5 1.75V3h3V1.75a.25.25 0 0 0-.25-.25h-2.5a.25.25 0 0 0-.25.25Z"/></svg></button></div>`;
+      repoCard.addEventListener('click', () => RepositoryManager.openRepository(repo.name));
+      repoList.appendChild(repoCard);
+    });
+  },
+  renderFileList: function() {
+    const tbody = document.getElementById('fileListBody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    if (currentState.files.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="3" class="px-4 py-8 text-center text-github-fg-muted"><svg class="w-8 h-8 mx-auto mb-2" fill="currentColor" viewBox="0 0 16 16"><path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z"/></svg><p>No files in this directory</p><button onclick="ModalManager.showCreateFileModal()" class="mt-2 text-github-accent-fg hover:underline text-sm">Create your first file</button></td></tr>`;
+      return;
+    }
+    currentState.files.forEach(file => {
+      const row = document.createElement('tr');
+      row.className = 'hover:bg-github-canvas-subtle transition-colors cursor-pointer';
+      const fileIcon = FileManager.getFileIcon(file.name, file.type);
+      row.innerHTML = `<td class="px-4 py-3"><div class="flex items-center space-x-3">${fileIcon}<span class="text-github-accent-fg hover:underline font-medium">${file.name}</span></div></td><td class="px-4 py-3 text-github-fg-muted text-sm max-w-md truncate">${file.lastCommit || 'Initial commit'}</td><td class="px-4 py-3 text-github-fg-muted text-sm text-right">${FileManager.formatDate(file.lastModified)}</td>`;
+      row.addEventListener('click', () => FileManager.viewFile(file.name));
+      row.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        UI.showContextMenu(e.clientX, e.clientY, file.name, file.type);
+      });
+      tbody.appendChild(row);
+    });
   },
   displayFileContent: function(filename, fileData) {
     const currentFileName = document.getElementById('currentFileName');
@@ -295,13 +556,13 @@ const UI = {
     const lineCount = lines.length;
     
     if (fileLinesCount) fileLinesCount.textContent = `${lineCount} lines`;
-    if (fileSize) fileSize.textContent = Utilities.formatFileSize(content.length);
-    if (fileCreated) fileCreated.textContent = Utilities.formatDate(fileData.created || Date.now());
-    if (fileModified) fileModified.textContent = Utilities.formatDate(fileData.lastModified || Date.now());
+    if (fileSize) fileSize.textContent = FileManager.formatFileSize(content.length);
+    if (fileCreated) fileCreated.textContent = FileManager.formatDate(fileData.created || Date.now());
+    if (fileModified) fileModified.textContent = FileManager.formatDate(fileData.lastModified || Date.now());
     
     const ext = filename.split('.').pop().toLowerCase();
-    const language = Utilities.getLanguageName(ext);
-    const prismLang = Utilities.getPrismLanguage(ext);
+    const language = FileManager.getLanguageName(ext);
+    const prismLang = FileManager.getPrismLanguage(ext);
     
     if (fileLanguageDisplay) fileLanguageDisplay.textContent = language;
     if (fileLanguage) fileLanguage.textContent = language;
@@ -347,7 +608,7 @@ const UI = {
       }
       
       setTimeout(() => {
-        this.adjustCodeBlockHeight();
+        FileManager.adjustCodeBlockHeight();
       }, 50);
     }, 100);
     
@@ -358,1100 +619,600 @@ const UI = {
         fileTags.innerHTML = fileData.tags.map(tag => `<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-github-accent-emphasis/20 border border-github-accent-emphasis/30 text-github-accent-fg">${tag}</span>`).join('');
       } else {
         fileTags.innerHTML = '<span class="text-github-fg-muted text-sm">No tags</span>';
-      }
     }
-  },
-  renderRepositoryList: function() {
-    const repoList = document.getElementById('repoList');
-    if (!repoList) return;
-    repoList.innerHTML = '';
-    if (currentState.repositories.length === 0) {
-      repoList.innerHTML = `<div class="col-span-full text-center py-12"><svg class="w-12 h-12 mx-auto text-github-fg-muted mb-4" fill="currentColor" viewBox="0 0 16 16"><path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z"/></svg><h3 class="text-lg font-medium text-github-fg-default mb-2">No repositories yet</h3><p class="text-github-fg-muted mb-4">Create your first repository to get started</p><button onclick="ModalManager.showCreateRepoModal()" class="inline-flex items-center px-4 py-2 bg-github-btn-primary-bg hover:bg-github-btn-primary-hover text-white rounded-md text-sm font-medium transition-colors"><svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16"><path d="M7.75 2a.75.75 0 0 1 .75.75V7h4.25a.75.75 0 0 1 0 1.5H8.5v4.25a.75.75 0 0 1-1.5 0V8.5H2.75a.75.75 0 0 1 0-1.5H7V2.75A.75.75 0 0 1 7.75 2Z"/></svg>Create repository</button></div>`;
-      return;
-    }
-    currentState.repositories.forEach(repo => {
-      const repoCard = document.createElement('div');
-      repoCard.className = 'bg-github-canvas-overlay border border-github-border-default rounded-lg p-4 hover:border-github-accent-fg transition-colors cursor-pointer';
-      repoCard.innerHTML = `<div class="flex items-start justify-between"><div class="flex-1"><h3 class="text-lg font-semibold text-github-accent-fg mb-1">${repo.name}</h3><p class="text-sm text-github-fg-muted mb-2">${repo.description || 'No description'}</p><div class="flex items-center space-x-4 text-xs text-github-fg-muted"><span>${Utilities.formatDate(repo.created)}</span><span class="flex items-center space-x-1"><div class="w-3 h-3 rounded-full bg-github-accent-fg"></div><span>${repo.defaultBranch || 'main'}</span></span></div></div><button onclick="event.stopPropagation();RepositoryManager.deleteRepository('${repo.name}')" class="text-github-danger-fg hover:text-red-500 p-1"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16"><path d="M11 1.75V3h2.25a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5H5V1.75C5 .784 5.784 0 6.75 0h2.5C10.216 0 11 .784 11 1.75ZM4.496 6.675l.66 6.6a.25.25 0 0 0 .249.225h5.19a.25.25 0 0 0 .249-.225l.66-6.6a.75.75 0 0 1 1.492.149l-.66 6.6A1.748 1.748 0 0 1 10.595 15h-5.19a1.748 1.748 0 0 1-1.741-1.575l-.66-6.6a.75.75 0 1 1 1.492-.15ZM6.5 1.75V3h3V1.75a.25.25 0 0 0-.25-.25h-2.5a.25.25 0 0 0-.25.25Z"/></svg></button></div>`;
-      repoCard.addEventListener('click', () => RepositoryManager.openRepository(repo.name));
-      repoList.appendChild(repoCard);
-    });
-  },
-  renderFileList: function() {
-    const tbody = document.getElementById('fileListBody');
-    if (!tbody) return;
-    tbody.innerHTML = '';
-    if (currentState.files.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="3" class="px-4 py-8 text-center text-github-fg-muted"><svg class="w-8 h-8 mx-auto mb-2" fill="currentColor" viewBox="0 0 16 16"><path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z"/></svg><p>No files in this directory</p><button onclick="ModalManager.showCreateFileModal()" class="mt-2 text-github-accent-fg hover:underline text-sm">Create your first file</button></td></tr>`;
-      return;
-    }
-    currentState.files.forEach(file => {
-      const row = document.createElement('tr');
-      row.className = 'hover:bg-github-canvas-subtle transition-colors cursor-pointer';
-      const fileIcon = Utilities.getFileIcon(file.name, file.type);
-      row.innerHTML = `<td class="px-4 py-3"><div class="flex items-center space-x-3">${fileIcon}<span class="text-github-accent-fg hover:underline font-medium">${file.name}</span></div></td><td class="px-4 py-3 text-github-fg-muted text-sm max-w-md truncate">${file.lastCommit || 'Initial commit'}</td><td class="px-4 py-3 text-github-fg-muted text-sm text-right">${Utilities.formatDate(file.lastModified)}</td>`;
-      row.addEventListener('click', () => FileManager.viewFile(file.name));
-      row.addEventListener('contextmenu', (e) => {
-        e.preventDefault();
-        ContextMenu.showContextMenu(e.clientX, e.clientY, file.name, file.type);
-      });
-      tbody.appendChild(row);
-    });
-  },
-  showSkeletonLoading: function(viewId) {
-    const view = document.getElementById(viewId);
-    if (!view) return;
-    
-    view.dataset.originalContent = view.innerHTML;
-    
-    let skeletonHTML = '';
-    
-    if (viewId === 'explorerView') {
-      skeletonHTML = `
-        <div class="space-y-4">
-          <div class="flex items-center space-x-2">
-            <div class="skeleton-item h-4 w-16"></div>
-            <div class="skeleton-item h-4 w-4"></div>
-            <div class="skeleton-item h-4 w-24"></div>
-          </div>
-          <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg overflow-hidden">
-            <div class="p-4 border-b border-github-border-muted">
-              <div class="flex items-center space-x-3">
-                <div class="skeleton-item h-6 w-6 rounded-full"></div>
-                <div class="skeleton-item h-4 w-32"></div>
-              </div>
-            </div>
-            ${Array.from({length: 8}).map(() => `
-              <div class="p-4 border-b border-github-border-muted last:border-b-0">
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center space-x-3">
-                    <div class="skeleton-item h-4 w-4"></div>
-                    <div class="skeleton-item h-4 w-48"></div>
-                  </div>
-                  <div class="skeleton-item h-4 w-24"></div>
-                </div>
-              </div>
-            `).join('')}
-          </div>
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
-            <div class="lg:col-span-2">
-              <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg p-6">
-                ${Array.from({length: 5}).map(() => `
-                  <div class="mb-4">
-                    <div class="skeleton-item h-4 w-full mb-2"></div>
-                    <div class="skeleton-item h-4 w-3/4"></div>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
-            <div class="space-y-6">
-              <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg p-4">
-                ${Array.from({length: 4}).map(() => `
-                  <div class="skeleton-item h-4 w-full mb-2"></div>
-                `).join('')}
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-    } else if (viewId === 'repoSelectorView') {
-      skeletonHTML = `
-        <div class="space-y-6">
-          <div class="flex items-center justify-between">
-            <div class="skeleton-item h-8 w-40"></div>
-            <div class="skeleton-item h-10 w-40"></div>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            ${Array.from({length: 6}).map(() => `
-              <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg p-4">
-                <div class="flex items-start justify-between">
-                  <div class="flex-1 space-y-3">
-                    <div class="skeleton-item h-6 w-32"></div>
-                    <div class="skeleton-item h-4 w-full"></div>
-                    <div class="skeleton-item h-4 w-24"></div>
-                  </div>
-                  <div class="skeleton-item h-4 w-4"></div>
-                </div>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-      `;
-    } else if (viewId === 'fileViewer') {
-      skeletonHTML = `
-        <div class="space-y-6">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center space-x-2">
-              <div class="skeleton-item h-4 w-24"></div>
-              <div class="skeleton-item h-4 w-4"></div>
-              <div class="skeleton-item h-4 w-32"></div>
-            </div>
-            <div class="flex items-center space-x-2">
-              <div class="skeleton-item h-10 w-24"></div>
-              <div class="skeleton-item h-10 w-24"></div>
-            </div>
-          </div>
-          <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg overflow-hidden">
-            <div class="p-4 border-b border-github-border-muted">
-              <div class="flex items-center space-x-4">
-                ${Array.from({length: 4}).map(() => `
-                  <div class="skeleton-item h-4 w-16"></div>
-                `).join('')}
-            </div>
-          </div>
-          <div class="flex">
-            <div class="w-16 p-4 border-r border-github-border-muted">
-              ${Array.from({length: 20}).map(() => `
-                <div class="skeleton-item h-4 w-full mb-1"></div>
-              `).join('')}
-            </div>
-            <div class="flex-1 p-4">
-              ${Array.from({length: 20}).map(() => `
-                <div class="skeleton-item h-4 w-full mb-1"></div>
-              `).join('')}
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-    }
-    
-    view.innerHTML = skeletonHTML;
-  },
-  hideSkeletonLoading: function(viewId) {
-    const view = document.getElementById(viewId);
-    if (!view || !view.dataset.originalContent) return;
-    
-    view.innerHTML = view.dataset.originalContent;
-    delete view.dataset.originalContent;
   }
+}
 };
 
-const LoadingManager = {
-  startPageTransition: function(estimatedDuration = 1000) {
-    isPageTransition = true;
-    
-    const progressBar = document.getElementById('loadingProgressBar');
-    if (progressBar) {
-      progressBar.style.width = '10%';
-      progressBar.style.transition = 'width 0.1s ease';
-      progressBar.style.opacity = '1';
-    }
-    
-    if (window.progressInterval) clearInterval(window.progressInterval);
-    
-    let progress = 10;
-    window.progressInterval = setInterval(() => {
-      if (progress >= 90) {
-        clearInterval(window.progressInterval);
-        return;
-      }
-      
-      const increment = 2 + Math.random() * 3;
-      progress = Math.min(90, progress + increment);
-      
-      if (progressBar) {
-        progressBar.style.width = `${progress}%`;
-      }
-    }, estimatedDuration / 30);
-  },
-  completePageTransition: function() {
-    if (window.progressInterval) {
-      clearInterval(window.progressInterval);
-    }
-    
-    const progressBar = document.getElementById('loadingProgressBar');
-    if (progressBar) {
-      progressBar.style.width = '100%';
-      progressBar.style.transition = 'width 0.3s ease';
-      progressBar.style.boxShadow = '0 0 20px rgba(220, 38, 38, 0.8), 0 0 35px rgba(220, 38, 38, 0.5)';
-      
-      setTimeout(() => {
-        if (progressBar) {
-          progressBar.style.width = '0%';
-          progressBar.style.boxShadow = 'none';
-          progressBar.style.opacity = '0';
-          progressBar.style.transition = 'width 0s, opacity 0.3s';
-        }
-        isPageTransition = false;
-        
-        setTimeout(() => {
-          if (progressBar) {
-            progressBar.style.transition = 'width 0.1s ease';
-            progressBar.style.opacity = '1';
-          }
-        }, 300);
-      }, 400);
-    }
-  },
-  showLoading: function(text = 'Loading...') {
-    const overlay = document.getElementById('loadingOverlay');
-    const loadingText = document.getElementById('loadingText');
-    if (overlay && loadingText) {
-      loadingText.textContent = text;
-      overlay.classList.remove('hidden');
-      overlay.classList.add('flex');
-    }
-  },
-  hideLoading: function() {
-    const overlay = document.getElementById('loadingOverlay');
-    if (overlay) {
-      overlay.classList.add('hidden');
-      overlay.classList.remove('flex');
-    }
-  }
-};
-
-const NotificationManager = {
-  showSuccessMessage: function(message) {
-    const notification = document.createElement('div');
-    notification.className = 'fixed top-4 right-4 bg-github-success-fg text-white px-4 py-3 rounded-lg shadow-lg z-50 animate-slide-down';
-    notification.innerHTML = `<div class="flex items-center space-x-2"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16"><path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"/></svg><span>${message}</span></div>`;
-    document.body.appendChild(notification);
-    setTimeout(() => {
-      notification.style.animation = 'fadeOut 0.3s ease-in';
-      setTimeout(() => notification.parentNode?.removeChild(notification), 300);
-    }, 3000);
-  },
-  showErrorMessage: function(message) {
-    const notification = document.createElement('div');
-    notification.className = 'fixed top-4 right-4 bg-github-danger-fg text-white px-4 py-3 rounded-lg shadow-lg z-50 animate-slide-down';
-    notification.innerHTML = `<div class="flex items-center space-x-2"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16"><path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16ZM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646Z"/></svg><span>${message}</span></div>`;
-    document.body.appendChild(notification);
-    setTimeout(() => {
-      notification.style.animation = 'fadeOut 0.3s ease-in';
-      setTimeout(() => notification.parentNode?.removeChild(notification), 300);
-    }, 5000);
-  }
-};
-
-const ContextMenu = {
-  hideContextMenu: function() {
-    const menu = document.getElementById('contextMenu');
-    if (menu) menu.remove();
-  },
-  showContextMenu: function(x, y, fileName, fileType) {
-    this.hideContextMenu();
-    
-    const menu = document.createElement('div');
-    menu.id = 'contextMenu';
-    menu.className = 'fixed bg-github-canvas-overlay border border-github-border-default rounded-lg shadow-2xl py-2 z-50 min-w-[160px]';
-    menu.style.left = `${x}px`;
-    menu.style.top = `${y}px`;
-    
-    let html = `<button onclick="ContextMenu.viewFileFromContext('${fileName}')" class="w-full text-left px-4 py-2 text-sm text-github-fg-default hover:bg-github-canvas-subtle flex items-center space-x-2"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16"><path d="M8 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z"/></svg><span>View</span></button>`;
-    
-    if (fileType === 'file') {
-      html += `<button onclick="ContextMenu.editFileFromContext('${fileName}')" class="w-full text-left px-4 py-2 text-sm text-github-fg-default hover:bg-github-canvas-subtle flex items-center space-x-2"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16"><path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Z"/></svg><span>Edit</span></button><button onclick="ContextMenu.downloadFileFromContext('${fileName}')" class="w-full text-left px-4 py-2 text-sm text-github-fg-default hover:bg-github-canvas-subtle flex items-center space-x-2"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16"><path d="M2.75 14A1.75 1.75 0 0 1 1 12.25v-2.5a.75.75 0 0 1 1.5 0v2.5c0 .138.112.25.25.25h10.5a.25.25 0 0 0 .25-.25v-2.5a.75.75 0 0 1 1.5 0v2.5A1.75 1.75 0 0 1 13.25 14Z"/><path d="M7.25 7.689V2a.75.75 0 0 1 1.5 0v5.689l1.97-1.969a.749.749 0 1 1 1.06 1.06l-3.25 3.25a.749.749 0 0 1-1.06 0L4.22 6.78a.749.749 0 1 1 1.06-1.06l1.97 1.969Z"/></svg><span>Download</span></button>`;
-    }
-    
-    html += `<div class="border-t border-github-border-muted my-1"></div><button onclick="ContextMenu.deleteFileFromContext('${fileName}')" class="w-full text-left px-4 py-2 text-sm text-github-danger-fg hover:bg-github-canvas-subtle flex items-center space-x-2"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16"><path d="M11 1.75V3h2.25a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5H5V1.75C5 .784 5.784 0 6.75 0h2.5C10.216 0 11 .784 11 1.75ZM4.496 6.675l.66 6.6a.25.25 0 0 0 .249.225h5.19a.25.25 0 0 0 .249-.225l.66-6.6a.75.75 0 0 1 1.492.149l-.66 6.6A1.748 1.748 0 0 1 10.595 15h-5.19a1.748 1.748 0 0 1-1.741-1.575l-.66-6.6a.75.75 0 1 1 1.492-.15ZM6.5 1.75V3h3V1.75a.25.25 0 0 0-.25-.25h-2.5a.25.25 0 0 0-.25.25Z"/></svg><span>Delete</span></button>`;
-    
-    menu.innerHTML = html;
-    document.body.appendChild(menu);
-    
-    const rect = menu.getBoundingClientRect();
-    if (rect.right > window.innerWidth) menu.style.left = `${x - rect.width}px`;
-    if (rect.bottom > window.innerHeight) menu.style.top = `${y - rect.height}px`;
-  },
-  viewFileFromContext: function(fileName) {
-    this.hideContextMenu();
-    FileManager.viewFile(fileName);
-  },
-  editFileFromContext: function(fileName) {
-    this.hideContextMenu();
-    currentState.currentFile = currentState.files.find(f => f.name === fileName);
-    FileManager.editFile();
-  },
-  downloadFileFromContext: function(fileName) {
-    this.hideContextMenu();
-    currentState.currentFile = currentState.files.find(f => f.name === fileName);
-    FileManager.downloadCurrentFile();
-  },
-  deleteFileFromContext: function(fileName) {
-    this.hideContextMenu();
-    currentState.currentFile = currentState.files.find(f => f.name === fileName);
-    ModalManager.showDeleteFileModal();
-  }
-};
-
-const Router = {
-  showFileViewer: function() {
-    document.getElementById('explorerView').classList.add('hidden');
-    document.getElementById('fileEditor').classList.add('hidden');
-    document.getElementById('repoSelectorView').classList.add('hidden');
-    document.getElementById('fileViewer').classList.remove('hidden');
-  },
-  showFileEditor: function() {
-    document.getElementById('explorerView').classList.add('hidden');
-    document.getElementById('fileViewer').classList.add('hidden');
-    document.getElementById('repoSelectorView').classList.add('hidden');
-    document.getElementById('fileEditor').classList.remove('hidden');
-  },
-  showRepoSelector: function() {
-    LoadingManager.startPageTransition();
-    UI.showSkeletonLoading('repoSelectorView');
-    
-    setTimeout(() => {
-      document.getElementById('explorerView').classList.add('hidden');
-      document.getElementById('fileViewer').classList.add('hidden');
-      document.getElementById('fileEditor').classList.add('hidden');
-      document.getElementById('repoSelectorView').classList.remove('hidden');
-      
-      LoadingManager.completePageTransition();
-      UI.hideSkeletonLoading('repoSelectorView');
-      UI.updateStats();
-    }, 300 + Math.random() * 200);
-  },
-  showExplorer: function() {
-    if (currentState.repository) {
-      LoadingManager.startPageTransition(500);
-      UI.showSkeletonLoading('explorerView');
-      
-      const codeBlock = document.getElementById('codeBlock');
-      if (codeBlock) {
-        codeBlock.textContent = '';
-        codeBlock.className = '';
-      }
-      
-      const lineNumbers = document.getElementById('lineNumbers');
-      if (lineNumbers) lineNumbers.innerHTML = '';
-      
-      currentState.currentFile = null;
-      
-      setTimeout(() => {
-        document.getElementById('fileViewer').classList.add('hidden');
-        document.getElementById('fileEditor').classList.add('hidden');
-        document.getElementById('repoSelectorView').classList.add('hidden');
-        document.getElementById('explorerView').classList.remove('hidden');
-        
-        LoadingManager.completePageTransition();
-        UI.hideSkeletonLoading('explorerView');
-        UI.updateStats();
-      }, 400);
-    }
-  },
-  navigateToRoot: function() {
-    currentState.path = '';
-    LoadingManager.showLoading('Loading repository root...');
-    
-    setTimeout(() => {
-      try {
-        currentState.files = LocalStorageManager.listFiles(currentState.repository, '');
-        UI.renderFileList();
-        UI.updateBreadcrumb();
-        LoadingManager.hideLoading();
-      } catch (error) {
-        LoadingManager.hideLoading();
-        NotificationManager.showErrorMessage('Failed to load repository root: ' + error.message);
-      }
-    }, 300);
-  },
-  navigateToPath: function(path) {
-    currentState.path = path;
-    LoadingManager.showLoading(`Loading directory ${path}...`);
-    
-    setTimeout(() => {
-      try {
-        const pathPrefix = path ? path + '/' : '';
-        currentState.files = LocalStorageManager.listFiles(currentState.repository, pathPrefix);
-        UI.renderFileList();
-        UI.updateBreadcrumb();
-        LoadingManager.hideLoading();
-      } catch (error) {
-        LoadingManager.hideLoading();
-        NotificationManager.showErrorMessage(`Failed to load path ${path}: ` + error.message);
-      }
-    }, 300);
-  }
+const Notifications = {
+showSuccessMessage: function(message) {
+const notification = document.createElement('div');
+notification.className = 'fixed top-4 right-4 bg-github-success-fg text-white px-4 py-3 rounded-lg shadow-lg z-50 animate-slide-down';
+notification.innerHTML = `<div class="flex items-center space-x-2"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16"><path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"/></svg><span>${message}</span></div>`;
+document.body.appendChild(notification);
+setTimeout(() => {
+  notification.style.animation = 'fadeOut 0.3s ease-in';
+  setTimeout(() => notification.parentNode?.removeChild(notification), 300);
+}, 3000);
+},
+showErrorMessage: function(message) {
+const notification = document.createElement('div');
+notification.className = 'fixed top-4 right-4 bg-github-danger-fg text-white px-4 py-3 rounded-lg shadow-lg z-50 animate-slide-down';
+notification.innerHTML = `<div class="flex items-center space-x-2"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16"><path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16ZM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646Z"/></svg><span>${message}</span></div>`;
+document.body.appendChild(notification);
+setTimeout(() => {
+  notification.style.animation = 'fadeOut 0.3s ease-in';
+  setTimeout(() => notification.parentNode?.removeChild(notification), 300);
+}, 5000);
+}
 };
 
 const ModalManager = {
-  showCreateRepoModal: function() {
-    document.getElementById('createRepoModal').classList.remove('hidden');
-    document.getElementById('createRepoModal').classList.add('flex');
-    document.getElementById('newRepoName').focus();
-  },
-  hideCreateRepoModal: function() {
-    document.getElementById('createRepoModal').classList.add('hidden');
-    document.getElementById('createRepoModal').classList.remove('flex');
-    document.getElementById('newRepoName').value = '';
-    document.getElementById('repoDescriptionInput').value = '';
-    document.getElementById('visibilityPublic').checked = true;
-    document.getElementById('initReadme').checked = true;
-  },
-  showCreateFileModal: function() {
-    document.getElementById('createFileModal').classList.remove('hidden');
-    document.getElementById('createFileModal').classList.add('flex');
-    document.getElementById('currentPathPrefix').textContent = currentState.repository + (currentState.path ? '/' + currentState.path : '') + '/';
-    document.getElementById('newFileName').focus();
-  },
-  hideCreateFileModal: function() {
-    document.getElementById('createFileModal').classList.add('hidden');
-    document.getElementById('createFileModal').classList.remove('flex');
-    document.getElementById('newFileName').value = '';
-    document.getElementById('fileCategoryInput').value = '';
-    document.getElementById('tagInput').value = '';
-    if (initialContentEditor) initialContentEditor.setValue('');
-    currentState.selectedTags = [];
-    UI.updateSelectedTags();
-  },
-  showDeleteFileModal: function() {
-    if (!currentState.currentFile) return;
-    document.getElementById('fileToDeleteName').textContent = currentState.currentFile.name;
-    document.getElementById('deleteFileModal').classList.remove('hidden');
-    document.getElementById('deleteFileModal').classList.add('flex');
-  },
-  hideDeleteFileModal: function() {
-    document.getElementById('deleteFileModal').classList.add('hidden');
-    document.getElementById('deleteFileModal').classList.remove('flex');
-  }
+showCreateRepoModal: function() {
+document.getElementById('createRepoModal').classList.remove('hidden');
+document.getElementById('createRepoModal').classList.add('flex');
+document.getElementById('newRepoName').focus();
+},
+hideCreateRepoModal: function() {
+document.getElementById('createRepoModal').classList.add('hidden');
+document.getElementById('createRepoModal').classList.remove('flex');
+document.getElementById('newRepoName').value = '';
+document.getElementById('repoDescriptionInput').value = '';
+document.getElementById('visibilityPublic').checked = true;
+document.getElementById('initReadme').checked = true;
+},
+showCreateFileModal: function() {
+document.getElementById('createFileModal').classList.remove('hidden');
+document.getElementById('createFileModal').classList.add('flex');
+document.getElementById('currentPathPrefix').textContent = currentState.repository + (currentState.path ? '/' + currentState.path : '') + '/';
+document.getElementById('newFileName').focus();
+},
+hideCreateFileModal: function() {
+document.getElementById('createFileModal').classList.add('hidden');
+document.getElementById('createFileModal').classList.remove('flex');
+document.getElementById('newFileName').value = '';
+document.getElementById('fileCategoryInput').value = '';
+document.getElementById('tagInput').value = '';
+if (initialContentEditor) initialContentEditor.setValue('');
+currentState.selectedTags = [];
+UI.updateSelectedTags();
+},
+showDeleteFileModal: function() {
+if (!currentState.currentFile) return;
+document.getElementById('fileToDeleteName').textContent = currentState.currentFile.name;
+document.getElementById('deleteFileModal').classList.remove('hidden');
+document.getElementById('deleteFileModal').classList.add('flex');
+},
+hideDeleteFileModal: function() {
+document.getElementById('deleteFileModal').classList.add('hidden');
+document.getElementById('deleteFileModal').classList.remove('flex');
+}
 };
 
 const RepositoryManager = {
-  createRepository: function() {
-    const repoName = document.getElementById('newRepoName').value.trim();
-    const description = document.getElementById('repoDescriptionInput').value.trim();
-    const initReadme = document.getElementById('initReadme').checked;
-    
-    if (!repoName) {
-      NotificationManager.showErrorMessage('Please enter a repository name');
-      return;
+loadRepositories: function() {
+LoadingManager.showLoading('Loading repositories...');
+LoadingManager.showSkeleton('repoList', 'card');
+setTimeout(() => {
+  currentState.repositories = LocalStorageManager.getRepositories();
+  UI.renderRepositoryList();
+  LoadingManager.hideLoading();
+  LoadingManager.hideSkeleton('repoList');
+}, 500);
+},
+createRepository: function() {
+const repoName = document.getElementById('newRepoName').value.trim();
+const description = document.getElementById('repoDescriptionInput').value.trim();
+const initReadme = document.getElementById('initReadme').checked;
+if (!repoName) {
+  Notifications.showErrorMessage('Please enter a repository name');
+  return;
+}
+if (!FileManager.isValidFilename(repoName)) {
+  Notifications.showErrorMessage('Invalid repository name. Please use only letters, numbers, hyphens and underscores.');
+  return;
+}
+const existingRepo = LocalStorageManager.getRepository(repoName);
+if (existingRepo) {
+  Notifications.showErrorMessage('Repository already exists');
+  return;
+}
+LoadingManager.showLoading('Creating repository...');
+setTimeout(() => {
+  try {
+    const repo = {
+      name: repoName,
+      description: description,
+      created: Date.now(),
+      lastModified: Date.now(),
+      defaultBranch: 'main',
+      branches: ['main'],
+      visibility: document.getElementById('visibilityPublic').checked ? 'public' : 'private'
+    };
+    LocalStorageManager.saveRepository(repo);
+    if (initReadme) {
+      const readmeContent = `# ${repoName}\n\n${description ? description + '\n\n' : ''}## Getting Started\n\nThis repository was created with GitHub Clone.\n`;
+      const readmeData = {
+        content: readmeContent,
+        category: 'Documentation',
+        tags: ['readme'],
+        created: Date.now(),
+        lastModified: Date.now(),
+        lastCommit: 'Initial commit',
+        size: new Blob([readmeContent]).size
+      };
+      LocalStorageManager.saveFile(repoName, 'README.md', readmeData);
     }
-    
-    if (!Utilities.isValidFilename(repoName)) {
-      NotificationManager.showErrorMessage('Invalid repository name. Please use only letters, numbers, hyphens and underscores.');
-      return;
-    }
-    
-    const existingRepo = LocalStorageManager.getRepository(repoName);
-    if (existingRepo) {
-      NotificationManager.showErrorMessage('Repository already exists');
-      return;
-    }
-    
-    LoadingManager.showLoading('Creating repository...');
-    
-    setTimeout(() => {
-      try {
-        const repo = {
-          name: repoName,
-          description: description,
-          created: Date.now(),
-          lastModified: Date.now(),
-          defaultBranch: 'main',
-          branches: ['main'],
-          visibility: document.getElementById('visibilityPublic').checked ? 'public' : 'private'
-        };
-        
-        LocalStorageManager.saveRepository(repo);
-        
-        if (initReadme) {
-          const readmeContent = `# ${repoName}\n\n${description ? description + '\n\n' : ''}## Getting Started\n\nThis repository was created with GitHub Clone.\n`;
-          const readmeData = {
-            content: readmeContent,
-            category: 'Documentation',
-            tags: ['readme'],
-            created: Date.now(),
-            lastModified: Date.now(),
-            lastCommit: 'Initial commit',
-            size: new Blob([readmeContent]).size
-          };
-          
-          LocalStorageManager.saveFile(repoName, 'README.md', readmeData);
-        }
-        
-        currentState.repositories.push(repo);
-        UI.renderRepositoryList();
-        ModalManager.hideCreateRepoModal();
-        LoadingManager.hideLoading();
-        NotificationManager.showSuccessMessage(`Repository "${repoName}" created successfully!`);
-        setTimeout(() => this.openRepository(repoName), 500);
-      } catch (error) {
-        LoadingManager.hideLoading();
-        NotificationManager.showErrorMessage('Failed to create repository: ' + error.message);
-      }
-    }, 300);
-  },
-  deleteRepository: function(repoName) {
-    if (!confirm(`Are you sure you want to delete the repository "${repoName}"? This action cannot be undone.`)) return;
-    
-    LoadingManager.showLoading(`Deleting repository ${repoName}...`);
-    
-    setTimeout(() => {
-      try {
-        LocalStorageManager.deleteRepository(repoName);
-        currentState.repositories = currentState.repositories.filter(r => r.name !== repoName);
-        if (currentState.repository === repoName) {
-          currentState.repository = null;
-          Router.showRepoSelector();
-        }
-        UI.renderRepositoryList();
-        LoadingManager.hideLoading();
-        NotificationManager.showSuccessMessage(`Repository "${repoName}" deleted successfully!`);
-      } catch (error) {
-        LoadingManager.hideLoading();
-        NotificationManager.showErrorMessage('Failed to delete repository: ' + error.message);
-      }
-    }, 300);
-  },
-  openRepository: function(repoName) {
-    LoadingManager.startPageTransition(800);
-    UI.showSkeletonLoading('explorerView');
-    
-    currentState.repository = repoName;
-    currentState.path = '';
-    
-    setTimeout(() => {
-      try {
-        currentState.files = LocalStorageManager.listFiles(repoName, '');
-        UI.renderFileList();
-        UI.updateBreadcrumb();
-        
-        const currentRepoName = document.getElementById('currentRepoName');
-        const repoNameInViewer = document.getElementById('repoNameInViewer');
-        const repoNameInEditor = document.getElementById('repoNameInEditor');
-        
-        if (currentRepoName) currentRepoName.textContent = repoName;
-        if (repoNameInViewer) repoNameInViewer.textContent = repoName;
-        if (repoNameInEditor) repoNameInEditor.textContent = repoName;
-        
-        const repo = LocalStorageManager.getRepository(repoName);
-        if (repo) {
-          const repoDescription = document.getElementById('repoDescription');
-          if (repoDescription) repoDescription.textContent = repo.description || 'No description provided.';
-        }
-        
-        LoadingManager.completePageTransition();
-        UI.hideSkeletonLoading('explorerView');
-        Router.showExplorer();
-        UI.updateStats();
-      } catch (error) {
-        NotificationManager.showErrorMessage('Failed to open repository: ' + error.message);
-        LoadingManager.completePageTransition();
-        UI.hideSkeletonLoading('explorerView');
-      }
-    }, 600);
-  },
-  loadRepositories: function() {
-    LoadingManager.showLoading('Loading repositories...');
-    setTimeout(() => {
-      currentState.repositories = LocalStorageManager.getRepositories();
-      UI.renderRepositoryList();
-      LoadingManager.hideLoading();
-    }, 500);
+    currentState.repositories.push(repo);
+    UI.renderRepositoryList();
+    ModalManager.hideCreateRepoModal();
+    LoadingManager.hideLoading();
+    Notifications.showSuccessMessage(`Repository "${repoName}" created successfully!`);
+    setTimeout(() => this.openRepository(repoName), 500);
+  } catch (error) {
+    LoadingManager.hideLoading();
+    Notifications.showErrorMessage('Failed to create repository: ' + error.message);
   }
+}, 300);
+},
+deleteRepository: function(repoName) {
+if (!confirm(`Are you sure you want to delete the repository "${repoName}"? This action cannot be undone.`)) return;
+LoadingManager.showLoading(`Deleting repository ${repoName}...`);
+setTimeout(() => {
+  try {
+    LocalStorageManager.deleteRepository(repoName);
+    currentState.repositories = currentState.repositories.filter(r => r.name !== repoName);
+    if (currentState.repository === repoName) {
+      currentState.repository = null;
+      Router.showRepoSelector();
+    }
+    UI.renderRepositoryList();
+    LoadingManager.hideLoading();
+    Notifications.showSuccessMessage(`Repository "${repoName}" deleted successfully!`);
+  } catch (error) {
+    LoadingManager.hideLoading();
+    Notifications.showErrorMessage('Failed to delete repository: ' + error.message);
+  }
+}, 300);
+},
+openRepository: function(repoName) {
+currentState.repository = repoName;
+currentState.path = '';
+try {
+  currentState.files = LocalStorageManager.listFiles(repoName, '');
+  UI.renderFileList();
+  UI.updateBreadcrumb();
+  const currentRepoName = document.getElementById('currentRepoName');
+  const repoNameInViewer = document.getElementById('repoNameInViewer');
+  const repoNameInEditor = document.getElementById('repoNameInEditor');
+  if (currentRepoName) currentRepoName.textContent = repoName;
+  if (repoNameInViewer) repoNameInViewer.textContent = repoName;
+  if (repoNameInEditor) repoNameInEditor.textContent = repoName;
+  const repo = LocalStorageManager.getRepository(repoName);
+  if (repo) {
+    const repoDescription = document.getElementById('repoDescription');
+    if (repoDescription) repoDescription.textContent = repo.description || 'No description provided.';
+  }
+  Router.showExplorer();
+  UI.updateStats();
+} catch (error) {
+  Notifications.showErrorMessage('Failed to open repository: ' + error.message);
+}
+}
 };
 
 const FileManager = {
-  createFile: function() {
-    const fileName = document.getElementById('newFileName').value.trim();
-    const category = document.getElementById('fileCategoryInput').value.trim() || 'General';
-    const content = initialContentEditor ? initialContentEditor.getValue() : '';
-    
-    if (!fileName) {
-      NotificationManager.showErrorMessage('Please enter a file name');
-      return;
-    }
-    
-    if (!Utilities.isValidFilename(fileName)) {
-      NotificationManager.showErrorMessage('Invalid file name. Please use only letters, numbers, dots, underscores and hyphens.');
-      return;
-    }
-    
-    LoadingManager.showLoading('Creating file...');
-    
-    setTimeout(() => {
-      try {
-        const filePath = (currentState.path ? currentState.path + '/' : '') + fileName;
-        const existingFile = LocalStorageManager.getFile(currentState.repository, filePath);
-        
-        if (existingFile) {
-          LoadingManager.hideLoading();
-          NotificationManager.showErrorMessage('File already exists');
-          return;
-        }
-        
-        const fileContent = content || `// ${fileName}\n// Created on ${new Date().toLocaleDateString()}\n\n`;
-        const fileData = {
-          content: fileContent,
-          category: category,
-          tags: currentState.selectedTags,
-          created: Date.now(),
-          lastModified: Date.now(),
-          lastCommit: 'Initial commit',
-          size: new Blob([fileContent]).size
-        };
-        
-        LocalStorageManager.saveFile(currentState.repository, filePath, fileData);
-        
-        currentState.files.push({
-          name: fileName,
-          type: 'file',
-          path: filePath,
-          lastModified: fileData.lastModified,
-          lastCommit: fileData.lastCommit
-        });
-        
-        UI.renderFileList();
-        ModalManager.hideCreateFileModal();
-        LoadingManager.hideLoading();
-        NotificationManager.showSuccessMessage(`File "${fileName}" created successfully!`);
-      } catch (error) {
-        LoadingManager.hideLoading();
-        NotificationManager.showErrorMessage('Failed to create file: ' + error.message);
-      }
-    }, 300);
-  },
-  confirmDeleteFile: function() {
-    this.deleteCurrentFile();
-    ModalManager.hideDeleteFileModal();
-  },
-  deleteCurrentFile: function() {
-    if (!currentState.currentFile) return;
-    LoadingManager.showLoading(`Deleting file ${currentState.currentFile.name}...`);
-    
-    setTimeout(() => {
-      try {
-        const filePath = (currentState.path ? currentState.path + '/' : '') + currentState.currentFile.name;
-        LocalStorageManager.deleteFile(currentState.repository, filePath);
-        currentState.files = currentState.files.filter(f => f.name !== currentState.currentFile.name);
-        UI.renderFileList();
-        ModalManager.hideDeleteFileModal();
-        LoadingManager.hideLoading();
-        NotificationManager.showSuccessMessage(`File "${currentState.currentFile.name}" deleted successfully!`);
-        setTimeout(() => Router.showExplorer(), 500);
-      } catch (error) {
-        LoadingManager.hideLoading();
-        NotificationManager.showErrorMessage('Failed to delete file: ' + error.message);
-      }
-    }, 300);
-  },
-  downloadCurrentFile: function() {
-    if (!currentState.currentFile) return;
-    
-    try {
-      const filePath = (currentState.path ? currentState.path + '/' : '') + currentState.currentFile.name;
-      const fileData = LocalStorageManager.getFile(currentState.repository, filePath);
-      
-      if (fileData) {
-        const blob = new Blob([fileData.content], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = currentState.currentFile.name;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        NotificationManager.showSuccessMessage(`File "${currentState.currentFile.name}" downloaded successfully!`);
-      }
-    } catch (error) {
-      NotificationManager.showErrorMessage('Failed to download file: ' + error.message);
-    }
-  },
-  viewFile: function(filename) {
-    if (!currentState.repository) {
-      NotificationManager.showErrorMessage('No repository selected');
-      return;
-    }
-    
-    const file = currentState.files.find(f => f.name === filename);
-    if (!file) {
-      NotificationManager.showErrorMessage(`File "${filename}" not found in current view`);
-      return;
-    }
-    
-    currentState.currentFile = file;
-    
-    try {
-      const filePath = file.path || ((currentState.path ? currentState.path + '/' : '') + filename);
-      const fileData = LocalStorageManager.getFile(currentState.repository, filePath);
-      
-      if (!fileData) {
-        throw new Error(`File data not found for ${filePath}`);
-      }
-      
-      RecentFilesManager.addToRecentFiles(filename, currentState.repository, filePath);
-      UI.displayFileContent(filename, fileData);
-      Router.showFileViewer();
-      UI.updateStats();
-    } catch (error) {
-      NotificationManager.showErrorMessage('Failed to load file: ' + error.message);
-    }
-  },
-  editFile: function() {
-    if (!currentState.currentFile) return;
-    LoadingManager.showLoading('Loading editor...');
-    
-    setTimeout(() => {
-      try {
-        const filePath = (currentState.path ? currentState.path + '/' : '') + currentState.currentFile.name;
-        const fileData = LocalStorageManager.getFile(currentState.repository, filePath);
-        
-        if (fileData) {
-          const editingFileName = document.getElementById('editingFileName');
-          const commitTitle = document.getElementById('commitTitle');
-          const fileCategoryInput = document.getElementById('fileCategoryInput');
-          
-          if (editingFileName) editingFileName.textContent = currentState.currentFile.name;
-          if (commitTitle) commitTitle.value = `Update ${currentState.currentFile.name}`;
-          
-          if (codeEditor) {
-            codeEditor.setValue(fileData.content);
-            UI.updateEditorMode(codeEditor, currentState.currentFile.name);
-          }
-          
-          if (fileCategoryInput) fileCategoryInput.value = fileData.category || '';
-          currentState.selectedTags = fileData.tags || [];
-          UI.updateSelectedTags();
-          
-          LoadingManager.hideLoading();
-          Router.showFileEditor();
-        } else {
-          throw new Error('File not found');
-        }
-      } catch (error) {
-        LoadingManager.hideLoading();
-        NotificationManager.showErrorMessage('Failed to load file for editing: ' + error.message);
-      }
-    }, 300);
-  },
-  saveFile: function() {
-    if (!currentState.currentFile) return;
-    
-    const commitTitle = document.getElementById('commitTitle');
-    const commitDescription = document.getElementById('commitDescription');
-    
-    if (!commitTitle || !commitTitle.value.trim()) {
-      NotificationManager.showErrorMessage('Please enter a commit message');
-      return;
-    }
-    
-    LoadingManager.showLoading('Saving changes...');
-    
-    setTimeout(() => {
-      try {
-        const filePath = (currentState.path ? currentState.path + '/' : '') + currentState.currentFile.name;
-        const content = codeEditor ? codeEditor.getValue() : '';
-        const fileCategoryInput = document.getElementById('fileCategoryInput');
-        
-        const fileData = {
-          content: content,
-          category: fileCategoryInput ? fileCategoryInput.value.trim() || 'General' : 'General',
-          tags: currentState.selectedTags,
-          lastModified: Date.now(),
-          created: LocalStorageManager.getFile(currentState.repository, filePath)?.created || Date.now(),
-          lastCommit: commitTitle.value.trim(),
-          size: new Blob([content]).size
-        };
-        
-        LocalStorageManager.saveFile(currentState.repository, filePath, fileData);
-        
-        const fileIndex = currentState.files.findIndex(f => f.name === currentState.currentFile.name);
-        if (fileIndex !== -1) {
-          currentState.files[fileIndex].lastModified = fileData.lastModified;
-          currentState.files[fileIndex].lastCommit = fileData.lastCommit;
-        }
-        
-        if (commitDescription) commitDescription.value = '';
-        LoadingManager.hideLoading();
-        NotificationManager.showSuccessMessage(`File "${currentState.currentFile.name}" saved successfully!`);
-        setTimeout(() => this.viewFile(currentState.currentFile.name), 500);
-      } catch (error) {
-        LoadingManager.hideLoading();
-        NotificationManager.showErrorMessage('Failed to save file: ' + error.message);
-      }
-    }, 300);
-  },
-  previewFile: function() {
-    if (!codeEditor || !currentState.currentFile) return;
-    
-    const content = codeEditor.getValue();
-    const ext = currentState.currentFile.name.split('.').pop().toLowerCase();
-    
-    if (ext === 'md' || ext === 'markdown') {
-      const previewWindow = window.open('', '_blank');
-      previewWindow.document.write(`<!DOCTYPE html><html><head><title>Preview: ${currentState.currentFile.name}</title><meta charset="utf-8"><style>body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;line-height:1.6;color:#24292f;background-color:#ffffff;max-width:980px;margin:0 auto;padding:45px;}@media(max-width:767px){body{padding:15px;}}h1,h2,h3,h4,h5,h6{margin-top:24px;margin-bottom:16px;font-weight:600;line-height:1.25;}h1{font-size:2em;border-bottom:1px solid #eaecef;padding-bottom:.3em;}h2{font-size:1.5em;border-bottom:1px solid #eaecef;padding-bottom:.3em;}p{margin-bottom:16px;}code{background-color:rgba(175,184,193,0.2);padding:2px 4px;border-radius:3px;font-size:85%;}pre{background-color:#f6f8fa;padding:16px;overflow:auto;border-radius:6px;}blockquote{padding:0 1em;color:#6a737d;border-left:0.25em solid #dfe2e5;margin:0 0 16px 0;}</style></head><body><pre>${content.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre></body></html>`);
-      previewWindow.document.close();
-    } else {
-      const previewWindow = window.open('', '_blank');
-      previewWindow.document.write(`<!DOCTYPE html><html><head><title>Preview: ${currentState.currentFile.name}</title><style>body{font-family:'JetBrains Mono',monospace;background:#22272e;color:#adbac7;margin:0;padding:16px;}pre{margin:0;white-space:pre-wrap;}</style></head><body><pre>${content.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre></body></html>`);
-      previewWindow.document.close();
-    }
+...FileManager,
+viewFile: function(filename) {
+if (!currentState.repository) {
+  Notifications.showErrorMessage('No repository selected');
+  return;
+}
+const file = currentState.files.find(f => f.name === filename);
+if (!file) {
+  Notifications.showErrorMessage(`File "${filename}" not found in current view`);
+  return;
+}
+currentState.currentFile = file;
+try {
+  const filePath = file.path || ((currentState.path ? currentState.path + '/' : '') + filename);
+  const fileData = LocalStorageManager.getFile(currentState.repository, filePath);
+  if (!fileData) {
+    throw new Error(`File data not found for ${filePath}`);
   }
+  RecentFiles.addToRecentFiles(filename, currentState.repository, filePath);
+  UI.displayFileContent(filename, fileData);
+  Router.showFileViewer();
+  UI.updateStats();
+} catch (error) {
+  Notifications.showErrorMessage('Failed to load file: ' + error.message);
+}
+},
+editFile: function() {
+if (!currentState.currentFile) return;
+LoadingManager.showLoading('Loading editor...');
+setTimeout(() => {
+  try {
+    const filePath = (currentState.path ? currentState.path + '/' : '') + currentState.currentFile.name;
+    const fileData = LocalStorageManager.getFile(currentState.repository, filePath);
+    if (fileData) {
+      const editingFileName = document.getElementById('editingFileName');
+      const commitTitle = document.getElementById('commitTitle');
+      const fileCategoryInput = document.getElementById('fileCategoryInput');
+      if (editingFileName) editingFileName.textContent = currentState.currentFile.name;
+      if (commitTitle) commitTitle.value = `Update ${currentState.currentFile.name}`;
+      if (codeEditor) {
+        codeEditor.setValue(fileData.content);
+        UI.updateEditorMode(codeEditor, currentState.currentFile.name);
+      }
+      if (fileCategoryInput) fileCategoryInput.value = fileData.category || '';
+      currentState.selectedTags = fileData.tags || [];
+      UI.updateSelectedTags();
+      LoadingManager.hideLoading();
+      Router.showFileEditor();
+    } else {
+      throw new Error('File not found');
+    }
+  } catch (error) {
+    LoadingManager.hideLoading();
+    Notifications.showErrorMessage('Failed to load file for editing: ' + error.message);
+  }
+}, 300);
+},
+saveFile: function() {
+if (!currentState.currentFile) return;
+const commitTitle = document.getElementById('commitTitle');
+const commitDescription = document.getElementById('commitDescription');
+if (!commitTitle || !commitTitle.value.trim()) {
+  Notifications.showErrorMessage('Please enter a commit message');
+  return;
+}
+LoadingManager.showLoading('Saving changes...');
+setTimeout(() => {
+  try {
+    const filePath = (currentState.path ? currentState.path + '/' : '') + currentState.currentFile.name;
+    const content = codeEditor ? codeEditor.getValue() : '';
+    const fileCategoryInput = document.getElementById('fileCategoryInput');
+    const fileData = {
+      content: content,
+      category: fileCategoryInput ? fileCategoryInput.value.trim() || 'General' : 'General',
+      tags: currentState.selectedTags,
+      lastModified: Date.now(),
+      created: LocalStorageManager.getFile(currentState.repository, filePath)?.created || Date.now(),
+      lastCommit: commitTitle.value.trim(),
+      size: new Blob([content]).size
+    };
+    LocalStorageManager.saveFile(currentState.repository, filePath, fileData);
+    const fileIndex = currentState.files.findIndex(f => f.name === currentState.currentFile.name);
+    if (fileIndex !== -1) {
+      currentState.files[fileIndex].lastModified = fileData.lastModified;
+      currentState.files[fileIndex].lastCommit = fileData.lastCommit;
+    }
+    if (commitDescription) commitDescription.value = '';
+    LoadingManager.hideLoading();
+    Notifications.showSuccessMessage(`File "${currentState.currentFile.name}" saved successfully!`);
+    setTimeout(() => this.viewFile(currentState.currentFile.name), 500);
+  } catch (error) {
+    LoadingManager.hideLoading();
+    Notifications.showErrorMessage('Failed to save file: ' + error.message);
+  }
+}, 300);
+},
+downloadCurrentFile: function() {
+if (!currentState.currentFile) return;
+try {
+  const filePath = (currentState.path ? currentState.path + '/' : '') + currentState.currentFile.name;
+  const fileData = LocalStorageManager.getFile(currentState.repository, filePath);
+  if (fileData) {
+    const blob = new Blob([fileData.content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = currentState.currentFile.name;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    Notifications.showSuccessMessage(`File "${currentState.currentFile.name}" downloaded successfully!`);
+  }
+} catch (error) {
+  Notifications.showErrorMessage('Failed to download file: ' + error.message);
+}
+},
+previewFile: function() {
+if (!codeEditor || !currentState.currentFile) return;
+const content = codeEditor.getValue();
+const ext = currentState.currentFile.name.split('.').pop().toLowerCase();
+if (ext === 'md' || ext === 'markdown') {
+  const previewWindow = window.open('', '_blank');
+  previewWindow.document.write(`<!DOCTYPE html><html><head><title>Preview: ${currentState.currentFile.name}</title><meta charset="utf-8"><style>body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;line-height:1.6;color:#24292f;background-color:#ffffff;max-width:980px;margin:0 auto;padding:45px;}@media(max-width:767px){body{padding:15px;}}h1,h2,h3,h4,h5,h6{margin-top:24px;margin-bottom:16px;font-weight:600;line-height:1.25;}h1{font-size:2em;border-bottom:1px solid #eaecef;padding-bottom:.3em;}h2{font-size:1.5em;border-bottom:1px solid #eaecef;padding-bottom:.3em;}p{margin-bottom:16px;}code{background-color:rgba(175,184,193,0.2);padding:2px 4px;border-radius:3px;font-size:85%;}pre{background-color:#f6f8fa;padding:16px;overflow:auto;border-radius:6px;}blockquote{padding:0 1em;color:#6a737d;border-left:0.25em solid #dfe2e5;margin:0 0 16px 0;}</style></head><body><pre>${content.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre></body></html>`);
+  previewWindow.document.close();
+} else {
+  const previewWindow = window.open('', '_blank');
+  previewWindow.document.write(`<!DOCTYPE html><html><head><title>Preview: ${currentState.currentFile.name}</title><style>body{font-family:'JetBrains Mono',monospace;background:#22272e;color:#adbac7;margin:0;padding:16px;}pre{margin:0;white-space:pre-wrap;}</style></head><body><pre>${content.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre></body></html>`);
+  previewWindow.document.close();
+}
+},
+createFile: function() {
+const fileName = document.getElementById('newFileName').value.trim();
+const category = document.getElementById('fileCategoryInput').value.trim() || 'General';
+const content = initialContentEditor ? initialContentEditor.getValue() : '';
+if (!fileName) {
+  Notifications.showErrorMessage('Please enter a file name');
+  return;
+}
+if (!FileManager.isValidFilename(fileName)) {
+  Notifications.showErrorMessage('Invalid file name. Please use only letters, numbers, dots, underscores and hyphens.');
+  return;
+}
+LoadingManager.showLoading('Creating file...');
+setTimeout(() => {
+  try {
+    const filePath = (currentState.path ? currentState.path + '/' : '') + fileName;
+    const existingFile = LocalStorageManager.getFile(currentState.repository, filePath);
+    if (existingFile) {
+      LoadingManager.hideLoading();
+      Notifications.showErrorMessage('File already exists');
+      return;
+    }
+    const fileContent = content || `// ${fileName}\n// Created on ${new Date().toLocaleDateString()}\n\n`;
+    const fileData = {
+      content: fileContent,
+      category: category,
+      tags: currentState.selectedTags,
+      created: Date.now(),
+      lastModified: Date.now(),
+      lastCommit: 'Initial commit',
+      size: new Blob([fileContent]).size
+    };
+    LocalStorageManager.saveFile(currentState.repository, filePath, fileData);
+    currentState.files.push({
+      name: fileName,
+      type: 'file',
+      path: filePath,
+      lastModified: fileData.lastModified,
+      lastCommit: fileData.lastCommit
+    });
+    UI.renderFileList();
+    ModalManager.hideCreateFileModal();
+    LoadingManager.hideLoading();
+    Notifications.showSuccessMessage(`File "${fileName}" created successfully!`);
+  } catch (error) {
+    LoadingManager.hideLoading();
+    Notifications.showErrorMessage('Failed to create file: ' + error.message);
+  }
+}, 300);
+},
+confirmDeleteFile: function() {
+this.deleteCurrentFile();
+ModalManager.hideDeleteFileModal();
+},
+deleteCurrentFile: function() {
+if (!currentState.currentFile) return;
+LoadingManager.showLoading(`Deleting file ${currentState.currentFile.name}...`);
+setTimeout(() => {
+  try {
+    const filePath = (currentState.path ? currentState.path + '/' : '') + currentState.currentFile.name;
+    LocalStorageManager.deleteFile(currentState.repository, filePath);
+    currentState.files = currentState.files.filter(f => f.name !== currentState.currentFile.name);
+    UI.renderFileList();
+    ModalManager.hideDeleteFileModal();
+    LoadingManager.hideLoading();
+    Notifications.showSuccessMessage(`File "${currentState.currentFile.name}" deleted successfully!`);
+    setTimeout(() => Router.showExplorer(), 500);
+  } catch (error) {
+    LoadingManager.hideLoading();
+    Notifications.showErrorMessage('Failed to delete file: ' + error.message);
+  }
+}, 300);
+}
+};
+
+const RecentFiles = {
+getRecentFiles: function() {
+return JSON.parse(localStorage.getItem('gitcodr_recent_files') || '[]');
+},
+addToRecentFiles: function(fileName, repoName, filePath) {
+let recentFiles = this.getRecentFiles();
+const existingIndex = recentFiles.findIndex(f => 
+  f.filePath === filePath && f.repoName === repoName
+);
+if (existingIndex !== -1) {
+  recentFiles.splice(existingIndex, 1);
+}
+recentFiles.unshift({
+  fileName,
+  repoName,
+  filePath,
+  timestamp: Date.now()
+});
+if (recentFiles.length > 10) {
+  recentFiles = recentFiles.slice(0, 10);
+}
+localStorage.setItem('gitcodr_recent_files', JSON.stringify(recentFiles));
+UI.updateRecentFilesUI();
+},
+openRecentFile: function(repoName, filePath, fileName) {
+currentState.repository = repoName;
+const pathParts = filePath.split('/');
+if (pathParts.length > 1) {
+  currentState.path = pathParts.slice(0, -1).join('/');
+} else {
+  currentState.path = '';
+}
+try {
+  currentState.files = LocalStorageManager.listFiles(repoName, currentState.path ? currentState.path + '/' : '');
+  UI.renderFileList();
+  UI.updateBreadcrumb();
+  const currentRepoName = document.getElementById('currentRepoName');
+  const repoNameInViewer = document.getElementById('repoNameInViewer');
+  const repoNameInEditor = document.getElementById('repoNameInEditor');
+  if (currentRepoName) currentRepoName.textContent = repoName;
+  if (repoNameInViewer) repoNameInViewer.textContent = repoName;
+  if (repoNameInEditor) repoNameInEditor.textContent = repoName;
+  FileManager.viewFile(fileName);
+} catch (error) {
+  Notifications.showErrorMessage('Failed to open recent file: ' + error.message);
+}
+}
+};
+
+const ContextMenu = {
+viewFileFromContext: function(fileName) {
+UI.hideContextMenu();
+FileManager.viewFile(fileName);
+},
+editFileFromContext: function(fileName) {
+UI.hideContextMenu();
+currentState.currentFile = currentState.files.find(f => f.name === fileName);
+FileManager.editFile();
+},
+downloadFileFromContext: function(fileName) {
+UI.hideContextMenu();
+currentState.currentFile = currentState.files.find(f => f.name === fileName);
+FileManager.downloadCurrentFile();
+},
+deleteFileFromContext: function(fileName) {
+UI.hideContextMenu();
+currentState.currentFile = currentState.files.find(f => f.name === fileName);
+ModalManager.showDeleteFileModal();
+}
 };
 
 const TagManager = {
-  addTag: function() {
-    const input = document.getElementById('tagInput');
-    const tag = input.value.trim();
-    
-    if (tag && !currentState.selectedTags.includes(tag)) {
-      currentState.selectedTags.push(tag);
-      UI.updateSelectedTags();
-      input.value = '';
-    }
-  },
-  removeTag: function(tag) {
-    currentState.selectedTags = currentState.selectedTags.filter(t => t !== tag);
-    UI.updateSelectedTags();
-  }
+addTag: function() {
+const input = document.getElementById('tagInput');
+const tag = input.value.trim();
+if (tag && !currentState.selectedTags.includes(tag)) {
+  currentState.selectedTags.push(tag);
+  UI.updateSelectedTags();
+  input.value = '';
+}
+},
+removeTag: function(tag) {
+currentState.selectedTags = currentState.selectedTags.filter(t => t !== tag);
+UI.updateSelectedTags();
+}
 };
 
-const RecentFilesManager = {
-  addToRecentFiles: function(fileName, repoName, filePath) {
-    const existingIndex = recentFiles.findIndex(f => 
-      f.filePath === filePath && f.repoName === repoName
-    );
-    
-    if (existingIndex !== -1) {
-      recentFiles.splice(existingIndex, 1);
-    }
-    
-    recentFiles.unshift({
-      fileName,
-      repoName,
-      filePath,
-      timestamp: Date.now()
-    });
-    
-    if (recentFiles.length > 10) {
-      recentFiles = recentFiles.slice(0, 10);
-    }
-    
-    localStorage.setItem('gitcodr_recent_files', JSON.stringify(recentFiles));
-    this.updateRecentFilesUI();
-  },
-  updateRecentFilesUI: function() {
-    const recentFilesList = document.getElementById('recentFilesList');
-    const recentFilesCount = document.getElementById('recentFilesCount');
-    const topRecentFilesList = document.getElementById('topRecentFilesList');
-    const topRecentFilesCount = document.getElementById('topRecentFilesCount');
-    
-    if (recentFilesList) {
-      if (recentFiles.length === 0) {
-        recentFilesList.innerHTML = `
-          <div class="text-center py-4 text-github-fg-muted text-sm">
-            No recent files
-          </div>
-        `;
-      } else {
-        recentFilesList.innerHTML = recentFiles.map(file => `
-          <button onclick="RecentFilesManager.openRecentFile('${file.repoName}', '${file.filePath}', '${file.fileName}')" 
-                  class="w-full flex items-center justify-between p-2 rounded hover:bg-github-canvas-subtle text-left group">
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center space-x-2">
-                <svg class="w-3 h-3 text-github-fg-muted flex-shrink-0" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"/>
-                </svg>
-                <span class="text-sm text-github-fg-default truncate">${file.fileName}</span>
-              </div>
-              <div class="text-xs text-github-fg-muted truncate mt-1">${file.repoName}</div>
-            </div>
-            <svg class="w-4 h-4 text-github-fg-muted opacity-0 group-hover:opacity-100 transition-opacity" 
-                 fill="currentColor" viewBox="0 0 16 16">
-              <path d="M4.22 11.78a.75.75 0 0 1 0-1.06L9.44 5.5H5.75a.75.75 0 0 1 0-1.5h5.5a.75.75 0 0 1 .75.75v5.5a.75.75 0 0 1-1.5 0V6.56l-5.22 5.22a.75.75 0 0 1-1.06 0Z"/>
-            </svg>
-          </button>
-        `).join('');
-      }
-    }
-    
-    if (topRecentFilesList) {
-      if (recentFiles.length === 0) {
-        topRecentFilesList.innerHTML = `
-          <div class="text-center py-4 text-github-fg-muted text-sm">
-            No recent files
-          </div>
-        `;
-      } else {
-        topRecentFilesList.innerHTML = recentFiles.map(file => `
-          <button onclick="RecentFilesManager.openRecentFile('${file.repoName}', '${file.filePath}', '${file.fileName}')" 
-                  class="w-full flex items-center justify-between p-2 rounded hover:bg-github-canvas-subtle text-left group">
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center space-x-2">
-                <svg class="w-3 h-3 text-github-fg-muted flex-shrink-0" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"/>
-                </svg>
-                <span class="text-sm text-github-fg-default truncate">${file.fileName}</span>
-              </div>
-              <div class="text-xs text-github-fg-muted truncate mt-1">${file.repoName}</div>
-            </div>
-            <svg class="w-4 h-4 text-github-fg-muted opacity-0 group-hover:opacity-100 transition-opacity" 
-                 fill="currentColor" viewBox="0 0 16 16">
-              <path d="M4.22 11.78a.75.75 0 0 1 0-1.06L9.44 5.5H5.75a.75.75 0 0 1 0-1.5h5.5a.75.75 0 0 1 .75.75v5.5a.75.75 0 0 1-1.5 0V6.56l-5.22 5.22a.75.75 0 0 1-1.06 0Z"/>
-            </svg>
-          </button>
-        `).join('');
-      }
-    }
-    
-    if (recentFilesCount) {
-      recentFilesCount.textContent = recentFiles.length.toString();
-    }
-    if (topRecentFilesCount) {
-      topRecentFilesCount.textContent = recentFiles.length.toString();
-    }
-  },
-  openRecentFile: function(repoName, filePath, fileName) {
-    currentState.repository = repoName;
-    const pathParts = filePath.split('/');
-    if (pathParts.length > 1) {
-      currentState.path = pathParts.slice(0, -1).join('/');
-    } else {
-      currentState.path = '';
-    }
-    
-    try {
-      currentState.files = LocalStorageManager.listFiles(repoName, currentState.path ? currentState.path + '/' : '');
-      UI.renderFileList();
-      UI.updateBreadcrumb();
-      const currentRepoName = document.getElementById('currentRepoName');
-      const repoNameInViewer = document.getElementById('repoNameInViewer');
-      const repoNameInEditor = document.getElementById('repoNameInEditor');
-      if (currentRepoName) currentRepoName.textContent = repoName;
-      if (repoNameInViewer) repoNameInViewer.textContent = repoName;
-      if (repoNameInEditor) repoNameInEditor.textContent = repoName;
-      FileManager.viewFile(fileName);
-    } catch (error) {
-      NotificationManager.showErrorMessage('Failed to open recent file: ' + error.message);
-    }
+const EventManager = {
+setupEventListeners: function() {
+const tagInput = document.getElementById('tagInput');
+if (tagInput) tagInput.addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') { e.preventDefault(); TagManager.addTag(); }
+});
+const branchSelector = document.getElementById('branchSelector');
+if (branchSelector) branchSelector.addEventListener('click', function(e) {
+  e.stopPropagation();
+  const branchDropdown = document.getElementById('branchDropdown');
+  if (branchDropdown) branchDropdown.classList.toggle('hidden');
+});
+document.addEventListener('click', function() {
+  const branchDropdown = document.getElementById('branchDropdown');
+  if (branchDropdown) branchDropdown.classList.add('hidden');
+});
+const newFileName = document.getElementById('newFileName');
+if (newFileName) newFileName.addEventListener('input', function(e) {
+  const fileName = e.target.value;
+  if (fileName && initialContentEditor) UI.updateEditorMode(initialContentEditor, fileName);
+});
+document.addEventListener('click', UI.hideContextMenu);
+},
+setupButtonEventListeners: function() {
+setTimeout(() => {
+  const createRepoBtn = document.querySelector('button[onclick*="showCreateRepoModal"]');
+  if (createRepoBtn) createRepoBtn.onclick = ModalManager.showCreateRepoModal;
+  const createFileBtn = document.querySelector('button[onclick*="showCreateFileModal"]');
+  if (createFileBtn) createFileBtn.onclick = ModalManager.showCreateFileModal;
+}, 100);
+},
+setupKeyboardShortcuts: function() {
+document.addEventListener('keydown', function(e) {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'n') { e.preventDefault(); ModalManager.showCreateFileModal(); }
+  if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'N') { e.preventDefault(); ModalManager.showCreateRepoModal(); }
+  if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+    const editor = document.getElementById('fileEditor');
+    if (editor && !editor.classList.contains('hidden')) { e.preventDefault(); FileManager.saveFile(); }
   }
+  if (e.key === 'Escape') {
+    const modals = ['createFileModal', 'createRepoModal', 'deleteFileModal'];
+    for (const modalId of modals) {
+      const modal = document.getElementById(modalId);
+      if (modal && !modal.classList.contains('hidden')) {
+        const hideBtn = modal.querySelector('button[onclick*="hide"]');
+        if (hideBtn) hideBtn.click();
+        return;
+      }
+    }
+    Router.showExplorer();
+  }
+});
+}
 };
 
-const SetupManager = {
-  setupEventListeners: function() {
-    const tagInput = document.getElementById('tagInput');
-    if (tagInput) tagInput.addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') { e.preventDefault(); TagManager.addTag(); }
-    });
-    
-    const branchSelector = document.getElementById('branchSelector');
-    if (branchSelector) branchSelector.addEventListener('click', function(e) {
-      e.stopPropagation();
-      const branchDropdown = document.getElementById('branchDropdown');
-      if (branchDropdown) branchDropdown.classList.toggle('hidden');
-    });
-    
-    document.addEventListener('click', function() {
-      const branchDropdown = document.getElementById('branchDropdown');
-      if (branchDropdown) branchDropdown.classList.add('hidden');
-    });
-    
-    const newFileName = document.getElementById('newFileName');
-    if (newFileName) newFileName.addEventListener('input', function(e) {
-      const fileName = e.target.value;
-      if (fileName && initialContentEditor) UI.updateEditorMode(initialContentEditor, fileName);
-    });
-  },
-  setupCodeEditors: function() {
-    if (typeof CodeMirror !== 'undefined') {
-      const editorConfig = {
-        lineNumbers: true,
-        mode: 'javascript',
-        theme: 'material-darker',
-        autoCloseBrackets: true,
-        matchBrackets: true,
-        styleActiveLine: true,
-        indentUnit: 2,
-        tabSize: 2,
-        lineWrapping: false,
-        viewportMargin: Infinity,
-        lineHeight: 1.3,
-        fontSize: 13,
-        fontFamily: "'JetBrains Mono', monospace",
-        extraKeys: { 
-          "Ctrl-S": function(cm) {
-            const fileEditor = document.getElementById('fileEditor');
-            if (fileEditor && !fileEditor.classList.contains('hidden')) FileManager.saveFile();
-          }
-        }
-      };
-      
+const CodeEditorManager = {
+setupCodeEditors: function() {
+if (typeof CodeMirror !== 'undefined') {
+  const editorConfig = {
+    lineNumbers: true,
+    mode: 'javascript',
+    theme: 'material-darker',
+    autoCloseBrackets: true,
+    matchBrackets: true,
+    styleActiveLine: true,
+    indentUnit: 2,
+    tabSize: 2,
+    lineWrapping: false,
+    viewportMargin: Infinity,
+    lineHeight: 1.3,
+    fontSize: 13,
+    fontFamily: "'JetBrains Mono', monospace",
+    extraKeys: { 
+      "Ctrl-S": function(cm) {
+        const fileEditor = document.getElementById('fileEditor');
+        if (fileEditor && !fileEditor.classList.contains('hidden')) FileManager.saveFile();
+      }
+    }
+  };
+  setTimeout(() => {
+    const editorContainer = document.getElementById('codeEditorContainer');
+    const initialContentContainer = document.getElementById('initialContentEditor');
+    if (editorContainer) {
+      codeEditor = CodeMirror(editorContainer, editorConfig);
+      codeEditor.on('change', UI.updateCommitMessage);
       setTimeout(() => {
-        const editorContainer = document.getElementById('codeEditorContainer');
-        const initialContentContainer = document.getElementById('initialContentEditor');
-        
-        if (editorContainer) {
-          codeEditor = CodeMirror(editorContainer, editorConfig);
-          codeEditor.on('change', UI.updateCommitMessage);
-          
-          setTimeout(() => {
-            if (codeEditor) codeEditor.refresh();
-          }, 100);
-        }
-        
-        if (initialContentContainer) {
-          initialContentEditor = CodeMirror(initialContentContainer, {
-            ...editorConfig,
-            lineNumbers: false,
-            height: '192px'
-          });
-          initialContentEditor.on('change', function() {
-            const fileName = document.getElementById('newFileName');
-            if (fileName && fileName.value) UI.updateEditorMode(initialContentEditor, fileName.value);
-          });
-        }
+        if (codeEditor) codeEditor.refresh();
       }, 100);
     }
-  },
-  setupButtonEventListeners: function() {
-    setTimeout(() => {
-      const createRepoBtn = document.querySelector('button[onclick*="showCreateRepoModal"]');
-      if (createRepoBtn) createRepoBtn.onclick = ModalManager.showCreateRepoModal;
-      
-      const createFileBtn = document.querySelector('button[onclick*="showCreateFileModal"]');
-      if (createFileBtn) createFileBtn.onclick = ModalManager.showCreateFileModal;
-    }, 100);
-  },
-  setupKeyboardShortcuts: function() {
-    document.addEventListener('keydown', function(e) {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'n') { e.preventDefault(); ModalManager.showCreateFileModal(); }
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'N') { e.preventDefault(); ModalManager.showCreateRepoModal(); }
-      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-        const editor = document.getElementById('fileEditor');
-        if (editor && !editor.classList.contains('hidden')) { e.preventDefault(); FileManager.saveFile(); }
-      }
-      
-      if (e.key === 'Escape') {
-        const modals = ['createFileModal', 'createRepoModal', 'deleteFileModal'];
-        for (const modalId of modals) {
-          const modal = document.getElementById(modalId);
-          if (modal && !modal.classList.contains('hidden')) {
-            const hideBtn = modal.querySelector('button[onclick*="hide"]');
-            if (hideBtn) hideBtn.click();
-            return;
-          }
-        }
-        Router.showExplorer();
-      }
-    });
-    
-    document.addEventListener('click', ContextMenu.hideContextMenu);
-  }
+    if (initialContentContainer) {
+      initialContentEditor = CodeMirror(initialContentContainer, {
+        ...editorConfig,
+        lineNumbers: false,
+        height: '192px'
+      });
+      initialContentEditor.on('change', function() {
+        const fileName = document.getElementById('newFileName');
+        if (fileName && fileName.value) UI.updateEditorMode(initialContentEditor, fileName.value);
+      });
+    }
+  }, 100);
+}
+}
 };
 
-function initializeApp() {
-  SetupManager.setupEventListeners();
-  SetupManager.setupButtonEventListeners();
-  SetupManager.setupKeyboardShortcuts();
-  SetupManager.setupCodeEditors();
-  RecentFilesManager.updateRecentFilesUI();
-  
-  LoadingManager.startPageTransition();
-  UI.showSkeletonLoading('repoSelectorView');
-  
-  setTimeout(() => {
-    RepositoryManager.loadRepositories();
-    LoadingManager.completePageTransition();
-    UI.hideSkeletonLoading('repoSelectorView');
-    
-    setTimeout(() => {
-      NotificationManager.showSuccessMessage('Welcome to GitHub Clone!');
-    }, 1000);
-  }, 500 + Math.random() * 300);
+const App = {
+initializeApp: function() {
+EventManager.setupEventListeners();
+EventManager.setupButtonEventListeners();
+EventManager.setupKeyboardShortcuts();
+CodeEditorManager.setupCodeEditors();
+UI.updateRecentFilesUI();
+setTimeout(() => {
+  RepositoryManager.loadRepositories();
+  Notifications.showSuccessMessage('Welcome to GitHub Clone!');
+}, 500);
 }
+};
 
 window.showCreateRepoModal = ModalManager.showCreateRepoModal;
 window.hideCreateRepoModal = ModalManager.hideCreateRepoModal;
@@ -1481,8 +1242,6 @@ window.viewFileFromContext = ContextMenu.viewFileFromContext;
 window.editFileFromContext = ContextMenu.editFileFromContext;
 window.downloadFileFromContext = ContextMenu.downloadFileFromContext;
 window.deleteFileFromContext = ContextMenu.deleteFileFromContext;
-window.openRecentFile = RecentFilesManager.openRecentFile;
-window.startPageTransition = LoadingManager.startPageTransition;
-window.completePageTransition = LoadingManager.completePageTransition;
+window.openRecentFile = RecentFiles.openRecentFile;
 
-document.addEventListener('DOMContentLoaded', initializeApp);
+document.addEventListener('DOMContentLoaded', App.initializeApp);
