@@ -66,19 +66,37 @@ const LocalStorageManager = {
     const folders = new Set();
 
     Object.keys(repoData).forEach(filePath => {
-      if (filePath.startsWith(pathPrefix)) {
-        const relativePath = filePath.substring(pathPrefix.length);
-        const parts = relativePath.split('/');
-        
-        if (parts.length === 1 && parts[0]) {
+      if (pathPrefix === '') {
+        const parts = filePath.split('/');
+        if (parts.length === 1) {
           files.push({
             name: parts[0],
             type: 'file',
             path: filePath,
-            ...repoData[filePath]
+            lastModified: repoData[filePath].lastModified || Date.now(),
+            lastCommit: repoData[filePath].lastCommit || 'Initial commit',
+            size: repoData[filePath].size || 0
           });
-        } else if (parts.length > 1 && parts[0]) {
+        } else if (parts.length > 1) {
           folders.add(parts[0]);
+        }
+      } else {
+        if (filePath.startsWith(pathPrefix)) {
+          const relativePath = filePath.substring(pathPrefix.length);
+          const parts = relativePath.split('/');
+          
+          if (parts.length === 1 && parts[0]) {
+            files.push({
+              name: parts[0],
+              type: 'file',
+              path: filePath,
+              lastModified: repoData[filePath].lastModified || Date.now(),
+              lastCommit: repoData[filePath].lastCommit || 'Initial commit',
+              size: repoData[filePath].size || 0
+            });
+          } else if (parts.length > 1 && parts[0]) {
+            folders.add(parts[0]);
+          }
         }
       }
     });
@@ -488,14 +506,15 @@ function createFile() {
         showErrorMessage('File already exists');
         return;
       }
+      const fileContent = content || `// ${fileName}\n// Created on ${new Date().toLocaleDateString()}\n\n`;
       const fileData = {
-        content: content || `// ${fileName}\n// Created on ${new Date().toLocaleDateString()}\n\n`,
+        content: fileContent,
         category: category,
         tags: currentState.selectedTags,
         created: Date.now(),
         lastModified: Date.now(),
         lastCommit: 'Initial commit',
-        size: new Blob([content]).size
+        size: new Blob([fileContent]).size
       };
       LocalStorageManager.saveFile(currentState.repository, filePath, fileData);
       currentState.files.push({
@@ -569,7 +588,8 @@ function adjustCodeBlockHeight() {
   const lineNumbers = document.getElementById('lineNumbers');
   const codeBlock = document.getElementById('codeBlock');
   if (codeContent && lineNumbers && codeBlock) {
-    const lineCount = codeBlock.textContent.split('\n').length;
+    const content = codeBlock.textContent || '';
+    const lineCount = content.split('\n').length;
     const minHeight = Math.max(500, Math.min(800, lineCount * 18));
     codeContent.style.minHeight = `${minHeight}px`;
     lineNumbers.style.minHeight = `${minHeight}px`;
@@ -633,6 +653,8 @@ function displayFileContent(filename, fileData) {
     for (let i = 1; i <= lineCount; i++) {
       const lineDiv = document.createElement('div');
       lineDiv.textContent = i;
+      lineDiv.style.lineHeight = '1.3';
+      lineDiv.style.fontSize = '13px';
       lineNumbers.appendChild(lineDiv);
     }
   }
@@ -641,16 +663,25 @@ function displayFileContent(filename, fileData) {
     if (window.Prism && codeBlock) {
       try {
         Prism.highlightElement(codeBlock);
-      } catch (error) {}
-    }
-    
-    if (codeBlock && !codeBlock.classList.contains('token')) {
+      } catch (error) {
+        console.warn('Prism highlighting failed:', error);
+        if (codeBlock) {
+          codeBlock.innerHTML = content
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+        }
+      }
+    } else if (codeBlock) {
       codeBlock.innerHTML = content
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/\n/g, '<br>');
+        .replace(/>/g, '&gt;');
     }
+    
+    setTimeout(() => {
+      adjustCodeBlockHeight();
+    }, 50);
   }, 100);
   
   if (fileCategory) fileCategory.textContent = fileData.category || 'General';
@@ -662,10 +693,6 @@ function displayFileContent(filename, fileData) {
       fileTags.innerHTML = '<span class="text-github-fg-muted text-sm">No tags</span>';
     }
   }
-  
-  setTimeout(() => {
-    adjustCodeBlockHeight();
-  }, 150);
 }
 
 function editFile() {
@@ -902,39 +929,6 @@ function setupButtonEventListeners() {
     if (createRepoBtn) createRepoBtn.onclick = showCreateRepoModal;
     const createFileBtn = document.querySelector('button[onclick*="showCreateFileModal"]');
     if (createFileBtn) createFileBtn.onclick = showCreateFileModal;
-    const modalHandlers = [
-      { selector: '#createRepoModal button[onclick*="hideCreateRepoModal"]', handler: hideCreateRepoModal },
-      { selector: '#createFileModal button[onclick*="hideCreateFileModal"]', handler: hideCreateFileModal },
-      { selector: '#deleteFileModal button[onclick*="hideDeleteFileModal"]', handler: hideDeleteFileModal },
-      { selector: '#createRepoModal button[onclick*="createRepository"]', handler: createRepository },
-      { selector: '#createFileModal button[onclick*="createFile"]', handler: createFile },
-      { selector: '#deleteFileModal button[onclick*="confirmDeleteFile"]', handler: confirmDeleteFile },
-      { selector: 'button[onclick*="addTag"]', handler: addTag }
-    ];
-    modalHandlers.forEach(({ selector, handler }) => {
-      const element = document.querySelector(selector);
-      if (element) element.onclick = handler;
-    });
-    const actionHandlers = [
-      { selector: 'button[onclick*="editFile"]', handler: editFile },
-      { selector: 'button[onclick*="downloadCurrentFile"]', handler: downloadCurrentFile },
-      { selector: 'button[onclick*="showDeleteFileModal"]', handler: showDeleteFileModal },
-      { selector: 'button[onclick*="saveFile"]', handler: saveFile },
-      { selector: 'button[onclick*="previewFile"]', handler: previewFile }
-    ];
-    actionHandlers.forEach(({ selector, handler }) => {
-      const element = document.querySelector(selector);
-      if (element) element.onclick = handler;
-    });
-    const navHandlers = [
-      { selector: 'a[onclick*="showRepoSelector"]', handler: (e) => { e.preventDefault(); showRepoSelector(); }},
-      { selector: 'button[onclick*="showExplorer"]', handler: showExplorer },
-      { selector: 'button[onclick*="showFileViewer"]', handler: showFileViewer }
-    ];
-    navHandlers.forEach(({ selector, handler }) => {
-      const elements = document.querySelectorAll(selector);
-      elements.forEach(element => element.onclick = handler);
-    });
   }, 100);
 }
 
@@ -963,181 +957,6 @@ function setupKeyboardShortcuts() {
 }
 
 let recentFiles = JSON.parse(localStorage.getItem('gitcodr_recent_files') || '[]');
-let isPageTransition = false;
-
-function startPageTransition(estimatedDuration = 1000) {
-  isPageTransition = true;
-  const progressBar = document.getElementById('loadingProgressBar');
-  if (progressBar) {
-    progressBar.style.width = '10%';
-    progressBar.style.transition = 'width 0.1s ease';
-    progressBar.style.opacity = '1';
-  }
-  if (window.progressInterval) clearInterval(window.progressInterval);
-  let progress = 10;
-  window.progressInterval = setInterval(() => {
-    if (progress >= 90) {
-      clearInterval(window.progressInterval);
-      return;
-    }
-    const increment = 2 + Math.random() * 3;
-    progress = Math.min(90, progress + increment);
-    if (progressBar) {
-      progressBar.style.width = `${progress}%`;
-    }
-  }, estimatedDuration / 30);
-}
-
-function completePageTransition() {
-  if (window.progressInterval) {
-    clearInterval(window.progressInterval);
-  }
-  const progressBar = document.getElementById('loadingProgressBar');
-  if (progressBar) {
-    progressBar.style.width = '100%';
-    progressBar.style.transition = 'width 0.3s ease';
-    progressBar.style.boxShadow = '0 0 20px rgba(220, 38, 38, 0.8), 0 0 35px rgba(220, 38, 38, 0.5)';
-    setTimeout(() => {
-      if (progressBar) {
-        progressBar.style.width = '0%';
-        progressBar.style.boxShadow = 'none';
-        progressBar.style.opacity = '0';
-        progressBar.style.transition = 'width 0s, opacity 0.3s';
-      }
-      isPageTransition = false;
-      setTimeout(() => {
-        if (progressBar) {
-          progressBar.style.transition = 'width 0.1s ease';
-          progressBar.style.opacity = '1';
-        }
-      }, 300);
-    }, 400);
-  }
-}
-
-function showSkeletonLoading(viewId) {
-  const view = document.getElementById(viewId);
-  if (!view) return;
-  view.dataset.originalContent = view.innerHTML;
-  let skeletonHTML = '';
-  if (viewId === 'explorerView') {
-    skeletonHTML = `
-      <div class="space-y-4">
-        <div class="flex items-center space-x-2">
-          <div class="skeleton-item h-4 w-16"></div>
-          <div class="skeleton-item h-4 w-4"></div>
-          <div class="skeleton-item h-4 w-24"></div>
-        </div>
-        <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg overflow-hidden">
-          <div class="p-4 border-b border-github-border-muted">
-            <div class="flex items-center space-x-3">
-              <div class="skeleton-item h-6 w-6 rounded-full"></div>
-              <div class="skeleton-item h-4 w-32"></div>
-            </div>
-          </div>
-          ${Array.from({length: 8}).map(() => `
-            <div class="p-4 border-b border-github-border-muted last:border-b-0">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                  <div class="skeleton-item h-4 w-4"></div>
-                  <div class="skeleton-item h-4 w-48"></div>
-                </div>
-                <div class="skeleton-item h-4 w-24"></div>
-              </div>
-            </div>
-          `).join('')}
-        </div>
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
-          <div class="lg:col-span-2">
-            <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg p-6">
-              ${Array.from({length: 5}).map(() => `
-                <div class="mb-4">
-                  <div class="skeleton-item h-4 w-full mb-2"></div>
-                  <div class="skeleton-item h-4 w-3/4"></div>
-                </div>
-              `).join('')}
-            </div>
-          </div>
-          <div class="space-y-6">
-            <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg p-4">
-              ${Array.from({length: 4}).map(() => `
-                <div class="skeleton-item h-4 w-full mb-2"></div>
-              `).join('')}
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-  } else if (viewId === 'repoSelectorView') {
-    skeletonHTML = `
-      <div class="space-y-6">
-        <div class="flex items-center justify-between">
-          <div class="skeleton-item h-8 w-40"></div>
-          <div class="skeleton-item h-10 w-40"></div>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          ${Array.from({length: 6}).map(() => `
-            <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg p-4">
-              <div class="flex items-start justify-between">
-                <div class="flex-1 space-y-3">
-                  <div class="skeleton-item h-6 w-32"></div>
-                  <div class="skeleton-item h-4 w-full"></div>
-                  <div class="skeleton-item h-4 w-24"></div>
-                </div>
-                <div class="skeleton-item h-4 w-4"></div>
-              </div>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    `;
-  } else if (viewId === 'fileViewer') {
-    skeletonHTML = `
-      <div class="space-y-6">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-2">
-            <div class="skeleton-item h-4 w-24"></div>
-            <div class="skeleton-item h-4 w-4"></div>
-            <div class="skeleton-item h-4 w-32"></div>
-          </div>
-          <div class="flex items-center space-x-2">
-            <div class="skeleton-item h-10 w-24"></div>
-            <div class="skeleton-item h-10 w-24"></div>
-          </div>
-        </div>
-        <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg overflow-hidden">
-          <div class="p-4 border-b border-github-border-muted">
-            <div class="flex items-center space-x-4">
-              ${Array.from({length: 4}).map(() => `
-                <div class="skeleton-item h-4 w-16"></div>
-              `).join('')}
-            </div>
-          </div>
-          <div class="flex">
-            <div class="w-16 p-4 border-r border-github-border-muted">
-              ${Array.from({length: 20}).map(() => `
-                <div class="skeleton-item h-4 w-full mb-1"></div>
-              `).join('')}
-            </div>
-            <div class="flex-1 p-4">
-              ${Array.from({length: 20}).map(() => `
-                <div class="skeleton-item h-4 w-full mb-1"></div>
-              `).join('')}
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-  view.innerHTML = skeletonHTML;
-}
-
-function hideSkeletonLoading(viewId) {
-  const view = document.getElementById(viewId);
-  if (!view || !view.dataset.originalContent) return;
-  view.innerHTML = view.dataset.originalContent;
-  delete view.dataset.originalContent;
-}
 
 function addToRecentFiles(fileName, repoName, filePath) {
   const existingIndex = recentFiles.findIndex(f => 
@@ -1162,6 +981,9 @@ function addToRecentFiles(fileName, repoName, filePath) {
 function updateRecentFilesUI() {
   const recentFilesList = document.getElementById('recentFilesList');
   const recentFilesCount = document.getElementById('recentFilesCount');
+  const topRecentFilesList = document.getElementById('topRecentFilesList');
+  const topRecentFilesCount = document.getElementById('topRecentFilesCount');
+  
   if (recentFilesList) {
     if (recentFiles.length === 0) {
       recentFilesList.innerHTML = `
@@ -1190,128 +1012,83 @@ function updateRecentFilesUI() {
       `).join('');
     }
   }
+  
+  if (topRecentFilesList) {
+    if (recentFiles.length === 0) {
+      topRecentFilesList.innerHTML = `
+        <div class="text-center py-4 text-github-fg-muted text-sm">
+          No recent files
+        </div>
+      `;
+    } else {
+      topRecentFilesList.innerHTML = recentFiles.map(file => `
+        <button onclick="openRecentFile('${file.repoName}', '${file.filePath}', '${file.fileName}')" 
+                class="w-full flex items-center justify-between p-2 rounded hover:bg-github-canvas-subtle text-left group">
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center space-x-2">
+              <svg class="w-3 h-3 text-github-fg-muted flex-shrink-0" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"/>
+              </svg>
+              <span class="text-sm text-github-fg-default truncate">${file.fileName}</span>
+            </div>
+            <div class="text-xs text-github-fg-muted truncate mt-1">${file.repoName}</div>
+          </div>
+          <svg class="w-4 h-4 text-github-fg-muted opacity-0 group-hover:opacity-100 transition-opacity" 
+               fill="currentColor" viewBox="0 0 16 16">
+            <path d="M4.22 11.78a.75.75 0 0 1 0-1.06L9.44 5.5H5.75a.75.75 0 0 1 0-1.5h5.5a.75.75 0 0 1 .75.75v5.5a.75.75 0 0 1-1.5 0V6.56l-5.22 5.22a.75.75 0 0 1-1.06 0Z"/>
+          </svg>
+        </button>
+      `).join('');
+    }
+  }
+  
   if (recentFilesCount) {
     recentFilesCount.textContent = recentFiles.length.toString();
+  }
+  if (topRecentFilesCount) {
+    topRecentFilesCount.textContent = recentFiles.length.toString();
   }
 }
 
 function openRecentFile(repoName, filePath, fileName) {
-  hideRecentFilesPopover();
-  startPageTransition();
-  showSkeletonLoading('explorerView');
-  setTimeout(() => {
-    currentState.repository = repoName;
-    const pathParts = filePath.split('/');
-    if (pathParts.length > 1) {
-      currentState.path = pathParts.slice(0, -1).join('/');
-    } else {
-      currentState.path = '';
-    }
-    try {
-      currentState.files = LocalStorageManager.listFiles(repoName, currentState.path ? currentState.path + '/' : '');
-      renderFileList();
-      updateBreadcrumb();
-      const currentRepoName = document.getElementById('currentRepoName');
-      const repoNameInViewer = document.getElementById('repoNameInViewer');
-      const repoNameInEditor = document.getElementById('repoNameInEditor');
-      if (currentRepoName) currentRepoName.textContent = repoName;
-      if (repoNameInViewer) repoNameInViewer.textContent = repoName;
-      if (repoNameInEditor) repoNameInEditor.textContent = repoName;
-      viewFile(fileName);
-      completePageTransition();
-      hideSkeletonLoading('explorerView');
-      updateStats();
-    } catch (error) {
-      showErrorMessage('Failed to open recent file: ' + error.message);
-      completePageTransition();
-      hideSkeletonLoading('explorerView');
-    }
-  }, 300 + Math.random() * 300);
-}
-
-function toggleFloatingNavbar() {
-  const navbar = document.getElementById('floatingNavbar');
-  if (navbar) {
-    navbar.classList.toggle('hidden');
-  }
-}
-
-function showRecentFilesPopover() {
-  const popover = document.getElementById('recentFilesPopover');
-  if (popover) {
-    popover.classList.add('show');
-    document.addEventListener('click', handleOutsideClick);
-  }
-}
-
-function hideRecentFilesPopover() {
-  const popover = document.getElementById('recentFilesPopover');
-  if (popover) {
-    popover.classList.remove('show');
-    document.removeEventListener('click', handleOutsideClick);
-  }
-}
-
-function showQuickActionsMenu() {
-  const menu = document.getElementById('quickActionsMenu');
-  if (menu) {
-    menu.classList.add('show');
-    document.addEventListener('click', handleOutsideClick);
-  }
-}
-
-function hideQuickActionsMenu() {
-  const menu = document.getElementById('quickActionsMenu');
-  if (menu) {
-    menu.classList.remove('show');
-    document.removeEventListener('click', handleOutsideClick);
-  }
-}
-
-function handleOutsideClick(event) {
-  const recentFilesBtn = document.getElementById('recentFilesBtn');
-  const recentFilesPopover = document.getElementById('recentFilesPopover');
-  const quickActionsBtn = document.getElementById('quickActionsBtn');
-  const quickActionsMenu = document.getElementById('quickActionsMenu');
-  if (recentFilesBtn && recentFilesPopover && 
-      !recentFilesBtn.contains(event.target) && 
-      !recentFilesPopover.contains(event.target)) {
-    hideRecentFilesPopover();
-  }
-  if (quickActionsBtn && quickActionsMenu && 
-      !quickActionsBtn.contains(event.target) && 
-      !quickActionsMenu.contains(event.target)) {
-    hideQuickActionsMenu();
-  }
-}
-
-function toggleTheme() {
-  const html = document.documentElement;
-  const themeIcon = document.getElementById('themeIcon');
-  if (html.getAttribute('data-theme') === 'dark') {
-    html.setAttribute('data-theme', 'light');
-    if (themeIcon) {
-      themeIcon.innerHTML = `<path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0Zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13ZM.5 8a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1H1a.5.5 0 0 1-.5-.5Zm13 0a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5Z"/>`;
-    }
+  currentState.repository = repoName;
+  const pathParts = filePath.split('/');
+  if (pathParts.length > 1) {
+    currentState.path = pathParts.slice(0, -1).join('/');
   } else {
-    html.setAttribute('data-theme', 'dark');
-    if (themeIcon) {
-      themeIcon.innerHTML = `<path d="M8 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6Zm0 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0Zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13ZM.5 8a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1H1a.5.5 0 0 1-.5-.5Zm13 0a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5Z"/>`;
-    }
+    currentState.path = '';
+  }
+  try {
+    currentState.files = LocalStorageManager.listFiles(repoName, currentState.path ? currentState.path + '/' : '');
+    renderFileList();
+    updateBreadcrumb();
+    const currentRepoName = document.getElementById('currentRepoName');
+    const repoNameInViewer = document.getElementById('repoNameInViewer');
+    const repoNameInEditor = document.getElementById('repoNameInEditor');
+    if (currentRepoName) currentRepoName.textContent = repoName;
+    if (repoNameInViewer) repoNameInViewer.textContent = repoName;
+    if (repoNameInEditor) repoNameInEditor.textContent = repoName;
+    viewFile(fileName);
+  } catch (error) {
+    showErrorMessage('Failed to open recent file: ' + error.message);
   }
 }
 
 function updateStats() {
   const statsText = document.getElementById('statsText');
-  if (statsText && currentState.repository) {
+  const topStatsText = document.getElementById('topStatsText');
+  if ((statsText || topStatsText) && currentState.repository) {
     try {
       const files = LocalStorageManager.listFiles(currentState.repository, '');
       const totalFiles = files.filter(f => f.type === 'file').length;
       const totalSize = files.reduce((sum, file) => sum + (file.size || 0), 0);
       const sizeText = formatFileSize(totalSize);
-      statsText.textContent = `${totalFiles} files • ${sizeText}`;
+      const displayText = `${totalFiles} files • ${sizeText}`;
+      if (statsText) statsText.textContent = displayText;
+      if (topStatsText) topStatsText.textContent = displayText;
     } catch (error) {
-      statsText.textContent = '0 files';
+      if (statsText) statsText.textContent = '0 files';
+      if (topStatsText) topStatsText.textContent = '0 files';
     }
   }
 }
@@ -1327,134 +1104,60 @@ function viewFile(filename) {
     return;
   }
   currentState.currentFile = file;
-  startPageTransition(500);
-  showSkeletonLoading('fileViewer');
-  setTimeout(() => {
-    try {
-      const filePath = file.path || ((currentState.path ? currentState.path + '/' : '') + filename);
-      const fileData = LocalStorageManager.getFile(currentState.repository, filePath);
-      if (!fileData) {
-        throw new Error(`File data not found for ${filePath}`);
-      }
-      addToRecentFiles(filename, currentState.repository, filePath);
-      displayFileContent(filename, fileData);
-      completePageTransition();
-      hideSkeletonLoading('fileViewer');
-      showFileViewer();
-      updateStats();
-    } catch (error) {
-      showErrorMessage('Failed to load file: ' + error.message);
-      completePageTransition();
-      hideSkeletonLoading('fileViewer');
+  try {
+    const filePath = file.path || ((currentState.path ? currentState.path + '/' : '') + filename);
+    const fileData = LocalStorageManager.getFile(currentState.repository, filePath);
+    if (!fileData) {
+      throw new Error(`File data not found for ${filePath}`);
     }
-  }, 400);
+    addToRecentFiles(filename, currentState.repository, filePath);
+    displayFileContent(filename, fileData);
+    showFileViewer();
+    updateStats();
+  } catch (error) {
+    showErrorMessage('Failed to load file: ' + error.message);
+  }
 }
 
 function openRepository(repoName) {
-  startPageTransition(800);
-  showSkeletonLoading('explorerView');
   currentState.repository = repoName;
   currentState.path = '';
-  setTimeout(() => {
-    try {
-      currentState.files = LocalStorageManager.listFiles(repoName, '');
-      renderFileList();
-      updateBreadcrumb();
-      const currentRepoName = document.getElementById('currentRepoName');
-      const repoNameInViewer = document.getElementById('repoNameInViewer');
-      const repoNameInEditor = document.getElementById('repoNameInEditor');
-      if (currentRepoName) currentRepoName.textContent = repoName;
-      if (repoNameInViewer) repoNameInViewer.textContent = repoName;
-      if (repoNameInEditor) repoNameInEditor.textContent = repoName;
-      const repo = LocalStorageManager.getRepository(repoName);
-      if (repo) {
-        const repoDescription = document.getElementById('repoDescription');
-        if (repoDescription) repoDescription.textContent = repo.description || 'No description provided.';
-      }
-      completePageTransition();
-      hideSkeletonLoading('explorerView');
-      showExplorer();
-      updateStats();
-    } catch (error) {
-      showErrorMessage('Failed to open repository: ' + error.message);
-      completePageTransition();
-      hideSkeletonLoading('explorerView');
+  try {
+    currentState.files = LocalStorageManager.listFiles(repoName, '');
+    renderFileList();
+    updateBreadcrumb();
+    const currentRepoName = document.getElementById('currentRepoName');
+    const repoNameInViewer = document.getElementById('repoNameInViewer');
+    const repoNameInEditor = document.getElementById('repoNameInEditor');
+    if (currentRepoName) currentRepoName.textContent = repoName;
+    if (repoNameInViewer) repoNameInViewer.textContent = repoName;
+    if (repoNameInEditor) repoNameInEditor.textContent = repoName;
+    const repo = LocalStorageManager.getRepository(repoName);
+    if (repo) {
+      const repoDescription = document.getElementById('repoDescription');
+      if (repoDescription) repoDescription.textContent = repo.description || 'No description provided.';
     }
-  }, 600);
+    showExplorer();
+    updateStats();
+  } catch (error) {
+    showErrorMessage('Failed to open repository: ' + error.message);
+  }
 }
 
 function showRepoSelector() {
-  startPageTransition();
-  showSkeletonLoading('repoSelectorView');
-  setTimeout(() => {
-    document.getElementById('explorerView').classList.add('hidden');
-    document.getElementById('fileViewer').classList.add('hidden');
-    document.getElementById('fileEditor').classList.add('hidden');
-    document.getElementById('repoSelectorView').classList.remove('hidden');
-    completePageTransition();
-    hideSkeletonLoading('repoSelectorView');
-    updateStats();
-  }, 300 + Math.random() * 200);
+  document.getElementById('explorerView').classList.add('hidden');
+  document.getElementById('fileViewer').classList.add('hidden');
+  document.getElementById('fileEditor').classList.add('hidden');
+  document.getElementById('repoSelectorView').classList.remove('hidden');
 }
 
 function showExplorer() {
   if (currentState.repository) {
-    startPageTransition(500);
-    showSkeletonLoading('explorerView');
-    setTimeout(() => {
-      document.getElementById('fileViewer').classList.add('hidden');
-      document.getElementById('fileEditor').classList.add('hidden');
-      document.getElementById('repoSelectorView').classList.add('hidden');
-      document.getElementById('explorerView').classList.remove('hidden');
-      completePageTransition();
-      hideSkeletonLoading('explorerView');
-      updateStats();
-    }, 400);
+    document.getElementById('fileViewer').classList.add('hidden');
+    document.getElementById('fileEditor').classList.add('hidden');
+    document.getElementById('repoSelectorView').classList.add('hidden');
+    document.getElementById('explorerView').classList.remove('hidden');
   }
-}
-
-function setupNavbarEventListeners() {
-  const recentFilesBtn = document.getElementById('recentFilesBtn');
-  const quickActionsBtn = document.getElementById('quickActionsBtn');
-  if (recentFilesBtn) {
-    recentFilesBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const popover = document.getElementById('recentFilesPopover');
-      if (popover && popover.classList.contains('show')) {
-        hideRecentFilesPopover();
-      } else {
-        showRecentFilesPopover();
-        hideQuickActionsMenu();
-      }
-    });
-  }
-  if (quickActionsBtn) {
-    quickActionsBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const menu = document.getElementById('quickActionsMenu');
-      if (menu && menu.classList.contains('show')) {
-        hideQuickActionsMenu();
-      } else {
-        showQuickActionsMenu();
-        hideRecentFilesPopover();
-      }
-    });
-  }
-  let lastScrollTop = 0;
-  window.addEventListener('scroll', () => {
-    const navbar = document.getElementById('floatingNavbar');
-    if (navbar) {
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      if (scrollTop > lastScrollTop && scrollTop > 100) {
-        navbar.style.transform = 'translateX(-50%) translateY(-100px)';
-        navbar.style.opacity = '0';
-      } else {
-        navbar.style.transform = 'translateX(-50%) translateY(0)';
-        navbar.style.opacity = '1';
-      }
-      lastScrollTop = scrollTop;
-    }
-  });
 }
 
 function initializeApp() {
@@ -1462,20 +1165,11 @@ function initializeApp() {
   setupButtonEventListeners();
   setupKeyboardShortcuts();
   setupCodeEditors();
-  setupNavbarEventListeners();
-  const navbar = document.getElementById('floatingNavbar');
-  if (navbar) navbar.classList.remove('hidden');
   updateRecentFilesUI();
-  startPageTransition();
-  showSkeletonLoading('repoSelectorView');
   setTimeout(() => {
     loadRepositories();
-    completePageTransition();
-    hideSkeletonLoading('repoSelectorView');
-    setTimeout(() => {
-      showSuccessMessage('Welcome to GitHub Clone!');
-    }, 1000);
-  }, 500 + Math.random() * 300);
+    showSuccessMessage('Welcome to GitHub Clone!');
+  }, 500);
 }
 
 window.showCreateRepoModal = showCreateRepoModal;
@@ -1506,13 +1200,6 @@ window.viewFileFromContext = viewFileFromContext;
 window.editFileFromContext = editFileFromContext;
 window.downloadFileFromContext = downloadFileFromContext;
 window.deleteFileFromContext = deleteFileFromContext;
-window.startPageTransition = startPageTransition;
-window.completePageTransition = completePageTransition;
-window.showRecentFilesPopover = showRecentFilesPopover;
-window.hideRecentFilesPopover = hideRecentFilesPopover;
-window.showQuickActionsMenu = showQuickActionsMenu;
-window.hideQuickActionsMenu = hideQuickActionsMenu;
-window.toggleTheme = toggleTheme;
 window.openRecentFile = openRecentFile;
 
 document.addEventListener('DOMContentLoaded', initializeApp);
