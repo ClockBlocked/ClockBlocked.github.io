@@ -380,6 +380,7 @@ function hideLoading() {
 
 
 
+
 /***
 function showLoading(text = 'Loading...') {
   const overlay = document.getElementById('loadingOverlay');
@@ -1064,84 +1065,26 @@ function setupEventListeners() {
 function setupCodeEditors() {
   if (typeof CodeMirror !== 'undefined') {
     const editorConfig = {
-  // Display
-  lineNumbers: true,
-  lineWrapping: false,
-  theme: 'material-darker',
-  mode: 'javascript',
-  indentUnit: 2,
-  tabSize: 2,
-  indentWithTabs: false,
-  smartIndent: true,
-  viewportMargin: Infinity,
-  cursorBlinkRate: 530,
-  cursorScrollMargin: 12,
-  cursorHeight: 1,
-  showCursorWhenSelecting: true,
-  scrollbarStyle: 'native',
-
-  // Interaction & Behavior
-  autofocus: false,
-  dragDrop: true,
-  allowDropFileTypes: ["text/plain", "text/javascript", "text/css", "text/html"],
-  undoDepth: 300,
-  historyEventDelay: 1250,
-  readOnly: false,
-
-  // Active Line + Highlighting
-  styleActiveLine: {
-    nonEmpty: true,
-    className: "cm-active-line-highlight"
-  },
-
-  // Brackets, Tags, Matching
-  matchBrackets: true,
-  autoCloseBrackets: true,
-  matchTags: { bothTags: true },
-  autoCloseTags: true,
-
-  // Folding system
-  foldGutter: true,
-  gutters: [
-    "CodeMirror-linenumbers",
-    "CodeMirror-foldgutter"
-  ],
-
-  // Linting (only becomes active if you include lint scripts)
-  lint: true,
-
-  // Search Highlight
-  highlightSelectionMatches: {
-    minChars: 2,
-    showToken: /\w/,
-    annotateScrollbar: true
-  },
-
-  // Placeholder (optional)
-  placeholder: "Start typing your code...",
-
-  // Font + Appearance (applied manually after initialization)
-  lineHeight: 1.2,
-  fontSize: 11,
-  fontFamily: "'JetBrains Mono', monospace",
-
-  // Keybindings
-  extraKeys: {
-    "Ctrl-S": function (cm) {
-      const fileEditor = document.getElementById('fileEditor');
-      if (fileEditor && !fileEditor.classList.contains('hidden')) saveFile();
-    },
-    "Ctrl-F": "findPersistent",
-    "Ctrl-Space": "autocomplete",
-    "Ctrl-D": function(cm) { cm.execCommand("duplicateLine"); },
-    "Ctrl-/": "toggleComment",
-    "Shift-Tab": "indentLess",
-    "Tab": function(cm) {
-      if (cm.somethingSelected()) cm.indentSelection("add");
-      else cm.execCommand("insertSoftTab");
-    }
-  }
-};
+      lineNumbers: true,
+      mode: 'javascript',
+      theme: 'material-darker',
+      autoCloseBrackets: true,
+      matchBrackets: true,
+      styleActiveLine: true,
+      indentUnit: 2,
+      tabSize: 2,
+      lineWrapping: false,
+      viewportMargin: Infinity,
+      lineHeight: 1,
+      fontSize: 11,
+      fontFamily: "'JetBrains Mono', monospace",
+      extraKeys: { 
+        "Ctrl-S": function(cm) {
+          const fileEditor = document.getElementById('fileEditor');
+          if (fileEditor && !fileEditor.classList.contains('hidden')) saveFile();
+        }
+      }
+    };
     setTimeout(() => {
       const editorContainer = document.getElementById('codeEditorContainer');
       const initialContentContainer = document.getElementById('initialContentEditor');
@@ -1166,34 +1109,7 @@ function setupCodeEditors() {
     }, 100);
   }
 }
-// Attach UI button handlers AFTER CodeMirror setup
-document.addEventListener('DOMContentLoaded', () => {
 
-  // Save Button
-  const saveBtn = document.getElementById('editorSaveBtn');
-  if (saveBtn) {
-    saveBtn.addEventListener('click', () => {
-      if (typeof saveFile === "function") saveFile();
-    });
-  }
-
-  // Format Button (simple JS beautifier fallback)
-  const formatBtn = document.getElementById('editorFormatBtn');
-  if (formatBtn) {
-    formatBtn.addEventListener('click', () => {
-      if (codeEditor) {
-        try {
-          const current = codeEditor.getValue();
-          const formatted = js_beautify(current, { indent_size: 2 });
-          codeEditor.setValue(formatted);
-        } catch (e) {
-          console.error("Format failed:", e);
-        }
-      }
-    });
-  }
-
-});
 function setupButtonEventListeners() {
   setTimeout(() => {
     const createRepoBtn = document.querySelector('button[onclick*="showCreateRepoModal"]');
