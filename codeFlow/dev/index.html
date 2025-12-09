@@ -123,9 +123,144 @@
       }
     }
   </script>
+  
+  
+  
+  <style>
+/* Hide scrollbar but keep functionality */
+.code-container {
+  overflow: hidden;
+  position: relative;
+}
+
+.code-content {
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+.code-content::-webkit-scrollbar {
+  display: none; /* Chrome/Safari/Opera */
+}
+
+/* Alternative: Thin custom scrollbar */
+.code-content.thin-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.code-content.thin-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+
+.code-content.thin-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(108, 122, 137, 0.5);
+  border-radius: 3px;
+}
+
+.code-content.thin-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(108, 122, 137, 0.8);
+}
+
+
+
+/* Add to your CSS file or <style> tag */
+@keyframes progress-glow {
+  0% {
+    box-shadow: 0 0 5px rgba(239, 68, 68, 0.5),
+                0 0 10px rgba(239, 68, 68, 0.3),
+                0 0 15px rgba(239, 68, 68, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.7),
+                0 0 20px rgba(239, 68, 68, 0.5),
+                0 0 30px rgba(239, 68, 68, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(239, 68, 68, 0.5),
+                0 0 10px rgba(239, 68, 68, 0.3),
+                0 0 15px rgba(239, 68, 68, 0.1);
+  }
+}
+
+@keyframes progress-slide {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(1000%);
+  }
+}
+
+.progress-bar-glow {
+  animation: progress-glow 2s ease-in-out infinite;
+}
+
+.progress-bar-slide {
+  animation: progress-slide 2s ease-in-out infinite;
+}
+
+
+
+/* Progress Bar Styles */
+#pageProgress {
+  background: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(2px);
+}
+
+#pageProgress > div > div {
+  filter: blur(0.5px);
+}
+
+/* Code Editor Line Height Fix */
+.CodeMirror-line {
+  line-height: 1 !important;
+}
+
+.cm-line {
+  line-height: 1 !important;
+}
+
+/* Prism.js line height fix */
+pre[class*="language-"] {
+  line-height: 1 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+code[class*="language-"] {
+  line-height: 1 !important;
+  font-family: 'JetBrains Mono', monospace !important;
+}
+
+/* Ensure code blocks don't have extra spacing */
+.token {
+  line-height: 1 !important;
+}
+
+/* Hide scrollbar but keep functionality */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+  </style>
 </head>
 
 <body class="bg-github-canvas-default text-github-fg-default font-sans">
+  
+<!-- Progress Bar -->
+<div id="pageProgress" class="fixed top-0 left-0 w-full h-1 z-50 opacity-0 transition-opacity duration-300">
+  <div class="h-full w-1/4 progress-bar-glow">
+    <div class="h-full bg-gradient-to-r from-red-500 via-pink-500 to-red-500 progress-bar-slide"></div>
+  </div>
+</div>
+
   <!-- Loading Overlay -->
   <div id="loadingOverlay" class="fixed inset-0 bg-github-canvas-default/90 backdrop-blur-sm z-50 hidden items-center justify-center">
     <div class="flex flex-col items-center space-y-4">
