@@ -245,6 +245,118 @@ function updateCommitMessage() {
 }
 
 
+// Progress Bar Controller
+const ProgressBar = {
+  element: null,
+  fillElement: null,
+  timeout: null,
+  
+  init() {
+    this.element = document.getElementById('pageProgress');
+    if (this.element) {
+      this.fillElement = this.element.querySelector('.progress-fill');
+    }
+  },
+  
+  show() {
+    if (!this.element) this.init();
+    if (this.element) {
+      // Clear any existing timeout
+      if (this.timeout) {
+        clearTimeout(this.timeout);
+        this.timeout = null;
+      }
+      
+      // Show progress bar
+      this.element.classList.add('visible');
+      this.element.classList.remove('hidden');
+      
+      // Reset animation
+      if (this.fillElement) {
+        this.fillElement.classList.remove('determinate');
+        this.fillElement.classList.add('indeterminate');
+      }
+    }
+  },
+  
+  hide() {
+    if (!this.element) this.init();
+    if (this.element) {
+      // Fade out
+      this.element.classList.remove('visible');
+      
+      // Hide completely after fade
+      this.timeout = setTimeout(() => {
+        this.element.classList.add('hidden');
+        if (this.fillElement) {
+          this.fillElement.classList.remove('indeterminate');
+        }
+      }, 300);
+    }
+  },
+  
+  // For when you know the progress percentage (0-100)
+  setProgress(percent) {
+    if (!this.element) this.init();
+    if (this.element && this.fillElement) {
+      this.fillElement.classList.remove('indeterminate');
+      this.fillElement.classList.add('determinate');
+      this.fillElement.style.width = `${percent}%`;
+      this.fillElement.style.transform = 'none';
+      this.fillElement.style.animation = 'none';
+    }
+  },
+  
+  // Simulate progress for X milliseconds
+  simulate(duration = 2000) {
+    this.show();
+    setTimeout(() => {
+      this.hide();
+    }, duration);
+  }
+};
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  ProgressBar.init();
+  ProgressBar.show();
+  setTimeout(() => {
+    ProgressBar.hide();
+  }, 300);
+});
+
+// Update your existing loading functions
+function showLoading(text = 'Loading...') {
+  const overlay = document.getElementById('loadingOverlay');
+  const loadingText = document.getElementById('loadingText');
+  
+  // Show progress bar
+  ProgressBar.show();
+  
+  if (overlay && loadingText) {
+    loadingText.textContent = text;
+    overlay.classList.remove('hidden');
+    overlay.style.display = 'flex';
+  }
+}
+
+function hideLoading() {
+  const overlay = document.getElementById('loadingOverlay');
+  
+  // Hide progress bar
+  ProgressBar.hide();
+  
+  if (overlay) {
+    overlay.classList.add('hidden');
+    overlay.style.display = 'none';
+  }
+}
+
+
+
+
+
+/***
 function showLoading(text = 'Loading...') {
   const overlay = document.getElementById('loadingOverlay');
   const loadingText = document.getElementById('loadingText');
@@ -311,7 +423,7 @@ function simulateProgress(duration = 2000) {
     hideProgressBar();
   }, duration);
 }
-
+***/
 function showSuccessMessage(message) {
   const notification = document.createElement('div');
   notification.className = 'fixed top-4 right-4 bg-github-success-fg text-white px-4 py-3 rounded-lg shadow-lg z-50 animate-slide-down';
@@ -1173,7 +1285,7 @@ function openRepository(repoName) {
   currentState.repository = repoName;
   currentState.path = '';
   
-  showProgressBar();
+  ProgressBar.show();
 setTimeout(() => {
   try {
     currentState.files = LocalStorageManager.listFiles(repoName, '');
@@ -1193,9 +1305,9 @@ setTimeout(() => {
     showExplorer();
     updateStats();
     
-    hideProgressBar();
+    ProgressBar.hide();
   } catch (error) {
-    hideProgressBar();
+    ProgressBar.hide();
     showErrorMessage('Failed to open repository: ' + error.message);
   } }, 300);
 }
