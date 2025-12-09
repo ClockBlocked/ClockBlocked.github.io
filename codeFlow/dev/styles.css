@@ -542,10 +542,13 @@ button {
 }
 
 #codeContent {
-  min-height: 500px;
-  max-height: calc(100vh - 300px);
+/*  min-height: 500px;
+  max-height: calc(100vh - 300px);*/
   width: 100%;
   height: 100%;
+  
+  
+  border: 3px solid blue;
 }
 
 .line-numbers {
