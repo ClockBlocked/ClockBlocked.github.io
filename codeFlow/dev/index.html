@@ -1698,6 +1698,226 @@ function updateSidebarAfterRepoOperation() {
   }
 }
   </script>
+  
+<script>
+class ServiceWorkerManager {
+    constructor() {
+        this.registration = null;
+        this.init();
+    }
+    
+    async init() {
+        if ('serviceWorker' in navigator) {
+            await this.register();
+            this.setupListeners();
+        }
+    }
+    
+    async register() {
+        try {
+            this.registration = await navigator.serviceWorker.register('/serviceWorker.js', {
+                scope: '/',
+                updateViaCache: 'all'
+            });
+            
+            console.log('✅ Service Worker registered:', this.registration);
+            
+            if (this.registration.waiting) {
+                this.showUpdateReady();
+            }
+            
+            return this.registration;
+        } catch (error) {
+            console.error('❌ Service Worker registration failed:', error);
+            return null;
+        }
+    }
+    
+    setupListeners() {
+        // Update found
+        this.registration.addEventListener('updatefound', () => {
+            const newWorker = this.registration.installing;
+            console.log('🔄 Update found, installing new Service Worker');
+            
+            newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed') {
+                    if (navigator.serviceWorker.controller) {
+                        this.showUpdateReady();
+                    } else {
+                        console.log('✅ Content is cached for offline use.');
+                    }
+                }
+            });
+        });
+        
+        // Controller change
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            console.log('🎮 New Service Worker controlling the page');
+        });
+        
+        // Message handling
+        navigator.serviceWorker.addEventListener('message', event => {
+            this.handleMessage(event.data);
+        });
+    }
+    
+    showUpdateReady() {
+        const updateDialog = document.createElement('div');
+        updateDialog.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #238636;
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            max-width: 400px;
+        `;
+        
+        updateDialog.innerHTML = `
+            <span>🔄 New version available</span>
+            <button style="
+                background: white;
+                color: #238636;
+                border: none;
+                padding: 0.5rem 1rem;
+                border-radius: 4px;
+                cursor: pointer;
+                font-weight: bold;
+            ">Update</button>
+            <button style="
+                background: transparent;
+                color: white;
+                border: 1px solid white;
+                padding: 0.5rem;
+                border-radius: 4px;
+                cursor: pointer;
+            ">×</button>
+        `;
+        
+        document.body.appendChild(updateDialog);
+        
+        const updateBtn = updateDialog.querySelector('button');
+        const closeBtn = updateDialog.querySelector('button:last-child');
+        
+        updateBtn.addEventListener('click', () => {
+            if (this.registration.waiting) {
+                this.registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+            }
+            window.location.reload();
+        });
+        
+        closeBtn.addEventListener('click', () => {
+            updateDialog.remove();
+        });
+    }
+    
+    handleMessage(data) {
+        console.log('📨 Message from Service Worker:', data);
+        
+        switch (data.type) {
+            case 'CACHE_UPDATED':
+                console.log('Cache updated:', data.payload);
+                break;
+            case 'OFFLINE':
+                this.showOfflineWarning();
+                break;
+        }
+    }
+    
+    showOfflineWarning() {
+        // Show a subtle offline indicator
+        const indicator = document.createElement('div');
+        indicator.id = 'offline-indicator';
+        indicator.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #f0ad4e;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            z-index: 9998;
+        `;
+        indicator.textContent = '⚠️ Offline';
+        document.body.appendChild(indicator);
+        
+        setTimeout(() => indicator.remove(), 3000);
+    }
+    
+    async checkForUpdates() {
+        if (this.registration) {
+            await this.registration.update();
+        }
+    }
+    
+    async unregister() {
+        if (this.registration) {
+            const unregistered = await this.registration.unregister();
+            console.log('Service Worker unregistered:', unregistered);
+        }
+    }
+}
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    window.swManager = new ServiceWorkerManager();
+    
+    // Add install button to your UI
+    const installBtn = document.createElement('button');
+    installBtn.id = 'pwa-install-btn';
+    installBtn.innerHTML = '📱 Install App';
+    installBtn.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        background: #58a6ff;
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 6px;
+        cursor: pointer;
+        z-index: 9997;
+        display: none;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    `;
+    document.body.appendChild(installBtn);
+});
+
+// PWA Installation
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    
+    const installBtn = document.getElementById('pwa-install-btn');
+    if (installBtn) {
+        installBtn.style.display = 'block';
+        
+        installBtn.addEventListener('click', async () => {
+            installBtn.style.display = 'none';
+            
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`User response to install prompt: ${outcome}`);
+                deferredPrompt = null;
+            }
+        });
+    }
+});
+
+window.addEventListener('appinstalled', () => {
+    console.log('PWA installed successfully');
+    const installBtn = document.getElementById('pwa-install-btn');
+    if (installBtn) installBtn.style.display = 'none';
+});
+</script>  
 
 </body>
 </html>
