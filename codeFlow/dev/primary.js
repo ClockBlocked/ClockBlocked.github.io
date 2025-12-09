@@ -1325,29 +1325,36 @@ function viewFile(filename) {
 }
 function displayFileContent_CodeMirror(filePath, filename, fileData) {
 
-  // Update filename UI
+  // HARDEN FILENAME
+  if (typeof filename !== "string") {
+    console.warn("Filename was not a string. Received:", filename);
+    filename = String(filename?.name || filename || "unknown");
+  }
+
+  // Update filename header
   const fileNameLabel = document.getElementById('editorFileName');
   if (fileNameLabel) fileNameLabel.textContent = filename;
 
-  // Detect language mode
+  // Detect mode
   const mode = detectModeFromFilename(filename);
 
-  // Update language indicator in header
+  // Update language label
   const langLabel = document.getElementById('editorFileLanguage');
   if (langLabel) langLabel.textContent = mode;
 
-  // Apply mode to CodeMirror
+  // Populate editor
   if (codeEditor) {
-    codeEditor.setOption('mode', mode);
-
-    // Populate the editor
+    codeEditor.setOption("mode", mode);
     codeEditor.setValue(fileData);
-
-    // Refresh ensures line numbers & gutters align
     codeEditor.refresh();
   }
 }
 function detectModeFromFilename(filename) {
+  if (typeof filename !== "string") {
+    console.error("detectModeFromFilename received non-string:", filename);
+    return "javascript"; // safe fallback
+  }
+
   const ext = filename.split('.').pop().toLowerCase();
 
   switch (ext) {
@@ -1359,8 +1366,8 @@ function detectModeFromFilename(filename) {
     case 'py': return 'python';
     case 'php': return 'php';
     case 'xml': return 'xml';
-    case 'yml':
-    case 'yaml': return 'yaml';
+    case 'yaml':
+    case 'yml': return 'yaml';
     default: return 'javascript';
   }
 }
