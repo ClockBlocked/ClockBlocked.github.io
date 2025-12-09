@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Clone - Offline</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #22272e 0%, #1c2128 100%);
+            color: #adbac7;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .container {
+            max-width: 600px;
+            padding: 40px;
+            background: #2d333b;
+            border-radius: 12px;
+            border: 1px solid #444c56;
+            box-shadow: 0 20px 60px rgba(1, 4, 9, 0.8);
+        }
+        
+        .icon {
+            font-size: 64px;
+            color: #539bf5;
+            margin-bottom: 24px;
+        }
+        
+        h1 {
+            font-size: 28px;
+            margin-bottom: 16px;
+            color: #adbac7;
+        }
+        
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+            color: #768390;
+        }
+        
+        .features {
+            background: #373e47;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 24px 0;
+            text-align: left;
+        }
+        
+        .features h3 {
+            color: #adbac7;
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+        
+        .features ul {
+            list-style: none;
+        }
+        
+        .features li {
+            padding: 8px 0;
+            border-bottom: 1px solid #444c56;
+            display: flex;
+            align-items: center;
+        }
+        
+        .features li:last-child {
+            border-bottom: none;
+        }
+        
+        .features li::before {
+            content: "✓";
+            color: #57ab5a;
+            font-weight: bold;
+            margin-right: 12px;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 24px;
+        }
+        
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .primary-btn {
+            background: #347d39;
+            color: white;
+        }
+        
+        .primary-btn:hover {
+            background: #46954a;
+        }
+        
+        .secondary-btn {
+            background: #373e47;
+            color: #adbac7;
+            border: 1px solid #444c56;
+        }
+        
+        .secondary-btn:hover {
+            background: #444c56;
+        }
+        
+        .status {
+            margin-top: 24px;
+            padding: 12px;
+            background: #444c56;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 24px;
+            }
+            
+            .actions {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </svg>
+        </div>
+        
+        <h1>You're Offline</h1>
+        
+        <p>GitHub Clone is currently offline. Don't worry! You can still:</p>
+        
+        <div class="features">
+            <h3>Available Offline Features:</h3>
+            <ul>
+                <li>Browse your local repositories</li>
+                <li>View and edit saved files</li>
+                <li>Create new files and repositories</li>
+                <li>Use syntax highlighting and code editing</li>
+                <li>Access recently viewed files</li>
+            </ul>
+        </div>
+        
+        <p>Your changes will sync automatically when you're back online.</p>
+        
+        <div class="actions">
+            <button class="primary-btn" onclick="window.location.reload()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;">
+                    <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+                </svg>
+                Retry Connection
+            </button>
+            
+            <button class="secondary-btn" onclick="history.back()">
+                Go Back
+            </button>
+        </div>
+        
+        <div class="status" id="connectionStatus">
+            Checking connection...
+        </div>
+    </div>
+
+    <script>
+        // Check connection status
+        function updateConnectionStatus() {
+            const statusElement = document.getElementById('connectionStatus');
+            
+            if (navigator.onLine) {
+                statusElement.innerHTML = `
+                    <span style="color: #57ab5a;">●</span>
+                    Connection restored! The app will reload in 3 seconds...
+                `;
+                
+                // Auto-reload when connection is restored
+                setTimeout(() => {
+                    window.location.reload();
+                }, 3000);
+            } else {
+                statusElement.innerHTML = `
+                    <span style="color: #e5534b;">●</span>
+                    You are currently offline. Please check your internet connection.
+                `;
+            }
+        }
+        
+        // Initial check
+        updateConnectionStatus();
+        
+        // Listen for connection changes
+        window.addEventListener('online', updateConnectionStatus);
+        window.addEventListener('offline', updateConnectionStatus);
+        
+        // Try to register service worker if not already
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js')
+                .catch(error => {
+                    console.log('Service Worker registration failed:', error);
+                });
+        }
+    </script>
+</body>
+</html>
