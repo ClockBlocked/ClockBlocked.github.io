@@ -51,6 +51,325 @@
   <script src="https://unpkg.com/@floating-ui/dom@1.5.4/dist/floating-ui.dom.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <style>
+    :root {
+      --sidebar-width: 296px;
+      --mini-sidebar-width: 60px;
+      --bg-main: #2a313c;
+      --bg-body: #1c222b;
+      --bg-sections: #212830;
+      --border-main: #434a55;
+      --color-text-primary: #c9d1d9;
+      --color-text-secondary: #8b949e;
+      --color-link: #58a6ff;
+      --color-border: #434a55;
+    }
+
+    *::-webkit-scrollbar {
+      display: none;
+    }
+
+    html, body {
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+      height: 100%;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    body {
+      background-color: var(--bg-body);
+      color: var(--color-text-primary);
+    }
+
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    #leftSidebar {
+      width: var(--sidebar-width);
+      flex-shrink: 0;
+      background-color: #2d333b;
+      border-right: 1px solid var(--color-border);
+      overflow-y: auto;
+      transition: transform 0.3s ease;
+      border-top-right-radius: 15px;
+    }
+
+    #rightSidebar {
+      width: var(--sidebar-width);
+      flex-shrink: 0;
+      background-color: #2d333b;
+      border-left: 1px solid var(--color-border);
+      overflow-y: auto;
+      transition: transform 0.3s ease;
+      border-top-left-radius: 15px;
+    }
+
+    .main-content-wrapper {
+      flex: 1;
+      overflow-x: hidden;
+      margin-left: var(--sidebar-width);
+      margin-right: var(--sidebar-width);
+      transition: margin 0.3s ease;
+    }
+
+    #overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.95);
+      z-index: 9;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+      backdrop-filter: blur(80px);
+    }
+
+    #overlay.active {
+      visibility: visible;
+      opacity: 0.65;
+      pointer-events: all;
+      z-index: 9;
+    }
+
+    @media (max-width: 1200px) {
+      #leftSidebar,
+      #rightSidebar {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        z-index: 15;
+        transform: translateX(-100%);
+        box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+      }
+
+      #rightSidebar {
+        right: 0;
+        left: auto;
+        transform: translateX(100%);
+      }
+
+      #leftSidebar.open {
+        transform: translateX(0);
+      }
+
+      #rightSidebar.open {
+        transform: translateX(0);
+      }
+
+      .main-content-wrapper {
+        margin-left: 0;
+        margin-right: 0;
+      }
+    }
+
+    /* Sidebar Styling */
+    .sidebar-title {
+      font-size: 0.75rem;
+      font-weight: 300;
+      text-transform: uppercase;
+      letter-spacing: 0.075em;
+      color: #c9d1d9;
+      padding: 0.5rem 0.75rem;
+      text-align: right;
+      opacity: 0.65;
+      transition: opacity 0.65s ease-in-out;
+    }
+
+    .sidebar-link {
+      display: block;
+      font-size: 0.875rem;
+      color: #8b949e;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.375rem;
+      transition: background 0.15s ease-in-out, color 0.15s ease-in-out;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .sidebar-link:hover {
+      background-color: #30363d;
+      color: #ffffff;
+    }
+
+    .sidebar-link.active {
+      background-color: #373e47;
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    aside:hover .sidebar-title {
+      opacity: 1;
+      transition: opacity 0.65s ease-in-out;
+    }
+
+    /* Profile Section */
+    .profile-section {
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--color-border);
+      margin-bottom: 16px;
+    }
+
+    .profile-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      margin-bottom: 12px;
+      border: 2px solid var(--color-border);
+    }
+
+    .profile-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      line-height: 1.2;
+    }
+
+    .profile-username {
+      font-size: 14px;
+      color: var(--color-text-secondary);
+    }
+
+    /* Repository List */
+    .repo-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      color: var(--color-text-primary);
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: all 0.2s ease;
+      margin-bottom: 2px;
+      cursor: pointer;
+    }
+
+    .repo-item:hover {
+      background-color: #444c56;
+    }
+
+    .repo-item.active {
+      background-color: #373e47;
+    }
+
+    .repo-icon {
+      font-size: 12px;
+      color: var(--color-text-secondary);
+    }
+
+    .repo-icon.public {
+      color: #57ab5a;
+    }
+
+    /* Recent Files */
+    .recent-file-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      color: var(--color-text-primary);
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: all 0.2s ease;
+      margin-bottom: 2px;
+      cursor: pointer;
+    }
+
+    .recent-file-item:hover {
+      background-color: #444c56;
+    }
+
+    .recent-file-icon {
+      width: 12px;
+      height: 12px;
+      color: var(--color-text-secondary);
+    }
+
+    /* Top Navbar */
+    .navbar-container {
+      background-color: #2d333b;
+      border-bottom: 1px solid var(--color-border);
+      height: 62px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    }
+
+    .navbar-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 100%;
+      padding: 0 16px;
+      max-width: 100%;
+    }
+
+    .navbar-left, .navbar-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .menu-button {
+      background: none;
+      border: none;
+      color: var(--color-text-primary);
+      font-size: 16px;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .menu-button:hover {
+      background-color: #444c56;
+    }
+
+    /* Progress Bar */
+    .page-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background-color: transparent;
+      z-index: 1001;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    .page-progress.visible {
+      opacity: 1;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 100%;
+      background-color: #2d333b;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #539bf5, #6cb6ff);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+  </style>
+
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -124,19 +443,16 @@
       }
     }
   </script>
-  
-  
-  
 </head>
 
 <body class="bg-github-canvas-default text-github-fg-default font-sans">
   
-<!-- Progress Bar -->
-<div id="pageProgress" class="page-progress">
-  <div class="progress-bar">
-    <div class="progress-fill"></div>
+  <!-- Progress Bar -->
+  <div id="pageProgress" class="page-progress">
+    <div class="progress-bar">
+      <div class="progress-fill"></div>
+    </div>
   </div>
-</div>
 
   <!-- Loading Overlay -->
   <div id="loadingOverlay" class="fixed inset-0 bg-github-canvas-default/90 backdrop-blur-sm z-50 hidden items-center justify-center">
@@ -149,103 +465,218 @@
     </div>
   </div>
 
-  <!-- Top Horizontal Menu Bar -->
-  <div id="topMenuBar" class="fixed left-0 right-0 bg-github-canvas-overlay/95 backdrop-blur-md border-b border-github-border-default z-50">
-    <div class="overflow-x-auto scrollbar-hide">
-      <div class="flex items-center space-x-6 px-6 py-3 min-w-max">
-        <!-- Quick Actions Section -->
-        <div class="flex items-center space-x-4">
-          <div class="relative">
-            <button id="topQuickActionsBtn" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-github-canvas-subtle transition-colors">
-              <svg class="w-4 h-4 text-github-fg-muted" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M5.75 2a.75.75 0 0 1 .75.75V4h3.5V2.75a.75.75 0 0 1 1.5 0V4h.25A2.25 2.25 0 0 1 14 6.25v5.5A2.25 2.25 0 0 1 11.75 14H4.25A2.25 2.25 0 0 1 2 11.75v-5.5A2.25 2.25 0 0 1 4.25 4H5V2.75A.75.75 0 0 1 5.75 2Zm-.75 5.75a.75.75 0 0 0-1.5 0v.25c0 .414.336.75.75.75h3.5a.75.75 0 0 0 0-1.5H5ZM11 10a1 1 0 1 0-2 0 1 1 0 0 0 2 0Z"/>
-              </svg>
-              <span class="text-sm font-medium text-github-fg-default">Actions</span>
-            </button>
-            <div id="topQuickActionsMenu" class="absolute top-full left-0 mt-2 w-56 bg-github-canvas-overlay border border-github-border-default rounded-lg shadow-xl z-10 opacity-0 transform scale-95 transition-all duration-200 pointer-events-none">
-              <div class="p-2">
-                <button onclick="showCreateFileModal()" class="w-full flex items-center space-x-2 px-3 py-2 rounded hover:bg-github-canvas-subtle text-sm text-github-fg-default">
-                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M7.75 2a.75.75 0 0 1 .75.75V7h4.25a.75.75 0 0 1 0 1.5H8.5v4.25a.75.75 0 0 1-1.5 0V8.5H2.75a.75.75 0 0 1 0-1.5H7V2.75A.75.75 0 0 1 7.75 2Z"/>
-                  </svg>
-                  <span>New File</span>
-                </button>
-                <button onclick="showCreateRepoModal()" class="w-full flex items-center space-x-2 px-3 py-2 rounded hover:bg-github-canvas-subtle text-sm text-github-fg-default">
-                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z"/>
-                  </svg>
-                  <span>New Repository</span>
-                </button>
-                <div class="border-t border-github-border-muted my-1"></div>
-                <button onclick="navigateToRoot()" class="w-full flex items-center space-x-2 px-3 py-2 rounded hover:bg-github-canvas-subtle text-sm text-github-fg-default">
-                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M8.543 2.232a.75.75 0 0 0-1.085 0l-5.25 5.5A.75.75 0 0 0 2.75 9H4v4a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1a1 1 0 1 1 2 0v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V9h1.25a.75.75 0 0 0 .543-1.268l-5.25-5.5Z"/>
-                  </svg>
-                  <span>Go to Root</span>
-                </button>
-                <button onclick="showRepoSelector()" class="w-full flex items-center space-x-2 px-3 py-2 rounded hover:bg-github-canvas-subtle text-sm text-github-fg-default">
-                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M1 2.75A2.75 2.75 0 0 1 3.75 0h8.5A2.75 2.75 0 0 1 15 2.75v10.5A2.75 2.75 0 0 1 12.25 16h-8.5A2.75 2.75 0 0 1 1 13.25V2.75ZM3.75 1.5c-.69 0-1.25.56-1.25 1.25v10.5c0 .69.56 1.25 1.25 1.25h8.5c.69 0 1.25-.56 1.25-1.25V2.75c0-.69-.56-1.25-1.25-1.25h-8.5Z"/>
-                  </svg>
-                  <span>Repository List</span>
-                </button>
-              </div>
-            </div>
+  <!-- Top Navigation Bar -->
+  <nav class="navbar-container">
+    <div class="navbar-content">
+      <!-- Left Section -->
+      <div class="navbar-left">
+        <button id="leftSidebarTrigger" class="menu-button">
+          <i class="fas fa-bars"></i>
+        </button>
+        <a href="#" class="flex items-center space-x-2">
+          <i class="fab fa-github text-2xl"></i>
+          <span class="text-sm font-semibold">GitHub Clone</span>
+        </a>
+      </div>
+
+      <!-- Center Search -->
+      <div class="flex-1 max-w-xl mx-4">
+        <div class="relative">
+          <input 
+            type="text" 
+            placeholder="Search repositories, files..." 
+            class="w-full px-4 py-2 bg-github-canvas-inset border border-github-border-default rounded-md text-sm text-github-fg-default placeholder-github-fg-muted focus:outline-none focus:ring-2 focus:ring-github-accent-fg focus:border-transparent"
+          >
+          <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-github-fg-muted text-sm">
+            Ctrl+K
           </div>
         </div>
-        
-        <!-- Navigation Links -->
-        <div class="flex items-center space-x-6">
-          <button onclick="showRepoSelector()" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-github-canvas-subtle transition-colors">
-            <svg class="w-4 h-4 text-github-fg-muted" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z"/>
-            </svg>
-            <span class="text-sm font-medium text-github-fg-default">Repositories</span>
+      </div>
+
+      <!-- Right Section -->
+      <div class="navbar-right">
+        <button onclick="showCreateRepoModal()" class="menu-button">
+          <i class="fas fa-plus"></i>
+          <span class="ml-2 text-sm">New</span>
+        </button>
+        <button onclick="toggleTheme()" class="menu-button">
+          <i id="themeIcon" class="fas fa-moon"></i>
+        </button>
+        <button id="rightSidebarTrigger" class="menu-button">
+          <i class="fas fa-ellipsis-v"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Overlay for Mobile -->
+  <div id="overlay" class="fixed inset-0 bg-black"></div>
+
+  <!-- Left Sidebar -->
+  <aside id="leftSidebar" class="sidebar left-sidebar">
+    <div class="p-4 h-full overflow-y-auto">
+      <!-- User Profile -->
+      <div class="profile-section">
+        <img src="https://dev.wuaze.com/banner.png" alt="Profile" class="profile-avatar" />
+        <div class="profile-info">
+          <h3 class="profile-name">GitHub Clone</h3>
+          <span class="profile-username">Local File Manager</span>
+        </div>
+        <button onclick="showCreateRepoModal()" class="w-full mt-3 px-3 py-2 bg-github-btn-primary-bg hover:bg-github-btn-primary-hover text-white rounded-md text-sm font-medium transition-colors">
+          <i class="fas fa-plus mr-2"></i>
+          New Repository
+        </button>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="mb-6">
+        <span class="sidebar-title">Quick Actions</span>
+        <div class="space-y-1">
+          <button onclick="showCreateFileModal()" class="sidebar-link">
+            <i class="fas fa-file mr-2"></i>
+            New File
           </button>
-          
-          <div class="relative">
-            <button id="topRecentFilesBtn" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-github-canvas-subtle transition-colors">
-              <svg class="w-4 h-4 text-github-fg-muted" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z"/>
-              </svg>
-              <span class="text-sm font-medium text-github-fg-default">Recent</span>
-              <span id="topRecentFilesCount" class="bg-github-accent-emphasis text-white text-xs px-1.5 py-0.5 rounded-full">0</span>
-            </button>
-            <div id="topRecentFilesPopover" class="absolute top-full left-0 mt-2 w-80 bg-github-canvas-overlay border border-github-border-default rounded-lg shadow-xl z-10 opacity-0 transform scale-95 transition-all duration-200 pointer-events-none">
-              <div class="p-3">
-                <h4 class="text-sm font-semibold text-github-fg-default mb-2">Recently Opened</h4>
-                <div id="topRecentFilesList" class="space-y-1 max-h-64 overflow-y-auto">
-                  <!-- Recent files will be populated here -->
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <button id="topStatsBtn" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-github-canvas-subtle transition-colors">
-            <svg class="w-4 h-4 text-github-fg-muted" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M1.75 16A1.75 1.75 0 0 1 0 14.25V1.75C0 .784.784 0 1.75 0h8.5C11.216 0 12 .784 12 1.75v12.5c0 .085-.006.168-.018.25h2.268a.25.25 0 0 0 .25-.25V8.285a.25.25 0 0 0-.111-.208l-1.055-.703a.749.749 0 1 1 .832-1.248l1.055.703c.487.325.78.871.78 1.456v5.965A1.75 1.75 0 0 1 14.25 16h-3.5a.75.75 0 0 1-.197-.026c-.099.017-.2.026-.303.026h-3a.75.75 0 0 1-.75-.75V14h-1v1.25a.75.75 0 0 1-.75.75Zm-.25-1.75c0 .138.112.25.25.25H4v-1.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 .75.75v1.25h2.25a.25.25 0 0 0 .25-.25V1.75a.25.25 0 0 0-.25-.25h-8.5a.25.25 0 0 0-.25.25Z"/>
-            </svg>
-            <span id="topStatsText" class="text-sm font-medium text-github-fg-default">0 files</span>
+          <button onclick="showRepoSelector()" class="sidebar-link">
+            <i class="fas fa-folder mr-2"></i>
+            Browse Repositories
+          </button>
+          <button onclick="navigateToRoot()" class="sidebar-link">
+            <i class="fas fa-home mr-2"></i>
+            Go to Root
           </button>
         </div>
-        
-        <!-- Right Side Actions -->
-        <div class="flex items-center space-x-3 ml-auto">
-          <div class="h-6 w-px bg-github-border-default"></div>
-          <button onclick="toggleTheme()" class="p-2 rounded-lg hover:bg-github-canvas-subtle transition-colors">
-            <svg id="topThemeIcon" class="w-4 h-4 text-github-fg-muted" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M8 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6Zm0 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0Zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13ZM.5 8a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1H1a.5.5 0 0 1-.5-.5Zm13 0a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5Z"/>
-            </svg>
+      </div>
+
+      <!-- Repository List -->
+      <div class="mb-6">
+        <div class="flex items-center justify-between mb-2">
+          <span class="sidebar-title">Repositories</span>
+          <span id="repoCount" class="text-xs text-github-fg-muted">0</span>
+        </div>
+        <div id="repoListSidebar" class="space-y-1">
+          <!-- Repositories will be populated here -->
+        </div>
+      </div>
+
+      <!-- Navigation Links -->
+      <div>
+        <span class="sidebar-title">Navigation</span>
+        <div class="space-y-1">
+          <a href="#" onclick="showRepoSelector()" class="sidebar-link">
+            <i class="fas fa-code mr-2"></i>
+            Code
+          </a>
+          <a href="#" class="sidebar-link">
+            <i class="fas fa-exclamation-circle mr-2"></i>
+            Issues
+            <span class="ml-auto bg-github-canvas-subtle text-github-fg-default text-xs px-1.5 py-0.5 rounded-full">0</span>
+          </a>
+          <a href="#" class="sidebar-link">
+            <i class="fas fa-code-branch mr-2"></i>
+            Pull Requests
+            <span class="ml-auto bg-github-canvas-subtle text-github-fg-default text-xs px-1.5 py-0.5 rounded-full">0</span>
+          </a>
+          <a href="#" class="sidebar-link">
+            <i class="fas fa-chart-bar mr-2"></i>
+            Insights
+          </a>
+        </div>
+      </div>
+
+      <!-- File Stats -->
+      <div class="mt-6 pt-4 border-t border-github-border-muted">
+        <div class="flex items-center justify-between text-sm">
+          <span class="text-github-fg-muted">Files:</span>
+          <span id="totalFilesCount" class="font-medium">0</span>
+        </div>
+        <div class="flex items-center justify-between text-sm mt-1">
+          <span class="text-github-fg-muted">Storage:</span>
+          <span id="totalStorage" class="font-medium">0 KB</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Right Sidebar -->
+  <aside id="rightSidebar" class="sidebar right-sidebar">
+    <div class="p-4 h-full overflow-y-auto">
+      <!-- Recent Files -->
+      <div class="mb-6">
+        <div class="flex items-center justify-between mb-2">
+          <span class="sidebar-title">Recent Files</span>
+          <button onclick="refreshRecentFiles()" class="text-xs text-github-accent-fg hover:underline">
+            Refresh
+          </button>
+        </div>
+        <div id="recentFilesList" class="space-y-2">
+          <!-- Recent files will be populated here -->
+        </div>
+      </div>
+
+      <!-- Current Repository Info -->
+      <div id="currentRepoInfo" class="mb-6 hidden">
+        <span class="sidebar-title">Current Repository</span>
+        <div class="p-3 bg-github-canvas-subtle rounded-md mt-2">
+          <h4 id="currentRepoNameSidebar" class="font-semibold text-github-fg-default mb-1"></h4>
+          <p id="currentRepoDesc" class="text-xs text-github-fg-muted mb-2"></p>
+          <div class="flex items-center justify-between text-xs">
+            <span class="text-github-fg-muted">Branch:</span>
+            <span id="currentRepoBranch" class="font-medium">main</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="mb-6">
+        <span class="sidebar-title">Quick Stats</span>
+        <div class="grid grid-cols-2 gap-2 mt-2">
+          <div class="p-3 bg-github-canvas-subtle rounded-md text-center">
+            <div class="text-lg font-semibold text-github-accent-fg" id="statsFiles">0</div>
+            <div class="text-xs text-github-fg-muted">Files</div>
+          </div>
+          <div class="p-3 bg-github-canvas-subtle rounded-md text-center">
+            <div class="text-lg font-semibold text-github-success-fg" id="statsCommits">0</div>
+            <div class="text-xs text-github-fg-muted">Commits</div>
+          </div>
+          <div class="p-3 bg-github-canvas-subtle rounded-md text-center">
+            <div class="text-lg font-semibold text-github-warning-fg" id="statsBranches">1</div>
+            <div class="text-xs text-github-fg-muted">Branches</div>
+          </div>
+          <div class="p-3 bg-github-canvas-subtle rounded-md text-center">
+            <div class="text-lg font-semibold text-github-danger-fg" id="statsIssues">0</div>
+            <div class="text-xs text-github-fg-muted">Issues</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Language Distribution -->
+      <div id="languageStatsSidebar" class="hidden">
+        <span class="sidebar-title">Languages</span>
+        <div id="languageStatsList" class="space-y-2 mt-2">
+          <!-- Language stats will be populated here -->
+        </div>
+      </div>
+
+      <!-- Quick Actions Footer -->
+      <div class="mt-auto pt-4 border-t border-github-border-muted">
+        <div class="space-y-2">
+          <button onclick="toggleTheme()" class="sidebar-link w-full text-left">
+            <i id="sidebarThemeIcon" class="fas fa-moon mr-2"></i>
+            Toggle Theme
+          </button>
+          <button onclick="showHelp()" class="sidebar-link w-full text-left">
+            <i class="fas fa-question-circle mr-2"></i>
+            Help & Documentation
           </button>
         </div>
       </div>
     </div>
-  </div>
+  </aside>
 
-  <!-- Page Container -->
-  <div id="pageContainer" class="min-h-screen flex flex-col pt-16">
+  <!-- Main Content Wrapper -->
+  <div class="main-content-wrapper pt-16">
     <!-- Repository Header -->
-    <header class="bg-github-canvas-overlay border-b border-github-border-default sticky top-0 z-40 backdrop-blur-md bg-github-canvas-overlay/95">
+    <header id="repoHeader" class="bg-github-canvas-overlay border-b border-github-border-default sticky top-0 z-40 backdrop-blur-md bg-github-canvas-overlay/95 hidden">
       <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between py-4">
           <div class="flex items-center space-x-3">
@@ -253,8 +684,8 @@
               <svg class="w-5 h-5 text-github-fg-muted" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z" />
               </svg>
-              <a href="#" class="text-github-accent-fg hover:underline text-xl font-semibold">
-                GitHub
+              <a href="#" onclick="showRepoSelector()" class="text-github-accent-fg hover:underline text-xl font-semibold">
+                GitHub Clone
               </a>
             </div>
             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-github-canvas-subtle border border-github-border-default text-github-fg-muted">
@@ -263,13 +694,13 @@
           </div>
 
           <div class="flex items-center space-x-2">
-            <button class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
+            <button onclick="starCurrentRepo()" class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
               <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.751 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z" />
               </svg>
               Star
             </button>
-            <button class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
+            <button onclick="forkCurrentRepo()" class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
               <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M5 5.372v.878c0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75v-.878a2.25 2.25 0 1 1 1.5 0v.878a2.25 2.25 0 0 1-2.25 2.25h-1.5v2.128a2.251 2.251 0 1 1-1.5 0V8.5h-1.5A2.25 2.25 0 0 1 3.5 6.25v-.878a2.25 2.25 0 1 1 1.5 0ZM5 3.25a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Zm6.75.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm-3 8.75a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Z" />
               </svg>
@@ -279,7 +710,7 @@
         </div>
 
         <nav class="flex space-x-6 border-b border-github-border-muted -mb-px">
-          <a href="#" class="flex items-center space-x-2 px-1 py-3 border-b-2 border-orange-400 text-sm font-semibold text-github-fg-default">
+          <a href="#" onclick="showExplorer()" class="flex items-center space-x-2 px-1 py-3 border-b-2 border-orange-400 text-sm font-semibold text-github-fg-default">
             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
               <path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z" />
             </svg>
@@ -503,9 +934,6 @@
           </div>
         </div>
 
-
-
-<!---
         <div class="bg-github-canvas-overlay border border-github-border-default rounded-t-lg px-4 py-2 flex items-center justify-between text-sm">
           <div class="flex items-center space-x-4 text-github-fg-muted">
             <span id="fileLinesCount">0 lines</span>
@@ -532,62 +960,6 @@
             </div>
           </div>
         </div>
---->
-
-
-
-<div id="fileViewer" class="file-viewer-container">
-  <!-- File Header -->
-  <div class="file-header">
-    <div class="file-stats">
-      <span id="fileLinesCount" class="file-stat">0 lines</span>
-      <span class="file-stat-separator">•</span>
-      <span id="fileSize" class="file-stat">0 KB</span>
-      <span class="file-stat-separator">•</span>
-      <span id="fileLanguageDisplay" class="file-stat">Text</span>
-    </div>
-    <div class="file-actions">
-      <button class="file-action-btn" aria-label="Raw file content">
-        <svg class="file-action-icon" fill="currentColor" viewBox="0 0 16 16">
-          <path d="M8 1a.75.75 0 0 1 .75.75v6.5a.75.75 0 0 1-1.5 0v-6.5A.75.75 0 0 1 8 1Zm-4.5 7a.75.75 0 0 1 .75-.75h7.5a.75.75 0 0 1 0 1.5h-7.5A.75.75 0 0 1 3.5 8Zm.75 3.25a.75.75 0 0 0 0 1.5h7.5a.75.75 0 0 0 0-1.5h-7.5Z"/>
-        </svg>
-      </button>
-      <button class="file-action-btn" aria-label="Copy file content">
-        <svg class="file-action-icon" fill="currentColor" viewBox="0 0 16 16">
-          <path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"/>
-          <path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"/>
-        </svg>
-      </button>
-      <button class="file-action-btn" aria-label="Download file">
-        <svg class="file-action-icon" fill="currentColor" viewBox="0 0 16 16">
-          <path d="M2.75 14A1.75 1.75 0 0 1 1 12.25v-2.5a.75.75 0 0 1 1.5 0v2.5c0 .138.112.25.25.25h10.5a.25.25 0 0 0 .25-.25v-2.5a.75.75 0 0 1 1.5 0v2.5A1.75 1.75 0 0 1 13.25 14Z"/>
-          <path d="M7.25 7.689V2a.75.75 0 0 1 1.5 0v5.689l1.97-1.969a.749.749 0 1 1 1.06 1.06l-3.25 3.25a.749.749 0 0 1-1.06 0L4.22 6.78a.749.749 0 1 1 1.06-1.06l1.97 1.969Z"/>
-        </svg>
-      </button>
-    </div>
-  </div>
-
-  <!-- Code Display Area -->
-  <div class="file-content">
-    <div class="code-display">
-      <!-- Line Numbers -->
-      <div id="lineNumbers" class="line-numbers-column"></div>
-      
-      <!-- Code Content -->
-      <div class="code-content-wrapper">
-        <pre id="codeContent" class="code-pre"><code id="codeBlock" class="code-block language-javascript"></code></pre>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-
-
-
-
-
-
 
         <div class="mt-6 bg-github-canvas-overlay border border-github-border-default rounded-lg p-6">
           <h3 class="text-lg font-semibold text-github-fg-default mb-4">File Details</h3>
@@ -832,42 +1204,500 @@
       </div>
     </div>
   </div>
-  
-  
-  
-<!-- Loading Progress Bar -->
-<div id="loadingProgressBar"></div>
-
-  
-  
-  
-  
 
   <script src="./primary.js"></script>
   
   <script>
-    // Fallback in case external script doesn't load
-    if (typeof showCreateRepoModal === 'undefined') {
-      console.error('script_fixed.js failed to load. Loading inline...');
-      // Minimal fallback functions
-      window.showCreateRepoModal = function() {
-        document.getElementById('createRepoModal').classList.remove('hidden');
-        document.getElementById('createRepoModal').classList.add('flex');
-      };
-      window.hideCreateRepoModal = function() {
-        document.getElementById('createRepoModal').classList.add('hidden');
-        document.getElementById('createRepoModal').classList.remove('flex');
-      };
+// Sidebar Manager for GitHub Clone
+const SidebarManager = {
+  // State
+  state: {
+    isLeftSidebarOpen: true,
+    isRightSidebarOpen: true,
+    isDarkTheme: true,
+    currentRepository: null,
+    recentFiles: [],
+    repositories: []
+  },
+
+  // Initialize sidebar functionality
+  init() {
+    this.setupEventListeners();
+    this.loadData();
+    this.checkWindowSize();
+    this.setupAutoRefresh();
+    
+    // Initialize sidebar content
+    this.updateRecentFiles();
+    this.updateRepositoryList();
+    this.updateStats();
+    
+    console.log('SidebarManager initialized');
+  },
+
+  // Setup event listeners
+  setupEventListeners() {
+    // Left sidebar trigger
+    const leftSidebarTrigger = document.getElementById('leftSidebarTrigger');
+    if (leftSidebarTrigger) {
+      leftSidebarTrigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.toggleLeftSidebar();
+      });
     }
+
+    // Right sidebar trigger
+    const rightSidebarTrigger = document.getElementById('rightSidebarTrigger');
+    if (rightSidebarTrigger) {
+      rightSidebarTrigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.toggleRightSidebar();
+      });
+    }
+
+    // Overlay click
+    const overlay = document.getElementById('overlay');
+    if (overlay) {
+      overlay.addEventListener('click', () => {
+        this.closeLeftSidebar();
+        this.closeRightSidebar();
+      });
+    }
+
+    // Theme toggle
+    const themeButtons = document.querySelectorAll('[onclick*="toggleTheme"]');
+    themeButtons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.toggleTheme();
+      });
+    });
+
+    // Refresh recent files
+    const refreshBtn = document.querySelector('[onclick*="refreshRecentFiles"]');
+    if (refreshBtn) {
+      refreshBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.refreshRecentFiles();
+      });
+    }
+
+    // Window resize
+    window.addEventListener('resize', () => {
+      this.checkWindowSize();
+    });
+
+    // Click outside sidebar to close on mobile
+    document.addEventListener('click', (e) => {
+      const leftSidebar = document.getElementById('leftSidebar');
+      const rightSidebar = document.getElementById('rightSidebar');
+      
+      if (window.innerWidth <= 1200) {
+        if (this.state.isLeftSidebarOpen && 
+            !leftSidebar.contains(e.target) && 
+            e.target !== leftSidebarTrigger) {
+          this.closeLeftSidebar();
+        }
+        
+        if (this.state.isRightSidebarOpen && 
+            !rightSidebar.contains(e.target) && 
+            e.target !== rightSidebarTrigger) {
+          this.closeRightSidebar();
+        }
+      }
+    });
+  },
+
+  // Load data from localStorage
+  loadData() {
+    // Load recent files
+    this.state.recentFiles = JSON.parse(localStorage.getItem('gitcodr_recent_files') || '[]');
+    
+    // Load repositories
+    this.state.repositories = JSON.parse(localStorage.getItem('gitcodr_repositories') || '[]');
+    
+    // Load current repository from global state if available
+    if (typeof currentState !== 'undefined' && currentState.repository) {
+      this.state.currentRepository = currentState.repository;
+    }
+  },
+
+  // Toggle left sidebar
+  toggleLeftSidebar() {
+    const leftSidebar = document.getElementById('leftSidebar');
+    const overlay = document.getElementById('overlay');
+    
+    if (window.innerWidth <= 1200) {
+      this.state.isLeftSidebarOpen = !this.state.isLeftSidebarOpen;
+      leftSidebar.classList.toggle('open', this.state.isLeftSidebarOpen);
+      
+      if (this.state.isLeftSidebarOpen) {
+        overlay.classList.add('active');
+        this.closeRightSidebar();
+      } else {
+        overlay.classList.remove('active');
+      }
+    }
+  },
+
+  // Toggle right sidebar
+  toggleRightSidebar() {
+    const rightSidebar = document.getElementById('rightSidebar');
+    const overlay = document.getElementById('overlay');
+    
+    if (window.innerWidth <= 1200) {
+      this.state.isRightSidebarOpen = !this.state.isRightSidebarOpen;
+      rightSidebar.classList.toggle('open', this.state.isRightSidebarOpen);
+      
+      if (this.state.isRightSidebarOpen) {
+        overlay.classList.add('active');
+        this.closeLeftSidebar();
+      } else {
+        overlay.classList.remove('active');
+      }
+    }
+  },
+
+  // Close left sidebar
+  closeLeftSidebar() {
+    const leftSidebar = document.getElementById('leftSidebar');
+    this.state.isLeftSidebarOpen = false;
+    leftSidebar.classList.remove('open');
+  },
+
+  // Close right sidebar
+  closeRightSidebar() {
+    const rightSidebar = document.getElementById('rightSidebar');
+    this.state.isRightSidebarOpen = false;
+    rightSidebar.classList.remove('open');
+  },
+
+  // Check window size and adjust sidebar visibility
+  checkWindowSize() {
+    const leftSidebar = document.getElementById('leftSidebar');
+    const rightSidebar = document.getElementById('rightSidebar');
+    const overlay = document.getElementById('overlay');
+    const mainContentWrapper = document.querySelector('.main-content-wrapper');
+    
+    if (window.innerWidth <= 1200) {
+      // Mobile/tablet view - hide sidebars by default
+      if (!this.state.isLeftSidebarOpen) {
+        leftSidebar.classList.remove('open');
+      }
+      if (!this.state.isRightSidebarOpen) {
+        rightSidebar.classList.remove('open');
+      }
+      if (!this.state.isLeftSidebarOpen && !this.state.isRightSidebarOpen) {
+        overlay.classList.remove('active');
+      }
+      if (mainContentWrapper) {
+        mainContentWrapper.style.marginLeft = '0';
+        mainContentWrapper.style.marginRight = '0';
+      }
+    } else {
+      // Desktop view - show both sidebars
+      leftSidebar.classList.add('open');
+      rightSidebar.classList.add('open');
+      this.state.isLeftSidebarOpen = true;
+      this.state.isRightSidebarOpen = true;
+      overlay.classList.remove('active');
+      if (mainContentWrapper) {
+        mainContentWrapper.style.marginLeft = 'var(--sidebar-width)';
+        mainContentWrapper.style.marginRight = 'var(--sidebar-width)';
+      }
+    }
+  },
+
+  // Toggle theme
+  toggleTheme() {
+    const html = document.documentElement;
+    const themeIcons = document.querySelectorAll('#themeIcon, #sidebarThemeIcon');
+    
+    this.state.isDarkTheme = !this.state.isDarkTheme;
+    
+    if (this.state.isDarkTheme) {
+      html.setAttribute('data-theme', 'dark');
+      themeIcons.forEach(icon => {
+        icon.className = 'fas fa-moon';
+      });
+    } else {
+      html.setAttribute('data-theme', 'light');
+      themeIcons.forEach(icon => {
+        icon.className = 'fas fa-sun';
+      });
+    }
+    
+    // Save theme preference
+    localStorage.setItem('gitcodr_theme', this.state.isDarkTheme ? 'dark' : 'light');
+  },
+
+  // Update recent files list
+  updateRecentFiles() {
+    const recentFilesList = document.getElementById('recentFilesList');
+    if (!recentFilesList) return;
+    
+    this.loadData(); // Reload data to get latest files
+    
+    if (this.state.recentFiles.length === 0) {
+      recentFilesList.innerHTML = `
+        <div class="text-center py-4 text-github-fg-muted text-sm">
+          <i class="fas fa-file text-lg mb-2 block"></i>
+          No recent files
+        </div>
+      `;
+    } else {
+      recentFilesList.innerHTML = this.state.recentFiles.slice(0, 5).map(file => `
+        <div class="recent-file-item" onclick="SidebarManager.openRecentFile('${file.repoName}', '${file.filePath}', '${file.fileName}')">
+          <i class="fas fa-file recent-file-icon"></i>
+          <div class="flex-1 min-w-0">
+            <div class="text-sm text-github-fg-default truncate">${file.fileName}</div>
+            <div class="text-xs text-github-fg-muted truncate">${file.repoName}</div>
+          </div>
+          <div class="text-xs text-github-fg-muted">
+            ${this.formatTimeAgo(file.timestamp)}
+          </div>
+        </div>
+      `).join('');
+    }
+  },
+
+  // Update repository list in sidebar
+  updateRepositoryList() {
+    const repoListSidebar = document.getElementById('repoListSidebar');
+    const repoCount = document.getElementById('repoCount');
+    
+    if (!repoListSidebar) return;
+    
+    this.loadData(); // Reload repositories
+    
+    if (this.state.repositories.length === 0) {
+      repoListSidebar.innerHTML = `
+        <div class="text-center py-2 text-sm text-github-fg-muted">
+          No repositories yet
+        </div>
+      `;
+    } else {
+      repoListSidebar.innerHTML = this.state.repositories.map(repo => `
+        <div class="repo-item ${this.state.currentRepository === repo.name ? 'active' : ''}" 
+             onclick="SidebarManager.selectRepository('${repo.name}')">
+          <i class="fas fa-folder repo-icon ${repo.visibility === 'public' ? 'public' : ''}"></i>
+          <span class="flex-1 truncate">${repo.name}</span>
+          <span class="text-xs text-github-fg-muted">${this.formatDate(repo.created)}</span>
+        </div>
+      `).join('');
+    }
+    
+    if (repoCount) {
+      repoCount.textContent = this.state.repositories.length.toString();
+    }
+  },
+
+  // Update sidebar statistics
+  updateStats() {
+    const totalFilesCount = document.getElementById('totalFilesCount');
+    const totalStorage = document.getElementById('totalStorage');
+    const currentRepoNameSidebar = document.getElementById('currentRepoNameSidebar');
+    const currentRepoDesc = document.getElementById('currentRepoDesc');
+    const currentRepoInfo = document.getElementById('currentRepoInfo');
+    const statsFiles = document.getElementById('statsFiles');
+    const statsCommits = document.getElementById('statsCommits');
+    const statsBranches = document.getElementById('statsBranches');
+    const statsIssues = document.getElementById('statsIssues');
+    
+    // Update global stats
+    let totalFiles = 0;
+    let totalSize = 0;
+    
+    this.state.repositories.forEach(repo => {
+      try {
+        const repoData = JSON.parse(localStorage.getItem(`gitcodr_repo_${repo.name}`) || '{}');
+        const fileCount = Object.keys(repoData).length;
+        totalFiles += fileCount;
+        
+        // Calculate total size
+        Object.values(repoData).forEach(file => {
+          totalSize += file.size || 0;
+        });
+      } catch (e) {
+        console.warn(`Error processing repo ${repo.name}:`, e);
+      }
+    });
+    
+    if (totalFilesCount) totalFilesCount.textContent = totalFiles.toString();
+    if (totalStorage) totalStorage.textContent = this.formatFileSize(totalSize);
+    if (statsFiles) statsFiles.textContent = totalFiles.toString();
+    if (statsCommits) statsCommits.textContent = Math.floor(totalFiles * 1.5).toString();
+    if (statsBranches) statsBranches.textContent = this.state.repositories.length.toString();
+    if (statsIssues) statsIssues.textContent = '0';
+    
+    // Update current repository info
+    if (this.state.currentRepository) {
+      const repo = this.state.repositories.find(r => r.name === this.state.currentRepository);
+      if (repo) {
+        if (currentRepoNameSidebar) currentRepoNameSidebar.textContent = repo.name;
+        if (currentRepoDesc) currentRepoDesc.textContent = repo.description || 'No description';
+        if (currentRepoInfo) currentRepoInfo.classList.remove('hidden');
+      }
+    } else {
+      if (currentRepoInfo) currentRepoInfo.classList.add('hidden');
+    }
+  },
+
+  // Select repository
+  selectRepository(repoName) {
+    this.state.currentRepository = repoName;
+    this.updateRepositoryList();
+    this.updateStats();
+    
+    // If global openRepository function exists, call it
+    if (typeof openRepository === 'function') {
+      openRepository(repoName);
+    }
+    
+    // Close sidebar on mobile
+    if (window.innerWidth <= 1200) {
+      this.closeLeftSidebar();
+    }
+  },
+
+  // Open recent file
+  openRecentFile(repoName, filePath, fileName) {
+    this.state.currentRepository = repoName;
+    this.updateRepositoryList();
+    this.updateStats();
+    
+    // If global openRecentFile function exists, call it
+    if (typeof openRecentFile === 'function') {
+      openRecentFile(repoName, filePath, fileName);
+    }
+    
+    // Close sidebar on mobile
+    if (window.innerWidth <= 1200) {
+      this.closeRightSidebar();
+    }
+  },
+
+  // Refresh recent files
+  refreshRecentFiles() {
+    this.loadData();
+    this.updateRecentFiles();
+    this.showNotification('Recent files refreshed');
+  },
+
+  // Add file to recent files
+  addToRecentFiles(fileName, repoName, filePath) {
+    const existingIndex = this.state.recentFiles.findIndex(f => 
+      f.filePath === filePath && f.repoName === repoName
+    );
+    
+    if (existingIndex !== -1) {
+      this.state.recentFiles.splice(existingIndex, 1);
+    }
+    
+    this.state.recentFiles.unshift({
+      fileName,
+      repoName,
+      filePath,
+      timestamp: Date.now()
+    });
+    
+    if (this.state.recentFiles.length > 10) {
+      this.state.recentFiles = this.state.recentFiles.slice(0, 10);
+    }
+    
+    localStorage.setItem('gitcodr_recent_files', JSON.stringify(this.state.recentFiles));
+    this.updateRecentFiles();
+  },
+
+  // Setup auto-refresh of sidebar data
+  setupAutoRefresh() {
+    // Refresh sidebar data every 30 seconds
+    setInterval(() => {
+      this.loadData();
+      this.updateRecentFiles();
+      this.updateRepositoryList();
+      this.updateStats();
+    }, 30000);
+  },
+
+  // Utility functions
+  formatDate(timestamp) {
+    if (!timestamp) return '';
+    const date = new Date(timestamp);
+    return date.toLocaleDateString();
+  },
+
+  formatTimeAgo(timestamp) {
+    if (!timestamp) return '';
+    const now = new Date();
+    const date = new Date(timestamp);
+    const diff = now - date;
+    
+    if (diff < 60000) return 'now';
+    if (diff < 3600000) return Math.floor(diff / 60000) + 'm';
+    if (diff < 86400000) return Math.floor(diff / 3600000) + 'h';
+    if (diff < 604800000) return Math.floor(diff / 86400000) + 'd';
+    return Math.floor(diff / 604800000) + 'w';
+  },
+
+  formatFileSize(bytes) {
+    if (typeof bytes !== 'number') return '0 KB';
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    if (bytes === 0) return '0 Bytes';
+    const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+    return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
+  },
+
+  showNotification(message) {
+    // Simple notification
+    console.log('Sidebar Notification:', message);
+  },
+
+  // Public API
+  updateAll() {
+    this.loadData();
+    this.updateRecentFiles();
+    this.updateRepositoryList();
+    this.updateStats();
+  },
+
+  setCurrentRepository(repoName) {
+    this.state.currentRepository = repoName;
+    this.updateRepositoryList();
+    this.updateStats();
+  }
+};
+
+// Initialize on DOM load
+document.addEventListener('DOMContentLoaded', () => {
+  SidebarManager.init();
+  
+  // Apply saved theme preference
+  const savedTheme = localStorage.getItem('gitcodr_theme');
+  if (savedTheme === 'light') {
+    SidebarManager.state.isDarkTheme = false;
+    SidebarManager.toggleTheme();
+  }
+});
+
+// Make available globally
+window.SidebarManager = SidebarManager;
+
+// Helper functions to integrate with existing code
+function updateSidebarAfterFileOperation(repoName, fileName, filePath) {
+  if (SidebarManager) {
+    SidebarManager.addToRecentFiles(fileName, repoName, filePath);
+    SidebarManager.updateStats();
+  }
+}
+
+function updateSidebarAfterRepoOperation() {
+  if (SidebarManager) {
+    SidebarManager.updateRepositoryList();
+    SidebarManager.updateStats();
+  }
+}
   </script>
-  
-  
-    <!-- Eruda -->
-    <!-- D E B U G G I N G -->
-    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-    <script>
-      eruda.init();
-    </script>
-  
+
 </body>
 </html>
