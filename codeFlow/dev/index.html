@@ -1715,7 +1715,7 @@ class ServiceWorkerManager {
     
     async register() {
         try {
-            this.registration = await navigator.serviceWorker.register('/serviceWorker.js', {
+            this.registration = await navigator.serviceWorker.register('./webApp/serviceWorker.js', {
                 scope: '/',
                 updateViaCache: 'all'
             });
