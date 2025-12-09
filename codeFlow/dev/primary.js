@@ -1311,7 +1311,7 @@ function viewFile(filename) {
     addToRecentFiles(filename, currentState.repository, filePath);
 
     // Display file in CodeMirror
-    displayFileContent_CodeMirror(filePath, file.name, fileData);
+    displayFileContent_CodeMirror(filePath, file.name, fileData.content);
 
     // Show editor UI
     showFileViewer();
@@ -1323,7 +1323,7 @@ function viewFile(filename) {
     showErrorMessage('Failed to load file: ' + error.message);
   }
 }
-function displayFileContent_CodeMirror(filePath, filename, fileData) {
+function displayFileContent_CodeMirror(filePath, filename, content) {
 
   // HARDEN FILENAME
   if (typeof filename !== "string") {
@@ -1345,7 +1345,7 @@ function displayFileContent_CodeMirror(filePath, filename, fileData) {
   // Populate editor
   if (codeEditor) {
     codeEditor.setOption("mode", mode);
-    codeEditor.setValue(fileData);
+    codeEditor.setValue(content);
     codeEditor.refresh();
   }
 }
