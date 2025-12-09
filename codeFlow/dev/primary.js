@@ -377,85 +377,6 @@ function hideLoading() {
   }
 }
 
-const editorConfig = {
-  // Display
-  lineNumbers: true,
-  lineWrapping: false,
-  theme: 'material-darker',
-  mode: 'javascript',
-  indentUnit: 2,
-  tabSize: 2,
-  indentWithTabs: false,
-  smartIndent: true,
-  viewportMargin: Infinity,
-  cursorBlinkRate: 530,
-  cursorScrollMargin: 12,
-  cursorHeight: 1,
-  showCursorWhenSelecting: true,
-  scrollbarStyle: 'native',
-
-  // Interaction & Behavior
-  autofocus: false,
-  dragDrop: true,
-  allowDropFileTypes: ["text/plain", "text/javascript", "text/css", "text/html"],
-  undoDepth: 300,
-  historyEventDelay: 1250,
-  readOnly: false,
-
-  // Active Line + Highlighting
-  styleActiveLine: {
-    nonEmpty: true,
-    className: "cm-active-line-highlight"
-  },
-
-  // Brackets, Tags, Matching
-  matchBrackets: true,
-  autoCloseBrackets: true,
-  matchTags: { bothTags: true },
-  autoCloseTags: true,
-
-  // Folding system
-  foldGutter: true,
-  gutters: [
-    "CodeMirror-linenumbers",
-    "CodeMirror-foldgutter"
-  ],
-
-  // Linting (only becomes active if you include lint scripts)
-  lint: true,
-
-  // Search Highlight
-  highlightSelectionMatches: {
-    minChars: 2,
-    showToken: /\w/,
-    annotateScrollbar: true
-  },
-
-  // Placeholder (optional)
-  placeholder: "Start typing your code...",
-
-  // Font + Appearance (applied manually after initialization)
-  lineHeight: 1.2,
-  fontSize: 11,
-  fontFamily: "'JetBrains Mono', monospace",
-
-  // Keybindings
-  extraKeys: {
-    "Ctrl-S": function (cm) {
-      const fileEditor = document.getElementById('fileEditor');
-      if (fileEditor && !fileEditor.classList.contains('hidden')) saveFile();
-    },
-    "Ctrl-F": "findPersistent",
-    "Ctrl-Space": "autocomplete",
-    "Ctrl-D": function(cm) { cm.execCommand("duplicateLine"); },
-    "Ctrl-/": "toggleComment",
-    "Shift-Tab": "indentLess",
-    "Tab": function(cm) {
-      if (cm.somethingSelected()) cm.indentSelection("add");
-      else cm.execCommand("insertSoftTab");
-    }
-  }
-};
 
 
 
@@ -925,8 +846,8 @@ function displayFileContent(filename, fileData) {
     for (let i = 1; i <= lineCount; i++) {
       const lineDiv = document.createElement('div');
       lineDiv.textContent = i;
-      lineDiv.style.lineHeight = '1.3';
-      lineDiv.style.fontSize = '13px';
+      lineDiv.style.lineHeight = '1';
+      lineDiv.style.fontSize = '11px';
       lineNumbers.appendChild(lineDiv);
     }
   }
