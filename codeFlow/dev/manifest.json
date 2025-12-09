@@ -1,0 +1,228 @@
+{
+  "name": "GitHub Clone - Local File Manager",
+  "short_name": "GitHub Clone",
+  "description": "A professional GitHub-like file explorer and editor with local storage and offline capabilities",
+  "start_url": "/",
+  "scope": "/",
+  
+  "display": "standalone",
+  "display_override": ["window-controls-overlay"],
+  "orientation": "any",
+  "dir": "ltr",
+  "lang": "en-US",
+  
+  "theme_color": "#22272e",
+  "background_color": "#1c222b",
+  
+  "categories": [
+    "development",
+    "productivity",
+    "utilities"
+  ],
+  
+  "shortcuts": [
+    {
+      "name": "New Repository",
+      "short_name": "New Repo",
+      "description": "Create a new repository",
+      "url": "/?new-repo",
+      "icons": [
+        {
+          "src": "/icons/icon-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "New File",
+      "short_name": "New File",
+      "description": "Create a new file",
+      "url": "/?new-file",
+      "icons": [
+        {
+          "src": "/icons/icon-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Recent Files",
+      "short_name": "Recent",
+      "description": "View recently opened files",
+      "url": "/?recent",
+      "icons": [
+        {
+          "src": "/icons/icon-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  
+  "icons": [
+    {
+      "src": "/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-256x256.png",
+      "sizes": "256x256",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/maskable-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/monochrome.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "monochrome"
+    }
+  ],
+  
+  "screenshots": [
+    {
+      "src": "/screenshots/desktop-1280x800.png",
+      "sizes": "1280x800",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "GitHub Clone desktop interface"
+    },
+    {
+      "src": "/screenshots/mobile-375x667.png",
+      "sizes": "375x667",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "GitHub Clone mobile interface"
+    },
+    {
+      "src": "/screenshots/tablet-768x1024.png",
+      "sizes": "768x1024",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "GitHub Clone tablet interface"
+    }
+  ],
+  
+  "related_applications": [],
+  
+  "prefer_related_applications": false,
+  
+  "protocol_handlers": [
+    {
+      "protocol": "web+githubclone",
+      "url": "/?repo=%s"
+    }
+  ],
+  
+  "share_target": {
+    "action": "/?share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "name",
+      "text": "description",
+      "url": "link",
+      "files": [
+        {
+          "name": "files",
+          "accept": ["text/*", ".js", ".html", ".css", ".json", ".md", ".txt"]
+        }
+      ]
+    }
+  },
+  
+  "handle_links": "preferred",
+  
+  "launch_handler": {
+    "client_mode": ["navigate-existing", "auto"]
+  },
+  
+  "file_handlers": [
+    {
+      "action": "/?open-file",
+      "accept": {
+        "text/*": [".txt", ".md", ".js", ".html", ".css", ".json", ".xml", ".yml", ".yaml"],
+        "application/json": [".json"],
+        "application/javascript": [".js"]
+      }
+    }
+  ],
+  
+  "edge_side_panel": {
+    "preferred_width": 320
+  },
+  
+  "permissions": [
+    "clipboard-read",
+    "clipboard-write",
+    "file-system"
+  ],
+  
+  "id": "/?source=pwa",
+  
+  "iarc_rating_id": "e10b8d4f-2b0a-4b1e-9b0a-9b9b0a9b0a9b"
+}
