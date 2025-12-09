@@ -503,6 +503,9 @@
           </div>
         </div>
 
+
+
+<!---
         <div class="bg-github-canvas-overlay border border-github-border-default rounded-t-lg px-4 py-2 flex items-center justify-between text-sm">
           <div class="flex items-center space-x-4 text-github-fg-muted">
             <span id="fileLinesCount">0 lines</span>
@@ -529,6 +532,62 @@
             </div>
           </div>
         </div>
+--->
+
+
+
+<div id="fileViewer" class="file-viewer-container">
+  <!-- File Header -->
+  <div class="file-header">
+    <div class="file-stats">
+      <span id="fileLinesCount" class="file-stat">0 lines</span>
+      <span class="file-stat-separator">•</span>
+      <span id="fileSize" class="file-stat">0 KB</span>
+      <span class="file-stat-separator">•</span>
+      <span id="fileLanguageDisplay" class="file-stat">Text</span>
+    </div>
+    <div class="file-actions">
+      <button class="file-action-btn" aria-label="Raw file content">
+        <svg class="file-action-icon" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M8 1a.75.75 0 0 1 .75.75v6.5a.75.75 0 0 1-1.5 0v-6.5A.75.75 0 0 1 8 1Zm-4.5 7a.75.75 0 0 1 .75-.75h7.5a.75.75 0 0 1 0 1.5h-7.5A.75.75 0 0 1 3.5 8Zm.75 3.25a.75.75 0 0 0 0 1.5h7.5a.75.75 0 0 0 0-1.5h-7.5Z"/>
+        </svg>
+      </button>
+      <button class="file-action-btn" aria-label="Copy file content">
+        <svg class="file-action-icon" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"/>
+          <path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"/>
+        </svg>
+      </button>
+      <button class="file-action-btn" aria-label="Download file">
+        <svg class="file-action-icon" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M2.75 14A1.75 1.75 0 0 1 1 12.25v-2.5a.75.75 0 0 1 1.5 0v2.5c0 .138.112.25.25.25h10.5a.25.25 0 0 0 .25-.25v-2.5a.75.75 0 0 1 1.5 0v2.5A1.75 1.75 0 0 1 13.25 14Z"/>
+          <path d="M7.25 7.689V2a.75.75 0 0 1 1.5 0v5.689l1.97-1.969a.749.749 0 1 1 1.06 1.06l-3.25 3.25a.749.749 0 0 1-1.06 0L4.22 6.78a.749.749 0 1 1 1.06-1.06l1.97 1.969Z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Code Display Area -->
+  <div class="file-content">
+    <div class="code-display">
+      <!-- Line Numbers -->
+      <div id="lineNumbers" class="line-numbers-column"></div>
+      
+      <!-- Code Content -->
+      <div class="code-content-wrapper">
+        <pre id="codeContent" class="code-pre"><code id="codeBlock" class="code-block language-javascript"></code></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
 
         <div class="mt-6 bg-github-canvas-overlay border border-github-border-default rounded-lg p-6">
           <h3 class="text-lg font-semibold text-github-fg-default mb-4">File Details</h3>
