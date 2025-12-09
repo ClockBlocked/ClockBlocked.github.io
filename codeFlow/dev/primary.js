@@ -1166,7 +1166,34 @@ function setupCodeEditors() {
     }, 100);
   }
 }
+// Attach UI button handlers AFTER CodeMirror setup
+document.addEventListener('DOMContentLoaded', () => {
 
+  // Save Button
+  const saveBtn = document.getElementById('editorSaveBtn');
+  if (saveBtn) {
+    saveBtn.addEventListener('click', () => {
+      if (typeof saveFile === "function") saveFile();
+    });
+  }
+
+  // Format Button (simple JS beautifier fallback)
+  const formatBtn = document.getElementById('editorFormatBtn');
+  if (formatBtn) {
+    formatBtn.addEventListener('click', () => {
+      if (codeEditor) {
+        try {
+          const current = codeEditor.getValue();
+          const formatted = js_beautify(current, { indent_size: 2 });
+          codeEditor.setValue(formatted);
+        } catch (e) {
+          console.error("Format failed:", e);
+        }
+      }
+    });
+  }
+
+});
 function setupButtonEventListeners() {
   setTimeout(() => {
     const createRepoBtn = document.querySelector('button[onclick*="showCreateRepoModal"]');
