@@ -776,19 +776,21 @@ function renderFileList() {
 }
 
 function adjustCodeBlockHeight() {
-  const codeContent = document.getElementById('codeContent');
   const lineNumbers = document.getElementById('lineNumbers');
   const codeBlock = document.getElementById('codeBlock');
-  if (codeContent && lineNumbers && codeBlock) {
+  
+  if (lineNumbers && codeBlock) {
     const content = codeBlock.textContent || '';
     const lineCount = content.split('\n').length;
-    const lineHeight = 18;
-    const minHeight = Math.max(400, Math.min(600, lineCount * lineHeight));
-    codeContent.style.minHeight = `${minHeight}px`;
-    lineNumbers.style.minHeight = `${minHeight}px`;
-    lineNumbers.innerHTML = Array.from({length: lineCount})
-      .map((_, i) => `<div style="line-height: 1; font-size: 13px;">${i + 1}</div>`)
-      .join('');
+    
+    // Just regenerate line numbers if needed
+    lineNumbers.innerHTML = '';
+    for (let i = 1; i <= lineCount; i++) {
+      const lineDiv = document.createElement('div');
+      lineDiv.className = 'line-number';
+      lineDiv.textContent = i;
+      lineNumbers.appendChild(lineDiv);
+    }
   }
 }
 
@@ -808,10 +810,7 @@ function displayFileContent(filename, fileData) {
   const currentFileName = document.getElementById('currentFileName');
   const fileLinesCount = document.getElementById('fileLinesCount');
   const fileSize = document.getElementById('fileSize');
-  const fileCreated = document.getElementById('fileCreated');
-  const fileModified = document.getElementById('fileModified');
   const fileLanguageDisplay = document.getElementById('fileLanguageDisplay');
-  const fileLanguage = document.getElementById('fileLanguage');
   const fileCategory = document.getElementById('fileCategory');
   const fileTags = document.getElementById('fileTags');
   
@@ -820,68 +819,59 @@ function displayFileContent(filename, fileData) {
   const lines = content.split('\n');
   const lineCount = lines.length;
   
-  if (fileLinesCount) fileLinesCount.textContent = `${lineCount} lines`;
+  if (fileLinesCount) fileLinesCount.textContent = `${lineCount} ${lineCount === 1 ? 'line' : 'lines'}`;
   if (fileSize) fileSize.textContent = formatFileSize(content.length);
-  if (fileCreated) fileCreated.textContent = formatDate(fileData.created || Date.now());
-  if (fileModified) fileModified.textContent = formatDate(fileData.lastModified || Date.now());
   
   const ext = filename.split('.').pop().toLowerCase();
   const language = getLanguageName(ext);
   const prismLang = getPrismLanguage(ext);
   
   if (fileLanguageDisplay) fileLanguageDisplay.textContent = language;
-  if (fileLanguage) fileLanguage.textContent = language;
   
   const codeBlock = document.getElementById('codeBlock');
   const lineNumbers = document.getElementById('lineNumbers');
   
+  // Set code content
   if (codeBlock) {
     codeBlock.textContent = content;
-    codeBlock.className = '';
+    codeBlock.className = 'code-block'; // Remove old classes first
     codeBlock.classList.add(`language-${prismLang}`);
   }
   
+  // Generate line numbers - NEW STRUCTURE
   if (lineNumbers) {
     lineNumbers.innerHTML = '';
     for (let i = 1; i <= lineCount; i++) {
       const lineDiv = document.createElement('div');
+      lineDiv.className = 'line-number'; // Add specific class
       lineDiv.textContent = i;
-      lineDiv.style.lineHeight = '1';
-      lineDiv.style.fontSize = '11px';
       lineNumbers.appendChild(lineDiv);
     }
   }
   
+  // Apply syntax highlighting
   setTimeout(() => {
     if (window.Prism && codeBlock) {
       try {
         Prism.highlightElement(codeBlock);
       } catch (error) {
         console.warn('Prism highlighting failed:', error);
+        // Fallback: escape HTML entities
         if (codeBlock) {
-          codeBlock.innerHTML = content
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;');
+          codeBlock.textContent = content;
         }
       }
-    } else if (codeBlock) {
-      codeBlock.innerHTML = content
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
     }
-    
-    setTimeout(() => {
-      adjustCodeBlockHeight();
-    }, 50);
-  }, 100);
+  }, 50);
   
+  // Update metadata fields
   if (fileCategory) fileCategory.textContent = fileData.category || 'General';
   
   if (fileTags) {
     if (fileData.tags && fileData.tags.length > 0) {
-      fileTags.innerHTML = fileData.tags.map(tag => `<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-github-accent-emphasis/20 border border-github-accent-emphasis/30 text-github-accent-fg">${tag}</span>`).join('');
+      fileTags.innerHTML = fileData.tags.map(tag => 
+        `<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-github-accent-emphasis/20 border border-github-accent-emphasis/30 text-github-accent-fg">${tag}</span>`
+      ).join('');
     } else {
       fileTags.innerHTML = '<span class="text-github-fg-muted text-sm">No tags</span>';
     }
