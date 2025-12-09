@@ -120,6 +120,19 @@ const LocalStorageManager = {
   }
 };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 function isValidFilename(filename) {
   if (!filename || filename.length > 255) return false;
   if (/[<>:"|?*\\\/]/.test(filename)) return false;
@@ -128,7 +141,6 @@ function isValidFilename(filename) {
   if (reserved.includes(nameWithoutExt.toUpperCase())) return false;
   return true;
 }
-
 function formatFileSize(bytes) {
   if (typeof bytes !== 'number') return '0 KB';
   const sizes = ['Bytes', 'KB', 'MB', 'GB'];
@@ -136,7 +148,6 @@ function formatFileSize(bytes) {
   const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
   return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
 }
-
 function formatDate(timestamp) {
   if (!timestamp) return 'Unknown';
   const date = new Date(timestamp);
@@ -160,7 +171,6 @@ function getLanguageColor(ext) {
   };
   return colors[ext] || '#7d8590';
 }
-
 function getLanguageName(ext) {
   const languages = {
     'html': 'HTML', 'htm': 'HTML', 'css': 'CSS', 'js': 'JavaScript', 'javascript': 'JavaScript',
@@ -171,7 +181,6 @@ function getLanguageName(ext) {
   };
   return languages[ext] || 'Text';
 }
-
 function getFileIcon(filename, type) {
   if (type === 'folder') {
     return `<svg class="w-4 h-4 text-github-accent-fg" fill="currentColor" viewBox="0 0 16 16"><path d="M1.75 1A1.75 1.75 0 0 0 0 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0 0 16 13.25v-8.5A1.75 1.75 0 0 0 14.25 3H7.5a.25.25 0 0 1-.2-.1l-.9-1.2C6.07 1.26 5.55 1 5 1H1.75Z"/></svg>`;
@@ -180,6 +189,7 @@ function getFileIcon(filename, type) {
   const iconColor = getLanguageColor(ext);
   return `<svg class="w-4 h-4" style="color: ${iconColor}" fill="currentColor" viewBox="0 0 16 16"><path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"/></svg>`;
 }
+
 
 function updateSelectedTags() {
   const container = document.getElementById('selectedTags');
@@ -193,7 +203,6 @@ function updateSelectedTags() {
     </span>
   `).join('');
 }
-
 function updateBreadcrumb() {
   const breadcrumb = document.getElementById('pathBreadcrumb');
   if (!breadcrumb) return;
@@ -215,7 +224,6 @@ function updateBreadcrumb() {
   }
   breadcrumb.innerHTML = html;
 }
-
 function updateEditorMode(editor, fileName) {
   if (!editor || !fileName) return;
   const ext = fileName.split('.').pop().toLowerCase();
@@ -228,7 +236,6 @@ function updateEditorMode(editor, fileName) {
   const mode = modeMap[ext] || 'text';
   editor.setOption('mode', mode);
 }
-
 function updateCommitMessage() {
   if (!currentState.currentFile) return;
   const commitTitle = document.getElementById('commitTitle');
@@ -237,9 +244,14 @@ function updateCommitMessage() {
   }
 }
 
+
 function showLoading(text = 'Loading...') {
   const overlay = document.getElementById('loadingOverlay');
   const loadingText = document.getElementById('loadingText');
+  
+  // Show progress bar
+  showProgressBar();
+  
   if (overlay && loadingText) {
     loadingText.textContent = text;
     overlay.classList.remove('hidden');
@@ -249,10 +261,55 @@ function showLoading(text = 'Loading...') {
 
 function hideLoading() {
   const overlay = document.getElementById('loadingOverlay');
+  
+  // Hide progress bar
+  hideProgressBar();
+  
   if (overlay) {
     overlay.classList.add('hidden');
     overlay.classList.remove('flex');
   }
+}
+
+// Add to your script (after other utility functions)
+
+let progressBarTimeout = null;
+
+function showProgressBar() {
+  const progressBar = document.getElementById('pageProgress');
+  if (progressBar) {
+    // Clear any existing timeout
+    if (progressBarTimeout) {
+      clearTimeout(progressBarTimeout);
+    }
+    
+    // Reset and show
+    progressBar.classList.remove('opacity-0');
+    progressBar.classList.add('opacity-100');
+  }
+}
+
+function hideProgressBar() {
+  const progressBar = document.getElementById('pageProgress');
+  if (progressBar) {
+    // Fade out
+    progressBar.classList.remove('opacity-100');
+    progressBar.classList.add('opacity-0');
+    
+    // Auto-hide after fade
+    progressBarTimeout = setTimeout(() => {
+      progressBar.classList.add('hidden');
+    }, 300);
+  }
+}
+
+function simulateProgress(duration = 2000) {
+  showProgressBar();
+  
+  // Auto-hide after duration
+  setTimeout(() => {
+    hideProgressBar();
+  }, duration);
 }
 
 function showSuccessMessage(message) {
@@ -265,7 +322,6 @@ function showSuccessMessage(message) {
     setTimeout(() => notification.parentNode?.removeChild(notification), 300);
   }, 3000);
 }
-
 function showErrorMessage(message) {
   const notification = document.createElement('div');
   notification.className = 'fixed top-4 right-4 bg-github-danger-fg text-white px-4 py-3 rounded-lg shadow-lg z-50 animate-slide-down';
@@ -277,11 +333,11 @@ function showErrorMessage(message) {
   }, 5000);
 }
 
+
 function hideContextMenu() {
   const menu = document.getElementById('contextMenu');
   if (menu) menu.remove();
 }
-
 function showContextMenu(x, y, fileName, fileType) {
   hideContextMenu();
   const menu = document.createElement('div');
@@ -301,13 +357,13 @@ function showContextMenu(x, y, fileName, fileType) {
   if (rect.bottom > window.innerHeight) menu.style.top = `${y - rect.height}px`;
 }
 
+
 function showFileViewer() {
   document.getElementById('explorerView').classList.add('hidden');
   document.getElementById('fileEditor').classList.add('hidden');
   document.getElementById('repoSelectorView').classList.add('hidden');
   document.getElementById('fileViewer').classList.remove('hidden');
 }
-
 function showFileEditor() {
   document.getElementById('explorerView').classList.add('hidden');
   document.getElementById('fileViewer').classList.add('hidden');
@@ -315,12 +371,12 @@ function showFileEditor() {
   document.getElementById('fileEditor').classList.remove('hidden');
 }
 
+
 function showCreateRepoModal() {
   document.getElementById('createRepoModal').classList.remove('hidden');
   document.getElementById('createRepoModal').classList.add('flex');
   document.getElementById('newRepoName').focus();
 }
-
 function hideCreateRepoModal() {
   document.getElementById('createRepoModal').classList.add('hidden');
   document.getElementById('createRepoModal').classList.remove('flex');
@@ -330,13 +386,13 @@ function hideCreateRepoModal() {
   document.getElementById('initReadme').checked = true;
 }
 
+
 function showCreateFileModal() {
   document.getElementById('createFileModal').classList.remove('hidden');
   document.getElementById('createFileModal').classList.add('flex');
   document.getElementById('currentPathPrefix').textContent = currentState.repository + (currentState.path ? '/' + currentState.path : '') + '/';
   document.getElementById('newFileName').focus();
 }
-
 function hideCreateFileModal() {
   document.getElementById('createFileModal').classList.add('hidden');
   document.getElementById('createFileModal').classList.remove('flex');
@@ -348,23 +404,23 @@ function hideCreateFileModal() {
   updateSelectedTags();
 }
 
+
 function showDeleteFileModal() {
   if (!currentState.currentFile) return;
   document.getElementById('fileToDeleteName').textContent = currentState.currentFile.name;
   document.getElementById('deleteFileModal').classList.remove('hidden');
   document.getElementById('deleteFileModal').classList.add('flex');
 }
-
 function hideDeleteFileModal() {
   document.getElementById('deleteFileModal').classList.add('hidden');
   document.getElementById('deleteFileModal').classList.remove('flex');
 }
 
+
 function confirmDeleteFile() {
   deleteCurrentFile();
   hideDeleteFileModal();
 }
-
 function deleteCurrentFile() {
   if (!currentState.currentFile) return;
   showLoading(`Deleting file ${currentState.currentFile.name}...`);
@@ -384,7 +440,6 @@ function deleteCurrentFile() {
     }
   }, 300);
 }
-
 function downloadCurrentFile() {
   if (!currentState.currentFile) return;
   try {
@@ -406,6 +461,7 @@ function downloadCurrentFile() {
     showErrorMessage('Failed to download file: ' + error.message);
   }
 }
+
 
 function createRepository() {
   const repoName = document.getElementById('newRepoName').value.trim();
@@ -462,7 +518,6 @@ function createRepository() {
     }
   }, 300);
 }
-
 function deleteRepository(repoName) {
   if (!confirm(`Are you sure you want to delete the repository "${repoName}"? This action cannot be undone.`)) return;
   showLoading(`Deleting repository ${repoName}...`);
@@ -483,6 +538,7 @@ function deleteRepository(repoName) {
     }
   }, 300);
 }
+
 
 function createFile() {
   const fileName = document.getElementById('newFileName').value.trim();
@@ -543,7 +599,6 @@ function loadRepositories() {
     hideLoading();
   }, 500);
 }
-
 function renderRepositoryList() {
   const repoList = document.getElementById('repoList');
   if (!repoList) return;
@@ -560,6 +615,7 @@ function renderRepositoryList() {
     repoList.appendChild(repoCard);
   });
 }
+
 
 function renderFileList() {
   const tbody = document.getElementById('fileListBody');
@@ -590,11 +646,12 @@ function adjustCodeBlockHeight() {
   if (codeContent && lineNumbers && codeBlock) {
     const content = codeBlock.textContent || '';
     const lineCount = content.split('\n').length;
-    const minHeight = Math.max(500, Math.min(800, lineCount * 18));
+    const lineHeight = 18;
+    const minHeight = Math.max(400, Math.min(600, lineCount * lineHeight));
     codeContent.style.minHeight = `${minHeight}px`;
     lineNumbers.style.minHeight = `${minHeight}px`;
     lineNumbers.innerHTML = Array.from({length: lineCount})
-      .map((_, i) => `<div style="line-height: 1.3; font-size: 13px;">${i + 1}</div>`)
+      .map((_, i) => `<div style="line-height: 1; font-size: 13px;">${i + 1}</div>`)
       .join('');
   }
 }
@@ -726,7 +783,6 @@ function editFile() {
     }
   }, 300);
 }
-
 function saveFile() {
   if (!currentState.currentFile) return;
   const commitTitle = document.getElementById('commitTitle');
@@ -766,7 +822,6 @@ function saveFile() {
     }
   }, 300);
 }
-
 function previewFile() {
   if (!codeEditor || !currentState.currentFile) return;
   const content = codeEditor.getValue();
@@ -797,7 +852,6 @@ function navigateToRoot() {
     }
   }, 300);
 }
-
 function navigateToPath(path) {
   currentState.path = path;
   showLoading(`Loading directory ${path}...`);
@@ -824,7 +878,6 @@ function addTag() {
     input.value = '';
   }
 }
-
 function removeTag(tag) {
   currentState.selectedTags = currentState.selectedTags.filter(t => t !== tag);
   updateSelectedTags();
@@ -834,19 +887,16 @@ function viewFileFromContext(fileName) {
   hideContextMenu();
   viewFile(fileName);
 }
-
 function editFileFromContext(fileName) {
   hideContextMenu();
   currentState.currentFile = currentState.files.find(f => f.name === fileName);
   editFile();
 }
-
 function downloadFileFromContext(fileName) {
   hideContextMenu();
   currentState.currentFile = currentState.files.find(f => f.name === fileName);
   downloadCurrentFile();
 }
-
 function deleteFileFromContext(fileName) {
   hideContextMenu();
   currentState.currentFile = currentState.files.find(f => f.name === fileName);
@@ -888,8 +938,8 @@ function setupCodeEditors() {
       tabSize: 2,
       lineWrapping: false,
       viewportMargin: Infinity,
-      lineHeight: 1.3,
-      fontSize: 13,
+      lineHeight: 1,
+      fontSize: 11,
       fontFamily: "'JetBrains Mono', monospace",
       extraKeys: { 
         "Ctrl-S": function(cm) {
@@ -1122,6 +1172,9 @@ function viewFile(filename) {
 function openRepository(repoName) {
   currentState.repository = repoName;
   currentState.path = '';
+  
+  showProgressBar();
+setTimeout(() => {
   try {
     currentState.files = LocalStorageManager.listFiles(repoName, '');
     renderFileList();
@@ -1139,9 +1192,12 @@ function openRepository(repoName) {
     }
     showExplorer();
     updateStats();
+    
+    hideProgressBar();
   } catch (error) {
+    hideProgressBar();
     showErrorMessage('Failed to open repository: ' + error.message);
-  }
+  } }, 300);
 }
 
 function showRepoSelector() {
