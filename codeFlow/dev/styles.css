@@ -43,6 +43,8 @@ body {
   font-size: 11px;
   line-height: 1;
   height: 100%;
+  
+  border: 3px solid crimson;
 }
 
 .CodeMirror-focused {
@@ -172,6 +174,7 @@ pre[class*="language-"] {
   margin: 0;
   overflow: auto;
   padding: 0;
+  border: 3px solid pink;
 }
 
 code[class*="language-"] {
@@ -570,8 +573,12 @@ button {
 }
 
 #fileViewer > .bg-github-canvas-overlay.border-x.border-b.border-github-border-default.rounded-b-lg.overflow-hidden {
-  min-height: 200px;
-  max-height: 400px;
+  /*min-height: 200px;
+  max-height: 400px;*/
+  
+  min-height: 100% !important;
+  max-height: 100% !important;
+  border: 3px solid purple;
 }
 
 #lineNumbers {
@@ -612,6 +619,7 @@ button {
   overflow-y: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  border: 3px solid green;
 }
 
 .code-content::-webkit-scrollbar {
