@@ -166,54 +166,6 @@
 
 
 
-/* Add to your CSS file or <style> tag */
-@keyframes progress-glow {
-  0% {
-    box-shadow: 0 0 5px rgba(239, 68, 68, 0.5),
-                0 0 10px rgba(239, 68, 68, 0.3),
-                0 0 15px rgba(239, 68, 68, 0.1);
-  }
-  50% {
-    box-shadow: 0 0 10px rgba(239, 68, 68, 0.7),
-                0 0 20px rgba(239, 68, 68, 0.5),
-                0 0 30px rgba(239, 68, 68, 0.3);
-  }
-  100% {
-    box-shadow: 0 0 5px rgba(239, 68, 68, 0.5),
-                0 0 10px rgba(239, 68, 68, 0.3),
-                0 0 15px rgba(239, 68, 68, 0.1);
-  }
-}
-
-@keyframes progress-slide {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(1000%);
-  }
-}
-
-.progress-bar-glow {
-  animation: progress-glow 2s ease-in-out infinite;
-}
-
-.progress-bar-slide {
-  animation: progress-slide 2s ease-in-out infinite;
-}
-
-
-
-/* Progress Bar Styles */
-#pageProgress {
-  height: 3px;
-  background: rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(2px);
-}
-
-#pageProgress > div > div {
-  filter: blur(0.5px);
-}
 
 /* Code Editor Line Height Fix */
 .CodeMirror-line {
@@ -250,15 +202,137 @@ code[class*="language-"] {
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+
+
+
+
+/* Progress Bar Container */
+.page-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  background: rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(1px);
+}
+
+.page-progress.visible {
+  opacity: 1;
+}
+
+/* Outer glow effect */
+.progress-bar {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Glowing animation */
+@keyframes progress-glow {
+  0% {
+    box-shadow: 
+      0 0 5px rgba(239, 68, 68, 0.5),
+      0 0 10px rgba(239, 68, 68, 0.3),
+      0 0 15px rgba(239, 68, 68, 0.1);
+  }
+  50% {
+    box-shadow: 
+      0 0 10px rgba(239, 68, 68, 0.7),
+      0 0 20px rgba(239, 68, 68, 0.5),
+      0 0 30px rgba(239, 68, 68, 0.3);
+  }
+  100% {
+    box-shadow: 
+      0 0 5px rgba(239, 68, 68, 0.5),
+      0 0 10px rgba(239, 68, 68, 0.3),
+      0 0 15px rgba(239, 68, 68, 0.1);
+  }
+}
+
+.progress-bar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  animation: progress-glow 2s ease-in-out infinite;
+  z-index: 1;
+}
+
+/* Moving fill with gradient */
+.progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 25%;
+  background: linear-gradient(
+    90deg,
+    rgba(239, 68, 68, 0.7) 0%,
+    rgba(236, 72, 153, 0.9) 25%,
+    rgba(244, 114, 182, 1) 50%,
+    rgba(236, 72, 153, 0.9) 75%,
+    rgba(239, 68, 68, 0.7) 100%
+  );
+  filter: blur(0.5px);
+  animation: progress-slide 1.5s ease-in-out infinite;
+  transform-origin: left center;
+}
+
+/* Slide animation */
+@keyframes progress-slide {
+  0% {
+    transform: translateX(-100%) scaleX(0.1);
+  }
+  20% {
+    transform: translateX(-50%) scaleX(0.4);
+  }
+  50% {
+    transform: translateX(0%) scaleX(1);
+  }
+  80% {
+    transform: translateX(50%) scaleX(0.4);
+  }
+  100% {
+    transform: translateX(100%) scaleX(0.1);
+  }
+}
+
+/* Alternative simpler slide animation */
+@keyframes progress-slide-simple {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(400%);
+  }
+}
+
+/* For indeterminate state (continuous animation) */
+.progress-fill.indeterminate {
+  animation: progress-slide 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* For determinate state (progress completion) */
+.progress-fill.determinate {
+  animation: none;
+  transition: width 0.3s ease;
+}
   </style>
 </head>
 
 <body class="bg-github-canvas-default text-github-fg-default font-sans">
   
 <!-- Progress Bar -->
-<div id="pageProgress" class="fixed top-0 left-0 w-full z-60 opacity-0 transition-opacity duration-300">
-  <div class="h-full w-1/4 progress-bar-glow">
-    <div class="h-full bg-gradient-to-r from-red-500 via-pink-500 to-red-500 progress-bar-slide"></div>
+<div id="pageProgress" class="page-progress">
+  <div class="progress-bar">
+    <div class="progress-fill"></div>
   </div>
 </div>
 
