@@ -245,88 +245,118 @@ function updateCommitMessage() {
 }
 
 
-// Progress Bar Controller
+
 const ProgressBar = {
   element: null,
   fillElement: null,
-  timeout: null,
+  hideTimeout: null,
+  progressInterval: null,
+  currentProgress: 0,
   
   init() {
-    this.element = document.getElementById('pageProgress');
-    if (this.element) {
-      this.fillElement = this.element.querySelector('.progress-fill');
+    if (!this.element) {
+      this.element = document.getElementById('pageProgress');
+      if (this.element) {
+        this.fillElement = this.element.querySelector('.progress-fill');
+      }
     }
   },
   
   show() {
-    if (!this.element) this.init();
-    if (this.element) {
-      // Clear any existing timeout
-      if (this.timeout) {
-        clearTimeout(this.timeout);
-        this.timeout = null;
-      }
-      
-      // Show progress bar
-      this.element.classList.add('visible');
-      this.element.classList.remove('hidden');
-      
-      // Reset animation
-      if (this.fillElement) {
-        this.fillElement.classList.remove('determinate');
-        this.fillElement.classList.add('indeterminate');
-      }
-    }
+    this.init();
+    if (!this.element) return;
+    
+    this.cleanup();
+    this.currentProgress = 0;
+    this.element.classList.remove('hidden');
+    this.element.classList.add('visible');
+    this.simulateRealisticLoad();
   },
   
   hide() {
-    if (!this.element) this.init();
-    if (this.element) {
-      // Fade out
+    this.init();
+    if (!this.element) return;
+    
+    if (this.fillElement) {
+      this.currentProgress = 100;
+      this.fillElement.style.width = '100%';
+    }
+    
+    this.hideTimeout = setTimeout(() => {
       this.element.classList.remove('visible');
       
-      // Hide completely after fade
-      this.timeout = setTimeout(() => {
-        this.element.classList.add('hidden');
-        if (this.fillElement) {
-          this.fillElement.classList.remove('indeterminate');
-        }
+      setTimeout(() => {
+        this.cleanup();
       }, 300);
-    }
+    }, 150);
   },
   
-  // For when you know the progress percentage (0-100)
-  setProgress(percent) {
-    if (!this.element) this.init();
-    if (this.element && this.fillElement) {
-      this.fillElement.classList.remove('indeterminate');
-      this.fillElement.classList.add('determinate');
-      this.fillElement.style.width = `${percent}%`;
-      this.fillElement.style.transform = 'none';
-      this.fillElement.style.animation = 'none';
+  cleanup() {
+    if (this.hideTimeout) {
+      clearTimeout(this.hideTimeout);
+      this.hideTimeout = null;
     }
+    if (this.progressInterval) {
+      clearInterval(this.progressInterval);
+      this.progressInterval = null;
+    }
+    
+    if (this.element) {
+      this.element.classList.add('hidden');
+      this.element.classList.remove('visible');
+    }
+    if (this.fillElement) {
+      this.fillElement.style.width = '0%';
+    }
+    this.currentProgress = 0;
   },
   
-  // Simulate progress for X milliseconds
-  simulate(duration = 2000) {
-    this.show();
-    setTimeout(() => {
-      this.hide();
-    }, duration);
+  simulateRealisticLoad() {
+    if (!this.fillElement) return;
+    
+    const updateProgress = () => {
+      if (this.currentProgress >= 95) {
+        clearInterval(this.progressInterval);
+        return;
+      }
+      
+      let increment, delay;
+      
+      if (this.currentProgress < 60) {
+        increment = Math.random() * 5 + 3;
+        delay = Math.random() * 60 + 20;
+      } else if (this.currentProgress < 90) {
+        increment = Math.random() * 2 + 1;
+        delay = Math.random() * 250 + 150;
+      } else {
+        increment = Math.random() * 0.5 + 0.3;
+        delay = Math.random() * 500 + 500;
+      }
+      
+      this.currentProgress = Math.min(95, this.currentProgress + increment);
+      this.fillElement.style.width = `${this.currentProgress}%`;
+      
+      clearInterval(this.progressInterval);
+      this.progressInterval = setTimeout(updateProgress, delay);
+    };
+    
+    updateProgress();
   }
 };
 
-// Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
   ProgressBar.init();
+  ProgressBar.show();
+  
+  setTimeout(() => {
+    ProgressBar.hide();
+  }, 800);
 });
 
-// Update your existing loading functions
 function showLoading(text = 'Loading...') {
   const overlay = document.getElementById('loadingOverlay');
   const loadingText = document.getElementById('loadingText');
   
-  // Show progress bar
   ProgressBar.show();
   
   if (overlay && loadingText) {
@@ -339,7 +369,6 @@ function showLoading(text = 'Loading...') {
 function hideLoading() {
   const overlay = document.getElementById('loadingOverlay');
   
-  // Hide progress bar
   ProgressBar.hide();
   
   if (overlay) {
@@ -348,7 +377,85 @@ function hideLoading() {
   }
 }
 
+const editorConfig = {
+  // Display
+  lineNumbers: true,
+  lineWrapping: false,
+  theme: 'material-darker',
+  mode: 'javascript',
+  indentUnit: 2,
+  tabSize: 2,
+  indentWithTabs: false,
+  smartIndent: true,
+  viewportMargin: Infinity,
+  cursorBlinkRate: 530,
+  cursorScrollMargin: 12,
+  cursorHeight: 1,
+  showCursorWhenSelecting: true,
+  scrollbarStyle: 'native',
 
+  // Interaction & Behavior
+  autofocus: false,
+  dragDrop: true,
+  allowDropFileTypes: ["text/plain", "text/javascript", "text/css", "text/html"],
+  undoDepth: 300,
+  historyEventDelay: 1250,
+  readOnly: false,
+
+  // Active Line + Highlighting
+  styleActiveLine: {
+    nonEmpty: true,
+    className: "cm-active-line-highlight"
+  },
+
+  // Brackets, Tags, Matching
+  matchBrackets: true,
+  autoCloseBrackets: true,
+  matchTags: { bothTags: true },
+  autoCloseTags: true,
+
+  // Folding system
+  foldGutter: true,
+  gutters: [
+    "CodeMirror-linenumbers",
+    "CodeMirror-foldgutter"
+  ],
+
+  // Linting (only becomes active if you include lint scripts)
+  lint: true,
+
+  // Search Highlight
+  highlightSelectionMatches: {
+    minChars: 2,
+    showToken: /\w/,
+    annotateScrollbar: true
+  },
+
+  // Placeholder (optional)
+  placeholder: "Start typing your code...",
+
+  // Font + Appearance (applied manually after initialization)
+  lineHeight: 1.2,
+  fontSize: 11,
+  fontFamily: "'JetBrains Mono', monospace",
+
+  // Keybindings
+  extraKeys: {
+    "Ctrl-S": function (cm) {
+      const fileEditor = document.getElementById('fileEditor');
+      if (fileEditor && !fileEditor.classList.contains('hidden')) saveFile();
+    },
+    "Ctrl-F": "findPersistent",
+    "Ctrl-Space": "autocomplete",
+    "Ctrl-D": function(cm) { cm.execCommand("duplicateLine"); },
+    "Ctrl-/": "toggleComment",
+    "Shift-Tab": "indentLess",
+    "Tab": function(cm) {
+      if (cm.somethingSelected()) cm.indentSelection("add");
+      else cm.execCommand("insertSoftTab");
+    }
+  }
+};
 
 
 
@@ -1036,26 +1143,84 @@ function setupEventListeners() {
 function setupCodeEditors() {
   if (typeof CodeMirror !== 'undefined') {
     const editorConfig = {
-      lineNumbers: true,
-      mode: 'javascript',
-      theme: 'material-darker',
-      autoCloseBrackets: true,
-      matchBrackets: true,
-      styleActiveLine: true,
-      indentUnit: 2,
-      tabSize: 2,
-      lineWrapping: false,
-      viewportMargin: Infinity,
-      lineHeight: 1,
-      fontSize: 11,
-      fontFamily: "'JetBrains Mono', monospace",
-      extraKeys: { 
-        "Ctrl-S": function(cm) {
-          const fileEditor = document.getElementById('fileEditor');
-          if (fileEditor && !fileEditor.classList.contains('hidden')) saveFile();
-        }
-      }
-    };
+  // Display
+  lineNumbers: true,
+  lineWrapping: false,
+  theme: 'material-darker',
+  mode: 'javascript',
+  indentUnit: 2,
+  tabSize: 2,
+  indentWithTabs: false,
+  smartIndent: true,
+  viewportMargin: Infinity,
+  cursorBlinkRate: 530,
+  cursorScrollMargin: 12,
+  cursorHeight: 1,
+  showCursorWhenSelecting: true,
+  scrollbarStyle: 'native',
+
+  // Interaction & Behavior
+  autofocus: false,
+  dragDrop: true,
+  allowDropFileTypes: ["text/plain", "text/javascript", "text/css", "text/html"],
+  undoDepth: 300,
+  historyEventDelay: 1250,
+  readOnly: false,
+
+  // Active Line + Highlighting
+  styleActiveLine: {
+    nonEmpty: true,
+    className: "cm-active-line-highlight"
+  },
+
+  // Brackets, Tags, Matching
+  matchBrackets: true,
+  autoCloseBrackets: true,
+  matchTags: { bothTags: true },
+  autoCloseTags: true,
+
+  // Folding system
+  foldGutter: true,
+  gutters: [
+    "CodeMirror-linenumbers",
+    "CodeMirror-foldgutter"
+  ],
+
+  // Linting (only becomes active if you include lint scripts)
+  lint: true,
+
+  // Search Highlight
+  highlightSelectionMatches: {
+    minChars: 2,
+    showToken: /\w/,
+    annotateScrollbar: true
+  },
+
+  // Placeholder (optional)
+  placeholder: "Start typing your code...",
+
+  // Font + Appearance (applied manually after initialization)
+  lineHeight: 1.2,
+  fontSize: 11,
+  fontFamily: "'JetBrains Mono', monospace",
+
+  // Keybindings
+  extraKeys: {
+    "Ctrl-S": function (cm) {
+      const fileEditor = document.getElementById('fileEditor');
+      if (fileEditor && !fileEditor.classList.contains('hidden')) saveFile();
+    },
+    "Ctrl-F": "findPersistent",
+    "Ctrl-Space": "autocomplete",
+    "Ctrl-D": function(cm) { cm.execCommand("duplicateLine"); },
+    "Ctrl-/": "toggleComment",
+    "Shift-Tab": "indentLess",
+    "Tab": function(cm) {
+      if (cm.somethingSelected()) cm.indentSelection("add");
+      else cm.execCommand("insertSoftTab");
+    }
+  }
+};
     setTimeout(() => {
       const editorContainer = document.getElementById('codeEditorContainer');
       const initialContentContainer = document.getElementById('initialContentEditor');
