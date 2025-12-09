@@ -169,8 +169,8 @@ pre[class*="language-"] {
   background: var(--github-canvas-overlay) !important;
   color: var(--github-fg-default) !important;
   font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace !important;
-  font-size: 13px !important;
-  line-height: 1.5 !important;
+  font-size: 11px !important;
+  line-height: 1 !important;
   margin: 0 !important;
   overflow: auto !important;
   padding: 0 !important;
@@ -822,9 +822,9 @@ button {
 /* CodeMirror editor improvements */
 .CodeMirror {
   font-family: 'JetBrains Mono', monospace !important;
-  font-size: 13px !important;
-  line-height: 1.3 !important;
-  height: 600px !important; /* Taller editor */
+  font-size: 11px;
+  line-height: 1;
+  height: 100%;
 }
 
 .CodeMirror-lines {
