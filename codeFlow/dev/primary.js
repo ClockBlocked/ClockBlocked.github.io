@@ -1200,7 +1200,7 @@ function setupCodeEditors() {
   placeholder: "Start typing your code...",
 
   // Font + Appearance (applied manually after initialization)
-  lineHeight: 1.2,
+  lineHeight: 1,
   fontSize: 11,
   fontFamily: "'JetBrains Mono', monospace",
 
