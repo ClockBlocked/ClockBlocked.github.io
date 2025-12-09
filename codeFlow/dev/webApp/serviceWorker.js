@@ -1,5 +1,3 @@
-// service-worker.js
-
 const CACHE_NAME = 'github-clone-v3.0';
 const OFFLINE_URL = '/offline.html';
 
