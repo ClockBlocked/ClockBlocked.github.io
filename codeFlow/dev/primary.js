@@ -1311,7 +1311,7 @@ function viewFile(filename) {
     addToRecentFiles(filename, currentState.repository, filePath);
 
     // Display file in CodeMirror
-    displayFileContent_CodeMirror(filePath, filename, fileData);
+    displayFileContent_CodeMirror(filePath, file.name, fileData);
 
     // Show editor UI
     showFileViewer();
