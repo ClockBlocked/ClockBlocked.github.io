@@ -336,44 +336,25 @@ html {
 }
 
 
-/* Shell */
-.editorShell {
-  width: 100%;
-}
-
-/* Header */
-.editorHeader {
-  user-select: none;
-}
-
-/* CodeMirror styling alignment */
 .CodeMirror {
   font-family: 'JetBrains Mono', monospace !important;
   font-size: 11px !important;
-  line-height: 1.35 !important;
+  line-height: 1.2 !important;
   height: auto !important;
-  min-height: 300px;
-  padding: 0 !important;
+  min-height: 220px;
 }
 
-/* Scroll behavior improvement */
+.cm-active-line-highlight {
+  background: rgba(255,255,255,0.05) !important;
+}
+
 .CodeMirror-scroll {
   overscroll-behavior: contain;
 }
 
-/* Highlight active line */
-.cm-active-line {
-  background-color: rgba(255, 255, 255, 0.04) !important;
-}
-
-/* Folder marker color */
 .CodeMirror-foldmarker {
-  color: #7da5ff !important;
-}
-
-/* Gutter border */
-.CodeMirror-gutters {
-  border-right: 1px solid var(--github-border-muted) !important;
+  color: #7da5ff;
+  cursor: pointer;
 }
   </style>
 </head>
@@ -769,52 +750,15 @@ html {
           </div>
         </div>
 
-<!-- Outer Editor Shell -->
-<div class="editorShell bg-github-canvas-overlay border border-github-border-default rounded-lg overflow-hidden">
-
-  <!-- Editor Header Bar -->
-  <div class="editorHeader flex items-center justify-between border-b border-github-border-muted bg-github-canvas-inset px-3 py-2">
-
-    <!-- Left: Filename -->
-    <div class="flex items-center space-x-2">
-      <span class="text-github-fg-default font-medium text-sm" id="editorFileName">
-        index.js
-      </span>
-      <span class="text-github-fg-muted text-xs" id="editorFileLanguage">
-        JavaScript
-      </span>
-    </div>
-
-    <!-- Right: Action Buttons -->
-    <div class="flex items-center space-x-2">
-
-      <!-- Format Button -->
-      <button
-        id="editorFormatBtn"
-        class="px-2 py-1 text-xs font-medium rounded-md border border-github-border-muted bg-github-canvas-default text-github-fg-muted hover:bg-github-canvas-overlay transition">
-        Format
-      </button>
-
-      <!-- Save Button -->
-      <button
-        id="editorSaveBtn"
-        class="px-2 py-1 text-xs font-medium rounded-md border border-github-accent-emphasis bg-github-accent-muted text-github-accent-fg hover:bg-github-accent-emphasis hover:text-white transition">
-        Save
-      </button>
-
-    </div>
-
-  </div>
-
-  <!-- Editor Body -->
-  <div class="editorBody relative">
-
-    <!-- CodeMirror will render inside here -->
-    <div id="codeEditorContainer" class="min-h-[300px]"></div>
-
-  </div>
-
-</div>
+        <div class="bg-github-canvas-overlay border-x border-b border-github-border-default rounded-b-lg overflow-hidden">
+          <div class="flex">
+            <div id="lineNumbers" class="bg-github-canvas-inset border-r border-github-border-muted p-4 text-right text-github-fg-muted font-mono text-sm leading-5 select-none min-w-[3rem]">
+            </div>
+            <div class="flex-1 overflow-auto">
+              <pre id="codeContent" class="p-4 text-sm font-mono leading-5 overflow-auto"><code id="codeBlock" class="language-javascript"></code></pre>
+            </div>
+          </div>
+        </div>
 
         <div class="mt-6 bg-github-canvas-overlay border border-github-border-default rounded-lg p-6">
           <h3 class="text-lg font-semibold text-github-fg-default mb-4">File Details</h3>
