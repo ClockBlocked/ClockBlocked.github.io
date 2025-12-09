@@ -804,89 +804,7 @@ function getPrismLanguage(ext) {
   return languageMap[ext] || 'text';
 }
 
-function displayFileContent(filename, fileData) {
-  const currentFileName = document.getElementById('currentFileName');
-  const fileLinesCount = document.getElementById('fileLinesCount');
-  const fileSize = document.getElementById('fileSize');
-  const fileCreated = document.getElementById('fileCreated');
-  const fileModified = document.getElementById('fileModified');
-  const fileLanguageDisplay = document.getElementById('fileLanguageDisplay');
-  const fileLanguage = document.getElementById('fileLanguage');
-  const fileCategory = document.getElementById('fileCategory');
-  const fileTags = document.getElementById('fileTags');
-  
-  if (currentFileName) currentFileName.textContent = filename;
-  const content = fileData.content || '';
-  const lines = content.split('\n');
-  const lineCount = lines.length;
-  
-  if (fileLinesCount) fileLinesCount.textContent = `${lineCount} lines`;
-  if (fileSize) fileSize.textContent = formatFileSize(content.length);
-  if (fileCreated) fileCreated.textContent = formatDate(fileData.created || Date.now());
-  if (fileModified) fileModified.textContent = formatDate(fileData.lastModified || Date.now());
-  
-  const ext = filename.split('.').pop().toLowerCase();
-  const language = getLanguageName(ext);
-  const prismLang = getPrismLanguage(ext);
-  
-  if (fileLanguageDisplay) fileLanguageDisplay.textContent = language;
-  if (fileLanguage) fileLanguage.textContent = language;
-  
-  const codeBlock = document.getElementById('codeBlock');
-  const lineNumbers = document.getElementById('lineNumbers');
-  
-  if (codeBlock) {
-    codeBlock.textContent = content;
-    codeBlock.className = '';
-    codeBlock.classList.add(`language-${prismLang}`);
-  }
-  
-  if (lineNumbers) {
-    lineNumbers.innerHTML = '';
-    for (let i = 1; i <= lineCount; i++) {
-      const lineDiv = document.createElement('div');
-      lineDiv.textContent = i;
-      lineDiv.style.lineHeight = '1.3';
-      lineDiv.style.fontSize = '13px';
-      lineNumbers.appendChild(lineDiv);
-    }
-  }
-  
-  setTimeout(() => {
-    if (window.Prism && codeBlock) {
-      try {
-        Prism.highlightElement(codeBlock);
-      } catch (error) {
-        console.warn('Prism highlighting failed:', error);
-        if (codeBlock) {
-          codeBlock.innerHTML = content
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;');
-        }
-      }
-    } else if (codeBlock) {
-      codeBlock.innerHTML = content
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
-    }
-    
-    setTimeout(() => {
-      adjustCodeBlockHeight();
-    }, 50);
-  }, 100);
-  
-  if (fileCategory) fileCategory.textContent = fileData.category || 'General';
-  
-  if (fileTags) {
-    if (fileData.tags && fileData.tags.length > 0) {
-      fileTags.innerHTML = fileData.tags.map(tag => `<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-github-accent-emphasis/20 border border-github-accent-emphasis/30 text-github-accent-fg">${tag}</span>`).join('');
-    } else {
-      fileTags.innerHTML = '<span class="text-github-fg-muted text-sm">No tags</span>';
-    }
-  }
-}
+
 
 function editFile() {
   if (!currentState.currentFile) return;
@@ -1364,31 +1282,90 @@ function updateStats() {
   }
 }
 
+
 function viewFile(filename) {
   if (!currentState.repository) {
     showErrorMessage('No repository selected');
     return;
   }
+
   const file = currentState.files.find(f => f.name === filename);
   if (!file) {
     showErrorMessage(`File "${filename}" not found in current view`);
     return;
   }
+
   currentState.currentFile = file;
+
   try {
+    // Compute full path
     const filePath = file.path || ((currentState.path ? currentState.path + '/' : '') + filename);
+
+    // Retrieve file data from storage
     const fileData = LocalStorageManager.getFile(currentState.repository, filePath);
     if (!fileData) {
       throw new Error(`File data not found for ${filePath}`);
     }
+
+    // Add to recent files
     addToRecentFiles(filename, currentState.repository, filePath);
-    displayFileContent(filename, fileData);
+
+    // Display file in CodeMirror
+    displayFileContent_CodeMirror(filePath, filename, fileData);
+
+    // Show editor UI
     showFileViewer();
+
+    // Update stats UI
     updateStats();
+
   } catch (error) {
     showErrorMessage('Failed to load file: ' + error.message);
   }
 }
+function displayFileContent_CodeMirror(filePath, filename, fileData) {
+
+  // Update filename UI
+  const fileNameLabel = document.getElementById('editorFileName');
+  if (fileNameLabel) fileNameLabel.textContent = filename;
+
+  // Detect language mode
+  const mode = detectModeFromFilename(filename);
+
+  // Update language indicator in header
+  const langLabel = document.getElementById('editorFileLanguage');
+  if (langLabel) langLabel.textContent = mode;
+
+  // Apply mode to CodeMirror
+  if (codeEditor) {
+    codeEditor.setOption('mode', mode);
+
+    // Populate the editor
+    codeEditor.setValue(fileData);
+
+    // Refresh ensures line numbers & gutters align
+    codeEditor.refresh();
+  }
+}
+function detectModeFromFilename(filename) {
+  const ext = filename.split('.').pop().toLowerCase();
+
+  switch (ext) {
+    case 'js': return 'javascript';
+    case 'json': return 'application/json';
+    case 'html': return 'htmlmixed';
+    case 'css': return 'css';
+    case 'md': return 'markdown';
+    case 'py': return 'python';
+    case 'php': return 'php';
+    case 'xml': return 'xml';
+    case 'yml':
+    case 'yaml': return 'yaml';
+    default: return 'javascript';
+  }
+}
+
+
 
 function openRepository(repoName) {
   currentState.repository = repoName;
