@@ -289,7 +289,7 @@ self.addEventListener('push', event => {
   const title = data.title || 'GitDev';
   const options = {
     body: data.body || 'New notification',
-    icon: '/icons/icon-192x192.png',
+    icon: '/icons/android/icon-192x192.png',
     badge: '/icons/android/android-launchericon-96-96.png',
     tag: data.tag || 'github-clone-notification',
     data: data.url || '/',
