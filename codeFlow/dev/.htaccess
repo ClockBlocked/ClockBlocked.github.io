@@ -1,9 +1,8 @@
-########################
+########################################################
 ## GitHub Clone PWA .htaccess
 
 ########################
 ## Security & Performance Headers
-
 <IfModule mod_headers.c>
     Header always set X-Frame-Options "SAMEORIGIN"
     Header always set X-XSS-Protection "1; mode=block"
@@ -19,9 +18,11 @@
     Header always set Service-Worker-Allowed "/"
 </IfModule>
 
+
+
+
 ########################
 ## Compression & Caching
-
 <IfModule mod_deflate.c>
     AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript
     AddOutputFilterByType DEFLATE application/xml application/xhtml+xml application/rss+xml
@@ -72,9 +73,11 @@
     </FilesMatch>
 </IfModule>
 
+
+
+
 ########################
 ## Rewrite Rules for PWA & SPA
-
 <IfModule mod_rewrite.c>
     RewriteEngine On
     # Force HTTPS (uncomment in production)
@@ -100,9 +103,11 @@
     ErrorDocument 500 ./webApp/offline.html
 </IfModule>
 
+
+
+
 ########################
 ## MIME Type Configuration
-
 <IfModule mod_mime.c>
     AddType application/manifest+json .webmanifest
     AddType application/javascript .js
@@ -124,9 +129,11 @@
     </FilesMatch>
 </IfModule>
 
+
+
+
 ########################
 ## File Access Control
-
 <FilesMatch "^\.">
     Order allow,deny
     Deny from all
@@ -146,9 +153,11 @@
 </Directory>
 Options -Indexes
 
+
+
+
 ########################
 ## PWA-Specific Configs
-
 <IfModule mod_headers.c>
     <FilesMatch "serviceWorker\.js$">
         Header set Service-Worker-Allowed "/"
@@ -162,9 +171,11 @@ Options -Indexes
     </FilesMatch>
 </IfModule>
 
+
+
+
 ########################
 ## Performance & Final Configs
-
 <IfModule mod_headers.c>
     Header set Connection keep-alive
     Header add Link "<https://fonts.googleapis.com>; rel=preconnect; crossorigin"
