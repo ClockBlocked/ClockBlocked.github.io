@@ -283,10 +283,10 @@ self.addEventListener('push', event => {
   try {
     data = event.data ? event.data.json() : {};
   } catch (e) {
-    data = { title: 'GitHub Clone', body: 'New notification' };
+    data = { title: 'GitDev', body: 'New notification' };
   }
   
-  const title = data.title || 'GitHub Clone';
+  const title = data.title || 'GitDev';
   const options = {
     body: data.body || 'New notification',
     icon: '/icons/icon-192x192.png',
