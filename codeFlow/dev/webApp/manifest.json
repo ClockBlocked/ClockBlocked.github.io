@@ -1,6 +1,6 @@
 {
-  "name": "GitHub Clone - Local File Manager",
-  "short_name": "GitHub Clone",
+  "name": "GitDev - Local File Manager",
+  "short_name": "GitDev",
   "description": "A professional GitHub-like file explorer and editor with local storage and offline capabilities",
   "start_url": "/",
   "scope": "/",
@@ -520,21 +520,21 @@
       "sizes": "1280x800",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "GitHub Clone desktop interface"
+      "label": "GitDev desktop interface"
     },
     {
       "src": "/screenshots/mobile-375x667.png",
       "sizes": "375x667",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "GitHub Clone mobile interface"
+      "label": "GitDev mobile interface"
     },
     {
       "src": "/screenshots/tablet-768x1024.png",
       "sizes": "768x1024",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "GitHub Clone tablet interface"
+      "label": "GitDev tablet interface"
     }
   ],
   
