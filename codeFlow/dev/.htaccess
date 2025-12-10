@@ -1,0 +1,228 @@
+########################
+## GitHub Clone PWA .htaccess
+
+########################
+## Security & Performance Headers
+
+<IfModule mod_headers.c>
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+    Header always set Content-Security-Policy "default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://preline.co https://cdnjs.cloudflare.com https://fonts.googleapis.com https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://preline.co https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https:; connect-src 'self' https:;"
+    Header always set Access-Control-Allow-Origin "*"
+    Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+    Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
+    Header always set Access-Control-Allow-Credentials "true"
+    Header always set X-PWA-Version "3.0.0"
+    Header always set Service-Worker-Allowed "/"
+</IfModule>
+
+########################
+## Compression & Caching
+
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript
+    AddOutputFilterByType DEFLATE application/xml application/xhtml+xml application/rss+xml
+    AddOutputFilterByType DEFLATE application/javascript application/x-javascript
+    AddOutputFilterByType DEFLATE application/json application/manifest+json
+    AddOutputFilterByType DEFLATE image/svg+xml
+    BrowserMatch ^Mozilla/4 gzip-only-text/html
+    BrowserMatch ^Mozilla/4\.0[678] no-gzip
+    BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+    Header append Vary User-Agent
+</IfModule>
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresDefault "access plus 1 hour"
+    ExpiresByType application/manifest+json "access plus 1 hour"
+    ExpiresByType application/json "access plus 1 hour"
+    ExpiresByType text/html "access plus 10 minutes"
+    ExpiresByType text/css "access plus 1 week"
+    ExpiresByType text/javascript "access plus 1 week"
+    ExpiresByType application/javascript "access plus 1 week"
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/gif "access plus 1 month"
+    ExpiresByType image/svg+xml "access plus 1 month"
+    ExpiresByType image/x-icon "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 month"
+    ExpiresByType font/ttf "access plus 1 year"
+    ExpiresByType font/otf "access plus 1 year"
+    ExpiresByType font/woff "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+    <FilesMatch "\.(html|htm|json)$">
+        Header set Cache-Control "public, max-age=600, must-revalidate"
+    </FilesMatch>
+    <FilesMatch "\.(css|js)$">
+        Header set Cache-Control "public, max-age=604800, immutable"
+    </FilesMatch>
+    <FilesMatch "\.(jpg|jpeg|png|gif|ico|svg|webp)$">
+        Header set Cache-Control "public, max-age=2592000, immutable"
+    </FilesMatch>
+    <FilesMatch "\.(ttf|otf|woff|woff2)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+    <FilesMatch "serviceWorker\.js$">
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+        Header set Pragma "no-cache"
+        Header set Expires 0
+    </FilesMatch>
+</IfModule>
+
+########################
+## Rewrite Rules for PWA & SPA
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # Force HTTPS (uncomment in production)
+    # RewriteCond %{HTTPS} off
+    # RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+    # Redirect www to non-www (or vice versa)
+    # RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+    # RewriteRule ^ https://%1%{REQUEST_URI} [R=301,L]
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [R=301,L]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} !\.(css|js|png|jpg|jpeg|gif|ico|svg|webp|ttf|woff|woff2|json|xml|txt|md)$ [NC]
+    RewriteRule ^ index.html [L,QSA]
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME}\.html -f
+    RewriteRule ^(.*)$ $1.html [L]
+    ErrorDocument 400 ./webApp/offline.html
+    ErrorDocument 401 ./webApp/offline.html
+    ErrorDocument 403 ./webApp/offline.html
+    ErrorDocument 404 ./webApp/offline.html
+    ErrorDocument 500 ./webApp/offline.html
+</IfModule>
+
+########################
+## MIME Type Configuration
+
+<IfModule mod_mime.c>
+    AddType application/manifest+json .webmanifest
+    AddType application/javascript .js
+    AddType font/woff .woff
+    AddType font/woff2 .woff2
+    AddType font/ttf .ttf
+    AddType font/otf .otf
+    AddType image/svg+xml .svg
+    AddType image/webp .webp
+    AddType application/json .json
+    AddType text/markdown .md
+    AddType text/plain .txt
+    AddType text/javascript .js
+    AddType text/css .css
+    AddType text/html .html .htm
+    AddDefaultCharset UTF-8
+    <FilesMatch "\.(html|htm|css|js|json|xml|txt|md)$">
+        ForceType 'text/html; charset=UTF-8'
+    </FilesMatch>
+</IfModule>
+
+########################
+## File Access Control
+
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+<FilesMatch "^(\.htaccess|\.htpasswd|\.git|\.env|composer\.json|package\.json|web\.config)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+<FilesMatch "\.(bak|config|sql|fla|psd|log|sh|inc|swp|dist)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+<Directory "/">
+    Options -Indexes -MultiViews +FollowSymLinks
+    AllowOverride All
+    Require all granted
+</Directory>
+Options -Indexes
+
+########################
+## PWA-Specific Configs
+
+<IfModule mod_headers.c>
+    <FilesMatch "serviceWorker\.js$">
+        Header set Service-Worker-Allowed "/"
+    </FilesMatch>
+    <FilesMatch "manifest\.json$">
+        Header set X-Content-Type-Options "nosniff"
+        Header set Content-Type "application/manifest+json; charset=UTF-8"
+    </FilesMatch>
+    <FilesMatch "offline\.html$">
+        Header set Cache-Control "public, max-age=86400"
+    </FilesMatch>
+</IfModule>
+
+########################
+## Performance & Final Configs
+
+<IfModule mod_headers.c>
+    Header set Connection keep-alive
+    Header add Link "<https://fonts.googleapis.com>; rel=preconnect; crossorigin"
+    Header add Link "<https://fonts.gstatic.com>; rel=preconnect; crossorigin"
+    Header add Link "<https://cdnjs.cloudflare.com>; rel=preconnect; crossorigin"
+</IfModule>
+FileETag MTime Size
+ServerSignature Off
+ErrorDocument 400 ./webApp/offline.html
+ErrorDocument 401 ./webApp/offline.html
+ErrorDocument 403 ./webApp/offline.html
+ErrorDocument 404 ./webApp/offline.html
+ErrorDocument 500 ./webApp/offline.html
+ErrorDocument 503 ./webApp/offline.html
+<IfModule mod_rewrite.c>
+    RewriteRule ^repo/([^/]+)/?$ /?repo=$1 [L,QSA]
+    RewriteRule ^repo/([^/]+)/(.*)$ /?repo=$1&path=$2 [L,QSA]
+    RewriteRule ^file/(.*)$ /?open-file=$1 [L,QSA]
+    RewriteRule ^share/(.*)$ /?share=$1 [L,QSA]
+    RewriteRule ^api/v1/repositories/?$ /api/repositories.php [L]
+    RewriteRule ^api/v1/repositories/([^/]+)/?$ /api/repository.php?id=$1 [L]
+    RewriteRule ^api/v1/files/(.*)$ /api/file.php?path=$1 [L]
+    RewriteRule ^webhook/github/?$ /webhook/github.php [L]
+    RewriteRule ^health/?$ /health.php [L]
+</IfModule>
+<IfModule mod_setenvif.c>
+    SetEnvIf Host "(localhost|127\.0\.0\.1|::1)" DEV_ENV
+    SetEnvIf Host "staging\." STAGING_ENV
+    SetEnvIf Host "(?!localhost|127\.0\.0\.1|staging)" PROD_ENV
+</IfModule>
+<IfDefine DEV_ENV>
+    <FilesMatch "\.(html|css|js)$">
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+    </FilesMatch>
+    Header set Access-Control-Allow-Origin "*"
+    php_flag display_errors on
+    php_value error_reporting E_ALL
+</IfDefine>
+<IfDefine PROD_ENV>
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com;"
+    php_flag display_errors off
+    php_value error_reporting 0
+</IfDefine>
+<LimitExcept GET POST HEAD OPTIONS>
+    Deny from all
+</LimitExcept>
+<Files ~ "^\.ht">
+    Order allow,deny
+    Deny from all
+    Satisfy All
+</Files>
+<IfModule mod_rewrite.c>
+    RewriteCond %{HTTP_ACCEPT} image/webp
+    RewriteCond %{DOCUMENT_ROOT}/$1.webp -f
+    RewriteRule ^(.*)\.(png|jpg|jpeg)$ $1.webp [T=image/webp,E=accept:1]
+</IfModule>
+<IfModule mod_headers.c>
+    Header append Vary Accept env=REDIRECT_accept
+</IfModule>
+AddType image/webp .webp
