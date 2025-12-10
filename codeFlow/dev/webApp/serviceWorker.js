@@ -2,15 +2,13 @@ const CACHE_NAME = 'GHSystem';
 const OFFLINE_URL = '/unPlugged.html';
 
 const PRECACHE_ASSETS = [
-  '/',
-  '/index.html',
   '/primary.js',
   '/styles.css',
   '/fonts.css',
   
   // Essential icons only - pick the most important ones
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png',
+  '/icons/android/icon-192x192.png',
+  '/icons/android/icon-512x512.png',
   '/icons/favicon.ico',
   
   // Critical Windows icons
@@ -404,7 +402,7 @@ async function syncRepositoryChanges() {
     // Show notification
     self.registration.showNotification('Changes Synced', {
       body: `Successfully synced ${changes.length} changes`,
-      icon: '/icons/icon-192x192.png',
+      icon: '/icons/android/icon-192x192.png',
       tag: 'sync-complete',
       data: { count: changes.length }
     });
