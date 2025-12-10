@@ -516,25 +516,32 @@
   
   "screenshots": [
     {
-      "src": "/screenshots/desktop-1280x800.png",
+      "src": "/screenshots/01.png",
       "sizes": "1280x800",
       "type": "image/png",
-      "form_factor": "wide",
-      "label": "GitDev desktop interface"
+      "form_factor": "narrow",
+      "label": "GitDev Mobile"
     },
     {
-      "src": "/screenshots/mobile-375x667.png",
+      "src": "/screenshots/02.png",
       "sizes": "375x667",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "GitDev mobile interface"
+      "label": "GitDev Mobile"
     },
     {
-      "src": "/screenshots/tablet-768x1024.png",
+      "src": "/screenshots/03.png",
+      "sizes": "375x667",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "GitDev Mobile"
+    },
+    {
+      "src": "/screenshots/04.png",
       "sizes": "768x1024",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "GitDev tablet interface"
+      "label": "GitDev Mobile"
     }
   ],
   
