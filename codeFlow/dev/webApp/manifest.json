@@ -2,8 +2,8 @@
   "name": "GitDev - Local File Manager",
   "short_name": "GitDev",
   "description": "A professional GitHub-like file explorer and editor with local storage and offline capabilities",
-  "start_url": "/",
-  "scope": "/",
+  "start_url": "/codeFlow/dev/",
+  "scope": "/codeFlow/dev/",
   
   "display": "standalone",
   "display_override": ["window-controls-overlay"],
