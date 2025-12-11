@@ -595,10 +595,31 @@
     </div>
     
     <script>
-        // Core Variables
         let cssRules = {};
         let htmlContent = '';
         let classMapping = {};
+        
+    let cssLibrary = {};
+    let elementCounter = 1;
+
+window.addEventListener('DOMContentLoaded', async () => {
+    const defaultCSSFile = 'obfuscated.css';
+    
+    try {
+        const response = await fetch(defaultCSSFile);
+        if (response.ok) {
+            const cssContent = await response.text();
+            cssLibraryTextarea.value = cssContent;
+            parseCSSLibrary();
+            showStatus('✓ CSS library auto-loaded from ' + defaultCSSFile, 'success');
+        }
+    } catch (error) {
+        // File not found - user can still upload manually
+        showStatus('ℹ Upload or paste your CSS library to begin', 'info');
+    }
+});
+
+        
         
         // File Input Handlers
         document.getElementById('cssFileInput').addEventListener('change', (e) => {
