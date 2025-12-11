@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Deobfuscator - Reverse Obfuscated Class Names</title>
+    <style>
+        :root {
+            --color-white: rgba(255, 255, 255, 1);
+            --color-black: rgba(0, 0, 0, 1);
+            --color-cream-50: rgba(252, 252, 249, 1);
+            --color-cream-100: rgba(255, 255, 253, 1);
+            --color-gray-200: rgba(245, 245, 245, 1);
+            --color-gray-300: rgba(167, 169, 169, 1);
+            --color-gray-400: rgba(119, 124, 124, 1);
+            --color-slate-500: rgba(98, 108, 113, 1);
+            --color-brown-600: rgba(94, 82, 64, 1);
+            --color-charcoal-700: rgba(31, 33, 33, 1);
+            --color-charcoal-800: rgba(38, 40, 40, 1);
+            --color-slate-900: rgba(19, 52, 59, 1);
+            --color-teal-300: rgba(50, 184, 198, 1);
+            --color-teal-400: rgba(45, 166, 178, 1);
+            --color-teal-500: rgba(33, 128, 141, 1);
+            --color-teal-600: rgba(29, 116, 128, 1);
+            --color-teal-700: rgba(26, 104, 115, 1);
+            --color-teal-800: rgba(41, 150, 161, 1);
+            --color-red-400: rgba(255, 84, 89, 1);
+            --color-red-500: rgba(192, 21, 47, 1);
+            --color-orange-400: rgba(230, 129, 97, 1);
+            --color-orange-500: rgba(168, 75, 47, 1);
+            --color-purple-500: rgba(147, 51, 234, 1);
+            --color-blue-500: rgba(59, 130, 246, 1);
+            
+            --color-brown-600-rgb: 94, 82, 64;
+            --color-teal-500-rgb: 33, 128, 141;
+            --color-slate-900-rgb: 19, 52, 59;
+            --color-teal-300-rgb: 50, 184, 198;
+            
+            --color-background: var(--color-cream-50);
+            --color-surface: var(--color-cream-100);
+            --color-text: var(--color-slate-900);
+            --color-text-secondary: var(--color-slate-500);
+            --color-primary: var(--color-teal-500);
+            --color-primary-hover: var(--color-teal-600);
+            --color-primary-active: var(--color-teal-700);
+            --color-secondary: rgba(var(--color-brown-600-rgb), 0.12);
+            --color-secondary-hover: rgba(var(--color-brown-600-rgb), 0.2);
+            --color-border: rgba(var(--color-brown-600-rgb), 0.2);
+            --color-error: var(--color-red-500);
+            --color-success: var(--color-teal-500);
+            --color-focus-ring: rgba(var(--color-teal-500-rgb), 0.4);
+            
+            --font-family-base: "Geist", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --font-family-mono: "Berkeley Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            --font-size-xs: 11px;
+            --font-size-sm: 12px;
+            --font-size-base: 14px;
+            --font-size-lg: 16px;
+            --font-size-xl: 18px;
+            --font-size-2xl: 20px;
+            --font-size-3xl: 24px;
+            --font-size-4xl: 30px;
+            --font-weight-normal: 400;
+            --font-weight-medium: 500;
+            --font-weight-semibold: 550;
+            --font-weight-bold: 600;
+            --line-height-tight: 1.2;
+            --line-height-normal: 1.5;
+            
+            --space-0: 0;
+            --space-4: 4px;
+            --space-6: 6px;
+            --space-8: 8px;
+            --space-12: 12px;
+            --space-16: 16px;
+            --space-20: 20px;
+            --space-24: 24px;
+            --space-32: 32px;
+            --space-40: 40px;
+            
+            --radius-sm: 6px;
+            --radius-base: 8px;
+            --radius-md: 10px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            
+            --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.02);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            
+            --duration-fast: 150ms;
+            --duration-normal: 250ms;
+            --ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        html {
+            font-size: var(--font-size-base);
+            font-family: var(--font-family-base);
+            line-height: var(--line-height-normal);
+            color: var(--color-text);
+            background-color: var(--color-background);
+            -webkit-font-smoothing: antialiased;
+            box-sizing: border-box;
+        }
+        
+        body {
+            margin: 0;
+            padding: var(--space-16);
+        }
+        
+        * {
+            box-sizing: inherit;
+        }
+        
+        h1, h2, h3 {
+            margin: 0;
+            font-weight: var(--font-weight-semibold);
+            line-height: var(--line-height-tight);
+        }
+        
+        h1 { font-size: var(--font-size-4xl); }
+        h2 { font-size: var(--font-size-3xl); }
+        h3 { font-size: var(--font-size-2xl); }
+        
+        p { margin: 0 0 var(--space-16) 0; }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: var(--space-40);
+            background: linear-gradient(135deg, var(--color-teal-500) 0%, var(--color-teal-600) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .header h1 {
+            margin-bottom: var(--space-8);
+            font-size: 2.5rem;
+        }
+        
+        .header p {
+            margin: 0;
+            color: var(--color-text-secondary);
+            font-size: var(--font-size-lg);
+        }
+        
+        .grid-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-32);
+            margin-bottom: var(--space-32);
+        }
+        
+        @media (max-width: 1024px) {
+            .grid-2col {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .card {
+            background: var(--color-surface);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--color-border);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            transition: box-shadow var(--duration-normal) var(--ease-standard);
+        }
+        
+        .card:hover {
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .card__header {
+            padding: var(--space-24);
+            border-bottom: 1px solid var(--color-border);
+            background: linear-gradient(135deg, rgba(var(--color-teal-500-rgb), 0.05) 0%, transparent 100%);
+        }
+        
+        .card__header h3 {
+            margin: 0;
+        }
+        
+        .card__body {
+            padding: var(--space-24);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-16);
+        }
+        
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-8);
+        }
+        
+        .input-label {
+            font-weight: var(--font-weight-medium);
+            font-size: var(--font-size-sm);
+            color: var(--color-text);
+        }
+        
+        .input-area {
+            position: relative;
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 280px;
+            padding: var(--space-16);
+            font-family: var(--font-family-mono);
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--color-text);
+            background: var(--color-surface);
+            border: 1.5px solid var(--color-border);
+            border-radius: var(--radius-base);
+            transition: border-color var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard);
+            resize: vertical;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px var(--color-focus-ring);
+        }
+        
+        input[type="file"] {
+            display: none;
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+        }
+        
+        .file-input-label {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-12) var(--space-20);
+            background: var(--color-secondary);
+            color: var(--color-text);
+            border-radius: var(--radius-base);
+            cursor: pointer;
+            font-weight: var(--font-weight-medium);
+            font-size: var(--font-size-sm);
+            transition: all var(--duration-fast) var(--ease-standard);
+        }
+        
+        .file-input-label:hover {
+            background: var(--color-secondary-hover);
+        }
+        
+        .file-input-label:active {
+            background: var(--color-secondary);
+        }
+        
+        .button-group {
+            display: flex;
+            gap: var(--space-12);
+            margin-top: var(--space-16);
+        }
+        
+        .btn {
+            flex: 1;
+            padding: var(--space-12) var(--space-20);
+            border: none;
+            border-radius: var(--radius-base);
+            font-size: var(--font-size-base);
+            font-weight: var(--font-weight-semibold);
+            cursor: pointer;
+            transition: all var(--duration-normal) var(--ease-standard);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-8);
+        }
+        
+        .btn--primary {
+            background: linear-gradient(135deg, var(--color-teal-500) 0%, var(--color-teal-600) 100%);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .btn--primary:hover {
+            background: linear-gradient(135deg, var(--color-teal-600) 0%, var(--color-teal-700) 100%);
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+        
+        .btn--primary:active {
+            transform: translateY(0);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .btn--secondary {
+            background: var(--color-secondary);
+            color: var(--color-text);
+        }
+        
+        .btn--secondary:hover {
+            background: var(--color-secondary-hover);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .output-tabs {
+            display: flex;
+            gap: var(--space-8);
+            border-bottom: 2px solid var(--color-border);
+            margin-bottom: var(--space-16);
+        }
+        
+        .tab-btn {
+            padding: var(--space-12) var(--space-16);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: var(--font-weight-medium);
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+            border-bottom: 2px solid transparent;
+            transition: all var(--duration-fast) var(--ease-standard);
+            margin-bottom: -2px;
+        }
+        
+        .tab-btn.active {
+            color: var(--color-primary);
+            border-bottom-color: var(--color-primary);
+        }
+        
+        .tab-btn:hover:not(.active) {
+            color: var(--color-text);
+        }
+        
+        .output-content {
+            display: none;
+        }
+        
+        .output-content.active {
+            display: block;
+            animation: fadeIn var(--duration-fast) var(--ease-standard);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .code-block {
+            position: relative;
+            background: rgba(var(--color-slate-900-rgb), 0.04);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-base);
+            padding: var(--space-16);
+            font-family: var(--font-family-mono);
+            font-size: 12px;
+            line-height: 1.6;
+            overflow: auto;
+            max-height: 600px;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: var(--space-12);
+            right: var(--space-12);
+            padding: var(--space-6) var(--space-12);
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 11px;
+            font-weight: var(--font-weight-semibold);
+            cursor: pointer;
+            transition: all var(--duration-fast) var(--ease-standard);
+            opacity: 0;
+        }
+        
+        .code-block:hover .copy-btn {
+            opacity: 1;
+        }
+        
+        .copy-btn:hover {
+            background: var(--color-primary-hover);
+            transform: scale(1.05);
+        }
+        
+        .copy-btn.copied {
+            background: var(--color-success);
+        }
+        
+        .status-message {
+            padding: var(--space-12) var(--space-16);
+            border-radius: var(--radius-base);
+            font-size: var(--font-size-sm);
+            margin: var(--space-16) 0;
+            display: none;
+        }
+        
+        .status-message.show {
+            display: block;
+            animation: slideDown var(--duration-fast) var(--ease-standard);
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .status-message.success {
+            background: rgba(var(--color-teal-500-rgb), 0.15);
+            color: var(--color-success);
+            border: 1px solid rgba(var(--color-teal-500-rgb), 0.3);
+        }
+        
+        .status-message.error {
+            background: rgba(255, 84, 89, 0.15);
+            color: var(--color-error);
+            border: 1px solid rgba(255, 84, 89, 0.3);
+        }
+        
+        .status-message.info {
+            background: rgba(var(--color-teal-300-rgb), 0.15);
+            color: var(--color-primary);
+            border: 1px solid rgba(var(--color-teal-300-rgb), 0.3);
+        }
+        
+        .hint-text {
+            font-size: var(--font-size-xs);
+            color: var(--color-text-secondary);
+            margin-top: var(--space-6);
+        }
+        
+        .mapping-display {
+            background: rgba(var(--color-slate-900-rgb), 0.02);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-base);
+            padding: var(--space-16);
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .mapping-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-12) 0;
+            border-bottom: 1px solid var(--color-border);
+            font-size: var(--font-size-sm);
+            font-family: var(--font-family-mono);
+        }
+        
+        .mapping-item:last-child {
+            border-bottom: none;
+        }
+        
+        .obfuscated-class {
+            color: var(--color-red-500);
+            font-weight: var(--font-weight-semibold);
+        }
+        
+        .mapped-class {
+            color: var(--color-teal-500);
+            font-weight: var(--font-weight-semibold);
+        }
+        
+        .divider {
+            color: var(--color-text-secondary);
+            margin: 0 var(--space-8);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: var(--space-40);
+            color: var(--color-text-secondary);
+        }
+        
+        .empty-state p {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎨 CSS Deobfuscator</h1>
+            <p>Reverse-engineer obfuscated CSS class names with precision and clarity</p>
+        </div>
+        
+        <div class="grid-2col">
+            <!-- LEFT COLUMN: INPUTS -->
+            <div class="card">
+                <div class="card__header">
+                    <h3>Input Configuration</h3>
+                </div>
+                <div class="card__body">
+                    <!-- CSS File Input -->
+                    <div class="input-group">
+                        <label class="input-label">📋 CSS Library (Obfuscation Map)</label>
+                        <div class="file-input-wrapper">
+                            <input type="file" id="cssFileInput" accept=".css,.txt" />
+                            <label for="cssFileInput" class="file-input-label">📁 Choose CSS File</label>
+                        </div>
+                        <p class="hint-text">Upload the CSS file containing obfuscated class definitions</p>
+                        <div id="cssFileName" style="font-size: 12px; color: var(--color-primary); margin-top: 8px;"></div>
+                    </div>
+                    
+                    <!-- HTML Input -->
+                    <div class="input-group">
+                        <label class="input-label">🔗 HTML Input</label>
+                        <textarea id="htmlInput" placeholder="Paste your obfuscated HTML here or upload a file...&#10;&#10;Example:&#10;&lt;div class=&quot;absolute gqbd6 ckz8f&quot;&gt;&#10;  &lt;img class=&quot;upgcu&quot; /&gt;&#10;&lt;/div&gt;"></textarea>
+                    </div>
+                    
+                    <!-- HTML File Input -->
+                    <div class="file-input-wrapper">
+                        <input type="file" id="htmlFileInput" accept=".html,.txt,.jsx,.tsx" />
+                        <label for="htmlFileInput" class="file-input-label">📁 Or Choose HTML File</label>
+                    </div>
+                    <p class="hint-text">Upload HTML file or paste content above</p>
+                    
+                    <!-- Action Buttons -->
+                    <div class="button-group">
+                        <button class="btn btn--primary" id="processBtn" onclick="processDeobfuscation()">
+                            ⚡ Deobfuscate
+                        </button>
+                        <button class="btn btn--secondary" id="clearBtn" onclick="clearAll()">
+                            🗑️ Clear
+                        </button>
+                    </div>
+                    
+                    <div id="statusMessage" class="status-message"></div>
+                </div>
+            </div>
+            
+            <!-- RIGHT COLUMN: OUTPUTS -->
+            <div class="card">
+                <div class="card__header">
+                    <h3>Output Results</h3>
+                </div>
+                <div class="card__body">
+                    <!-- Mapping Display -->
+                    <div class="input-group">
+                        <label class="input-label">🗺️ Class Mapping</label>
+                        <div id="mappingDisplay" class="mapping-display">
+                            <div class="empty-state">
+                                <p>Upload CSS and HTML to see mappings</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Tabs for Output -->
+                    <div class="input-group">
+                        <label class="input-label">Output Code</label>
+                        <div class="output-tabs">
+                            <button class="tab-btn active" onclick="switchTab('html')">📄 HTML</button>
+                            <button class="tab-btn" onclick="switchTab('css')">🎨 CSS</button>
+                        </div>
+                        
+                        <!-- HTML Output -->
+                        <div id="htmlTab" class="output-content active">
+                            <div class="code-block" id="htmlOutput">
+                                <div class="empty-state">
+                                    <p>HTML output will appear here</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- CSS Output -->
+                        <div id="cssTab" class="output-content">
+                            <div class="code-block" id="cssOutput">
+                                <div class="empty-state">
+                                    <p>CSS output will appear here</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Core Variables
+        let cssRules = {};
+        let htmlContent = '';
+        let classMapping = {};
+        
+        // File Input Handlers
+        document.getElementById('cssFileInput').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    document.getElementById('cssFileName').textContent = '✓ Loaded: ' + file.name;
+                    parseCSSFile(event.target.result);
+                    showStatus(`CSS file loaded: ${file.name}`, 'info');
+                };
+                reader.readAsText(file);
+            }
+        });
+        
+        document.getElementById('htmlFileInput').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    document.getElementById('htmlInput').value = event.target.result;
+                    showStatus(`HTML file loaded: ${file.name}`, 'info');
+                };
+                reader.readAsText(file);
+            }
+        });
+        
+        // Parse CSS File and Extract Rules
+        function parseCSSFile(cssText) {
+            cssRules = {};
+            
+            // Match class selectors and their properties
+            const classRegex = /\.([a-zA-Z0-9_-]+)\s*\{([^}]+)\}/g;
+            let match;
+            
+            while ((match = classRegex.exec(cssText)) !== null) {
+                const className = match[1];
+                const properties = match[2];
+                
+                // Parse individual CSS properties
+                const propMap = {};
+                const propRegex = /([a-zA-Z-]+)\s*:\s*([^;]+);/g;
+                let propMatch;
+                
+                while ((propMatch = propRegex.exec(properties)) !== null) {
+                    const propName = propMatch[1].trim();
+                    const propValue = propMatch[2].trim();
+                    propMap[propName] = propValue;
+                }
+                
+                cssRules[className] = propMap;
+            }
+            
+            showStatus(`Parsed ${Object.keys(cssRules).length} CSS classes`, 'success');
+        }
+        
+        // Extract Tailwind Utilities
+        function extractTailwindUtilities(classString) {
+            const utilities = [];
+            const classes = classString.split(/\s+/);
+            
+            const tailwindMap = {
+                'absolute': 'position: absolute;',
+                'relative': 'position: relative;',
+                'fixed': 'position: fixed;',
+                'static': 'position: static;',
+                'hidden': 'visibility: hidden;',
+                'block': 'display: block;',
+                'inline-block': 'display: inline-block;',
+                'flex': 'display: flex;',
+                'grid': 'display: grid;'
+            };
+            
+            for (const cls of classes) {
+                if (tailwindMap[cls]) {
+                    utilities.push(cls);
+                } else if (cls.startsWith('sm:') || cls.startsWith('md:') || cls.startsWith('lg:')) {
+                    // Handle responsive classes
+                    const baseClass = cls.split(':')[1];
+                    if (!utilities.includes(baseClass)) {
+                        utilities.push(cls);
+                    }
+                } else if (cssRules[cls]) {
+                    // It's an obfuscated class
+                    if (!utilities.includes(cls)) {
+                        utilities.push(cls);
+                    }
+                }
+            }
+            
+            return utilities;
+        }
+        
+        // Main Deobfuscation Process
+        function processDeobfuscation() {
+            htmlContent = document.getElementById('htmlInput').value.trim();
+            
+            if (!htmlContent) {
+                showStatus('Please provide HTML content', 'error');
+                return;
+            }
+            
+            if (Object.keys(cssRules).length === 0) {
+                showStatus('Please load a CSS file first', 'error');
+                return;
+            }
+            
+            classMapping = {};
+            let elementCounter = 1;
+            
+            // Parse HTML and extract class information
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlContent, 'text/html');
+            const allElements = doc.querySelectorAll('[class]');
+            
+            if (allElements.length === 0) {
+                showStatus('No elements with classes found', 'error');
+                return;
+            }
+            
+            let deobfuscatedHTML = htmlContent;
+            let cssOutput = '';
+            const elementMap = new Map(); // Map old classes to element IDs
+            
+            // Process each element
+            allElements.forEach(element => {
+                const classes = element.getAttribute('class').split(/\s+/);
+                const obfuscatedClasses = classes.filter(cls => cssRules[cls]);
+                
+                if (obfuscatedClasses.length > 0) {
+                    const elementId = `element-${String(elementCounter).padStart(2, '0')}`;
+                    elementMap.set(obfuscatedClasses.join(' '), elementId);
+                    
+                    // Build element CSS rules
+                    let elementRules = {};
+                    let hasResponsive = false;
+                    let responsiveRules = {};
+                    
+                    for (const cls of classes) {
+                        if (cssRules[cls]) {
+                            // Add CSS from obfuscated class
+                            Object.assign(elementRules, cssRules[cls]);
+                            classMapping[cls] = elementId;
+                        } else if (cls === 'hidden') {
+                            elementRules['visibility'] = 'hidden';
+                        } else if (cls === 'absolute') {
+                            elementRules['position'] = 'absolute';
+                        } else if (cls.startsWith('sm:')) {
+                            hasResponsive = true;
+                            const baseClass = cls.split(':')[1];
+                            if (cssRules[baseClass]) {
+                                responsiveRules[baseClass] = cssRules[baseClass];
+                            }
+                        }
+                    }
+                    
+                    // Generate CSS for this element
+                    cssOutput += `.${elementId} {\n`;
+                    for (const [prop, value] of Object.entries(elementRules)) {
+                        cssOutput += `  ${prop}: ${value};\n`;
+                    }
+                    cssOutput += `}\n`;
+                    
+                    // Handle child element classes (like img with classes)
+                    const childrenWithClasses = element.querySelectorAll('[class]');
+                    childrenWithClasses.forEach((child, index) => {
+                        const childClasses = child.getAttribute('class').split(/\s+/);
+                        const childObfuscated = childClasses.filter(cls => cssRules[cls]);
+                        
+                        if (childObfuscated.length > 0 && index === 0) {
+                            cssOutput += `.${elementId} ${child.tagName.toLowerCase()} {\n`;
+                            for (const cls of childObfuscated) {
+                                for (const [prop, value] of Object.entries(cssRules[cls])) {
+                                    cssOutput += `  ${prop}: ${value};\n`;
+                                }
+                            }
+                            cssOutput += `}\n`;
+                        }
+                    });
+                    
+                    // Add responsive rules if needed
+                    if (hasResponsive) {
+                        cssOutput += `\n@media (max-width: 640px) {\n`;
+                        cssOutput += `.${elementId} {\n`;
+                        for (const [baseClass, rules] of Object.entries(responsiveRules)) {
+                            for (const [prop, value] of Object.entries(rules)) {
+                                cssOutput += `  ${prop}: ${value};\n`;
+                            }
+                        }
+                        cssOutput += `}\n}\n`;
+                    }
+                    
+                    cssOutput += '\n';
+                    elementCounter++;
+                }
+            });
+            
+            // Replace classes in HTML
+            let deobHTML = htmlContent;
+            for (const [classes, elementId] of elementMap) {
+                const classPattern = new RegExp(`class="[^"]*\\b(${classes.split(' ').join('|')})\\b[^"]*"`, 'g');
+                deobHTML = deobHTML.replace(classPattern, `class="${elementId}"`);
+            }
+            
+            // Display results
+            displayResults(deobHTML, cssOutput);
+            showStatus(`Successfully deobfuscated ${elementCounter - 1} elements`, 'success');
+        }
+        
+        // Display Results
+        function displayResults(html, css) {
+            // Update HTML output
+            const htmlContainer = document.getElementById('htmlOutput');
+            const pre = document.createElement('pre');
+            pre.textContent = formatHTML(html);
+            htmlContainer.innerHTML = '';
+            htmlContainer.appendChild(pre);
+            addCopyButton('htmlOutput');
+            
+            // Update CSS output
+            const cssContainer = document.getElementById('cssOutput');
+            const cssPre = document.createElement('pre');
+            cssPre.textContent = css;
+            cssContainer.innerHTML = '';
+            cssContainer.appendChild(cssPre);
+            addCopyButton('cssOutput');
+            
+            // Update Mapping Display
+            updateMappingDisplay();
+        }
+        
+        // Format HTML for better readability
+        function formatHTML(html) {
+            let formatted = html;
+            let indent = 0;
+            const lines = formatted.split('\n');
+            let result = [];
+            
+            for (let line of lines) {
+                line = line.trim();
+                if (line.startsWith('</')) indent = Math.max(0, indent - 1);
+                result.push('  '.repeat(indent) + line);
+                if (line.startsWith('<') && !line.startsWith('</') && !line.endsWith('/>') && !line.includes('</')) {
+                    if (!line.includes('<!') && line.includes('>')) indent++;
+                }
+            }
+            
+            return result.join('\n').trim();
+        }
+        
+        // Update Mapping Display
+        function updateMappingDisplay() {
+            const mappingDiv = document.getElementById('mappingDisplay');
+            
+            if (Object.keys(classMapping).length === 0) {
+                mappingDiv.innerHTML = '<div class="empty-state"><p>No mappings found</p></div>';
+                return;
+            }
+            
+            let html = '';
+            for (const [obf, clean] of Object.entries(classMapping)) {
+                html += `<div class="mapping-item">
+                    <span class="obfuscated-class">${obf}</span>
+                    <span class="divider">→</span>
+                    <span class="mapped-class">${clean}</span>
+                </div>`;
+            }
+            
+            mappingDiv.innerHTML = html;
+        }
+        
+        // Add Copy Button Functionality
+        function addCopyButton(containerId) {
+            const container = document.getElementById(containerId);
+            const btn = document.createElement('button');
+            btn.className = 'copy-btn';
+            btn.textContent = '📋 Copy';
+            btn.onclick = () => {
+                const text = container.querySelector('pre').textContent;
+                navigator.clipboard.writeText(text).then(() => {
+                    btn.textContent = '✓ Copied!';
+                    btn.classList.add('copied');
+                    setTimeout(() => {
+                        btn.textContent = '📋 Copy';
+                        btn.classList.remove('copied');
+                    }, 2000);
+                });
+            };
+            container.appendChild(btn);
+        }
+        
+        // Switch Tabs
+        function switchTab(tab) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update content
+            document.querySelectorAll('.output-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(tab + 'Tab').classList.add('active');
+        }
+        
+        // Show Status Messages
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('statusMessage');
+            statusDiv.textContent = message;
+            statusDiv.className = `status-message show ${type}`;
+            
+            setTimeout(() => {
+                statusDiv.classList.remove('show');
+            }, 4000);
+        }
+        
+        // Clear All
+        function clearAll() {
+            document.getElementById('htmlInput').value = '';
+            document.getElementById('cssFileInput').value = '';
+            document.getElementById('htmlFileInput').value = '';
+            document.getElementById('cssFileName').textContent = '';
+            document.getElementById('htmlOutput').innerHTML = '<div class="empty-state"><p>HTML output will appear here</p></div>';
+            document.getElementById('cssOutput').innerHTML = '<div class="empty-state"><p>CSS output will appear here</p></div>';
+            document.getElementById('mappingDisplay').innerHTML = '<div class="empty-state"><p>Upload CSS and HTML to see mappings</p></div>';
+            document.getElementById('statusMessage').classList.remove('show');
+            cssRules = {};
+            classMapping = {};
+            showStatus('All fields cleared', 'info');
+        }
+    </script>
+</body>
+</html>
