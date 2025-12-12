@@ -1121,17 +1121,19 @@ Example:
                 const preservedClasses = [];
                 const responsiveClasses = [];
 
-                classes.forEach(cls => {
-                    if (preserveTailwind && tailwindClasses.includes(cls)) {
-                        preservedClasses.push(cls);
-                    } else if (cls.startsWith('sm:') || cls.startsWith('md:') || 
-                               cls.startsWith('lg:') || cls.startsWith('xl:') || 
-                               cls.startsWith('2xl:')) {
-                        responsiveClasses.push(cls);
-                    } else if (cssLibrary[cls]) {
-                        obfuscatedClasses.push(cls);
-                    }
-                });
+classes.forEach(cls => {
+    if (typeof cls === 'string') {
+        if (preserveTailwind && tailwindClasses.includes(cls)) {
+            preservedClasses.push(cls);
+        } else if (cls.startsWith('sm:') || cls.startsWith('md:') || 
+                   cls.startsWith('lg:') || cls.startsWith('xl:') || 
+                   cls.startsWith('2xl:')) {
+            responsiveClasses.push(cls);
+        } else if (cssLibrary[cls]) {
+            obfuscatedClasses.push(cls);
+        }
+    }
+});
 
                 if (obfuscatedClasses.length > 0) {
                     const newClassName = classPrefix + (elementCounter++);
@@ -1155,20 +1157,25 @@ Example:
 
                     cssRules[newClassName] = combinedCSS.trim();
 
-                    // Handle child elements
-                    const childElements = element.querySelectorAll('[class]');
-                    childElements.forEach(child => {
-                        const childClasses = child.className.split(/\s+/).filter(c => c && cssLibrary[c]);
-                        if (childClasses.length > 0) {
-                            let childCSS = '';
-                            childClasses.forEach(cls => {
-                                if (cssLibrary[cls]) {
-                                    childCSS += cssLibrary[cls] + '\n    ';
-                                }
-                            });
-                            cssRules[newClassName + ' ' + child.tagName.toLowerCase()] = childCSS.trim();
-                        }
-                    });
+// Handle child elements
+const childElements = element.querySelectorAll('[class]');
+childElements.forEach(child => {
+    // Safely handle className - check if it exists and is a string
+    if (child.className && typeof child.className === 'string') {
+        const childClasses = child.className.split(/\s+/).filter(c => c && cssLibrary[c]);
+        if (childClasses.length > 0) {
+            let childCSS = '';
+            childClasses.forEach(cls => {
+                if (cssLibrary[cls]) {
+                    childCSS += cssLibrary[cls] + '\n    ';
+                }
+            });
+            if (child.tagName) {
+                cssRules[newClassName + ' ' + child.tagName.toLowerCase()] = childCSS.trim();
+            }
+        }
+    }
+});
 
                     // Handle responsive classes
                     if (generateMediaQueries && responsiveClasses.length > 0) {
