@@ -972,428 +972,386 @@ Example:
     </div>
 
     <script>
-        let cssLibrary = {};
-        let classMapping = {};
-        let elementCounter = 1;
-        let allMappings = [];
+let cssLibrary = {};
+let classMapping = {};
+let elementCounter = 1;
+let allMappings = [];
 
-        // Auto-load CSS file from same directory
-        window.addEventListener('DOMContentLoaded', async () => {
-            const defaultCSSFile = 'obfuscated.css';
-
-            try {
-                const response = await fetch(defaultCSSFile);
-                if (response.ok) {
-                    const cssContent = await response.text();
-                    document.getElementById('cssLibrary').value = cssContent;
-                    parseCSSLibrary();
-                    showStatus('✓ CSS library auto-loaded from ' + defaultCSSFile, 'success');
-                }
-            } catch (error) {
-                showStatus('ℹ Upload or paste your CSS library to begin', 'info');
-            }
-        });
-
-        // ENHANCEMENT #2: Drag & Drop Functionality
-        function setupDragAndDrop(zoneId, inputId, callback) {
-            const zone = document.getElementById(zoneId);
-            const input = document.getElementById(inputId);
-
-            zone.addEventListener('click', () => input.click());
-
-            zone.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                zone.classList.add('drag-over');
-            });
-
-            zone.addEventListener('dragleave', () => {
-                zone.classList.remove('drag-over');
-            });
-
-            zone.addEventListener('drop', (e) => {
-                e.preventDefault();
-                zone.classList.remove('drag-over');
-                const files = e.dataTransfer.files;
-                if (files.length > 0) {
-                    handleFileUpload(files[0], callback);
-                }
-            });
-
-            input.addEventListener('change', (e) => {
-                if (e.target.files.length > 0) {
-                    handleFileUpload(e.target.files[0], callback);
-                }
-            });
-        }
-
-        function handleFileUpload(file, callback) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                callback(e.target.result);
-                showStatus(`✓ File "${file.name}" loaded successfully`, 'success');
-            };
-            reader.readAsText(file);
-        }
-
-        setupDragAndDrop('cssUploadZone', 'cssFileInput', (content) => {
-            document.getElementById('cssLibrary').value = content;
+window.addEventListener('DOMContentLoaded', async () => {
+    const defaultCSSFile = 'obfuscated.css';
+    try {
+        const response = await fetch(defaultCSSFile);
+        if (response.ok) {
+            const cssContent = await response.text();
+            document.getElementById('cssLibrary').value = cssContent;
             parseCSSLibrary();
-        });
-
-        setupDragAndDrop('htmlUploadZone', 'htmlFileInput', (content) => {
-            document.getElementById('htmlInput').value = content;
-        });
-
-        function parseCSSLibrary() {
-            const startTime = performance.now();
-            const cssText = document.getElementById('cssLibrary').value;
-            cssLibrary = {};
-
-            // Parse CSS classes
-            const classRegex = /\.([a-zA-Z0-9_-]+)\s*\{([^}]+)\}/g;
-            let match;
-            let count = 0;
-
-            while ((match = classRegex.exec(cssText)) !== null) {
-                const className = match[1];
-                const properties = match[2].trim();
-                cssLibrary[className] = properties;
-                count++;
-            }
-
-            const endTime = performance.now();
-            const processingTime = Math.round(endTime - startTime);
-
-            // Update stats
-            document.getElementById('classCount').textContent = count;
-            document.getElementById('processingTime').textContent = processingTime + 'ms';
-
-            showStatus(`✓ Parsed ${count} CSS classes in ${processingTime}ms`, 'success');
-            updateProgressBar(100);
+            showStatus('✓ CSS library auto-loaded from ' + defaultCSSFile, 'success');
         }
-
-        function deobfuscateHTML() {
-            const startTime = performance.now();
-            const htmlInput = document.getElementById('htmlInput').value;
-
-            if (!htmlInput.trim()) {
-                showStatus('⚠️ Please provide HTML input', 'warning');
-                return;
-            }
-
-            if (Object.keys(cssLibrary).length === 0) {
-                showStatus('⚠️ Please parse CSS library first', 'warning');
-                return;
-            }
-
-            // Get settings
-            const classPrefix = document.getElementById('classPrefix').value || 'element-';
-            const startNumber = parseInt(document.getElementById('startNumber').value) || 1;
-            const preserveTailwind = document.getElementById('preserveTailwind').checked;
-            const generateMediaQueries = document.getElementById('generateMediaQueries').checked;
-            const addComments = document.getElementById('addComments').checked;
-
-            // Reset counters
-            elementCounter = startNumber;
-            classMapping = {};
-            allMappings = [];
-
-            // Parse HTML
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(htmlInput, 'text/html');
-
-            // Tailwind utility classes to preserve
-            const tailwindClasses = ['hidden', 'block', 'flex', 'grid', 'absolute', 'relative', 
-                                     'fixed', 'sticky', 'sm:block', 'md:block', 'lg:block', 
-                                     'xl:block', '2xl:block', 'sm:hidden', 'md:hidden', 
-                                     'lg:hidden', 'xl:hidden', '2xl:hidden'];
-
-            // Find all elements with class attributes
-            const elementsWithClasses = doc.querySelectorAll('[class]');
-            let processedCount = 0;
-
-            const cssRules = {};
-            const responsiveRules = {};
-
-            elementsWithClasses.forEach((element) => {
-                const classes = element.className.split(/\s+/).filter(c => c);
-                const obfuscatedClasses = [];
-                const preservedClasses = [];
-                const responsiveClasses = [];
-
-classes.forEach(cls => {
-    if (typeof cls === 'string') {
-        if (preserveTailwind && tailwindClasses.includes(cls)) {
-            preservedClasses.push(cls);
-        } else if (cls.startsWith('sm:') || cls.startsWith('md:') || 
-                   cls.startsWith('lg:') || cls.startsWith('xl:') || 
-                   cls.startsWith('2xl:')) {
-            responsiveClasses.push(cls);
-        } else if (cssLibrary[cls]) {
-            obfuscatedClasses.push(cls);
-        }
+    } catch (error) {
+        showStatus('ℹ Upload or paste your CSS library to begin', 'info');
     }
 });
 
-                if (obfuscatedClasses.length > 0) {
-                    const newClassName = classPrefix + (elementCounter++);
+function setupDragAndDrop(zoneId, inputId, callback) {
+    const zone = document.getElementById(zoneId);
+    const input = document.getElementById(inputId);
+    zone.addEventListener('click', () => input.click());
+    zone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        zone.classList.add('drag-over');
+    });
+    zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+    zone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        zone.classList.remove('drag-over');
+        const files = e.dataTransfer.files;
+        if (files.length > 0) handleFileUpload(files[0], callback);
+    });
+    input.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) handleFileUpload(e.target.files[0], callback);
+    });
+}
 
-                    // Store mapping for display
-                    obfuscatedClasses.forEach(oldClass => {
-                        allMappings.push({
-                            old: oldClass,
-                            new: newClassName,
-                            element: element.tagName.toLowerCase()
-                        });
-                    });
+function handleFileUpload(file, callback) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        callback(e.target.result);
+        showStatus(`✓ File "${file.name}" loaded successfully`, 'success');
+    };
+    reader.readAsText(file);
+}
 
-                    // Combine CSS properties
-                    let combinedCSS = '';
-                    obfuscatedClasses.forEach(cls => {
-                        if (cssLibrary[cls]) {
-                            combinedCSS += cssLibrary[cls] + '\n  ';
-                        }
-                    });
-
-                    cssRules[newClassName] = combinedCSS.trim();
-
-// Handle child elements
-const childElements = element.querySelectorAll('[class]');
-childElements.forEach(child => {
-    // Safely handle className - check if it exists and is a string
-    if (child.className && typeof child.className === 'string') {
-        const childClasses = child.className.split(/\s+/).filter(c => c && cssLibrary[c]);
-        if (childClasses.length > 0) {
-            let childCSS = '';
-            childClasses.forEach(cls => {
-                if (cssLibrary[cls]) {
-                    childCSS += cssLibrary[cls] + '\n    ';
-                }
-            });
-            if (child.tagName) {
-                cssRules[newClassName + ' ' + child.tagName.toLowerCase()] = childCSS.trim();
-            }
-        }
-    }
+setupDragAndDrop('cssUploadZone', 'cssFileInput', (content) => {
+    document.getElementById('cssLibrary').value = content;
+    parseCSSLibrary();
 });
 
-                    // Handle responsive classes
-                    if (generateMediaQueries && responsiveClasses.length > 0) {
-                        responsiveClasses.forEach(respClass => {
-                            const [breakpoint, utility] = respClass.split(':');
-                            if (!responsiveRules[breakpoint]) {
-                                responsiveRules[breakpoint] = {};
-                            }
-                            if (!responsiveRules[breakpoint][newClassName]) {
-                                responsiveRules[breakpoint][newClassName] = [];
-                            }
+setupDragAndDrop('htmlUploadZone', 'htmlFileInput', (content) => {
+    document.getElementById('htmlInput').value = content;
+});
 
-                            // Map Tailwind utilities
-                            if (utility === 'block') {
-                                responsiveRules[breakpoint][newClassName].push('display: block;');
-                            } else if (utility === 'hidden') {
-                                responsiveRules[breakpoint][newClassName].push('display: none;');
-                            }
+function parseCSSLibrary() {
+    const startTime = performance.now();
+    const cssText = document.getElementById('cssLibrary').value;
+    cssLibrary = {};
+    const classRegex = /\.([a-zA-Z0-9_-]+)\s*\{([^}]+)\}/g;
+    let match;
+    let count = 0;
+    while ((match = classRegex.exec(cssText)) !== null) {
+        const className = match[1];
+        const properties = match[2].trim();
+        cssLibrary[className] = properties;
+        count++;
+    }
+    const endTime = performance.now();
+    const processingTime = Math.round(endTime - startTime);
+    document.getElementById('classCount').textContent = count;
+    document.getElementById('processingTime').textContent = processingTime + 'ms';
+    showStatus(`✓ Parsed ${count} CSS classes in ${processingTime}ms`, 'success');
+    updateProgressBar(100);
+}
+
+function deobfuscateHTML() {
+    const startTime = performance.now();
+    const htmlInput = document.getElementById('htmlInput').value;
+    if (!htmlInput.trim()) {
+        showStatus('⚠️ Please provide HTML input', 'warning');
+        return;
+    }
+    if (Object.keys(cssLibrary).length === 0) {
+        showStatus('⚠️ Please parse CSS library first', 'warning');
+        return;
+    }
+    const classPrefix = document.getElementById('classPrefix').value || 'element-';
+    const startNumber = parseInt(document.getElementById('startNumber').value) || 1;
+    const preserveTailwind = document.getElementById('preserveTailwind').checked;
+    const generateMediaQueries = document.getElementById('generateMediaQueries').checked;
+    const addComments = document.getElementById('addComments').checked;
+    const minifyCSS = document.getElementById('minifyCSS').checked;
+    elementCounter = startNumber;
+    classMapping = {};
+    allMappings = [];
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlInput, 'text/html');
+    const tailwindClasses = ['hidden', 'block', 'flex', 'grid', 'absolute', 'relative', 'fixed', 'sticky', 'sm:block', 'md:block', 'lg:block', 'xl:block', '2xl:block', 'sm:hidden', 'md:hidden', 'lg:hidden', 'xl:hidden', '2xl:hidden'];
+    const elementsWithClasses = doc.querySelectorAll('[class]');
+    let processedCount = 0;
+    const cssRules = {};
+    const responsiveRules = {};
+    const preserveOriginal = {};
+    elementsWithClasses.forEach((element) => {
+        const classAttr = element.getAttribute('class');
+        const classes = classAttr ? classAttr.split(/\s+/).filter(c => c) : [];
+        const obfuscatedClasses = [];
+        const preservedClasses = [];
+        const responsiveClasses = [];
+        classes.forEach(cls => {
+            if (typeof cls === 'string') {
+                if (preserveTailwind && tailwindClasses.includes(cls)) {
+                    preservedClasses.push(cls);
+                } else if (cls.startsWith('sm:') || cls.startsWith('md:') || cls.startsWith('lg:') || cls.startsWith('xl:') || cls.startsWith('2xl:')) {
+                    responsiveClasses.push(cls);
+                } else if (cssLibrary[cls]) {
+                    obfuscatedClasses.push(cls);
+                } else {
+                    preservedClasses.push(cls);
+                }
+            }
+        });
+        if (obfuscatedClasses.length > 0) {
+            const newClassName = classPrefix + (elementCounter++);
+            obfuscatedClasses.forEach(oldClass => {
+                allMappings.push({
+                    old: oldClass,
+                    new: newClassName,
+                    element: element.tagName.toLowerCase()
+                });
+            });
+            let combinedCSS = '';
+            obfuscatedClasses.forEach(cls => {
+                if (cssLibrary[cls]) combinedCSS += cssLibrary[cls] + '\n  ';
+            });
+            cssRules[newClassName] = combinedCSS.trim();
+            preserveOriginal[newClassName] = preservedClasses;
+            const childElements = element.querySelectorAll('[class]');
+            childElements.forEach(child => {
+                const childClassAttr = child.getAttribute('class');
+                if (childClassAttr && typeof childClassAttr === 'string') {
+                    const childClasses = childClassAttr.split(/\s+/).filter(c => c && cssLibrary[c]);
+                    if (childClasses.length > 0) {
+                        let childCSS = '';
+                        childClasses.forEach(cls => {
+                            if (cssLibrary[cls]) childCSS += cssLibrary[cls] + '\n    ';
                         });
+                        if (child.tagName) cssRules[newClassName + ' ' + child.tagName.toLowerCase()] = childCSS.trim();
                     }
-
-                    // Update element class
-                    element.className = newClassName;
-                    processedCount++;
                 }
             });
-
-            // Generate CSS output
-            let cssOutput = '';
-
-            if (addComments) {
-                cssOutput += '/* Deobfuscated CSS */\n';
-                cssOutput += '/* Generated by CSS Deobfuscator Pro */\n\n';
-            }
-
-            Object.keys(cssRules).forEach(className => {
-                cssOutput += `.${className} {\n  ${cssRules[className]}\n}\n\n`;
-            });
-
-            // Add media queries
-            if (generateMediaQueries && Object.keys(responsiveRules).length > 0) {
-                const breakpoints = {
-                    'sm': '640px',
-                    'md': '768px',
-                    'lg': '1024px',
-                    'xl': '1280px',
-                    '2xl': '1536px'
-                };
-
-                Object.keys(responsiveRules).forEach(breakpoint => {
-                    if (addComments) {
-                        cssOutput += `/* Responsive: ${breakpoint} breakpoint */\n`;
-                    }
-                    cssOutput += `@media (min-width: ${breakpoints[breakpoint]}) {\n`;
-                    Object.keys(responsiveRules[breakpoint]).forEach(className => {
-                        cssOutput += `  .${className} {\n`;
-                        responsiveRules[breakpoint][className].forEach(prop => {
-                            cssOutput += `    ${prop}\n`;
-                        });
-                        cssOutput += `  }\n`;
-                    });
-                    cssOutput += `}\n\n`;
+            if (generateMediaQueries && responsiveClasses.length > 0) {
+                responsiveClasses.forEach(respClass => {
+                    const [breakpoint, utility] = respClass.split(':');
+                    if (!responsiveRules[breakpoint]) responsiveRules[breakpoint] = {};
+                    if (!responsiveRules[breakpoint][newClassName]) responsiveRules[breakpoint][newClassName] = [];
+                    if (utility === 'block') responsiveRules[breakpoint][newClassName].push('display: block;');
+                    else if (utility === 'hidden') responsiveRules[breakpoint][newClassName].push('display: none;');
+                    else if (utility === 'flex') responsiveRules[breakpoint][newClassName].push('display: flex;');
+                    else if (utility === 'grid') responsiveRules[breakpoint][newClassName].push('display: grid;');
                 });
             }
+            const finalClasses = [newClassName, ...preservedClasses].filter(c => c).join(' ');
+            element.setAttribute('class', finalClasses);
+            processedCount++;
+        }
+    });
+    let cssOutput = '';
+    if (addComments) {
+        cssOutput += '/* Deobfuscated CSS */\n';
+        cssOutput += '/* Generated by CSS Deobfuscator Pro */\n\n';
+    }
+    Object.keys(cssRules).forEach(className => {
+        const preserved = preserveOriginal[className] || [];
+        let rule = `.${className}`;
+        if (preserved.length > 0) rule += `, .${className}.${preserved.join(', .' + className + '.')}`;
+        cssOutput += `${rule} {\n  ${cssRules[className]}\n}\n\n`;
+    });
+    if (generateMediaQueries && Object.keys(responsiveRules).length > 0) {
+        const breakpoints = { 'sm': '640px', 'md': '768px', 'lg': '1024px', 'xl': '1280px', '2xl': '1536px' };
+        Object.keys(responsiveRules).forEach(breakpoint => {
+            if (addComments) cssOutput += `/* Responsive: ${breakpoint} breakpoint */\n`;
+            cssOutput += `@media (min-width: ${breakpoints[breakpoint]}) {\n`;
+            Object.keys(responsiveRules[breakpoint]).forEach(className => {
+                cssOutput += `  .${className} {\n`;
+                responsiveRules[breakpoint][className].forEach(prop => cssOutput += `    ${prop}\n`);
+                cssOutput += `  }\n`;
+            });
+            cssOutput += `}\n\n`;
+        });
+    }
+    if (minifyCSS) {
+        cssOutput = cssOutput.replace(/\s*\{\s*/g, '{').replace(/\s*\}\s*/g, '}').replace(/\s*;\s*/g, ';').replace(/\s+/g, ' ').replace(/;}/g, '}').trim();
+    }
+    const htmlOutput = doc.body.innerHTML;
+    document.getElementById('htmlOutput').value = htmlOutput;
+    document.getElementById('cssOutput').value = cssOutput;
+    updateMappingDisplay();
+    generateDiff(htmlInput, htmlOutput);
+    const endTime = performance.now();
+    const processingTime = Math.round(endTime - startTime);
+    document.getElementById('mappedCount').textContent = allMappings.length;
+    document.getElementById('elementsProcessed').textContent = processedCount;
+    document.getElementById('processingTime').textContent = processingTime + 'ms';
+    showStatus(`✓ Successfully deobfuscated ${processedCount} elements with ${allMappings.length} class mappings in ${processingTime}ms`, 'success');
+    updateProgressBar(100);
+}
 
-            // Minify if enabled
-            if (document.getElementById('minifyCSS').checked) {
-                cssOutput = cssOutput.replace(/\s+/g, ' ').replace(/\n/g, '').replace(/;\s*}/g, '}');
+function updateMappingDisplay() {
+    const container = document.getElementById('mappingDisplay');
+    if (allMappings.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: var(--gh-fg-muted);">No mappings yet.</p>';
+        return;
+    }
+    let html = '';
+    allMappings.forEach(mapping => {
+        html += `<div class="mapping-item">
+            <span class="obfuscated-class">${mapping.old}</span>
+            <span class="mapping-arrow">→</span>
+            <span class="clean-class">${mapping.new}</span>
+            <span style="color: var(--gh-fg-muted); margin-left: auto;">&lt;${mapping.element}&gt;</span>
+        </div>`;
+    });
+    container.innerHTML = html;
+}
+
+function filterMappings() {
+    const searchTerm = document.getElementById('mappingSearch').value.toLowerCase();
+    const items = document.querySelectorAll('.mapping-item');
+    items.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        item.style.display = text.includes(searchTerm) ? 'flex' : 'none';
+    });
+}
+
+function generateDiff(original, modified) {
+    const diffViewer = document.getElementById('diffViewer');
+    const originalLines = original.split('\n');
+    const modifiedLines = modified.split('\n');
+    const maxLength = Math.max(originalLines.length, modifiedLines.length);
+    let html = '<div style="font-family: monospace; font-size: 13px;">';
+    for (let i = 0; i < maxLength; i++) {
+        const origLine = originalLines[i] || '';
+        const modLine = modifiedLines[i] || '';
+        if (origLine !== modLine) {
+            if (origLine && !modifiedLines.includes(origLine)) html += `<div class="diff-line diff-removed">- ${escapeHTML(origLine)}</div>`;
+            if (modLine && !originalLines.includes(modLine)) html += `<div class="diff-line diff-added">+ ${escapeHTML(modLine)}</div>`;
+        } else if (origLine.trim()) {
+            html += `<div style="color: var(--gh-fg-subtle); padding: 2px 8px;">  ${escapeHTML(origLine)}</div>`;
+        }
+    }
+    html += '</div>';
+    diffViewer.innerHTML = html;
+}
+
+function escapeHTML(str) {
+    return str.replace(/[&<>"']/g, (m) => {
+        return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[m];
+    });
+}
+
+function switchTab(tabName) {
+    document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    event.target.classList.add('active');
+    document.getElementById(tabName + 'Tab').classList.add('active');
+}
+
+function showStatus(message, type) {
+    const container = document.getElementById('statusContainer');
+    const status = document.createElement('div');
+    status.className = `status ${type}`;
+    status.innerHTML = `<span>${message}</span>`;
+    container.innerHTML = '';
+    container.appendChild(status);
+    setTimeout(() => {
+        status.style.opacity = '0';
+        setTimeout(() => status.remove(), 300);
+    }, 5000);
+}
+
+function updateProgressBar(percent) {
+    document.getElementById('progressBar').style.width = percent + '%';
+}
+
+function copyToClipboard(textareaId) {
+    const textarea = document.getElementById(textareaId);
+    textarea.select();
+    document.execCommand('copy');
+    showStatus('✓ Copied to clipboard!', 'success');
+}
+
+function downloadFile(filename, textareaId) {
+    const content = document.getElementById(textareaId).value;
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+    showStatus(`✓ Downloaded ${filename}`, 'success');
+}
+
+function clearCSS() {
+    document.getElementById('cssLibrary').value = '';
+    cssLibrary = {};
+    document.getElementById('classCount').textContent = '0';
+    showStatus('ℹ CSS library cleared', 'info');
+}
+
+function clearHTML() {
+    document.getElementById('htmlInput').value = '';
+    showStatus('ℹ HTML input cleared', 'info');
+}
+
+function exportMappings() {
+    const mappingsJSON = JSON.stringify(allMappings, null, 2);
+    const blob = new Blob([mappingsJSON], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'class-mappings.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    showStatus('✓ Class mappings exported as JSON', 'success');
+}
+
+function importMappings() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = (e) => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                allMappings = JSON.parse(e.target.result);
+                updateMappingDisplay();
+                showStatus('✓ Class mappings imported successfully', 'success');
+            } catch (error) {
+                showStatus('❌ Error importing mappings file', 'error');
             }
+        };
+        reader.readAsText(file);
+    };
+    input.click();
+}
 
-            // Get HTML output
-            const htmlOutput = doc.body.innerHTML;
+document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+        e.preventDefault();
+        deobfuscateHTML();
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
+        const activeTab = document.querySelector('.tab.active');
+        if (activeTab.textContent.includes('HTML')) copyToClipboard('htmlOutput');
+        else if (activeTab.textContent.includes('CSS')) copyToClipboard('cssOutput');
+    }
+});
 
-            // Update outputs
-            document.getElementById('htmlOutput').value = htmlOutput;
-            document.getElementById('cssOutput').value = cssOutput;
-
-            // Update mapping display
-            updateMappingDisplay();
-
-            // Generate diff
-            generateDiff(htmlInput, htmlOutput);
-
-            // Update stats
-            const endTime = performance.now();
-            const processingTime = Math.round(endTime - startTime);
-            document.getElementById('mappedCount').textContent = allMappings.length;
-            document.getElementById('elementsProcessed').textContent = processedCount;
-            document.getElementById('processingTime').textContent = processingTime + 'ms';
-
-            showStatus(`✓ Successfully deobfuscated ${processedCount} elements with ${allMappings.length} class mappings in ${processingTime}ms`, 'success');
-            updateProgressBar(100);
+function batchProcess() {
+    const htmlInputs = document.getElementById('htmlInput').value.split('---');
+    let combinedHTML = '';
+    let combinedCSS = '';
+    htmlInputs.forEach((html, index) => {
+        if (html.trim()) {
+            document.getElementById('htmlInput').value = html;
+            deobfuscateHTML();
+            combinedHTML += document.getElementById('htmlOutput').value + '\n---\n';
+            combinedCSS += document.getElementById('cssOutput').value + '\n/* --- */\n';
         }
-
-        // ENHANCEMENT #4: Update mapping display
-        function updateMappingDisplay() {
-            const container = document.getElementById('mappingDisplay');
-
-            if (allMappings.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: var(--gh-fg-muted);">No mappings yet.</p>';
-                return;
-            }
-
-            let html = '';
-            allMappings.forEach(mapping => {
-                html += `
-                    <div class="mapping-item">
-                        <span class="obfuscated-class">${mapping.old}</span>
-                        <span class="mapping-arrow">→</span>
-                        <span class="clean-class">${mapping.new}</span>
-                        <span style="color: var(--gh-fg-muted); margin-left: auto;">&lt;${mapping.element}&gt;</span>
-                    </div>
-                `;
-            });
-
-            container.innerHTML = html;
-        }
-
-        // ENHANCEMENT #5: Filter mappings
-        function filterMappings() {
-            const searchTerm = document.getElementById('mappingSearch').value.toLowerCase();
-            const items = document.querySelectorAll('.mapping-item');
-
-            items.forEach(item => {
-                const text = item.textContent.toLowerCase();
-                item.style.display = text.includes(searchTerm) ? 'flex' : 'none';
-            });
-        }
-
-        // ENHANCEMENT #6: Generate diff view
-        function generateDiff(original, modified) {
-            const diffViewer = document.getElementById('diffViewer');
-
-            const originalLines = original.split('\n');
-            const modifiedLines = modified.split('\n');
-
-            let html = '<div style="font-family: monospace; font-size: 13px;">';
-
-            // Simple diff: show removed and added lines
-            originalLines.forEach(line => {
-                if (line.trim() && !modifiedLines.includes(line)) {
-                    html += `<div class="diff-line diff-removed">- ${escapeHTML(line)}</div>`;
-                }
-            });
-
-            modifiedLines.forEach(line => {
-                if (line.trim() && !originalLines.includes(line)) {
-                    html += `<div class="diff-line diff-added">+ ${escapeHTML(line)}</div>`;
-                }
-            });
-
-            html += '</div>';
-            diffViewer.innerHTML = html;
-        }
-
-        function escapeHTML(str) {
-            return str.replace(/[&<>"']/g, (m) => {
-                return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[m];
-            });
-        }
-
-        function switchTab(tabName) {
-            // Update tabs
-            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-
-            event.target.classList.add('active');
-            document.getElementById(tabName + 'Tab').classList.add('active');
-        }
-
-        function showStatus(message, type) {
-            const container = document.getElementById('statusContainer');
-            const status = document.createElement('div');
-            status.className = `status ${type}`;
-            status.innerHTML = `<span>${message}</span>`;
-            container.innerHTML = '';
-            container.appendChild(status);
-
-            setTimeout(() => {
-                status.style.opacity = '0';
-                setTimeout(() => status.remove(), 300);
-            }, 5000);
-        }
-
-        function updateProgressBar(percent) {
-            document.getElementById('progressBar').style.width = percent + '%';
-        }
-
-        function copyToClipboard(textareaId) {
-            const textarea = document.getElementById(textareaId);
-            textarea.select();
-            document.execCommand('copy');
-            showStatus('✓ Copied to clipboard!', 'success');
-        }
-
-        function downloadFile(filename, textareaId) {
-            const content = document.getElementById(textareaId).value;
-            const blob = new Blob([content], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            a.click();
-            URL.revokeObjectURL(url);
-            showStatus(`✓ Downloaded ${filename}`, 'success');
-        }
-
-        function clearCSS() {
-            document.getElementById('cssLibrary').value = '';
-            cssLibrary = {};
-            document.getElementById('classCount').textContent = '0';
-            showStatus('ℹ CSS library cleared', 'info');
-        }
-
-        function clearHTML() {
-            document.getElementById('htmlInput').value = '';
-            showStatus('ℹ HTML input cleared', 'info');
-        }
+    });
+    document.getElementById('htmlOutput').value = combinedHTML;
+    document.getElementById('cssOutput').value = combinedCSS;
+}
     </script>
     
     
