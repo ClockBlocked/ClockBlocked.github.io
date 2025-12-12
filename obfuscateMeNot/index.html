@@ -3,415 +3,416 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CSS Deobfuscator - Reverse Obfuscated Class Names</title>
+    <title>CSS Deobfuscator Pro - Advanced Web Tool</title>
     <style>
+        /* ===== GITHUB DARK DIMMED COLOR SCHEME ===== */
         :root {
-            --color-white: rgba(255, 255, 255, 1);
-            --color-black: rgba(0, 0, 0, 1);
-            --color-cream-50: rgba(252, 252, 249, 1);
-            --color-cream-100: rgba(255, 255, 253, 1);
-            --color-gray-200: rgba(245, 245, 245, 1);
-            --color-gray-300: rgba(167, 169, 169, 1);
-            --color-gray-400: rgba(119, 124, 124, 1);
-            --color-slate-500: rgba(98, 108, 113, 1);
-            --color-brown-600: rgba(94, 82, 64, 1);
-            --color-charcoal-700: rgba(31, 33, 33, 1);
-            --color-charcoal-800: rgba(38, 40, 40, 1);
-            --color-slate-900: rgba(19, 52, 59, 1);
-            --color-teal-300: rgba(50, 184, 198, 1);
-            --color-teal-400: rgba(45, 166, 178, 1);
-            --color-teal-500: rgba(33, 128, 141, 1);
-            --color-teal-600: rgba(29, 116, 128, 1);
-            --color-teal-700: rgba(26, 104, 115, 1);
-            --color-teal-800: rgba(41, 150, 161, 1);
-            --color-red-400: rgba(255, 84, 89, 1);
-            --color-red-500: rgba(192, 21, 47, 1);
-            --color-orange-400: rgba(230, 129, 97, 1);
-            --color-orange-500: rgba(168, 75, 47, 1);
-            --color-purple-500: rgba(147, 51, 234, 1);
-            --color-blue-500: rgba(59, 130, 246, 1);
-            
-            --color-brown-600-rgb: 94, 82, 64;
-            --color-teal-500-rgb: 33, 128, 141;
-            --color-slate-900-rgb: 19, 52, 59;
-            --color-teal-300-rgb: 50, 184, 198;
-            
-            --color-background: var(--color-cream-50);
-            --color-surface: var(--color-cream-100);
-            --color-text: var(--color-slate-900);
-            --color-text-secondary: var(--color-slate-500);
-            --color-primary: var(--color-teal-500);
-            --color-primary-hover: var(--color-teal-600);
-            --color-primary-active: var(--color-teal-700);
-            --color-secondary: rgba(var(--color-brown-600-rgb), 0.12);
-            --color-secondary-hover: rgba(var(--color-brown-600-rgb), 0.2);
-            --color-border: rgba(var(--color-brown-600-rgb), 0.2);
-            --color-error: var(--color-red-500);
-            --color-success: var(--color-teal-500);
-            --color-focus-ring: rgba(var(--color-teal-500-rgb), 0.4);
-            
-            --font-family-base: "Geist", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            --font-family-mono: "Berkeley Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-            --font-size-xs: 11px;
-            --font-size-sm: 12px;
-            --font-size-base: 14px;
-            --font-size-lg: 16px;
-            --font-size-xl: 18px;
-            --font-size-2xl: 20px;
-            --font-size-3xl: 24px;
-            --font-size-4xl: 30px;
-            --font-weight-normal: 400;
-            --font-weight-medium: 500;
-            --font-weight-semibold: 550;
-            --font-weight-bold: 600;
-            --line-height-tight: 1.2;
-            --line-height-normal: 1.5;
-            
-            --space-0: 0;
-            --space-4: 4px;
-            --space-6: 6px;
-            --space-8: 8px;
-            --space-12: 12px;
-            --space-16: 16px;
-            --space-20: 20px;
-            --space-24: 24px;
-            --space-32: 32px;
-            --space-40: 40px;
-            
-            --radius-sm: 6px;
-            --radius-base: 8px;
-            --radius-md: 10px;
-            --radius-lg: 12px;
-            --radius-xl: 16px;
-            
-            --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.02);
-            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.04);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            
-            --duration-fast: 150ms;
-            --duration-normal: 250ms;
-            --ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
+            /* GitHub Dark Dimmed Colors */
+            --gh-canvas-default: #22272e;
+            --gh-canvas-subtle: #2d333b;
+            --gh-canvas-inset: #1c2128;
+            --gh-border-default: #444c56;
+            --gh-border-muted: #373e47;
+            --gh-accent-emphasis: #539bf5;
+            --gh-accent-subtle: #1c2d41;
+            --gh-success-emphasis: #57ab5a;
+            --gh-danger-emphasis: #e5534b;
+            --gh-warning-emphasis: #c69026;
+            --gh-fg-default: #adbac7;
+            --gh-fg-muted: #768390;
+            --gh-fg-subtle: #545d68;
+
+            /* Extended palette */
+            --gh-purple: #b083f0;
+            --gh-orange: #e0823d;
+            --gh-pink: #d47cd4;
+            --gh-teal: #39c5cf;
+
+            /* Shadows */
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.5);
+            --shadow-glow: 0 0 20px rgba(83, 155, 245, 0.3);
         }
-        
-        html {
-            font-size: var(--font-size-base);
-            font-family: var(--font-family-base);
-            line-height: var(--line-height-normal);
-            color: var(--color-text);
-            background-color: var(--color-background);
-            -webkit-font-smoothing: antialiased;
+
+        * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
-            margin: 0;
-            padding: var(--space-16);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+            background: var(--gh-canvas-inset);
+            color: var(--gh-fg-default);
+            line-height: 1.6;
+            overflow-x: hidden;
         }
-        
-        * {
-            box-sizing: inherit;
+
+        /* Animated Background Pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(83, 155, 245, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(87, 171, 90, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
         }
-        
-        h1, h2, h3 {
-            margin: 0;
-            font-weight: var(--font-weight-semibold);
-            line-height: var(--line-height-tight);
-        }
-        
-        h1 { font-size: var(--font-size-4xl); }
-        h2 { font-size: var(--font-size-3xl); }
-        h3 { font-size: var(--font-size-2xl); }
-        
-        p { margin: 0 0 var(--space-16) 0; }
-        
+
         .container {
-            max-width: 1400px;
+            max-width: 1800px;
             margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
         }
-        
-        .header {
-            text-align: center;
-            margin-bottom: var(--space-40);
-            background: linear-gradient(135deg, var(--color-teal-500) 0%, var(--color-teal-600) 100%);
+
+        /* ===== HEADER ===== */
+        header {
+            background: linear-gradient(135deg, var(--gh-canvas-subtle) 0%, var(--gh-canvas-default) 100%);
+            border: 1px solid var(--gh-border-default);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, 
+                var(--gh-accent-emphasis) 0%, 
+                var(--gh-success-emphasis) 50%, 
+                var(--gh-purple) 100%);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--gh-accent-emphasis), var(--gh-teal));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
         }
-        
-        .header h1 {
-            margin-bottom: var(--space-8);
-            font-size: 2.5rem;
+
+        .subtitle {
+            color: var(--gh-fg-muted);
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        
-        .header p {
-            margin: 0;
-            color: var(--color-text-secondary);
-            font-size: var(--font-size-lg);
+
+        .version-badge {
+            background: var(--gh-accent-subtle);
+            color: var(--gh-accent-emphasis);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: 600;
+            border: 1px solid var(--gh-accent-emphasis);
         }
-        
-        .grid-2col {
+
+        /* ===== STATS BAR ===== */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: var(--gh-canvas-subtle);
+            border: 1px solid var(--gh-border-default);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--gh-accent-emphasis);
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--gh-accent-emphasis);
+            display: block;
+        }
+
+        .stat-label {
+            color: var(--gh-fg-muted);
+            font-size: 0.85em;
+            margin-top: 5px;
+        }
+
+        /* ===== MAIN GRID ===== */
+        .main-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: var(--space-32);
-            margin-bottom: var(--space-32);
+            gap: 25px;
+            margin-bottom: 25px;
         }
-        
-        @media (max-width: 1024px) {
-            .grid-2col {
+
+        @media (max-width: 1200px) {
+            .main-grid {
                 grid-template-columns: 1fr;
             }
         }
-        
+
+        /* ===== CARDS ===== */
         .card {
-            background: var(--color-surface);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--color-border);
+            background: var(--gh-canvas-subtle);
+            border: 1px solid var(--gh-border-default);
+            border-radius: 12px;
+            padding: 0;
             box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            position: relative;
             overflow: hidden;
-            transition: box-shadow var(--duration-normal) var(--ease-standard);
         }
-        
+
         .card:hover {
             box-shadow: var(--shadow-lg);
+            border-color: var(--gh-border-muted);
         }
-        
-        .card__header {
-            padding: var(--space-24);
-            border-bottom: 1px solid var(--color-border);
-            background: linear-gradient(135deg, rgba(var(--color-teal-500-rgb), 0.05) 0%, transparent 100%);
-        }
-        
-        .card__header h3 {
-            margin: 0;
-        }
-        
-        .card__body {
-            padding: var(--space-24);
+
+        .card-header {
+            background: var(--gh-canvas-default);
+            border-bottom: 1px solid var(--gh-border-default);
+            padding: 20px;
             display: flex;
-            flex-direction: column;
-            gap: var(--space-16);
+            justify-content: space-between;
+            align-items: center;
         }
-        
-        .input-group {
+
+        .card-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: var(--gh-fg-default);
             display: flex;
-            flex-direction: column;
-            gap: var(--space-8);
+            align-items: center;
+            gap: 10px;
         }
-        
-        .input-label {
-            font-weight: var(--font-weight-medium);
-            font-size: var(--font-size-sm);
-            color: var(--color-text);
+
+        .card-icon {
+            width: 24px;
+            height: 24px;
         }
-        
-        .input-area {
-            position: relative;
+
+        .card-body {
+            padding: 20px;
         }
-        
-        textarea {
+
+        /* ===== TEXTAREAS & INPUTS ===== */
+        textarea, input[type="text"], select {
             width: 100%;
-            min-height: 280px;
-            padding: var(--space-16);
-            font-family: var(--font-family-mono);
-            font-size: 13px;
-            line-height: 1.6;
-            color: var(--color-text);
-            background: var(--color-surface);
-            border: 1.5px solid var(--color-border);
-            border-radius: var(--radius-base);
-            transition: border-color var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard);
+            background: var(--gh-canvas-inset);
+            border: 1px solid var(--gh-border-default);
+            border-radius: 8px;
+            padding: 15px;
+            color: var(--gh-fg-default);
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
             resize: vertical;
+            transition: all 0.3s ease;
         }
-        
-        textarea:focus {
+
+        textarea:focus, input[type="text"]:focus, select:focus {
             outline: none;
-            border-color: var(--color-primary);
-            box-shadow: 0 0 0 3px var(--color-focus-ring);
+            border-color: var(--gh-accent-emphasis);
+            box-shadow: 0 0 0 3px var(--gh-accent-subtle);
         }
-        
+
+        textarea::placeholder {
+            color: var(--gh-fg-subtle);
+        }
+
+        .css-input {
+            height: 300px;
+        }
+
+        .html-input {
+            height: 400px;
+        }
+
+        .output-textarea {
+            height: 500px;
+            font-size: 13px;
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: var(--gh-accent-emphasis);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .btn-success {
+            background: var(--gh-success-emphasis);
+        }
+
+        .btn-warning {
+            background: var(--gh-warning-emphasis);
+        }
+
+        .btn-danger {
+            background: var(--gh-danger-emphasis);
+        }
+
+        .btn-secondary {
+            background: var(--gh-canvas-default);
+            border: 1px solid var(--gh-border-default);
+            color: var(--gh-fg-default);
+        }
+
+        .btn-purple {
+            background: var(--gh-purple);
+        }
+
+        .btn-teal {
+            background: var(--gh-teal);
+        }
+
+        /* ===== FILE UPLOAD ZONE ===== */
+        .upload-zone {
+            border: 2px dashed var(--gh-border-default);
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            background: var(--gh-canvas-inset);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+
+        .upload-zone:hover, .upload-zone.drag-over {
+            border-color: var(--gh-accent-emphasis);
+            background: var(--gh-accent-subtle);
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+            opacity: 0.6;
+        }
+
         input[type="file"] {
             display: none;
         }
-        
-        .file-input-wrapper {
-            position: relative;
-        }
-        
-        .file-input-label {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: var(--space-12) var(--space-20);
-            background: var(--color-secondary);
-            color: var(--color-text);
-            border-radius: var(--radius-base);
-            cursor: pointer;
-            font-weight: var(--font-weight-medium);
-            font-size: var(--font-size-sm);
-            transition: all var(--duration-fast) var(--ease-standard);
-        }
-        
-        .file-input-label:hover {
-            background: var(--color-secondary-hover);
-        }
-        
-        .file-input-label:active {
-            background: var(--color-secondary);
-        }
-        
-        .button-group {
+
+        /* ===== TABS ===== */
+        .tabs {
             display: flex;
-            gap: var(--space-12);
-            margin-top: var(--space-16);
+            gap: 5px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--gh-border-default);
         }
-        
-        .btn {
-            flex: 1;
-            padding: var(--space-12) var(--space-20);
+
+        .tab {
+            padding: 12px 24px;
+            background: transparent;
+            color: var(--gh-fg-muted);
             border: none;
-            border-radius: var(--radius-base);
-            font-size: var(--font-size-base);
-            font-weight: var(--font-weight-semibold);
-            cursor: pointer;
-            transition: all var(--duration-normal) var(--ease-standard);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: var(--space-8);
-        }
-        
-        .btn--primary {
-            background: linear-gradient(135deg, var(--color-teal-500) 0%, var(--color-teal-600) 100%);
-            color: white;
-            box-shadow: var(--shadow-md);
-        }
-        
-        .btn--primary:hover {
-            background: linear-gradient(135deg, var(--color-teal-600) 0%, var(--color-teal-700) 100%);
-            box-shadow: var(--shadow-lg);
-            transform: translateY(-2px);
-        }
-        
-        .btn--primary:active {
-            transform: translateY(0);
-            box-shadow: var(--shadow-sm);
-        }
-        
-        .btn--secondary {
-            background: var(--color-secondary);
-            color: var(--color-text);
-        }
-        
-        .btn--secondary:hover {
-            background: var(--color-secondary-hover);
-        }
-        
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
-        .output-tabs {
-            display: flex;
-            gap: var(--space-8);
-            border-bottom: 2px solid var(--color-border);
-            margin-bottom: var(--space-16);
-        }
-        
-        .tab-btn {
-            padding: var(--space-12) var(--space-16);
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-weight: var(--font-weight-medium);
-            font-size: var(--font-size-sm);
-            color: var(--color-text-secondary);
             border-bottom: 2px solid transparent;
-            transition: all var(--duration-fast) var(--ease-standard);
-            margin-bottom: -2px;
-        }
-        
-        .tab-btn.active {
-            color: var(--color-primary);
-            border-bottom-color: var(--color-primary);
-        }
-        
-        .tab-btn:hover:not(.active) {
-            color: var(--color-text);
-        }
-        
-        .output-content {
-            display: none;
-        }
-        
-        .output-content.active {
-            display: block;
-            animation: fadeIn var(--duration-fast) var(--ease-standard);
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        .code-block {
-            position: relative;
-            background: rgba(var(--color-slate-900-rgb), 0.04);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-base);
-            padding: var(--space-16);
-            font-family: var(--font-family-mono);
-            font-size: 12px;
-            line-height: 1.6;
-            overflow: auto;
-            max-height: 600px;
-        }
-        
-        .copy-btn {
-            position: absolute;
-            top: var(--space-12);
-            right: var(--space-12);
-            padding: var(--space-6) var(--space-12);
-            background: var(--color-primary);
-            color: white;
-            border: none;
-            border-radius: var(--radius-sm);
-            font-size: 11px;
-            font-weight: var(--font-weight-semibold);
             cursor: pointer;
-            transition: all var(--duration-fast) var(--ease-standard);
-            opacity: 0;
+            transition: all 0.3s ease;
+            font-weight: 500;
         }
-        
-        .code-block:hover .copy-btn {
-            opacity: 1;
+
+        .tab:hover {
+            color: var(--gh-fg-default);
+            background: var(--gh-canvas-inset);
         }
-        
-        .copy-btn:hover {
-            background: var(--color-primary-hover);
-            transform: scale(1.05);
+
+        .tab.active {
+            color: var(--gh-accent-emphasis);
+            border-bottom-color: var(--gh-accent-emphasis);
         }
-        
-        .copy-btn.copied {
-            background: var(--color-success);
-        }
-        
-        .status-message {
-            padding: var(--space-12) var(--space-16);
-            border-radius: var(--radius-base);
-            font-size: var(--font-size-sm);
-            margin: var(--space-16) 0;
+
+        .tab-content {
             display: none;
         }
-        
-        .status-message.show {
+
+        .tab-content.active {
             display: block;
-            animation: slideDown var(--duration-fast) var(--ease-standard);
         }
-        
-        @keyframes slideDown {
+
+        /* ===== STATUS MESSAGES ===== */
+        .status {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
             from {
                 opacity: 0;
                 transform: translateY(-10px);
@@ -421,531 +422,970 @@
                 transform: translateY(0);
             }
         }
-        
-        .status-message.success {
-            background: rgba(var(--color-teal-500-rgb), 0.15);
-            color: var(--color-success);
-            border: 1px solid rgba(var(--color-teal-500-rgb), 0.3);
+
+        .status.success {
+            background: rgba(87, 171, 90, 0.1);
+            border-color: var(--gh-success-emphasis);
+            color: var(--gh-success-emphasis);
         }
-        
-        .status-message.error {
-            background: rgba(255, 84, 89, 0.15);
-            color: var(--color-error);
-            border: 1px solid rgba(255, 84, 89, 0.3);
+
+        .status.error {
+            background: rgba(229, 83, 75, 0.1);
+            border-color: var(--gh-danger-emphasis);
+            color: var(--gh-danger-emphasis);
         }
-        
-        .status-message.info {
-            background: rgba(var(--color-teal-300-rgb), 0.15);
-            color: var(--color-primary);
-            border: 1px solid rgba(var(--color-teal-300-rgb), 0.3);
+
+        .status.info {
+            background: rgba(83, 155, 245, 0.1);
+            border-color: var(--gh-accent-emphasis);
+            color: var(--gh-accent-emphasis);
         }
-        
-        .hint-text {
-            font-size: var(--font-size-xs);
-            color: var(--color-text-secondary);
-            margin-top: var(--space-6);
+
+        .status.warning {
+            background: rgba(198, 144, 38, 0.1);
+            border-color: var(--gh-warning-emphasis);
+            color: var(--gh-warning-emphasis);
         }
-        
-        .mapping-display {
-            background: rgba(var(--color-slate-900-rgb), 0.02);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-base);
-            padding: var(--space-16);
-            max-height: 300px;
+
+        /* ===== MAPPING TABLE ===== */
+        .mapping-container {
+            max-height: 400px;
             overflow-y: auto;
+            background: var(--gh-canvas-inset);
+            border-radius: 8px;
+            padding: 15px;
         }
-        
+
+        .mapping-container::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .mapping-container::-webkit-scrollbar-track {
+            background: var(--gh-canvas-default);
+            border-radius: 5px;
+        }
+
+        .mapping-container::-webkit-scrollbar-thumb {
+            background: var(--gh-border-default);
+            border-radius: 5px;
+        }
+
+        .mapping-container::-webkit-scrollbar-thumb:hover {
+            background: var(--gh-accent-emphasis);
+        }
+
         .mapping-item {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: var(--space-12) 0;
-            border-bottom: 1px solid var(--color-border);
-            font-size: var(--font-size-sm);
-            font-family: var(--font-family-mono);
+            gap: 15px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: var(--gh-canvas-subtle);
+            border: 1px solid var(--gh-border-default);
+            border-radius: 6px;
+            transition: all 0.2s ease;
         }
-        
-        .mapping-item:last-child {
-            border-bottom: none;
+
+        .mapping-item:hover {
+            background: var(--gh-canvas-default);
+            border-color: var(--gh-accent-emphasis);
         }
-        
+
+        .mapping-arrow {
+            color: var(--gh-accent-emphasis);
+            font-weight: bold;
+        }
+
         .obfuscated-class {
-            color: var(--color-red-500);
-            font-weight: var(--font-weight-semibold);
+            font-family: monospace;
+            color: var(--gh-danger-emphasis);
+            background: rgba(229, 83, 75, 0.1);
+            padding: 4px 8px;
+            border-radius: 4px;
         }
-        
-        .mapped-class {
-            color: var(--color-teal-500);
-            font-weight: var(--font-weight-semibold);
+
+        .clean-class {
+            font-family: monospace;
+            color: var(--gh-success-emphasis);
+            background: rgba(87, 171, 90, 0.1);
+            padding: 4px 8px;
+            border-radius: 4px;
         }
-        
-        .divider {
-            color: var(--color-text-secondary);
-            margin: 0 var(--space-8);
+
+        /* ===== SETTINGS PANEL ===== */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
         }
-        
-        .empty-state {
+
+        .setting-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .setting-label {
+            color: var(--gh-fg-muted);
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--gh-canvas-default);
+            border: 1px solid var(--gh-border-default);
+            transition: 0.4s;
+            border-radius: 26px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 3px;
+            background-color: var(--gh-fg-muted);
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--gh-accent-emphasis);
+            border-color: var(--gh-accent-emphasis);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(24px);
+            background-color: white;
+        }
+
+        /* ===== SEARCH BAR ===== */
+        .search-container {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 40px 12px 15px;
+            background: var(--gh-canvas-inset);
+            border: 1px solid var(--gh-border-default);
+            border-radius: 8px;
+            color: var(--gh-fg-default);
+            font-size: 14px;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gh-fg-muted);
+        }
+
+        /* ===== DIFF VIEWER ===== */
+        .diff-viewer {
+            background: var(--gh-canvas-inset);
+            border-radius: 8px;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 13px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .diff-line {
+            padding: 2px 8px;
+            margin: 2px 0;
+            border-radius: 3px;
+        }
+
+        .diff-added {
+            background: rgba(87, 171, 90, 0.15);
+            border-left: 3px solid var(--gh-success-emphasis);
+        }
+
+        .diff-removed {
+            background: rgba(229, 83, 75, 0.15);
+            border-left: 3px solid var(--gh-danger-emphasis);
+        }
+
+        /* ===== PROGRESS BAR ===== */
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: var(--gh-canvas-inset);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, 
+                var(--gh-accent-emphasis), 
+                var(--gh-success-emphasis));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
             text-align: center;
-            padding: var(--space-40);
-            color: var(--color-text-secondary);
+            padding: 30px;
+            margin-top: 40px;
+            color: var(--gh-fg-muted);
+            border-top: 1px solid var(--gh-border-default);
         }
-        
-        .empty-state p {
-            margin: 0;
+
+        /* ===== TOOLTIPS ===== */
+        [data-tooltip] {
+            position: relative;
+            cursor: help;
+        }
+
+        [data-tooltip]:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 8px 12px;
+            background: var(--gh-canvas-default);
+            color: var(--gh-fg-default);
+            border: 1px solid var(--gh-border-default);
+            border-radius: 6px;
+            white-space: nowrap;
+            z-index: 1000;
+            font-size: 12px;
+            box-shadow: var(--shadow-md);
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .processing {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-bar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>🎨 CSS Deobfuscator</h1>
-            <p>Reverse-engineer obfuscated CSS class names with precision and clarity</p>
+        <header>
+            <h1>🔓 CSS Deobfuscator Pro</h1>
+            <div class="subtitle">
+                Advanced HTML & CSS Reverse Engineering Tool
+                <span class="version-badge">v2.0</span>
+            </div>
+        </header>
+
+        <!-- ENHANCEMENT #1: Real-time Statistics Dashboard -->
+        <div class="stats-bar">
+            <div class="stat-card">
+                <span class="stat-value" id="classCount">0</span>
+                <span class="stat-label">CSS Classes Loaded</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value" id="mappedCount">0</span>
+                <span class="stat-label">Classes Mapped</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value" id="elementsProcessed">0</span>
+                <span class="stat-label">Elements Processed</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value" id="processingTime">0ms</span>
+                <span class="stat-label">Processing Time</span>
+            </div>
         </div>
-        
-        <div class="grid-2col">
-            <!-- LEFT COLUMN: INPUTS -->
+
+        <div id="statusContainer"></div>
+
+        <div class="main-grid">
+            <!-- CSS LIBRARY INPUT -->
             <div class="card">
-                <div class="card__header">
-                    <h3>Input Configuration</h3>
+                <div class="card-header">
+                    <div class="card-title">
+                        📚 CSS Library
+                    </div>
                 </div>
-                <div class="card__body">
-                    <!-- CSS File Input -->
-                    <div class="input-group">
-                        <label class="input-label">📋 CSS Library (Obfuscation Map)</label>
-                        <div class="file-input-wrapper">
-                            <input type="file" id="cssFileInput" accept=".css,.txt" />
-                            <label for="cssFileInput" class="file-input-label">📁 Choose CSS File</label>
-                        </div>
-                        <p class="hint-text">Upload the CSS file containing obfuscated class definitions</p>
-                        <div id="cssFileName" style="font-size: 12px; color: var(--color-primary); margin-top: 8px;"></div>
+                <div class="card-body">
+                    <!-- ENHANCEMENT #2: Drag & Drop File Upload -->
+                    <div class="upload-zone" id="cssUploadZone">
+                        <div class="upload-icon">📤</div>
+                        <p><strong>Drop CSS file here</strong> or click to browse</p>
+                        <p style="color: var(--gh-fg-subtle); font-size: 0.9em;">Supports .css files</p>
+                        <input type="file" id="cssFileInput" accept=".css">
                     </div>
-                    
-                    <!-- HTML Input -->
-                    <div class="input-group">
-                        <label class="input-label">🔗 HTML Input</label>
-                        <textarea id="htmlInput" placeholder="Paste your obfuscated HTML here or upload a file...&#10;&#10;Example:&#10;&lt;div class=&quot;absolute gqbd6 ckz8f&quot;&gt;&#10;  &lt;img class=&quot;upgcu&quot; /&gt;&#10;&lt;/div&gt;"></textarea>
-                    </div>
-                    
-                    <!-- HTML File Input -->
-                    <div class="file-input-wrapper">
-                        <input type="file" id="htmlFileInput" accept=".html,.txt,.jsx,.tsx" />
-                        <label for="htmlFileInput" class="file-input-label">📁 Or Choose HTML File</label>
-                    </div>
-                    <p class="hint-text">Upload HTML file or paste content above</p>
-                    
-                    <!-- Action Buttons -->
-                    <div class="button-group">
-                        <button class="btn btn--primary" id="processBtn" onclick="processDeobfuscation()">
-                            ⚡ Deobfuscate
+
+                    <textarea 
+                        class="css-input" 
+                        id="cssLibrary" 
+                        placeholder="Paste your obfuscated CSS library here...
+
+Example:
+.abc123 { color: red; }
+.xyz789 { font-size: 16px; }"></textarea>
+
+                    <div class="btn-group" style="margin-top: 15px;">
+                        <button class="btn-success" onclick="parseCSSLibrary()">
+                            ⚡ Parse CSS Library
                         </button>
-                        <button class="btn btn--secondary" id="clearBtn" onclick="clearAll()">
+                        <button class="btn-secondary" onclick="clearCSS()">
                             🗑️ Clear
                         </button>
                     </div>
-                    
-                    <div id="statusMessage" class="status-message"></div>
                 </div>
             </div>
-            
-            <!-- RIGHT COLUMN: OUTPUTS -->
+
+            <!-- HTML INPUT -->
             <div class="card">
-                <div class="card__header">
-                    <h3>Output Results</h3>
-                </div>
-                <div class="card__body">
-                    <!-- Mapping Display -->
-                    <div class="input-group">
-                        <label class="input-label">🗺️ Class Mapping</label>
-                        <div id="mappingDisplay" class="mapping-display">
-                            <div class="empty-state">
-                                <p>Upload CSS and HTML to see mappings</p>
-                            </div>
-                        </div>
+                <div class="card-header">
+                    <div class="card-title">
+                        🌐 HTML Input
                     </div>
-                    
-                    <!-- Tabs for Output -->
-                    <div class="input-group">
-                        <label class="input-label">Output Code</label>
-                        <div class="output-tabs">
-                            <button class="tab-btn active" onclick="switchTab('html')">📄 HTML</button>
-                            <button class="tab-btn" onclick="switchTab('css')">🎨 CSS</button>
-                        </div>
-                        
-                        <!-- HTML Output -->
-                        <div id="htmlTab" class="output-content active">
-                            <div class="code-block" id="htmlOutput">
-                                <div class="empty-state">
-                                    <p>HTML output will appear here</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- CSS Output -->
-                        <div id="cssTab" class="output-content">
-                            <div class="code-block" id="cssOutput">
-                                <div class="empty-state">
-                                    <p>CSS output will appear here</p>
-                                </div>
-                            </div>
-                        </div>
+                </div>
+                <div class="card-body">
+                    <div class="upload-zone" id="htmlUploadZone">
+                        <div class="upload-icon">📄</div>
+                        <p><strong>Drop HTML file here</strong> or click to browse</p>
+                        <p style="color: var(--gh-fg-subtle); font-size: 0.9em;">Supports .html files</p>
+                        <input type="file" id="htmlFileInput" accept=".html">
+                    </div>
+
+                    <textarea 
+                        class="html-input" 
+                        id="htmlInput" 
+                        placeholder="Paste your HTML with obfuscated classes here...
+
+Example:
+<div class=&quot;abc123 xyz789&quot;>
+  <p>Content</p>
+</div>"></textarea>
+
+                    <div class="btn-group" style="margin-top: 15px;">
+                        <button class="btn-purple" onclick="deobfuscateHTML()">
+                            🚀 Deobfuscate
+                        </button>
+                        <button class="btn-secondary" onclick="clearHTML()">
+                            🗑️ Clear
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- ENHANCEMENT #3: Advanced Settings Panel -->
+        <div class="card" style="margin-bottom: 25px;">
+            <div class="card-header">
+                <div class="card-title">
+                    ⚙️ Advanced Settings
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="settings-grid">
+                    <div class="setting-item">
+                        <span class="setting-label">Class Naming Prefix</span>
+                        <input type="text" id="classPrefix" value="element-" placeholder="element-">
+                    </div>
+                    <div class="setting-item">
+                        <span class="setting-label">Starting Number</span>
+                        <input type="text" id="startNumber" value="1" placeholder="1">
+                    </div>
+                    <div class="setting-item">
+                        <span class="setting-label">Preserve Tailwind Classes</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="preserveTailwind" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <span class="setting-label">Generate Media Queries</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="generateMediaQueries" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <span class="setting-label">Minify Output CSS</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="minifyCSS">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <span class="setting-label">Add Comments</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="addComments" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ENHANCEMENT #4: Live Class Mapping Viewer -->
+        <div class="card" style="margin-bottom: 25px;">
+            <div class="card-header">
+                <div class="card-title">
+                    🔗 Class Mapping
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- ENHANCEMENT #5: Search/Filter functionality -->
+                <div class="search-container">
+                    <input 
+                        type="text" 
+                        class="search-input" 
+                        id="mappingSearch" 
+                        placeholder="🔍 Search class mappings..."
+                        oninput="filterMappings()">
+                    <span class="search-icon">🔍</span>
+                </div>
+
+                <div class="mapping-container" id="mappingDisplay">
+                    <p style="text-align: center; color: var(--gh-fg-muted);">
+                        No mappings yet. Deobfuscate HTML to see class mappings here.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- OUTPUT SECTION -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    ✨ Output
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="progress-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('html')">HTML Output</button>
+                    <button class="tab" onclick="switchTab('css')">CSS Output</button>
+                    <button class="tab" onclick="switchTab('diff')">Before/After Diff</button>
+                </div>
+
+                <div id="htmlTab" class="tab-content active">
+                    <textarea 
+                        class="output-textarea" 
+                        id="htmlOutput" 
+                        readonly 
+                        placeholder="Deobfuscated HTML will appear here..."></textarea>
+                    <div class="btn-group" style="margin-top: 15px;">
+                        <button class="btn-teal" onclick="copyToClipboard('htmlOutput')">
+                            📋 Copy HTML
+                        </button>
+                        <button class="btn-success" onclick="downloadFile('deobfuscated.html', 'htmlOutput')">
+                            💾 Download HTML
+                        </button>
+                    </div>
+                </div>
+
+                <div id="cssTab" class="tab-content">
+                    <textarea 
+                        class="output-textarea" 
+                        id="cssOutput" 
+                        readonly 
+                        placeholder="Deobfuscated CSS will appear here..."></textarea>
+                    <div class="btn-group" style="margin-top: 15px;">
+                        <button class="btn-teal" onclick="copyToClipboard('cssOutput')">
+                            📋 Copy CSS
+                        </button>
+                        <button class="btn-success" onclick="downloadFile('deobfuscated.css', 'cssOutput')">
+                            💾 Download CSS
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ENHANCEMENT #6: Before/After Diff Viewer -->
+                <div id="diffTab" class="tab-content">
+                    <div class="diff-viewer" id="diffViewer">
+                        <p style="text-align: center; color: var(--gh-fg-muted);">
+                            Diff view will appear here after deobfuscation.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Built with ❤️ for developers who reverse-engineer obfuscated code</p>
+            <p style="font-size: 0.9em; margin-top: 10px;">
+                Powered by GitHub Dark Dimmed Theme | CSS Deobfuscator Pro v2.0
+            </p>
+        </footer>
     </div>
-    
+
     <script>
-        let cssRules = {};
-        let htmlContent = '';
+        let cssLibrary = {};
         let classMapping = {};
-        
-    let cssLibrary = {};
-    let elementCounter = 1;
+        let elementCounter = 1;
+        let allMappings = [];
 
-window.addEventListener('DOMContentLoaded', async () => {
-    const defaultCSSFile = 'obfuscated.css';
-    
-    try {
-        const response = await fetch(defaultCSSFile);
-        if (response.ok) {
-            const cssContent = await response.text();
-            cssLibraryTextarea.value = cssContent;
-            parseCSSLibrary();
-            showStatus('✓ CSS library auto-loaded from ' + defaultCSSFile, 'success');
-        }
-    } catch (error) {
-        // File not found - user can still upload manually
-        showStatus('ℹ Upload or paste your CSS library to begin', 'info');
-    }
-});
+        // Auto-load CSS file from same directory
+        window.addEventListener('DOMContentLoaded', async () => {
+            const defaultCSSFile = 'obfuscated.css';
 
-        
-        
-        // File Input Handlers
-        document.getElementById('cssFileInput').addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    document.getElementById('cssFileName').textContent = '✓ Loaded: ' + file.name;
-                    parseCSSFile(event.target.result);
-                    showStatus(`CSS file loaded: ${file.name}`, 'info');
-                };
-                reader.readAsText(file);
+            try {
+                const response = await fetch(defaultCSSFile);
+                if (response.ok) {
+                    const cssContent = await response.text();
+                    document.getElementById('cssLibrary').value = cssContent;
+                    parseCSSLibrary();
+                    showStatus('✓ CSS library auto-loaded from ' + defaultCSSFile, 'success');
+                }
+            } catch (error) {
+                showStatus('ℹ Upload or paste your CSS library to begin', 'info');
             }
         });
-        
-        document.getElementById('htmlFileInput').addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    document.getElementById('htmlInput').value = event.target.result;
-                    showStatus(`HTML file loaded: ${file.name}`, 'info');
-                };
-                reader.readAsText(file);
-            }
-        });
-        
-        // Parse CSS File and Extract Rules
-        function parseCSSFile(cssText) {
-            cssRules = {};
-            
-            // Match class selectors and their properties
-            const classRegex = /\.([a-zA-Z0-9_-]+)\s*\{([^}]+)\}/g;
-            let match;
-            
-            while ((match = classRegex.exec(cssText)) !== null) {
-                const className = match[1];
-                const properties = match[2];
-                
-                // Parse individual CSS properties
-                const propMap = {};
-                const propRegex = /([a-zA-Z-]+)\s*:\s*([^;]+);/g;
-                let propMatch;
-                
-                while ((propMatch = propRegex.exec(properties)) !== null) {
-                    const propName = propMatch[1].trim();
-                    const propValue = propMatch[2].trim();
-                    propMap[propName] = propValue;
-                }
-                
-                cssRules[className] = propMap;
-            }
-            
-            showStatus(`Parsed ${Object.keys(cssRules).length} CSS classes`, 'success');
-        }
-        
-        // Extract Tailwind Utilities
-        function extractTailwindUtilities(classString) {
-            const utilities = [];
-            const classes = classString.split(/\s+/);
-            
-            const tailwindMap = {
-                'absolute': 'position: absolute;',
-                'relative': 'position: relative;',
-                'fixed': 'position: fixed;',
-                'static': 'position: static;',
-                'hidden': 'visibility: hidden;',
-                'block': 'display: block;',
-                'inline-block': 'display: inline-block;',
-                'flex': 'display: flex;',
-                'grid': 'display: grid;'
-            };
-            
-            for (const cls of classes) {
-                if (tailwindMap[cls]) {
-                    utilities.push(cls);
-                } else if (cls.startsWith('sm:') || cls.startsWith('md:') || cls.startsWith('lg:')) {
-                    // Handle responsive classes
-                    const baseClass = cls.split(':')[1];
-                    if (!utilities.includes(baseClass)) {
-                        utilities.push(cls);
-                    }
-                } else if (cssRules[cls]) {
-                    // It's an obfuscated class
-                    if (!utilities.includes(cls)) {
-                        utilities.push(cls);
-                    }
-                }
-            }
-            
-            return utilities;
-        }
-        
-        // Main Deobfuscation Process
-        function processDeobfuscation() {
-            htmlContent = document.getElementById('htmlInput').value.trim();
-            
-            if (!htmlContent) {
-                showStatus('Please provide HTML content', 'error');
-                return;
-            }
-            
-            if (Object.keys(cssRules).length === 0) {
-                showStatus('Please load a CSS file first', 'error');
-                return;
-            }
-            
-            classMapping = {};
-            let elementCounter = 1;
-            
-            // Parse HTML and extract class information
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(htmlContent, 'text/html');
-            const allElements = doc.querySelectorAll('[class]');
-            
-            if (allElements.length === 0) {
-                showStatus('No elements with classes found', 'error');
-                return;
-            }
-            
-            let deobfuscatedHTML = htmlContent;
-            let cssOutput = '';
-            const elementMap = new Map(); // Map old classes to element IDs
-            
-            // Process each element
-            allElements.forEach(element => {
-                const classes = element.getAttribute('class').split(/\s+/);
-                const obfuscatedClasses = classes.filter(cls => cssRules[cls]);
-                
-                if (obfuscatedClasses.length > 0) {
-                    const elementId = `element-${String(elementCounter).padStart(2, '0')}`;
-                    elementMap.set(obfuscatedClasses.join(' '), elementId);
-                    
-                    // Build element CSS rules
-                    let elementRules = {};
-                    let hasResponsive = false;
-                    let responsiveRules = {};
-                    
-                    for (const cls of classes) {
-                        if (cssRules[cls]) {
-                            // Add CSS from obfuscated class
-                            Object.assign(elementRules, cssRules[cls]);
-                            classMapping[cls] = elementId;
-                        } else if (cls === 'hidden') {
-                            elementRules['visibility'] = 'hidden';
-                        } else if (cls === 'absolute') {
-                            elementRules['position'] = 'absolute';
-                        } else if (cls.startsWith('sm:')) {
-                            hasResponsive = true;
-                            const baseClass = cls.split(':')[1];
-                            if (cssRules[baseClass]) {
-                                responsiveRules[baseClass] = cssRules[baseClass];
-                            }
-                        }
-                    }
-                    
-                    // Generate CSS for this element
-                    cssOutput += `.${elementId} {\n`;
-                    for (const [prop, value] of Object.entries(elementRules)) {
-                        cssOutput += `  ${prop}: ${value};\n`;
-                    }
-                    cssOutput += `}\n`;
-                    
-                    // Handle child element classes (like img with classes)
-                    const childrenWithClasses = element.querySelectorAll('[class]');
-                    childrenWithClasses.forEach((child, index) => {
-                        const childClasses = child.getAttribute('class').split(/\s+/);
-                        const childObfuscated = childClasses.filter(cls => cssRules[cls]);
-                        
-                        if (childObfuscated.length > 0 && index === 0) {
-                            cssOutput += `.${elementId} ${child.tagName.toLowerCase()} {\n`;
-                            for (const cls of childObfuscated) {
-                                for (const [prop, value] of Object.entries(cssRules[cls])) {
-                                    cssOutput += `  ${prop}: ${value};\n`;
-                                }
-                            }
-                            cssOutput += `}\n`;
-                        }
-                    });
-                    
-                    // Add responsive rules if needed
-                    if (hasResponsive) {
-                        cssOutput += `\n@media (max-width: 640px) {\n`;
-                        cssOutput += `.${elementId} {\n`;
-                        for (const [baseClass, rules] of Object.entries(responsiveRules)) {
-                            for (const [prop, value] of Object.entries(rules)) {
-                                cssOutput += `  ${prop}: ${value};\n`;
-                            }
-                        }
-                        cssOutput += `}\n}\n`;
-                    }
-                    
-                    cssOutput += '\n';
-                    elementCounter++;
+
+        // ENHANCEMENT #2: Drag & Drop Functionality
+        function setupDragAndDrop(zoneId, inputId, callback) {
+            const zone = document.getElementById(zoneId);
+            const input = document.getElementById(inputId);
+
+            zone.addEventListener('click', () => input.click());
+
+            zone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                zone.classList.add('drag-over');
+            });
+
+            zone.addEventListener('dragleave', () => {
+                zone.classList.remove('drag-over');
+            });
+
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('drag-over');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    handleFileUpload(files[0], callback);
                 }
             });
-            
-            // Replace classes in HTML
-            let deobHTML = htmlContent;
-            for (const [classes, elementId] of elementMap) {
-                const classPattern = new RegExp(`class="[^"]*\\b(${classes.split(' ').join('|')})\\b[^"]*"`, 'g');
-                deobHTML = deobHTML.replace(classPattern, `class="${elementId}"`);
-            }
-            
-            // Display results
-            displayResults(deobHTML, cssOutput);
-            showStatus(`Successfully deobfuscated ${elementCounter - 1} elements`, 'success');
-        }
-        
-        // Display Results
-        function displayResults(html, css) {
-            // Update HTML output
-            const htmlContainer = document.getElementById('htmlOutput');
-            const pre = document.createElement('pre');
-            pre.textContent = formatHTML(html);
-            htmlContainer.innerHTML = '';
-            htmlContainer.appendChild(pre);
-            addCopyButton('htmlOutput');
-            
-            // Update CSS output
-            const cssContainer = document.getElementById('cssOutput');
-            const cssPre = document.createElement('pre');
-            cssPre.textContent = css;
-            cssContainer.innerHTML = '';
-            cssContainer.appendChild(cssPre);
-            addCopyButton('cssOutput');
-            
-            // Update Mapping Display
-            updateMappingDisplay();
-        }
-        
-        // Format HTML for better readability
-        function formatHTML(html) {
-            let formatted = html;
-            let indent = 0;
-            const lines = formatted.split('\n');
-            let result = [];
-            
-            for (let line of lines) {
-                line = line.trim();
-                if (line.startsWith('</')) indent = Math.max(0, indent - 1);
-                result.push('  '.repeat(indent) + line);
-                if (line.startsWith('<') && !line.startsWith('</') && !line.endsWith('/>') && !line.includes('</')) {
-                    if (!line.includes('<!') && line.includes('>')) indent++;
+
+            input.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    handleFileUpload(e.target.files[0], callback);
                 }
-            }
-            
-            return result.join('\n').trim();
+            });
         }
-        
-        // Update Mapping Display
-        function updateMappingDisplay() {
-            const mappingDiv = document.getElementById('mappingDisplay');
-            
-            if (Object.keys(classMapping).length === 0) {
-                mappingDiv.innerHTML = '<div class="empty-state"><p>No mappings found</p></div>';
+
+        function handleFileUpload(file, callback) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                callback(e.target.result);
+                showStatus(`✓ File "${file.name}" loaded successfully`, 'success');
+            };
+            reader.readAsText(file);
+        }
+
+        setupDragAndDrop('cssUploadZone', 'cssFileInput', (content) => {
+            document.getElementById('cssLibrary').value = content;
+            parseCSSLibrary();
+        });
+
+        setupDragAndDrop('htmlUploadZone', 'htmlFileInput', (content) => {
+            document.getElementById('htmlInput').value = content;
+        });
+
+        function parseCSSLibrary() {
+            const startTime = performance.now();
+            const cssText = document.getElementById('cssLibrary').value;
+            cssLibrary = {};
+
+            // Parse CSS classes
+            const classRegex = /\.([a-zA-Z0-9_-]+)\s*\{([^}]+)\}/g;
+            let match;
+            let count = 0;
+
+            while ((match = classRegex.exec(cssText)) !== null) {
+                const className = match[1];
+                const properties = match[2].trim();
+                cssLibrary[className] = properties;
+                count++;
+            }
+
+            const endTime = performance.now();
+            const processingTime = Math.round(endTime - startTime);
+
+            // Update stats
+            document.getElementById('classCount').textContent = count;
+            document.getElementById('processingTime').textContent = processingTime + 'ms';
+
+            showStatus(`✓ Parsed ${count} CSS classes in ${processingTime}ms`, 'success');
+            updateProgressBar(100);
+        }
+
+        function deobfuscateHTML() {
+            const startTime = performance.now();
+            const htmlInput = document.getElementById('htmlInput').value;
+
+            if (!htmlInput.trim()) {
+                showStatus('⚠️ Please provide HTML input', 'warning');
                 return;
             }
-            
-            let html = '';
-            for (const [obf, clean] of Object.entries(classMapping)) {
-                html += `<div class="mapping-item">
-                    <span class="obfuscated-class">${obf}</span>
-                    <span class="divider">→</span>
-                    <span class="mapped-class">${clean}</span>
-                </div>`;
+
+            if (Object.keys(cssLibrary).length === 0) {
+                showStatus('⚠️ Please parse CSS library first', 'warning');
+                return;
             }
-            
-            mappingDiv.innerHTML = html;
-        }
-        
-        // Add Copy Button Functionality
-        function addCopyButton(containerId) {
-            const container = document.getElementById(containerId);
-            const btn = document.createElement('button');
-            btn.className = 'copy-btn';
-            btn.textContent = '📋 Copy';
-            btn.onclick = () => {
-                const text = container.querySelector('pre').textContent;
-                navigator.clipboard.writeText(text).then(() => {
-                    btn.textContent = '✓ Copied!';
-                    btn.classList.add('copied');
-                    setTimeout(() => {
-                        btn.textContent = '📋 Copy';
-                        btn.classList.remove('copied');
-                    }, 2000);
-                });
-            };
-            container.appendChild(btn);
-        }
-        
-        // Switch Tabs
-        function switchTab(tab) {
-            // Update tab buttons
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            
-            // Update content
-            document.querySelectorAll('.output-content').forEach(content => content.classList.remove('active'));
-            document.getElementById(tab + 'Tab').classList.add('active');
-        }
-        
-        // Show Status Messages
-        function showStatus(message, type) {
-            const statusDiv = document.getElementById('statusMessage');
-            statusDiv.textContent = message;
-            statusDiv.className = `status-message show ${type}`;
-            
-            setTimeout(() => {
-                statusDiv.classList.remove('show');
-            }, 4000);
-        }
-        
-        // Clear All
-        function clearAll() {
-            document.getElementById('htmlInput').value = '';
-            document.getElementById('cssFileInput').value = '';
-            document.getElementById('htmlFileInput').value = '';
-            document.getElementById('cssFileName').textContent = '';
-            document.getElementById('htmlOutput').innerHTML = '<div class="empty-state"><p>HTML output will appear here</p></div>';
-            document.getElementById('cssOutput').innerHTML = '<div class="empty-state"><p>CSS output will appear here</p></div>';
-            document.getElementById('mappingDisplay').innerHTML = '<div class="empty-state"><p>Upload CSS and HTML to see mappings</p></div>';
-            document.getElementById('statusMessage').classList.remove('show');
-            cssRules = {};
+
+            // Get settings
+            const classPrefix = document.getElementById('classPrefix').value || 'element-';
+            const startNumber = parseInt(document.getElementById('startNumber').value) || 1;
+            const preserveTailwind = document.getElementById('preserveTailwind').checked;
+            const generateMediaQueries = document.getElementById('generateMediaQueries').checked;
+            const addComments = document.getElementById('addComments').checked;
+
+            // Reset counters
+            elementCounter = startNumber;
             classMapping = {};
-            showStatus('All fields cleared', 'info');
+            allMappings = [];
+
+            // Parse HTML
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlInput, 'text/html');
+
+            // Tailwind utility classes to preserve
+            const tailwindClasses = ['hidden', 'block', 'flex', 'grid', 'absolute', 'relative', 
+                                     'fixed', 'sticky', 'sm:block', 'md:block', 'lg:block', 
+                                     'xl:block', '2xl:block', 'sm:hidden', 'md:hidden', 
+                                     'lg:hidden', 'xl:hidden', '2xl:hidden'];
+
+            // Find all elements with class attributes
+            const elementsWithClasses = doc.querySelectorAll('[class]');
+            let processedCount = 0;
+
+            const cssRules = {};
+            const responsiveRules = {};
+
+            elementsWithClasses.forEach((element) => {
+                const classes = element.className.split(/\s+/).filter(c => c);
+                const obfuscatedClasses = [];
+                const preservedClasses = [];
+                const responsiveClasses = [];
+
+                classes.forEach(cls => {
+                    if (preserveTailwind && tailwindClasses.includes(cls)) {
+                        preservedClasses.push(cls);
+                    } else if (cls.startsWith('sm:') || cls.startsWith('md:') || 
+                               cls.startsWith('lg:') || cls.startsWith('xl:') || 
+                               cls.startsWith('2xl:')) {
+                        responsiveClasses.push(cls);
+                    } else if (cssLibrary[cls]) {
+                        obfuscatedClasses.push(cls);
+                    }
+                });
+
+                if (obfuscatedClasses.length > 0) {
+                    const newClassName = classPrefix + (elementCounter++);
+
+                    // Store mapping for display
+                    obfuscatedClasses.forEach(oldClass => {
+                        allMappings.push({
+                            old: oldClass,
+                            new: newClassName,
+                            element: element.tagName.toLowerCase()
+                        });
+                    });
+
+                    // Combine CSS properties
+                    let combinedCSS = '';
+                    obfuscatedClasses.forEach(cls => {
+                        if (cssLibrary[cls]) {
+                            combinedCSS += cssLibrary[cls] + '\n  ';
+                        }
+                    });
+
+                    cssRules[newClassName] = combinedCSS.trim();
+
+                    // Handle child elements
+                    const childElements = element.querySelectorAll('[class]');
+                    childElements.forEach(child => {
+                        const childClasses = child.className.split(/\s+/).filter(c => c && cssLibrary[c]);
+                        if (childClasses.length > 0) {
+                            let childCSS = '';
+                            childClasses.forEach(cls => {
+                                if (cssLibrary[cls]) {
+                                    childCSS += cssLibrary[cls] + '\n    ';
+                                }
+                            });
+                            cssRules[newClassName + ' ' + child.tagName.toLowerCase()] = childCSS.trim();
+                        }
+                    });
+
+                    // Handle responsive classes
+                    if (generateMediaQueries && responsiveClasses.length > 0) {
+                        responsiveClasses.forEach(respClass => {
+                            const [breakpoint, utility] = respClass.split(':');
+                            if (!responsiveRules[breakpoint]) {
+                                responsiveRules[breakpoint] = {};
+                            }
+                            if (!responsiveRules[breakpoint][newClassName]) {
+                                responsiveRules[breakpoint][newClassName] = [];
+                            }
+
+                            // Map Tailwind utilities
+                            if (utility === 'block') {
+                                responsiveRules[breakpoint][newClassName].push('display: block;');
+                            } else if (utility === 'hidden') {
+                                responsiveRules[breakpoint][newClassName].push('display: none;');
+                            }
+                        });
+                    }
+
+                    // Update element class
+                    element.className = newClassName;
+                    processedCount++;
+                }
+            });
+
+            // Generate CSS output
+            let cssOutput = '';
+
+            if (addComments) {
+                cssOutput += '/* Deobfuscated CSS */\n';
+                cssOutput += '/* Generated by CSS Deobfuscator Pro */\n\n';
+            }
+
+            Object.keys(cssRules).forEach(className => {
+                cssOutput += `.${className} {\n  ${cssRules[className]}\n}\n\n`;
+            });
+
+            // Add media queries
+            if (generateMediaQueries && Object.keys(responsiveRules).length > 0) {
+                const breakpoints = {
+                    'sm': '640px',
+                    'md': '768px',
+                    'lg': '1024px',
+                    'xl': '1280px',
+                    '2xl': '1536px'
+                };
+
+                Object.keys(responsiveRules).forEach(breakpoint => {
+                    if (addComments) {
+                        cssOutput += `/* Responsive: ${breakpoint} breakpoint */\n`;
+                    }
+                    cssOutput += `@media (min-width: ${breakpoints[breakpoint]}) {\n`;
+                    Object.keys(responsiveRules[breakpoint]).forEach(className => {
+                        cssOutput += `  .${className} {\n`;
+                        responsiveRules[breakpoint][className].forEach(prop => {
+                            cssOutput += `    ${prop}\n`;
+                        });
+                        cssOutput += `  }\n`;
+                    });
+                    cssOutput += `}\n\n`;
+                });
+            }
+
+            // Minify if enabled
+            if (document.getElementById('minifyCSS').checked) {
+                cssOutput = cssOutput.replace(/\s+/g, ' ').replace(/\n/g, '').replace(/;\s*}/g, '}');
+            }
+
+            // Get HTML output
+            const htmlOutput = doc.body.innerHTML;
+
+            // Update outputs
+            document.getElementById('htmlOutput').value = htmlOutput;
+            document.getElementById('cssOutput').value = cssOutput;
+
+            // Update mapping display
+            updateMappingDisplay();
+
+            // Generate diff
+            generateDiff(htmlInput, htmlOutput);
+
+            // Update stats
+            const endTime = performance.now();
+            const processingTime = Math.round(endTime - startTime);
+            document.getElementById('mappedCount').textContent = allMappings.length;
+            document.getElementById('elementsProcessed').textContent = processedCount;
+            document.getElementById('processingTime').textContent = processingTime + 'ms';
+
+            showStatus(`✓ Successfully deobfuscated ${processedCount} elements with ${allMappings.length} class mappings in ${processingTime}ms`, 'success');
+            updateProgressBar(100);
+        }
+
+        // ENHANCEMENT #4: Update mapping display
+        function updateMappingDisplay() {
+            const container = document.getElementById('mappingDisplay');
+
+            if (allMappings.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: var(--gh-fg-muted);">No mappings yet.</p>';
+                return;
+            }
+
+            let html = '';
+            allMappings.forEach(mapping => {
+                html += `
+                    <div class="mapping-item">
+                        <span class="obfuscated-class">${mapping.old}</span>
+                        <span class="mapping-arrow">→</span>
+                        <span class="clean-class">${mapping.new}</span>
+                        <span style="color: var(--gh-fg-muted); margin-left: auto;">&lt;${mapping.element}&gt;</span>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // ENHANCEMENT #5: Filter mappings
+        function filterMappings() {
+            const searchTerm = document.getElementById('mappingSearch').value.toLowerCase();
+            const items = document.querySelectorAll('.mapping-item');
+
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(searchTerm) ? 'flex' : 'none';
+            });
+        }
+
+        // ENHANCEMENT #6: Generate diff view
+        function generateDiff(original, modified) {
+            const diffViewer = document.getElementById('diffViewer');
+
+            const originalLines = original.split('\n');
+            const modifiedLines = modified.split('\n');
+
+            let html = '<div style="font-family: monospace; font-size: 13px;">';
+
+            // Simple diff: show removed and added lines
+            originalLines.forEach(line => {
+                if (line.trim() && !modifiedLines.includes(line)) {
+                    html += `<div class="diff-line diff-removed">- ${escapeHTML(line)}</div>`;
+                }
+            });
+
+            modifiedLines.forEach(line => {
+                if (line.trim() && !originalLines.includes(line)) {
+                    html += `<div class="diff-line diff-added">+ ${escapeHTML(line)}</div>`;
+                }
+            });
+
+            html += '</div>';
+            diffViewer.innerHTML = html;
+        }
+
+        function escapeHTML(str) {
+            return str.replace(/[&<>"']/g, (m) => {
+                return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[m];
+            });
+        }
+
+        function switchTab(tabName) {
+            // Update tabs
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById(tabName + 'Tab').classList.add('active');
+        }
+
+        function showStatus(message, type) {
+            const container = document.getElementById('statusContainer');
+            const status = document.createElement('div');
+            status.className = `status ${type}`;
+            status.innerHTML = `<span>${message}</span>`;
+            container.innerHTML = '';
+            container.appendChild(status);
+
+            setTimeout(() => {
+                status.style.opacity = '0';
+                setTimeout(() => status.remove(), 300);
+            }, 5000);
+        }
+
+        function updateProgressBar(percent) {
+            document.getElementById('progressBar').style.width = percent + '%';
+        }
+
+        function copyToClipboard(textareaId) {
+            const textarea = document.getElementById(textareaId);
+            textarea.select();
+            document.execCommand('copy');
+            showStatus('✓ Copied to clipboard!', 'success');
+        }
+
+        function downloadFile(filename, textareaId) {
+            const content = document.getElementById(textareaId).value;
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+            showStatus(`✓ Downloaded ${filename}`, 'success');
+        }
+
+        function clearCSS() {
+            document.getElementById('cssLibrary').value = '';
+            cssLibrary = {};
+            document.getElementById('classCount').textContent = '0';
+            showStatus('ℹ CSS library cleared', 'info');
+        }
+
+        function clearHTML() {
+            document.getElementById('htmlInput').value = '';
+            showStatus('ℹ HTML input cleared', 'info');
         }
     </script>
 </body>
