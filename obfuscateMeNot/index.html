@@ -1,1343 +1,1373 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CSS Deobfuscator Pro - Advanced Web Tool</title>
     <style>
-        /* ===== GITHUB DARK DIMMED COLOR SCHEME ===== */
-        :root {
-            /* GitHub Dark Dimmed Colors */
-            --gh-canvas-default: #22272e;
-            --gh-canvas-subtle: #2d333b;
-            --gh-canvas-inset: #1c2128;
-            --gh-border-default: #444c56;
-            --gh-border-muted: #373e47;
-            --gh-accent-emphasis: #539bf5;
-            --gh-accent-subtle: #1c2d41;
-            --gh-success-emphasis: #57ab5a;
-            --gh-danger-emphasis: #e5534b;
-            --gh-warning-emphasis: #c69026;
-            --gh-fg-default: #adbac7;
-            --gh-fg-muted: #768390;
-            --gh-fg-subtle: #545d68;
+      /* ===== GITHUB DARK DIMMED COLOR SCHEME ===== */
+      :root {
+        /* GitHub Dark Dimmed Colors */
+        --gh-canvas-default: #22272e;
+        --gh-canvas-subtle: #2d333b;
+        --gh-canvas-inset: #1c2128;
+        --gh-border-default: #444c56;
+        --gh-border-muted: #373e47;
+        --gh-accent-emphasis: #539bf5;
+        --gh-accent-subtle: #1c2d41;
+        --gh-success-emphasis: #57ab5a;
+        --gh-danger-emphasis: #e5534b;
+        --gh-warning-emphasis: #c69026;
+        --gh-fg-default: #adbac7;
+        --gh-fg-muted: #768390;
+        --gh-fg-subtle: #545d68;
 
-            /* Extended palette */
-            --gh-purple: #b083f0;
-            --gh-orange: #e0823d;
-            --gh-pink: #d47cd4;
-            --gh-teal: #39c5cf;
+        /* Extended palette */
+        --gh-purple: #b083f0;
+        --gh-orange: #e0823d;
+        --gh-pink: #d47cd4;
+        --gh-teal: #39c5cf;
 
-            /* Shadows */
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
-            --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
-            --shadow-lg: 0 8px 24px rgba(0,0,0,0.5);
-            --shadow-glow: 0 0 20px rgba(83, 155, 245, 0.3);
-        }
+        /* Shadows */
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+        --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+        --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+        --shadow-glow: 0 0 20px rgba(83, 155, 245, 0.3);
+      }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
-            background: var(--gh-canvas-inset);
-            color: var(--gh-fg-default);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+        background: var(--gh-canvas-inset);
+        color: var(--gh-fg-default);
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
 
-        /* Animated Background Pattern */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 20% 50%, rgba(83, 155, 245, 0.05) 0%, transparent 50%),
-                radial-gradient(circle at 80% 50%, rgba(87, 171, 90, 0.05) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: 0;
-        }
+      /* Animated Background Pattern */
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at 20% 50%, rgba(83, 155, 245, 0.05) 0%, transparent 50%),
+          radial-gradient(circle at 80% 50%, rgba(87, 171, 90, 0.05) 0%, transparent 50%);
+        pointer-events: none;
+        z-index: 0;
+      }
 
-        .container {
-            max-width: 1800px;
-            margin: 0 auto;
-            padding: 20px;
-            position: relative;
-            z-index: 1;
-        }
+      .container {
+        max-width: 1800px;
+        margin: 0 auto;
+        padding: 20px;
+        position: relative;
+        z-index: 1;
+      }
 
-        /* ===== HEADER ===== */
-        header {
-            background: linear-gradient(135deg, var(--gh-canvas-subtle) 0%, var(--gh-canvas-default) 100%);
-            border: 1px solid var(--gh-border-default);
-            border-radius: 12px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: var(--shadow-lg);
-            position: relative;
-            overflow: hidden;
-        }
+      /* ===== HEADER ===== */
+      header {
+        background: linear-gradient(135deg, var(--gh-canvas-subtle) 0%, var(--gh-canvas-default) 100%);
+        border: 1px solid var(--gh-border-default);
+        border-radius: 12px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: var(--shadow-lg);
+        position: relative;
+        overflow: hidden;
+      }
 
-        header::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: linear-gradient(90deg, 
-                var(--gh-accent-emphasis) 0%, 
-                var(--gh-success-emphasis) 50%, 
-                var(--gh-purple) 100%);
-        }
+      header::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(
+          90deg,
+          var(--gh-accent-emphasis) 0%,
+          var(--gh-success-emphasis) 50%,
+          var(--gh-purple) 100%
+        );
+      }
 
-        h1 {
-            font-size: 2.5em;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--gh-accent-emphasis), var(--gh-teal));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 10px;
-            letter-spacing: -0.5px;
-        }
+      h1 {
+        font-size: 2.5em;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--gh-accent-emphasis), var(--gh-teal));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 10px;
+        letter-spacing: -0.5px;
+      }
 
-        .subtitle {
-            color: var(--gh-fg-muted);
-            font-size: 1.1em;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+      .subtitle {
+        color: var(--gh-fg-muted);
+        font-size: 1.1em;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
 
-        .version-badge {
-            background: var(--gh-accent-subtle);
-            color: var(--gh-accent-emphasis);
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 0.75em;
-            font-weight: 600;
-            border: 1px solid var(--gh-accent-emphasis);
-        }
+      .version-badge {
+        background: var(--gh-accent-subtle);
+        color: var(--gh-accent-emphasis);
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 0.75em;
+        font-weight: 600;
+        border: 1px solid var(--gh-accent-emphasis);
+      }
 
-        /* ===== STATS BAR ===== */
-        .stats-bar {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px;
-            margin-bottom: 25px;
-        }
+      /* ===== STATS BAR ===== */
+      .stats-bar {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 15px;
+        margin-bottom: 25px;
+      }
 
-        .stat-card {
-            background: var(--gh-canvas-subtle);
-            border: 1px solid var(--gh-border-default);
-            border-radius: 8px;
-            padding: 15px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
+      .stat-card {
+        background: var(--gh-canvas-subtle);
+        border: 1px solid var(--gh-border-default);
+        border-radius: 8px;
+        padding: 15px;
+        text-align: center;
+        transition: all 0.3s ease;
+      }
 
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-            border-color: var(--gh-accent-emphasis);
-        }
+      .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+        border-color: var(--gh-accent-emphasis);
+      }
 
-        .stat-value {
-            font-size: 2em;
-            font-weight: 700;
-            color: var(--gh-accent-emphasis);
-            display: block;
-        }
+      .stat-value {
+        font-size: 2em;
+        font-weight: 700;
+        color: var(--gh-accent-emphasis);
+        display: block;
+      }
 
-        .stat-label {
-            color: var(--gh-fg-muted);
-            font-size: 0.85em;
-            margin-top: 5px;
-        }
+      .stat-label {
+        color: var(--gh-fg-muted);
+        font-size: 0.85em;
+        margin-top: 5px;
+      }
 
-        /* ===== MAIN GRID ===== */
+      /* ===== MAIN GRID ===== */
+      .main-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 25px;
+        margin-bottom: 25px;
+      }
+
+      @media (max-width: 1200px) {
         .main-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-            margin-bottom: 25px;
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* ===== CARDS ===== */
+      .card {
+        background: var(--gh-canvas-subtle);
+        border: 1px solid var(--gh-border-default);
+        border-radius: 12px;
+        padding: 0;
+        box-shadow: var(--shadow-md);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .card:hover {
+        box-shadow: var(--shadow-lg);
+        border-color: var(--gh-border-muted);
+      }
+
+      .card-header {
+        background: var(--gh-canvas-default);
+        border-bottom: 1px solid var(--gh-border-default);
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .card-title {
+        font-size: 1.3em;
+        font-weight: 600;
+        color: var(--gh-fg-default);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .card-icon {
+        width: 24px;
+        height: 24px;
+      }
+
+      .card-body {
+        padding: 20px;
+      }
+
+      /* ===== TEXTAREAS & INPUTS ===== */
+      textarea,
+      input[type="text"],
+      select {
+        width: 100%;
+        background: var(--gh-canvas-inset);
+        border: 1px solid var(--gh-border-default);
+        border-radius: 8px;
+        padding: 15px;
+        color: var(--gh-fg-default);
+        font-family: "Consolas", "Monaco", "Courier New", monospace;
+        font-size: 14px;
+        line-height: 1.5;
+        resize: vertical;
+        transition: all 0.3s ease;
+      }
+
+      textarea:focus,
+      input[type="text"]:focus,
+      select:focus {
+        outline: none;
+        border-color: var(--gh-accent-emphasis);
+        box-shadow: 0 0 0 3px var(--gh-accent-subtle);
+      }
+
+      textarea::placeholder {
+        color: var(--gh-fg-subtle);
+      }
+
+      .css-input {
+        height: 300px;
+      }
+
+      .html-input {
+        height: 400px;
+      }
+
+      .output-textarea {
+        height: 500px;
+        font-size: 13px;
+      }
+
+      /* ===== BUTTONS ===== */
+      .btn-group {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        background: var(--gh-accent-emphasis);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 24px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      button::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        transform: translate(-50%, -50%);
+        transition:
+          width 0.6s,
+          height 0.6s;
+      }
+
+      button:hover::before {
+        width: 300px;
+        height: 300px;
+      }
+
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-glow);
+      }
+
+      button:active {
+        transform: translateY(0);
+      }
+
+      .btn-success {
+        background: var(--gh-success-emphasis);
+      }
+
+      .btn-warning {
+        background: var(--gh-warning-emphasis);
+      }
+
+      .btn-danger {
+        background: var(--gh-danger-emphasis);
+      }
+
+      .btn-secondary {
+        background: var(--gh-canvas-default);
+        border: 1px solid var(--gh-border-default);
+        color: var(--gh-fg-default);
+      }
+
+      .btn-purple {
+        background: var(--gh-purple);
+      }
+
+      .btn-teal {
+        background: var(--gh-teal);
+      }
+
+      /* ===== FILE UPLOAD ZONE ===== */
+      .upload-zone {
+        border: 2px dashed var(--gh-border-default);
+        border-radius: 12px;
+        padding: 40px;
+        text-align: center;
+        background: var(--gh-canvas-inset);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        margin-bottom: 15px;
+      }
+
+      .upload-zone:hover,
+      .upload-zone.drag-over {
+        border-color: var(--gh-accent-emphasis);
+        background: var(--gh-accent-subtle);
+        transform: scale(1.02);
+      }
+
+      .upload-icon {
+        font-size: 3em;
+        margin-bottom: 15px;
+        opacity: 0.6;
+      }
+
+      input[type="file"] {
+        display: none;
+      }
+
+      /* ===== TABS ===== */
+      .tabs {
+        display: flex;
+        gap: 5px;
+        margin-bottom: 20px;
+        border-bottom: 1px solid var(--gh-border-default);
+      }
+
+      .tab {
+        padding: 12px 24px;
+        background: transparent;
+        color: var(--gh-fg-muted);
+        border: none;
+        border-bottom: 2px solid transparent;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+      }
+
+      .tab:hover {
+        color: var(--gh-fg-default);
+        background: var(--gh-canvas-inset);
+      }
+
+      .tab.active {
+        color: var(--gh-accent-emphasis);
+        border-bottom-color: var(--gh-accent-emphasis);
+      }
+
+      .tab-content {
+        display: none;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      /* ===== STATUS MESSAGES ===== */
+      .status {
+        padding: 15px 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        border-left: 4px solid;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        animation: slideIn 0.3s ease;
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .status.success {
+        background: rgba(87, 171, 90, 0.1);
+        border-color: var(--gh-success-emphasis);
+        color: var(--gh-success-emphasis);
+      }
+
+      .status.error {
+        background: rgba(229, 83, 75, 0.1);
+        border-color: var(--gh-danger-emphasis);
+        color: var(--gh-danger-emphasis);
+      }
+
+      .status.info {
+        background: rgba(83, 155, 245, 0.1);
+        border-color: var(--gh-accent-emphasis);
+        color: var(--gh-accent-emphasis);
+      }
+
+      .status.warning {
+        background: rgba(198, 144, 38, 0.1);
+        border-color: var(--gh-warning-emphasis);
+        color: var(--gh-warning-emphasis);
+      }
+
+      /* ===== MAPPING TABLE ===== */
+      .mapping-container {
+        max-height: 400px;
+        overflow-y: auto;
+        background: var(--gh-canvas-inset);
+        border-radius: 8px;
+        padding: 15px;
+      }
+
+      .mapping-container::-webkit-scrollbar {
+        width: 10px;
+      }
+
+      .mapping-container::-webkit-scrollbar-track {
+        background: var(--gh-canvas-default);
+        border-radius: 5px;
+      }
+
+      .mapping-container::-webkit-scrollbar-thumb {
+        background: var(--gh-border-default);
+        border-radius: 5px;
+      }
+
+      .mapping-container::-webkit-scrollbar-thumb:hover {
+        background: var(--gh-accent-emphasis);
+      }
+
+      .mapping-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 10px;
+        margin-bottom: 8px;
+        background: var(--gh-canvas-subtle);
+        border: 1px solid var(--gh-border-default);
+        border-radius: 6px;
+        transition: all 0.2s ease;
+      }
+
+      .mapping-item:hover {
+        background: var(--gh-canvas-default);
+        border-color: var(--gh-accent-emphasis);
+      }
+
+      .mapping-arrow {
+        color: var(--gh-accent-emphasis);
+        font-weight: bold;
+      }
+
+      .obfuscated-class {
+        font-family: monospace;
+        color: var(--gh-danger-emphasis);
+        background: rgba(229, 83, 75, 0.1);
+        padding: 4px 8px;
+        border-radius: 4px;
+      }
+
+      .clean-class {
+        font-family: monospace;
+        color: var(--gh-success-emphasis);
+        background: rgba(87, 171, 90, 0.1);
+        padding: 4px 8px;
+        border-radius: 4px;
+      }
+
+      /* ===== SETTINGS PANEL ===== */
+      .settings-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .setting-item {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .setting-label {
+        color: var(--gh-fg-muted);
+        font-size: 0.9em;
+        font-weight: 500;
+      }
+
+      .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 26px;
+      }
+
+      .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: var(--gh-canvas-default);
+        border: 1px solid var(--gh-border-default);
+        transition: 0.4s;
+        border-radius: 26px;
+      }
+
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 4px;
+        bottom: 3px;
+        background-color: var(--gh-fg-muted);
+        transition: 0.4s;
+        border-radius: 50%;
+      }
+
+      input:checked + .slider {
+        background-color: var(--gh-accent-emphasis);
+        border-color: var(--gh-accent-emphasis);
+      }
+
+      input:checked + .slider:before {
+        transform: translateX(24px);
+        background-color: white;
+      }
+
+      /* ===== SEARCH BAR ===== */
+      .search-container {
+        position: relative;
+        margin-bottom: 15px;
+      }
+
+      .search-input {
+        width: 100%;
+        padding: 12px 40px 12px 15px;
+        background: var(--gh-canvas-inset);
+        border: 1px solid var(--gh-border-default);
+        border-radius: 8px;
+        color: var(--gh-fg-default);
+        font-size: 14px;
+      }
+
+      .search-icon {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--gh-fg-muted);
+      }
+
+      /* ===== DIFF VIEWER ===== */
+      .diff-viewer {
+        background: var(--gh-canvas-inset);
+        border-radius: 8px;
+        padding: 15px;
+        font-family: monospace;
+        font-size: 13px;
+        max-height: 400px;
+        overflow-y: auto;
+      }
+
+      .diff-line {
+        padding: 2px 8px;
+        margin: 2px 0;
+        border-radius: 3px;
+      }
+
+      .diff-added {
+        background: rgba(87, 171, 90, 0.15);
+        border-left: 3px solid var(--gh-success-emphasis);
+      }
+
+      .diff-removed {
+        background: rgba(229, 83, 75, 0.15);
+        border-left: 3px solid var(--gh-danger-emphasis);
+      }
+
+      /* ===== PROGRESS BAR ===== */
+      .progress-container {
+        width: 100%;
+        height: 6px;
+        background: var(--gh-canvas-inset);
+        border-radius: 3px;
+        overflow: hidden;
+        margin-bottom: 15px;
+      }
+
+      .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, var(--gh-accent-emphasis), var(--gh-success-emphasis));
+        width: 0%;
+        transition: width 0.3s ease;
+      }
+
+      /* ===== FOOTER ===== */
+      footer {
+        text-align: center;
+        padding: 30px;
+        margin-top: 40px;
+        color: var(--gh-fg-muted);
+        border-top: 1px solid var(--gh-border-default);
+      }
+
+      /* ===== TOOLTIPS ===== */
+      [data-tooltip] {
+        position: relative;
+        cursor: help;
+      }
+
+      [data-tooltip]:hover::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 8px 12px;
+        background: var(--gh-canvas-default);
+        color: var(--gh-fg-default);
+        border: 1px solid var(--gh-border-default);
+        border-radius: 6px;
+        white-space: nowrap;
+        z-index: 1000;
+        font-size: 12px;
+        box-shadow: var(--shadow-md);
+      }
+
+      /* ===== ANIMATIONS ===== */
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      .processing {
+        animation: pulse 1.5s ease-in-out infinite;
+      }
+
+      /* ===== RESPONSIVE ===== */
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 1.8em;
         }
 
-        @media (max-width: 1200px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-            }
+        .main-grid {
+          grid-template-columns: 1fr;
         }
 
-        /* ===== CARDS ===== */
-        .card {
-            background: var(--gh-canvas-subtle);
-            border: 1px solid var(--gh-border-default);
-            border-radius: 12px;
-            padding: 0;
-            box-shadow: var(--shadow-md);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+        .stats-bar {
+          grid-template-columns: repeat(2, 1fr);
         }
 
-        .card:hover {
-            box-shadow: var(--shadow-lg);
-            border-color: var(--gh-border-muted);
-        }
-
-        .card-header {
-            background: var(--gh-canvas-default);
-            border-bottom: 1px solid var(--gh-border-default);
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .card-title {
-            font-size: 1.3em;
-            font-weight: 600;
-            color: var(--gh-fg-default);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .card-icon {
-            width: 24px;
-            height: 24px;
-        }
-
-        .card-body {
-            padding: 20px;
-        }
-
-        /* ===== TEXTAREAS & INPUTS ===== */
-        textarea, input[type="text"], select {
-            width: 100%;
-            background: var(--gh-canvas-inset);
-            border: 1px solid var(--gh-border-default);
-            border-radius: 8px;
-            padding: 15px;
-            color: var(--gh-fg-default);
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-            font-size: 14px;
-            line-height: 1.5;
-            resize: vertical;
-            transition: all 0.3s ease;
-        }
-
-        textarea:focus, input[type="text"]:focus, select:focus {
-            outline: none;
-            border-color: var(--gh-accent-emphasis);
-            box-shadow: 0 0 0 3px var(--gh-accent-subtle);
-        }
-
-        textarea::placeholder {
-            color: var(--gh-fg-subtle);
-        }
-
-        .css-input {
-            height: 300px;
-        }
-
-        .html-input {
-            height: 400px;
-        }
-
-        .output-textarea {
-            height: 500px;
-            font-size: 13px;
-        }
-
-        /* ===== BUTTONS ===== */
         .btn-group {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+          flex-direction: column;
         }
 
         button {
-            background: var(--gh-accent-emphasis);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 12px 24px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            position: relative;
-            overflow: hidden;
+          width: 100%;
         }
-
-        button::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.2);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-
-        button:hover::before {
-            width: 300px;
-            height: 300px;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-glow);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        .btn-success {
-            background: var(--gh-success-emphasis);
-        }
-
-        .btn-warning {
-            background: var(--gh-warning-emphasis);
-        }
-
-        .btn-danger {
-            background: var(--gh-danger-emphasis);
-        }
-
-        .btn-secondary {
-            background: var(--gh-canvas-default);
-            border: 1px solid var(--gh-border-default);
-            color: var(--gh-fg-default);
-        }
-
-        .btn-purple {
-            background: var(--gh-purple);
-        }
-
-        .btn-teal {
-            background: var(--gh-teal);
-        }
-
-        /* ===== FILE UPLOAD ZONE ===== */
-        .upload-zone {
-            border: 2px dashed var(--gh-border-default);
-            border-radius: 12px;
-            padding: 40px;
-            text-align: center;
-            background: var(--gh-canvas-inset);
-            transition: all 0.3s ease;
-            cursor: pointer;
-            margin-bottom: 15px;
-        }
-
-        .upload-zone:hover, .upload-zone.drag-over {
-            border-color: var(--gh-accent-emphasis);
-            background: var(--gh-accent-subtle);
-            transform: scale(1.02);
-        }
-
-        .upload-icon {
-            font-size: 3em;
-            margin-bottom: 15px;
-            opacity: 0.6;
-        }
-
-        input[type="file"] {
-            display: none;
-        }
-
-        /* ===== TABS ===== */
-        .tabs {
-            display: flex;
-            gap: 5px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--gh-border-default);
-        }
-
-        .tab {
-            padding: 12px 24px;
-            background: transparent;
-            color: var(--gh-fg-muted);
-            border: none;
-            border-bottom: 2px solid transparent;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .tab:hover {
-            color: var(--gh-fg-default);
-            background: var(--gh-canvas-inset);
-        }
-
-        .tab.active {
-            color: var(--gh-accent-emphasis);
-            border-bottom-color: var(--gh-accent-emphasis);
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* ===== STATUS MESSAGES ===== */
-        .status {
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border-left: 4px solid;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .status.success {
-            background: rgba(87, 171, 90, 0.1);
-            border-color: var(--gh-success-emphasis);
-            color: var(--gh-success-emphasis);
-        }
-
-        .status.error {
-            background: rgba(229, 83, 75, 0.1);
-            border-color: var(--gh-danger-emphasis);
-            color: var(--gh-danger-emphasis);
-        }
-
-        .status.info {
-            background: rgba(83, 155, 245, 0.1);
-            border-color: var(--gh-accent-emphasis);
-            color: var(--gh-accent-emphasis);
-        }
-
-        .status.warning {
-            background: rgba(198, 144, 38, 0.1);
-            border-color: var(--gh-warning-emphasis);
-            color: var(--gh-warning-emphasis);
-        }
-
-        /* ===== MAPPING TABLE ===== */
-        .mapping-container {
-            max-height: 400px;
-            overflow-y: auto;
-            background: var(--gh-canvas-inset);
-            border-radius: 8px;
-            padding: 15px;
-        }
-
-        .mapping-container::-webkit-scrollbar {
-            width: 10px;
-        }
-
-        .mapping-container::-webkit-scrollbar-track {
-            background: var(--gh-canvas-default);
-            border-radius: 5px;
-        }
-
-        .mapping-container::-webkit-scrollbar-thumb {
-            background: var(--gh-border-default);
-            border-radius: 5px;
-        }
-
-        .mapping-container::-webkit-scrollbar-thumb:hover {
-            background: var(--gh-accent-emphasis);
-        }
-
-        .mapping-item {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 10px;
-            margin-bottom: 8px;
-            background: var(--gh-canvas-subtle);
-            border: 1px solid var(--gh-border-default);
-            border-radius: 6px;
-            transition: all 0.2s ease;
-        }
-
-        .mapping-item:hover {
-            background: var(--gh-canvas-default);
-            border-color: var(--gh-accent-emphasis);
-        }
-
-        .mapping-arrow {
-            color: var(--gh-accent-emphasis);
-            font-weight: bold;
-        }
-
-        .obfuscated-class {
-            font-family: monospace;
-            color: var(--gh-danger-emphasis);
-            background: rgba(229, 83, 75, 0.1);
-            padding: 4px 8px;
-            border-radius: 4px;
-        }
-
-        .clean-class {
-            font-family: monospace;
-            color: var(--gh-success-emphasis);
-            background: rgba(87, 171, 90, 0.1);
-            padding: 4px 8px;
-            border-radius: 4px;
-        }
-
-        /* ===== SETTINGS PANEL ===== */
-        .settings-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .setting-item {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .setting-label {
-            color: var(--gh-fg-muted);
-            font-size: 0.9em;
-            font-weight: 500;
-        }
-
-        .toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 26px;
-        }
-
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: var(--gh-canvas-default);
-            border: 1px solid var(--gh-border-default);
-            transition: 0.4s;
-            border-radius: 26px;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 4px;
-            bottom: 3px;
-            background-color: var(--gh-fg-muted);
-            transition: 0.4s;
-            border-radius: 50%;
-        }
-
-        input:checked + .slider {
-            background-color: var(--gh-accent-emphasis);
-            border-color: var(--gh-accent-emphasis);
-        }
-
-        input:checked + .slider:before {
-            transform: translateX(24px);
-            background-color: white;
-        }
-
-        /* ===== SEARCH BAR ===== */
-        .search-container {
-            position: relative;
-            margin-bottom: 15px;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 12px 40px 12px 15px;
-            background: var(--gh-canvas-inset);
-            border: 1px solid var(--gh-border-default);
-            border-radius: 8px;
-            color: var(--gh-fg-default);
-            font-size: 14px;
-        }
-
-        .search-icon {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--gh-fg-muted);
-        }
-
-        /* ===== DIFF VIEWER ===== */
-        .diff-viewer {
-            background: var(--gh-canvas-inset);
-            border-radius: 8px;
-            padding: 15px;
-            font-family: monospace;
-            font-size: 13px;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .diff-line {
-            padding: 2px 8px;
-            margin: 2px 0;
-            border-radius: 3px;
-        }
-
-        .diff-added {
-            background: rgba(87, 171, 90, 0.15);
-            border-left: 3px solid var(--gh-success-emphasis);
-        }
-
-        .diff-removed {
-            background: rgba(229, 83, 75, 0.15);
-            border-left: 3px solid var(--gh-danger-emphasis);
-        }
-
-        /* ===== PROGRESS BAR ===== */
-        .progress-container {
-            width: 100%;
-            height: 6px;
-            background: var(--gh-canvas-inset);
-            border-radius: 3px;
-            overflow: hidden;
-            margin-bottom: 15px;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, 
-                var(--gh-accent-emphasis), 
-                var(--gh-success-emphasis));
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        /* ===== FOOTER ===== */
-        footer {
-            text-align: center;
-            padding: 30px;
-            margin-top: 40px;
-            color: var(--gh-fg-muted);
-            border-top: 1px solid var(--gh-border-default);
-        }
-
-        /* ===== TOOLTIPS ===== */
-        [data-tooltip] {
-            position: relative;
-            cursor: help;
-        }
-
-        [data-tooltip]:hover::after {
-            content: attr(data-tooltip);
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 8px 12px;
-            background: var(--gh-canvas-default);
-            color: var(--gh-fg-default);
-            border: 1px solid var(--gh-border-default);
-            border-radius: 6px;
-            white-space: nowrap;
-            z-index: 1000;
-            font-size: 12px;
-            box-shadow: var(--shadow-md);
-        }
-
-        /* ===== ANIMATIONS ===== */
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.5;
-            }
-        }
-
-        .processing {
-            animation: pulse 1.5s ease-in-out infinite;
-        }
-
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 1.8em;
-            }
-
-            .main-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .stats-bar {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .btn-group {
-                flex-direction: column;
-            }
-
-            button {
-                width: 100%;
-            }
-        }
-        
-        
-        
-        .validation-container {
-    max-height: 400px;
-    overflow-y: auto;
-    background: var(--gh-canvas-inset);
-    border-radius: 8px;
-    padding: 15px;
-}
-
-.validation-summary {
-    background: var(--gh-canvas-subtle);
-    border: 1px solid var(--gh-border-default);
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 15px;
-}
-
-.validation-item {
-    border: 1px solid var(--gh-border-default);
-    border-radius: 6px;
-    padding: 12px;
-    margin-bottom: 10px;
-    background: var(--gh-canvas-subtle);
-}
-
-.validation-item h4 {
-    color: var(--gh-accent-emphasis);
-    margin-bottom: 8px;
-}
-
-.validation-details pre {
-    background: var(--gh-canvas-inset);
-    padding: 10px;
-    border-radius: 4px;
-    font-family: monospace;
-    font-size: 12px;
-    margin: 0;
-    overflow-x: auto;
-}
-
-.has-issues {
-    border-left: 4px solid var(--gh-warning-emphasis);
-}
+      }
+
+      .validation-container {
+        max-height: 400px;
+        overflow-y: auto;
+        background: var(--gh-canvas-inset);
+        border-radius: 8px;
+        padding: 15px;
+      }
+
+      .validation-summary {
+        background: var(--gh-canvas-subtle);
+        border: 1px solid var(--gh-border-default);
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+      }
+
+      .validation-item {
+        border: 1px solid var(--gh-border-default);
+        border-radius: 6px;
+        padding: 12px;
+        margin-bottom: 10px;
+        background: var(--gh-canvas-subtle);
+      }
+
+      .validation-item h4 {
+        color: var(--gh-accent-emphasis);
+        margin-bottom: 8px;
+      }
+
+      .validation-details pre {
+        background: var(--gh-canvas-inset);
+        padding: 10px;
+        border-radius: 4px;
+        font-family: monospace;
+        font-size: 12px;
+        margin: 0;
+        overflow-x: auto;
+      }
+
+      .has-issues {
+        border-left: 4px solid var(--gh-warning-emphasis);
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <header>
-            <h1>🔓 CSS Deobfuscator Pro</h1>
-            <div class="subtitle">
-                Advanced HTML & CSS Reverse Engineering Tool
-                <span class="version-badge">v2.0</span>
-            </div>
-        </header>
-
-        <!-- ENHANCEMENT #1: Real-time Statistics Dashboard -->
-        <div class="stats-bar">
-            <div class="stat-card">
-                <span class="stat-value" id="classCount">0</span>
-                <span class="stat-label">CSS Classes Loaded</span>
-            </div>
-            <div class="stat-card">
-                <span class="stat-value" id="mappedCount">0</span>
-                <span class="stat-label">Classes Mapped</span>
-            </div>
-            <div class="stat-card">
-                <span class="stat-value" id="elementsProcessed">0</span>
-                <span class="stat-label">Elements Processed</span>
-            </div>
-            <div class="stat-card">
-                <span class="stat-value" id="processingTime">0ms</span>
-                <span class="stat-label">Processing Time</span>
-            </div>
+      <header>
+        <h1>🔓 CSS Deobfuscator Pro</h1>
+        <div class="subtitle">
+          Advanced HTML & CSS Reverse Engineering Tool
+          <span class="version-badge">v2.0</span>
         </div>
+      </header>
 
-        <div id="statusContainer"></div>
+      <!-- ENHANCEMENT #1: Real-time Statistics Dashboard -->
+      <div class="stats-bar">
+        <div class="stat-card">
+          <span class="stat-value" id="classCount">0</span>
+          <span class="stat-label">CSS Classes Loaded</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value" id="mappedCount">0</span>
+          <span class="stat-label">Classes Mapped</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value" id="elementsProcessed">0</span>
+          <span class="stat-label">Elements Processed</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value" id="processingTime">0ms</span>
+          <span class="stat-label">Processing Time</span>
+        </div>
+      </div>
 
-        <div class="main-grid">
-            <!-- CSS LIBRARY INPUT -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">
-                        📚 CSS Library
-                    </div>
-                </div>
-                <div class="card-body">
-                    <!-- ENHANCEMENT #2: Drag & Drop File Upload -->
-                    <div class="upload-zone" id="cssUploadZone">
-                        <div class="upload-icon">📤</div>
-                        <p><strong>Drop CSS file here</strong> or click to browse</p>
-                        <p style="color: var(--gh-fg-subtle); font-size: 0.9em;">Supports .css files</p>
-                        <input type="file" id="cssFileInput" accept=".css">
-                    </div>
+      <div id="statusContainer"></div>
 
-                    <textarea 
-                        class="css-input" 
-                        id="cssLibrary" 
-                        placeholder="Paste your obfuscated CSS library here...
+      <div class="main-grid">
+        <!-- CSS LIBRARY INPUT -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📚 CSS Library</div>
+          </div>
+          <div class="card-body">
+            <!-- ENHANCEMENT #2: Drag & Drop File Upload -->
+            <div class="upload-zone" id="cssUploadZone">
+              <div class="upload-icon">📤</div>
+              <p><strong>Drop CSS file here</strong> or click to browse</p>
+              <p style="color: var(--gh-fg-subtle); font-size: 0.9em">Supports .css files</p>
+              <input type="file" id="cssFileInput" accept=".css" />
+            </div>
+
+            <textarea
+              class="css-input"
+              id="cssLibrary"
+              placeholder="Paste your obfuscated CSS library here...
 
 Example:
 .abc123 { color: red; }
-.xyz789 { font-size: 16px; }"></textarea>
+.xyz789 { font-size: 16px; }"
+            ></textarea>
 
-                    <div class="btn-group" style="margin-top: 15px;">
-                        <button class="btn-success" onclick="parseCSSLibrary()">
-                            ⚡ Parse CSS Library
-                        </button>
-                        <button class="btn-secondary" onclick="clearCSS()">
-                            🗑️ Clear
-                        </button>
-                    </div>
-                </div>
+            <div class="btn-group" style="margin-top: 15px">
+              <button class="btn-success" onclick="parseCSSLibrary()">⚡ Parse CSS Library</button>
+              <button class="btn-secondary" onclick="clearCSS()">🗑️ Clear</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- HTML INPUT -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">🌐 HTML Input</div>
+          </div>
+          <div class="card-body">
+            <div class="upload-zone" id="htmlUploadZone">
+              <div class="upload-icon">📄</div>
+              <p><strong>Drop HTML file here</strong> or click to browse</p>
+              <p style="color: var(--gh-fg-subtle); font-size: 0.9em">Supports .html files</p>
+              <input type="file" id="htmlFileInput" accept=".html" />
             </div>
 
-            <!-- HTML INPUT -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">
-                        🌐 HTML Input
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="upload-zone" id="htmlUploadZone">
-                        <div class="upload-icon">📄</div>
-                        <p><strong>Drop HTML file here</strong> or click to browse</p>
-                        <p style="color: var(--gh-fg-subtle); font-size: 0.9em;">Supports .html files</p>
-                        <input type="file" id="htmlFileInput" accept=".html">
-                    </div>
-
-                    <textarea 
-                        class="html-input" 
-                        id="htmlInput" 
-                        placeholder="Paste your HTML with obfuscated classes here...
+            <textarea
+              class="html-input"
+              id="htmlInput"
+              placeholder='Paste your HTML with obfuscated classes here...
 
 Example:
-<div class=&quot;abc123 xyz789&quot;>
+<div class="abc123 xyz789">
   <p>Content</p>
-</div>"></textarea>
+</div>'
+            ></textarea>
 
-                    <div class="btn-group" style="margin-top: 15px;">
-                        <button class="btn-purple" onclick="deobfuscateHTML()">
-                            🚀 Deobfuscate
-                        </button>
-                        <button class="btn-secondary" onclick="clearHTML()">
-                            🗑️ Clear
-                        </button>
-                    </div>
-                </div>
+            <div class="btn-group" style="margin-top: 15px">
+              <button class="btn-purple" onclick="deobfuscateHTML()">🚀 Deobfuscate</button>
+              <button class="btn-secondary" onclick="clearHTML()">🗑️ Clear</button>
             </div>
+          </div>
         </div>
+      </div>
 
-        <!-- ENHANCEMENT #3: Advanced Settings Panel -->
-        <div class="card" style="margin-bottom: 25px;">
-            <div class="card-header">
-                <div class="card-title">
-                    ⚙️ Advanced Settings
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="settings-grid">
-                    <div class="setting-item">
-                        <span class="setting-label">Class Naming Prefix</span>
-                        <input type="text" id="classPrefix" value="element-" placeholder="element-">
-                    </div>
-                    <div class="setting-item">
-                        <span class="setting-label">Starting Number</span>
-                        <input type="text" id="startNumber" value="1" placeholder="1">
-                    </div>
-                    <div class="setting-item">
-                        <span class="setting-label">Preserve Tailwind Classes</span>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="preserveTailwind" checked>
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                    <div class="setting-item">
-                        <span class="setting-label">Generate Media Queries</span>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="generateMediaQueries" checked>
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                    <div class="setting-item">
-                        <span class="setting-label">Minify Output CSS</span>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="minifyCSS">
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                    <div class="setting-item">
-                        <span class="setting-label">Add Comments</span>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="addComments" checked>
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                </div>
-            </div>
+      <!-- ENHANCEMENT #3: Advanced Settings Panel -->
+      <div class="card" style="margin-bottom: 25px">
+        <div class="card-header">
+          <div class="card-title">⚙️ Advanced Settings</div>
         </div>
-
-        <!-- ENHANCEMENT #4: Live Class Mapping Viewer -->
-        <div class="card" style="margin-bottom: 25px;">
-            <div class="card-header">
-                <div class="card-title">
-                    🔗 Class Mapping
-                </div>
+        <div class="card-body">
+          <div class="settings-grid">
+            <div class="setting-item">
+              <span class="setting-label">Class Naming Prefix</span>
+              <input type="text" id="classPrefix" value="element-" placeholder="element-" />
             </div>
-            <div class="card-body">
-                <!-- ENHANCEMENT #5: Search/Filter functionality -->
-                <div class="search-container">
-                    <input 
-                        type="text" 
-                        class="search-input" 
-                        id="mappingSearch" 
-                        placeholder="🔍 Search class mappings..."
-                        oninput="filterMappings()">
-                    <span class="search-icon">🔍</span>
-                </div>
-
-                <div class="mapping-container" id="mappingDisplay">
-                    <p style="text-align: center; color: var(--gh-fg-muted);">
-                        No mappings yet. Deobfuscate HTML to see class mappings here.
-                    </p>
-                </div>
+            <div class="setting-item">
+              <span class="setting-label">Starting Number</span>
+              <input type="text" id="startNumber" value="1" placeholder="1" />
             </div>
+            <div class="setting-item">
+              <span class="setting-label">Preserve Tailwind Classes</span>
+              <label class="toggle-switch">
+                <input type="checkbox" id="preserveTailwind" checked />
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="setting-item">
+              <span class="setting-label">Generate Media Queries</span>
+              <label class="toggle-switch">
+                <input type="checkbox" id="generateMediaQueries" checked />
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="setting-item">
+              <span class="setting-label">Minify Output CSS</span>
+              <label class="toggle-switch">
+                <input type="checkbox" id="minifyCSS" />
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="setting-item">
+              <span class="setting-label">Add Comments</span>
+              <label class="toggle-switch">
+                <input type="checkbox" id="addComments" checked />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
         </div>
+      </div>
 
-        <!-- OUTPUT SECTION -->
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title">
-                    ✨ Output
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="progress-container">
-                    <div class="progress-bar" id="progressBar"></div>
-                </div>
-
-                <div class="tabs">
-                    <button class="tab active" onclick="switchTab('html')">HTML Output</button>
-                    <button class="tab" onclick="switchTab('css')">CSS Output</button>
-                    <button class="tab" onclick="switchTab('diff')">Before/After Diff</button>
-                </div>
-
-                <div id="htmlTab" class="tab-content active">
-                    <textarea 
-                        class="output-textarea" 
-                        id="htmlOutput" 
-                        readonly 
-                        placeholder="Deobfuscated HTML will appear here..."></textarea>
-                    <div class="btn-group" style="margin-top: 15px;">
-                        <button class="btn-teal" onclick="copyToClipboard('htmlOutput')">
-                            📋 Copy HTML
-                        </button>
-                        <button class="btn-success" onclick="downloadFile('deobfuscated.html', 'htmlOutput')">
-                            💾 Download HTML
-                        </button>
-                    </div>
-                </div>
-
-                <div id="cssTab" class="tab-content">
-                    <textarea 
-                        class="output-textarea" 
-                        id="cssOutput" 
-                        readonly 
-                        placeholder="Deobfuscated CSS will appear here..."></textarea>
-                    <div class="btn-group" style="margin-top: 15px;">
-                        <button class="btn-teal" onclick="copyToClipboard('cssOutput')">
-                            📋 Copy CSS
-                        </button>
-                        <button class="btn-success" onclick="downloadFile('deobfuscated.css', 'cssOutput')">
-                            💾 Download CSS
-                        </button>
-                    </div>
-                </div>
-
-                <!-- ENHANCEMENT #6: Before/After Diff Viewer -->
-                <div id="diffTab" class="tab-content">
-                    <div class="diff-viewer" id="diffViewer">
-                        <p style="text-align: center; color: var(--gh-fg-muted);">
-                            Diff view will appear here after deobfuscation.
-                        </p>
-                    </div>
-                </div>
-            </div>
+      <!-- ENHANCEMENT #4: Live Class Mapping Viewer -->
+      <div class="card" style="margin-bottom: 25px">
+        <div class="card-header">
+          <div class="card-title">🔗 Class Mapping</div>
         </div>
+        <div class="card-body">
+          <!-- ENHANCEMENT #5: Search/Filter functionality -->
+          <div class="search-container">
+            <input
+              type="text"
+              class="search-input"
+              id="mappingSearch"
+              placeholder="🔍 Search class mappings..."
+              oninput="filterMappings()"
+            />
+            <span class="search-icon">🔍</span>
+          </div>
 
-        <footer>
-            <p>Built with ❤️ for developers who reverse-engineer obfuscated code</p>
-            <p style="font-size: 0.9em; margin-top: 10px;">
-                Powered by GitHub Dark Dimmed Theme | CSS Deobfuscator Pro v2.0
+          <div class="mapping-container" id="mappingDisplay">
+            <p style="text-align: center; color: var(--gh-fg-muted)">
+              No mappings yet. Deobfuscate HTML to see class mappings here.
             </p>
-        </footer>
+          </div>
+        </div>
+      </div>
+
+      <!-- OUTPUT SECTION -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">✨ Output</div>
+        </div>
+        <div class="card-body">
+          <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+          </div>
+
+          <div class="tabs">
+            <button class="tab active" onclick="switchTab('html')">HTML Output</button>
+            <button class="tab" onclick="switchTab('css')">CSS Output</button>
+            <button class="tab" onclick="switchTab('diff')">Before/After Diff</button>
+          </div>
+
+          <div id="htmlTab" class="tab-content active">
+            <textarea
+              class="output-textarea"
+              id="htmlOutput"
+              readonly
+              placeholder="Deobfuscated HTML will appear here..."
+            ></textarea>
+            <div class="btn-group" style="margin-top: 15px">
+              <button class="btn-teal" onclick="copyToClipboard('htmlOutput')">📋 Copy HTML</button>
+              <button class="btn-success" onclick="downloadFile('deobfuscated.html', 'htmlOutput')">
+                💾 Download HTML
+              </button>
+            </div>
+          </div>
+
+          <div id="cssTab" class="tab-content">
+            <textarea
+              class="output-textarea"
+              id="cssOutput"
+              readonly
+              placeholder="Deobfuscated CSS will appear here..."
+            ></textarea>
+            <div class="btn-group" style="margin-top: 15px">
+              <button class="btn-teal" onclick="copyToClipboard('cssOutput')">📋 Copy CSS</button>
+              <button class="btn-success" onclick="downloadFile('deobfuscated.css', 'cssOutput')">
+                💾 Download CSS
+              </button>
+            </div>
+          </div>
+
+          <!-- ENHANCEMENT #6: Before/After Diff Viewer -->
+          <div id="diffTab" class="tab-content">
+            <div class="diff-viewer" id="diffViewer">
+              <p style="text-align: center; color: var(--gh-fg-muted)">
+                Diff view will appear here after deobfuscation.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <p>Built with ❤️ for developers who reverse-engineer obfuscated code</p>
+        <p style="font-size: 0.9em; margin-top: 10px">
+          Powered by GitHub Dark Dimmed Theme | CSS Deobfuscator Pro v2.0
+        </p>
+      </footer>
     </div>
 
-<script>
-let cssLibrary = {};
-let cssVariables = {};
-let classMapping = {};
-let elementCounter = 1;
-let allMappings = [];
-let validationResults = {};
+    <script>
+      let cssLibrary = {};
+      let cssVariables = {};
+      let classMapping = {};
+      let elementCounter = 1;
+      let allMappings = [];
+      let validationResults = {};
 
-window.addEventListener('DOMContentLoaded', async () => {
-    const defaultCSSFile = 'obfuscated.css';
-    try {
-        const response = await fetch(defaultCSSFile);
-        if (response.ok) {
+      window.addEventListener("DOMContentLoaded", async () => {
+        const defaultCSSFile = "obfuscated.css";
+        try {
+          const response = await fetch(defaultCSSFile);
+          if (response.ok) {
             const cssContent = await response.text();
-            document.getElementById('cssLibrary').value = cssContent;
+            document.getElementById("cssLibrary").value = cssContent;
             parseCSSLibrary();
-            showStatus('✓ CSS library auto-loaded from ' + defaultCSSFile, 'success');
+            showStatus("✓ CSS library auto-loaded from " + defaultCSSFile, "success");
+          }
+        } catch (error) {
+          showStatus("ℹ Upload or paste your CSS library to begin", "info");
         }
-    } catch (error) {
-        showStatus('ℹ Upload or paste your CSS library to begin', 'info');
-    }
-});
+      });
 
-function setupDragAndDrop(zoneId, inputId, callback) {
-    const zone = document.getElementById(zoneId);
-    const input = document.getElementById(inputId);
-    zone.addEventListener('click', () => input.click());
-    zone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        zone.classList.add('drag-over');
-    });
-    zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
-    zone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        zone.classList.remove('drag-over');
-        const files = e.dataTransfer.files;
-        if (files.length > 0) handleFileUpload(files[0], callback);
-    });
-    input.addEventListener('change', (e) => {
-        if (e.target.files.length > 0) handleFileUpload(e.target.files[0], callback);
-    });
-}
-
-function handleFileUpload(file, callback) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        callback(e.target.result);
-        showStatus(`✓ File "${file.name}" loaded successfully`, 'success');
-    };
-    reader.readAsText(file);
-}
-
-setupDragAndDrop('cssUploadZone', 'cssFileInput', (content) => {
-    document.getElementById('cssLibrary').value = content;
-    parseCSSLibrary();
-});
-
-setupDragAndDrop('htmlUploadZone', 'htmlFileInput', (content) => {
-    document.getElementById('htmlInput').value = content;
-});
-
-function parseCSSLibrary() {
-    const startTime = performance.now();
-    const cssText = document.getElementById('cssLibrary').value;
-    cssLibrary = {};
-    cssVariables = {};
-    
-    const variableRegex = /--([a-zA-Z0-9_-]+)\s*:\s*([^;]+);/g;
-    let match;
-    while ((match = variableRegex.exec(cssText)) !== null) {
-        cssVariables[match[1]] = match[2].trim();
-    }
-    
-    const classRegex = /\.([a-zA-Z0-9_-]+)\s*\{([^}]+)\}/g;
-    let count = 0;
-    while ((match = classRegex.exec(cssText)) !== null) {
-        const className = match[1];
-        let properties = match[2].trim();
-        properties = resolveCSSVariables(properties);
-        cssLibrary[className] = properties;
-        count++;
-    }
-    
-    const endTime = performance.now();
-    const processingTime = Math.round(endTime - startTime);
-    document.getElementById('classCount').textContent = count;
-    document.getElementById('processingTime').textContent = processingTime + 'ms';
-    showStatus(`✓ Parsed ${count} CSS classes and ${Object.keys(cssVariables).length} variables in ${processingTime}ms`, 'success');
-    updateProgressBar(100);
-}
-
-function resolveCSSVariables(properties) {
-    const varRegex = /var\(--([a-zA-Z0-9_-]+)(?:\s*,\s*([^)]+))?\)/g;
-    return properties.replace(varRegex, (match, varName, fallback) => {
-        return cssVariables[varName] || fallback || match;
-    });
-}
-
-function deobfuscateHTML() {
-    const startTime = performance.now();
-    const htmlInput = document.getElementById('htmlInput').value;
-    
-    if (!htmlInput.trim()) {
-        showStatus('⚠️ Please provide HTML input', 'warning');
-        return;
-    }
-    
-    if (Object.keys(cssLibrary).length === 0) {
-        showStatus('⚠️ Please parse CSS library first', 'warning');
-        return;
-    }
-    
-    const classPrefix = document.getElementById('classPrefix').value || 'element-';
-    const startNumber = parseInt(document.getElementById('startNumber').value) || 1;
-    const preserveTailwind = document.getElementById('preserveTailwind').checked;
-    const generateMediaQueries = document.getElementById('generateMediaQueries').checked;
-    const addComments = document.getElementById('addComments').checked;
-    const minifyCSS = document.getElementById('minifyCSS').checked;
-    const validateOutput = document.getElementById('validateOutput') ? document.getElementById('validateOutput').checked : true;
-    
-    elementCounter = startNumber;
-    classMapping = {};
-    allMappings = [];
-    validationResults = {};
-    
-    const parser = new DOMParser();
-    const originalDoc = parser.parseFromString(htmlInput, 'text/html');
-    const workingDoc = parser.parseFromString(htmlInput, 'text/html');
-    
-    const tailwindClasses = ['hidden', 'block', 'flex', 'grid', 'absolute', 'relative', 'fixed', 'sticky', 
-                           'sm:block', 'md:block', 'lg:block', 'xl:block', '2xl:block', 
-                           'sm:hidden', 'md:hidden', 'lg:hidden', 'xl:hidden', '2xl:hidden'];
-    
-    const elementsWithClasses = workingDoc.querySelectorAll('[class]');
-    const originalElements = originalDoc.querySelectorAll('[class]');
-    
-    let processedCount = 0;
-    const cssRules = {};
-    const responsiveRules = {};
-    const preserveOriginal = {};
-    
-    elementsWithClasses.forEach((element, index) => {
-        const originalElement = originalElements[index];
-        const classAttr = element.getAttribute('class');
-        const classes = classAttr ? classAttr.split(/\s+/).filter(c => c) : [];
-        const obfuscatedClasses = [];
-        const preservedClasses = [];
-        const responsiveClasses = [];
-        
-        classes.forEach(cls => {
-            if (typeof cls === 'string') {
-                if (preserveTailwind && tailwindClasses.includes(cls)) {
-                    preservedClasses.push(cls);
-                } else if (cls.startsWith('sm:') || cls.startsWith('md:') || cls.startsWith('lg:') || 
-                           cls.startsWith('xl:') || cls.startsWith('2xl:')) {
-                    responsiveClasses.push(cls);
-                } else if (cssLibrary[cls]) {
-                    obfuscatedClasses.push(cls);
-                } else {
-                    preservedClasses.push(cls);
-                }
-            }
+      function setupDragAndDrop(zoneId, inputId, callback) {
+        const zone = document.getElementById(zoneId);
+        const input = document.getElementById(inputId);
+        zone.addEventListener("click", () => input.click());
+        zone.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          zone.classList.add("drag-over");
         });
-        
-        if (obfuscatedClasses.length > 0) {
-            const newClassName = classPrefix + (elementCounter++);
-            
-            obfuscatedClasses.forEach(oldClass => {
-                allMappings.push({
-                    old: oldClass,
-                    new: newClassName,
-                    element: element.tagName.toLowerCase(),
-                    properties: cssLibrary[oldClass]
-                });
+        zone.addEventListener("dragleave", () => zone.classList.remove("drag-over"));
+        zone.addEventListener("drop", (e) => {
+          e.preventDefault();
+          zone.classList.remove("drag-over");
+          const files = e.dataTransfer.files;
+          if (files.length > 0) handleFileUpload(files[0], callback);
+        });
+        input.addEventListener("change", (e) => {
+          if (e.target.files.length > 0) handleFileUpload(e.target.files[0], callback);
+        });
+      }
+
+      function handleFileUpload(file, callback) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          callback(e.target.result);
+          showStatus(`✓ File "${file.name}" loaded successfully`, "success");
+        };
+        reader.readAsText(file);
+      }
+
+      setupDragAndDrop("cssUploadZone", "cssFileInput", (content) => {
+        document.getElementById("cssLibrary").value = content;
+        parseCSSLibrary();
+      });
+
+      setupDragAndDrop("htmlUploadZone", "htmlFileInput", (content) => {
+        document.getElementById("htmlInput").value = content;
+      });
+
+      function parseCSSLibrary() {
+        const startTime = performance.now();
+        const cssText = document.getElementById("cssLibrary").value;
+        cssLibrary = {};
+        cssVariables = {};
+
+        const variableRegex = /--([a-zA-Z0-9_-]+)\s*:\s*([^;]+);/g;
+        let match;
+        while ((match = variableRegex.exec(cssText)) !== null) {
+          cssVariables[match[1]] = match[2].trim();
+        }
+
+        const classRegex = /\.([a-zA-Z0-9_-]+)\s*\{([^}]+)\}/g;
+        let count = 0;
+        while ((match = classRegex.exec(cssText)) !== null) {
+          const className = match[1];
+          let properties = match[2].trim();
+          properties = resolveCSSVariables(properties);
+          cssLibrary[className] = properties;
+          count++;
+        }
+
+        const endTime = performance.now();
+        const processingTime = Math.round(endTime - startTime);
+        document.getElementById("classCount").textContent = count;
+        document.getElementById("processingTime").textContent = processingTime + "ms";
+        showStatus(
+          `✓ Parsed ${count} CSS classes and ${Object.keys(cssVariables).length} variables in ${processingTime}ms`,
+          "success"
+        );
+        updateProgressBar(100);
+      }
+
+      function resolveCSSVariables(properties) {
+        const varRegex = /var\(--([a-zA-Z0-9_-]+)(?:\s*,\s*([^)]+))?\)/g;
+        return properties.replace(varRegex, (match, varName, fallback) => {
+          return cssVariables[varName] || fallback || match;
+        });
+      }
+
+      function deobfuscateHTML() {
+        const startTime = performance.now();
+        const htmlInput = document.getElementById("htmlInput").value;
+
+        if (!htmlInput.trim()) {
+          showStatus("⚠️ Please provide HTML input", "warning");
+          return;
+        }
+
+        if (Object.keys(cssLibrary).length === 0) {
+          showStatus("⚠️ Please parse CSS library first", "warning");
+          return;
+        }
+
+        const classPrefix = document.getElementById("classPrefix").value || "element-";
+        const startNumber = parseInt(document.getElementById("startNumber").value) || 1;
+        const preserveTailwind = document.getElementById("preserveTailwind").checked;
+        const generateMediaQueries = document.getElementById("generateMediaQueries").checked;
+        const addComments = document.getElementById("addComments").checked;
+        const minifyCSS = document.getElementById("minifyCSS").checked;
+        const validateOutput = document.getElementById("validateOutput")
+          ? document.getElementById("validateOutput").checked
+          : true;
+
+        elementCounter = startNumber;
+        classMapping = {};
+        allMappings = [];
+        validationResults = {};
+
+        const parser = new DOMParser();
+        const originalDoc = parser.parseFromString(htmlInput, "text/html");
+        const workingDoc = parser.parseFromString(htmlInput, "text/html");
+
+        const tailwindClasses = [
+          "hidden",
+          "block",
+          "flex",
+          "grid",
+          "absolute",
+          "relative",
+          "fixed",
+          "sticky",
+          "sm:block",
+          "md:block",
+          "lg:block",
+          "xl:block",
+          "2xl:block",
+          "sm:hidden",
+          "md:hidden",
+          "lg:hidden",
+          "xl:hidden",
+          "2xl:hidden",
+        ];
+
+        const elementsWithClasses = workingDoc.querySelectorAll("[class]");
+        const originalElements = originalDoc.querySelectorAll("[class]");
+
+        let processedCount = 0;
+        const cssRules = {};
+        const responsiveRules = {};
+        const preserveOriginal = {};
+
+        elementsWithClasses.forEach((element, index) => {
+          const originalElement = originalElements[index];
+          const classAttr = element.getAttribute("class");
+          const classes = classAttr ? classAttr.split(/\s+/).filter((c) => c) : [];
+          const obfuscatedClasses = [];
+          const preservedClasses = [];
+          const responsiveClasses = [];
+
+          classes.forEach((cls) => {
+            if (typeof cls === "string") {
+              if (preserveTailwind && tailwindClasses.includes(cls)) {
+                preservedClasses.push(cls);
+              } else if (
+                cls.startsWith("sm:") ||
+                cls.startsWith("md:") ||
+                cls.startsWith("lg:") ||
+                cls.startsWith("xl:") ||
+                cls.startsWith("2xl:")
+              ) {
+                responsiveClasses.push(cls);
+              } else if (cssLibrary[cls]) {
+                obfuscatedClasses.push(cls);
+              } else {
+                preservedClasses.push(cls);
+              }
+            }
+          });
+
+          if (obfuscatedClasses.length > 0) {
+            const newClassName = classPrefix + elementCounter++;
+
+            obfuscatedClasses.forEach((oldClass) => {
+              allMappings.push({
+                old: oldClass,
+                new: newClassName,
+                element: element.tagName.toLowerCase(),
+                properties: cssLibrary[oldClass],
+              });
             });
-            
-            let combinedCSS = '';
-            obfuscatedClasses.forEach(cls => {
-                if (cssLibrary[cls]) {
-                    combinedCSS += cssLibrary[cls] + '\n  ';
-                }
+
+            let combinedCSS = "";
+            obfuscatedClasses.forEach((cls) => {
+              if (cssLibrary[cls]) {
+                combinedCSS += cssLibrary[cls] + "\n  ";
+              }
             });
-            
+
             cssRules[newClassName] = combinedCSS.trim();
             preserveOriginal[newClassName] = preservedClasses;
-            
+
             if (validateOutput && originalElement) {
-                const originalStyles = getComputedStyles(originalElement, obfuscatedClasses);
-                validationResults[newClassName] = {
-                    originalClasses: obfuscatedClasses,
-                    originalStyles: originalStyles
-                };
+              const originalStyles = getComputedStyles(originalElement, obfuscatedClasses);
+              validationResults[newClassName] = {
+                originalClasses: obfuscatedClasses,
+                originalStyles: originalStyles,
+              };
             }
-            
-            const childElements = element.querySelectorAll('[class]');
-            childElements.forEach(child => {
-                const childClassAttr = child.getAttribute('class');
-                if (childClassAttr && typeof childClassAttr === 'string') {
-                    const childClasses = childClassAttr.split(/\s+/).filter(c => c && cssLibrary[c]);
-                    if (childClasses.length > 0) {
-                        let childCSS = '';
-                        childClasses.forEach(cls => {
-                            if (cssLibrary[cls]) childCSS += cssLibrary[cls] + '\n    ';
-                        });
-                        if (child.tagName) {
-                            cssRules[newClassName + ' ' + child.tagName.toLowerCase()] = childCSS.trim();
-                        }
-                    }
+
+            const childElements = element.querySelectorAll("[class]");
+            childElements.forEach((child) => {
+              const childClassAttr = child.getAttribute("class");
+              if (childClassAttr && typeof childClassAttr === "string") {
+                const childClasses = childClassAttr.split(/\s+/).filter((c) => c && cssLibrary[c]);
+                if (childClasses.length > 0) {
+                  let childCSS = "";
+                  childClasses.forEach((cls) => {
+                    if (cssLibrary[cls]) childCSS += cssLibrary[cls] + "\n    ";
+                  });
+                  if (child.tagName) {
+                    cssRules[newClassName + " " + child.tagName.toLowerCase()] = childCSS.trim();
+                  }
                 }
+              }
             });
-            
+
             if (generateMediaQueries && responsiveClasses.length > 0) {
-                responsiveClasses.forEach(respClass => {
-                    const [breakpoint, utility] = respClass.split(':');
-                    if (!responsiveRules[breakpoint]) responsiveRules[breakpoint] = {};
-                    if (!responsiveRules[breakpoint][newClassName]) responsiveRules[breakpoint][newClassName] = [];
-                    
-                    if (utility === 'block') responsiveRules[breakpoint][newClassName].push('display: block;');
-                    else if (utility === 'hidden') responsiveRules[breakpoint][newClassName].push('display: none;');
-                    else if (utility === 'flex') responsiveRules[breakpoint][newClassName].push('display: flex;');
-                    else if (utility === 'grid') responsiveRules[breakpoint][newClassName].push('display: grid;');
-                    else if (utility === 'absolute') responsiveRules[breakpoint][newClassName].push('position: absolute;');
-                    else if (utility === 'relative') responsiveRules[breakpoint][newClassName].push('position: relative;');
-                });
+              responsiveClasses.forEach((respClass) => {
+                const [breakpoint, utility] = respClass.split(":");
+                if (!responsiveRules[breakpoint]) responsiveRules[breakpoint] = {};
+                if (!responsiveRules[breakpoint][newClassName]) responsiveRules[breakpoint][newClassName] = [];
+
+                if (utility === "block") responsiveRules[breakpoint][newClassName].push("display: block;");
+                else if (utility === "hidden") responsiveRules[breakpoint][newClassName].push("display: none;");
+                else if (utility === "flex") responsiveRules[breakpoint][newClassName].push("display: flex;");
+                else if (utility === "grid") responsiveRules[breakpoint][newClassName].push("display: grid;");
+                else if (utility === "absolute") responsiveRules[breakpoint][newClassName].push("position: absolute;");
+                else if (utility === "relative") responsiveRules[breakpoint][newClassName].push("position: relative;");
+              });
             }
-            
-            const finalClasses = [newClassName, ...preservedClasses].filter(c => c).join(' ');
-            element.setAttribute('class', finalClasses);
+
+            const finalClasses = [newClassName, ...preservedClasses].filter((c) => c).join(" ");
+            element.setAttribute("class", finalClasses);
             processedCount++;
+          }
+        });
+
+        let cssOutput = "";
+        if (addComments) {
+          cssOutput += "/* Deobfuscated CSS */\n";
+          cssOutput += "/* Generated by CSS Deobfuscator Pro */\n";
+          cssOutput += "/* CSS Variables Found: " + Object.keys(cssVariables).length + " */\n\n";
         }
-    });
-    
-    let cssOutput = '';
-    if (addComments) {
-        cssOutput += '/* Deobfuscated CSS */\n';
-        cssOutput += '/* Generated by CSS Deobfuscator Pro */\n';
-        cssOutput += '/* CSS Variables Found: ' + Object.keys(cssVariables).length + ' */\n\n';
-    }
-    
-    Object.keys(cssVariables).forEach(varName => {
-        cssOutput += `--${varName}: ${cssVariables[varName]};\n`;
-    });
-    
-    if (Object.keys(cssVariables).length > 0) {
-        cssOutput += '\n';
-    }
-    
-    Object.keys(cssRules).forEach(className => {
-        const preserved = preserveOriginal[className] || [];
-        let rule = `.${className}`;
-        if (preserved.length > 0) {
-            rule += `, .${className}.${preserved.join(', .' + className + '.')}`;
+
+        Object.keys(cssVariables).forEach((varName) => {
+          cssOutput += `--${varName}: ${cssVariables[varName]};\n`;
+        });
+
+        if (Object.keys(cssVariables).length > 0) {
+          cssOutput += "\n";
         }
-        cssOutput += `${rule} {\n  ${cssRules[className]}\n}\n\n`;
-    });
-    
-    if (generateMediaQueries && Object.keys(responsiveRules).length > 0) {
-        const breakpoints = { 'sm': '640px', 'md': '768px', 'lg': '1024px', 'xl': '1280px', '2xl': '1536px' };
-        Object.keys(responsiveRules).forEach(breakpoint => {
+
+        Object.keys(cssRules).forEach((className) => {
+          const preserved = preserveOriginal[className] || [];
+          let rule = `.${className}`;
+          if (preserved.length > 0) {
+            rule += `, .${className}.${preserved.join(", ." + className + ".")}`;
+          }
+          cssOutput += `${rule} {\n  ${cssRules[className]}\n}\n\n`;
+        });
+
+        if (generateMediaQueries && Object.keys(responsiveRules).length > 0) {
+          const breakpoints = { sm: "640px", md: "768px", lg: "1024px", xl: "1280px", "2xl": "1536px" };
+          Object.keys(responsiveRules).forEach((breakpoint) => {
             if (addComments) cssOutput += `/* Responsive: ${breakpoint} breakpoint */\n`;
             cssOutput += `@media (min-width: ${breakpoints[breakpoint]}) {\n`;
-            Object.keys(responsiveRules[breakpoint]).forEach(className => {
-                cssOutput += `  .${className} {\n`;
-                responsiveRules[breakpoint][className].forEach(prop => cssOutput += `    ${prop}\n`);
-                cssOutput += `  }\n`;
+            Object.keys(responsiveRules[breakpoint]).forEach((className) => {
+              cssOutput += `  .${className} {\n`;
+              responsiveRules[breakpoint][className].forEach((prop) => (cssOutput += `    ${prop}\n`));
+              cssOutput += `  }\n`;
             });
             cssOutput += `}\n\n`;
+          });
+        }
+
+        if (minifyCSS) {
+          cssOutput = minifyCSSOutput(cssOutput);
+        }
+
+        const htmlOutput = workingDoc.body.innerHTML;
+        document.getElementById("htmlOutput").value = htmlOutput;
+        document.getElementById("cssOutput").value = cssOutput;
+
+        updateMappingDisplay();
+        generateDiff(htmlInput, htmlOutput);
+
+        if (validateOutput) {
+          validateDeobfuscation(originalDoc, workingDoc, cssRules);
+        }
+
+        const endTime = performance.now();
+        const processingTime = Math.round(endTime - startTime);
+
+        document.getElementById("mappedCount").textContent = allMappings.length;
+        document.getElementById("elementsProcessed").textContent = processedCount;
+        document.getElementById("processingTime").textContent = processingTime + "ms";
+
+        showStatus(
+          `✓ Successfully deobfuscated ${processedCount} elements with ${allMappings.length} class mappings in ${processingTime}ms`,
+          "success"
+        );
+        updateProgressBar(100);
+      }
+
+      function getComputedStyles(element, classes) {
+        const tempDiv = document.createElement("div");
+        tempDiv.className = classes.join(" ");
+        document.body.appendChild(tempDiv);
+
+        const computed = window.getComputedStyle(tempDiv);
+        const styles = {};
+        const importantProps = [
+          "display",
+          "position",
+          "width",
+          "height",
+          "margin",
+          "padding",
+          "color",
+          "background",
+          "font-size",
+          "border",
+          "max-width",
+          "max-height",
+        ];
+
+        importantProps.forEach((prop) => {
+          styles[prop] = computed.getPropertyValue(prop);
         });
-    }
-    
-    if (minifyCSS) {
-        cssOutput = minifyCSSOutput(cssOutput);
-    }
-    
-    const htmlOutput = workingDoc.body.innerHTML;
-    document.getElementById('htmlOutput').value = htmlOutput;
-    document.getElementById('cssOutput').value = cssOutput;
-    
-    updateMappingDisplay();
-    generateDiff(htmlInput, htmlOutput);
-    
-    if (validateOutput) {
-        validateDeobfuscation(originalDoc, workingDoc, cssRules);
-    }
-    
-    const endTime = performance.now();
-    const processingTime = Math.round(endTime - startTime);
-    
-    document.getElementById('mappedCount').textContent = allMappings.length;
-    document.getElementById('elementsProcessed').textContent = processedCount;
-    document.getElementById('processingTime').textContent = processingTime + 'ms';
-    
-    showStatus(`✓ Successfully deobfuscated ${processedCount} elements with ${allMappings.length} class mappings in ${processingTime}ms`, 'success');
-    updateProgressBar(100);
-}
 
-function getComputedStyles(element, classes) {
-    const tempDiv = document.createElement('div');
-    tempDiv.className = classes.join(' ');
-    document.body.appendChild(tempDiv);
-    
-    const computed = window.getComputedStyle(tempDiv);
-    const styles = {};
-    const importantProps = ['display', 'position', 'width', 'height', 'margin', 'padding', 
-                           'color', 'background', 'font-size', 'border', 'max-width', 'max-height'];
-    
-    importantProps.forEach(prop => {
-        styles[prop] = computed.getPropertyValue(prop);
-    });
-    
-    document.body.removeChild(tempDiv);
-    return styles;
-}
+        document.body.removeChild(tempDiv);
+        return styles;
+      }
 
-function validateDeobfuscation(originalDoc, deobfuscatedDoc, cssRules) {
-    const validationTab = document.getElementById('validationTab');
-    if (!validationTab) {
-        const tabs = document.querySelector('.tabs');
-        tabs.innerHTML += '<button class="tab" onclick="switchTab(\'validation\')">✅ Validation</button>';
-        
-        const outputSection = document.querySelector('.card-body');
-        outputSection.innerHTML += `
+      function validateDeobfuscation(originalDoc, deobfuscatedDoc, cssRules) {
+        const validationTab = document.getElementById("validationTab");
+        if (!validationTab) {
+          const tabs = document.querySelector(".tabs");
+          tabs.innerHTML += '<button class="tab" onclick="switchTab(\'validation\')">✅ Validation</button>';
+
+          const outputSection = document.querySelector(".card-body");
+          outputSection.innerHTML += `
             <div id="validationTab" class="tab-content">
                 <div class="validation-container" id="validationResults">
                     <p style="text-align: center; color: var(--gh-fg-muted);">
@@ -1354,230 +1384,230 @@ function validateDeobfuscation(originalDoc, deobfuscatedDoc, cssRules) {
                 </div>
             </div>
         `;
-    }
-    
-    const validationContainer = document.getElementById('validationResults');
-    let html = '<div class="validation-summary">';
-    
-    const totalElements = originalDoc.querySelectorAll('[class]').length;
-    const validatedElements = Object.keys(cssRules).length;
-    
-    html += `<h3>Validation Summary</h3>`;
-    html += `<p>Total Elements: ${totalElements}</p>`;
-    html += `<p>Elements Validated: ${validatedElements}</p>`;
-    html += `<p>Accuracy: ${Math.round((validatedElements / totalElements) * 100)}%</p>`;
-    html += '</div><hr>';
-    
-    Object.keys(cssRules).forEach(className => {
-        html += `<div class="validation-item">
+        }
+
+        const validationContainer = document.getElementById("validationResults");
+        let html = '<div class="validation-summary">';
+
+        const totalElements = originalDoc.querySelectorAll("[class]").length;
+        const validatedElements = Object.keys(cssRules).length;
+
+        html += `<h3>Validation Summary</h3>`;
+        html += `<p>Total Elements: ${totalElements}</p>`;
+        html += `<p>Elements Validated: ${validatedElements}</p>`;
+        html += `<p>Accuracy: ${Math.round((validatedElements / totalElements) * 100)}%</p>`;
+        html += "</div><hr>";
+
+        Object.keys(cssRules).forEach((className) => {
+          html += `<div class="validation-item">
             <h4>${className}</h4>
             <div class="validation-details">
                 <pre>${cssRules[className]}</pre>
             </div>
         </div>`;
-    });
-    
-    validationContainer.innerHTML = html;
-}
+        });
 
-function minifyCSSOutput(css) {
-    return css
-        .replace(/\/\*[\s\S]*?\*\//g, '')
-        .replace(/\s+/g, ' ')
-        .replace(/\s*\{\s*/g, '{')
-        .replace(/\s*\}\s*/g, '}')
-        .replace(/\s*;\s*/g, ';')
-        .replace(/\s*:\s*/g, ':')
-        .replace(/\s*,\s*/g, ',')
-        .replace(/;\}/g, '}')
-        .trim();
-}
+        validationContainer.innerHTML = html;
+      }
 
-function updateMappingDisplay() {
-    const container = document.getElementById('mappingDisplay');
-    if (allMappings.length === 0) {
-        container.innerHTML = '<p style="text-align: center; color: var(--gh-fg-muted);">No mappings yet.</p>';
-        return;
-    }
-    
-    let html = '';
-    allMappings.forEach((mapping, index) => {
-        const hasIssues = mapping.properties && mapping.properties.includes('var(');
-        html += `<div class="mapping-item ${hasIssues ? 'has-issues' : ''}">
+      function minifyCSSOutput(css) {
+        return css
+          .replace(/\/\*[\s\S]*?\*\//g, "")
+          .replace(/\s+/g, " ")
+          .replace(/\s*\{\s*/g, "{")
+          .replace(/\s*\}\s*/g, "}")
+          .replace(/\s*;\s*/g, ";")
+          .replace(/\s*:\s*/g, ":")
+          .replace(/\s*,\s*/g, ",")
+          .replace(/;\}/g, "}")
+          .trim();
+      }
+
+      function updateMappingDisplay() {
+        const container = document.getElementById("mappingDisplay");
+        if (allMappings.length === 0) {
+          container.innerHTML = '<p style="text-align: center; color: var(--gh-fg-muted);">No mappings yet.</p>';
+          return;
+        }
+
+        let html = "";
+        allMappings.forEach((mapping, index) => {
+          const hasIssues = mapping.properties && mapping.properties.includes("var(");
+          html += `<div class="mapping-item ${hasIssues ? "has-issues" : ""}">
             <span class="obfuscated-class">${mapping.old}</span>
             <span class="mapping-arrow">→</span>
             <span class="clean-class">${mapping.new}</span>
-            <span style="color: var(${hasIssues ? '--gh-danger-emphasis' : '--gh-fg-muted'}); 
+            <span style="color: var(${hasIssues ? "--gh-danger-emphasis" : "--gh-fg-muted"}); 
                          margin-left: auto;">
                 &lt;${mapping.element}&gt;
             </span>
-            ${hasIssues ? '<span style="color: var(--gh-warning-emphasis); margin-left: 10px;">⚠️ var</span>' : ''}
+            ${hasIssues ? '<span style="color: var(--gh-warning-emphasis); margin-left: 10px;">⚠️ var</span>' : ""}
         </div>`;
-    });
-    container.innerHTML = html;
-}
+        });
+        container.innerHTML = html;
+      }
 
-function filterMappings() {
-    const searchTerm = document.getElementById('mappingSearch').value.toLowerCase();
-    const items = document.querySelectorAll('.mapping-item');
-    items.forEach(item => {
-        const text = item.textContent.toLowerCase();
-        item.style.display = text.includes(searchTerm) ? 'flex' : 'none';
-    });
-}
+      function filterMappings() {
+        const searchTerm = document.getElementById("mappingSearch").value.toLowerCase();
+        const items = document.querySelectorAll(".mapping-item");
+        items.forEach((item) => {
+          const text = item.textContent.toLowerCase();
+          item.style.display = text.includes(searchTerm) ? "flex" : "none";
+        });
+      }
 
-function generateDiff(original, modified) {
-    const diffViewer = document.getElementById('diffViewer');
-    const originalLines = original.split('\n');
-    const modifiedLines = modified.split('\n');
-    const maxLength = Math.max(originalLines.length, modifiedLines.length);
-    let html = '<div style="font-family: monospace; font-size: 13px;">';
-    
-    for (let i = 0; i < maxLength; i++) {
-        const origLine = originalLines[i] || '';
-        const modLine = modifiedLines[i] || '';
-        
-        if (origLine !== modLine) {
+      function generateDiff(original, modified) {
+        const diffViewer = document.getElementById("diffViewer");
+        const originalLines = original.split("\n");
+        const modifiedLines = modified.split("\n");
+        const maxLength = Math.max(originalLines.length, modifiedLines.length);
+        let html = '<div style="font-family: monospace; font-size: 13px;">';
+
+        for (let i = 0; i < maxLength; i++) {
+          const origLine = originalLines[i] || "";
+          const modLine = modifiedLines[i] || "";
+
+          if (origLine !== modLine) {
             if (origLine && !modifiedLines.includes(origLine)) {
-                html += `<div class="diff-line diff-removed">- ${escapeHTML(origLine)}</div>`;
+              html += `<div class="diff-line diff-removed">- ${escapeHTML(origLine)}</div>`;
             }
             if (modLine && !originalLines.includes(modLine)) {
-                html += `<div class="diff-line diff-added">+ ${escapeHTML(modLine)}</div>`;
+              html += `<div class="diff-line diff-added">+ ${escapeHTML(modLine)}</div>`;
             }
-        } else if (origLine.trim()) {
+          } else if (origLine.trim()) {
             html += `<div style="color: var(--gh-fg-subtle); padding: 2px 8px;">  ${escapeHTML(origLine)}</div>`;
+          }
         }
-    }
-    
-    html += '</div>';
-    diffViewer.innerHTML = html;
-}
 
-function escapeHTML(str) {
-    return str.replace(/[&<>"']/g, (m) => {
-        return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[m];
-    });
-}
+        html += "</div>";
+        diffViewer.innerHTML = html;
+      }
 
-function switchTab(tabName) {
-    document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-    event.target.classList.add('active');
-    document.getElementById(tabName + 'Tab').classList.add('active');
-}
+      function escapeHTML(str) {
+        return str.replace(/[&<>"']/g, (m) => {
+          return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m];
+        });
+      }
 
-function showStatus(message, type) {
-    const container = document.getElementById('statusContainer');
-    const status = document.createElement('div');
-    status.className = `status ${type}`;
-    status.innerHTML = `<span>${message}</span>`;
-    container.innerHTML = '';
-    container.appendChild(status);
-    setTimeout(() => {
-        status.style.opacity = '0';
-        setTimeout(() => status.remove(), 300);
-    }, 5000);
-}
+      function switchTab(tabName) {
+        document.querySelectorAll(".tab").forEach((tab) => tab.classList.remove("active"));
+        document.querySelectorAll(".tab-content").forEach((content) => content.classList.remove("active"));
+        event.target.classList.add("active");
+        document.getElementById(tabName + "Tab").classList.add("active");
+      }
 
-function updateProgressBar(percent) {
-    document.getElementById('progressBar').style.width = percent + '%';
-}
+      function showStatus(message, type) {
+        const container = document.getElementById("statusContainer");
+        const status = document.createElement("div");
+        status.className = `status ${type}`;
+        status.innerHTML = `<span>${message}</span>`;
+        container.innerHTML = "";
+        container.appendChild(status);
+        setTimeout(() => {
+          status.style.opacity = "0";
+          setTimeout(() => status.remove(), 300);
+        }, 5000);
+      }
 
-function copyToClipboard(textareaId) {
-    const textarea = document.getElementById(textareaId);
-    textarea.select();
-    document.execCommand('copy');
-    showStatus('✓ Copied to clipboard!', 'success');
-}
+      function updateProgressBar(percent) {
+        document.getElementById("progressBar").style.width = percent + "%";
+      }
 
-function downloadFile(filename, textareaId) {
-    const content = document.getElementById(textareaId).value;
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    a.click();
-    URL.revokeObjectURL(url);
-    showStatus(`✓ Downloaded ${filename}`, 'success');
-}
+      function copyToClipboard(textareaId) {
+        const textarea = document.getElementById(textareaId);
+        textarea.select();
+        document.execCommand("copy");
+        showStatus("✓ Copied to clipboard!", "success");
+      }
 
-function clearCSS() {
-    document.getElementById('cssLibrary').value = '';
-    cssLibrary = {};
-    cssVariables = {};
-    document.getElementById('classCount').textContent = '0';
-    showStatus('ℹ CSS library cleared', 'info');
-}
+      function downloadFile(filename, textareaId) {
+        const content = document.getElementById(textareaId).value;
+        const blob = new Blob([content], { type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+        showStatus(`✓ Downloaded ${filename}`, "success");
+      }
 
-function clearHTML() {
-    document.getElementById('htmlInput').value = '';
-    showStatus('ℹ HTML input cleared', 'info');
-}
+      function clearCSS() {
+        document.getElementById("cssLibrary").value = "";
+        cssLibrary = {};
+        cssVariables = {};
+        document.getElementById("classCount").textContent = "0";
+        showStatus("ℹ CSS library cleared", "info");
+      }
 
-function exportMappings() {
-    const exportData = {
-        mappings: allMappings,
-        variables: cssVariables,
-        timestamp: new Date().toISOString()
-    };
-    const mappingsJSON = JSON.stringify(exportData, null, 2);
-    const blob = new Blob([mappingsJSON], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'class-mappings-' + Date.now() + '.json';
-    a.click();
-    URL.revokeObjectURL(url);
-    showStatus('✓ Class mappings exported as JSON', 'success');
-}
+      function clearHTML() {
+        document.getElementById("htmlInput").value = "";
+        showStatus("ℹ HTML input cleared", "info");
+      }
 
-function importMappings() {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.json';
-    input.onchange = (e) => {
-        const file = e.target.files[0];
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            try {
-                const data = JSON.parse(e.target.result);
-                allMappings = data.mappings || [];
-                cssVariables = data.variables || {};
-                updateMappingDisplay();
-                showStatus('✓ Class mappings imported successfully', 'success');
-            } catch (error) {
-                showStatus('❌ Error importing mappings file', 'error');
-            }
+      function exportMappings() {
+        const exportData = {
+          mappings: allMappings,
+          variables: cssVariables,
+          timestamp: new Date().toISOString(),
         };
-        reader.readAsText(file);
-    };
-    input.click();
-}
+        const mappingsJSON = JSON.stringify(exportData, null, 2);
+        const blob = new Blob([mappingsJSON], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "class-mappings-" + Date.now() + ".json";
+        a.click();
+        URL.revokeObjectURL(url);
+        showStatus("✓ Class mappings exported as JSON", "success");
+      }
 
-document.addEventListener('keydown', (e) => {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
-        e.preventDefault();
-        deobfuscateHTML();
-    }
-    if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
-        const activeTab = document.querySelector('.tab.active');
-        if (activeTab && activeTab.textContent.includes('HTML')) copyToClipboard('htmlOutput');
-        else if (activeTab && activeTab.textContent.includes('CSS')) copyToClipboard('cssOutput');
-    }
-});
+      function importMappings() {
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = ".json";
+        input.onchange = (e) => {
+          const file = e.target.files[0];
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            try {
+              const data = JSON.parse(e.target.result);
+              allMappings = data.mappings || [];
+              cssVariables = data.variables || {};
+              updateMappingDisplay();
+              showStatus("✓ Class mappings imported successfully", "success");
+            } catch (error) {
+              showStatus("❌ Error importing mappings file", "error");
+            }
+          };
+          reader.readAsText(file);
+        };
+        input.click();
+      }
 
-function previewOutput() {
-    const htmlOutput = document.getElementById('htmlOutput').value;
-    const cssOutput = document.getElementById('cssOutput').value;
-    
-    if (!htmlOutput || !cssOutput) {
-        showStatus('⚠️ Please generate output first', 'warning');
-        return;
-    }
-    
-    const previewWindow = window.open();
-    previewWindow.document.write(`
+      document.addEventListener("keydown", (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === "d") {
+          e.preventDefault();
+          deobfuscateHTML();
+        }
+        if ((e.ctrlKey || e.metaKey) && e.key === "c") {
+          const activeTab = document.querySelector(".tab.active");
+          if (activeTab && activeTab.textContent.includes("HTML")) copyToClipboard("htmlOutput");
+          else if (activeTab && activeTab.textContent.includes("CSS")) copyToClipboard("cssOutput");
+        }
+      });
+
+      function previewOutput() {
+        const htmlOutput = document.getElementById("htmlOutput").value;
+        const cssOutput = document.getElementById("cssOutput").value;
+
+        if (!htmlOutput || !cssOutput) {
+          showStatus("⚠️ Please generate output first", "warning");
+          return;
+        }
+
+        const previewWindow = window.open();
+        previewWindow.document.write(`
         <!DOCTYPE html>
         <html>
         <head>
@@ -1587,13 +1617,13 @@ function previewOutput() {
         <body>${htmlOutput}</body>
         </html>
     `);
-    previewWindow.document.close();
-}
+        previewWindow.document.close();
+      }
 
-function addCSSValidationFeature() {
-    const settingsPanel = document.querySelector('.settings-grid');
-    if (!document.getElementById('validateOutput')) {
-        settingsPanel.innerHTML += `
+      function addCSSValidationFeature() {
+        const settingsPanel = document.querySelector(".settings-grid");
+        if (!document.getElementById("validateOutput")) {
+          settingsPanel.innerHTML += `
             <div class="setting-item">
                 <span class="setting-label">Validate Output</span>
                 <label class="toggle-switch">
@@ -1602,31 +1632,19 @@ function addCSSValidationFeature() {
                 </label>
             </div>
         `;
-    }
-}
+        }
+      }
 
-window.addEventListener('load', () => {
-    addCSSValidationFeature();
-});
-</script>
+      window.addEventListener("load", () => {
+        addCSSValidationFeature();
+      });
+    </script>
 
-
-
-
-
-
-
-
-<!-- Eruda -->
-<!-- D E B U G G I N G -->
-<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-<script>
-  eruda.init();
-</script>
-
-
-
-
-
-</body>
+    <!-- Eruda -->
+    <!-- D E B U G G I N G -->
+    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+    <script>
+      eruda.init();
+    </script>
+  </body>
 </html>
