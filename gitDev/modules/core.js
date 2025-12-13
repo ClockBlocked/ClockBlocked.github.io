@@ -484,32 +484,45 @@ function openRecentFile(repoName, filePath, fileName) {
 }
 
 function viewFile(filename) {
-  if (!currentState.repository) {
-    showErrorMessage('No repository selected');
-    return;
-  }
-  const file = currentState.files.find(f => f.name === filename);
-  if (!file) {
-    showErrorMessage(`File "${filename}" not found in current view`);
-    return;
-  }
-  currentState.currentFile = file;
-  
-  fetchData(`Loading ${filename}...`, () => {
-    const filePath = file.path || ((currentState.path ? currentState.path + '/' : '') + filename);
-    const fileData = LocalStorageManager.getFile(currentState.repository, filePath);
-    if (!fileData) {
-      throw new Error(`File data not found for ${filePath}`);
+    if (!currentState.repository) {
+        showErrorMessage('No repository selected');
+        return;
     }
-    addToRecentFiles(filename, currentState.repository, filePath);
-    displayFileContent(filename, fileData);
-    showFileViewer();
-    updateStats();
-    return fileData;
-  }).catch((error) => {
-    showErrorMessage('Failed to load file: ' + error.message);
-  });
+    
+    const file = currentState.files.find(f => f.name === filename);
+    if (!file) {
+        showErrorMessage(`File "${filename}" not found in current view`);
+        return;
+    }
+    
+    currentState.currentFile = file;
+    
+    fetchData(`Loading ${filename}...`, () => {
+        const filePath = file.path || ((currentState.path ? currentState.path + '/' : '') + filename);
+        const fileData = LocalStorageManager.getFile(currentState.repository, filePath);
+        
+        if (!fileData) {
+            throw new Error(`File data not found for ${filePath}`);
+        }
+        
+        addToRecentFiles(filename, currentState.repository, filePath);
+        
+        // USE ONLY THE NEW CODE VIEWER SYSTEM
+        if (window.codeViewerEditor) {
+            codeViewerEditor.loadFile(filename, fileData);
+        } else {
+            console.error('CodeViewerEditor not initialized!');
+            showErrorMessage('Code viewer not available');
+        }
+        
+        showFileViewer();
+        updateStats();
+        return fileData;
+    }).catch((error) => {
+        showErrorMessage('Failed to load file: ' + error.message);
+    });
 }
+
 
 function openRepository(repoName) {
   currentState.repository = repoName;
