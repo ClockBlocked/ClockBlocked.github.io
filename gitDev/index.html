@@ -14,6 +14,9 @@
   <link rel="stylesheet" href="https://clockblocked.github.io/gitDev/styleSheets/enhancements.css" />
   
   <style>
+  
+  
+
 * {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -22,6 +25,12 @@
   -ms-user-select: none;
   user-select: none;
 }
+body {
+  
+}
+
+
+
 
 pre,
 code,
@@ -208,14 +217,15 @@ input, textarea {
 
     /* Sidebar Styling */
     .sidebar-title {
-      font-size: 0.75rem;
-      font-weight: 300;
+      font-size: 1.25rem;
+      font-weight: 100;
       text-transform: uppercase;
-      letter-spacing: 0.075em;
+      letter-spacing: 0.75em;
       color: #c9d1d9;
       padding: 0.5rem 0.75rem;
+      transform: translateX(-2rem);
       text-align: right;
-      opacity: 0.65;
+      opacity: 0.35;
       transition: opacity 0.65s ease-in-out;
     }
 
@@ -440,10 +450,10 @@ input, textarea {
               'btn-secondary-hover': '#444c56'
             }
           },
-          fontFamily: {
+/**          fontFamily: {
             'sans': ['Inter', 'system-ui', 'sans-serif'],
             'mono': ['JetBrains Mono', 'SFMono-Regular', 'Consolas', 'monospace']
-          },
+          },**/
           animation: {
             'fade-in': 'fadeIn 0.2s ease-out',
             'fade-out': 'fadeOut 0.2s ease-in',
