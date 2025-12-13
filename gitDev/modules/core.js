@@ -551,23 +551,6 @@ function openRepository(repoName) {
 }
 
 function initializeApp() {
-  setupEventListeners();
-  setupButtonEventListeners();
-  setupKeyboardShortcuts();
-  setupCodeEditors();
-  updateRecentFilesUI();
-  
-  fetchData('Initializing app...', () => {
-    eventListeners.init(SidebarManager || null);
-    return loadRepositories();
-  }).then(() => {
-    showSuccessMessage('Welcome back');
-  }).catch((error) => {
-    console.error('Initialization error:', error);
-  });
-}
-
-function initializeApp() {
     setupEventListeners();
     setupButtonEventListeners();
     setupKeyboardShortcuts();
