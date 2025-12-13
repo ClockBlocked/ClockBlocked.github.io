@@ -137,8 +137,8 @@ window.addEventListener("DOMContentLoaded", () => {
                 }
 
                 // Initialize code viewer manager if available
-                if (typeof codeViewerManager !== "undefined" && codeViewerManager.init) {
-                    codeViewerManager.init();
+                if (typeof CodeViewerEditor !== "undefined" && CodeViewerEditor.init) {
+                    CodeViewerEditor.init();
                 }
 
                 console.log("All modules processed");
