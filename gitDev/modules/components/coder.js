@@ -2344,8 +2344,8 @@ function escapeHtml(str) {
 const codeViewerEditor = new CodeViewerEditor();
 
 window.codeViewerEditor = codeViewerEditor;
-window.CodeViewerEditor = CodeViewerEditor;
 /**
+window.CodeViewerEditor = CodeViewerEditor;
  * 
  *  C R E A T E D  B Y
  * 
