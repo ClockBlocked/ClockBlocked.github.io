@@ -567,6 +567,25 @@ function initializeApp() {
   });
 }
 
+function initializeApp() {
+    setupEventListeners();
+    setupButtonEventListeners();
+    setupKeyboardShortcuts();
+    setupCodeEditors();
+    setupCodeViewer();
+    updateRecentFilesUI();
+    
+    fetchData('Initializing app...', () => {
+        eventListeners.init(SidebarManager || null);
+        return loadRepositories();
+    }).then(() => {
+        showSuccessMessage('Welcome back');
+    }).catch((error) => {
+        console.error('Initialization error:', error);
+    });
+}
+
+
 document.addEventListener('DOMContentLoaded', initializeApp);
 
 
