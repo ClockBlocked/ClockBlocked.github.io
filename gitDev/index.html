@@ -419,51 +419,6 @@ input, textarea {
       z-index: 9999999999 !important;
     }
     
-    /* * 1. Target the main parent container to apply Flexbox 
- * This ensures line numbers and code content are side-by-side columns. 
- */
-.bg-github-canvas-overlay > .flex {
-    display: flex;
-    
-    /* CRITICAL: Set the definitive line height here, overriding any default/class values */
-    /* 1.25rem is often the exact value for Tailwind's 'leading-5' */
-    line-height: 1.25rem !important; 
-    
-    /* Ensure text properties are consistent */
-    font-size: 0.75rem !important; /* Adjust if your desired font is different */
-}
-
-/* * 2. Target the Line Numbers Wrapper (#lineNumbers)
- */
-#lineNumbers {
-    /* CRITICAL: Remove all padding (p-4) to prevent misalignment */
-    padding: 0 !important; 
-    margin: 0 !important;
-    
-    /* Ensure it inherits the fixed line-height from the parent .flex */
-    line-height: inherit !important;
-}
-
-/* * 3. Target the Code Content (<pre id="codeContent">)
- */
-pre {
-    /* CRITICAL: Remove all padding (p-4) to prevent misalignment */
-    padding: 0 !important; 
-    margin: 0 !important;
-    
-    /* Ensure it inherits the fixed line-height from the parent .flex */
-    line-height: inherit !important;
-}
-
-/* * 4. Target the individual elements inside for final consistency 
- * (The actual code lines and line number span/divs if you add them later)
- */
-pre, 
-#lineNumbers > * { /* Target all children of the line numbers wrapper */
-    line-height: inherit !important;
-    margin: 0 !important;
-    padding: 0 !important;
-}
 
   </style>
 
@@ -1089,16 +1044,9 @@ pre,
 
 
 <!-- Code Viewer / Editor -->
-        <div class="bg-github-canvas-overlay border-x border-b border-github-border-default rounded-b-lg overflow-hidden">
-          <div class="flex">
-            <div id="lineNumbers" class="bg-github-canvas-inset border-r border-github-border-muted p-4 text-right text-github-fg-muted font-mono text-sm leading-5 select-none min-w-[3rem]">
-            </div>
-            <div class="flex-1 overflow-auto">
-              <pre id="codeContent" class="p-4 text-sm font-mono leading-5 overflow-auto"><code id="codeBlock" class="language-javascript"></code></pre>
-            </div>
-          </div>
-        </div>
-
+<div id="fileViewer" class="hidden">
+    <!-- Code viewer will be inserted here -->
+</div>
 
 
         <div class="mt-6 bg-github-canvas-overlay border border-github-border-default rounded-lg p-6">
