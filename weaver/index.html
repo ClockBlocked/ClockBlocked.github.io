@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitDev - GitHub Clone</title>
+    
+    <!-- PWA -->
+    <link rel="manifest" href="https://gitdev.wuaze.com/manifest.json">
+    <meta name="theme-color" content="#22272e">
+    <meta name="description" content="GitHub-like file explorer and editor with local storage">
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="https://gitdev.wuaze.com/styles.css">
+    <link rel="stylesheet" href="https://gitdev.wuaze.com/styleSheets/global/fonts.css">
+    <link rel="stylesheet" href="https://gitdev.wuaze.com/styleSheets/enhancements.css">
+    <link rel="stylesheet" href="https://gitdev.wuaze.com/styleSheets/components/transitions.css">
+    
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CodeMirror -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material-darker.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/markdown/markdown.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Prism -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    
+    <!-- JSZip for Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    
+    <style>
+        * {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        pre, code, .code-block, [class*="language-"] {
+            -webkit-user-select: text !important;
+            -moz-user-select: text !important;
+            -ms-user-select: text !important;
+            user-select: text !important;
+        }
+        
+        input, textarea {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+        }
+        
+        .page-transition {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        
+        .page-transition.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .fade-out {
+            animation: fadeOut 0.2s ease-out forwards;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+        
+        @keyframes fadeOut {
+            to { opacity: 0; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .code-editor-loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+    </style>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        github: {
+                            'canvas-default': '#22272e',
+                            'tableHeader': '#2d333b',
+                            'canvas-overlay': '#2d333b',
+                            'canvas-inset': '#1c2128',
+                            'canvas-subtle': '#2d333b',
+                            'border-default': '#444c56',
+                            'border-muted': '#373e47',
+                            'fg-default': '#adbac7',
+                            'fg-muted': '#768390',
+                            'accent-fg': '#539bf5',
+                            'accent-emphasis': '#4184e4',
+                            'success-fg': '#57ab5a',
+                            'danger-fg': '#e5534b',
+                            'btn-primary-bg': '#347d39',
+                            'btn-primary-hover': '#46954a',
+                            'btn-secondary-bg': '#373e47',
+                            'btn-secondary-hover': '#444c56'
+                        }
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                        'mono': ['JetBrains Mono', 'SFMono-Regular', 'Consolas', 'monospace']
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.2s ease-out',
+                        'fade-out': 'fadeOut 0.2s ease-in',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'slide-down': 'slideDown 0.3s ease-out',
+                        'pulse-soft': 'pulseSoft 2s ease-in-out infinite',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-github-canvas-default text-github-fg-default font-sans">
+    <!-- Top Navigation Bar (Static) -->
+    <nav class="navbar-container fixed top-0 left-0 right-0 z-50">
+        <div class="navbar-content">
+            <div class="navbar-left">
+                <button id="leftSidebarTrigger" class="menu-button">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <a href="#" class="flex items-center space-x-2">
+                    <i class="fab fa-github text-2xl"></i>
+                    <span class="text-sm font-semibold">GitDev</span>
+                </a>
+            </div>
+            
+            <button onclick="App.showSearchModal()" class="search-button">
+                <i class="fas fa-search"></i>
+                <span class="hidden sm:inline">Search</span>
+                <kbd class="hidden lg:inline-block ml-2 text-xs">Ctrl+K</kbd>
+            </button>
+            
+            <div class="navbar-right">
+                <button onclick="App.showCreateFileModal()" class="menu-button">
+                    <i class="fas fa-plus"></i>
+                    <span class="ml-2 text-sm">New</span>
+                </button>
+                <button onclick="App.toggleTheme()" class="menu-button">
+                    <i id="themeIcon" class="fas fa-moon"></i>
+                </button>
+                <button id="rightSidebarTrigger" class="menu-button">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Global Progress Bar -->
+        <div id="globalProgress" class="page-progress hidden">
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main App Container -->
+    <div class="app-container pt-16">
+        <!-- Sidebars (Static) -->
+        <aside id="leftSidebar" class="sidebar left-sidebar">
+            <!-- Content loaded dynamically -->
+        </aside>
+        
+        <aside id="rightSidebar" class="sidebar right-sidebar">
+            <!-- Content loaded dynamically -->
+        </aside>
+        
+        <!-- Main Content Area -->
+        <main id="mainContent" class="main-content-wrapper">
+            <!-- Views will be dynamically injected here -->
+        </main>
+        
+        <!-- Global Overlay -->
+        <div id="globalOverlay" class="fixed inset-0 bg-black/50 z-40 hidden"></div>
+    </div>
+    
+    <!-- Modals Container -->
+    <div id="modalsContainer"></div>
+    
+    <!-- Scripts -->
+    <script src="https://gitdev.wuaze.com/new/core/templateManager.js"></script>
+    <script src="https://gitdev.wuaze.com/new/core/router.js"></script>
+    <script src="https://gitdev.wuaze.com/new/core/app.js"></script>
+    <script src="https://gitdev.wuaze.com/new/storage.js"></script>
+    <script src="https://gitdev.wuaze.com/new/pageUpdates.js"></script>
+    <script src="https://gitdev.wuaze.com/new/overlays.js"></script>
+    <script src="https://gitdev.wuaze.com/new/listeners.js"></script>
+    <script src="https://gitdev.wuaze.com/new/importExport.js"></script>
+    <script src="https://gitdev.wuaze.com/new/fileMenu.js"></script>
+    <script src="https://gitdev.wuaze.com/new/dependencies.js"></script>
+    
+    <!-- Service Worker -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('https://gitdev.wuaze.com/sw.js');
+        }
+        
+        // Initialize app when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            App.init();
+        });
+    </script>
+</body>
+</html>
