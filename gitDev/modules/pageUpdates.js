@@ -384,9 +384,9 @@ function setupEventListeners() {
   });
 }
 
-function setupCodeViewer() {
-    if (window.codeViewerManager && typeof codeViewerManager.init === 'function') {
-        codeViewerManager.init();
+function setupCodeViewerEditor() {
+    if (window.codeViewerEditor && typeof codeViewerEditor.init === 'function') {
+        codeViewerEditor.init();
     }
 }
 /**
