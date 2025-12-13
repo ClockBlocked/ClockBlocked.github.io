@@ -1,16 +1,3 @@
-
-
-
-/**
- * 
-import { LoadingProgress } from 'https://gitdev.wuaze.com/modules/router.js';
-import { currentState } from 'https://gitdev.wuaze.com/modules/core.js';
-import { updateSelectedTags } from 'https://gitdev.wuaze.com/modules/pageUpdates.js';
-// import { ProgressBar } from 'https://gitdev.wuaze.com/modules/router.js';
-**/
-
-
-
 function showContextMenu(x, y, fileName, fileType) {
   hideContextMenu();
   const menu = document.createElement('div');
