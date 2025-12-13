@@ -1,0 +1,43 @@
+<div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6 page-transition">
+    <div class="flex items-center justify-between mb-4">
+        <nav class="flex items-center space-x-1 text-sm">
+            <button onclick="router.navigate('/repo/{{repoName}}')" class="text-github-accent-fg hover:underline font-semibold">{{repoName}}</button>
+            <span class="text-github-fg-muted">/</span>
+            <span class="text-github-fg-default font-semibold">{{fileName}}</span>
+        </nav>
+        
+        <div class="flex items-center space-x-2">
+            <button onclick="router.navigate('/repo/{{repoName}}/edit/{{../currentFile.path}}')" class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
+                <i class="fas fa-edit mr-2"></i>
+                Edit
+            </button>
+            <button onclick="App.downloadFile()" class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
+                <i class="fas fa-download mr-2"></i>
+                Download
+            </button>
+        </div>
+    </div>
+    
+    <div class="bg-github-canvas-overlay border border-github-border-default rounded-t-lg px-4 py-2 flex items-center justify-between text-sm">
+        <div class="flex items-center space-x-4 text-github-fg-muted">
+            <span>{{fileData.content.split('\\n').length}} lines</span>
+            <span>•</span>
+            <span>{{formatFileSize fileData.size}}</span>
+            <span>•</span>
+            <span>{{getLanguageName fileName}}</span>
+        </div>
+    </div>
+    
+    <div class="bg-github-canvas-overlay border-x border-b border-github-border-default rounded-b-lg overflow-hidden">
+        <div class="flex">
+            <div id="lineNumbers" class="bg-github-canvas-inset border-r border-github-border-muted p-4 text-right text-github-fg-muted font-mono text-sm leading-5 select-none min-w-[3rem]">
+                {{#each fileData.content.split('\\n')}}
+                <div class="line-number">{{@index}}</div>
+                {{/each}}
+            </div>
+            <div class="flex-1 overflow-auto">
+                <pre class="p-4 text-sm font-mono leading-5 overflow-auto"><code class="language-{{getPrismLanguage fileName}}">{{fileData.content}}</code></pre>
+            </div>
+        </div>
+    </div>
+</div>

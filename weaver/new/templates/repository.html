@@ -1,0 +1,57 @@
+<div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6 page-transition">
+    <div class="flex items-center justify-between mb-4">
+        <nav class="flex items-center space-x-3 text-sm">
+            <button onclick="router.navigate('/')" class="text-github-accent-fg hover:underline font-semibold">Repositories</button>
+            <span class="text-github-fg-muted">/</span>
+            <span class="text-github-fg-default font-semibold">{{repoName}}</span>
+        </nav>
+        
+        <div class="flex items-center space-x-2">
+            <button onclick="App.showCreateFileModal()" class="inline-flex items-center px-3 py-1.5 bg-github-btn-primary-bg hover:bg-github-btn-primary-hover text-white rounded-md text-sm font-medium transition-colors">
+                <i class="fas fa-plus mr-2"></i>
+                New
+            </button>
+            <button onclick="App.showImportModal()" class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
+                <i class="fas fa-download mr-2"></i>
+                Import
+            </button>
+        </div>
+    </div>
+    
+    <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-github-tableHeader">
+                    <tr>
+                        <th class="px-4 py-2 text-left text-sm font-medium text-github-fg-default">Name</th>
+                        <th class="px-4 py-2 text-left text-sm font-medium text-github-fg-default">Last commit message</th>
+                        <th class="px-4 py-2 text-right text-sm font-medium text-github-fg-default">Updated</th>
+                    </tr>
+                </thead>
+                <tbody id="fileListBody" class="divide-y divide-github-border-muted">
+                    <div data-bind="files" data-template="fileRow"></div>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<template id="fileRow">
+    <tr class="hover:bg-github-canvas-subtle cursor-pointer border-b border-github-border-default transition-colors group"
+        onclick="router.navigate('/repo/{{../repoName}}/view/{{path}}')">
+        <td class="py-3 px-4">
+            <div class="flex items-center gap-3">
+                {{fileIcon name type}}
+                <span class="text-github-fg-default font-mono">{{name}}</span>
+            </div>
+        </td>
+        <td class="py-3 px-4 text-github-fg-muted text-sm">{{lastCommit}}</td>
+        <td class="py-3 px-4 text-github-fg-muted text-sm">{{formatDate lastModified}}</td>
+        <td class="py-3 px-4 text-right">
+            <button class="file-more-menu-btn opacity-0 group-hover:opacity-100 px-2 py-1 rounded transition-all hover:bg-github-canvas-subtle"
+                    onclick="event.stopPropagation();fileMenuManager.showFileMenu('{{name}}', event)">
+                <i class="fas fa-ellipsis-v"></i>
+            </button>
+        </td>
+    </tr>
+</template>
