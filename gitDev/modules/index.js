@@ -114,7 +114,6 @@ window.addEventListener("DOMContentLoaded", () => {
         console.groupEnd();
     }
 
-    // expose retry globally for console usage
     window.retryScript = retryScript;
 
     (async function loadAllScripts() {
@@ -136,13 +135,11 @@ window.addEventListener("DOMContentLoaded", () => {
                     initializeApp();
                 }
 
-                // Initialize code viewer manager if available
                 if (typeof CodeViewerEditor !== "undefined" && CodeViewerEditor.init) {
                     CodeViewerEditor.init();
                 }
 
                 console.log("All modules processed");
-
             }, 50);
         }
     })();
