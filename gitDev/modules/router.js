@@ -17,7 +17,6 @@ function navigateToRoot() {
 //    ProgressBar.hide();
   }, 150);
 }
-
 function navigateToPath(path) {
   currentState.path = path;
   
@@ -38,7 +37,6 @@ function navigateToPath(path) {
 //    ProgressBar.hide();
   }, 150);
 }
-
 
 
 function showFileViewer() {
@@ -105,9 +103,6 @@ function showExplorer() {
 }
 
 
-
-
-
 const loaderStyles = `
   .gh-progress {
     position: fixed;
@@ -135,7 +130,6 @@ const loaderStyles = `
     transition: width 0.5s ease-in-out;
   }
 `;
-
 const LoadingProgress = (() => {
 
   let progressElement = null;
