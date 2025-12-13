@@ -405,6 +405,19 @@ function setupCodeEditors() {
   }
 }
 
+
+function setupCodeViewerEditor() {
+    if (typeof CodeViewerEditor !== 'undefined') {
+        window.codeViewerEditor = new CodeViewerEditor();
+        codeViewerEditor.init();
+        console.log('✅ CodeViewerEditor initialized successfully');
+    } else {
+        console.error('❌ CodeViewerEditor class not loaded');
+    }
+}
+
+
+
 function setupButtonEventListeners() {
   setTimeout(() => {
     const createRepoBtn = document.querySelector('button[onclick*="showCreateRepoModal"]');
