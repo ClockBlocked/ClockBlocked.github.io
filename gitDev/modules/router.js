@@ -55,12 +55,15 @@ function showFileViewer() {
     setTimeout(() => LoadingProgress.hide(), 300);
 }
 function showFileEditor() {
-    // This is now handled by the new code viewer
-    // We can redirect to edit mode within the viewer
+    // Use the new code viewer's edit mode instead of old editor
     if (window.codeViewerEditor && typeof codeViewerEditor.enterEditMode === 'function') {
         codeViewerEditor.enterEditMode();
+    } else {
+        console.error('CodeViewerEditor not available or enterEditMode not found');
+        showErrorMessage('Editor not available');
     }
 }
+
 function showRepoSelector() {
     const views = ['explorerView', 'fileViewer', 'fileEditor'];
     views.forEach(viewId => {
