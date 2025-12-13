@@ -16,18 +16,17 @@ function showContextMenu(x, y, fileName, fileType) {
   if (rect.right > window.innerWidth) menu.style.left = `${x - rect.width}px`;
   if (rect.bottom > window.innerHeight) menu.style.top = `${y - rect.height}px`;
 }
-
 function hideContextMenu() {
   const menu = document.getElementById('contextMenu');
   if (menu) menu.remove();
 }
+
 
 function showCreateRepoModal() {
   document.getElementById('createRepoModal').classList.remove('hidden');
   document.getElementById('createRepoModal').classList.add('flex');
   document.getElementById('newRepoName').focus();
 }
-
 function hideCreateRepoModal() {
   document.getElementById('createRepoModal').classList.add('hidden');
   document.getElementById('createRepoModal').classList.remove('flex');
@@ -37,13 +36,13 @@ function hideCreateRepoModal() {
   document.getElementById('initReadme').checked = true;
 }
 
+
 function showCreateFileModal() {
   document.getElementById('createFileModal').classList.remove('hidden');
   document.getElementById('createFileModal').classList.add('flex');
   document.getElementById('currentPathPrefix').textContent = currentState.repository + (currentState.path ? '/' + currentState.path : '') + '/';
   document.getElementById('newFileName').focus();
 }
-
 function hideCreateFileModal() {
   document.getElementById('createFileModal').classList.add('hidden');
   document.getElementById('createFileModal').classList.remove('flex');
@@ -55,17 +54,18 @@ function hideCreateFileModal() {
   updateSelectedTags();
 }
 
+
 function showDeleteFileModal() {
   if (!currentState.currentFile) return;
   document.getElementById('fileToDeleteName').textContent = currentState.currentFile.name;
   document.getElementById('deleteFileModal').classList.remove('hidden');
   document.getElementById('deleteFileModal').classList.add('flex');
 }
-
 function hideDeleteFileModal() {
   document.getElementById('deleteFileModal').classList.add('hidden');
   document.getElementById('deleteFileModal').classList.remove('flex');
 }
+
 
 function showLoading(text = 'Loading...') {
   const overlay = document.getElementById('loadingOverlay');
@@ -80,7 +80,6 @@ function showLoading(text = 'Loading...') {
     overlay.style.display = 'flex';
   }
 }
-
 function hideLoading() {
   const overlay = document.getElementById('loadingOverlay');
   
@@ -92,6 +91,7 @@ function hideLoading() {
     overlay.style.display = 'none';
   }
 }
+
 
 function showSuccessMessage(message) {
   LoadingProgress.show();
@@ -105,7 +105,6 @@ function showSuccessMessage(message) {
     setTimeout(() => notification.parentNode?.removeChild(notification), 300);
   }, 3000);
 }
-
 function showErrorMessage(message) {
   const notification = document.createElement('div');
   notification.className = 'fixed top-4 right-4 bg-github-danger-fg text-white px-4 py-3 rounded-lg shadow-lg animate-slide-down';
