@@ -1,14 +1,3 @@
-
-
-/**
-import { formatDate, getFileIcon, getLanguageName, formatFileSize, getPrismLanguage, adjustCodeBlockHeight } from 'https://gitdev.wuaze.com/modules/dependencies.js';
-import { currentState, recentFiles } from 'https://gitdev.wuaze.com/modules/core.js';
-import { LocalStorageManager } from 'https://gitdev.wuaze.com/modules/storage.js';
-**/
-
-
-
-
 function updateSelectedTags() {
   const container = document.getElementById('selectedTags');
   if (!container) return;
@@ -81,51 +70,7 @@ function renderRepositoryList() {
     repoList.appendChild(repoCard);
   });
 }
-/**
-function renderFileList() {
-  const tbody = document.getElementById('fileListBody');
-  if (!tbody) return;
-  tbody.innerHTML = '';
-  if (currentState.files.length === 0) {
-    tbody.innerHTML = `
-    <tr>
-  <td colspan="3" class="px-4 py-8 text-center text-github-fg-muted">
-    <svg class="w-8 h-8 mx-auto mb-2" fill="currentColor" viewBox="0 0 16 16">
-      <path
-        d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z"
-      />
-    </svg>
-    <p>No files in this directory</p>
-    <button onclick="showCreateFileModal()" class="mt-2 text-github-accent-fg hover:underline text-sm">
-      Create your first file
-    </button>
-  </td>
-</tr>
-    `;
-    return;
-  }
-  currentState.files.forEach(file => {
-    const row = document.createElement('tr');
-    row.className = 'hover:bg-github-canvas-subtle transition-colors cursor-pointer';
-    const fileIcon = getFileIcon(file.name, file.type);
-    row.innerHTML = `
-    <td class="px-4 py-3">
-  <div class="flex items-center space-x-3">
-    ${fileIcon}<span class="text-github-accent-fg hover:underline font-medium">${file.name}</span>
-  </div>
-</td>
-<td class="px-4 py-3 text-github-fg-muted text-sm max-w-md truncate">${file.lastCommit || 'Initial commit'}</td>
-<td class="px-4 py-3 text-github-fg-muted text-sm text-right">${formatDate(file.lastModified)}</td>
-    `;
-    row.addEventListener('click', () => window.viewFile(file.name));
-    row.addEventListener('contextmenu', (e) => {
-      e.preventDefault();
-      window.showContextMenu(e.clientX, e.clientY, file.name, file.type);
-    });
-    tbody.appendChild(row);
-  });
-}
-**/
+
 function renderFileList() {
   const tbody = document.getElementById('fileListBody');
   if (!tbody) return;
@@ -196,7 +141,6 @@ function escapeHTML(str) {
   div.textContent = str;
   return div.innerHTML;
 }
-
 
 function displayFileContent(filename, fileData) {
     if (window.codeViewerEditor && typeof codeViewerEditor.displayFileContent === 'function') {
