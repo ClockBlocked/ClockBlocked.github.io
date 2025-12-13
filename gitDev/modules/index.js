@@ -54,9 +54,8 @@ window.addEventListener("DOMContentLoaded", () => {
             url: "https://clockblocked.github.io/gitDev/modules/fileMenu.js",
             category: SCRIPT_CATEGORIES.UI
         },
-        // Add new code viewer module
         {
-            url: "https://clockblocked.github.io/gitDev/modules/codeViewer.js",
+            url: "https://clockblocked.github.io/gitDev/modules/coder.js",
             category: SCRIPT_CATEGORIES.UI
         }
     ];
