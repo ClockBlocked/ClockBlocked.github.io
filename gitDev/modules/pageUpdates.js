@@ -199,9 +199,8 @@ function escapeHTML(str) {
 
 
 function displayFileContent(filename, fileData) {
-    // Use the new code viewer if available
-    if (window.codeViewerManager && typeof codeViewerManager.displayFileContent === 'function') {
-        codeViewerManager.displayFileContent(filename, fileData);
+    if (window.codeViewerEditor && typeof codeViewerEditor.displayFileContent === 'function') {
+        codeViewerEditor.displayFileContent(filename, fileData);
         return;
     }
     
