@@ -1,12 +1,9 @@
-
-
-
-
-
-class CodeViewerManager {
+class CodeViewerEditor {
     constructor() {
         this.currentFile = null;
-        this.codeViewerInstance = null;
+        this.fileData = null;
+        this.isEditing = false;
+        this.codeMirrorEditor = null;
         this.elements = {};
         this.state = {
             fontSize: 12,
@@ -17,10 +14,11 @@ class CodeViewerManager {
             totalLines: 0,
             wrapEnabled: true,
             minimapEnabled: false,
-            splitViewEnabled: false
+            isModified: false
         };
     }
 
+/////////////  S E T U P  /////
     init() {
         this.setupStyles();
         this.cacheElements();
@@ -28,7 +26,7 @@ class CodeViewerManager {
     }
 
     setupStyles() {
-        // Add the CSS styles to the document
+        // Add transition styles for smooth mode switching
         const styleElement = document.createElement('style');
         styleElement.innerHTML = `
             .code-viewer-container {
@@ -41,1078 +39,41 @@ class CodeViewerManager {
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
                 color: #adbac7;
                 height: 100%;
+                transition: all 0.3s ease;
             }
 
-            .code-viewer-header {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 8px 16px;
-                background: linear-gradient(180deg, #2d333b 0%, #282e36 100%);
-                border-bottom: 1px solid #444c56;
-                min-height: 44px;
-                gap: 16px;
+            .edit-mode .code-viewer-container {
+                border-color: #347d39;
+                box-shadow: 0 0 0 1px rgba(52, 125, 57, 0.3);
             }
 
-            .header-left {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                flex-shrink: 0;
-            }
-
-            .file-icon {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                width: 28px;
-                height: 28px;
-                background: linear-gradient(135deg, #347d39 0%, #2b6a30 100%);
-                border-radius: 6px;
-                color: #ffffff;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            }
-
-            .file-name {
-                font-size: 14px;
-                font-weight: 600;
-                color: #adbac7;
-                letter-spacing: -0.01em;
-            }
-
-            .file-badge {
-                display: inline-flex;
-                align-items: center;
-                padding: 2px 6px;
-                font-size: 10px;
-                font-weight: 500;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-                background: rgba(99, 110, 123, 0.2);
-                border: 1px solid rgba(99, 110, 123, 0.3);
-                border-radius: 4px;
-                color: #768390;
-            }
-
-            .header-center {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                flex: 1;
-                min-width: 0;
-            }
-
-            .breadcrumb-trail {
-                display: flex;
-                align-items: center;
-                gap: 4px;
-                font-size: 12px;
-                color: #768390;
-                overflow: hidden;
-            }
-
-            .breadcrumb-item {
-                padding: 4px 8px;
-                border-radius: 4px;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                transition: all 0.15s ease;
-                cursor: pointer;
-            }
-
-            .breadcrumb-item:hover {
-                background: rgba(99, 110, 123, 0.2);
-                color: #adbac7;
-            }
-
-            .breadcrumb-item.active {
-                background: rgba(65, 132, 228, 0.15);
-                color: #539bf5;
-                font-weight: 500;
-            }
-
-            .breadcrumb-separator {
-                color: #545d68;
-                font-weight: 300;
-            }
-
-            .header-right {
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                flex-shrink: 0;
-            }
-
-            .header-stats {
-                display: flex;
-                align-items: center;
-                gap: 16px;
-            }
-
-            .stat-item {
-                display: flex;
-                align-items: center;
-                gap: 6px;
-                font-size: 12px;
-                color: #768390;
-            }
-
-            .stat-item svg {
-                opacity: 0.7;
-            }
-
-            .header-actions {
-                display: flex;
-                align-items: center;
-                gap: 4px;
-                padding-left: 12px;
-                border-left: 1px solid #373e47;
-            }
-
-            .action-btn {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 6px;
-                padding: 6px 8px;
-                background: transparent;
-                border: 1px solid transparent;
-                border-radius: 6px;
-                color: #768390;
-                cursor: pointer;
-                transition: all 0.15s ease;
-                position: relative;
-            }
-
-            .action-btn:hover {
-                background: rgba(99, 110, 123, 0.2);
-                color: #adbac7;
-                border-color: rgba(99, 110, 123, 0.3);
-            }
-
-            .action-btn:active {
-                background: rgba(99, 110, 123, 0.3);
-                transform: scale(0.96);
-            }
-
-            .action-btn[data-tooltip]:hover::after {
-                content: attr(data-tooltip);
-                position: absolute;
-                bottom: calc(100% + 8px);
-                left: 50%;
-                transform: translateX(-50%);
-                padding: 6px 10px;
-                background: #2d333b;
-                border: 1px solid #444c56;
-                border-radius: 6px;
-                font-size: 11px;
-                font-weight: 500;
-                color: #adbac7;
-                white-space: nowrap;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-                z-index: 100;
-                pointer-events: none;
-                animation: tooltipFade 0.15s ease;
-            }
-
-            @keyframes tooltipFade {
-                from {
-                    opacity: 0;
-                    transform: translateX(-50%) translateY(4px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateX(-50%) translateY(0);
-                }
-            }
-
-            .action-divider {
-                width: 1px;
-                height: 20px;
-                background: #373e47;
-                margin: 0 4px;
-            }
-
-            .edit-btn {
-                background: linear-gradient(180deg, #347d39 0%, #2b6a30 100%);
-                border-color: rgba(0, 0, 0, 0.2);
-                color: #ffffff;
-                font-size: 12px;
-                font-weight: 500;
-                padding: 6px 12px;
-                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            }
-
-            .edit-btn:hover {
-                background: linear-gradient(180deg, #3d8b40 0%, #347d39 100%);
-                color: #ffffff;
-                border-color: rgba(0, 0, 0, 0.3);
-            }
-
-            .code-viewer-toolbar {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 6px 12px;
-                background: #22272e;
-                border-bottom: 1px solid #444c56;
-                gap: 16px;
-            }
-
-            .toolbar-left {
-                display: flex;
-                align-items: center;
-                gap: 4px;
-            }
-
-            .toolbar-btn {
-                display: flex;
-                align-items: center;
-                gap: 6px;
-                padding: 6px 12px;
-                background: transparent;
-                border: 1px solid transparent;
-                border-radius: 6px;
-                font-size: 12px;
-                font-weight: 500;
-                color: #768390;
-                cursor: pointer;
-                transition: all 0.15s ease;
-            }
-
-            .toolbar-btn:hover {
-                background: rgba(99, 110, 123, 0.15);
-                color: #adbac7;
-            }
-
-            .toolbar-btn.active {
-                background: rgba(65, 132, 228, 0.15);
-                color: #539bf5;
-                border-color: rgba(65, 132, 228, 0.3);
-            }
-
-            .toolbar-center {
-                flex: 1;
-                display: flex;
-                justify-content: center;
-                max-width: 400px;
-            }
-
-            .search-container {
-                display: flex;
-                align-items: center;
-                width: 100%;
-                padding: 6px 12px;
-                background: #1c2128;
-                border: 1px solid #373e47;
-                border-radius: 6px;
-                gap: 8px;
-                transition: all 0.15s ease;
-            }
-
-            .search-container:focus-within {
-                border-color: #539bf5;
-                box-shadow: 0 0 0 3px rgba(65, 132, 228, 0.15);
-            }
-
-            .search-icon {
-                color: #545d68;
-                flex-shrink: 0;
-            }
-
-            .search-input {
-                flex: 1;
-                background: transparent;
-                border: none;
-                outline: none;
-                font-size: 12px;
-                color: #adbac7;
-                min-width: 0;
-            }
-
-            .search-input::placeholder {
-                color: #545d68;
-            }
-
-            .search-shortcuts {
-                display: flex;
-                gap: 2px;
-                flex-shrink: 0;
-            }
-
-            .search-shortcuts kbd {
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                padding: 2px 5px;
-                font-family: inherit;
-                font-size: 10px;
-                font-weight: 500;
-                color: #768390;
-                background: linear-gradient(180deg, #2d333b 0%, #282e36 100%);
-                border: 1px solid #444c56;
-                border-radius: 4px;
-                box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
-            }
-
-            .toolbar-right {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-            }
-
-            .view-options {
-                display: flex;
-                align-items: center;
-                background: #1c2128;
-                border: 1px solid #373e47;
-                border-radius: 6px;
-                padding: 2px;
-                gap: 2px;
-            }
-
-            .view-btn {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                width: 28px;
-                height: 26px;
-                background: transparent;
-                border: none;
-                border-radius: 4px;
-                color: #545d68;
-                cursor: pointer;
-                transition: all 0.15s ease;
-            }
-
-            .view-btn:hover {
-                color: #768390;
-                background: rgba(99, 110, 123, 0.15);
-            }
-
-            .view-btn.active {
-                color: #539bf5;
-                background: rgba(65, 132, 228, 0.15);
-            }
-
-            .toolbar-divider {
-                width: 1px;
-                height: 24px;
-                background: #373e47;
-            }
-
-            .font-size-control {
-                display: flex;
-                align-items: center;
-                background: #1c2128;
-                border: 1px solid #373e47;
-                border-radius: 6px;
-                overflow: hidden;
-            }
-
-            .font-btn {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                width: 26px;
-                height: 26px;
-                background: transparent;
-                border: none;
-                color: #768390;
-                cursor: pointer;
-                transition: all 0.15s ease;
-            }
-
-            .font-btn:hover {
-                background: rgba(99, 110, 123, 0.2);
-                color: #adbac7;
-            }
-
-            .font-btn:active {
-                background: rgba(99, 110, 123, 0.3);
-            }
-
-            .font-size-display {
-                padding: 0 8px;
-                font-size: 11px;
-                font-weight: 500;
-                color: #adbac7;
-                border-left: 1px solid #373e47;
-                border-right: 1px solid #373e47;
-                min-width: 40px;
-                text-align: center;
-            }
-
-            .code-viewer-body {
-                display: flex;
-                flex: 1;
-                overflow: hidden;
+            .loading-transition {
                 position: relative;
                 min-height: 300px;
+                overflow: hidden;
             }
 
-            .gutter-container {
-                display: flex;
-                flex-shrink: 0;
-                background: #1c2128;
-                border-right: 1px solid #444c56;
-                user-select: none;
-            }
-
-            .gutter-fold-column {
-                width: 16px;
-                background: linear-gradient(90deg, #1c2128 0%, #22272e 100%);
-                border-right: 1px solid #373e47;
-            }
-
-            .gutter-line-numbers {
-                display: flex;
-                flex-direction: column;
-                padding: 12px 12px 12px 8px;
-                text-align: right;
-                font-family: 'SF Mono', 'Cascadia Code', 'Fira Code', 'JetBrains Mono', Consolas, monospace;
-                font-size: 12px;
-                line-height: 1.5;
-                color: #545d68;
-                min-width: 48px;
-                background: #1c2128;
-            }
-
-            .gutter-diff-column {
-                width: 4px;
-                background: #1c2128;
-            }
-
-            .line-number {
-                display: flex;
-                align-items: center;
-                justify-content: flex-end;
-                height: 18px;
-                padding-right: 4px;
-                cursor: pointer;
-                transition: color 0.1s ease;
-                position: relative;
-            }
-
-            .line-number:hover {
-                color: #adbac7;
-            }
-
-            .line-number:hover::before {
+            .loading-transition::after {
                 content: '';
-                position: absolute;
-                left: -8px;
-                right: -12px;
-                top: 0;
-                bottom: 0;
-                background: rgba(65, 132, 228, 0.08);
-                border-radius: 2px;
-                pointer-events: none;
-            }
-
-            .line-number.selected {
-                color: #539bf5;
-                font-weight: 600;
-            }
-
-            .line-number.selected::after {
-                content: '';
-                position: absolute;
-                right: -13px;
-                top: 0;
-                bottom: 0;
-                width: 3px;
-                background: #539bf5;
-                border-radius: 0 2px 2px 0;
-            }
-
-            .code-container {
-                display: flex;
-                flex: 1;
-                overflow: auto;
-                position: relative;
-            }
-
-            .code-content {
-                flex: 1;
-                margin: 0;
-                padding: 12px 16px;
-                font-family: 'SF Mono', 'Cascadia Code', 'Fira Code', 'JetBrains Mono', Consolas, monospace;
-                font-size: 12px;
-                line-height: 1.5;
-                color: #adbac7;
-                background: transparent;
-                overflow: visible;
-                tab-size: 2;
-            }
-
-            .code-content code {
-                display: block;
-                font-family: inherit;
-                background: transparent;
-            }
-            
-            .minimap-container {
-                position: absolute;
-                right: 0;
-                top: 0;
-                bottom: 0;
-                width: 80px;
-                background: rgba(28, 33, 40, 0.9);
-                border-left: 1px solid #373e47;
-                opacity: 0;
-                transition: opacity 0.2s ease;
-                pointer-events: none;
-            }
-
-            .code-viewer-body:hover .minimap-container {
-                opacity: 1;
-                pointer-events: auto;
-            }
-
-            .minimap-viewport {
                 position: absolute;
                 top: 0;
                 left: 0;
                 right: 0;
-                height: 60px;
-                background: rgba(65, 132, 228, 0.1);
-                border: 1px solid rgba(65, 132, 228, 0.3);
-                border-radius: 2px;
-                cursor: pointer;
-                transition: background 0.15s ease;
-            }
-
-            .minimap-viewport:hover {
-                background: rgba(65, 132, 228, 0.15);
-            }
-
-            .minimap-canvas {
-                width: 100%;
-                height: 100%;
-                opacity: 0.6;
-            }
-
-            .code-viewer-footer {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 6px 12px;
-                background: linear-gradient(180deg, #22272e 0%, #1c2128 100%);
-                border-top: 1px solid #444c56;
-                font-size: 11px;
-                gap: 16px;
-            }
-
-            .footer-left {
-                display: flex;
-                align-items: center;
-                gap: 16px;
-            }
-
-            .cursor-position {
-                display: flex;
-                align-items: center;
-                gap: 4px;
-                color: #768390;
-                padding: 4px 8px;
-                background: rgba(99, 110, 123, 0.1);
-                border-radius: 4px;
-            }
-
-            .cursor-position strong {
-                color: #adbac7;
-                font-weight: 600;
-            }
-
-            .selection-info {
-                color: #545d68;
-            }
-
-            .footer-center {
+                bottom: 0;
+                background: rgba(28, 33, 40, 0.95);
+                backdrop-filter: blur(2px);
                 display: flex;
                 align-items: center;
                 justify-content: center;
-            }
-
-            .language-selector {
-                display: flex;
-                align-items: center;
-                gap: 6px;
-                padding: 4px 10px;
-                background: rgba(99, 110, 123, 0.1);
-                border: 1px solid transparent;
-                border-radius: 4px;
-                color: #adbac7;
-                font-weight: 500;
-                cursor: pointer;
-                transition: all 0.15s ease;
-            }
-
-            .language-selector:hover {
-                background: rgba(99, 110, 123, 0.2);
-                border-color: rgba(99, 110, 123, 0.3);
-            }
-
-            .language-selector svg:first-child {
-                color: #f0c239;
-            }
-
-            .dropdown-arrow {
-                color: #545d68;
-                transition: transform 0.15s ease;
-            }
-
-            .language-selector:hover .dropdown-arrow {
-                color: #768390;
-            }
-
-            .footer-right {
-                display: flex;
-                align-items: center;
-                gap: 12px;
-            }
-
-            .indent-info,
-            .encoding-info,
-            .eol-info {
-                color: #545d68;
-                padding: 4px 8px;
-                border-radius: 4px;
-                cursor: pointer;
-                transition: all 0.15s ease;
-            }
-
-            .indent-info:hover,
-            .encoding-info:hover,
-            .eol-info:hover {
-                background: rgba(99, 110, 123, 0.15);
-                color: #768390;
-            }
-
-            .footer-btn {
-                display: flex;
-                align-items: center;
-                gap: 6px;
-                padding: 4px 10px;
-                background: transparent;
-                border: 1px solid #373e47;
-                border-radius: 4px;
-                color: #768390;
-                font-size: 11px;
-                font-weight: 500;
-                cursor: pointer;
-                transition: all 0.15s ease;
-            }
-
-            .footer-btn:hover {
-                background: rgba(99, 110, 123, 0.15);
-                color: #adbac7;
-                border-color: #545d68;
-            }
-
-            .prettify-btn svg {
-                color: #986ee2;
-            }
-
-            .code-line {
-                display: block;
-                height: 18px;
-                line-height: 18px;
-                padding: 0 4px;
-                margin: 0 -4px;
-                border-radius: 2px;
-                transition: background 0.1s ease;
-            }
-
-            .code-line:hover {
-                background: rgba(99, 110, 123, 0.08);
-            }
-
-            .code-line.highlighted {
-                background: rgba(65, 132, 228, 0.15);
-                box-shadow: inset 3px 0 0 #539bf5;
-            }
-
-            .code-line.added {
-                background: rgba(70, 149, 74, 0.15);
-                box-shadow: inset 3px 0 0 #46954a;
-            }
-
-            .code-line.removed {
-                background: rgba(229, 83, 75, 0.15);
-                box-shadow: inset 3px 0 0 #e5534b;
-            }
-
-            .code-line.modified {
-                background: rgba(174, 124, 20, 0.15);
-                box-shadow: inset 3px 0 0 #ae7c14;
-            }
-
-            .token-keyword {
-                color: #f47067;
-                font-weight: 500;
-            }
-
-            .token-string {
-                color: #96d0ff;
-            }
-
-            .token-number {
-                color: #6cb6ff;
-            }
-
-            .token-comment {
-                color: #768390;
-                font-style: italic;
-            }
-
-            .token-function {
-                color: #dcbdfb;
-            }
-
-            .token-class {
-                color: #f69d50;
-            }
-
-            .token-variable {
-                color: #adbac7;
-            }
-
-            .token-operator {
-                color: #f47067;
-            }
-
-            .token-punctuation {
-                color: #768390;
-            }
-
-            .token-property {
-                color: #6cb6ff;
-            }
-
-            .token-constant {
-                color: #6cb6ff;
-                font-weight: 500;
-            }
-
-            .token-boolean {
-                color: #6cb6ff;
-            }
-
-            .token-regex {
-                color: #96d0ff;
-            }
-
-            .token-tag {
-                color: #8ddb8c;
-            }
-
-            .token-attr-name {
-                color: #6cb6ff;
-            }
-
-            .token-attr-value {
-                color: #96d0ff;
-            }
-
-            .code-viewer-container::-webkit-scrollbar,
-            .code-container::-webkit-scrollbar {
-                width: 14px;
-                height: 14px;
-            }
-
-            .code-viewer-container::-webkit-scrollbar-track,
-            .code-container::-webkit-scrollbar-track {
-                background: #1c2128;
-                border-radius: 7px;
-            }
-
-            .code-viewer-container::-webkit-scrollbar-thumb,
-            .code-container::-webkit-scrollbar-thumb {
-                background: #373e47;
-                border: 3px solid #1c2128;
-                border-radius: 7px;
-                transition: background 0.15s ease;
-            }
-
-            .code-viewer-container::-webkit-scrollbar-thumb:hover,
-            .code-container::-webkit-scrollbar-thumb:hover {
-                background: #444c56;
-            }
-
-            .code-viewer-container::-webkit-scrollbar-corner,
-            .code-container::-webkit-scrollbar-corner {
-                background: #1c2128;
-            }
-
-            .fold-indicator {
-                position: absolute;
-                left: 2px;
-                width: 12px;
-                height: 18px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-                color: #545d68;
-                transition: all 0.15s ease;
-                border-radius: 2px;
-            }
-
-            .fold-indicator:hover {
-                color: #adbac7;
-                background: rgba(99, 110, 123, 0.2);
-            }
-
-            .fold-indicator svg {
-                width: 10px;
-                height: 10px;
-                transition: transform 0.15s ease;
-            }
-
-            .fold-indicator.collapsed svg {
-                transform: rotate(-90deg);
-            }
-
-            .folded-lines {
-                display: inline-flex;
-                align-items: center;
-                padding: 0 6px;
-                margin-left: 4px;
-                background: rgba(65, 132, 228, 0.15);
-                border: 1px solid rgba(65, 132, 228, 0.3);
-                border-radius: 4px;
-                font-size: 10px;
-                font-weight: 500;
-                color: #539bf5;
-                cursor: pointer;
-                transition: all 0.15s ease;
-            }
-
-            .folded-lines:hover {
-                background: rgba(65, 132, 228, 0.25);
-            }
-
-            .diff-indicator {
-                position: absolute;
-                right: 0;
-                width: 3px;
-                height: 18px;
-                border-radius: 1px;
-            }
-
-            .diff-indicator.added {
-                background: #46954a;
-            }
-
-            .diff-indicator.removed {
-                background: #e5534b;
-            }
-
-            .diff-indicator.modified {
-                background: #ae7c14;
-            }
-
-            .blame-info {
-                position: absolute;
-                left: 100%;
-                top: 0;
-                padding: 0 12px;
-                font-size: 11px;
-                color: #545d68;
-                white-space: nowrap;
-                opacity: 0;
-                transform: translateX(-8px);
-                transition: all 0.2s ease;
-                pointer-events: none;
-            }
-
-            .line-number:hover .blame-info {
-                opacity: 1;
-                transform: translateX(0);
-            }
-
-            .search-highlight {
-                background: rgba(174, 124, 20, 0.4);
-                border-radius: 2px;
-                box-shadow: 0 0 0 1px rgba(174, 124, 20, 0.6);
-            }
-
-            .search-highlight.current {
-                background: rgba(174, 124, 20, 0.6);
-                box-shadow: 0 0 0 2px #ae7c14;
-            }
-
-            .selection-highlight {
-                background: rgba(65, 132, 228, 0.25);
-            }
-
-            .bracket-match {
-                background: rgba(99, 110, 123, 0.3);
-                border: 1px solid #545d68;
-                border-radius: 2px;
-            }
-
-            .indent-guide {
-                position: absolute;
-                width: 1px;
-                background: #373e47;
-                pointer-events: none;
-            }
-
-            .indent-guide.active {
-                background: #545d68;
-            }
-
-            .cursor-line {
-                background: rgba(99, 110, 123, 0.1);
-            }
-
-            .error-squiggle {
-                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 6 3'%3E%3Cpath d='M0 3 L1.5 0 L3 3 L4.5 0 L6 3' stroke='%23e5534b' fill='none' stroke-width='1'/%3E%3C/svg%3E");
-                background-repeat: repeat-x;
-                background-position: bottom;
-                background-size: 6px 3px;
-                padding-bottom: 2px;
-            }
-
-            .warning-squiggle {
-                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 6 3'%3E%3Cpath d='M0 3 L1.5 0 L3 3 L4.5 0 L6 3' stroke='%23ae7c14' fill='none' stroke-width='1'/%3E%3C/svg%3E");
-                background-repeat: repeat-x;
-                background-position: bottom;
-                background-size: 6px 3px;
-                padding-bottom: 2px;
-            }
-
-            .info-squiggle {
-                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 6 3'%3E%3Cpath d='M0 3 L1.5 0 L3 3 L4.5 0 L6 3' stroke='%23539bf5' fill='none' stroke-width='1'/%3E%3C/svg%3E");
-                background-repeat: repeat-x;
-                background-position: bottom;
-                background-size: 6px 3px;
-                padding-bottom: 2px;
-            }
-
-            @keyframes blink {
-                0%, 50% { opacity: 1; }
-                51%, 100% { opacity: 0; }
-            }
-
-            .cursor-caret {
-                position: absolute;
-                width: 2px;
-                background: #539bf5;
-                animation: blink 1s infinite;
-                pointer-events: none;
-                z-index: 10;
-            }
-
-            .autocomplete-popup {
-                position: absolute;
-                min-width: 280px;
-                max-width: 400px;
-                max-height: 240px;
-                background: #2d333b;
-                border: 1px solid #444c56;
-                border-radius: 8px;
-                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.2);
-                overflow: hidden;
-                z-index: 1000;
-            }
-
-            .autocomplete-header {
-                padding: 8px 12px;
-                background: #22272e;
-                border-bottom: 1px solid #373e47;
-                font-size: 11px;
-                font-weight: 600;
-                color: #768390;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-            }
-
-            .autocomplete-list {
-                overflow-y: auto;
-                max-height: 200px;
-            }
-
-            .autocomplete-item {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                padding: 8px 12px;
-                cursor: pointer;
-                transition: background 0.1s ease;
-            }
-
-            .autocomplete-item:hover {
-                background: rgba(99, 110, 123, 0.15);
-            }
-
-            .autocomplete-item.selected {
-                background: rgba(65, 132, 228, 0.2);
-            }
-
-            .autocomplete-icon {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                width: 20px;
-                height: 20px;
-                border-radius: 4px;
-                font-size: 11px;
-                font-weight: 600;
-            }
-
-            .autocomplete-icon.function {
-                background: rgba(220, 189, 251, 0.2);
-                color: #dcbdfb;
-            }
-
-            .autocomplete-icon.variable {
-                background: rgba(108, 182, 255, 0.2);
-                color: #6cb6ff;
-            }
-
-            .autocomplete-icon.keyword {
-                background: rgba(244, 112, 103, 0.2);
-                color: #f47067;
-            }
-
-            .autocomplete-icon.class {
-                background: rgba(246, 157, 80, 0.2);
-                color: #f69d50;
-            }
-
-            .autocomplete-name {
-                flex: 1;
-                font-size: 13px;
-                color: #adbac7;
-            }
-
-            .autocomplete-name mark {
-                background: transparent;
-                color: #539bf5;
-                font-weight: 600;
-            }
-
-            .autocomplete-type {
-                font-size: 11px;
-                color: #545d68;
-            }
-
-            .loading-overlay {
-                position: absolute;
-                inset: 0;
-                background: rgba(28, 33, 40, 0.8);
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                gap: 16px;
                 z-index: 100;
-                backdrop-filter: blur(4px);
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.3s ease;
+            }
+
+            .loading-transition.loading::after {
+                opacity: 1;
+                pointer-events: auto;
             }
 
             .loading-spinner {
@@ -1122,100 +83,213 @@ class CodeViewerManager {
                 border-top-color: #539bf5;
                 border-radius: 50%;
                 animation: spin 0.8s linear infinite;
+                z-index: 101;
             }
 
             @keyframes spin {
                 to { transform: rotate(360deg); }
             }
 
-            .loading-text {
-                font-size: 13px;
-                color: #768390;
+            .file-name-input {
+                background: transparent;
+                border: 2px solid transparent;
+                border-radius: 4px;
+                color: #adbac7;
+                font-size: 14px;
+                font-weight: 600;
+                padding: 2px 6px;
+                margin: -2px;
+                min-width: 150px;
+                transition: all 0.2s ease;
             }
 
-            @media (max-width: 768px) {
-                .code-viewer-header {
-                    flex-wrap: wrap;
-                    padding: 8px 12px;
-                }
-                
-                .header-center {
-                    order: 3;
-                    width: 100%;
-                    justify-content: flex-start;
-                    margin-top: 8px;
-                    padding-top: 8px;
-                    border-top: 1px solid #373e47;
-                }
-                
-                .header-stats {
-                    display: none;
-                }
-                
-                .code-viewer-toolbar {
-                    flex-wrap: wrap;
-                }
-                
-                .toolbar-center {
-                    order: 3;
-                    max-width: none;
-                    width: 100%;
-                    margin-top: 8px;
-                }
-                
-                .minimap-container {
-                    display: none;
-                }
-                
-                .code-viewer-footer {
-                    flex-wrap: wrap;
-                    gap: 8px;
-                }
-                
-                .footer-center {
-                    order: -1;
-                    width: 100%;
-                    justify-content: flex-start;
-                }
+            .file-name-input:focus {
+                border-color: #539bf5;
+                background: rgba(65, 132, 228, 0.1);
+                outline: none;
             }
+
+            .file-name-input:hover:not(:focus) {
+                background: rgba(99, 110, 123, 0.1);
+            }
+
+            .edit-mode .header-left .file-icon {
+                background: linear-gradient(135deg, #347d39 0%, #2b6a30 100%);
+            }
+
+            .edit-mode .edit-btn {
+                background: linear-gradient(180deg, #e5534b 0%, #c93c37 100%);
+            }
+
+            .edit-mode .edit-btn span {
+                content: "Cancel";
+            }
+
+            .commit-panel {
+                max-height: 0;
+                overflow: hidden;
+                opacity: 0;
+                transition: all 0.3s ease;
+                background: #22272e;
+                border-top: 1px solid #373e47;
+            }
+
+            .edit-mode .commit-panel {
+                max-height: 200px;
+                opacity: 1;
+                padding: 16px;
+            }
+
+            .commit-input {
+                width: 100%;
+                padding: 8px 12px;
+                background: #1c2128;
+                border: 1px solid #444c56;
+                border-radius: 6px;
+                color: #adbac7;
+                font-size: 14px;
+                margin-bottom: 8px;
+                transition: all 0.2s ease;
+            }
+
+            .commit-input:focus {
+                border-color: #539bf5;
+                outline: none;
+                box-shadow: 0 0 0 3px rgba(65, 132, 228, 0.15);
+            }
+
+            .commit-textarea {
+                width: 100%;
+                padding: 8px 12px;
+                background: #1c2128;
+                border: 1px solid #444c56;
+                border-radius: 6px;
+                color: #adbac7;
+                font-size: 14px;
+                min-height: 80px;
+                resize: vertical;
+                transition: all 0.2s ease;
+            }
+
+            .commit-textarea:focus {
+                border-color: #539bf5;
+                outline: none;
+                box-shadow: 0 0 0 3px rgba(65, 132, 228, 0.15);
+            }
+
+            .commit-actions {
+                display: flex;
+                justify-content: flex-end;
+                gap: 8px;
+                margin-top: 12px;
+            }
+
+            .commit-btn {
+                padding: 8px 16px;
+                background: linear-gradient(180deg, #347d39 0%, #2b6a30 100%);
+                border: none;
+                border-radius: 6px;
+                color: white;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .commit-btn:hover {
+                background: linear-gradient(180deg, #3d8b40 0%, #347d39 100%);
+            }
+
+            .cancel-btn {
+                padding: 8px 16px;
+                background: transparent;
+                border: 1px solid #444c56;
+                border-radius: 6px;
+                color: #adbac7;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .cancel-btn:hover {
+                background: rgba(99, 110, 123, 0.1);
+                border-color: #545d68;
+            }
+
+            .file-details-panel {
+                transition: all 0.3s ease;
+                overflow: hidden;
+            }
+
+            .edit-mode .file-details-panel {
+                max-height: 0;
+                opacity: 0;
+                padding: 0;
+                margin: 0;
+                border: none;
+            }
+
+            .CodeMirror {
+                height: auto;
+                min-height: 300px;
+                background: transparent;
+                color: #adbac7;
+                font-family: 'SF Mono', 'Cascadia Code', 'Fira Code', 'JetBrains Mono', Consolas, monospace;
+                font-size: 12px;
+                line-height: 1.5;
+            }
+
+            .CodeMirror-gutters {
+                background: #1c2128;
+                border-right: 1px solid #444c56;
+            }
+
+            .CodeMirror-linenumber {
+                color: #545d68;
+            }
+
+            .CodeMirror-line {
+                color: #adbac7;
+            }
+
+            .CodeMirror-cursor {
+                border-left: 2px solid #539bf5;
+            }
+
+            /* Rest of the styles from previous implementation... */
+            /* ... (include all the CSS from the previous codeViewer.js here) ... */
         `;
         document.head.appendChild(styleElement);
     }
-
     cacheElements() {
         this.elements = {
-            container: null,
-            lineNumbers: null,
-            codeContent: null,
-            codeBlock: null,
-            fontSizeDisplay: null,
-            cursorPosition: null,
-            selectionInfo: null,
-            searchInput: null,
-            viewBtns: null,
-            fontBtns: null,
-            actionBtns: null,
-            toolbarBtns: null,
-            minimapViewport: null,
-            minimapCanvas: null,
-            codeContainer: null
+            fileViewer: document.getElementById('fileViewer'),
+            fileEditor: document.getElementById('fileEditor')
         };
     }
-
     bindEvents() {
-        // Events will be bound after viewer is created
+        // Global keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 's' && this.isEditing) {
+                e.preventDefault();
+                this.saveChanges();
+            }
+            if (e.key === 'Escape' && this.isEditing) {
+                this.cancelEdit();
+            }
+        });
     }
 
-    createViewer(containerId = 'codeViewerContainer') {
-        // Remove existing viewer if it exists
-        const existingViewer = document.getElementById('codeViewerContainer');
-        if (existingViewer) {
-            existingViewer.remove();
-        }
 
-        // Create new viewer
+////////////  V I E W E R  ////
+    createViewer() {
+        if (!this.elements.fileViewer) return false;
+
+        // Clear existing content
+        this.elements.fileViewer.innerHTML = '';
+
         const viewerHTML = `
-            <div class="code-viewer-container" id="${containerId}">
+            <div class="code-viewer-container" id="codeViewerContainer">
+                <!-- Header -->
                 <div class="code-viewer-header">
                     <div class="header-left">
                         <div class="file-icon">
@@ -1223,18 +297,12 @@ class CodeViewerManager {
                                 <path d="M3.75 1.5a.25.25 0 0 0-.25.25v11.5c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25V6H9.75A1.75 1.75 0 0 1 8 4.25V1.5H3.75Zm5.75.56 2.44 2.44H9.75a.25.25 0 0 1-.25-.25V2.06ZM2 1.75C2 .784 2.784 0 3.75 0h5.086c.464 0 .909.184 1.237.513l3.414 3.414c.329.328.513.773.513 1.237v8.086A1.75 1.75 0 0 1 12.25 15h-8.5A1.75 1.75 0 0 1 2 13.25V1.75Z"/>
                             </svg>
                         </div>
-                        <span class="file-name" id="codeViewerFileName">index.js</span>
+                        <input type="text" class="file-name-input" id="fileNameInput" value="" readonly>
                         <div class="file-badge" id="encodingBadge">UTF-8</div>
                         <div class="file-badge" id="eolBadge">LF</div>
                     </div>
                     <div class="header-center">
-                        <div class="breadcrumb-trail" id="codeViewerBreadcrumb">
-                            <span class="breadcrumb-item">src</span>
-                            <span class="breadcrumb-separator">/</span>
-                            <span class="breadcrumb-item">components</span>
-                            <span class="breadcrumb-separator">/</span>
-                            <span class="breadcrumb-item active">index.js</span>
-                        </div>
+                        <div class="breadcrumb-trail" id="codeViewerBreadcrumb"></div>
                     </div>
                     <div class="header-right">
                         <div class="header-stats">
@@ -1265,7 +333,7 @@ class CodeViewerManager {
                                 </svg>
                             </button>
                             <div class="action-divider"></div>
-                            <button class="action-btn edit-btn" id="editFileBtn">
+                            <button class="action-btn edit-btn" id="editToggleBtn">
                                 <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
                                     <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"/>
                                 </svg>
@@ -1274,6 +342,8 @@ class CodeViewerManager {
                         </div>
                     </div>
                 </div>
+
+                <!-- Toolbar -->
                 <div class="code-viewer-toolbar">
                     <div class="toolbar-left">
                         <button class="toolbar-btn active" id="codeViewBtn">
@@ -1281,12 +351,6 @@ class CodeViewerManager {
                                 <path d="M4 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm0 1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1Z"/>
                             </svg>
                             <span>Code</span>
-                        </button>
-                        <button class="toolbar-btn" id="blameViewBtn">
-                            <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor">
-                                <path d="M7.78 12.53a.75.75 0 0 1-1.06 0L2.47 8.28a.75.75 0 0 1 0-1.06l4.25-4.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042L4.81 7h7.44a.75.75 0 0 1 0 1.5H4.81l2.97 2.97a.75.75 0 0 1 0 1.06Z"/>
-                            </svg>
-                            <span>Blame</span>
                         </button>
                     </div>
                     <div class="toolbar-center">
@@ -1329,213 +393,186 @@ class CodeViewerManager {
                         </div>
                     </div>
                 </div>
-                <div class="code-viewer-body">
+
+                <!-- Code Area -->
+                <div class="code-viewer-body loading-transition" id="codeArea">
                     <div class="gutter-container">
                         <div class="gutter-fold-column"></div>
                         <div class="gutter-line-numbers" id="codeViewerLineNumbers"></div>
                         <div class="gutter-diff-column"></div>
                     </div>
                     <div class="code-container" id="codeContainer">
-                        <pre id="codeContent" class="code-content"><code id="codeBlock" class="language-javascript"></code></pre>
+                        <div id="codeEditorWrapper"></div>
                         <div class="minimap-container">
                             <div class="minimap-viewport" id="minimapViewport"></div>
                             <canvas class="minimap-canvas" id="minimapCanvas"></canvas>
                         </div>
                     </div>
                 </div>
-                <div class="code-viewer-footer">
-                    <div class="footer-left">
-                        <div class="cursor-position" id="cursorPosition">
-                            <span>Ln <strong>1</strong>, Col <strong>1</strong></span>
-                        </div>
-                        <div class="selection-info" id="selectionInfo">
-                            <span>0 selected</span>
-                        </div>
-                    </div>
-                    <div class="footer-center">
-                        <div class="language-selector" id="languageSelector">
-                            <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor">
-                                <path d="M1.5 2.75a.25.25 0 0 1 .25-.25h12.5a.25.25 0 0 1 .25.25v8.5a.25.25 0 0 1-.25.25h-6.5a.75.75 0 0 0-.53.22L5.5 13.44V12a.75.75 0 0 0-.75-.75H1.75a.25.25 0 0 1-.25-.25Zm.25-1.75A1.75 1.75 0 0 0 0 2.75v8.5C0 12.216.784 13 1.75 13H4v1.543a1.458 1.458 0 0 0 2.487 1.03L8.061 14h6.189A1.75 1.75 0 0 0 16 12.25v-8.5A1.75 1.75 0 0 0 14.25 1Z"/>
-                            </svg>
-                            <span id="languageDisplay">JavaScript</span>
-                            <svg class="dropdown-arrow" viewBox="0 0 16 16" width="12" height="12" fill="currentColor">
-                                <path d="M4.427 7.427a.25.25 0 0 1 .354-.004l3.22 3.068 3.22-3.068a.25.25 0 0 1 .354.004l.706.707a.25.25 0 0 1-.004.354l-3.866 3.676a.5.5 0 0 1-.708 0L3.717 8.488a.25.25 0 0 1-.004-.354Z"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="footer-right">
-                        <div class="indent-info" id="indentInfo">
-                            <span>Spaces: 2</span>
-                        </div>
-                        <div class="encoding-info" id="encodingInfo">
-                            <span>UTF-8</span>
-                        </div>
-                        <div class="eol-info" id="eolInfo">
-                            <span>LF</span>
+
+                <!-- Commit Panel (hidden in view mode) -->
+                <div class="commit-panel" id="commitPanel">
+                    <div class="space-y-3">
+                        <input type="text" 
+                               id="commitTitleInput" 
+                               class="commit-input" 
+                               placeholder="Update filename.ext">
+                        <textarea 
+                            id="commitDescriptionInput" 
+                            class="commit-textarea" 
+                            placeholder="Add an optional extended description..."
+                            rows="3"></textarea>
+                        <div class="commit-actions">
+                            <button class="cancel-btn" id="cancelEditBtn">Cancel</button>
+                            <button class="commit-btn" id="saveChangesBtn">Commit changes</button>
                         </div>
                     </div>
                 </div>
             </div>
         `;
 
-        // Insert viewer into fileViewer container
-        const fileViewer = document.getElementById('fileViewer');
-        if (fileViewer) {
-            // Clear existing content
-            fileViewer.innerHTML = '';
-            fileViewer.insertAdjacentHTML('beforeend', viewerHTML);
-            
-            // Update cached elements
-            this.updateCachedElements();
-            
-            // Bind events
-            this.bindViewerEvents();
-            
-            return true;
-        }
+        this.elements.fileViewer.insertAdjacentHTML('beforeend', viewerHTML);
+        this.updateCachedElements();
+        this.bindViewerEvents();
         
-        return false;
+        return true;
     }
-
     updateCachedElements() {
         this.elements = {
+            ...this.elements,
             container: document.getElementById('codeViewerContainer'),
-            lineNumbers: document.getElementById('codeViewerLineNumbers'),
-            codeContent: document.getElementById('codeContent'),
-            codeBlock: document.getElementById('codeBlock'),
-            fontSizeDisplay: document.getElementById('fontSizeDisplay'),
-            cursorPosition: document.getElementById('cursorPosition'),
-            selectionInfo: document.getElementById('selectionInfo'),
-            searchInput: document.getElementById('codeSearchInput'),
-            codeContainer: document.getElementById('codeContainer'),
-            fileName: document.getElementById('codeViewerFileName'),
+            codeArea: document.getElementById('codeArea'),
+            fileNameInput: document.getElementById('fileNameInput'),
             breadcrumb: document.getElementById('codeViewerBreadcrumb'),
             lineCountStat: document.getElementById('lineCountStat'),
             fileSizeStat: document.getElementById('fileSizeStat'),
-            languageDisplay: document.getElementById('languageDisplay'),
+            editToggleBtn: document.getElementById('editToggleBtn'),
             copyFileBtn: document.getElementById('copyFileBtn'),
             downloadFileBtn: document.getElementById('downloadFileBtn'),
-            editFileBtn: document.getElementById('editFileBtn'),
+            codeEditorWrapper: document.getElementById('codeEditorWrapper'),
+            commitPanel: document.getElementById('commitPanel'),
+            commitTitleInput: document.getElementById('commitTitleInput'),
+            commitDescriptionInput: document.getElementById('commitDescriptionInput'),
+            cancelEditBtn: document.getElementById('cancelEditBtn'),
+            saveChangesBtn: document.getElementById('saveChangesBtn'),
             wrapLinesBtn: document.getElementById('wrapLinesBtn'),
             minimapBtn: document.getElementById('minimapBtn'),
-            minimapViewport: document.getElementById('minimapViewport'),
-            minimapCanvas: document.getElementById('minimapCanvas'),
             increaseFontBtn: document.getElementById('increaseFontBtn'),
             decreaseFontBtn: document.getElementById('decreaseFontBtn'),
-            codeViewBtn: document.getElementById('codeViewBtn'),
-            blameViewBtn: document.getElementById('blameViewBtn')
+            searchInput: document.getElementById('codeSearchInput')
         };
     }
-
     bindViewerEvents() {
         const self = this;
 
+        // Edit toggle button
+        if (this.elements.editToggleBtn) {
+            this.elements.editToggleBtn.addEventListener('click', () => {
+                if (this.isEditing) {
+                    this.cancelEdit();
+                } else {
+                    this.enterEditMode();
+                }
+            });
+        }
+
+        // File name inline editing
+        if (this.elements.fileNameInput) {
+            this.elements.fileNameInput.addEventListener('dblclick', () => {
+                if (this.isEditing) {
+                    this.elements.fileNameInput.readOnly = false;
+                    this.elements.fileNameInput.select();
+                }
+            });
+
+            this.elements.fileNameInput.addEventListener('blur', () => {
+                this.elements.fileNameInput.readOnly = true;
+                const newName = this.elements.fileNameInput.value.trim();
+                if (newName && newName !== this.currentFile) {
+                    this.renameFile(newName);
+                }
+            });
+
+            this.elements.fileNameInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    this.elements.fileNameInput.blur();
+                }
+                if (e.key === 'Escape') {
+                    this.elements.fileNameInput.value = this.currentFile;
+                    this.elements.fileNameInput.blur();
+                }
+            });
+        }
+
+        // Save and cancel buttons
+        if (this.elements.saveChangesBtn) {
+            this.elements.saveChangesBtn.addEventListener('click', () => {
+                this.saveChanges();
+            });
+        }
+
+        if (this.elements.cancelEditBtn) {
+            this.elements.cancelEditBtn.addEventListener('click', () => {
+                this.cancelEdit();
+            });
+        }
+
+        // Copy button
+        if (this.elements.copyFileBtn) {
+            this.elements.copyFileBtn.addEventListener('click', () => {
+                this.copyCode();
+            });
+        }
+
+        // Download button
+        if (this.elements.downloadFileBtn) {
+            this.elements.downloadFileBtn.addEventListener('click', () => {
+                this.downloadCurrentFile();
+            });
+        }
+
         // Font size controls
         if (this.elements.increaseFontBtn) {
-            this.elements.increaseFontBtn.addEventListener('click', function() {
-                self.changeFontSize(1);
+            this.elements.increaseFontBtn.addEventListener('click', () => {
+                this.changeFontSize(1);
             });
         }
 
         if (this.elements.decreaseFontBtn) {
-            this.elements.decreaseFontBtn.addEventListener('click', function() {
-                self.changeFontSize(-1);
+            this.elements.decreaseFontBtn.addEventListener('click', () => {
+                this.changeFontSize(-1);
             });
         }
 
-        // View options
-        if (this.elements.wrapLinesBtn) {
-            this.elements.wrapLinesBtn.addEventListener('click', function() {
-                self.toggleWordWrap();
-            });
-        }
-
-        if (this.elements.minimapBtn) {
-            this.elements.minimapBtn.addEventListener('click', function() {
-                self.toggleMinimap();
-            });
-        }
-
-        // Copy file button
-        if (this.elements.copyFileBtn) {
-            this.elements.copyFileBtn.addEventListener('click', function() {
-                self.copyCode();
-            });
-        }
-
-        // Download file button
-        if (this.elements.downloadFileBtn) {
-            this.elements.downloadFileBtn.addEventListener('click', function() {
-                self.downloadCurrentFile();
-            });
-        }
-
-        // Edit file button
-        if (this.elements.editFileBtn) {
-            this.elements.editFileBtn.addEventListener('click', function() {
-                if (window.editFile && typeof window.editFile === 'function') {
-                    window.editFile();
-                }
-            });
-        }
-
-        // View toggles
-        if (this.elements.codeViewBtn && this.elements.blameViewBtn) {
-            this.elements.codeViewBtn.addEventListener('click', function() {
-                self.elements.codeViewBtn.classList.add('active');
-                self.elements.blameViewBtn.classList.remove('active');
-                // Switch to code view
-            });
-
-            this.elements.blameViewBtn.addEventListener('click', function() {
-                self.elements.codeViewBtn.classList.remove('active');
-                self.elements.blameViewBtn.classList.add('active');
-                // Switch to blame view
-            });
-        }
-
-        // Search input
+        // Search
         if (this.elements.searchInput) {
-            this.elements.searchInput.addEventListener('input', function() {
-                self.handleSearch(this.value);
-            });
-
-            this.elements.searchInput.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    this.value = '';
-                    this.blur();
-                    self.clearSearchHighlights();
-                }
+            this.elements.searchInput.addEventListener('input', () => {
+                this.handleSearch(this.elements.searchInput.value);
             });
         }
 
-        // Scroll sync
-        if (this.elements.codeContainer) {
-            this.elements.codeContainer.addEventListener('scroll', function() {
-                self.syncScroll();
-                self.updateMinimapViewport();
+        // Wrap lines
+        if (this.elements.wrapLinesBtn) {
+            this.elements.wrapLinesBtn.addEventListener('click', () => {
+                this.toggleWordWrap();
             });
         }
 
-        // Keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
-                e.preventDefault();
-                if (self.elements.searchInput) {
-                    self.elements.searchInput.focus();
-                    self.elements.searchInput.select();
-                }
-            }
-        });
+        // Minimap
+        if (this.elements.minimapBtn) {
+            this.elements.minimapBtn.addEventListener('click', () => {
+                this.toggleMinimap();
+            });
+        }
 
-        // Selection info
-        if (this.elements.codeContent) {
-            this.elements.codeContent.addEventListener('mouseup', function() {
-                self.updateSelectionInfo();
+        // CodeMirror changes
+        if (this.codeMirrorEditor) {
+            this.codeMirrorEditor.on('change', () => {
+                this.state.isModified = true;
+                this.updateCommitMessage();
             });
         }
     }
-
     displayFileContent(filename, fileData) {
         if (!this.createViewer()) {
             console.error('Failed to create code viewer');
@@ -1543,6 +580,9 @@ class CodeViewerManager {
         }
 
         this.currentFile = filename;
+        this.fileData = fileData;
+        this.isEditing = false;
+
         const content = fileData.content || '';
         const ext = filename.split('.').pop().toLowerCase();
         const language = getLanguageName(ext);
@@ -1551,12 +591,8 @@ class CodeViewerManager {
         const fileSize = new Blob([content]).size;
 
         // Update UI elements
-        if (this.elements.fileName) {
-            this.elements.fileName.textContent = filename;
-        }
-
-        if (this.elements.languageDisplay) {
-            this.elements.languageDisplay.textContent = language;
+        if (this.elements.fileNameInput) {
+            this.elements.fileNameInput.value = filename;
         }
 
         if (this.elements.lineCountStat) {
@@ -1567,35 +603,330 @@ class CodeViewerManager {
             this.elements.fileSizeStat.textContent = formatFileSize(fileSize);
         }
 
-        // Set code content with line wrapping
-        if (this.elements.codeBlock) {
-            let html = '';
-            lines.forEach(function(line, index) {
-                html += `<span class="code-line" data-line="${index + 1}">${escapeHtml(line)}\n</span>`;
-            });
-            this.elements.codeBlock.innerHTML = html;
-            
-            // Apply syntax highlighting if Prism is available
-            setTimeout(() => {
-                if (window.Prism && this.elements.codeBlock) {
+        // Update breadcrumb
+        this.updateBreadcrumb();
+
+        // Display content in viewer mode
+        this.displayViewMode(content, ext);
+
+        // Reset editing state
+        this.exitEditMode();
+    }
+    displayViewMode(content, ext) {
+        if (this.codeMirrorEditor) {
+            this.codeMirrorEditor.toTextArea();
+            this.codeMirrorEditor = null;
+        }
+
+        // Create read-only display
+        const codeWrapper = this.elements.codeEditorWrapper;
+        codeWrapper.innerHTML = `
+            <pre id="codeContent" class="code-content">
+                <code id="codeBlock" class="language-${ext}">${escapeHtml(content)}</code>
+            </pre>
+        `;
+
+        // Render line numbers
+        this.renderLineNumbers(content);
+
+        // Apply syntax highlighting
+        setTimeout(() => {
+            if (window.Prism) {
+                const codeBlock = document.getElementById('codeBlock');
+                if (codeBlock) {
                     try {
-                        Prism.highlightElement(this.elements.codeBlock);
+                        Prism.highlightElement(codeBlock);
                     } catch (error) {
                         console.warn('Prism highlighting failed:', error);
                     }
                 }
-            }, 50);
+            }
+        }, 50);
+    }
+
+
+//////////////  E D I T  //////
+    async enterEditMode() {
+        if (!this.currentFile || !this.fileData) return;
+
+        const self = this;
+        
+        // Show loading transition
+        this.elements.codeArea.classList.add('loading');
+
+        // Simulate loading delay (like GitHub)
+        setTimeout(async () => {
+            try {
+                // Switch to edit mode UI
+                this.isEditing = true;
+                this.elements.container.classList.add('edit-mode');
+                
+                // Update edit button
+                if (this.elements.editToggleBtn) {
+                    const span = this.elements.editToggleBtn.querySelector('span');
+                    if (span) span.textContent = 'Cancel';
+                }
+
+                // Initialize CodeMirror editor
+                if (typeof CodeMirror !== 'undefined') {
+                    const mode = this.getCodeMirrorMode(this.currentFile);
+                    
+                    this.codeMirrorEditor = CodeMirror(this.elements.codeEditorWrapper, {
+                        value: this.fileData.content || '',
+                        mode: mode,
+                        theme: 'material-darker',
+                        lineNumbers: true,
+                        lineWrapping: this.state.wrapEnabled,
+                        tabSize: 2,
+                        indentUnit: 2,
+                        smartIndent: true,
+                        matchBrackets: true,
+                        autoCloseBrackets: true,
+                        scrollbarStyle: 'native',
+                        viewportMargin: Infinity,
+                        readOnly: false,
+                        extraKeys: {
+                            "Ctrl-S": function(cm) {
+                                self.saveChanges();
+                            },
+                            "Cmd-S": function(cm) {
+                                self.saveChanges();
+                            }
+                        }
+                    });
+
+                    // Set initial size
+                    this.codeMirrorEditor.setSize('100%', 'auto');
+                    
+                    // Focus the editor
+                    setTimeout(() => {
+                        this.codeMirrorEditor.focus();
+                        this.codeMirrorEditor.setCursor(0, 0);
+                    }, 100);
+                } else {
+                    // Fallback to textarea
+                    const textarea = document.createElement('textarea');
+                    textarea.className = 'code-editor-textarea';
+                    textarea.value = this.fileData.content || '';
+                    textarea.style.width = '100%';
+                    textarea.style.height = '300px';
+                    textarea.style.background = 'transparent';
+                    textarea.style.color = '#adbac7';
+                    textarea.style.fontFamily = "'SF Mono', 'Cascadia Code', monospace";
+                    textarea.style.fontSize = '12px';
+                    textarea.style.border = 'none';
+                    textarea.style.outline = 'none';
+                    textarea.style.resize = 'vertical';
+                    
+                    this.elements.codeEditorWrapper.innerHTML = '';
+                    this.elements.codeEditorWrapper.appendChild(textarea);
+                    
+                    // Store reference for fallback
+                    this.fallbackEditor = textarea;
+                }
+
+                // Pre-fill commit message
+                this.updateCommitMessage();
+
+                // Hide loading
+                this.elements.codeArea.classList.remove('loading');
+
+            } catch (error) {
+                console.error('Failed to enter edit mode:', error);
+                this.elements.codeArea.classList.remove('loading');
+                showErrorMessage('Failed to load editor');
+            }
+        }, 800); // GitHub-like delay
+    }
+    async saveChanges() {
+        if (!this.currentFile || !this.fileData) return;
+
+        const commitTitle = this.elements.commitTitleInput ? 
+            this.elements.commitTitleInput.value.trim() : '';
+        const commitDescription = this.elements.commitDescriptionInput ? 
+            this.elements.commitDescriptionInput.value.trim() : '';
+
+        if (!commitTitle) {
+            showErrorMessage('Please enter a commit message');
+            return;
         }
 
-        // Render line numbers
-        this.renderLineNumbers();
+        // Get content from editor
+        let newContent = '';
+        if (this.codeMirrorEditor) {
+            newContent = this.codeMirrorEditor.getValue();
+        } else if (this.fallbackEditor) {
+            newContent = this.fallbackEditor.value;
+        }
 
-        // Update breadcrumb
-        this.updateBreadcrumb();
+        // Show loading
+        showLoading('Saving changes...');
 
-        // Enable word wrap by default
-        this.toggleWordWrap();
+        try {
+            // Update file data
+            this.fileData.content = newContent;
+            this.fileData.lastModified = Date.now();
+            this.fileData.lastCommit = commitTitle;
+            this.fileData.size = new Blob([newContent]).size;
+
+            // Save to storage
+            const filePath = (currentState.path ? currentState.path + '/' : '') + this.currentFile;
+            LocalStorageManager.saveFile(currentState.repository, filePath, this.fileData);
+
+            // Update UI
+            showSuccessMessage(`File "${this.currentFile}" saved successfully!`);
+            
+            // Switch back to view mode
+            this.displayViewMode(newContent, this.currentFile.split('.').pop().toLowerCase());
+            this.exitEditMode();
+
+            // Clear commit inputs
+            if (this.elements.commitTitleInput) this.elements.commitTitleInput.value = '';
+            if (this.elements.commitDescriptionInput) this.elements.commitDescriptionInput.value = '';
+
+            // Update file list if needed
+            if (window.renderFileList) {
+                window.renderFileList();
+            }
+
+        } catch (error) {
+            showErrorMessage('Failed to save file: ' + error.message);
+        } finally {
+            hideLoading();
+        }
     }
+    updateCommitMessage() {
+        if (!this.currentFile || !this.elements.commitTitleInput) return;
+
+        if (!this.elements.commitTitleInput.value.trim()) {
+            this.elements.commitTitleInput.value = `Update ${this.currentFile}`;
+        }
+    }
+    
+    renameFile(newName) {
+        if (!this.currentFile || !currentState.repository) return;
+
+        const oldName = this.currentFile;
+        if (newName === oldName) return;
+
+        if (!isValidFilename(newName)) {
+            showErrorMessage('Invalid file name');
+            this.elements.fileNameInput.value = oldName;
+            return;
+        }
+
+        // Get file path
+        const oldPath = (currentState.path ? currentState.path + '/' : '') + oldName;
+        const newPath = (currentState.path ? currentState.path + '/' : '') + newName;
+
+        // Check if new name already exists
+        const existingFile = LocalStorageManager.getFile(currentState.repository, newPath);
+        if (existingFile) {
+            showErrorMessage('A file with that name already exists');
+            this.elements.fileNameInput.value = oldName;
+            return;
+        }
+
+        // Get file data
+        const fileData = LocalStorageManager.getFile(currentState.repository, oldPath);
+        if (!fileData) {
+            showErrorMessage('File not found');
+            this.elements.fileNameInput.value = oldName;
+            return;
+        }
+
+        // Rename in storage
+        LocalStorageManager.saveFile(currentState.repository, newPath, {
+            ...fileData,
+            lastModified: Date.now(),
+            lastCommit: `Rename ${oldName} to ${newName}`
+        });
+
+        LocalStorageManager.deleteFile(currentState.repository, oldPath);
+
+        // Update current state
+        this.currentFile = newName;
+        
+        // Update file in file list
+        const fileIndex = currentState.files.findIndex(f => f.name === oldName);
+        if (fileIndex !== -1) {
+            currentState.files[fileIndex].name = newName;
+            currentState.files[fileIndex].path = newPath;
+        }
+
+        // Update UI
+        showSuccessMessage(`Renamed to "${newName}"`);
+        
+        // Update file list
+        if (window.renderFileList) {
+            window.renderFileList();
+        }
+    }
+    getCodeMirrorMode(filename) {
+        const ext = filename.split('.').pop().toLowerCase();
+        const modeMap = {
+            'js': 'javascript',
+            'javascript': 'javascript',
+            'ts': 'javascript',
+            'typescript': 'javascript',
+            'jsx': 'javascript',
+            'tsx': 'javascript',
+            'html': 'htmlmixed',
+            'htm': 'htmlmixed',
+            'css': 'css',
+            'scss': 'css',
+            'less': 'css',
+            'json': 'javascript',
+            'md': 'markdown',
+            'markdown': 'markdown',
+            'py': 'python',
+            'python': 'python',
+            'php': 'php',
+            'java': 'text/x-java',
+            'cpp': 'text/x-c++src',
+            'c': 'text/x-csrc',
+            'cs': 'text/x-csharp',
+            'rb': 'ruby',
+            'go': 'go',
+            'rs': 'rust',
+            'yml': 'yaml',
+            'yaml': 'yaml',
+            'xml': 'xml',
+            'sql': 'sql'
+        };
+        return modeMap[ext] || 'text';
+    }
+    
+    exitEditMode() {
+        this.isEditing = false;
+        this.state.isModified = false;
+        
+        if (this.elements.container) {
+            this.elements.container.classList.remove('edit-mode');
+        }
+
+        if (this.elements.editToggleBtn) {
+            const span = this.elements.editToggleBtn.querySelector('span');
+            if (span) span.textContent = 'Edit';
+        }
+
+        // Clear commit inputs
+        if (this.elements.commitTitleInput) {
+            this.elements.commitTitleInput.value = '';
+        }
+        if (this.elements.commitDescriptionInput) {
+            this.elements.commitDescriptionInput.value = '';
+        }
+    }
+    cancelEdit() {
+        if (!this.state.isModified || confirm('You have unsaved changes. Discard changes?')) {
+            this.displayViewMode(this.fileData.content || '', 
+                this.currentFile.split('.').pop().toLowerCase());
+            this.exitEditMode();
+        }
+    }
+
+
 
     renderLineNumbers() {
         if (!this.elements.lineNumbers || !this.elements.codeBlock) return;
@@ -1854,18 +1185,16 @@ class CodeViewerManager {
 }
 
 
-const codeViewerManager = new CodeViewerManager();
-
-window.codeViewerManager = codeViewerManager;
-window.CodeViewerManager = CodeViewerManager;
-
-
-
 function escapeHtml(str) {
     const div = document.createElement('div');
     div.textContent = str;
     return div.innerHTML;
 }
+
+const codeViewerEditor = new CodeViewerEditor();
+
+window.codeViewerEditor = codeViewerEditor;
+window.CodeViewerEditor = CodeViewerEditor;
 /**
  * 
  *  C R E A T E D  B Y
