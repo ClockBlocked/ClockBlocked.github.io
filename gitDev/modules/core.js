@@ -572,7 +572,7 @@ function initializeApp() {
     setupButtonEventListeners();
     setupKeyboardShortcuts();
     setupCodeEditors();
-    setupCodeViewer();
+    setupCodeViewerEditor();
     updateRecentFilesUI();
     
     fetchData('Initializing app...', () => {
