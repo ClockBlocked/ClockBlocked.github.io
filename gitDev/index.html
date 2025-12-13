@@ -418,6 +418,54 @@ input, textarea {
     [data-notify="error"] {
       z-index: 9999999999 !important;
     }
+    
+    /* * 1. Target the main parent container to apply Flexbox 
+ * This ensures line numbers and code content are side-by-side columns. 
+ */
+.bg-github-canvas-overlay > .flex {
+    display: flex;
+    
+    /* CRITICAL: Set the definitive line height here, overriding any default/class values */
+    /* 1.25rem is often the exact value for Tailwind's 'leading-5' */
+    line-height: 1.25rem !important; 
+    
+    /* Ensure text properties are consistent */
+    font-size: 0.75rem !important; /* Adjust if your desired font is different */
+    font-family: monospace, Courier, "Courier New" !important;
+}
+
+/* * 2. Target the Line Numbers Wrapper (#lineNumbers)
+ */
+#lineNumbers {
+    /* CRITICAL: Remove all padding (p-4) to prevent misalignment */
+    padding: 0 !important; 
+    margin: 0 !important;
+    
+    /* Ensure it inherits the fixed line-height from the parent .flex */
+    line-height: inherit !important;
+}
+
+/* * 3. Target the Code Content (<pre id="codeContent">)
+ */
+#codeContent {
+    /* CRITICAL: Remove all padding (p-4) to prevent misalignment */
+    padding: 0 !important; 
+    margin: 0 !important;
+    
+    /* Ensure it inherits the fixed line-height from the parent .flex */
+    line-height: inherit !important;
+}
+
+/* * 4. Target the individual elements inside for final consistency 
+ * (The actual code lines and line number span/divs if you add them later)
+ */
+#codeBlock, 
+#lineNumbers > * { /* Target all children of the line numbers wrapper */
+    line-height: inherit !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
   </style>
 
   <script>
