@@ -54,7 +54,6 @@ const modals = {
         ]
     },
 
-    // Modal management methods
     show: function(modalType, data = {}) {
         const modalConfig = this[modalType];
         if (!modalConfig) {
@@ -62,29 +61,21 @@ const modals = {
             return;
         }
 
-        // Get the modal element
         let modal = document.getElementById(modalConfig.id);
-        
-        // If modal doesn't exist, create it
         if (!modal) {
             this.createModalElement(modalConfig);
             modal = document.getElementById(modalConfig.id);
         }
 
-        // Update modal content based on data
         this.updateModalContent(modalType, data);
 
-        // Show the modal
         modal.classList.remove('hidden');
         modal.classList.add('flex');
-
-        // Focus the first input if it exists
-        setTimeout(() => {
-            const firstInput = modal.querySelector('input, textarea, select');
-            if (firstInput) firstInput.focus();
-        }, 100);
+          setTimeout(() => {
+              const firstInput = modal.querySelector('input, textarea, select');
+              if (firstInput) firstInput.focus();
+          }, 100);
     },
-
     hide: function(modalType) {
         const modalConfig = this[modalType];
         if (!modalConfig) return;
@@ -94,7 +85,7 @@ const modals = {
             modal.classList.add('hidden');
             modal.classList.remove('flex');
             
-            // Clear inputs for create modals
+            // Clear forms
             if (modalType === 'create') {
                 document.getElementById('newRepoName').value = '';
                 document.getElementById('repoDescriptionInput').value = '';
@@ -112,6 +103,7 @@ const modals = {
             }
         }
     },
+
 
     createModalElement: function(config) {
         let modalHTML = '';
@@ -136,7 +128,6 @@ const modals = {
             });
         }
     },
-
     createRepoModalHTML: function() {
         return `
             <div id="createRepoModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
@@ -196,7 +187,6 @@ const modals = {
             </div>
         `;
     },
-
     createFileModalHTML: function() {
         return `
             <div id="createFileModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
@@ -260,6 +250,7 @@ const modals = {
         `;
     },
 
+
     deleteFileModalHTML: function() {
         return `
             <div id="deleteFileModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
@@ -287,6 +278,7 @@ const modals = {
         `;
     },
 
+
     updateModalContent: function(modalType, data) {
         if (modalType === 'createFile') {
             const prefix = document.getElementById('currentPathPrefix');
@@ -300,7 +292,6 @@ const modals = {
             }
         }
     },
-
     getButtonClass: function(type) {
         switch(type) {
             case 'primary':
