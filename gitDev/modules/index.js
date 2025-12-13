@@ -53,6 +53,11 @@ window.addEventListener("DOMContentLoaded", () => {
         {
             url: "https://clockblocked.github.io/gitDev/modules/fileMenu.js",
             category: SCRIPT_CATEGORIES.UI
+        },
+        // Add new code viewer module
+        {
+            url: "https://clockblocked.github.io/gitDev/modules/codeViewer.js",
+            category: SCRIPT_CATEGORIES.UI
         }
     ];
 
@@ -130,6 +135,11 @@ window.addEventListener("DOMContentLoaded", () => {
 
                 if (typeof initializeApp === "function") {
                     initializeApp();
+                }
+
+                // Initialize code viewer manager if available
+                if (typeof codeViewerManager !== "undefined" && codeViewerManager.init) {
+                    codeViewerManager.init();
                 }
 
                 console.log("All modules processed");
