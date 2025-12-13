@@ -54,6 +54,8 @@ const modals = {
         ]
     },
 
+
+
     show: function(modalType, data = {}) {
         const modalConfig = this[modalType];
         if (!modalConfig) {
@@ -306,6 +308,7 @@ const modals = {
     }
 };
 
+
 function showContextMenu(x, y, fileName, fileType) {
     hideContextMenu();
     const menu = document.createElement('div');
@@ -411,6 +414,9 @@ function showErrorMessage(message) {
         }, 300);
     }, 5000);
 }
+
+
+
 
 document.addEventListener('DOMContentLoaded', function() {
 // Allows multiple referencing for:
