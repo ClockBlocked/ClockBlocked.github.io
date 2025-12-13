@@ -55,7 +55,7 @@ window.addEventListener("DOMContentLoaded", () => {
             category: SCRIPT_CATEGORIES.UI
         },
         {
-            url: "https://clockblocked.github.io/gitDev/modules/coder.js",
+            url: "https://clockblocked.github.io/gitDev/modules/components/coder.js",
             category: SCRIPT_CATEGORIES.UI
         }
     ];
