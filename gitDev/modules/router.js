@@ -165,58 +165,73 @@ function navigateToPath(path) {
   }, 150);
 }
 
+
+
 function showFileViewer() {
-  document.getElementById('explorerView').classList.add('hidden');
-  document.getElementById('fileEditor').classList.add('hidden');
-  document.getElementById('repoSelectorView').classList.add('hidden');
-  document.getElementById('fileViewer').classList.remove('hidden');
-  
-//  ProgressBar.show();
-  LoadingProgress.show();
-  
-//  setTimeout(() => ProgressBar.hide(), 300);
-  setTimeout(() => LoadingProgress.hide(), 300);
-}
-
-function showFileEditor() {
-  document.getElementById('explorerView').classList.add('hidden');
-  document.getElementById('fileViewer').classList.add('hidden');
-  document.getElementById('repoSelectorView').classList.add('hidden');
-  document.getElementById('fileEditor').classList.remove('hidden');
-  
-//  ProgressBar.show();
-//  setTimeout(() => ProgressBar.hide(), 300);
-  setTimeout(() => LoadingProgress.hide(), 300);
-}
-
-function showRepoSelector() {
-  document.getElementById('explorerView').classList.add('hidden');
-  document.getElementById('fileViewer').classList.add('hidden');
-  document.getElementById('fileEditor').classList.add('hidden');
-  document.getElementById('repoSelectorView').classList.remove('hidden');
-  
-//  ProgressBar.show();
-  LoadingProgress.show();
-  setTimeout(() => {
-//    ProgressBar.hide();
-    LoadingProgress.hide();
-  }, 400);
-}
-
-function showExplorer() {
-  if (currentState.repository) {
-    document.getElementById('fileViewer').classList.add('hidden');
-    document.getElementById('fileEditor').classList.add('hidden');
-    document.getElementById('repoSelectorView').classList.add('hidden');
-    document.getElementById('explorerView').classList.remove('hidden');
+    const views = ['explorerView', 'fileEditor', 'repoSelectorView'];
+    views.forEach(viewId => {
+        const view = document.getElementById(viewId);
+        if (view) view.classList.add('hidden');
+    });
     
-//    ProgressBar.show();
+    const fileViewer = document.getElementById('fileViewer');
+    if (fileViewer) {
+        fileViewer.classList.remove('hidden');
+    }
+    
     LoadingProgress.show();
-    updateStats();
-//    setTimeout(() => ProgressBar.hide(), 300);
     setTimeout(() => LoadingProgress.hide(), 300);
-  }
 }
+function showFileEditor() {
+    // This is now handled by the new code viewer
+    // We can redirect to edit mode within the viewer
+    if (window.codeViewerEditor && typeof codeViewerEditor.enterEditMode === 'function') {
+        codeViewerEditor.enterEditMode();
+    }
+}
+function showRepoSelector() {
+    const views = ['explorerView', 'fileViewer', 'fileEditor'];
+    views.forEach(viewId => {
+        const view = document.getElementById(viewId);
+        if (view) view.classList.add('hidden');
+    });
+    
+    const repoSelector = document.getElementById('repoSelectorView');
+    if (repoSelector) {
+        repoSelector.classList.remove('hidden');
+    }
+    
+    LoadingProgress.show();
+    setTimeout(() => {
+        LoadingProgress.hide();
+    }, 400);
+}
+function showExplorer() {
+    if (currentState.repository) {
+        const views = ['fileViewer', 'fileEditor', 'repoSelectorView'];
+        views.forEach(viewId => {
+            const view = document.getElementById(viewId);
+            if (view) view.classList.add('hidden');
+        });
+        
+        const explorerView = document.getElementById('explorerView');
+        if (explorerView) {
+            explorerView.classList.remove('hidden');
+        } else {
+            console.error('explorerView element not found');
+            return;
+        }
+        
+        updateStats();
+        LoadingProgress.show();
+        setTimeout(() => {
+            LoadingProgress.hide();
+        }, 300);
+    }
+}
+
+
+
 
 
 const loaderStyles = `
