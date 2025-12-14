@@ -1,37 +1,37 @@
 window.addEventListener("DOMContentLoaded", () => {
 
     const dependenciesScript = document.createElement('script');
-    dependenciesScript.src = 'https://gitdev.wuaze.com/modules/dependencies.js';
+    dependenciesScript.src = 'https://clockblocked.github.io/gitDev/modules/dependencies.js';
 
     const storageScript = document.createElement('script');
-    storageScript.src = 'https://gitdev.wuaze.com/modules/storage.js';
+    storageScript.src = 'https://clockblocked.github.io/gitDev/modules/storage.js';
 
     const routerScript = document.createElement('script');
-    routerScript.src = 'https://gitdev.wuaze.com/modules/router.js';
+    routerScript.src = 'modules/router.js';
 
     const pageUpdatesScript = document.createElement('script');
-    pageUpdatesScript.src = 'https://gitdev.wuaze.com/modules/pageUpdates.js';
+    pageUpdatesScript.src = 'https://clockblocked.github.io/gitDev/modules/pageUpdates.js';
 
     const overlaysScript = document.createElement('script');
-    overlaysScript.src = 'https://gitdev.wuaze.com/modules/overlays.js';
+    overlaysScript.src = 'https://clockblocked.github.io/gitDev/modules/overlays.js';
 
     const coreScript = document.createElement('script');
-    coreScript.src = 'https://gitdev.wuaze.com/modules/core.js';
+    coreScript.src = 'https://clockblocked.github.io/gitDev/modules/core.js';
 
     const listenersScript = document.createElement('script');
-    listenersScript.src = 'https://gitdev.wuaze.com/modules/listeners.js';
+    listenersScript.src = 'https://clockblocked.github.io/gitDev/modules/listeners.js';
 
     const searchScript = document.createElement('script');
-    searchScript.src = 'https://gitdev.wuaze.com/modules/search.js';
+    searchScript.src = 'https://clockblocked.github.io/gitDev/modules/search.js';
 
     const fileUploadScript = document.createElement('script');
-    fileUploadScript.src = 'https://gitdev.wuaze.com/modules/fileUpload.js';
+    fileUploadScript.src = 'https://clockblocked.github.io/gitDev/modules/fileUpload.js';
 
     const importExportScript = document.createElement('script');
-    importExportScript.src = 'https://gitdev.wuaze.com/modules/importExport.js';
+    importExportScript.src = 'https://clockblocked.github.io/gitDev/modules/importExport.js';
 
     const fileMenuScript = document.createElement('script');
-    fileMenuScript.src = 'https://gitdev.wuaze.com/modules/fileMenu.js';
+    fileMenuScript.src = 'https://clockblocked.github.io/gitDev/modules/fileMenu.js';
 
     const scripts = [
         dependenciesScript,
@@ -62,7 +62,7 @@ window.addEventListener("DOMContentLoaded", () => {
                     initializeApp();
                 }
 
-                console.log('âœ… All GitDev modules loaded successfully');
+                console.log('âœ… All gitDev modules loaded successfully');
 
             }, 50);
         }
