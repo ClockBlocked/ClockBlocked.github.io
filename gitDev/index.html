@@ -789,196 +789,135 @@ input, textarea {
 
     <!-- Main Content -->
     <main class="flex-1">
-      <!-- Repository Selector View -->
-      <div id="repoSelectorView" class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+
+
+
+
+
+
+<!-- Repository Selector View -->
+<div id="repoSelectorView">
+    <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <!-- Your repository list goes here -->
+        <div id="repoList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Repositories will be populated here -->
+        </div>
+    </div>
+</div>
+
+<!-- Repository Explorer View -->
+<div id="explorerView" class="hidden">
+    <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <!-- Breadcrumb navigation -->
         <div class="flex items-center justify-between mb-6">
-          <h2 class="text-2xl font-bold text-github-fg-default">Your Repositories</h2>
-          <button data-action="create-repo" class="inline-flex items-center px-4 py-2 bg-github-btn-primary-bg hover:bg-github-btn-primary-hover text-white rounded-md text-sm font-medium transition-colors">
-            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M7.75 2a.75.75 0 0 1 .75.75V7h4.25a.75.75 0 0 1 0 1.5H8.5v4.25a.75.75 0 0 1-1.5 0V8.5H2.75a.75.75 0 0 1 0-1.5H7V2.75A.75.75 0 0 1 7.75 2Z" />
-            </svg>
-            New repository
-          </button>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="repoList">
-        </div>
-      </div>
-
-      <!-- File Explorer View -->
-      <div id="explorerView" class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6 hidden">
-        <div class="flex items-center justify-between mb-4">
-          <div class="flex items-center space-x-3">
-            <div class="relative">
-              <button id="branchSelector" class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
-                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M9.5 3.25a2.25 2.25 0 1 1 3 2.122V6A2.5 2.5 0 0 1 10 8.5H6a1 1 0 0 0-1 1v1.128a2.251 2.251 0 1 1-1.5 0V5.372a2.25 2.25 0 1 1 1.5 0v1.836A2.493 2.493 0 0 1 6 7h4a1 1 0 0 0 1-1v-.628A2.25 2.25 0 0 1 9.5 3.25Zm-6 0a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Zm8.25-.75a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5ZM4.25 12a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Z" />
-                </svg>
-                <span id="currentBranch">main</span>
-                <svg class="w-4 h-4 ml-1 text-github-fg-muted" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M12.78 5.22a.749.749 0 0 1 0 1.06l-4.25 4.25a.749.749 0 0 1-1.06 0L3.22 6.28a.749.749 0 1 1 1.06-1.06L8 8.939l3.72-3.719a.749.749 0 0 1 1.06 0Z" />
-                </svg>
-              </button>
-              <div id="branchDropdown" class="hidden absolute z-10 mt-1 w-56 bg-github-canvas-overlay border border-github-border-default rounded-md shadow-lg">
-                <div class="p-1">
-                  <input type="text" placeholder="Find or create branch..." class="w-full px-2 py-1 mb-1 bg-github-canvas-inset border border-github-border-default rounded text-sm text-github-fg-default">
-                  <div class="max-h-60 overflow-y-auto">
-                    <div class="px-2 py-1 text-sm text-github-fg-default hover:bg-github-canvas-subtle cursor-pointer">main</div>
-                  </div>
-                </div>
-              </div>
+            <div class="flex items-center space-x-2 text-sm" id="pathBreadcrumb">
+                <!-- Breadcrumb will be populated here -->
             </div>
-
-            <nav class="flex items-center space-x-1 text-sm" id="pathBreadcrumb">
-              <a href="#" onclick="showRepoSelector()" class="text-github-accent-fg hover:underline font-semibold">Repositories</a>
-              <span class="text-github-fg-muted">/</span>
-              <a href="#" class="text-github-accent-fg hover:underline font-semibold" id="currentRepoName">Repository</a>
-            </nav>
-          </div>
-
-          <div class="flex items-center space-x-2">
-            <button data-action="create-file" class="inline-flex items-center px-3 py-1.5 bg-github-btn-primary-bg hover:bg-github-btn-primary-hover text-white rounded-md text-sm font-medium transition-colors">
-              <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M7.75 2a.75.75 0 0 1 .75.75V7h4.25a.75.75 0 0 1 0 1.5H8.5v4.25a.75.75 0 0 1-1.5 0V8.5H2.75a.75.75 0 0 1 0-1.5H7V2.75A.75.75 0 0 1 7.75 2Z" />
-              </svg>
-              New
-            </button>
-            <button class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
-              <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M2.75 14A1.75 1.75 0 0 1 1 12.25v-2.5a.75.75 0 0 1 1.5 0v2.5c0 .138.112.25.25.25h10.5a.25.25 0 0 0 .25-.25v-2.5a.75.75 0 0 1 1.5 0v2.5A1.75 1.75 0 0 1 13.25 14Z" />
-                <path d="M7.25 7.689V2a.75.75 0 0 1 1.5 0v5.689l1.97-1.969a.749.749 0 1 1 1.06 1.06l-3.25 3.25a.749.749 0 0 1-1.06 0L4.22 6.78a.749.749 0 1 1 1.06-1.06l1.97 1.969Z" />
-              </svg>
-              Code
-            </button>
-          </div>
-        </div>
-
-        <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg overflow-hidden">
-          <div class="px-4 py-3 border-b border-github-border-muted bg-github-canvas-overlay">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center space-x-3">
-                <img src="https://github.com/github.png" alt="User" class="w-6 h-6 rounded-full">
-                <div class="flex items-center space-x-2">
-                  <span class="text-github-fg-default font-medium">
-                    <!-- FAR LEFT SIDE -->
-                  </span>
-                  <span class="text-github-fg-default">
-                    <!-- LEFT SIDE -->
-                    
-                    <button
-                        onclick="showImportModal()"
-                        class="flex items-center gap-2 px-4 py-2 bg-github-canvas-overlay hover:bg-github-canvas-subtle border border-github-border-default rounded-lg transition-all"
-                        data-tooltip="Import from URL">
-                      <i class="fas fa-download"></i>
-                      <span class="hidden sm:inline">Import</span>
-                    </button>
-                    
-                  </span>
-                </div>
-              </div>
-              <div class="flex items-center space-x-4 text-sm text-github-fg-muted">
-                <span id="lastCommitTime">
-                  <!-- RIGHT SIDE -->
-                </span>
-                <span class="font-mono" id="commitHash">
-                  <!-- FAR RIGHT SIDE -->
-                  
-                  <button
-                      onclick="showUploadModal()"
-                      class="flex items-center gap-2 px-4 py-2 bg-github-success-emphasis hover:bg-github-success-fg text-white rounded-lg transition-all"
-                      data-tooltip="Upload files (Ctrl+U)">
-                    <i class="fas fa-upload"></i>
-                    <span class="hidden sm:inline">Upload</span>
-                  </button>
-
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div class="overflow-x-auto">
-            <table class="w-full">
-              <thead class="bg-github-tableHeader">
-                <tr>
-                  <th class="px-4 py-2 text-left text-sm font-medium text-github-fg-default">Name</th>
-                  <th class="px-4 py-2 text-left text-sm font-medium text-github-fg-default">Last commit message</th>
-                  <th class="px-4 py-2 text-right text-sm font-medium text-github-fg-default">Updated</th>
-                </tr>
-              </thead>
-              <tbody id="fileListBody" class="divide-y divide-github-border-muted">
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div class="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div class="lg:col-span-2">
-            <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg p-6">
-              <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-semibold text-github-fg-default">README.md</h2>
-                <button class="text-github-fg-muted hover:text-github-fg-default">
-                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M8 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z" />
-                  </svg>
+            <div class="flex items-center space-x-2">
+                <button onclick="showCreateFileModal()" 
+                        class="inline-flex items-center px-3 py-1.5 bg-github-btn-primary-bg hover:bg-github-btn-primary-hover text-white rounded-md text-sm font-medium transition-colors">
+                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M7.75 2a.75.75 0 0 1 .75.75V7h4.25a.75.75 0 0 1 0 1.5H8.5v4.25a.75.75 0 0 1-1.5 0V8.5H2.75a.75.75 0 0 1 0-1.5H7V2.75A.75.75 0 0 1 7.75 2Z"/>
+                    </svg>
+                    New file
                 </button>
-              </div>
-              <div class="prose prose-invert max-w-none" id="readmeContent">
-                <h1>GitDev</h1>
-                <p>A professional file explorer and editor interface that mimics GitHub's design and functionality with local storage.</p>
-              </div>
             </div>
-          </div>
-
-          <div class="space-y-6">
-            <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg p-4">
-              <h3 class="font-semibold text-github-fg-default mb-3">About</h3>
-              <p class="text-sm text-github-fg-muted mb-4" id="repoDescription">GitDev with Local Storage</p>
-              <div class="space-y-2 text-sm">
-                <div class="flex items-center space-x-2">
-                  <svg class="w-4 h-4 text-github-fg-muted" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z" />
-                  </svg>
-                  <span class="text-github-fg-muted">Local file management system</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg p-4">
-              <h3 class="font-semibold text-github-fg-default mb-3">Languages</h3>
-              <div class="space-y-2" id="languageStats">
-                <div class="flex items-center justify-between text-sm">
-                  <div class="flex items-center space-x-2">
-                    <div class="w-3 h-3 rounded-full bg-orange-500"></div>
-                    <span class="text-github-fg-default">HTML</span>
-                  </div>
-                  <span class="text-github-fg-muted">47.2%</span>
-                </div>
-                <div class="flex items-center justify-between text-sm">
-                  <div class="flex items-center space-x-2">
-                    <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
-                    <span class="text-github-fg-default">JavaScript</span>
-                  </div>
-                  <span class="text-github-fg-muted">43.8%</span>
-                </div>
-                <div class="flex items-center justify-between text-sm">
-                  <div class="flex items-center space-x-2">
-                    <div class="w-3 h-3 rounded-full bg-blue-500"></div>
-                    <span class="text-github-fg-default">CSS</span>
-                  </div>
-                  <span class="text-github-fg-muted">7.0%</span>
-                </div>
-                <div class="flex items-center justify-between text-sm">
-                  <div class="flex items-center space-x-2">
-                    <div class="w-3 h-3 rounded-full bg-purple-500"></div>
-                    <span class="text-github-fg-default">Other</span>
-                  </div>
-                  <span class="text-github-fg-muted">2.0%</span>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
+
+        <!-- File list table -->
+        <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg overflow-hidden">
+            <table class="min-w-full divide-y divide-github-border-default">
+                <thead>
+                    <tr class="bg-github-canvas-subtle">
+                        <th class="px-4 py-3 text-left text-xs font-medium text-github-fg-muted uppercase tracking-wider">Name</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-github-fg-muted uppercase tracking-wider">Last commit</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-github-fg-muted uppercase tracking-wider">Last modified</th>
+                        <th class="px-4 py-3 text-right text-xs font-medium text-github-fg-muted uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="fileListBody" class="bg-github-canvas-default divide-y divide-github-border-default">
+                    <!-- Files will be populated here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Unified Code Viewer/Editor -->
+<div id="coder" class="hidden" data-state="view">
+  <div class="code-viewer-header">
+    <!-- Header content (same as before) -->
+    <div class="header-left">
+      <div class="file-icon">
+        <!-- icon -->
       </div>
+      <input type="text" id="fileNameInput" class="file-name-input" value="filename.js" readonly>
+      <div class="file-badge" id="encodingBadge">UTF-8</div>
+      <div class="file-badge" id="eolBadge">LF</div>
+    </div>
+    <div class="header-center">
+      <div class="breadcrumb-trail" id="breadcrumbTrail"></div>
+    </div>
+    <div class="header-right">
+      <div class="header-actions">
+        <button class="action-btn" data-tooltip="Copy" id="copyBtn">
+          <!-- copy icon -->
+        </button>
+        <button class="action-btn" data-tooltip="Download" id="downloadBtn">
+          <!-- download icon -->
+        </button>
+        <div class="action-divider"></div>
+        <button class="action-btn edit-btn" id="editToggleBtn">
+          <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
+            <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"/>
+          </svg>
+          <span>Edit</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="code-viewer-toolbar">
+    <!-- Toolbar content -->
+  </div>
+
+  <!-- Code Container with Loading Overlay -->
+  <div class="code-viewer-body loading-transition" id="codeArea">
+    <div id="codeMirrorContainer" class="code-container">
+      <!-- CodeMirror will be inserted here -->
+      <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Switching to edit mode...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Commit Panel (hidden in view mode) -->
+  <div class="commit-panel" id="commitPanel">
+    <div class="space-y-3">
+      <input type="text" 
+             id="commitTitleInput" 
+             class="commit-input" 
+             placeholder="Update filename.ext">
+      <textarea 
+          id="commitDescriptionInput" 
+          class="commit-textarea" 
+          placeholder="Add an optional extended description..."
+          rows="3"></textarea>
+      <div class="commit-actions">
+        <button class="cancel-btn" id="cancelEditBtn">Cancel</button>
+        <button class="commit-btn" id="saveChangesBtn">Commit changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
 
 <!-- File Viewer --
       <div id="fileViewer" class="hidden max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -1129,76 +1068,6 @@ input, textarea {
 
 
 
-
-<!-- Single Code Viewer/Editor Container -->
-<div id="coder" class="hidden" data-state="view">
-  <div class="code-viewer-header">
-    <!-- Header content (same as before) -->
-    <div class="header-left">
-      <div class="file-icon">
-        <!-- icon -->
-      </div>
-      <input type="text" id="fileNameInput" class="file-name-input" value="filename.js" readonly>
-      <div class="file-badge" id="encodingBadge">UTF-8</div>
-      <div class="file-badge" id="eolBadge">LF</div>
-    </div>
-    <div class="header-center">
-      <div class="breadcrumb-trail" id="breadcrumbTrail"></div>
-    </div>
-    <div class="header-right">
-      <div class="header-actions">
-        <button class="action-btn" data-tooltip="Copy" id="copyBtn">
-          <!-- copy icon -->
-        </button>
-        <button class="action-btn" data-tooltip="Download" id="downloadBtn">
-          <!-- download icon -->
-        </button>
-        <div class="action-divider"></div>
-        <button class="action-btn edit-btn" id="editToggleBtn">
-          <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
-            <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"/>
-          </svg>
-          <span>Edit</span>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Toolbar -->
-  <div class="code-viewer-toolbar">
-    <!-- Toolbar content -->
-  </div>
-
-  <!-- Code Container with Loading Overlay -->
-  <div class="code-viewer-body loading-transition" id="codeArea">
-    <div id="codeMirrorContainer" class="code-container">
-      <!-- CodeMirror will be inserted here -->
-      <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-spinner"></div>
-        <div class="loading-text">Switching to edit mode...</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Commit Panel (hidden in view mode) -->
-  <div class="commit-panel" id="commitPanel">
-    <div class="space-y-3">
-      <input type="text" 
-             id="commitTitleInput" 
-             class="commit-input" 
-             placeholder="Update filename.ext">
-      <textarea 
-          id="commitDescriptionInput" 
-          class="commit-textarea" 
-          placeholder="Add an optional extended description..."
-          rows="3"></textarea>
-      <div class="commit-actions">
-        <button class="cancel-btn" id="cancelEditBtn">Cancel</button>
-        <button class="commit-btn" id="saveChangesBtn">Commit changes</button>
-      </div>
-    </div>
-  </div>
-</div>
 
 
 
