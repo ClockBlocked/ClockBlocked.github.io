@@ -179,17 +179,23 @@ function showFileEditor() {
 }
 
 function showRepoSelector() {
-  document.getElementById('explorerView').classList.add('hidden');
-  document.getElementById('fileViewer').classList.add('hidden');
-  document.getElementById('fileEditor').classList.add('hidden');
-  document.getElementById('repoSelectorView').classList.remove('hidden');
-  
-//  ProgressBar.show();
-  LoadingProgress.show();
-  setTimeout(() => {
-//    ProgressBar.hide();
-    LoadingProgress.hide();
-  }, 400);
+    // Hide other views
+    const explorerView = document.getElementById('explorerView');
+    const coder = document.getElementById('coder');
+    
+    if (explorerView) explorerView.classList.add('hidden');
+    if (coder) coder.classList.add('hidden');
+    
+    // Show repo selector
+    const repoSelector = document.getElementById('repoSelectorView');
+    if (repoSelector) {
+        repoSelector.classList.remove('hidden');
+    }
+    
+    LoadingProgress.show();
+    setTimeout(() => {
+        LoadingProgress.hide();
+    }, 400);
 }
 
 
