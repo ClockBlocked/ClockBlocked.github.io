@@ -7,7 +7,7 @@ window.addEventListener("DOMContentLoaded", () => {
     storageScript.src = 'https://clockblocked.github.io/gitDev/modules/storage.js';
 
     const routerScript = document.createElement('script');
-    routerScript.src = 'modules/router.js';
+    routerScript.src = './router.js';
 
     const pageUpdatesScript = document.createElement('script');
     pageUpdatesScript.src = 'https://clockblocked.github.io/gitDev/modules/pageUpdates.js';
@@ -33,6 +33,9 @@ window.addEventListener("DOMContentLoaded", () => {
     const fileMenuScript = document.createElement('script');
     fileMenuScript.src = 'https://clockblocked.github.io/gitDev/modules/fileMenu.js';
 
+    const coder = document.createElement('script');
+    coder.src = 'https://clockblocked.github.io/gitDev/modules/coder.js';
+
     const scripts = [
         dependenciesScript,
         storageScript,
@@ -44,7 +47,8 @@ window.addEventListener("DOMContentLoaded", () => {
         searchScript,
         fileUploadScript,
         importExportScript,
-        fileMenuScript
+        fileMenuScript,
+        coder
     ];
 
     let loadedCount = 0;
