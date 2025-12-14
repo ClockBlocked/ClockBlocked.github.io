@@ -200,12 +200,16 @@ function showRepoSelector() {
 
 function showFileViewer() {
     // Hide other views
-    document.getElementById('explorerView').classList.add('hidden');
-    document.getElementById('repoSelectorView').classList.add('hidden');
+    const repoSelector = document.getElementById('repoSelectorView');
+    const explorerView = document.getElementById('explorerView');
     
-    // Use unified coder instead of old viewer
-    if (window.coderViewEdit) {
-        coderViewEdit.show();
+    if (repoSelector) repoSelector.classList.add('hidden');
+    if (explorerView) explorerView.classList.add('hidden');
+    
+    // Show the unified coder
+    const coder = document.getElementById('coder');
+    if (coder) {
+        coder.classList.remove('hidden');
     }
     
     LoadingProgress.show();
@@ -214,18 +218,29 @@ function showFileViewer() {
 
 function showExplorer() {
     if (currentState.repository) {
-        // Hide coder and other views
-        if (window.coderViewEdit) coderViewEdit.hide();
-        document.getElementById('repoSelectorView').classList.add('hidden');
+        // Hide other views
+        const repoSelector = document.getElementById('repoSelectorView');
+        const coder = document.getElementById('coder');
         
-        // Show explorer
-        document.getElementById('explorerView').classList.remove('hidden');
+        if (repoSelector) repoSelector.classList.add('hidden');
+        if (coder) coder.classList.add('hidden');
         
+        // Show explorer view
+        const explorerView = document.getElementById('explorerView');
+        if (explorerView) {
+            explorerView.classList.remove('hidden');
+        } else {
+            console.error('explorerView element not found');
+            return;
+        }
+        
+        updateStats();
         LoadingProgress.show();
-        setTimeout(() => LoadingProgress.hide(), 300);
+        setTimeout(() => {
+            LoadingProgress.hide();
+        }, 300);
     }
 }
-
 
 
 
