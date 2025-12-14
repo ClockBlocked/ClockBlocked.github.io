@@ -1,2468 +1,384 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
-
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>File Explorer - GitDev</title>
-  
-  
-  <link rel="manifest" href="https://clockblocked.github.io/gitDev/gitDev/webApp/manifest.json">  
-
-  <link rel="stylesheet" href="https://clockblocked.github.io/gitDev/styleSheets/components/styles.css" />
-  <link rel="stylesheet" href="https://clockblocked.github.io/gitDev/styleSheets/global/fonts.css" />
-  <link rel="stylesheet" href="https://clockblocked.github.io/gitDev/styleSheets/enhancements.css" />
-  
-  <style>
-  
-  
-
-* {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-body {
-  
-}
-
-
-
-
-pre,
-code,
-.code-block,
-pre code,
-.hljs,
-.prism-code,
-[class*="language-"],
-[class*="hljs-"] {
-  -webkit-user-select: text !important;
-  -moz-user-select: text !important;
-  -ms-user-select: text !important;
-  user-select: text !important;
-}
-
-input, textarea {
-  -webkit-user-select: text;
-  -moz-user-select: text;
-  -ms-user-select: text;
-  user-select: text;
-}
-  </style>
-
-  <!-- TailwindCSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Preline UI -->
-  <link rel="stylesheet" href="https://preline.co/assets/css/main.min.css">
-  <script async defer src="https://preline.co/assets/js/hs-ui.bundle.js"></script>
-
-  <!-- Flowbite -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css" rel="stylesheet" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
-
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-  <!-- CodeMirror for Live Syntax Highlighting -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material-darker.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/markdown/markdown.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/php/php.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/sql/sql.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/yaml/yaml.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/selection/active-line.min.js"></script>
-
-  <!-- Prism for Code Display -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
-
-  <!-- Additional Libraries -->
-  <script src="https://unpkg.com/@floating-ui/dom@1.5.4/dist/floating-ui.dom.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-
-  <style>
-    :root {
-      --sidebar-width: 296px;
-      --mini-sidebar-width: 60px;
-      --bg-main: #2a313c;
-      --bg-body: #1c222b;
-      --bg-sections: #212830;
-      --border-main: #434a55;
-      --color-text-primary: #c9d1d9;
-      --color-text-secondary: #8b949e;
-      --color-link: #58a6ff;
-      --color-border: #434a55;
-    }
-
-    *::-webkit-scrollbar {
-      display: none;
-    }
-
-    html, body {
-      scroll-behavior: smooth;
-      overflow-x: hidden;
-      height: 100%;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-    }
-
-    body {
-      background-color: var(--bg-body);
-      color: var(--color-text-primary);
-    }
-
-    .layout {
-      display: flex;
-      min-height: 100vh;
-    }
-
-    #leftSidebar {
-      width: var(--sidebar-width);
-      flex-shrink: 0;
-      background-color: #2d333b;
-      border-right: 1px solid var(--color-border);
-      overflow-y: auto;
-      transition: transform 0.3s ease;
-      border-top-right-radius: 15px;
-    }
-
-    #rightSidebar {
-      width: var(--sidebar-width);
-      flex-shrink: 0;
-      background-color: #2d333b;
-      border-left: 1px solid var(--color-border);
-      overflow-y: auto;
-      transition: transform 0.3s ease;
-      border-top-left-radius: 15px;
-    }
-
-    .main-content-wrapper {
-      flex: 1;
-      overflow-x: hidden;
-      margin-left: var(--sidebar-width);
-      margin-right: var(--sidebar-width);
-      transition: margin 0.3s ease;
-    }
-
-    #overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: rgba(0, 0, 0, 0.95);
-      z-index: 9;
-      visibility: hidden;
-      opacity: 0;
-      transition: opacity 0.3s ease, visibility 0.3s ease;
-      backdrop-filter: blur(80px);
-    }
-
-    #overlay.active {
-      visibility: visible;
-      opacity: 0.65;
-      pointer-events: all;
-      z-index: 9;
-    }
-
-    @media (max-width: 1200px) {
-      #leftSidebar,
-      #rightSidebar {
-        position: fixed;
-        top: 0;
-        bottom: 0;
-        z-index: 15;
-        transform: translateX(-100%);
-        box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
-      }
-
-      #rightSidebar {
-        right: 0;
-        left: auto;
-        transform: translateX(100%);
-      }
-
-      #leftSidebar.open {
-        transform: translateX(0);
-      }
-
-      #rightSidebar.open {
-        transform: translateX(0);
-      }
-
-      .main-content-wrapper {
-        margin-left: 0;
-        margin-right: 0;
-      }
-    }
-
-    /* Sidebar Styling */
-    .sidebar-title {
-      font-size: 1.25rem;
-      font-weight: 100;
-      text-transform: uppercase;
-      letter-spacing: 0.75em;
-      color: #c9d1d9;
-      padding: 0.5rem 0.75rem;
-      transform: translateX(-2rem);
-      text-align: right;
-      opacity: 0.35;
-      transition: opacity 0.65s ease-in-out;
-    }
-
-    .sidebar-link {
-      display: block;
-      font-size: 0.875rem;
-      color: #8b949e;
-      padding: 0.25rem 0.5rem;
-      border-radius: 0.375rem;
-      transition: background 0.15s ease-in-out, color 0.15s ease-in-out;
-      text-decoration: none;
-      cursor: pointer;
-    }
-
-    .sidebar-link:hover {
-      background-color: #30363d;
-      color: #ffffff;
-    }
-
-    .sidebar-link.active {
-      background-color: #373e47;
-      color: #ffffff;
-      font-weight: 600;
-    }
-
-    aside:hover .sidebar-title {
-      opacity: 1;
-      transition: opacity 0.65s ease-in-out;
-    }
-
-    /* Profile Section */
-    .profile-section {
-      padding-bottom: 16px;
-      border-bottom: 1px solid var(--color-border);
-      margin-bottom: 16px;
-    }
-
-    .profile-avatar {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      margin-bottom: 12px;
-      border: 2px solid var(--color-border);
-    }
-
-    .profile-name {
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--color-text-primary);
-      line-height: 1.2;
-    }
-
-    .profile-username {
-      font-size: 14px;
-      color: var(--color-text-secondary);
-    }
-
-    /* Repository List */
-    .repo-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 12px;
-      color: var(--color-text-primary);
-      text-decoration: none;
-      border-radius: 6px;
-      font-size: 14px;
-      transition: all 0.2s ease;
-      margin-bottom: 2px;
-      cursor: pointer;
-    }
-
-    .repo-item:hover {
-      background-color: #444c56;
-    }
-
-    .repo-item.active {
-      background-color: #373e47;
-    }
-
-    .repo-icon {
-      font-size: 12px;
-      color: var(--color-text-secondary);
-    }
-
-    .repo-icon.public {
-      color: #57ab5a;
-    }
-
-    /* Recent Files */
-    .recent-file-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 12px;
-      color: var(--color-text-primary);
-      text-decoration: none;
-      border-radius: 6px;
-      font-size: 14px;
-      transition: all 0.2s ease;
-      margin-bottom: 2px;
-      cursor: pointer;
-    }
-
-    .recent-file-item:hover {
-      background-color: #444c56;
-    }
-
-    .recent-file-icon {
-      width: 12px;
-      height: 12px;
-      color: var(--color-text-secondary);
-    }
-
-    /* Top Navbar */
-    .navbar-container {
-      background-color: #2d333b;
-      border-bottom: 1px solid var(--color-border);
-      height: 62px;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 1000;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-    }
-
-    .navbar-content {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 100%;
-      padding: 0 16px;
-      max-width: 100%;
-    }
-
-    .navbar-left, .navbar-right {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .menu-button {
-      background: none;
-      border: none;
-      color: var(--color-text-primary);
-      font-size: 16px;
-      cursor: pointer;
-      padding: 8px;
-      border-radius: 6px;
-      transition: all 0.2s ease;
-    }
-
-    .menu-button:hover {
-      background-color: #444c56;
-    }
-
-    /* Progress Bar */
-    .page-progress {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 3px;
-      background-color: transparent;
-      z-index: 1001;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      pointer-events: none;
-    }
-
-    .page-progress.visible {
-      opacity: 1;
-    }
-
-    .progress-bar {
-      width: 100%;
-      height: 100%;
-      background-color: #2d333b;
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #539bf5, #6cb6ff);
-      width: 0%;
-      transition: width 0.3s ease;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="GitDev - Local File Manager with GitHub-inspired Interface">
+    <meta name="theme-color" content="#1c2128">
+    <title>GitDev - File Explorer</title>
     
-    [data-notify="error"] {
-      z-index: 9999999999 !important;
-    }
+    <link rel="manifest" href="/manifest.json">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/material-darker.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prismjs/1.29.0/themes/prism-dark.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.0/tailwind.min.css" rel="stylesheet">
     
-
-  </style>
-
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            github: {
-              'canvas-default': '#22272e',
-              'tableHeader': '#2d333b',
-              'canvas-overlay': '#2d333b',
-              'canvas-inset': '#1c2128',
-              'canvas-subtle': '#2d333b',
-              'border-default': '#444c56',
-              'border-muted': '#373e47',
-              'neutral-emphasis': '#768390',
-              'neutral-muted': '#636e7b',
-              'fg-default': '#adbac7',
-              'fg-muted': '#768390',
-              'fg-subtle': '#545d68',
-              'accent-fg': '#539bf5',
-              'accent-emphasis': '#4184e4',
-              'success-fg': '#57ab5a',
-              'danger-fg': '#e5534b',
-              'warning-fg': '#c69026',
-              'btn-primary-bg': '#347d39',
-              'btn-primary-hover': '#46954a',
-              'btn-secondary-bg': '#373e47',
-              'btn-secondary-hover': '#444c56'
-            }
-          },
-/**          fontFamily: {
-            'sans': ['Inter', 'system-ui', 'sans-serif'],
-            'mono': ['JetBrains Mono', 'SFMono-Regular', 'Consolas', 'monospace']
-          },**/
-          animation: {
-            'fade-in': 'fadeIn 0.2s ease-out',
-            'fade-out': 'fadeOut 0.2s ease-in',
-            'slide-up': 'slideUp 0.3s ease-out',
-            'slide-down': 'slideDown 0.3s ease-out',
-            'scale-in': 'scaleIn 0.2s ease-out',
-            'spin-slow': 'spin 1.5s linear infinite',
-            'pulse-soft': 'pulseSoft 2s ease-in-out infinite',
-          },
-          keyframes: {
-            fadeIn: {
-              '0%': { opacity: '0' },
-              '100%': { opacity: '1' }
-            },
-            fadeOut: {
-              '0%': { opacity: '1' },
-              '100%': { opacity: '0' }
-            },
-            slideUp: {
-              '0%': { transform: 'translateY(20px)', opacity: '0' },
-              '100%': { transform: 'translateY(0)', opacity: '1' }
-            },
-            slideDown: {
-              '0%': { transform: 'translateY(-20px)', opacity: '0' },
-              '100%': { transform: 'translateY(0)', opacity: '1' }
-            },
-            scaleIn: {
-              '0%': { transform: 'scale(0.95)', opacity: '0' },
-              '100%': { transform: 'scale(1)', opacity: '1' }
-            },
-            pulseSoft: {
-              '0%, 100%': { opacity: '1' },
-              '50%': { opacity: '0.7' }
-            }
-          }
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-      }
-    }
-  </script>
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            background-color: #0d1117;
+            color: #c9d1d9;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+        }
+        
+        .github-dark {
+            --color-canvas-default: #0d1117;
+            --color-canvas-inset: #010409;
+            --color-canvas-overlay: #161b22;
+            --color-canvas-subtle: #21262d;
+            --color-border-default: #30363d;
+            --color-border-muted: #21262d;
+            --color-bg-primary: #0d1117;
+            --color-bg-secondary: #161b22;
+            --color-fg-default: #c9d1d9;
+            --color-fg-muted: #8b949e;
+            --color-fg-subtle: #6e7681;
+            --color-accent-fg: #58a6ff;
+            --color-success-fg: #3fb950;
+            --color-danger-fg: #f85149;
+            --color-warning-fg: #d29922;
+        }
+        
+        body {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            background-color: var(--color-canvas-default);
+        }
+        
+        .app-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            gap: 0;
+        }
+        
+        .main-content {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .visible {
+            display: flex !important;
+        }
+        
+        .sidebar {
+            width: 260px;
+            background-color: var(--color-canvas-inset);
+            border-right: 1px solid var(--color-border-default);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        
+        .sidebar-section {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--color-border-muted);
+        }
+        
+        .sidebar-title {
+            padding: 0 16px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--color-fg-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        
+        .sidebar-item {
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+            color: var(--color-fg-default);
+            border-left: 3px solid transparent;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .sidebar-item:hover {
+            background-color: var(--color-canvas-overlay);
+        }
+        
+        .sidebar-item.active {
+            background-color: var(--color-canvas-overlay);
+            border-left-color: var(--color-accent-fg);
+            color: var(--color-accent-fg);
+        }
+        
+        .sidebar-item-icon {
+            margin-right: 8px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 260px;
+                height: 100%;
+                z-index: 100;
+            }
+            
+            .sidebar.visible {
+                display: flex;
+            }
+        }
+        
+        .gh-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2.5px;
+            z-index: 9999;
+            background-color: transparent;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .gh-progress.visible {
+            opacity: 1;
+        }
+        
+        .gh-progress-fill {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #58a6ff 0%, #3fb950 50%, #f85149 100%);
+            transition: width 0.3s ease-out;
+            box-shadow: 0 0 10px rgba(88, 166, 255, 0.5);
+        }
+    </style>
 </head>
-
-<body class="bg-github-canvas-default text-github-fg-default font-sans">
-  
-  <!-- Progress Bar -->
-  <div id="pageProgress" class="page-progress">
-    <div class="progress-bar">
-      <div class="progress-fill"></div>
-    </div>
-  </div>
-
-  <!-- Loading Overlay -->
-  <div id="loadingOverlay" class="fixed inset-0 bg-github-canvas-default/90 backdrop-blur-sm z-50 hidden items-center justify-center">
-    <div class="flex flex-col items-center space-y-4">
-      <div class="relative">
-        <div class="w-8 h-8 border-2 border-github-accent-fg border-t-transparent rounded-full animate-spin"></div>
-        <div class="absolute inset-0 w-8 h-8 border-2 border-github-accent-fg/30 rounded-full animate-pulse-soft"></div>
-      </div>
-      <p class="text-github-fg-muted text-sm font-medium" id="loadingText">Loading...</p>
-    </div>
-  </div>
-
-  <!-- Top Navigation Bar -->
-  <nav class="navbar-container">
-    <div class="navbar-content">
-      <!-- Left Section -->
-      <div class="navbar-left">
-        <button id="leftSidebarTrigger" class="menu-button">
-          <i class="fas fa-bars"></i>
-        </button>
-        <a href="#" class="flex items-center space-x-2">
-          <i class="fab fa-github text-2xl"></i>
-          <span class="text-sm font-semibold">GitDev</span>
-        </a>
-      </div>
-
-      <!-- Center Search --
-      <div class="flex-1 max-w-xl mx-4">
-        <div class="relative">
-          <input 
-            type="text" 
-            placeholder="Search repositories, files..." 
-            class="w-full px-4 py-2 bg-github-canvas-inset border border-github-border-default rounded-md text-sm text-github-fg-default placeholder-github-fg-muted focus:outline-none focus:ring-2 focus:ring-github-accent-fg focus:border-transparent"
-          >
-          <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-github-fg-muted text-sm">
-            Ctrl+K
-          </div>
-        </div>
-      </div>
----->
-
-<button 
-    onclick="showSearchModal()" 
-    class="flex items-center gap-2 px-4 py-2 bg-github-canvas-overlay hover:bg-github-canvas-subtle border border-github-border-default rounded-lg transition-all"
-    data-tooltip="Search files (Ctrl+K)"
->
-    <i class="fas fa-search"></i>
-    <span class="hidden sm:inline">Search</span>
-    <kbd class="hidden lg:inline-block ml-2 text-xs">Ctrl+K</kbd>
-</button>
-
-
-      <!-- Right Section -->
-      <div class="navbar-right">
-        <button data-action="show-create-file" class="menu-button">
-          <i class="fas fa-plus"></i>
-          <span class="ml-2 text-sm">New</span>
-        </button>
-        <button data-action="toggle-theme" class="menu-button">
-          <i id="themeIcon" class="fas fa-moon"></i>
-        </button>
-        <button id="rightSidebarTrigger" class="menu-button">
-          <i class="fas fa-ellipsis-v"></i>
-        </button>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Overlay for Mobile -->
-  <div id="overlay" class="fixed inset-0 bg-black"></div>
-
-  <!-- Left Sidebar -->
-  <aside id="leftSidebar" class="sidebar left-sidebar">
-    <div class="p-4 h-full overflow-y-auto">
-      <!-- User Profile -->
-      <div class="profile-section">
-        <img src="https://dev.wuaze.com/banner.png" alt="Profile" class="profile-avatar" />
-        <div class="profile-info">
-          <h3 class="profile-name">GitDev</h3>
-          <span class="profile-username">Local File Manager</span>
-        </div>
-        <button data-action="show-create-repo" class="w-full mt-3 px-3 py-2 bg-github-btn-primary-bg hover:bg-github-btn-primary-hover text-white rounded-md text-sm font-medium transition-colors">
-          <i class="fas fa-plus mr-2"></i>
-          New Repository
-        </button>
-      </div>
-
-      <!-- Quick Actions -->
-      <div class="mb-6">
-        <span class="sidebar-title">Quick Actions</span>
-        <div class="space-y-1">
-          <button data-action="create-file" class="sidebar-link">
-            <i class="fas fa-file mr-2"></i>
-            New File
-          </button>
-          <button data-action="show-repo-selector" class="sidebar-link">
-            <i class="fas fa-folder mr-2"></i>
-            Browse Repositories
-          </button>
-          <button data-action="navigate-root" class="sidebar-link">
-            <i class="fas fa-home mr-2"></i>
-            Go to Root
-          </button>
-        </div>
-      </div>
-
-      <!-- Repository List -->
-      <div class="mb-6">
-        <div class="flex items-center justify-between mb-2">
-          <span class="sidebar-title">Repositories</span>
-          <span id="repoCount" class="text-xs text-github-fg-muted">0</span>
-        </div>
-        <div id="repoListSidebar" class="space-y-1">
-          <!-- Repositories will be populated here -->
-        </div>
-      </div>
-
-      <!-- Navigation Links -->
-      <div>
-        <span class="sidebar-title">Navigation</span>
-        <div class="space-y-1">
-          <a href="#" onclick="showRepoSelector()" class="sidebar-link">
-            <i class="fas fa-code mr-2"></i>
-            Code
-          </a>
-          <a href="#" class="sidebar-link">
-            <i class="fas fa-exclamation-circle mr-2"></i>
-            Issues
-            <span class="ml-auto bg-github-canvas-subtle text-github-fg-default text-xs px-1.5 py-0.5 rounded-full">0</span>
-          </a>
-          <a href="#" class="sidebar-link">
-            <i class="fas fa-code-branch mr-2"></i>
-            Pull Requests
-            <span class="ml-auto bg-github-canvas-subtle text-github-fg-default text-xs px-1.5 py-0.5 rounded-full">0</span>
-          </a>
-          <a href="#" class="sidebar-link">
-            <i class="fas fa-chart-bar mr-2"></i>
-            Insights
-          </a>
-        </div>
-      </div>
-
-      <!-- File Stats -->
-      <div class="mt-6 pt-4 border-t border-github-border-muted">
-        <div class="flex items-center justify-between text-sm">
-          <span class="text-github-fg-muted">Files:</span>
-          <span id="totalFilesCount" class="font-medium">0</span>
-        </div>
-        <div class="flex items-center justify-between text-sm mt-1">
-          <span class="text-github-fg-muted">Storage:</span>
-          <span id="totalStorage" class="font-medium">0 KB</span>
-        </div>
-      </div>
-    </div>
-  </aside>
-
-  <!-- Right Sidebar -->
-  <aside id="rightSidebar" class="sidebar right-sidebar">
-    <div class="p-4 h-full overflow-y-auto">
-      <!-- Recent Files -->
-      <div class="mb-6">
-        <div class="flex items-center justify-between mb-2">
-          <span class="sidebar-title">Recent Files</span>
-          <button onclick="refreshRecentFiles()" class="text-xs text-github-accent-fg hover:underline">
-            Refresh
-          </button>
-        </div>
-        <div id="recentFilesList" class="space-y-2">
-          <!-- Recent files will be populated here -->
-        </div>
-      </div>
-
-      <!-- Current Repository Info -->
-      <div id="currentRepoInfo" class="mb-6 hidden">
-        <span class="sidebar-title">Current Repository</span>
-        <div class="p-3 bg-github-canvas-subtle rounded-md mt-2">
-          <h4 id="currentRepoNameSidebar" class="font-semibold text-github-fg-default mb-1"></h4>
-          <p id="currentRepoDesc" class="text-xs text-github-fg-muted mb-2"></p>
-          <div class="flex items-center justify-between text-xs">
-            <span class="text-github-fg-muted">Branch:</span>
-            <span id="currentRepoBranch" class="font-medium">main</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Quick Stats -->
-      <div class="mb-6">
-        <span class="sidebar-title">Quick Stats</span>
-        <div class="grid grid-cols-2 gap-2 mt-2">
-          <div class="p-3 bg-github-canvas-subtle rounded-md text-center">
-            <div class="text-lg font-semibold text-github-accent-fg" id="statsFiles">0</div>
-            <div class="text-xs text-github-fg-muted">Files</div>
-          </div>
-          <div class="p-3 bg-github-canvas-subtle rounded-md text-center">
-            <div class="text-lg font-semibold text-github-success-fg" id="statsCommits">0</div>
-            <div class="text-xs text-github-fg-muted">Commits</div>
-          </div>
-          <div class="p-3 bg-github-canvas-subtle rounded-md text-center">
-            <div class="text-lg font-semibold text-github-warning-fg" id="statsBranches">1</div>
-            <div class="text-xs text-github-fg-muted">Branches</div>
-          </div>
-          <div class="p-3 bg-github-canvas-subtle rounded-md text-center">
-            <div class="text-lg font-semibold text-github-danger-fg" id="statsIssues">0</div>
-            <div class="text-xs text-github-fg-muted">Issues</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Language Distribution -->
-      <div id="languageStatsSidebar" class="hidden">
-        <span class="sidebar-title">Languages</span>
-        <div id="languageStatsList" class="space-y-2 mt-2">
-          <!-- Language stats will be populated here -->
-        </div>
-      </div>
-
-      <!-- Quick Actions Footer -->
-      <div class="mt-auto pt-4 border-t border-github-border-muted">
-        <div class="space-y-2">
-          <button onclick="toggleTheme()" class="sidebar-link w-full text-left">
-            <i id="sidebarThemeIcon" class="fas fa-moon mr-2"></i>
-            Toggle Theme
-          </button>
-          <button onclick="showHelp()" class="sidebar-link w-full text-left">
-            <i class="fas fa-question-circle mr-2"></i>
-            Help & Documentation
-          </button>
-        </div>
-      </div>
-    </div>
-  </aside>
-
-  <!-- Main Content Wrapper -->
-  <div class="main-content-wrapper pt-16">
-    <!-- Repository Header -->
-    <header id="repoHeader" class="bg-github-canvas-overlay border-b border-github-border-default sticky top-0 z-40 backdrop-blur-md bg-github-canvas-overlay/95 hidden">
-      <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between py-4">
-          <div class="flex items-center space-x-3">
-            <div class="flex items-center space-x-2">
-              <svg class="w-5 h-5 text-github-fg-muted" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z" />
-              </svg>
-              <a href="#" onclick="showRepoSelector()" class="text-github-accent-fg hover:underline text-xl font-semibold">
-                GitDev
-              </a>
+<body class="github-dark">
+    <div class="app-container">
+        <div id="sidebar-left" class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">Repositories</div>
+                <div id="repoList"></div>
             </div>
-            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-github-canvas-subtle border border-github-border-default text-github-fg-muted">
-              Local
-            </span>
-          </div>
-
-          <div class="flex items-center space-x-2">
-            <button data-action="star-repo" class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
-              <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.751 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z" />
-              </svg>
-              Star
-            </button>
-            <button data-action="fork-repo" class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
-              <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M5 5.372v.878c0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75v-.878a2.25 2.25 0 1 1 1.5 0v.878a2.25 2.25 0 0 1-2.25 2.25h-1.5v2.128a2.251 2.251 0 1 1-1.5 0V8.5h-1.5A2.25 2.25 0 0 1 3.5 6.25v-.878a2.25 2.25 0 1 1 1.5 0ZM5 3.25a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Zm6.75.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm-3 8.75a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Z" />
-              </svg>
-              Fork
-            </button>
-          </div>
-        </div>
-
-        <nav class="flex space-x-6 border-b border-github-border-muted -mb-px">
-          <a href="#" onclick="showExplorer()" class="flex items-center space-x-2 px-1 py-3 border-b-2 border-orange-400 text-sm font-semibold text-github-fg-default">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z" />
-            </svg>
-            <span>Code</span>
-          </a>
-          <a href="#" class="flex items-center space-x-2 px-1 py-3 border-b-2 border-transparent text-sm font-medium text-github-fg-muted hover:text-github-fg-default hover:border-github-border-default transition-colors">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" />
-              <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Z" />
-            </svg>
-            <span>Issues</span>
-            <span class="bg-github-canvas-subtle text-github-fg-default text-xs px-1.5 py-0.5 rounded-full">0</span>
-          </a>
-          <a href="#" class="flex items-center space-x-2 px-1 py-3 border-b-2 border-transparent text-sm font-medium text-github-fg-muted hover:text-github-fg-default hover:border-github-border-default transition-colors">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M1.5 3.25a2.25 2.25 0 1 1 3 2.122v5.256a2.251 2.251 0 1 1-1.5 0V5.372A2.25 2.25 0 0 1 1.5 3.25Zm5.677-.177L9.573.677A.25.25 0 0 1 10 .854V2.5h1A2.5 2.5 0 0 1 13.5 5v5.628a2.251 2.251 0 1 1-1.5 0V5a1 1 0 0 0-1-1h-1v1.646a.25.25 0 0 1-.427.177L7.177 3.427a.25.25 0 0 1 0-.354ZM3.75 2.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm0 9.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm8.25.75a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Z" />
-            </svg>
-            <span>Pull requests</span>
-            <span class="bg-github-canvas-subtle text-github-fg-default text-xs px-1.5 py-0.5 rounded-full">0</span>
-          </a>
-        </nav>
-      </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="flex-1">
-      <!-- Repository Selector View -->
-      <div id="repoSelectorView" class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-2xl font-bold text-github-fg-default">Your Repositories</h2>
-          <button data-action="create-repo" class="inline-flex items-center px-4 py-2 bg-github-btn-primary-bg hover:bg-github-btn-primary-hover text-white rounded-md text-sm font-medium transition-colors">
-            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M7.75 2a.75.75 0 0 1 .75.75V7h4.25a.75.75 0 0 1 0 1.5H8.5v4.25a.75.75 0 0 1-1.5 0V8.5H2.75a.75.75 0 0 1 0-1.5H7V2.75A.75.75 0 0 1 7.75 2Z" />
-            </svg>
-            New repository
-          </button>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="repoList">
-        </div>
-      </div>
-
-
-
-
-
-
-      <!-- File Explorer View --
-      <div id="explorerView" class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6 hidden">
-        <div class="flex items-center justify-between mb-4">
-          <div class="flex items-center space-x-3">
-            <div class="relative">
-              <button id="branchSelector" class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
-                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M9.5 3.25a2.25 2.25 0 1 1 3 2.122V6A2.5 2.5 0 0 1 10 8.5H6a1 1 0 0 0-1 1v1.128a2.251 2.251 0 1 1-1.5 0V5.372a2.25 2.25 0 1 1 1.5 0v1.836A2.493 2.493 0 0 1 6 7h4a1 1 0 0 0 1-1v-.628A2.25 2.25 0 0 1 9.5 3.25Zm-6 0a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Zm8.25-.75a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5ZM4.25 12a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Z" />
-                </svg>
-                <span id="currentBranch">main</span>
-                <svg class="w-4 h-4 ml-1 text-github-fg-muted" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M12.78 5.22a.749.749 0 0 1 0 1.06l-4.25 4.25a.749.749 0 0 1-1.06 0L3.22 6.28a.749.749 0 1 1 1.06-1.06L8 8.939l3.72-3.719a.749.749 0 0 1 1.06 0Z" />
-                </svg>
-              </button>
-              <div id="branchDropdown" class="hidden absolute z-10 mt-1 w-56 bg-github-canvas-overlay border border-github-border-default rounded-md shadow-lg">
-                <div class="p-1">
-                  <input type="text" placeholder="Find or create branch..." class="w-full px-2 py-1 mb-1 bg-github-canvas-inset border border-github-border-default rounded text-sm text-github-fg-default">
-                  <div class="max-h-60 overflow-y-auto">
-                    <div class="px-2 py-1 text-sm text-github-fg-default hover:bg-github-canvas-subtle cursor-pointer">main</div>
-                  </div>
-                </div>
-              </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Recent Files</div>
+                <div id="recentFilesList"></div>
             </div>
-
-            <nav class="flex items-center space-x-1 text-sm" id="pathBreadcrumb">
-              <a href="#" onclick="showRepoSelector()" class="text-github-accent-fg hover:underline font-semibold">Repositories</a>
-              <span class="text-github-fg-muted">/</span>
-              <a href="#" class="text-github-accent-fg hover:underline font-semibold" id="currentRepoName">Repository</a>
-            </nav>
-          </div>
-
-          <div class="flex items-center space-x-2">
-            <button data-action="create-file" class="inline-flex items-center px-3 py-1.5 bg-github-btn-primary-bg hover:bg-github-btn-primary-hover text-white rounded-md text-sm font-medium transition-colors">
-              <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M7.75 2a.75.75 0 0 1 .75.75V7h4.25a.75.75 0 0 1 0 1.5H8.5v4.25a.75.75 0 0 1-1.5 0V8.5H2.75a.75.75 0 0 1 0-1.5H7V2.75A.75.75 0 0 1 7.75 2Z" />
-              </svg>
-              New
-            </button>
-            <button class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
-              <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M2.75 14A1.75 1.75 0 0 1 1 12.25v-2.5a.75.75 0 0 1 1.5 0v2.5c0 .138.112.25.25.25h10.5a.25.25 0 0 0 .25-.25v-2.5a.75.75 0 0 1 1.5 0v2.5A1.75 1.75 0 0 1 13.25 14Z" />
-                <path d="M7.25 7.689V2a.75.75 0 0 1 1.5 0v5.689l1.97-1.969a.749.749 0 1 1 1.06 1.06l-3.25 3.25a.749.749 0 0 1-1.06 0L4.22 6.78a.749.749 0 1 1 1.06-1.06l1.97 1.969Z" />
-              </svg>
-              Code
-            </button>
-          </div>
         </div>
-
-        <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg overflow-hidden">
-          <div class="px-4 py-3 border-b border-github-border-muted bg-github-canvas-overlay">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center space-x-3">
-                <img src="https://github.com/github.png" alt="User" class="w-6 h-6 rounded-full">
-                <div class="flex items-center space-x-2">
-                  <span class="text-github-fg-default font-medium">
-                    
-                  </span>
-                  <span class="text-github-fg-default">
-                  
-                    
-                    <button
-                        onclick="showImportModal()"
-                        class="flex items-center gap-2 px-4 py-2 bg-github-canvas-overlay hover:bg-github-canvas-subtle border border-github-border-default rounded-lg transition-all"
-                        data-tooltip="Import from URL">
-                      <i class="fas fa-download"></i>
-                      <span class="hidden sm:inline">Import</span>
-                    </button>
-                    
-                  </span>
-                </div>
-              </div>
-              <div class="flex items-center space-x-4 text-sm text-github-fg-muted">
-                <span id="lastCommitTime">
-                
-                </span>
-                <span class="font-mono" id="commitHash">
-              
-                  
-                  <button
-                      onclick="showUploadModal()"
-                      class="flex items-center gap-2 px-4 py-2 bg-github-success-emphasis hover:bg-github-success-fg text-white rounded-lg transition-all"
-                      data-tooltip="Upload files (Ctrl+U)">
-                    <i class="fas fa-upload"></i>
-                    <span class="hidden sm:inline">Upload</span>
-                  </button>
-
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div class="overflow-x-auto">
-            <table class="w-full">
-              <thead class="bg-github-tableHeader">
-                <tr>
-                  <th class="px-4 py-2 text-left text-sm font-medium text-github-fg-default">Name</th>
-                  <th class="px-4 py-2 text-left text-sm font-medium text-github-fg-default">Last commit message</th>
-                  <th class="px-4 py-2 text-right text-sm font-medium text-github-fg-default">Updated</th>
-                </tr>
-              </thead>
-              <tbody id="fileListBody" class="divide-y divide-github-border-muted">
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div class="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div class="lg:col-span-2">
-            <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg p-6">
-              <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-semibold text-github-fg-default">README.md</h2>
-                <button class="text-github-fg-muted hover:text-github-fg-default">
-                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M8 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z" />
-                  </svg>
-                </button>
-              </div>
-              <div class="prose prose-invert max-w-none" id="readmeContent">
-                <h1>GitDev</h1>
-                <p>A professional file explorer and editor interface that mimics GitHub's design and functionality with local storage.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="space-y-6">
-            <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg p-4">
-              <h3 class="font-semibold text-github-fg-default mb-3">About</h3>
-              <p class="text-sm text-github-fg-muted mb-4" id="repoDescription">GitDev with Local Storage</p>
-              <div class="space-y-2 text-sm">
-                <div class="flex items-center space-x-2">
-                  <svg class="w-4 h-4 text-github-fg-muted" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z" />
-                  </svg>
-                  <span class="text-github-fg-muted">Local file management system</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg p-4">
-              <h3 class="font-semibold text-github-fg-default mb-3">Languages</h3>
-              <div class="space-y-2" id="languageStats">
-                <div class="flex items-center justify-between text-sm">
-                  <div class="flex items-center space-x-2">
-                    <div class="w-3 h-3 rounded-full bg-orange-500"></div>
-                    <span class="text-github-fg-default">HTML</span>
-                  </div>
-                  <span class="text-github-fg-muted">47.2%</span>
-                </div>
-                <div class="flex items-center justify-between text-sm">
-                  <div class="flex items-center space-x-2">
-                    <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
-                    <span class="text-github-fg-default">JavaScript</span>
-                  </div>
-                  <span class="text-github-fg-muted">43.8%</span>
-                </div>
-                <div class="flex items-center justify-between text-sm">
-                  <div class="flex items-center space-x-2">
-                    <div class="w-3 h-3 rounded-full bg-blue-500"></div>
-                    <span class="text-github-fg-default">CSS</span>
-                  </div>
-                  <span class="text-github-fg-muted">7.0%</span>
-                </div>
-                <div class="flex items-center justify-between text-sm">
-                  <div class="flex items-center space-x-2">
-                    <div class="w-3 h-3 rounded-full bg-purple-500"></div>
-                    <span class="text-github-fg-default">Other</span>
-                  </div>
-                  <span class="text-github-fg-muted">2.0%</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
---->
-
-
-
-
-
-
-<!-- Repository Explorer View -->
-<div id="explorerView" class="hidden">
-    <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <!-- Breadcrumb navigation -->
-        <div class="flex items-center justify-between mb-6">
-            <div class="flex items-center space-x-2 text-sm" id="pathBreadcrumb">
-                <!-- Breadcrumb will be populated dynamically -->
-            </div>
-            <div class="flex items-center space-x-2">
-                <button onclick="showCreateFileModal()" 
-                        class="inline-flex items-center px-3 py-1.5 bg-github-btn-primary-bg hover:bg-github-btn-primary-hover text-white rounded-md text-sm font-medium transition-colors">
-                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M7.75 2a.75.75 0 0 1 .75.75V7h4.25a.75.75 0 0 1 0 1.5H8.5v4.25a.75.75 0 0 1-1.5 0V8.5H2.75a.75.75 0 0 1 0-1.5H7V2.75A.75.75 0 0 1 7.75 2Z"/>
+        
+        <div class="main-content">
+            <div id="repoSelectorView" class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6 hidden w-full h-full flex flex-col">
+                <div class="flex-1 flex flex-col items-center justify-center">
+                    <svg class="w-16 h-16 text-gray-500 mb-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M3 3a2 2 0 0 1 2-2h3.28a1 1 0 0 1 .948.684l1.498 4.493a1 1 0 0 1-.502 1.21l-2.257 1.13a11.042 11.042 0 0 0 5.516 5.516l1.13-2.257a1 1 0 0 1 1.21-.502l4.493 1.498a1 1 0 0 1 .684.949V19a2 2 0 0 1-2 2h-1C9.716 21 3 14.284 3 6V5a2 2 0 0 1 2-2Z"/>
                     </svg>
-                    New file
-                </button>
-            </div>
-        </div>
-
-        <!-- File list table -->
-        <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg overflow-hidden">
-            <table class="min-w-full divide-y divide-github-border-default">
-                <thead>
-                    <tr class="bg-github-canvas-subtle">
-                        <th class="px-4 py-3 text-left text-xs font-medium text-github-fg-muted uppercase tracking-wider">Name</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-github-fg-muted uppercase tracking-wider">Last commit</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-github-fg-muted uppercase tracking-wider">Last modified</th>
-                        <th class="px-4 py-3 text-right text-xs font-medium text-github-fg-muted uppercase tracking-wider">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="fileListBody" class="bg-github-canvas-default divide-y divide-github-border-default">
-                    <!-- Files will be populated here -->
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Empty state -->
-        <div id="emptyExplorerState" class="hidden text-center py-12">
-            <svg class="w-12 h-12 mx-auto text-github-fg-muted mb-4" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z"/>
-            </svg>
-            <h3 class="text-lg font-medium text-github-fg-default mb-2">No files yet</h3>
-            <p class="text-github-fg-muted mb-4">Create your first file to get started</p>
-            <button onclick="showCreateFileModal()" 
-                    class="inline-flex items-center px-4 py-2 bg-github-btn-primary-bg hover:bg-github-btn-primary-hover text-white rounded-md text-sm font-medium transition-colors">
-                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M7.75 2a.75.75 0 0 1 .75.75V7h4.25a.75.75 0 0 1 0 1.5H8.5v4.25a.75.75 0 0 1-1.5 0V8.5H2.75a.75.75 0 0 1 0-1.5H7V2.75A.75.75 0 0 1 7.75 2Z"/>
-                </svg>
-                Create file
-            </button>
-        </div>
-    </div>
-
-    <!-- File Details Panel -->
-    <div id="fileDetails" class="mt-6 bg-github-canvas-overlay border border-github-border-default rounded-lg p-6">
-        <h3 class="text-lg font-semibold text-github-fg-default mb-4">File Details</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-            <div class="space-y-3">
-                <div class="flex items-center justify-between">
-                    <span class="text-github-fg-muted">Created:</span>
-                    <span class="text-github-fg-default" id="fileCreated">now</span>
-                </div>
-                <div class="flex items-center justify-between">
-                    <span class="text-github-fg-muted">Modified:</span>
-                    <span class="text-github-fg-default" id="fileModified">now</span>
-                </div>
-                <div class="flex items-center justify-between">
-                    <span class="text-github-fg-muted">Language:</span>
-                    <span class="text-github-fg-default" id="fileLanguage">JavaScript</span>
+                    <h1 class="text-3xl font-bold text-gray-300 mb-2">Welcome to GitDev</h1>
+                    <p class="text-gray-400 mb-8">Create or select a repository to get started</p>
+                    <button onclick="modals.show('create')" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium transition-colors">
+                        Create New Repository
+                    </button>
                 </div>
             </div>
-            <div class="space-y-3">
-                <div class="flex items-center justify-between">
-                    <span class="text-github-fg-muted">Category:</span>
-                    <span class="text-github-fg-default" id="fileCategory">General</span>
-                </div>
-                <div>
-                    <span class="text-github-fg-muted block mb-2">Tags:</span>
-                    <div class="flex flex-wrap gap-1" id="fileTags">
-                        <span class="text-github-fg-muted text-sm">No tags</span>
+            
+            <div id="explorerView" class="hidden w-full h-full flex flex-col">
+                <div class="bg-gray-800 border-b border-gray-700 p-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2" id="pathBreadcrumb"></div>
+                        <button onclick="modals.show('createFile')" class="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-md text-sm font-medium transition-colors">
+                            New File
+                        </button>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
-
-
-
-<!-- File Viewer / Editor -->
-<div id="fileViewer" class="hidden">
-</div>
-
-<div id="fileDetails" class="mt-6 bg-github-canvas-overlay border border-github-border-default rounded-lg p-6">
-    <h3 class="text-lg font-semibold text-github-fg-default mb-4">File Details</h3>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-            <div class="space-y-3">
-              <div class="flex items-center justify-between">
-                <span class="text-github-fg-muted">Created:</span>
-                <span class="text-github-fg-default" id="fileCreated">now</span>
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="text-github-fg-muted">Modified:</span>
-                <span class="text-github-fg-default" id="fileModified">now</span>
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="text-github-fg-muted">Language:</span>
-                <span class="text-github-fg-default" id="fileLanguage">JavaScript</span>
-              </div>
-            </div>
-            <div class="space-y-3">
-              <div class="flex items-center justify-between">
-                <span class="text-github-fg-muted">Category:</span>
-                <span class="text-github-fg-default" id="fileCategory">General</span>
-              </div>
-              <div>
-                <span class="text-github-fg-muted block mb-2">Tags:</span>
-                <div class="flex flex-wrap gap-1" id="fileTags">
-                  <span class="text-github-fg-muted text-sm">No tags</span>
+                
+                <div class="flex-1 overflow-y-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-750 sticky top-0">
+                            <tr class="border-b border-gray-700">
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Name</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Last Commit</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Modified</th>
+                                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-400 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="fileListBody"></tbody>
+                    </table>
                 </div>
-              </div>
             </div>
+            
+            <div id="fileViewer" class="hidden w-full h-full flex flex-col overflow-hidden">
+                <div id="codeViewerContainer" class="flex-1 overflow-hidden"></div>
+            </div>
+        </div>
     </div>
-</div>
-<!-- E N D -->
-
-
-
-    </main>
-  </div>
-
-  <!-- Create File Modal -->
-  <div id="createFileModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-    <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg shadow-2xl w-full max-w-2xl animate-scale-in">
-      <div class="px-6 py-4 border-b border-github-border-default">
-        <div class="flex items-center justify-between">
-          <h3 class="text-lg font-semibold text-github-fg-default">Create new file</h3>
-          <button data-action="hide-create-file-modal" class="text-github-fg-muted hover:text-github-fg-default transition-colors">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z" />
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      <div class="p-6 space-y-6">
-        <div>
-          <label class="block text-sm font-medium text-github-fg-default mb-2">Name your file...</label>
-          <div class="flex items-center bg-github-canvas-inset border border-github-border-default rounded-md overflow-hidden focus-within:ring-2 focus-within:ring-github-accent-emphasis focus-within:border-transparent">
-            <span class="px-3 py-2 bg-github-canvas-subtle border-r border-github-border-default text-github-fg-muted text-sm font-mono" id="currentPathPrefix">Repository/</span>
-            <input type="text" id="newFileName" placeholder="filename.ext" class="flex-1 px-3 py-2 bg-transparent border-none text-github-fg-default placeholder-github-fg-muted focus:outline-none text-sm">
-          </div>
-          <p class="mt-1 text-xs text-github-fg-muted">The file extension will determine syntax highlighting</p>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-github-fg-default mb-2">Category (optional)</label>
-          <input type="text" id="fileCategoryInput" maxlength="15" placeholder="e.g., Component, Utility, Config" class="w-full px-3 py-2 bg-github-canvas-inset border border-github-border-default rounded-md text-github-fg-default placeholder-github-fg-muted focus:outline-none focus:ring-2 focus:ring-github-accent-emphasis focus:border-transparent">
-          <p class="mt-1 text-xs text-github-fg-muted">Maximum 15 characters</p>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-github-fg-default mb-2">Tags (optional)</label>
-          <div class="space-y-2">
-            <div id="selectedTags" class="flex flex-wrap gap-2 min-h-[2rem]">
-            </div>
-            <div class="flex items-center space-x-2">
-              <input type="text" id="tagInput" placeholder="Add a tag..." class="flex-1 px-3 py-2 bg-github-canvas-inset border border-github-border-default rounded-md text-github-fg-default placeholder-github-fg-muted focus:outline-none focus:ring-2 focus:ring-github-accent-emphasis focus:border-transparent text-sm">
-              <button data-action="add-tag" class="px-3 py-2 bg-github-accent-emphasis hover:bg-github-accent-fg text-white rounded-md text-sm font-medium transition-colors">
-                Add
-              </button>
-            </div>
-          </div>
-          <p class="mt-1 text-xs text-github-fg-muted">Press Enter or click Add to add tags</p>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-github-fg-default mb-2">Initial content (optional)</label>
-          <div id="initialContentEditor" class="border border-github-border-default rounded-sm h-20"></div>
-        </div>
-      </div>
-
-      <div class="px-6 py-4 border-t border-github-border-default bg-github-canvas-subtle flex items-center justify-end space-x-3">
-        <button data-action="hide-create-file-modal" class="px-4 py-2 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
-          Cancel
-        </button>
-        <button data-action="create-file" class="px-4 py-2 bg-github-btn-primary-bg hover:bg-github-btn-primary-hover text-white rounded-md text-sm font-medium transition-colors">
-          Create file
-        </button>
-      </div>
+    
+    <div id="loadingOverlay" class="fixed inset-0 bg-gray-900/90 backdrop-blur-sm z-50 items-center justify-center hidden flex-col gap-4">
+        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-blue-500 border-opacity-75"></div>
+        <p id="loadingText" class="text-gray-300 text-sm">Loading...</p>
     </div>
-  </div>
-
-  <!-- Create Repository Modal -->
-  <div id="createRepoModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-    <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg shadow-2xl w-full max-w-2xl animate-scale-in">
-      <div class="px-6 py-4 border-b border-github-border-default">
-        <div class="flex items-center justify-between">
-          <h3 class="text-lg font-semibold text-github-fg-default">Create new repository</h3>
-          <button data-action="hide-create-repo-modal" class="text-github-fg-muted hover:text-github-fg-default transition-colors">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z" />
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      <div class="p-6 space-y-6">
-        <div>
-          <label class="block text-sm font-medium text-github-fg-default mb-2">Repository name</label>
-          <input type="text" id="newRepoName" placeholder="repository-name" class="w-full px-3 py-2 bg-github-canvas-inset border border-github-border-default rounded-md text-github-fg-default placeholder-github-fg-muted focus:outline-none focus:ring-2 focus:ring-github-accent-emphasis focus:border-transparent">
-          <p class="mt-1 text-xs text-github-fg-muted">Great repository names are short and memorable.</p>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-github-fg-default mb-2">Description (optional)</label>
-          <textarea id="repoDescriptionInput" rows="3" placeholder="A short description of your repository" class="w-full px-3 py-2 bg-github-canvas-inset border border-github-border-default rounded-md text-github-fg-default placeholder-github-fg-muted focus:outline-none focus:ring-2 focus:ring-github-accent-emphasis focus:border-transparent resize-none"></textarea>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-github-fg-default mb-2">Visibility</label>
-          <div class="space-y-2">
-            <div class="flex items-center space-x-3 p-3 border border-github-border-default rounded-md">
-              <input type="radio" id="visibilityPublic" name="visibility" value="public" checked class="text-github-accent-fg focus:ring-github-accent-fg">
-              <div>
-                <label for="visibilityPublic" class="block text-sm font-medium text-github-fg-default">Public</label>
-                <p class="text-xs text-github-fg-muted">Anyone can see this repository locally.</p>
-              </div>
+    
+    <div id="createRepoModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-gray-800 rounded-lg shadow-xl w-full max-w-md border border-gray-700">
+            <div class="p-6">
+                <h2 class="text-xl font-semibold text-gray-100 mb-4">Create New Repository</h2>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Repository Name</label>
+                        <input type="text" id="newRepoName" placeholder="my-repository" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Description</label>
+                        <textarea id="repoDescriptionInput" rows="3" placeholder="A brief description..." class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-300">Visibility</label>
+                        <div class="flex gap-4">
+                            <label class="flex items-center">
+                                <input type="radio" name="visibility" id="visibilityPublic" value="public" checked class="mr-2">
+                                <span class="text-gray-300">Public</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="visibility" id="visibilityPrivate" value="private" class="mr-2">
+                                <span class="text-gray-300">Private</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <label class="flex items-center">
+                        <input type="checkbox" id="initReadme" checked class="mr-2">
+                        <span class="text-gray-300">Initialize with README</span>
+                    </label>
+                </div>
+                
+                <div class="flex gap-3 mt-6">
+                    <button onclick="modals.show('create')" class="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium transition-colors">
+                        Create Repository
+                    </button>
+                    <button onclick="modals.hide('create')" class="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-100 rounded-md font-medium transition-colors">
+                        Cancel
+                    </button>
+                </div>
             </div>
-            <div class="flex items-center space-x-3 p-3 border border-github-border-default rounded-md">
-              <input type="radio" id="visibilityPrivate" name="visibility" value="private" class="text-github-accent-fg focus:ring-github-accent-fg">
-              <div>
-                <label for="visibilityPrivate" class="block text-sm font-medium text-github-fg-default">Private</label>
-                <p class="text-xs text-github-fg-muted">Only you can see this repository.</p>
-              </div>
+        </div>
+    </div>
+    
+    <div id="createFileModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-gray-800 rounded-lg shadow-xl w-full max-w-2xl border border-gray-700 max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <h2 class="text-xl font-semibold text-gray-100 mb-4">Create New File</h2>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">File Name</label>
+                        <div class="flex">
+                            <span class="px-3 py-2 bg-gray-700 border border-r-0 border-gray-600 rounded-l-md text-gray-400" id="currentPathPrefix"></span>
+                            <input type="text" id="newFileName" placeholder="index.js" class="flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-r-md text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Category</label>
+                            <input type="text" id="fileCategoryInput" placeholder="General" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Tags</label>
+                            <div class="flex gap-1">
+                                <input type="text" id="tagInput" placeholder="Add tags..." class="flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-l-md text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <button onclick="addTag()" class="px-3 py-2 bg-gray-600 hover:bg-gray-500 text-gray-100 rounded-r-md font-medium transition-colors">
+                                    Add
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="selectedTags" class="flex flex-wrap gap-2"></div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Initial Content (Optional)</label>
+                        <div id="initialContentEditor" class="bg-gray-700 rounded-md border border-gray-600 h-48"></div>
+                    </div>
+                </div>
+                
+                <div class="flex gap-3 mt-6">
+                    <button onclick="createFile()" class="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium transition-colors">
+                        Create File
+                    </button>
+                    <button onclick="modals.hide('createFile')" class="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-100 rounded-md font-medium transition-colors">
+                        Cancel
+                    </button>
+                </div>
             </div>
-          </div>
         </div>
-
-        <div>
-          <div class="flex items-center space-x-3">
-            <input type="checkbox" id="initReadme" checked class="text-github-accent-fg focus:ring-github-accent-fg">
-            <label for="initReadme" class="text-sm font-medium text-github-fg-default">Initialize this repository with a README</label>
-          </div>
-        </div>
-      </div>
-
-      <div class="px-6 py-4 border-t border-github-border-default bg-github-canvas-subtle flex items-center justify-end space-x-3">
-        <button data-action="hide-create-repo-modal" class="px-4 py-2 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
-          Cancel
-        </button>
-        <button data-action="create-repo" class="px-4 py-2 bg-github-btn-primary-bg hover:bg-github-btn-primary-hover text-white rounded-md text-sm font-medium transition-colors">
-          Create repository
-        </button>
-      </div>
     </div>
-  </div>
-
-  <!-- Delete File Modal -->
-  <div id="deleteFileModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-    <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg shadow-2xl w-full max-w-md animate-scale-in">
-      <div class="px-6 py-4 border-b border-github-border-default">
-        <div class="flex items-center justify-between">
-          <h3 class="text-lg font-semibold text-github-fg-default">Delete file</h3>
-          <button data-action="hide-delete-file-modal" class="text-github-fg-muted hover:text-github-fg-default transition-colors">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z" />
-            </svg>
-          </button>
+    
+    <div id="deleteFileModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-gray-800 rounded-lg shadow-xl w-full max-w-md border border-gray-700">
+            <div class="p-6">
+                <h2 class="text-xl font-semibold text-gray-100 mb-4">Delete File</h2>
+                <p class="text-gray-300 mb-6">
+                    Are you sure you want to delete <span id="fileToDeleteName" class="font-semibold text-gray-100"></span>?
+                    <br>
+                    <span class="text-sm text-gray-400">This action cannot be undone.</span>
+                </p>
+                
+                <div class="flex gap-3">
+                    <button onclick="confirmDeleteFile()" class="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md font-medium transition-colors">
+                        Delete
+                    </button>
+                    <button onclick="modals.hide('deleteFile')" class="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-100 rounded-md font-medium transition-colors">
+                        Cancel
+                    </button>
+                </div>
+            </div>
         </div>
-      </div>
-
-      <div class="p-6">
-        <p class="text-github-fg-default mb-4">Are you sure you want to delete <span id="fileToDeleteName" class="font-semibold">filename.ext</span>? This action cannot be undone.</p>
-        <div class="flex items-center justify-end space-x-3">
-          <button data-action="hide-delete-file-modal" class="px-4 py-2 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
-            Cancel
-          </button>
-          <button data-action="confirm-delete-file" class="px-4 py-2 bg-github-danger-fg hover:bg-red-600 text-white rounded-md text-sm font-medium transition-colors">
-            Delete
-          </button>
-        </div>
-      </div>
     </div>
-  </div>
-
-
-<!---
-
-  <script src="https://clockblocked.github.io/gitDev//modules/primary.js" type="module"></script>
-  <script src="https://clockblocked.github.io/gitDev//modules/listeners.js" type="module"></script>
---->
-
-
-<script type="module" src="https://clockblocked.github.io/gitDev/modules/index.js">
-/**
- *  Main script
- */
-</script>
-
-
-  
-<!---<script>
-// Sidebar Manager for GitDev
-const SidebarManager = {
-  // State
-  state: {
-    isLeftSidebarOpen: true,
-    isRightSidebarOpen: true,
-    isDarkTheme: true,
-    currentRepository: null,
-    recentFiles: [],
-    repositories: []
-  },
-
-  // Initialize sidebar functionality
-  init() {
-    this.setupEventListeners();
-    this.loadData();
-    this.checkWindowSize();
-    this.setupAutoRefresh();
     
-    // Initialize sidebar content
-    this.updateRecentFiles();
-    this.updateRepositoryList();
-    this.updateStats();
-    
-    console.log('SidebarManager initialized');
-  },
-
-  // Setup event listeners
-  setupEventListeners() {
-    // Left sidebar trigger
-    const leftSidebarTrigger = document.getElementById('leftSidebarTrigger');
-    if (leftSidebarTrigger) {
-      leftSidebarTrigger.addEventListener('click', (e) => {
-        e.stopPropagation();
-        this.toggleLeftSidebar();
-      });
-    }
-
-    // Right sidebar trigger
-    const rightSidebarTrigger = document.getElementById('rightSidebarTrigger');
-    if (rightSidebarTrigger) {
-      rightSidebarTrigger.addEventListener('click', (e) => {
-        e.stopPropagation();
-        this.toggleRightSidebar();
-      });
-    }
-
-    // Overlay click
-    const overlay = document.getElementById('overlay');
-    if (overlay) {
-      overlay.addEventListener('click', () => {
-        this.closeLeftSidebar();
-        this.closeRightSidebar();
-      });
-    }
-
-    // Theme toggle
-    const themeButtons = document.querySelectorAll('[onclick*="toggleTheme"]');
-    themeButtons.forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        this.toggleTheme();
-      });
-    });
-
-    // Refresh recent files
-    const refreshBtn = document.querySelector('[onclick*="refreshRecentFiles"]');
-    if (refreshBtn) {
-      refreshBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        this.refreshRecentFiles();
-      });
-    }
-
-    // Window resize
-    window.addEventListener('resize', () => {
-      this.checkWindowSize();
-    });
-
-    // Click outside sidebar to close on mobile
-    document.addEventListener('click', (e) => {
-      const leftSidebar = document.getElementById('leftSidebar');
-      const rightSidebar = document.getElementById('rightSidebar');
-      
-      if (window.innerWidth <= 1200) {
-        if (this.state.isLeftSidebarOpen && 
-            !leftSidebar.contains(e.target) && 
-            e.target !== leftSidebarTrigger) {
-          this.closeLeftSidebar();
-        }
-        
-        if (this.state.isRightSidebarOpen && 
-            !rightSidebar.contains(e.target) && 
-            e.target !== rightSidebarTrigger) {
-          this.closeRightSidebar();
-        }
-      }
-    });
-  },
-
-  // Load data from localStorage
-  loadData() {
-    // Load recent files
-    this.state.recentFiles = JSON.parse(localStorage.getItem('gitcodr_recent_files') || '[]');
-    
-    // Load repositories
-    this.state.repositories = JSON.parse(localStorage.getItem('gitcodr_repositories') || '[]');
-    
-    // Load current repository from global state if available
-    if (typeof currentState !== 'undefined' && currentState.repository) {
-      this.state.currentRepository = currentState.repository;
-    }
-  },
-
-  // Toggle left sidebar
-  toggleLeftSidebar() {
-    const leftSidebar = document.getElementById('leftSidebar');
-    const overlay = document.getElementById('overlay');
-    
-    if (window.innerWidth <= 1200) {
-      this.state.isLeftSidebarOpen = !this.state.isLeftSidebarOpen;
-      leftSidebar.classList.toggle('open', this.state.isLeftSidebarOpen);
-      
-      if (this.state.isLeftSidebarOpen) {
-        overlay.classList.add('active');
-        this.closeRightSidebar();
-      } else {
-        overlay.classList.remove('active');
-      }
-    }
-  },
-
-  // Toggle right sidebar
-  toggleRightSidebar() {
-    const rightSidebar = document.getElementById('rightSidebar');
-    const overlay = document.getElementById('overlay');
-    
-    if (window.innerWidth <= 1200) {
-      this.state.isRightSidebarOpen = !this.state.isRightSidebarOpen;
-      rightSidebar.classList.toggle('open', this.state.isRightSidebarOpen);
-      
-      if (this.state.isRightSidebarOpen) {
-        overlay.classList.add('active');
-        this.closeLeftSidebar();
-      } else {
-        overlay.classList.remove('active');
-      }
-    }
-  },
-
-  // Close left sidebar
-  closeLeftSidebar() {
-    const leftSidebar = document.getElementById('leftSidebar');
-    this.state.isLeftSidebarOpen = false;
-    leftSidebar.classList.remove('open');
-  },
-
-  // Close right sidebar
-  closeRightSidebar() {
-    const rightSidebar = document.getElementById('rightSidebar');
-    this.state.isRightSidebarOpen = false;
-    rightSidebar.classList.remove('open');
-  },
-
-  // Check window size and adjust sidebar visibility
-  checkWindowSize() {
-    const leftSidebar = document.getElementById('leftSidebar');
-    const rightSidebar = document.getElementById('rightSidebar');
-    const overlay = document.getElementById('overlay');
-    const mainContentWrapper = document.querySelector('.main-content-wrapper');
-    
-    if (window.innerWidth <= 1200) {
-      // Mobile/tablet view - hide sidebars by default
-      if (!this.state.isLeftSidebarOpen) {
-        leftSidebar.classList.remove('open');
-      }
-      if (!this.state.isRightSidebarOpen) {
-        rightSidebar.classList.remove('open');
-      }
-      if (!this.state.isLeftSidebarOpen && !this.state.isRightSidebarOpen) {
-        overlay.classList.remove('active');
-      }
-      if (mainContentWrapper) {
-        mainContentWrapper.style.marginLeft = '0';
-        mainContentWrapper.style.marginRight = '0';
-      }
-    } else {
-      // Desktop view - show both sidebars
-      leftSidebar.classList.add('open');
-      rightSidebar.classList.add('open');
-      this.state.isLeftSidebarOpen = true;
-      this.state.isRightSidebarOpen = true;
-      overlay.classList.remove('active');
-      if (mainContentWrapper) {
-        mainContentWrapper.style.marginLeft = 'var(--sidebar-width)';
-        mainContentWrapper.style.marginRight = 'var(--sidebar-width)';
-      }
-    }
-  },
-
-  // Toggle theme
-  toggleTheme() {
-    const html = document.documentElement;
-    const themeIcons = document.querySelectorAll('#themeIcon, #sidebarThemeIcon');
-    
-    this.state.isDarkTheme = !this.state.isDarkTheme;
-    
-    if (this.state.isDarkTheme) {
-      html.setAttribute('data-theme', 'dark');
-      themeIcons.forEach(icon => {
-        icon.className = 'fas fa-moon';
-      });
-    } else {
-      html.setAttribute('data-theme', 'light');
-      themeIcons.forEach(icon => {
-        icon.className = 'fas fa-sun';
-      });
-    }
-    
-    // Save theme preference
-    localStorage.setItem('gitcodr_theme', this.state.isDarkTheme ? 'dark' : 'light');
-  },
-
-  // Update recent files list
-  updateRecentFiles() {
-    const recentFilesList = document.getElementById('recentFilesList');
-    if (!recentFilesList) return;
-    
-    this.loadData(); // Reload data to get latest files
-    
-    if (this.state.recentFiles.length === 0) {
-      recentFilesList.innerHTML = `
-        <div class="text-center py-4 text-github-fg-muted text-sm">
-          <i class="fas fa-file text-lg mb-2 block"></i>
-          No recent files
-        </div>
-      `;
-    } else {
-      recentFilesList.innerHTML = this.state.recentFiles.slice(0, 5).map(file => `
-        <div class="recent-file-item" onclick="SidebarManager.openRecentFile('${file.repoName}', '${file.filePath}', '${file.fileName}')">
-          <i class="fas fa-file recent-file-icon"></i>
-          <div class="flex-1 min-w-0">
-            <div class="text-sm text-github-fg-default truncate">${file.fileName}</div>
-            <div class="text-xs text-github-fg-muted truncate">${file.repoName}</div>
-          </div>
-          <div class="text-xs text-github-fg-muted">
-            ${this.formatTimeAgo(file.timestamp)}
-          </div>
-        </div>
-      `).join('');
-    }
-  },
-
-  // Update repository list in sidebar
-  updateRepositoryList() {
-    const repoListSidebar = document.getElementById('repoListSidebar');
-    const repoCount = document.getElementById('repoCount');
-    
-    if (!repoListSidebar) return;
-    
-    this.loadData(); // Reload repositories
-    
-    if (this.state.repositories.length === 0) {
-      repoListSidebar.innerHTML = `
-        <div class="text-center py-2 text-sm text-github-fg-muted">
-          No repositories yet
-        </div>
-      `;
-    } else {
-      repoListSidebar.innerHTML = this.state.repositories.map(repo => `
-        <div class="repo-item ${this.state.currentRepository === repo.name ? 'active' : ''}" 
-             onclick="SidebarManager.selectRepository('${repo.name}')">
-          <i class="fas fa-folder repo-icon ${repo.visibility === 'public' ? 'public' : ''}"></i>
-          <span class="flex-1 truncate">${repo.name}</span>
-          <span class="text-xs text-github-fg-muted">${this.formatDate(repo.created)}</span>
-        </div>
-      `).join('');
-    }
-    
-    if (repoCount) {
-      repoCount.textContent = this.state.repositories.length.toString();
-    }
-  },
-
-  // Update sidebar statistics
-  updateStats() {
-    const totalFilesCount = document.getElementById('totalFilesCount');
-    const totalStorage = document.getElementById('totalStorage');
-    const currentRepoNameSidebar = document.getElementById('currentRepoNameSidebar');
-    const currentRepoDesc = document.getElementById('currentRepoDesc');
-    const currentRepoInfo = document.getElementById('currentRepoInfo');
-    const statsFiles = document.getElementById('statsFiles');
-    const statsCommits = document.getElementById('statsCommits');
-    const statsBranches = document.getElementById('statsBranches');
-    const statsIssues = document.getElementById('statsIssues');
-    
-    // Update global stats
-    let totalFiles = 0;
-    let totalSize = 0;
-    
-    this.state.repositories.forEach(repo => {
-      try {
-        const repoData = JSON.parse(localStorage.getItem(`gitcodr_repo_${repo.name}`) || '{}');
-        const fileCount = Object.keys(repoData).length;
-        totalFiles += fileCount;
-        
-        // Calculate total size
-        Object.values(repoData).forEach(file => {
-          totalSize += file.size || 0;
-        });
-      } catch (e) {
-        console.warn(`Error processing repo ${repo.name}:`, e);
-      }
-    });
-    
-    if (totalFilesCount) totalFilesCount.textContent = totalFiles.toString();
-    if (totalStorage) totalStorage.textContent = this.formatFileSize(totalSize);
-    if (statsFiles) statsFiles.textContent = totalFiles.toString();
-    if (statsCommits) statsCommits.textContent = Math.floor(totalFiles * 1.5).toString();
-    if (statsBranches) statsBranches.textContent = this.state.repositories.length.toString();
-    if (statsIssues) statsIssues.textContent = '0';
-    
-    // Update current repository info
-    if (this.state.currentRepository) {
-      const repo = this.state.repositories.find(r => r.name === this.state.currentRepository);
-      if (repo) {
-        if (currentRepoNameSidebar) currentRepoNameSidebar.textContent = repo.name;
-        if (currentRepoDesc) currentRepoDesc.textContent = repo.description || 'No description';
-        if (currentRepoInfo) currentRepoInfo.classList.remove('hidden');
-      }
-    } else {
-      if (currentRepoInfo) currentRepoInfo.classList.add('hidden');
-    }
-  },
-
-  // Select repository
-  selectRepository(repoName) {
-    this.state.currentRepository = repoName;
-    this.updateRepositoryList();
-    this.updateStats();
-    
-    // If global openRepository function exists, call it
-    if (typeof openRepository === 'function') {
-      openRepository(repoName);
-    }
-    
-    // Close sidebar on mobile
-    if (window.innerWidth <= 1200) {
-      this.closeLeftSidebar();
-    }
-  },
-
-  // Open recent file
-  openRecentFile(repoName, filePath, fileName) {
-    this.state.currentRepository = repoName;
-    this.updateRepositoryList();
-    this.updateStats();
-    
-    // If global openRecentFile function exists, call it
-    if (typeof openRecentFile === 'function') {
-      openRecentFile(repoName, filePath, fileName);
-    }
-    
-    // Close sidebar on mobile
-    if (window.innerWidth <= 1200) {
-      this.closeRightSidebar();
-    }
-  },
-
-  // Refresh recent files
-  refreshRecentFiles() {
-    this.loadData();
-    this.updateRecentFiles();
-    this.showNotification('Recent files refreshed');
-  },
-
-  // Add file to recent files
-  addToRecentFiles(fileName, repoName, filePath) {
-    const existingIndex = this.state.recentFiles.findIndex(f => 
-      f.filePath === filePath && f.repoName === repoName
-    );
-    
-    if (existingIndex !== -1) {
-      this.state.recentFiles.splice(existingIndex, 1);
-    }
-    
-    this.state.recentFiles.unshift({
-      fileName,
-      repoName,
-      filePath,
-      timestamp: Date.now()
-    });
-    
-    if (this.state.recentFiles.length > 10) {
-      this.state.recentFiles = this.state.recentFiles.slice(0, 10);
-    }
-    
-    localStorage.setItem('gitcodr_recent_files', JSON.stringify(this.state.recentFiles));
-    this.updateRecentFiles();
-  },
-
-  // Setup auto-refresh of sidebar data
-  setupAutoRefresh() {
-    // Refresh sidebar data every 30 seconds
-    setInterval(() => {
-      this.loadData();
-      this.updateRecentFiles();
-      this.updateRepositoryList();
-      this.updateStats();
-    }, 30000);
-  },
-
-  // Utility functions
-  formatDate(timestamp) {
-    if (!timestamp) return '';
-    const date = new Date(timestamp);
-    return date.toLocaleDateString();
-  },
-
-  formatTimeAgo(timestamp) {
-    if (!timestamp) return '';
-    const now = new Date();
-    const date = new Date(timestamp);
-    const diff = now - date;
-    
-    if (diff < 60000) return 'now';
-    if (diff < 3600000) return Math.floor(diff / 60000) + 'm';
-    if (diff < 86400000) return Math.floor(diff / 3600000) + 'h';
-    if (diff < 604800000) return Math.floor(diff / 86400000) + 'd';
-    return Math.floor(diff / 604800000) + 'w';
-  },
-
-  formatFileSize(bytes) {
-    if (typeof bytes !== 'number') return '0 KB';
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    if (bytes === 0) return '0 Bytes';
-    const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
-    return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
-  },
-
-  showNotification(message) {
-    // Simple notification
-    console.log('Sidebar Notification:', message);
-  },
-
-  // Public API
-  updateAll() {
-    this.loadData();
-    this.updateRecentFiles();
-    this.updateRepositoryList();
-    this.updateStats();
-  },
-
-  setCurrentRepository(repoName) {
-    this.state.currentRepository = repoName;
-    this.updateRepositoryList();
-    this.updateStats();
-  }
-};
-
-document.addEventListener('DOMContentLoaded', () => {
-    // theme only — do NOT call init()
-    const savedTheme = localStorage.getItem('gitcodr_theme');
-    if (savedTheme === 'light') {
-        SidebarManager.state.isDarkTheme = false;
-        SidebarManager.toggleTheme();
-    }
-});
-
-// Make available globally
-SidebarManager = SidebarManager;
-
-// Helper functions to integrate with existing code
-function updateSidebarAfterFileOperation(repoName, fileName, filePath) {
-  if (SidebarManager) {
-    SidebarManager.addToRecentFiles(fileName, repoName, filePath);
-    SidebarManager.updateStats();
-  }
-}
-
-function updateSidebarAfterRepoOperation() {
-  if (SidebarManager) {
-    SidebarManager.updateRepositoryList();
-    SidebarManager.updateStats();
-  }
-}
-  </script>--->
-  
-  
-<script>
-const SidebarManager = {
-  state: {
-    isLeftSidebarOpen: false,
-    isRightSidebarOpen: false,
-    isDarkTheme: true,
-    currentRepository: null,
-    recentFiles: [],
-    repositories: []
-  },
-
-  init() {
-    this.setupEventListeners();
-    this.loadData();
-    this.checkWindowSize();
-    this.setupAutoRefresh();
-    this.updateRecentFiles();
-    this.updateRepositoryList();
-    this.updateStats();
-  },
-
-  setupEventListeners() {
-    const leftSidebarTrigger = document.getElementById('leftSidebarTrigger');
-    const rightSidebarTrigger = document.getElementById('rightSidebarTrigger');
-    const overlay = document.getElementById('overlay');
-
-    if (leftSidebarTrigger) {
-      leftSidebarTrigger.addEventListener('click', (e) => {
-        e.stopPropagation();
-        this.toggleLeftSidebar();
-      });
-    }
-
-    if (rightSidebarTrigger) {
-      rightSidebarTrigger.addEventListener('click', (e) => {
-        e.stopPropagation();
-        this.toggleRightSidebar();
-      });
-    }
-
-    if (overlay) {
-      overlay.addEventListener('click', () => {
-        if (this.state.isLeftSidebarOpen) {
-          this.closeLeftSidebar();
-        }
-        if (this.state.isRightSidebarOpen) {
-          this.closeRightSidebar();
-        }
-      });
-    }
-
-    document.addEventListener('click', (e) => {
-      if (window.innerWidth > 1200) return;
-      
-      const leftSidebar = document.getElementById('leftSidebar');
-      const rightSidebar = document.getElementById('rightSidebar');
-      const leftTrigger = document.getElementById('leftSidebarTrigger');
-      const rightTrigger = document.getElementById('rightSidebarTrigger');
-      
-      const isClickOnLeftTrigger = e.target === leftTrigger || leftTrigger.contains(e.target);
-      const isClickOnRightTrigger = e.target === rightTrigger || rightTrigger.contains(e.target);
-      const isClickInLeftSidebar = leftSidebar.contains(e.target);
-      const isClickInRightSidebar = rightSidebar.contains(e.target);
-      
-      if (this.state.isLeftSidebarOpen && !isClickInLeftSidebar && !isClickOnLeftTrigger) {
-        this.closeLeftSidebar();
-      }
-      
-      if (this.state.isRightSidebarOpen && !isClickInRightSidebar && !isClickOnRightTrigger) {
-        this.closeRightSidebar();
-      }
-    });
-
-    window.addEventListener('resize', () => {
-      this.checkWindowSize();
-    });
-  },
-
-  loadData() {
-    try {
-      this.state.recentFiles = JSON.parse(localStorage.getItem('gitcodr_recent_files') || '[]');
-      this.state.repositories = JSON.parse(localStorage.getItem('gitcodr_repositories') || '[]');
-    } catch (e) {
-      this.state.recentFiles = [];
-      this.state.repositories = [];
-    }
-  },
-
-  toggleLeftSidebar() {
-    if (window.innerWidth <= 1200) {
-      if (this.state.isLeftSidebarOpen) {
-        this.closeLeftSidebar();
-      } else {
-        this.openLeftSidebar();
-      }
-    }
-  },
-
-  toggleRightSidebar() {
-    if (window.innerWidth <= 1200) {
-      if (this.state.isRightSidebarOpen) {
-        this.closeRightSidebar();
-      } else {
-        this.openRightSidebar();
-      }
-    }
-  },
-
-  openLeftSidebar() {
-    const leftSidebar = document.getElementById('leftSidebar');
-    const overlay = document.getElementById('overlay');
-    
-    this.closeRightSidebar();
-    
-    this.state.isLeftSidebarOpen = true;
-    leftSidebar.classList.add('open');
-    overlay.classList.add('active');
-  },
-
-  openRightSidebar() {
-    const rightSidebar = document.getElementById('rightSidebar');
-    const overlay = document.getElementById('overlay');
-    
-    this.closeLeftSidebar();
-    
-    this.state.isRightSidebarOpen = true;
-    rightSidebar.classList.add('open');
-    overlay.classList.add('active');
-  },
-
-  closeLeftSidebar() {
-    const leftSidebar = document.getElementById('leftSidebar');
-    const overlay = document.getElementById('overlay');
-    
-    this.state.isLeftSidebarOpen = false;
-    leftSidebar.classList.remove('open');
-    
-    if (!this.state.isRightSidebarOpen) {
-      overlay.classList.remove('active');
-    }
-  },
-
-  closeRightSidebar() {
-    const rightSidebar = document.getElementById('rightSidebar');
-    const overlay = document.getElementById('overlay');
-    
-    this.state.isRightSidebarOpen = false;
-    rightSidebar.classList.remove('open');
-    
-    if (!this.state.isLeftSidebarOpen) {
-      overlay.classList.remove('active');
-    }
-  },
-
-  checkWindowSize() {
-    const leftSidebar = document.getElementById('leftSidebar');
-    const rightSidebar = document.getElementById('rightSidebar');
-    const overlay = document.getElementById('overlay');
-    const mainContentWrapper = document.querySelector('.main-content-wrapper');
-    
-    if (window.innerWidth <= 1200) {
-      leftSidebar.classList.remove('open');
-      rightSidebar.classList.remove('open');
-      this.state.isLeftSidebarOpen = false;
-      this.state.isRightSidebarOpen = false;
-      overlay.classList.remove('active');
-      
-      if (mainContentWrapper) {
-        mainContentWrapper.style.marginLeft = '0';
-        mainContentWrapper.style.marginRight = '0';
-      }
-    } else {
-      leftSidebar.classList.remove('open');
-      rightSidebar.classList.remove('open');
-      this.state.isLeftSidebarOpen = false;
-      this.state.isRightSidebarOpen = false;
-      overlay.classList.remove('active');
-      
-      if (mainContentWrapper) {
-        mainContentWrapper.style.marginLeft = 'var(--sidebar-width)';
-        mainContentWrapper.style.marginRight = 'var(--sidebar-width)';
-      }
-    }
-  },
-
-  toggleTheme() {
-    const html = document.documentElement;
-    const themeIcons = document.querySelectorAll('#themeIcon, #sidebarThemeIcon');
-    
-    this.state.isDarkTheme = !this.state.isDarkTheme;
-    
-    if (this.state.isDarkTheme) {
-      html.setAttribute('data-theme', 'dark');
-      themeIcons.forEach(icon => {
-        icon.className = 'fas fa-moon';
-      });
-    } else {
-      html.setAttribute('data-theme', 'light');
-      themeIcons.forEach(icon => {
-        icon.className = 'fas fa-sun';
-      });
-    }
-    
-    localStorage.setItem('gitcodr_theme', this.state.isDarkTheme ? 'dark' : 'light');
-  },
-
-  updateRecentFiles() {
-    const recentFilesList = document.getElementById('recentFilesList');
-    if (!recentFilesList) return;
-    
-    this.loadData();
-    
-    if (this.state.recentFiles.length === 0) {
-      recentFilesList.innerHTML = '<div class="text-center py-4 text-github-fg-muted text-sm"><i class="fas fa-file text-lg mb-2 block"></i>No recent files</div>';
-    } else {
-      recentFilesList.innerHTML = this.state.recentFiles.slice(0, 5).map(file => `<div class="recent-file-item" onclick="SidebarManager.openRecentFile('${file.repoName}', '${file.filePath}', '${file.fileName}')"><i class="fas fa-file recent-file-icon"></i><div class="flex-1 min-w-0"><div class="text-sm text-github-fg-default truncate">${file.fileName}</div><div class="text-xs text-github-fg-muted truncate">${file.repoName}</div></div><div class="text-xs text-github-fg-muted">${this.formatTimeAgo(file.timestamp)}</div></div>`).join('');
-    }
-  },
-
-  updateRepositoryList() {
-    const repoListSidebar = document.getElementById('repoListSidebar');
-    const repoCount = document.getElementById('repoCount');
-    
-    if (!repoListSidebar) return;
-    
-    this.loadData();
-    
-    if (this.state.repositories.length === 0) {
-      repoListSidebar.innerHTML = '<div class="text-center py-2 text-sm text-github-fg-muted">No repositories yet</div>';
-    } else {
-      repoListSidebar.innerHTML = this.state.repositories.map(repo => `<div class="repo-item ${this.state.currentRepository === repo.name ? 'active' : ''}" onclick="SidebarManager.selectRepository('${repo.name}')"><i class="fas fa-folder repo-icon ${repo.visibility === 'public' ? 'public' : ''}"></i><span class="flex-1 truncate">${repo.name}</span><span class="text-xs text-github-fg-muted">${this.formatDate(repo.created)}</span></div>`).join('');
-    }
-    
-    if (repoCount) {
-      repoCount.textContent = this.state.repositories.length.toString();
-    }
-  },
-
-  updateStats() {
-    const totalFilesCount = document.getElementById('totalFilesCount');
-    const totalStorage = document.getElementById('totalStorage');
-    const currentRepoNameSidebar = document.getElementById('currentRepoNameSidebar');
-    const currentRepoDesc = document.getElementById('currentRepoDesc');
-    const currentRepoInfo = document.getElementById('currentRepoInfo');
-    const statsFiles = document.getElementById('statsFiles');
-    const statsCommits = document.getElementById('statsCommits');
-    const statsBranches = document.getElementById('statsBranches');
-    const statsIssues = document.getElementById('statsIssues');
-    
-    let totalFiles = 0;
-    let totalSize = 0;
-    
-    this.state.repositories.forEach(repo => {
-      try {
-        const repoData = JSON.parse(localStorage.getItem(`gitcodr_repo_${repo.name}`) || '{}');
-        const fileCount = Object.keys(repoData).length;
-        totalFiles += fileCount;
-        
-        Object.values(repoData).forEach(file => {
-          totalSize += file.size || 0;
-        });
-      } catch (e) {
-        console.warn(`Error processing repo ${repo.name}:`, e);
-      }
-    });
-    
-    if (totalFilesCount) totalFilesCount.textContent = totalFiles.toString();
-    if (totalStorage) totalStorage.textContent = this.formatFileSize(totalSize);
-    if (statsFiles) statsFiles.textContent = totalFiles.toString();
-    if (statsCommits) statsCommits.textContent = Math.floor(totalFiles * 1.5).toString();
-    if (statsBranches) statsBranches.textContent = this.state.repositories.length.toString();
-    if (statsIssues) statsIssues.textContent = '0';
-    
-    if (this.state.currentRepository) {
-      const repo = this.state.repositories.find(r => r.name === this.state.currentRepository);
-      if (repo) {
-        if (currentRepoNameSidebar) currentRepoNameSidebar.textContent = repo.name;
-        if (currentRepoDesc) currentRepoDesc.textContent = repo.description || 'No description';
-        if (currentRepoInfo) currentRepoInfo.classList.remove('hidden');
-      }
-    } else {
-      if (currentRepoInfo) currentRepoInfo.classList.add('hidden');
-    }
-  },
-
-  selectRepository(repoName) {
-    this.state.currentRepository = repoName;
-    this.updateRepositoryList();
-    this.updateStats();
-    
-    if (typeof openRepository === 'function') {
-      openRepository(repoName);
-    }
-    
-    if (window.innerWidth <= 1200) {
-      this.closeLeftSidebar();
-    }
-  },
-
-  openRecentFile(repoName, filePath, fileName) {
-    this.state.currentRepository = repoName;
-    this.updateRepositoryList();
-    this.updateStats();
-    
-    if (typeof openRecentFile === 'function') {
-      openRecentFile(repoName, filePath, fileName);
-    }
-    
-    if (window.innerWidth <= 1200) {
-      this.closeRightSidebar();
-    }
-  },
-
-  refreshRecentFiles() {
-    this.loadData();
-    this.updateRecentFiles();
-  },
-
-  addToRecentFiles(fileName, repoName, filePath) {
-    const existingIndex = this.state.recentFiles.findIndex(f => f.filePath === filePath && f.repoName === repoName);
-    
-    if (existingIndex !== -1) {
-      this.state.recentFiles.splice(existingIndex, 1);
-    }
-    
-    this.state.recentFiles.unshift({
-      fileName,
-      repoName,
-      filePath,
-      timestamp: Date.now()
-    });
-    
-    if (this.state.recentFiles.length > 10) {
-      this.state.recentFiles = this.state.recentFiles.slice(0, 10);
-    }
-    
-    localStorage.setItem('gitcodr_recent_files', JSON.stringify(this.state.recentFiles));
-    this.updateRecentFiles();
-  },
-
-  setupAutoRefresh() {
-    setInterval(() => {
-      this.loadData();
-      this.updateRecentFiles();
-      this.updateRepositoryList();
-      this.updateStats();
-    }, 30000);
-  },
-
-  formatDate(timestamp) {
-    if (!timestamp) return '';
-    const date = new Date(timestamp);
-    return date.toLocaleDateString();
-  },
-
-  formatTimeAgo(timestamp) {
-    if (!timestamp) return '';
-    const now = new Date();
-    const date = new Date(timestamp);
-    const diff = now - date;
-    
-    if (diff < 60000) return 'now';
-    if (diff < 3600000) return Math.floor(diff / 60000) + 'm';
-    if (diff < 86400000) return Math.floor(diff / 3600000) + 'h';
-    if (diff < 604800000) return Math.floor(diff / 86400000) + 'd';
-    return Math.floor(diff / 604800000) + 'w';
-  },
-
-  formatFileSize(bytes) {
-    if (typeof bytes !== 'number') return '0 KB';
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    if (bytes === 0) return '0 Bytes';
-    const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
-    return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
-  },
-
-  updateAll() {
-    this.loadData();
-    this.updateRecentFiles();
-    this.updateRepositoryList();
-    this.updateStats();
-  },
-
-  setCurrentRepository(repoName) {
-    this.state.currentRepository = repoName;
-    this.updateRepositoryList();
-    this.updateStats();
-  }
-};
-
-document.addEventListener('DOMContentLoaded', () => {
-  SidebarManager.init();
-  
-  const savedTheme = localStorage.getItem('gitcodr_theme');
-  if (savedTheme === 'light') {
-    SidebarManager.state.isDarkTheme = false;
-    SidebarManager.toggleTheme();
-  }
-});
-
-function updateSidebarAfterFileOperation(repoName, fileName, filePath) {
-  if (SidebarManager) {
-    SidebarManager.addToRecentFiles(fileName, repoName, filePath);
-    SidebarManager.updateStats();
-  }
-}
-
-function updateSidebarAfterRepoOperation() {
-  if (SidebarManager) {
-    SidebarManager.updateRepositoryList();
-    SidebarManager.updateStats();
-  }
-}
-</script>
-  
-<script>
-class ServiceWorkerManager {
-    constructor() {
-        this.registration = null;
-        this.init();
-    }
-    
-    async init() {
-        if ('serviceWorker' in navigator) {
-            await this.register();
-            this.setupListeners();
-        }
-    }
-    
-    async register() {
-        try {
-            this.registration = await navigator.serviceWorker.register('https://clockblocked.github.io/gitDev/webApp/serviceWorker.js', {
-                scope: '/',
-                updateViaCache: 'all'
-            });
-            
-            console.log('✅ Service Worker registered:', this.registration);
-            
-            if (this.registration.waiting) {
-                this.showUpdateReady();
-            }
-            
-            return this.registration;
-        } catch (error) {
-            console.error('❌ Service Worker registration failed:', error);
-            return null;
-        }
-    }
-    
-    setupListeners() {
-        // Update found
-        this.registration.addEventListener('updatefound', () => {
-            const newWorker = this.registration.installing;
-            console.log('🔄 Update found, installing new Service Worker');
-            
-            newWorker.addEventListener('statechange', () => {
-                if (newWorker.state === 'installed') {
-                    if (navigator.serviceWorker.controller) {
-                        this.showUpdateReady();
-                    } else {
-                        console.log('✅ Content is cached for offline use.');
-                    }
-                }
-            });
-        });
-        
-        // Controller change
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
-            console.log('🎮 New Service Worker controlling the page');
-        });
-        
-        // Message handling
-        navigator.serviceWorker.addEventListener('message', event => {
-            this.handleMessage(event.data);
-        });
-    }
-    
-    showUpdateReady() {
-        const updateDialog = document.createElement('div');
-        updateDialog.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #238636;
-            color: white;
-            padding: 1rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            max-width: 400px;
-        `;
-        
-        updateDialog.innerHTML = `
-            <span>🔄 New version available</span>
-            <button style="
-                background: white;
-                color: #238636;
-                border: none;
-                padding: 0.5rem 1rem;
-                border-radius: 4px;
-                cursor: pointer;
-                font-weight: bold;
-            ">Update</button>
-            <button style="
-                background: transparent;
-                color: white;
-                border: 1px solid white;
-                padding: 0.5rem;
-                border-radius: 4px;
-                cursor: pointer;
-            ">×</button>
-        `;
-        
-        document.body.appendChild(updateDialog);
-        
-        const updateBtn = updateDialog.querySelector('button');
-        const closeBtn = updateDialog.querySelector('button:last-child');
-        
-        updateBtn.addEventListener('click', () => {
-            if (this.registration.waiting) {
-                this.registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-            }
-            window.location.reload();
-        });
-        
-        closeBtn.addEventListener('click', () => {
-            updateDialog.remove();
-        });
-    }
-    
-    handleMessage(data) {
-        console.log('📨 Message from Service Worker:', data);
-        
-        switch (data.type) {
-            case 'CACHE_UPDATED':
-                console.log('Cache updated:', data.payload);
-                break;
-            case 'OFFLINE':
-                this.showOfflineWarning();
-                break;
-        }
-    }
-    
-    showOfflineWarning() {
-        // Show a subtle offline indicator
-        const indicator = document.createElement('div');
-        indicator.id = 'offline-indicator';
-        indicator.style.cssText = `
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #f0ad4e;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            z-index: 9998;
-        `;
-        indicator.textContent = '⚠️ Offline';
-        document.body.appendChild(indicator);
-        
-        setTimeout(() => indicator.remove(), 3000);
-    }
-    
-    async checkForUpdates() {
-        if (this.registration) {
-            await this.registration.update();
-        }
-    }
-    
-    async unregister() {
-        if (this.registration) {
-            const unregistered = await this.registration.unregister();
-            console.log('Service Worker unregistered:', unregistered);
-        }
-    }
-}
-
-// Initialize when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-    swManager = new ServiceWorkerManager();
-    
-    // Add install button to your UI
-    const installBtn = document.createElement('button');
-    installBtn.id = 'pwa-install-btn';
-    installBtn.innerHTML = '📱 Install App';
-    installBtn.style.cssText = `
-        position: fixed;
-        bottom: 20px;
-        left: 20px;
-        background: #58a6ff;
-        color: white;
-        border: none;
-        padding: 0.75rem 1.5rem;
-        border-radius: 6px;
-        cursor: pointer;
-        z-index: 9997;
-        display: none;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    `;
-    document.body.appendChild(installBtn);
-});
-
-// PWA Installation
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    
-    const installBtn = document.getElementById('pwa-install-btn');
-    if (installBtn) {
-        installBtn.style.display = 'block';
-        
-        installBtn.addEventListener('click', async () => {
-            installBtn.style.display = 'none';
-            
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                console.log(`User response to install prompt: ${outcome}`);
-                deferredPrompt = null;
-            }
-        });
-    }
-});
-
-window.addEventListener('appinstalled', () => {
-    console.log('PWA installed successfully');
-    const installBtn = document.getElementById('pwa-install-btn');
-    if (installBtn) installBtn.style.display = 'none';
-});
-</script>  
-
-
-<script>
-    // Handle shared files from other apps
-    if (window.location.search.includes('share')) {
-        window.addEventListener('load', async () => {
-            const formData = await getSharedData();
-            if (formData) {
-                handleSharedFiles(formData);
-            }
-        });
-    }
-
-    async function getSharedData() {
-        // Implementation for handling shared files
-        // This would process files shared via Web Share Target API
-    }
-
-    function handleSharedFiles(formData) {
-        // Process and upload shared files
-        console.log('Processing shared files...');
-    }
-</script>
-
-
-    <!-- Eruda -->
-    <!-- D E B U G G I N G -->
-    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-    <script>
-      eruda.init();
-    </script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/htmlmixed/htmlmixed.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/php/php.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/markdown/markdown.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/yaml/yaml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/sql/sql.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/go/go.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/rust/rust.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/ruby/ruby.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/fold/foldcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/fold/foldgutter.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/fold/brace-fold.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prismjs/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prismjs/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prismjs/1.29.0/components/prism-markup.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prismjs/1.29.0/components/prism-css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prismjs/1.29.0/components/prism-python.min.js"></script>
+    
+    <script src="https://clockblocked.github.io/gitDev/modules/dependencies.js"></script>
 </body>
 </html>
