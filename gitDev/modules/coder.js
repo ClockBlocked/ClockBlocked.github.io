@@ -677,5 +677,5 @@ class coderViewEdit {
 }
 
 // Initialize and expose
-const coderviewedit = new coderViewEdit();
+// const coderviewedit = new coderViewEdit();
 window.coderViewEdit = coderViewEdit;
