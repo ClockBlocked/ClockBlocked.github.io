@@ -1,61 +1,49 @@
 function navigateToRoot() {
-  currentState.path = '';
-  
-  showLoading('Loading repository root...');
-//  ProgressBar.show();
-  
-  setTimeout(() => {
-    try {
-      currentState.files = LocalStorageManager.listFiles(currentState.repository, '');
-      renderFileList();
-      updateBreadcrumb();
-    } catch (error) {
-      console.error('Failed to load repository root:', error);
-    }
-    
-    hideLoading();
-//    ProgressBar.hide();
-  }, 150);
-}
-function navigateToPath(path) {
-  currentState.path = path;
-  
-  showLoading(`Loading directory ${path}...`);
-//  ProgressBar.show();
-  
-  setTimeout(() => {
-    try {
-      const pathPrefix = path ? path + '/' : '';
-      currentState.files = LocalStorageManager.listFiles(currentState.repository, pathPrefix);
-      renderFileList();
-      updateBreadcrumb();
-    } catch (error) {
-      console.error(`Failed to load path ${path}:`, error);
-    }
-    
-    hideLoading();
-//    ProgressBar.hide();
-  }, 150);
+    currentState.path = '';
+    LoadingProgress.show();
+    setTimeout(() => {
+        try {
+            currentState.files = LocalStorageManager.listFiles(currentState.repository, '');
+            renderFileList();
+            updateBreadcrumb();
+        } catch (error) {
+            console.error('Failed to load repository root:', error);
+        }
+        LoadingProgress.hide();
+    }, 150);
 }
 
+function navigateToPath(path) {
+    currentState.path = path;
+    LoadingProgress.show();
+    setTimeout(() => {
+        try {
+            const pathPrefix = path ? path + '/' : '';
+            currentState.files = LocalStorageManager.listFiles(currentState.repository, pathPrefix);
+            renderFileList();
+            updateBreadcrumb();
+        } catch (error) {
+            console.error(`Failed to load path ${path}:`, error);
+        }
+        LoadingProgress.hide();
+    }, 150);
+}
 
 function showFileViewer() {
-    const views = ['explorerView', 'fileEditor', 'repoSelectorView'];
+    const views = ['explorerView', 'repoSelectorView'];
     views.forEach(viewId => {
         const view = document.getElementById(viewId);
         if (view) view.classList.add('hidden');
     });
-    
     const fileViewer = document.getElementById('fileViewer');
     if (fileViewer) {
         fileViewer.classList.remove('hidden');
     }
-    
     LoadingProgress.show();
     setTimeout(() => LoadingProgress.hide(), 300);
 }
+
 function showFileEditor() {
-    // Use the new code viewer's edit mode instead of old editor
     if (window.codeViewerEditor && typeof codeViewerEditor.enterEditMode === 'function') {
         codeViewerEditor.enterEditMode();
     } else {
@@ -65,30 +53,28 @@ function showFileEditor() {
 }
 
 function showRepoSelector() {
-    const views = ['explorerView', 'fileViewer', 'fileEditor'];
+    const views = ['explorerView', 'fileViewer'];
     views.forEach(viewId => {
         const view = document.getElementById(viewId);
         if (view) view.classList.add('hidden');
     });
-    
     const repoSelector = document.getElementById('repoSelectorView');
     if (repoSelector) {
         repoSelector.classList.remove('hidden');
     }
-    
     LoadingProgress.show();
     setTimeout(() => {
         LoadingProgress.hide();
     }, 400);
 }
+
 function showExplorer() {
     if (currentState.repository) {
-        const views = ['fileViewer', 'fileEditor', 'repoSelectorView'];
+        const views = ['fileViewer', 'repoSelectorView'];
         views.forEach(viewId => {
             const view = document.getElementById(viewId);
             if (view) view.classList.add('hidden');
         });
-        
         const explorerView = document.getElementById('explorerView');
         if (explorerView) {
             explorerView.classList.remove('hidden');
@@ -96,7 +82,6 @@ function showExplorer() {
             console.error('explorerView element not found');
             return;
         }
-        
         updateStats();
         LoadingProgress.show();
         setTimeout(() => {
@@ -105,176 +90,156 @@ function showExplorer() {
     }
 }
 
-
 const loaderStyles = `
-  .gh-progress {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 2.5px;
-    z-index: 9999;
-    background-color: #e1e4e8;
-    transition: opacity 0.5s linear;
-    opacity: 0;
-    pointer-events: none;
-  }
-  
-  .gh-progress.visible {
-    opacity: 1;
-    transition: opacity 0.3s ease-in;
-  }
-  
-  .gh-progress-fill {
-    display: block;
-    height: 100%;
-    width: 0;
-    background-color: #0366d6;
-    transition: width 0.5s ease-in-out;
-  }
+.gh-progress {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 2.5px;
+z-index: 9999;
+background-color: transparent;
+transition: opacity 0.5s linear;
+opacity: 0;
+pointer-events: none;
+}
+
+.gh-progress.visible {
+opacity: 1;
+transition: opacity 0.3s ease-in;
+}
+
+.gh-progress-fill {
+display: block;
+height: 100%;
+width: 0;
+background: linear-gradient(90deg, #58a6ff 0%, #3fb950 50%, #f85149 100%);
+transition: width 0.5s ease-in-out;
+}
 `;
+
 const LoadingProgress = (() => {
+    let progressElement = null;
+    let fillElement = null;
+    let hideTimeout = null;
+    let progressInterval = null;
+    let currentProgress = 0;
+    let config = {
+        color: '#1c7eec',
+        height: '2.5px',
+        minimum: 0.08,
+        maximum: 0.994,
+        incrementPace: 'realistic'
+    };
 
-  let progressElement = null;
-  let fillElement = null;
-  let hideTimeout = null;
-  let progressInterval = null;
-  let currentProgress = 0;
-
-  let config = {
-    color: '#1c7eec',
-    height: '2.5px', 
-    minimum: 0.08,
-    maximum: 0.994,
-    incrementPace: 'realistic'
-  };
-
-  function init() {
-    progressElement = document.createElement('div');
-    progressElement.className = 'gh-progress';
-    
-    fillElement = document.createElement('div'); 
-    fillElement.className = 'gh-progress-fill';
-    
-    progressElement.appendChild(fillElement);
-    
-    const styleElement = document.createElement('style');
-    styleElement.innerHTML = loaderStyles;
-    document.head.appendChild(styleElement);
-    
-    progressElement.style.height = config.height;
-    fillElement.style.backgroundColor = config.color;
-    
-    document.body.appendChild(progressElement);
-  }
-
-  function show() {
-    if (!progressElement) init();
-    
-    cleanup();
-    currentProgress = 0;
-    progressElement.classList.remove('hidden');  
-    progressElement.classList.add('visible');
-    
-    if (config.incrementPace === 'realistic') {
-      simulateRealisticLoad();
-    } else if (config.incrementPace === 'linear') {
-      simulateLinearLoad();
-    } else {
-      fillElement.style.width = `${config.minimum * 100}%`; 
+    function init() {
+        progressElement = document.createElement('div');
+        progressElement.className = 'gh-progress';
+        fillElement = document.createElement('div');
+        fillElement.className = 'gh-progress-fill';
+        progressElement.appendChild(fillElement);
+        const styleElement = document.createElement('style');
+        styleElement.innerHTML = loaderStyles;
+        document.head.appendChild(styleElement);
+        progressElement.style.height = config.height;
+        fillElement.style.background = `linear-gradient(90deg, #58a6ff 0%, #3fb950 50%, #f85149 100%)`;
+        document.body.appendChild(progressElement);
     }
-  }
 
-  function hide() {
-    if (!progressElement) return;
-    
-    currentProgress = 100;
-    fillElement.style.width = '100%';
-    
-    hideTimeout = setTimeout(() => {
-      progressElement.classList.remove('visible');
-      setTimeout(cleanup, 300);  
-    }, 150);
-  }
+    function show() {
+        if (!progressElement) init();
+        cleanup();
+        currentProgress = 0;
+        progressElement.classList.remove('hidden');
+        progressElement.classList.add('visible');
+        if (config.incrementPace === 'realistic') {
+            simulateRealisticLoad();
+        } else if (config.incrementPace === 'linear') {
+            simulateLinearLoad();
+        } else {
+            fillElement.style.width = `${config.minimum * 100}%`;
+        }
+    }
 
-  function cleanup() {
-    clearTimeout(hideTimeout);
-    hideTimeout = null;
-    
-    clearInterval(progressInterval);
-    progressInterval = null;
-    
-    progressElement.classList.add('hidden');
-    progressElement.classList.remove('visible');
-    
-    fillElement.style.width = '0%';
-    currentProgress = 0;
-  }
+    function hide() {
+        if (!progressElement) return;
+        currentProgress = 100;
+        fillElement.style.width = '100%';
+        hideTimeout = setTimeout(() => {
+            progressElement.classList.remove('visible');
+            setTimeout(cleanup, 300);
+        }, 150);
+    }
 
-  function simulateRealisticLoad() {
-    const updateProgress = () => {
-      if (currentProgress >= config.maximum * 100) {
+    function cleanup() {
+        clearTimeout(hideTimeout);
+        hideTimeout = null;
         clearInterval(progressInterval);
-        return;
-      }
-      
-      let increment, delay;
-
-      if (currentProgress < 60) {
-        increment = Math.random() * 5 + 3;
-        delay = Math.random() * 60 + 20;
-      } else if (currentProgress < 90) {
-        increment = Math.random() * 2 + 1;
-        delay = Math.random() * 250 + 150;
-      } else {
-        increment = Math.random() * 0.5 + 0.3;  
-        delay = Math.random() * 500 + 500;
-      }
-
-      currentProgress = Math.min(config.maximum * 100, currentProgress + increment);
-      fillElement.style.width = `${currentProgress}%`;
-
-      clearInterval(progressInterval);
-      progressInterval = setTimeout(updateProgress, delay);
-    };
-
-    updateProgress();
-  }
-
-  function simulateLinearLoad() {
-    const updateProgress = () => {
-      currentProgress += 1;
-      fillElement.style.width = `${currentProgress}%`;
-
-      if (currentProgress < config.maximum * 100) {
-        setTimeout(updateProgress, 16);
-      }
-    };
-
-    updateProgress();
-  }
-
-  function configOptions(options = {}) {
-    config = { ...config, ...options };
-
-    if (progressElement) {
-      progressElement.style.height = config.height;
-      fillElement.style.backgroundColor = config.color;
+        progressInterval = null;
+        if (progressElement) {
+            progressElement.classList.add('hidden');
+            progressElement.classList.remove('visible');
+            fillElement.style.width = '0%';
+        }
+        currentProgress = 0;
     }
-  }
 
-  function isVisible() {
-    return progressElement && !progressElement.classList.contains('hidden');
-  }
+    function simulateRealisticLoad() {
+        const updateProgress = () => {
+            if (currentProgress >= config.maximum * 100) {
+                clearInterval(progressInterval);
+                return;
+            }
+            let increment, delay;
+            if (currentProgress < 60) {
+                increment = Math.random() * 5 + 3;
+                delay = Math.random() * 60 + 20;
+            } else if (currentProgress < 90) {
+                increment = Math.random() * 2 + 1;
+                delay = Math.random() * 250 + 150;
+            } else {
+                increment = Math.random() * 0.5 + 0.3;
+                delay = Math.random() * 500 + 500;
+            }
+            currentProgress = Math.min(config.maximum * 100, currentProgress + increment);
+            fillElement.style.width = `${currentProgress}%`;
+            clearInterval(progressInterval);
+            progressInterval = setTimeout(updateProgress, delay);
+        };
+        updateProgress();
+    }
 
-  return {
-    config: configOptions,
-    show,
-    hide,
-    isVisible  
-  };
+    function simulateLinearLoad() {
+        const updateProgress = () => {
+            currentProgress += 1;
+            fillElement.style.width = `${currentProgress}%`;
+            if (currentProgress < config.maximum * 100) {
+                setTimeout(updateProgress, 16);
+            }
+        };
+        updateProgress();
+    }
 
+    function configOptions(options = {}) {
+        config = { ...config, ...options };
+        if (progressElement) {
+            progressElement.style.height = config.height;
+        }
+    }
+
+    function isVisible() {
+        return progressElement && !progressElement.classList.contains('hidden');
+    }
+
+    return {
+        config: configOptions,
+        show,
+        hide,
+        isVisible
+    };
 })();
+
+window.LoadingProgress = LoadingProgress;
 /**
  * 
  *  C R E A T E D  B Y
