@@ -1,9 +1,3 @@
-/**
-*
-*  coderViewEdit.js - Unified Code Viewer/Editor
-*  Uses single CodeMirror instance with readOnly toggle
-*
-**/
 class coderViewEdit {
     constructor() {
         this.currentFile = null;
