@@ -1,130 +1,57 @@
 window.addEventListener("DOMContentLoaded", () => {
 
-    const SCRIPT_CATEGORIES = {
-        NAVIGATION: "Navigation",
-        UI: "UI",
-        STORAGE: "Storage",
-        PRIMARY: "Primary",
-        INTERACTIVE: "Interactive",
-        OTHER: "Other"
-    };
+    const dependenciesScript = document.createElement('script');
+    dependenciesScript.src = 'https://gitdev.wuaze.com/modules/dependencies.js';
 
-    const scriptRegistry = [
-        {
-            url: "https://clockblocked.github.io/gitDev/modules/dependencies.js",
-            category: SCRIPT_CATEGORIES.PRIMARY
-        },
-        {
-            url: "https://clockblocked.github.io/gitDev/modules/storage.js",
-            category: SCRIPT_CATEGORIES.STORAGE
-        },
-        {
-            url: "https://clockblocked.github.io/gitDev/modules/router.js",
-            category: SCRIPT_CATEGORIES.NAVIGATION
-        },
-        {
-            url: "https://clockblocked.github.io/gitDev/modules/pageUpdates.js",
-            category: SCRIPT_CATEGORIES.UI
-        },
-        {
-            url: "https://clockblocked.github.io/gitDev/modules/overlays.js",
-            category: SCRIPT_CATEGORIES.UI
-        },
-        {
-            url: "https://clockblocked.github.io/gitDev/modules/core.js",
-            category: SCRIPT_CATEGORIES.PRIMARY
-        },
-        {
-            url: "https://clockblocked.github.io/gitDev/modules/listeners.js",
-            category: SCRIPT_CATEGORIES.INTERACTIVE
-        },
-        {
-            url: "https://clockblocked.github.io/gitDev/modules/search.js",
-            category: SCRIPT_CATEGORIES.INTERACTIVE
-        },
-        {
-            url: "https://clockblocked.github.io/gitDev/modules/fileUpload.js",
-            category: SCRIPT_CATEGORIES.INTERACTIVE
-        },
-        {
-            url: "https://clockblocked.github.io/gitDev/modules/importExport.js",
-            category: SCRIPT_CATEGORIES.OTHER
-        },
-        {
-            url: "https://clockblocked.github.io/gitDev/modules/fileMenu.js",
-            category: SCRIPT_CATEGORIES.UI
-        },
-        {
-            url: "https://clockblocked.github.io/gitDev/modules/components/coder.js",
-            category: SCRIPT_CATEGORIES.UI
-        }
+    const storageScript = document.createElement('script');
+    storageScript.src = 'https://gitdev.wuaze.com/modules/storage.js';
+
+    const routerScript = document.createElement('script');
+    routerScript.src = 'https://gitdev.wuaze.com/modules/router.js';
+
+    const pageUpdatesScript = document.createElement('script');
+    pageUpdatesScript.src = 'https://gitdev.wuaze.com/modules/pageUpdates.js';
+
+    const overlaysScript = document.createElement('script');
+    overlaysScript.src = 'https://gitdev.wuaze.com/modules/overlays.js';
+
+    const coreScript = document.createElement('script');
+    coreScript.src = 'https://gitdev.wuaze.com/modules/core.js';
+
+    const listenersScript = document.createElement('script');
+    listenersScript.src = 'https://gitdev.wuaze.com/modules/listeners.js';
+
+    const searchScript = document.createElement('script');
+    searchScript.src = 'https://gitdev.wuaze.com/modules/search.js';
+
+    const fileUploadScript = document.createElement('script');
+    fileUploadScript.src = 'https://gitdev.wuaze.com/modules/fileUpload.js';
+
+    const importExportScript = document.createElement('script');
+    importExportScript.src = 'https://gitdev.wuaze.com/modules/importExport.js';
+
+    const fileMenuScript = document.createElement('script');
+    fileMenuScript.src = 'https://gitdev.wuaze.com/modules/fileMenu.js';
+
+    const scripts = [
+        dependenciesScript,
+        storageScript,
+        routerScript,
+        pageUpdatesScript,
+        overlaysScript,
+        coreScript,
+        listenersScript,
+        searchScript,
+        fileUploadScript,
+        importExportScript,
+        fileMenuScript
     ];
 
-    const scriptStatusMap = {};
-    let completedCount = 0;
+    let loadedCount = 0;
 
-    function loadScript(entry) {
-        return new Promise((resolve) => {
-            const script = document.createElement("script");
-            script.src = entry.url;
-            script.async = false;
-
-            script.onload = () => {
-                scriptStatusMap[entry.url] = "Loaded";
-                resolve();
-            };
-
-            script.onerror = () => {
-                scriptStatusMap[entry.url] = "Error";
-                resolve();
-            };
-
-            document.head.appendChild(script);
-        });
-    }
-
-    function retryScript(url) {
-        console.clear();
-        console.log("Retrying script:", url);
-
-        scriptStatusMap[url] = "Retrying";
-
-        loadScript(
-            scriptRegistry.find(s => s.url === url)
-        ).then(renderConsoleTable);
-    }
-
-    function renderConsoleTable() {
-        const tableData = scriptRegistry.map(entry => ({
-            URL: entry.url,
-            Category: entry.category,
-            Status: scriptStatusMap[entry.url] || "Pending",
-            Retry:
-                scriptStatusMap[entry.url] === "Error"
-                    ? `retryScript("${entry.url}")`
-                    : ""
-        }));
-
-        console.groupCollapsed("📦 Script Load Status");
-        console.table(tableData);
-        console.log(
-            "To retry a failed script, run:",
-            "\nretryScript(\"<SCRIPT_URL>\")"
-        );
-        console.groupEnd();
-    }
-
-    window.retryScript = retryScript;
-
-    (async function loadAllScripts() {
-        for (const entry of scriptRegistry) {
-            await loadScript(entry);
-            completedCount++;
-        }
-
-        renderConsoleTable();
-
-        if (completedCount === scriptRegistry.length) {
+    function checkAllLoaded() {
+        loadedCount++;
+        if (loadedCount === scripts.length) {
             setTimeout(() => {
 
                 if (typeof SidebarManager !== "undefined" && SidebarManager.init) {
@@ -135,13 +62,18 @@ window.addEventListener("DOMContentLoaded", () => {
                     initializeApp();
                 }
 
-                if (typeof CodeViewerEditor !== "undefined" && CodeViewerEditor.init) {
-                    CodeViewerEditor.init();
-                }
+                console.log('âœ… All GitDev modules loaded successfully');
 
-                console.log("All modules processed");
             }, 50);
         }
-    })();
+    }
 
+    scripts.forEach(script => {
+        script.onload = checkAllLoaded;
+        script.onerror = () => {
+            console.error("Failed to load script:", script.src);
+            checkAllLoaded();
+        };
+        document.head.appendChild(script);
+    });
 });

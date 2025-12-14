@@ -1,166 +1,111 @@
-const LocalStorageManager = (() => {
-    const STORAGE_PREFIX = 'gitcodr_';
-    
-    function saveRepository(repo) {
-        try {
-            const repos = getRepositories();
-            const existingIndex = repos.findIndex(r => r.name === repo.name);
-            if (existingIndex !== -1) {
-                repos[existingIndex] = { ...repos[existingIndex], ...repo };
-            } else {
-                repos.push(repo);
-            }
-            localStorage.setItem(`${STORAGE_PREFIX}repositories`, JSON.stringify(repos));
-            return true;
-        } catch (error) {
-            console.error('Failed to save repository:', error);
-            return false;
-        }
+const LocalStorageManager = {
+  getRepositories: function() {
+    return JSON.parse(localStorage.getItem('gitcodr_repositories') || '[]');
+  },
+  saveRepositories: function(repositories) {
+    localStorage.setItem('gitcodr_repositories', JSON.stringify(repositories));
+  },
+  getRepository: function(repoName) {
+    const repos = this.getRepositories();
+    return repos.find(r => r.name === repoName);
+  },
+  saveRepository: function(repo) {
+    const repos = this.getRepositories();
+    const index = repos.findIndex(r => r.name === repo.name);
+    if (index !== -1) {
+      repos[index] = repo;
+    } else {
+      repos.push(repo);
     }
-    
-    function getRepository(name) {
-        try {
-            const repos = getRepositories();
-            return repos.find(r => r.name === name);
-        } catch (error) {
-            console.error('Failed to get repository:', error);
-            return null;
-        }
-    }
-    
-    function getRepositories() {
-        try {
-            const data = localStorage.getItem(`${STORAGE_PREFIX}repositories`);
-            return data ? JSON.parse(data) : [];
-        } catch (error) {
-            console.error('Failed to get repositories:', error);
-            return [];
-        }
-    }
-    
-    function deleteRepository(name) {
-        try {
-            const repos = getRepositories().filter(r => r.name !== name);
-            localStorage.setItem(`${STORAGE_PREFIX}repositories`, JSON.stringify(repos));
-            
-            const keysToRemove = [];
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key && key.startsWith(`${STORAGE_PREFIX}repo_${name}`)) {
-                    keysToRemove.push(key);
-                }
-            }
-            keysToRemove.forEach(key => localStorage.removeItem(key));
-            return true;
-        } catch (error) {
-            console.error('Failed to delete repository:', error);
-            return false;
-        }
-    }
-    
-    function saveFile(repoName, filePath, fileData) {
-        try {
-            const key = `${STORAGE_PREFIX}repo_${repoName}`;
-            let repoData = localStorage.getItem(key);
-            repoData = repoData ? JSON.parse(repoData) : {};
-            
-            repoData[filePath] = {
-                ...fileData,
-                lastModified: Date.now()
-            };
-            
-            localStorage.setItem(key, JSON.stringify(repoData));
-            return true;
-        } catch (error) {
-            console.error('Failed to save file:', error);
-            return false;
-        }
-    }
-    
-    function getFile(repoName, filePath) {
-        try {
-            const key = `${STORAGE_PREFIX}repo_${repoName}`;
-            const repoData = localStorage.getItem(key);
-            if (!repoData) return null;
-            const files = JSON.parse(repoData);
-            return files[filePath] || null;
-        } catch (error) {
-            console.error('Failed to get file:', error);
-            return null;
-        }
-    }
-    
-    function deleteFile(repoName, filePath) {
-        try {
-            const key = `${STORAGE_PREFIX}repo_${repoName}`;
-            let repoData = localStorage.getItem(key);
-            if (!repoData) return false;
-            
-            repoData = JSON.parse(repoData);
-            delete repoData[filePath];
-            localStorage.setItem(key, JSON.stringify(repoData));
-            return true;
-        } catch (error) {
-            console.error('Failed to delete file:', error);
-            return false;
-        }
-    }
-    
-    function listFiles(repoName, pathPrefix = '') {
-        try {
-            const key = `${STORAGE_PREFIX}repo_${repoName}`;
-            const repoData = localStorage.getItem(key);
-            if (!repoData) return [];
-            
-            const files = JSON.parse(repoData);
-            const fileList = [];
-            
-            for (const [path, data] of Object.entries(files)) {
-                if (path.startsWith(pathPrefix)) {
-                    const relativePath = path.substring(pathPrefix.length);
-                    const parts = relativePath.split('/');
-                    
-                    if (parts.length === 1 && parts[0]) {
-                        fileList.push({
-                            name: parts[0],
-                            type: 'file',
-                            path: path,
-                            lastModified: data.lastModified || Date.now(),
-                            lastCommit: data.lastCommit || 'Initial commit',
-                            size: data.size || 0
-                        });
-                    } else if (parts.length > 1 && parts[0]) {
-                        if (!fileList.find(f => f.name === parts[0] && f.type === 'directory')) {
-                            fileList.push({
-                                name: parts[0],
-                                type: 'directory',
-                                path: pathPrefix + parts[0]
-                            });
-                        }
-                    }
-                }
-            }
-            
-            return fileList;
-        } catch (error) {
-            console.error('Failed to list files:', error);
-            return [];
-        }
-    }
-    
-    return {
-        saveRepository,
-        getRepository,
-        getRepositories,
-        deleteRepository,
-        saveFile,
-        getFile,
-        deleteFile,
-        listFiles
-    };
-})();
+    this.saveRepositories(repos);
+  },
+  deleteRepository: function(repoName) {
+    const repos = this.getRepositories();
+    const filtered = repos.filter(r => r.name !== repoName);
+    this.saveRepositories(filtered);
+    localStorage.removeItem(`gitcodr_repo_${repoName}`);
+  },
+  getRepositoryFiles: function(repoName) {
+    const key = `gitcodr_repo_${repoName}`;
+    return JSON.parse(localStorage.getItem(key) || '{}');
+  },
+  saveRepositoryFiles: function(repoName, files) {
+    const key = `gitcodr_repo_${repoName}`;
+    localStorage.setItem(key, JSON.stringify(files));
+  },
+  getFile: function(repoName, filePath) {
+    const repoData = this.getRepositoryFiles(repoName);
+    return repoData[filePath] || null;
+  },
+  saveFile: function(repoName, filePath, fileData) {
+    const repoData = this.getRepositoryFiles(repoName);
+    repoData[filePath] = fileData;
+    this.saveRepositoryFiles(repoName, repoData);
+  },
+  deleteFile: function(repoName, filePath) {
+    const repoData = this.getRepositoryFiles(repoName);
+    delete repoData[filePath];
+    this.saveRepositoryFiles(repoName, repoData);
+  },
+  listFiles: function(repoName, pathPrefix = '') {
+    const repoData = this.getRepositoryFiles(repoName);
+    const files = [];
+    const folders = new Set();
 
-window.LocalStorageManager = LocalStorageManager;
+    Object.keys(repoData).forEach(filePath => {
+      if (pathPrefix === '') {
+        const parts = filePath.split('/');
+        if (parts.length === 1) {
+          files.push({
+            name: parts[0],
+            type: 'file',
+            path: filePath,
+            lastModified: repoData[filePath].lastModified || Date.now(),
+            lastCommit: repoData[filePath].lastCommit || 'Initial commit',
+            size: repoData[filePath].size || 0
+          });
+        } else if (parts.length > 1) {
+          folders.add(parts[0]);
+        }
+      } else {
+        if (filePath.startsWith(pathPrefix)) {
+          const relativePath = filePath.substring(pathPrefix.length);
+          const parts = relativePath.split('/');
+          
+          if (parts.length === 1 && parts[0]) {
+            files.push({
+              name: parts[0],
+              type: 'file',
+              path: filePath,
+              lastModified: repoData[filePath].lastModified || Date.now(),
+              lastCommit: repoData[filePath].lastCommit || 'Initial commit',
+              size: repoData[filePath].size || 0
+            });
+          } else if (parts.length > 1 && parts[0]) {
+            folders.add(parts[0]);
+          }
+        }
+      }
+    });
+
+    folders.forEach(folderName => {
+      files.push({
+        name: folderName,
+        type: 'folder',
+        path: pathPrefix + folderName + '/',
+        lastModified: Date.now(),
+        lastCommit: 'Folder'
+      });
+    });
+
+    return files.sort((a, b) => {
+      if (a.type !== b.type) {
+        return a.type === 'folder' ? -1 : 1;
+      }
+      return a.name.localeCompare(b.name);
+    });
+  }
+};
 /**
  * 
  *  C R E A T E D  B Y
