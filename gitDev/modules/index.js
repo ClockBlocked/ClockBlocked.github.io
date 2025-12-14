@@ -66,7 +66,7 @@ window.addEventListener("DOMContentLoaded", () => {
                     initializeApp();
                 }
 
-                console.log('âœ… All gitDev modules loaded successfully');
+                console.log('All gitDev modules loaded successfully');
 
             }, 50);
         }
