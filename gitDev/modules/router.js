@@ -165,18 +165,7 @@ function navigateToPath(path) {
   }, 150);
 }
 
-function showFileViewer() {
-  document.getElementById('explorerView').classList.add('hidden');
-  document.getElementById('fileEditor').classList.add('hidden');
-  document.getElementById('repoSelectorView').classList.add('hidden');
-  document.getElementById('fileViewer').classList.remove('hidden');
-  
-//  ProgressBar.show();
-  LoadingProgress.show();
-  
-//  setTimeout(() => ProgressBar.hide(), 300);
-  setTimeout(() => LoadingProgress.hide(), 300);
-}
+
 
 function showFileEditor() {
   document.getElementById('explorerView').classList.add('hidden');
@@ -203,20 +192,44 @@ function showRepoSelector() {
   }, 400);
 }
 
-function showExplorer() {
-  if (currentState.repository) {
-    document.getElementById('fileViewer').classList.add('hidden');
-    document.getElementById('fileEditor').classList.add('hidden');
+
+
+
+
+// In router.js, update these functions:
+
+function showFileViewer() {
+    // Hide other views
+    document.getElementById('explorerView').classList.add('hidden');
     document.getElementById('repoSelectorView').classList.add('hidden');
-    document.getElementById('explorerView').classList.remove('hidden');
     
-//    ProgressBar.show();
+    // Use unified coder instead of old viewer
+    if (window.coderViewEdit) {
+        coderViewEdit.show();
+    }
+    
     LoadingProgress.show();
-    updateStats();
-//    setTimeout(() => ProgressBar.hide(), 300);
     setTimeout(() => LoadingProgress.hide(), 300);
-  }
 }
+
+function showExplorer() {
+    if (currentState.repository) {
+        // Hide coder and other views
+        if (window.coderViewEdit) coderViewEdit.hide();
+        document.getElementById('repoSelectorView').classList.add('hidden');
+        
+        // Show explorer
+        document.getElementById('explorerView').classList.remove('hidden');
+        
+        LoadingProgress.show();
+        setTimeout(() => LoadingProgress.hide(), 300);
+    }
+}
+
+
+
+
+
 
 
 const loaderStyles = `
