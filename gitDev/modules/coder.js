@@ -763,7 +763,7 @@ toggleTheme() {
     
     // Update CodeMirror theme
     if (this.codeMirror) {
-        this.codeMirror.setOption('theme', isDark ? 'default' : 'material-darker');
+        this.codeMirror.setOption('theme', isDark ? 'default' : 'one-dark');
     }
 }
 
