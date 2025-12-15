@@ -1,15 +1,3 @@
-
-
-/**
-import { eventListeners } from 'https://gitdev.wuaze.com/modules/listeners.js';
-import { showLoading, hideLoading, showSuccessMessage, showErrorMessage } from 'https://gitdev.wuaze.com/modules/overlays.js';
-import { LocalStorageManager } from 'https://gitdev.wuaze.com/modules/storage.js';
-import { updateBreadcrumb, renderFileList, renderRepositoryList, updateSelectedTags, updateEditorMode, updateCommitMessage, updateStats, updateRecentFilesUI, displayFileContent } from 'https://gitdev.wuaze.com/modules/pageUpdates.js';
-import { formatFileSize, formatDate, isValidFilename, getLanguageColor, getLanguageName, getFileIcon, getPrismLanguage, getLanguageColor as getLangColor } from 'https://gitdev.wuaze.com/modules/dependencies.js';
-import { navigateToRoot, navigateToPath, showExplorer, showRepoSelector, showFileViewer, showFileEditor } from 'https://gitdev.wuaze.com/modules/router.js';
-import { hideCreateFileModal } from 'https://gitdev.wuaze.com/modules/overlays.js';
-**/
-
 let currentState = {
   repository: null,
   branch: 'main',
@@ -432,9 +420,6 @@ function openRecentFile(repoName, filePath, fileName) {
   });
 }
 
-/**
- * core.js
- */
 function viewFile(filename) {
   if (!currentState.repository) {
     showErrorMessage('No repository selected');
@@ -613,79 +598,6 @@ function initializeApp() {
 }
 
 document.addEventListener('DOMContentLoaded', initializeApp);
-
-
-/**
-window.showCreateRepoModal = showCreateRepoModal;
-window.hideCreateRepoModal = hideCreateRepoModal;
-window.showCreateFileModal = showCreateFileModal;
-window.hideCreateFileModal = hideCreateFileModal;
-window.showDeleteFileModal = showDeleteFileModal;
-window.hideDeleteFileModal = hideDeleteFileModal;
-
-window.createRepository = createRepository;
-window.createFile = createFile;
-window.confirmDeleteFile = confirmDeleteFile;
-window.deleteRepository = deleteRepository;
-window.openRepository = openRepository;
-window.viewFile = viewFile;
-window.editFile = editFile;
-window.saveFile = saveFile;
-window.downloadCurrentFile = downloadCurrentFile;
-window.previewFile = previewFile;
-window.showRepoSelector = showRepoSelector;
-window.showExplorer = showExplorer;
-window.showFileViewer = showFileViewer;
-window.showFileEditor = showFileEditor;
-window.navigateToRoot = navigateToRoot;
-window.navigateToPath = navigateToPath;
-window.addTag = addTag;
-window.removeTag = removeTag;
-window.viewFileFromContext = viewFileFromContext;
-window.editFileFromContext = editFileFromContext;
-window.downloadFileFromContext = downloadFileFromContext;
-window.deleteFileFromContext = deleteFileFromContext;
-window.openRecentFile = openRecentFile;
-**/
-
-
-
-/**
- * 
- *
- export {
-    showCreateRepoModal,
-    hideCreateRepoModal,
-    showCreateFileModal,
-    hideCreateFileModal,
-    showDeleteFileModal,
-    hideDeleteFileModal,
-    createRepository,
-    createFile,
-    confirmDeleteFile,
-    deleteRepository,
-    openRepository,
-    viewFile,
-    editFile,
-    saveFile,
-    downloadCurrentFile,
-    previewFile,
-    showRepoSelector,
-    showExplorer,
-    showFileViewer,
-    showFileEditor,
-    navigateToRoot,
-    navigateToPath,
-    addTag,
-    removeTag,
-    openRecentFile,
-    addToRecentFiles,
-    setupCodeEditors,
-    initializeApp
-};
-**/
-
-
 /**
  * 
  *  C R E A T E D  B Y
@@ -697,7 +609,3 @@ window.openRecentFile = openRecentFile;
  *  m.me/Chevrolay
  * 
  */
- 
- 
- 
- 
