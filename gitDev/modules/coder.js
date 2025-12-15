@@ -347,44 +347,6 @@ class coderViewEdit {
         });
     }
 
-    setupCodeMirror() {
-        if (typeof CodeMirror === 'undefined') {
-            setTimeout(() => this.setupCodeMirror(), 100);
-            return;
-        }
-
-        if (!this.elements.codeMirrorContainer || this.codeMirror) return;
-        
-        this.codeMirror = CodeMirror(this.elements.codeMirrorContainer, {
-            value: '',
-            mode: 'javascript',
-            theme: 'material-darker',
-            lineNumbers: false,
-            lineWrapping: true,
-            readOnly: true,
-            tabSize: 2,
-            indentUnit: 2,
-            smartIndent: true,
-            matchBrackets: true,
-            autoCloseBrackets: true,
-            scrollbarStyle: 'native',
-            viewportMargin: Infinity,
-            cursorBlinkRate: 530,
-            extraKeys: {
-                "Ctrl-S": () => this.saveChanges(),
-                "Cmd-S": () => this.saveChanges(),
-                "Ctrl-F": "findPersistent",
-                "Ctrl-D": (cm) => cm.execCommand("duplicateLine"),
-                "Ctrl-/": "toggleComment"
-            }
-        });
-        
-        this.updateLineNumbers();
-        
-        this.codeMirror.on('change', () => {
-            this.updateLineNumbers();
-        });
-    }
 
     updateLineNumbers() {
         if (!this.codeMirror || !this.elements.codeViewerLineNumbers) return;
@@ -496,79 +458,6 @@ class coderViewEdit {
         this.isLoading = false;
         this.elements.loadingOverlay.style.opacity = '0';
         this.elements.loadingOverlay.style.pointerEvents = 'none';
-    }
-
-    enterEditMode() {
-        if (!this.currentFile || this.isLoading) return;
-        
-        this.showLoading('Switching to edit mode...');
-        
-        setTimeout(() => {
-            try {
-                this.isEditing = true;
-                
-                if (this.elements.editToggleBtn) {
-                    this.elements.editToggleBtn.innerHTML = `
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
-                            <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z"/>
-                        </svg>
-                        <span>Cancel</span>
-                    `;
-                    this.elements.editToggleBtn.classList.remove('bg-github-btn-secondary-bg');
-                    this.elements.editToggleBtn.classList.add('bg-github-danger-emphasis', 'text-white');
-                }
-                
-                this.setReadOnly(false);
-                this.elements.commitPanel.classList.remove('hidden');
-                
-                setTimeout(() => {
-                    if (this.codeMirror) {
-                        this.codeMirror.focus();
-                        this.codeMirror.setCursor(0, 0);
-                    }
-                }, 100);
-                
-                this.updateCommitMessage();
-                
-                setTimeout(() => {
-                    this.hideLoading();
-                }, 800);
-                
-            } catch (error) {
-                this.hideLoading();
-                showErrorMessage('Failed to enter edit mode');
-            }
-        }, 100);
-    }
-
-    exitEditMode() {
-        this.isEditing = false;
-        
-        if (this.elements.editToggleBtn) {
-            this.elements.editToggleBtn.innerHTML = `
-                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"/>
-                </svg>
-                <span>Edit</span>
-            `;
-            this.elements.editToggleBtn.classList.remove('bg-github-danger-emphasis', 'text-white');
-            this.elements.editToggleBtn.classList.add('bg-github-btn-secondary-bg');
-        }
-        
-        if (this.codeMirror) {
-            this.setReadOnly(true);
-        }
-        
-        if (this.elements.commitPanel) {
-            this.elements.commitPanel.classList.add('hidden');
-        }
-        
-        if (this.elements.commitTitleInput) {
-            this.elements.commitTitleInput.value = '';
-        }
-        if (this.elements.commitDescriptionInput) {
-            this.elements.commitDescriptionInput.value = '';
-        }
     }
 
     cancelEdit() {
@@ -902,12 +791,12 @@ setupCodeMirror() {
     
     // Load saved font size
     const savedFontSize = localStorage.getItem('gitcodr_fontsize');
-    const fontSize = savedFontSize ? parseInt(savedFontSize) : 12;
+    const fontSize = savedFontSize ? parseInt(savedFontSize) : 10;
     
     // Load saved theme
     const savedTheme = localStorage.getItem('gitcodr_theme');
     const isDarkTheme = savedTheme === 'dark' || (!savedTheme && document.documentElement.getAttribute('data-theme') === 'dark');
-    const cmTheme = isDarkTheme ? 'material-darker' : 'default';
+    const cmTheme = isDarkTheme ? 'one-dark' : 'default';
     
     this.codeMirror = CodeMirror(this.elements.codeMirrorContainer, {
         value: '',
