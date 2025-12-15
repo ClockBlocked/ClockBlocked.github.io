@@ -1,5 +1,4 @@
 class coderViewEdit {
-  //////////  Setup  ////
   constructor() {
     this.currentFile = null;
     this.fileData = null;
@@ -8,7 +7,6 @@ class coderViewEdit {
     this.isLoading = false;
     this.originalContent = "";
     this.isInitialized = false;
-
     this.elements = {};
     this.state = {
       fontSize: 12,
@@ -18,10 +16,8 @@ class coderViewEdit {
   }
   init() {
     if (this.isInitialized) return;
-
     const coder = document.getElementById("coder");
     if (!coder) return;
-
     coder.innerHTML = `
             <div class="flex items-center justify-between mb-4">
                 <nav class="flex items-center space-x-1 text-sm">
@@ -29,7 +25,6 @@ class coderViewEdit {
                     <span class="text-github-fg-muted">/</span>
                     <input type="text" id="fileNameInput" class="bg-transparent border-none text-github-fg-default font-semibold focus:outline-none focus:bg-github-canvas-subtle px-1 rounded" value="" readonly>
                 </nav>
-
                 <div class="flex items-center space-x-2">
                     <button id="editToggleBtn" class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
                         <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
@@ -53,7 +48,6 @@ class coderViewEdit {
                     </button>
                 </div>
             </div>
-
 <div class="bg-github-canvas-overlay border border-github-border-default rounded-t-lg px-4 py-2 flex items-center justify-between text-sm">
     <div class="flex items-center space-x-4 text-github-fg-muted" id="fileStats">
         <span id="fileLinesCount">0 lines</span>
@@ -62,60 +56,47 @@ class coderViewEdit {
         <span>•</span>
         <span id="fileLanguageDisplay">Text</span>
     </div>
-    
     <div class="flex items-center space-x-2">
-        <!-- Theme Toggle -->
-        <button id="themeToggleBtn" class="p-2 rounded hover:bg-github-canvas-subtle text-github-fg-muted hover:text-github-fg-default transition-colors" data-tooltip="Toggle theme">
+        <button id="themeToggleBtn" class="p-2 rounded hover:bg-github-canvas-subtle text-github-fg-muted hover:text-github-fg-default transition-colors">
             <svg id="themeIcon" class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M8 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z"/>
             </svg>
         </button>
-        
-        <!-- Font Size Controls -->
         <div class="flex items-center border border-github-border-default rounded-md overflow-hidden">
-            <button id="decreaseFontBtn" class="p-1.5 hover:bg-github-canvas-subtle text-github-fg-muted hover:text-github-fg-default transition-colors" data-tooltip="Decrease font size">
+            <button id="decreaseFontBtn" class="p-1.5 hover:bg-github-canvas-subtle text-github-fg-muted hover:text-github-fg-default transition-colors">
                 <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 16 16">
                     <path d="M3.75 7.25a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5Z"/>
                 </svg>
             </button>
             <span id="fontSizeDisplay" class="px-2 text-xs text-github-fg-default border-x border-github-border-default min-w-[40px] text-center">12px</span>
-            <button id="increaseFontBtn" class="p-1.5 hover:bg-github-canvas-subtle text-github-fg-muted hover:text-github-fg-default transition-colors" data-tooltip="Increase font size">
+            <button id="increaseFontBtn" class="p-1.5 hover:bg-github-canvas-subtle text-github-fg-muted hover:text-github-fg-default transition-colors">
                 <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 16 16">
                     <path d="M7.25 3.75a.75.75 0 0 1 1.5 0V7.25h3.5a.75.75 0 0 1 0 1.5h-3.5v3.5a.75.75 0 0 1-1.5 0v-3.5h-3.5a.75.75 0 0 1 0-1.5h3.5Z"/>
                 </svg>
             </button>
         </div>
-        
-        <!-- Wrap Lines -->
-        <button id="wrapLinesBtn" class="p-2 rounded hover:bg-github-canvas-subtle text-github-fg-muted hover:text-github-fg-default transition-colors" data-tooltip="Wrap lines">
+        <button id="wrapLinesBtn" class="p-2 rounded hover:bg-github-canvas-subtle text-github-fg-muted hover:text-github-fg-default transition-colors">
             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M2 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm3.75-1.5a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5Zm0 5a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5Zm0 5a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5ZM3 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm-1 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/>
             </svg>
         </button>
-        
-        <!-- Search -->
-        <button id="searchBtn" class="p-2 rounded hover:bg-github-canvas-subtle text-github-fg-muted hover:text-github-fg-default transition-colors" data-tooltip="Search in file (Ctrl+F)">
+        <button id="searchBtn" class="p-2 rounded hover:bg-github-canvas-subtle text-github-fg-muted hover:text-github-fg-default transition-colors">
             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"/>
             </svg>
         </button>
-        
-        <!-- Fullscreen -->
-        <button id="fullscreenBtn" class="p-2 rounded hover:bg-github-canvas-subtle text-github-fg-muted hover:text-github-fg-default transition-colors" data-tooltip="Toggle fullscreen">
+        <button id="fullscreenBtn" class="p-2 rounded hover:bg-github-canvas-subtle text-github-fg-muted hover:text-github-fg-default transition-colors">
             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M3.75 2A1.75 1.75 0 0 0 2 3.75v1.5a.75.75 0 0 0 1.5 0v-1.5a.25.25 0 0 1 .25-.25h1.5a.75.75 0 0 0 0-1.5h-1.5ZM10.75 2a.75.75 0 0 0 0 1.5h1.5a.25.25 0 0 1 .25.25v1.5a.75.75 0 0 0 1.5 0v-1.5A1.75 1.75 0 0 0 12.25 2ZM3.75 14a.75.75 0 0 0 0-1.5h-1.5a.25.25 0 0 1-.25-.25v-1.5a.75.75 0 0 0-1.5 0v1.5A1.75 1.75 0 0 0 3.75 16h1.5a.75.75 0 0 0 0-1.5ZM14 10.75a.75.75 0 0 0-1.5 0v1.5a.25.25 0 0 1-.25.25h-1.5a.75.75 0 0 0 0 1.5h1.5A1.75 1.75 0 0 0 16 12.25Z"/>
             </svg>
         </button>
-        
-        <!-- Format Code (only in edit mode) -->
-        <button id="formatCodeBtn" class="p-2 rounded hover:bg-github-canvas-subtle text-github-fg-muted hover:text-github-fg-default transition-colors hidden" data-tooltip="Format code">
+        <button id="formatCodeBtn" class="p-2 rounded hover:bg-github-canvas-subtle text-github-fg-muted hover:text-github-fg-default transition-colors hidden">
             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M4.72 3.22a.75.75 0 0 1 1.06 1.06L2.06 8l3.72 3.72a.75.75 0 1 1-1.06 1.06L.47 8.53a.75.75 0 0 1 0-1.06l4.25-4.25Zm6.56 0a.75.75 0 1 0-1.06 1.06L13.94 8l-3.72 3.72a.75.75 0 1 0 1.06 1.06l4.25-4.25a.75.75 0 0 0 0-1.06l-4.25-4.25Z"/>
             </svg>
         </button>
     </div>
 </div>
-
             <div id="coderWrapper" class="bg-github-canvas-overlay border-x border-b border-github-border-default rounded-b-lg overflow-hidden relative">
                 <div id="loadingOverlay" class="absolute inset-0 bg-github-canvas-overlay/90 backdrop-blur-sm z-10 flex items-center justify-center transition-opacity duration-300 opacity-0 pointer-events-none">
                     <div class="text-center">
@@ -123,15 +104,12 @@ class coderViewEdit {
                         <p class="text-github-fg-muted text-sm" id="loadingText">Loading...</p>
                     </div>
                 </div>
-                
                 <div class="flex h-full">
-
                     <div class="flex-1 overflow-auto">
                         <div id="codeMirrorContainer"></div>
                     </div>
                 </div>
             </div>
-
             <div id="commitPanel" class="mt-6 bg-github-canvas-overlay border border-github-border-default rounded-lg p-6 hidden">
                 <h3 class="text-lg font-semibold text-github-fg-default mb-4">Commit changes</h3>
                 <div class="space-y-4">
@@ -152,16 +130,13 @@ class coderViewEdit {
                 </div>
             </div>
         `;
-
     this.cacheElements();
     this.bindEvents();
-
     if (typeof CodeMirror !== "undefined") {
       this.setupCodeMirror();
     } else {
       setTimeout(() => this.setupCodeMirror(), 100);
     }
-
     this.isInitialized = true;
   }
   cacheElements() {
@@ -205,77 +180,61 @@ class coderViewEdit {
         }
       });
     }
-
     if (this.elements.decreaseFontBtn) {
       this.elements.decreaseFontBtn.addEventListener("click", () => {
         this.adjustFontSize(-1);
       });
     }
-
     if (this.elements.increaseFontBtn) {
       this.elements.increaseFontBtn.addEventListener("click", () => {
         this.adjustFontSize(1);
       });
     }
-
-    // Theme toggle
     if (this.elements.themeToggleBtn) {
       this.elements.themeToggleBtn.addEventListener("click", () => {
         this.toggleTheme();
       });
     }
-
-    // Search
     if (this.elements.searchBtn) {
       this.elements.searchBtn.addEventListener("click", () => {
         this.openSearch();
       });
     }
-
-    // Fullscreen
     if (this.elements.fullscreenBtn) {
       this.elements.fullscreenBtn.addEventListener("click", () => {
         this.toggleFullscreen();
       });
     }
-
-    // Format code
     if (this.elements.formatCodeBtn) {
       this.elements.formatCodeBtn.addEventListener("click", () => {
         this.formatCode();
       });
     }
-
     if (this.elements.saveChangesBtn) {
       this.elements.saveChangesBtn.addEventListener("click", () => {
         this.saveChanges();
       });
     }
-
     if (this.elements.cancelEditBtn) {
       this.elements.cancelEditBtn.addEventListener("click", () => {
         this.cancelEdit();
       });
     }
-
     if (this.elements.copyBtn) {
       this.elements.copyBtn.addEventListener("click", () => {
         this.copyCode();
       });
     }
-
     if (this.elements.downloadBtn) {
       this.elements.downloadBtn.addEventListener("click", () => {
         this.downloadFile();
       });
     }
-
     if (this.elements.wrapLinesBtn) {
       this.elements.wrapLinesBtn.addEventListener("click", () => {
         this.toggleWrapLines();
       });
     }
-
     if (this.elements.fileNameInput) {
       this.elements.fileNameInput.addEventListener("dblclick", () => {
         if (this.isEditing) {
@@ -283,12 +242,10 @@ class coderViewEdit {
           this.elements.fileNameInput.select();
         }
       });
-
       this.elements.fileNameInput.addEventListener("blur", () => {
         this.elements.fileNameInput.readOnly = true;
         this.renameFile(this.elements.fileNameInput.value);
       });
-
       this.elements.fileNameInput.addEventListener("keydown", (e) => {
         if (e.key === "Enter") this.elements.fileNameInput.blur();
         if (e.key === "Escape") {
@@ -297,7 +254,6 @@ class coderViewEdit {
         }
       });
     }
-
     document.addEventListener("keydown", (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key === "s" && this.isEditing) {
         e.preventDefault();
@@ -310,31 +266,22 @@ class coderViewEdit {
         e.preventDefault();
         this.openSearch();
       }
-
-      // Ctrl+Plus/Minus for font size
       if ((e.ctrlKey || e.metaKey) && (e.key === "+" || e.key === "=")) {
         e.preventDefault();
         this.adjustFontSize(1);
       }
-
       if ((e.ctrlKey || e.metaKey) && e.key === "-") {
         e.preventDefault();
         this.adjustFontSize(-1);
       }
-
-      // Ctrl+0 for reset font size
       if ((e.ctrlKey || e.metaKey) && e.key === "0") {
         e.preventDefault();
         this.resetFontSize();
       }
-
-      // F11 for fullscreen
       if (e.key === "F11") {
         e.preventDefault();
         this.toggleFullscreen();
       }
-
-      // Ctrl+Shift+F for format (when in edit mode)
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === "F" && this.isEditing) {
         e.preventDefault();
         this.formatCode();
@@ -346,24 +293,17 @@ class coderViewEdit {
       setTimeout(() => this.setupCodeMirror(), 100);
       return;
     }
-
     if (!this.elements.codeMirrorContainer || this.codeMirror) return;
-
-    // Load saved font size
     const savedFontSize = localStorage.getItem("gitcodr_fontsize");
-    const fontSize = savedFontSize ? parseInt(savedFontSize) : 10;
-
-    // Load saved theme
+    const fontSize = savedFontSize ? parseInt(savedFontSize) : 12;
     const savedTheme = localStorage.getItem("gitcodr_theme");
     const isDarkTheme =
       savedTheme === "dark" || (!savedTheme && document.documentElement.getAttribute("data-theme") === "dark");
     const cmTheme = isDarkTheme ? "one-dark" : "default";
-
     this.codeMirror = CodeMirror(this.elements.codeMirrorContainer, {
       value: "",
       mode: "javascript",
       theme: cmTheme,
-      fontSize: fontSize,
       lineNumbers: false,
       lineWrapping: true,
       readOnly: true,
@@ -384,27 +324,30 @@ class coderViewEdit {
         "Ctrl-Shift-F": () => this.formatCode(),
       },
     });
-
-    // Update font size display
     if (this.elements.fontSizeDisplay) {
       this.elements.fontSizeDisplay.textContent = `${fontSize}px`;
     }
-
-    // Update theme icon
     if (this.elements.themeIcon && isDarkTheme) {
       this.elements.themeIcon.innerHTML =
         '<path d="M9.598 1.591a.75.75 0 0 1 .785-.175 7 7 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Z"/>';
     }
-
     this.updateLineNumbers();
-
     this.codeMirror.on("change", () => {
       this.updateLineNumbers();
     });
+    this.setCodeMirrorFontSize(fontSize);
+  }
+  setCodeMirrorFontSize(size) {
+    if (!this.codeMirror) return;
+    this.codeMirror.getWrapperElement().style.fontSize = `${size}px`;
+    this.state.fontSize = size;
+    if (this.elements.fontSizeDisplay) {
+      this.elements.fontSizeDisplay.textContent = `${size}px`;
+    }
+    localStorage.setItem("gitcodr_fontsize", size);
   }
   setCodeMirrorMode(filename) {
     if (!this.codeMirror) return;
-
     const ext = filename.split(".").pop().toLowerCase();
     const modeMap = {
       js: "javascript",
@@ -427,13 +370,10 @@ class coderViewEdit {
       sql: "sql",
       yml: "yaml",
     };
-
     this.codeMirror.setOption("mode", modeMap[ext] || "text");
   }
-
   showLoading(message = "Loading...") {
     if (!this.elements.loadingOverlay || !this.elements.loadingText) return;
-
     this.isLoading = true;
     this.elements.loadingText.textContent = message;
     this.elements.loadingOverlay.style.opacity = "1";
@@ -441,12 +381,10 @@ class coderViewEdit {
   }
   hideLoading() {
     if (!this.elements.loadingOverlay) return;
-
     this.isLoading = false;
     this.elements.loadingOverlay.style.opacity = "0";
     this.elements.loadingOverlay.style.pointerEvents = "none";
   }
-
   show() {
     if (this.elements.coder) {
       this.elements.coder.classList.remove("hidden");
@@ -457,22 +395,32 @@ class coderViewEdit {
       this.elements.coder.classList.add("hidden");
     }
   }
-
   enterEditMode() {
     if (!this.currentFile || this.isLoading) return;
-
     this.showLoading("Switching to edit mode...");
-
     setTimeout(() => {
       try {
         this.isEditing = true;
-
-        // Show format button in edit mode
+        this.elements.editToggleBtn.innerHTML = `
+                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M8 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z"/>
+                    </svg>
+                    <span>Cancel</span>
+                `;
         if (this.elements.formatCodeBtn) {
           this.elements.formatCodeBtn.classList.remove("hidden");
         }
-
-        // ... rest of existing enterEditMode code ...
+        if (this.elements.commitPanel) {
+          this.elements.commitPanel.classList.remove("hidden");
+        }
+        if (this.codeMirror) {
+          this.codeMirror.setOption("readOnly", false);
+          this.codeMirror.getWrapperElement().style.pointerEvents = "all";
+          this.codeMirror.getWrapperElement().style.cursor = "text";
+          this.codeMirror.focus();
+        }
+        this.updateCommitMessage();
+        this.hideLoading();
       } catch (error) {
         this.hideLoading();
         showErrorMessage("Failed to enter edit mode");
@@ -481,50 +429,52 @@ class coderViewEdit {
   }
   exitEditMode() {
     this.isEditing = false;
-
-    // Hide format button in view mode
+    this.elements.editToggleBtn.innerHTML = `
+            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"/>
+            </svg>
+            <span>Edit</span>
+        `;
     if (this.elements.formatCodeBtn) {
       this.elements.formatCodeBtn.classList.add("hidden");
     }
-
-    // ... rest of existing exitEditMode code ...
+    if (this.elements.commitPanel) {
+      this.elements.commitPanel.classList.add("hidden");
+    }
+    if (this.codeMirror) {
+      this.codeMirror.setOption("readOnly", true);
+      this.codeMirror.getWrapperElement().style.pointerEvents = "none";
+      this.codeMirror.getWrapperElement().style.cursor = "default";
+    }
   }
   cancelEdit() {
     if (!confirm("Discard changes?")) return;
-
     this.showLoading("Reverting changes...");
-
     setTimeout(() => {
       if (this.codeMirror) {
         this.codeMirror.setValue(this.originalContent);
         this.updateLineNumbers();
       }
-
       setTimeout(() => {
         this.exitEditMode();
         this.hideLoading();
       }, 300);
     }, 300);
   }
-
   displayFile(filename, fileData) {
     if (!this.isInitialized) {
       this.init();
     }
-
     this.currentFile = filename;
     this.fileData = fileData;
     this.originalContent = fileData.content || "";
-
     if (this.elements.fileNameInput) {
       this.elements.fileNameInput.value = filename;
     }
-
     const ext = filename.split(".").pop().toLowerCase();
     const language = getLanguageName(ext);
     const size = formatFileSize(new Blob([this.originalContent]).size);
     const lines = this.originalContent.split("\n").length;
-
     if (this.elements.fileLanguageDisplay) {
       this.elements.fileLanguageDisplay.textContent = language;
     }
@@ -534,7 +484,6 @@ class coderViewEdit {
     if (this.elements.fileSize) {
       this.elements.fileSize.textContent = size;
     }
-
     if (!this.codeMirror) {
       this.setupCodeMirror();
       setTimeout(() => {
@@ -549,24 +498,20 @@ class coderViewEdit {
       this.setCodeMirrorMode(filename);
       this.updateLineNumbers();
     }
-
     this.exitEditMode();
     this.show();
   }
   updateCommitMessage() {
     if (!this.currentFile || !this.elements.commitTitleInput) return;
-
     if (!this.elements.commitTitleInput.value.trim()) {
       this.elements.commitTitleInput.value = `Update ${this.currentFile}`;
     }
   }
   updateLineNumbers() {
     if (!this.codeMirror || !this.elements.codeViewerLineNumbers) return;
-
     const content = this.codeMirror.getValue();
     const lines = content.split("\n");
     this.elements.codeViewerLineNumbers.innerHTML = "";
-
     for (let i = 1; i <= lines.length; i++) {
       const lineDiv = document.createElement("div");
       lineDiv.className = "line-number";
@@ -574,15 +519,9 @@ class coderViewEdit {
       this.elements.codeViewerLineNumbers.appendChild(lineDiv);
     }
   }
-
-
-
-  /////////  Actions  ////
   setReadOnly(readOnly) {
     if (!this.codeMirror) return;
-
     this.codeMirror.setOption("readOnly", readOnly);
-
     const cmElement = this.codeMirror.getWrapperElement();
     if (readOnly) {
       cmElement.style.pointerEvents = "none";
@@ -594,43 +533,31 @@ class coderViewEdit {
   }
   saveChanges() {
     if (!this.currentFile || !this.fileData) return;
-
     const commitTitle = this.elements.commitTitleInput ? this.elements.commitTitleInput.value.trim() : "";
-
     if (!commitTitle) {
       showErrorMessage("Please enter a commit message");
       return;
     }
-
     const commitDescription = this.elements.commitDescriptionInput
       ? this.elements.commitDescriptionInput.value.trim()
       : "";
-
     this.showLoading("Saving changes...");
-
     setTimeout(() => {
       try {
         const newContent = this.codeMirror ? this.codeMirror.getValue() : "";
-
         this.fileData.content = newContent;
         this.fileData.lastModified = Date.now();
         this.fileData.lastCommit = commitTitle;
         this.fileData.size = new Blob([newContent]).size;
-
         const filePath = (window.currentState?.path ? window.currentState.path + "/" : "") + this.currentFile;
         LocalStorageManager.saveFile(window.currentState?.repository, filePath, this.fileData);
-
         this.originalContent = newContent;
-
         showSuccessMessage(`Saved ${this.currentFile}`);
-
         setTimeout(() => {
           this.exitEditMode();
           this.hideLoading();
-
           if (this.elements.commitTitleInput) this.elements.commitTitleInput.value = "";
           if (this.elements.commitDescriptionInput) this.elements.commitDescriptionInput.value = "";
-
           if (window.renderFileList) {
             window.renderFileList();
           }
@@ -643,7 +570,6 @@ class coderViewEdit {
   }
   copyCode() {
     if (!this.codeMirror) return;
-
     const content = this.codeMirror.getValue();
     navigator.clipboard
       .writeText(content)
@@ -656,7 +582,6 @@ class coderViewEdit {
   }
   downloadFile() {
     if (!this.currentFile || !this.fileData) return;
-
     const content = this.fileData.content || "";
     const blob = new Blob([content], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
@@ -667,15 +592,12 @@ class coderViewEdit {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-
     showSuccessMessage(`Downloaded ${this.currentFile}`);
   }
   toggleWrapLines() {
     if (!this.codeMirror) return;
-
     const current = this.codeMirror.getOption("lineWrapping");
     this.codeMirror.setOption("lineWrapping", !current);
-
     if (this.elements.wrapLinesBtn) {
       if (!current) {
         this.elements.wrapLinesBtn.classList.add("text-github-accent-fg");
@@ -684,69 +606,36 @@ class coderViewEdit {
       }
     }
   }
-  renameFile(newName) {
-    // Rename logic here
-  }
+  renameFile(newName) {}
   adjustFontSize(change) {
-    if (!this.codeMirror) return;
-
-    const currentSize = this.codeMirror.getOption("fontSize") || 12;
-    let newSize = currentSize + change;
-
-    // Limit font size between 8 and 24
-    newSize = Math.max(8, Math.min(24, newSize));
-
-    if (newSize !== currentSize) {
-      this.codeMirror.setOption("fontSize", newSize);
-
-      if (this.elements.fontSizeDisplay) {
-        this.elements.fontSizeDisplay.textContent = `${newSize}px`;
-      }
-
-      // Save preference
-      localStorage.setItem("gitcodr_fontsize", newSize);
+    const newSize = this.state.fontSize + change;
+    const clampedSize = Math.max(8, Math.min(24, newSize));
+    if (clampedSize !== this.state.fontSize) {
+      this.setCodeMirrorFontSize(clampedSize);
     }
   }
   resetFontSize() {
-    if (!this.codeMirror) return;
-
-    const defaultSize = 12;
-    this.codeMirror.setOption("fontSize", defaultSize);
-
-    if (this.elements.fontSizeDisplay) {
-      this.elements.fontSizeDisplay.textContent = `${defaultSize}px`;
-    }
-
-    localStorage.setItem("gitcodr_fontsize", defaultSize);
+    this.setCodeMirrorFontSize(12);
   }
   toggleTheme() {
     const html = document.documentElement;
     const currentTheme = html.getAttribute("data-theme");
     const isDark = currentTheme === "dark";
     const newTheme = isDark ? "light" : "dark";
-
     html.setAttribute("data-theme", newTheme);
     localStorage.setItem("gitcodr_theme", newTheme);
-
-    // Update icon
     if (this.elements.themeIcon) {
       this.elements.themeIcon.innerHTML = isDark
-        ? '<path d="M8 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z"/>' // Sun icon
-        : '<path d="M9.598 1.591a.75.75 0 0 1 .785-.175 7 7 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Z"/>'; // Moon icon
+        ? '<path d="M8 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z"/>'
+        : '<path d="M9.598 1.591a.75.75 0 0 1 .785-.175 7 7 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Z"/>';
     }
-
-    // Update CodeMirror theme
     if (this.codeMirror) {
       this.codeMirror.setOption("theme", isDark ? "default" : "one-dark");
     }
   }
   openSearch() {
     if (!this.codeMirror) return;
-
-    // CodeMirror has built-in search
     this.codeMirror.execCommand("find");
-
-    // Focus search input if we have one
     const searchInput = document.querySelector(".CodeMirror-search-field");
     if (searchInput) {
       searchInput.focus();
@@ -756,7 +645,6 @@ class coderViewEdit {
   toggleFullscreen() {
     const coder = this.elements.coder;
     if (!coder) return;
-
     if (!document.fullscreenElement) {
       if (coder.requestFullscreen) {
         coder.requestFullscreen();
@@ -764,14 +652,6 @@ class coderViewEdit {
         coder.webkitRequestFullscreen();
       } else if (coder.msRequestFullscreen) {
         coder.msRequestFullscreen();
-      }
-
-      if (this.elements.fullscreenBtn) {
-        this.elements.fullscreenBtn.innerHTML = `
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M3.75 2A1.75 1.75 0 0 0 2 3.75v1.5a.75.75 0 0 0 1.5 0v-1.5a.25.25 0 0 1 .25-.25h1.5a.75.75 0 0 0 0-1.5h-1.5ZM10.75 2a.75.75 0 0 0 0 1.5h1.5a.25.25 0 0 1 .25.25v1.5a.75.75 0 0 0 1.5 0v-1.5A1.75 1.75 0 0 0 12.25 2ZM3.75 14a.75.75 0 0 0 0-1.5h-1.5a.25.25 0 0 1-.25-.25v-1.5a.75.75 0 0 0-1.5 0v1.5A1.75 1.75 0 0 0 3.75 16h1.5a.75.75 0 0 0 0-1.5ZM14 10.75a.75.75 0 0 0-1.5 0v1.5a.25.25 0 0 1-.25.25h-1.5a.75.75 0 0 0 0 1.5h1.5A1.75 1.75 0 0 0 16 12.25Z"/>
-                </svg>
-            `;
       }
     } else {
       if (document.exitFullscreen) {
@@ -781,37 +661,22 @@ class coderViewEdit {
       } else if (document.msExitFullscreen) {
         document.msExitFullscreen();
       }
-
-      if (this.elements.fullscreenBtn) {
-        this.elements.fullscreenBtn.innerHTML = `
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M3.75 2A1.75 1.75 0 0 0 2 3.75v1.5a.75.75 0 0 0 1.5 0v-1.5a.25.25 0 0 1 .25-.25h1.5a.75.75 0 0 0 0-1.5h-1.5ZM10.75 2a.75.75 0 0 0 0 1.5h1.5a.25.25 0 0 1 .25.25v1.5a.75.75 0 0 0 1.5 0v-1.5A1.75 1.75 0 0 0 12.25 2ZM3.75 14a.75.75 0 0 0 0-1.5h-1.5a.25.25 0 0 1-.25-.25v-1.5a.75.75 0 0 0-1.5 0v1.5A1.75 1.75 0 0 0 3.75 16h1.5a.75.75 0 0 0 0-1.5ZM14 10.75a.75.75 0 0 0-1.5 0v1.5a.25.25 0 0 1-.25.25h-1.5a.75.75 0 0 0 0 1.5h1.5A1.75 1.75 0 0 0 16 12.25Z"/>
-                </svg>
-            `;
-      }
     }
   }
   formatCode() {
     if (!this.codeMirror || !this.isEditing) return;
-
     const content = this.codeMirror.getValue();
     const language = this.codeMirror.getOption("mode");
-
-    // Simple formatting based on language
     let formatted = content;
-
     if (language === "javascript" || language === "json") {
       try {
         formatted = JSON.stringify(JSON.parse(content), null, 2);
       } catch (e) {
-        // Try basic JS formatting
         formatted = content.replace(/{/g, " {\n").replace(/}/g, "\n}").replace(/;/g, ";\n").replace(/,/g, ",\n");
       }
     } else if (language === "htmlmixed") {
-      // Basic HTML formatting
       formatted = content.replace(/>\s+</g, ">\n<").replace(/</g, "\n<").trim();
     }
-
     if (formatted !== content) {
       this.codeMirror.setValue(formatted);
       showSuccessMessage("Code formatted");
@@ -820,16 +685,15 @@ class coderViewEdit {
     }
   }
 }
-
 window.coderViewEdit = new coderViewEdit();
 /**
- *
+ * 
  *  C R E A T E D  B Y
- *
- *  William Hanson
- *
+ * 
+ *  William Hanson 
+ * 
  *  Chevrolay@Outlook.com
- *
+ * 
  *  m.me/Chevrolay
- *
+ * 
  */
