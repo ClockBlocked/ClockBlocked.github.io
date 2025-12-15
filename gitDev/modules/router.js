@@ -1,3 +1,7 @@
+
+
+
+/**
 function navigateToRoot() {
   currentState.path = '';
   
@@ -297,13 +301,282 @@ const LoadingProgress = (() => {
   };
 
 })();
+**/
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+function navigateToRoot() {
+  currentState.path = '';
+  
+  showLoading('Loading repository root...');
+  
+  setTimeout(() => {
+    try {
+      currentState.files = LocalStorageManager.listFiles(currentState.repository, '');
+      renderFileList();
+      updateBreadcrumb();
+    } catch (error) {
+      console.error('Failed to load repository root:', error);
+    }
+    
+    hideLoading();
+  }, 150);
+}
+
+function navigateToPath(path) {
+  currentState.path = path;
+  
+  showLoading(`Loading directory ${path}...`);
+  
+  setTimeout(() => {
+    try {
+      const pathPrefix = path ? path + '/' : '';
+      currentState.files = LocalStorageManager.listFiles(currentState.repository, pathPrefix);
+      renderFileList();
+      updateBreadcrumb();
+    } catch (error) {
+      console.error(`Failed to load path ${path}:`, error);
+    }
+    
+    hideLoading();
+  }, 150);
+}
+
+function showFileEditor() {
+  // NO LONGER USED - Using unified coder instead
+  console.warn('showFileEditor deprecated - use showFileViewer instead');
+  showFileViewer();
+}
+
+function showRepoSelector() {
+  // Hide other views
+  const explorerView = document.getElementById('explorerView');
+  const coder = document.getElementById('coder');
+  
+  if (explorerView) explorerView.classList.add('hidden');
+  if (coder) coder.classList.add('hidden');
+  
+  // Show repo selector
+  const repoSelector = document.getElementById('repoSelectorView');
+  if (repoSelector) {
+    repoSelector.classList.remove('hidden');
+  }
+  
+  LoadingProgress.show();
+  setTimeout(() => {
+    LoadingProgress.hide();
+  }, 400);
+}
+
+function showFileViewer() {
+  // Hide other views
+  const repoSelector = document.getElementById('repoSelectorView');
+  const explorerView = document.getElementById('explorerView');
+  
+  if (repoSelector) repoSelector.classList.add('hidden');
+  if (explorerView) explorerView.classList.add('hidden');
+  
+  // Show the unified coder
+  const coder = document.getElementById('coder');
+  if (coder) {
+    coder.classList.remove('hidden');
+    
+    // Initialize coder if needed
+    if (window.coderViewEdit && typeof window.coderViewEdit.init === 'function') {
+      // Check if already has header (initialized)
+      const hasHeader = coder.querySelector('.code-viewer-header');
+      if (!hasHeader) {
+        window.coderViewEdit.init();
+      }
+    }
+  }
+  
+  LoadingProgress.show();
+  setTimeout(() => LoadingProgress.hide(), 300);
+}
+
+function showExplorer() {
+  if (currentState.repository) {
+    // Hide other views
+    const repoSelector = document.getElementById('repoSelectorView');
+    const coder = document.getElementById('coder');
+    
+    if (repoSelector) repoSelector.classList.add('hidden');
+    if (coder) coder.classList.add('hidden');
+    
+    // Show explorer view
+    const explorerView = document.getElementById('explorerView');
+    if (explorerView) {
+      explorerView.classList.remove('hidden');
+    } else {
+      console.error('explorerView element not found');
+      return;
+    }
+    
+    updateStats();
+    LoadingProgress.show();
+    setTimeout(() => {
+      LoadingProgress.hide();
+    }, 300);
+  }
+}
+
+const LoadingProgress = (() => {
+
+  let progressElement = null;
+  let fillElement = null;
+  let hideTimeout = null;
+  let progressInterval = null;
+  let currentProgress = 0;
+
+  let config = {
+    color: '#1c7eec',
+    height: '2.5px', 
+    minimum: 0.08,
+    maximum: 0.994,
+    incrementPace: 'realistic'
+  };
+
+  function init() {
+    progressElement = document.createElement('div');
+    progressElement.className = 'gh-progress';
+    
+    fillElement = document.createElement('div'); 
+    fillElement.className = 'gh-progress-fill';
+    
+    progressElement.appendChild(fillElement);
+    
+    const styleElement = document.createElement('style');
+    styleElement.innerHTML = loaderStyles;
+    document.head.appendChild(styleElement);
+    
+    progressElement.style.height = config.height;
+    fillElement.style.backgroundColor = config.color;
+    
+    document.body.appendChild(progressElement);
+  }
+
+  function show() {
+    if (!progressElement) init();
+    
+    cleanup();
+    currentProgress = 0;
+    progressElement.classList.remove('hidden');  
+    progressElement.classList.add('visible');
+    
+    if (config.incrementPace === 'realistic') {
+      simulateRealisticLoad();
+    } else if (config.incrementPace === 'linear') {
+      simulateLinearLoad();
+    } else {
+      fillElement.style.width = `${config.minimum * 100}%`; 
+    }
+  }
+
+  function hide() {
+    if (!progressElement) return;
+    
+    currentProgress = 100;
+    fillElement.style.width = '100%';
+    
+    hideTimeout = setTimeout(() => {
+      progressElement.classList.remove('visible');
+      setTimeout(cleanup, 300);  
+    }, 150);
+  }
+
+  function cleanup() {
+    clearTimeout(hideTimeout);
+    hideTimeout = null;
+    
+    clearInterval(progressInterval);
+    progressInterval = null;
+    
+    progressElement.classList.add('hidden');
+    progressElement.classList.remove('visible');
+    
+    fillElement.style.width = '0%';
+    currentProgress = 0;
+  }
+
+  function simulateRealisticLoad() {
+    const updateProgress = () => {
+      if (currentProgress >= config.maximum * 100) {
+        clearInterval(progressInterval);
+        return;
+      }
+      
+      let increment, delay;
+
+      if (currentProgress < 60) {
+        increment = Math.random() * 5 + 3;
+        delay = Math.random() * 60 + 20;
+      } else if (currentProgress < 90) {
+        increment = Math.random() * 2 + 1;
+        delay = Math.random() * 250 + 150;
+      } else {
+        increment = Math.random() * 0.5 + 0.3;  
+        delay = Math.random() * 500 + 500;
+      }
+
+      currentProgress = Math.min(config.maximum * 100, currentProgress + increment);
+      fillElement.style.width = `${currentProgress}%`;
+
+      clearInterval(progressInterval);
+      progressInterval = setTimeout(updateProgress, delay);
+    };
+
+    updateProgress();
+  }
+
+  function simulateLinearLoad() {
+    const updateProgress = () => {
+      currentProgress += 1;
+      fillElement.style.width = `${currentProgress}%`;
+
+      if (currentProgress < config.maximum * 100) {
+        setTimeout(updateProgress, 16);
+      }
+    };
+
+    updateProgress();
+  }
+
+  function configOptions(options = {}) {
+    config = { ...config, ...options };
+
+    if (progressElement) {
+      progressElement.style.height = config.height;
+      fillElement.style.backgroundColor = config.color;
+    }
+  }
+
+  function isVisible() {
+    return progressElement && !progressElement.classList.contains('hidden');
+  }
+
+  return {
+    config: configOptions,
+    show,
+    hide,
+    isVisible  
+  };
+
+})();
 
 
 
-// { ProgressBar };
-
-
-
+window.navigateToRoot = navigateToRoot;
+window.navigateToPath = navigateToPath;
+window.showFileEditor = showFileEditor;
+window.showRepoSelector = showRepoSelector;
+window.showFileViewer = showFileViewer;
+window.showExplorer = showExplorer;
 /**
  * 
  *  C R E A T E D  B Y
