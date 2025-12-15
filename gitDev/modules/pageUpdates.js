@@ -200,78 +200,68 @@ function escapeHTML(str) {
 
 
 
+/**
+ * pageUpdates.js
+ */
 function displayFileContent(filename, fileData) {
-    if (window.coderViewEdit && typeof coderViewEdit.displayFile === 'function') {
-        coderViewEdit.displayFile(filename, fileData);
-        showFileViewer();
-        return;
-    }
+    // ALWAYS use the new coder system
+    console.log('displayFileContent called for:', filename);
     
-    const currentFileName = document.getElementById('currentFileName');
-    const fileLinesCount = document.getElementById('fileLinesCount');
-    const fileSize = document.getElementById('fileSize');
-    const fileLanguageDisplay = document.getElementById('fileLanguageDisplay');
-    const fileCategory = document.getElementById('fileCategory');
-    const fileTags = document.getElementById('fileTags');
-    
-    if (currentFileName) currentFileName.textContent = filename;
-    const content = fileData.content || '';
-    const lines = content.split('\n');
-    const lineCount = lines.length;
-    
-    if (fileLinesCount) fileLinesCount.textContent = `${lineCount} ${lineCount === 1 ? 'line' : 'lines'}`;
-    if (fileSize) fileSize.textContent = formatFileSize(content.length);
-    
-    const ext = filename.split('.').pop().toLowerCase();
-    const language = getLanguageName(ext);
-    const prismLang = getPrismLanguage(ext);
-    
-    if (fileLanguageDisplay) fileLanguageDisplay.textContent = language;
-    
-    const codeBlock = document.getElementById('codeBlock');
-    const lineNumbers = document.getElementById('lineNumbers');
-    
-    if (codeBlock) {
-        codeBlock.textContent = content;
-        codeBlock.className = 'code-block';
-        codeBlock.classList.add(`language-${prismLang}`);
-    }
-    
-    if (lineNumbers) {
-        lineNumbers.innerHTML = '';
-        for (let i = 1; i <= lineCount; i++) {
-            const lineDiv = document.createElement('div');
-            lineDiv.className = 'line-number';
-            lineDiv.textContent = i;
-            lineNumbers.appendChild(lineDiv);
-        }
-    }
-    
-    setTimeout(() => {
-        if (window.Prism && codeBlock) {
-            try {
-                Prism.highlightElement(codeBlock);
-            } catch (error) {
-                console.warn('Prism highlighting failed:', error);
-                if (codeBlock) {
-                    codeBlock.textContent = content;
+    // Make sure coderViewEdit exists
+    if (window.coderViewEdit && typeof window.coderViewEdit.displayFile === 'function') {
+        try {
+            // Initialize coder if needed
+            if (typeof window.coderViewEdit.init === 'function') {
+                const coder = document.getElementById('coder');
+                if (coder && !coder.querySelector('.code-viewer-header')) {
+                    window.coderViewEdit.init();
                 }
             }
-        }
-    }, 50);
-    
-    if (fileCategory) fileCategory.textContent = fileData.category || 'General';
-    
-    if (fileTags) {
-        if (fileData.tags && fileData.tags.length > 0) {
-            fileTags.innerHTML = fileData.tags.map(tag => 
-                `<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-github-accent-emphasis/20 border border-github-accent-emphasis/30 text-github-accent-fg">${tag}</span>`
-            ).join('');
-        } else {
-            fileTags.innerHTML = '<span class="text-github-fg-muted text-sm">No tags</span>';
+            
+            // Display the file
+            window.coderViewEdit.displayFile(filename, fileData);
+            
+            // Show the coder view
+            showFileViewer();
+            return;
+            
+        } catch (error) {
+            console.error('Error using coderViewEdit:', error);
+            // Fall through to error message
         }
     }
+    
+    // If we get here, coderViewEdit failed or doesn't exist
+    console.error('coderViewEdit not available or failed');
+    
+    // Create a simple fallback display in the coder container
+    const coder = document.getElementById('coder');
+    if (coder) {
+        coder.innerHTML = `
+            <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                <div class="mb-4">
+                    <h1 class="text-2xl font-bold text-github-fg-default">${filename}</h1>
+                    <p class="text-github-fg-muted">File size: ${formatFileSize(fileData.content.length)}</p>
+                </div>
+                <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg overflow-hidden">
+                    <pre class="p-4 overflow-auto max-h-[600px] text-sm font-mono">${fileData.content}</pre>
+                </div>
+                <div class="mt-4">
+                    <button onclick="editFile()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                        Edit (Fallback)
+                    </button>
+                </div>
+            </div>
+        `;
+        coder.classList.remove('hidden');
+        showFileViewer();
+    } else {
+        showErrorMessage('Cannot display file: coder container not found');
+    }
 }
+
+// Keep all your other existing functions (updateSelectedTags, updateBreadcrumb, etc.)
+// ... rest of your pageUpdates.js code ...
 
 
 
