@@ -11,13 +11,11 @@ class EventListenersManager {
             repositories: []
         };
     }
-
     init(sidebarManager) {
         this.sidebarManager = sidebarManager;
         this.setupAllEventListeners();
         this.setupGlobalEventDelegation();
     }
-
     setupAllEventListeners() {
         const actionHandlers = {
             'create-repo': () => this.handleCreateRepo(),
@@ -41,7 +39,6 @@ class EventListenersManager {
             'confirm-delete-file': () => this.handleConfirmDeleteFile(),
             'hide-delete-file-modal': () => this.handleHideDeleteFileModal()
         };
-
         Object.keys(actionHandlers).forEach(action => {
             document.querySelectorAll(`[data-action="${action}"]`).forEach(element => {
                 element.addEventListener('click', (e) => {
@@ -51,52 +48,41 @@ class EventListenersManager {
                 });
             });
         });
-
         this.setupKeyboardShortcuts();
         this.setupFormInteractions();
         this.setupModalInteractions();
         this.setupAdditionalListeners();
     }
-
     handleCreateRepo() {
         if (window.createRepository && typeof window.createRepository === 'function') {
             window.createRepository();
         }
     }
-
     handleShowCreateRepo() {
         if (window.showCreateRepoModal && typeof window.showCreateRepoModal === 'function') {
             window.showCreateRepoModal();
         }
     }
-
     handleHideCreateRepoModal() {
         if (window.hideCreateRepoModal && typeof window.hideCreateRepoModal === 'function') {
             window.hideCreateRepoModal();
         }
     }
-
     handleCreateFile() {
         if (window.createFile && typeof window.createFile === 'function') {
             window.createFile();
         }
     }
-
     handleShowCreateFile() {
         if (window.showCreateFileModal && typeof window.showCreateFileModal === 'function') {
             window.showCreateFileModal();
         }
     }
-
     handleHideCreateFileModal() {
         if (window.hideCreateFileModal && typeof window.hideCreateFileModal === 'function') {
             window.hideCreateFileModal();
         }
     }
-
-
-
-
     handleEditFile() {
         if (window.editFile && typeof window.editFile === 'function') {
             window.editFile();
@@ -104,49 +90,36 @@ class EventListenersManager {
             this.handleShowFileViewer();
         }
     }
-
-
-
-
     handleDownloadFile() {
         if (window.downloadCurrentFile && typeof window.downloadCurrentFile === 'function') {
             window.downloadCurrentFile();
         }
     }
-
     handleDeleteFile() {
         if (window.showDeleteFileModal && typeof window.showDeleteFileModal === 'function') {
             window.showDeleteFileModal();
         }
     }
-
     handlePreviewFile() {
         if (window.previewFile && typeof window.previewFile === 'function') {
             window.previewFile();
         }
     }
-
     handleShowRepoSelector() {
         if (window.showRepoSelector && typeof window.showRepoSelector === 'function') {
             window.showRepoSelector();
         }
     }
-
     handleNavigateRoot() {
         if (window.navigateToRoot && typeof window.navigateToRoot === 'function') {
             window.navigateToRoot();
         }
     }
-
     handleShowExplorer() {
         if (window.showExplorer && typeof window.showExplorer === 'function') {
             window.showExplorer();
         }
     }
-
-
-
-
     handleShowFileViewer() {
         if (window.showFileViewer && typeof window.showFileViewer === 'function') {
             window.showFileViewer();
@@ -154,59 +127,47 @@ class EventListenersManager {
             const coder = document.getElementById('coder');
             const repoSelector = document.getElementById('repoSelectorView');
             const explorerView = document.getElementById('explorerView');
-            
             if (coder) coder.classList.remove('hidden');
             if (repoSelector) repoSelector.classList.add('hidden');
             if (explorerView) explorerView.classList.add('hidden');
         }
     }
-
-
-
-
     handleStarRepo() {
         if (this.currentState.repository) {
             this.showNotification(`Starred ${this.currentState.repository}`);
         }
     }
-
     handleForkRepo() {
         if (this.currentState.repository) {
             this.showNotification(`Forked ${this.currentState.repository}`);
         }
     }
-
     handleToggleTheme() {
-        if (this.sidebarManager && this.sidebarManager.toggleTheme && typeof this.sidebarManager.toggleTheme === 'function') {
-            this.sidebarManager.toggleTheme();
+        if (window.coderViewEdit && typeof window.coderViewEdit.toggleTheme === 'function') {
+            window.coderViewEdit.toggleTheme();
         } else {
             this.toggleThemeFallback();
         }
     }
-
     handleAddTag() {
         if (window.addTag && typeof window.addTag === 'function') {
             window.addTag();
         }
     }
-
     handleConfirmDeleteFile() {
         if (window.confirmDeleteFile && typeof window.confirmDeleteFile === 'function') {
             window.confirmDeleteFile();
         }
     }
-
     handleHideDeleteFileModal() {
         if (window.hideDeleteFileModal && typeof window.hideDeleteFileModal === 'function') {
             window.hideDeleteFileModal();
         }
     }
-
     toggleThemeFallback() {
         const html = document.documentElement;
         const themeIcons = document.querySelectorAll('#themeIcon, #sidebarThemeIcon');
         const isDarkTheme = html.getAttribute('data-theme') === 'dark';
-        
         if (isDarkTheme) {
             html.setAttribute('data-theme', 'light');
             themeIcons.forEach(icon => {
@@ -218,10 +179,8 @@ class EventListenersManager {
                 icon.className = 'fas fa-moon';
             });
         }
-        
         localStorage.setItem('gitcodr_theme', isDarkTheme ? 'light' : 'dark');
     }
-
     setupKeyboardShortcuts() {
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
@@ -229,17 +188,14 @@ class EventListenersManager {
                 this.handleHideCreateFileModal();
                 this.handleHideDeleteFileModal();
             }
-            
             if ((e.ctrlKey || e.metaKey) && e.key === 'n' && !e.shiftKey) {
                 e.preventDefault();
                 this.handleShowCreateFile();
             }
-            
             if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'N') {
                 e.preventDefault();
                 this.handleShowCreateRepo();
             }
-            
             if ((e.ctrlKey || e.metaKey) && e.key === 's') {
                 e.preventDefault();
                 if (window.saveFile && typeof window.saveFile === 'function') {
@@ -248,7 +204,6 @@ class EventListenersManager {
             }
         });
     }
-
     setupFormInteractions() {
         const tagInput = document.getElementById('tagInput');
         if (tagInput) {
@@ -259,14 +214,12 @@ class EventListenersManager {
                 }
             });
         }
-        
         const newFileName = document.getElementById('newFileName');
         if (newFileName) {
             newFileName.addEventListener('focus', () => {
                 newFileName.select();
             });
         }
-        
         const newRepoName = document.getElementById('newRepoName');
         if (newRepoName) {
             newRepoName.addEventListener('focus', () => {
@@ -274,7 +227,6 @@ class EventListenersManager {
             });
         }
     }
-
     setupModalInteractions() {
         const createRepoModal = document.getElementById('createRepoModal');
         if (createRepoModal) {
@@ -284,7 +236,6 @@ class EventListenersManager {
                 }
             });
         }
-        
         const createFileModal = document.getElementById('createFileModal');
         if (createFileModal) {
             createFileModal.addEventListener('click', (e) => {
@@ -293,7 +244,6 @@ class EventListenersManager {
                 }
             });
         }
-        
         const deleteFileModal = document.getElementById('deleteFileModal');
         if (deleteFileModal) {
             deleteFileModal.addEventListener('click', (e) => {
@@ -303,7 +253,6 @@ class EventListenersManager {
             });
         }
     }
-
     setupAdditionalListeners() {
         const branchSelector = document.getElementById('branchSelector');
         if (branchSelector) {
@@ -316,14 +265,12 @@ class EventListenersManager {
                 }
             });
         }
-        
         document.addEventListener('click', (e) => {
             const branchDropdown = document.getElementById('branchDropdown');
             if (branchDropdown && !branchDropdown.contains(e.target) && e.target !== branchSelector) {
                 branchDropdown.classList.add('hidden');
             }
         });
-        
         const leftSidebarTrigger = document.getElementById('leftSidebarTrigger');
         if (leftSidebarTrigger) {
             leftSidebarTrigger.addEventListener('click', (e) => {
@@ -333,7 +280,6 @@ class EventListenersManager {
                 }
             });
         }
-        
         const rightSidebarTrigger = document.getElementById('rightSidebarTrigger');
         if (rightSidebarTrigger) {
             rightSidebarTrigger.addEventListener('click', (e) => {
@@ -343,7 +289,6 @@ class EventListenersManager {
                 }
             });
         }
-        
         const overlay = document.getElementById('overlay');
         if (overlay) {
             overlay.addEventListener('click', () => {
@@ -358,9 +303,6 @@ class EventListenersManager {
             });
         }
     }
-
-
-
     setupGlobalEventDelegation() {
         document.addEventListener('click', (e) => {
             const repoCard = e.target.closest('.bg-github-canvas-overlay.border');
@@ -371,7 +313,6 @@ class EventListenersManager {
                     window.openRepository(repoName);
                 }
             }
-            // Repository List Items
             const repoItem = e.target.closest('.repo-item');
             if (repoItem) {
                 const repoName = repoItem.querySelector('span:not(.text-github-fg-muted)')?.textContent;
@@ -380,7 +321,6 @@ class EventListenersManager {
                     window.openRepository(repoName);
                 }
             }
-            // Recent File List Toolbar Options
             const recentFileItem = e.target.closest('.recent-file-item');
             if (recentFileItem) {
                 const fileName = recentFileItem.querySelector('.text-github-fg-default')?.textContent;
@@ -390,7 +330,6 @@ class EventListenersManager {
                     window.openRecentFile(repoName, '', fileName);
                 }
             }
-            // File Toolbar Optiona
             const fileRow = e.target.closest('tbody tr');
             if (fileRow && fileRow.parentElement.id === 'fileListBody') {
                 const fileName = fileRow.querySelector('td:first-child span')?.textContent;
@@ -399,7 +338,6 @@ class EventListenersManager {
                     window.viewFile(fileName);
                 }
             }
-            // Breadcrumbs
             const breadcrumbLink = e.target.closest('#pathBreadcrumb a');
             if (breadcrumbLink) {
                 e.preventDefault();
@@ -410,30 +348,23 @@ class EventListenersManager {
                     window.navigateToRoot();
                 }
             }
-            // Edit
             const editBtn = e.target.closest('#editToggleBtn, .edit-btn');
             if (editBtn && window.coderViewEdit && typeof window.coderViewEdit.enterEditMode === 'function') {
                 e.preventDefault();
                 window.coderViewEdit.enterEditMode();
             }
-            // Save
             const saveBtn = e.target.closest('#saveChangesBtn, .commit-btn');
             if (saveBtn && window.coderViewEdit && typeof window.coderViewEdit.saveChanges === 'function') {
                 e.preventDefault();
                 window.coderViewEdit.saveChanges();
             }
-            // Cancel            
             const cancelBtn = e.target.closest('#cancelEditBtn, .cancel-btn');
             if (cancelBtn && window.coderViewEdit && typeof window.coderViewEdit.cancelEdit === 'function') {
                 e.preventDefault();
                 window.coderViewEdit.cancelEdit();
-            }            
+            }
         });
     }
-
-
-
-
     showNotification(message) {
         const notification = document.createElement('div');
         notification.className = 'fixed top-4 right-4 bg-github-canvas-overlay border border-github-border-default rounded-lg p-4 shadow-lg z-50 animate-slide-down';
@@ -445,9 +376,7 @@ class EventListenersManager {
                 <span class="text-github-fg-default text-sm">${message}</span>
             </div>
         `;
-        
         document.body.appendChild(notification);
-        
         setTimeout(() => {
             notification.style.animation = 'fadeOut 0.3s ease-in';
             setTimeout(() => {
@@ -458,7 +387,6 @@ class EventListenersManager {
         }, 3000);
     }
 }
-
 const eventListeners = new EventListenersManager();
 /**
  * 
