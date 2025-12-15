@@ -708,6 +708,250 @@ class coderViewEdit {
             this.elements.coder.classList.add('hidden');
         }
     }
+    
+    
+    
+    
+adjustFontSize(change) {
+    if (!this.codeMirror) return;
+    
+    const currentSize = this.codeMirror.getOption('fontSize') || 12;
+    let newSize = currentSize + change;
+    
+    // Limit font size between 8 and 24
+    newSize = Math.max(8, Math.min(24, newSize));
+    
+    if (newSize !== currentSize) {
+        this.codeMirror.setOption('fontSize', newSize);
+        
+        if (this.elements.fontSizeDisplay) {
+            this.elements.fontSizeDisplay.textContent = `${newSize}px`;
+        }
+        
+        // Save preference
+        localStorage.setItem('gitcodr_fontsize', newSize);
+    }
+}
+
+resetFontSize() {
+    if (!this.codeMirror) return;
+    
+    const defaultSize = 12;
+    this.codeMirror.setOption('fontSize', defaultSize);
+    
+    if (this.elements.fontSizeDisplay) {
+        this.elements.fontSizeDisplay.textContent = `${defaultSize}px`;
+    }
+    
+    localStorage.setItem('gitcodr_fontsize', defaultSize);
+}
+
+toggleTheme() {
+    const html = document.documentElement;
+    const currentTheme = html.getAttribute('data-theme');
+    const isDark = currentTheme === 'dark';
+    const newTheme = isDark ? 'light' : 'dark';
+    
+    html.setAttribute('data-theme', newTheme);
+    localStorage.setItem('gitcodr_theme', newTheme);
+    
+    // Update icon
+    if (this.elements.themeIcon) {
+        this.elements.themeIcon.innerHTML = isDark ? 
+            '<path d="M8 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z"/>' : // Sun icon
+            '<path d="M9.598 1.591a.75.75 0 0 1 .785-.175 7 7 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Z"/>'; // Moon icon
+    }
+    
+    // Update CodeMirror theme
+    if (this.codeMirror) {
+        this.codeMirror.setOption('theme', isDark ? 'default' : 'material-darker');
+    }
+}
+
+openSearch() {
+    if (!this.codeMirror) return;
+    
+    // CodeMirror has built-in search
+    this.codeMirror.execCommand('find');
+    
+    // Focus search input if we have one
+    const searchInput = document.querySelector('.CodeMirror-search-field');
+    if (searchInput) {
+        searchInput.focus();
+        searchInput.select();
+    }
+}
+
+toggleFullscreen() {
+    const coder = this.elements.coder;
+    if (!coder) return;
+    
+    if (!document.fullscreenElement) {
+        if (coder.requestFullscreen) {
+            coder.requestFullscreen();
+        } else if (coder.webkitRequestFullscreen) {
+            coder.webkitRequestFullscreen();
+        } else if (coder.msRequestFullscreen) {
+            coder.msRequestFullscreen();
+        }
+        
+        if (this.elements.fullscreenBtn) {
+            this.elements.fullscreenBtn.innerHTML = `
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M3.75 2A1.75 1.75 0 0 0 2 3.75v1.5a.75.75 0 0 0 1.5 0v-1.5a.25.25 0 0 1 .25-.25h1.5a.75.75 0 0 0 0-1.5h-1.5ZM10.75 2a.75.75 0 0 0 0 1.5h1.5a.25.25 0 0 1 .25.25v1.5a.75.75 0 0 0 1.5 0v-1.5A1.75 1.75 0 0 0 12.25 2ZM3.75 14a.75.75 0 0 0 0-1.5h-1.5a.25.25 0 0 1-.25-.25v-1.5a.75.75 0 0 0-1.5 0v1.5A1.75 1.75 0 0 0 3.75 16h1.5a.75.75 0 0 0 0-1.5ZM14 10.75a.75.75 0 0 0-1.5 0v1.5a.25.25 0 0 1-.25.25h-1.5a.75.75 0 0 0 0 1.5h1.5A1.75 1.75 0 0 0 16 12.25Z"/>
+                </svg>
+            `;
+        }
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+        }
+        
+        if (this.elements.fullscreenBtn) {
+            this.elements.fullscreenBtn.innerHTML = `
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M3.75 2A1.75 1.75 0 0 0 2 3.75v1.5a.75.75 0 0 0 1.5 0v-1.5a.25.25 0 0 1 .25-.25h1.5a.75.75 0 0 0 0-1.5h-1.5ZM10.75 2a.75.75 0 0 0 0 1.5h1.5a.25.25 0 0 1 .25.25v1.5a.75.75 0 0 0 1.5 0v-1.5A1.75 1.75 0 0 0 12.25 2ZM3.75 14a.75.75 0 0 0 0-1.5h-1.5a.25.25 0 0 1-.25-.25v-1.5a.75.75 0 0 0-1.5 0v1.5A1.75 1.75 0 0 0 3.75 16h1.5a.75.75 0 0 0 0-1.5ZM14 10.75a.75.75 0 0 0-1.5 0v1.5a.25.25 0 0 1-.25.25h-1.5a.75.75 0 0 0 0 1.5h1.5A1.75 1.75 0 0 0 16 12.25Z"/>
+                </svg>
+            `;
+        }
+    }
+}
+
+formatCode() {
+    if (!this.codeMirror || !this.isEditing) return;
+    
+    const content = this.codeMirror.getValue();
+    const language = this.codeMirror.getOption('mode');
+    
+    // Simple formatting based on language
+    let formatted = content;
+    
+    if (language === 'javascript' || language === 'json') {
+        try {
+            formatted = JSON.stringify(JSON.parse(content), null, 2);
+        } catch (e) {
+            // Try basic JS formatting
+            formatted = content
+                .replace(/{/g, ' {\n')
+                .replace(/}/g, '\n}')
+                .replace(/;/g, ';\n')
+                .replace(/,/g, ',\n');
+        }
+    } else if (language === 'htmlmixed') {
+        // Basic HTML formatting
+        formatted = content
+            .replace(/>\s+</g, '>\n<')
+            .replace(/</g, '\n<')
+            .trim();
+    }
+    
+    if (formatted !== content) {
+        this.codeMirror.setValue(formatted);
+        showSuccessMessage('Code formatted');
+    } else {
+        showInfoMessage('No formatting needed');
+    }
+}
+
+// Update enterEditMode to show format button
+enterEditMode() {
+    if (!this.currentFile || this.isLoading) return;
+    
+    this.showLoading('Switching to edit mode...');
+    
+    setTimeout(() => {
+        try {
+            this.isEditing = true;
+            
+            // Show format button in edit mode
+            if (this.elements.formatCodeBtn) {
+                this.elements.formatCodeBtn.classList.remove('hidden');
+            }
+            
+            // ... rest of existing enterEditMode code ...
+        } catch (error) {
+            this.hideLoading();
+            showErrorMessage('Failed to enter edit mode');
+        }
+    }, 100);
+}
+
+// Update exitEditMode to hide format button
+exitEditMode() {
+    this.isEditing = false;
+    
+    // Hide format button in view mode
+    if (this.elements.formatCodeBtn) {
+        this.elements.formatCodeBtn.classList.add('hidden');
+    }
+    
+    // ... rest of existing exitEditMode code ...
+}
+
+// Add to setupCodeMirror to load saved preferences
+setupCodeMirror() {
+    if (typeof CodeMirror === 'undefined') {
+        setTimeout(() => this.setupCodeMirror(), 100);
+        return;
+    }
+
+    if (!this.elements.codeMirrorContainer || this.codeMirror) return;
+    
+    // Load saved font size
+    const savedFontSize = localStorage.getItem('gitcodr_fontsize');
+    const fontSize = savedFontSize ? parseInt(savedFontSize) : 12;
+    
+    // Load saved theme
+    const savedTheme = localStorage.getItem('gitcodr_theme');
+    const isDarkTheme = savedTheme === 'dark' || (!savedTheme && document.documentElement.getAttribute('data-theme') === 'dark');
+    const cmTheme = isDarkTheme ? 'material-darker' : 'default';
+    
+    this.codeMirror = CodeMirror(this.elements.codeMirrorContainer, {
+        value: '',
+        mode: 'javascript',
+        theme: cmTheme,
+        fontSize: fontSize,
+        lineNumbers: false,
+        lineWrapping: true,
+        readOnly: true,
+        tabSize: 2,
+        indentUnit: 2,
+        smartIndent: true,
+        matchBrackets: true,
+        autoCloseBrackets: true,
+        scrollbarStyle: 'native',
+        viewportMargin: Infinity,
+        cursorBlinkRate: 530,
+        extraKeys: {
+            "Ctrl-S": () => this.saveChanges(),
+            "Cmd-S": () => this.saveChanges(),
+            "Ctrl-F": "findPersistent",
+            "Ctrl-D": (cm) => cm.execCommand("duplicateLine"),
+            "Ctrl-/": "toggleComment",
+            "Ctrl-Shift-F": () => this.formatCode()
+        }
+    });
+    
+    // Update font size display
+    if (this.elements.fontSizeDisplay) {
+        this.elements.fontSizeDisplay.textContent = `${fontSize}px`;
+    }
+    
+    // Update theme icon
+    if (this.elements.themeIcon && isDarkTheme) {
+        this.elements.themeIcon.innerHTML = '<path d="M9.598 1.591a.75.75 0 0 1 .785-.175 7 7 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Z"/>';
+    }
+    
+    this.updateLineNumbers();
+    
+    this.codeMirror.on('change', () => {
+        this.updateLineNumbers();
+    });
+}    
 }
 
 window.coderViewEdit = new coderViewEdit();
