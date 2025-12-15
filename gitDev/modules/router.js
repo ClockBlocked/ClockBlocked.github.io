@@ -308,8 +308,6 @@ const LoadingProgress = (() => {
  
  
  
- 
- 
 function navigateToRoot() {
   currentState.path = '';
   
@@ -320,9 +318,7 @@ function navigateToRoot() {
       currentState.files = LocalStorageManager.listFiles(currentState.repository, '');
       renderFileList();
       updateBreadcrumb();
-    } catch (error) {
-      console.error('Failed to load repository root:', error);
-    }
+    } catch (error) {}
     
     hideLoading();
   }, 150);
@@ -339,29 +335,23 @@ function navigateToPath(path) {
       currentState.files = LocalStorageManager.listFiles(currentState.repository, pathPrefix);
       renderFileList();
       updateBreadcrumb();
-    } catch (error) {
-      console.error(`Failed to load path ${path}:`, error);
-    }
+    } catch (error) {}
     
     hideLoading();
   }, 150);
 }
 
 function showFileEditor() {
-  // NO LONGER USED - Using unified coder instead
-  console.warn('showFileEditor deprecated - use showFileViewer instead');
   showFileViewer();
 }
 
 function showRepoSelector() {
-  // Hide other views
   const explorerView = document.getElementById('explorerView');
   const coder = document.getElementById('coder');
   
   if (explorerView) explorerView.classList.add('hidden');
   if (coder) coder.classList.add('hidden');
   
-  // Show repo selector
   const repoSelector = document.getElementById('repoSelectorView');
   if (repoSelector) {
     repoSelector.classList.remove('hidden');
@@ -374,21 +364,17 @@ function showRepoSelector() {
 }
 
 function showFileViewer() {
-  // Hide other views
   const repoSelector = document.getElementById('repoSelectorView');
   const explorerView = document.getElementById('explorerView');
   
   if (repoSelector) repoSelector.classList.add('hidden');
   if (explorerView) explorerView.classList.add('hidden');
   
-  // Show the unified coder
   const coder = document.getElementById('coder');
   if (coder) {
     coder.classList.remove('hidden');
     
-    // Initialize coder if needed
     if (window.coderViewEdit && typeof window.coderViewEdit.init === 'function') {
-      // Check if already has header (initialized)
       const hasHeader = coder.querySelector('.code-viewer-header');
       if (!hasHeader) {
         window.coderViewEdit.init();
@@ -402,20 +388,15 @@ function showFileViewer() {
 
 function showExplorer() {
   if (currentState.repository) {
-    // Hide other views
     const repoSelector = document.getElementById('repoSelectorView');
     const coder = document.getElementById('coder');
     
     if (repoSelector) repoSelector.classList.add('hidden');
     if (coder) coder.classList.add('hidden');
     
-    // Show explorer view
     const explorerView = document.getElementById('explorerView');
     if (explorerView) {
       explorerView.classList.remove('hidden');
-    } else {
-      console.error('explorerView element not found');
-      return;
     }
     
     updateStats();
@@ -427,7 +408,6 @@ function showExplorer() {
 }
 
 const LoadingProgress = (() => {
-
   let progressElement = null;
   let fillElement = null;
   let hideTimeout = null;
@@ -452,7 +432,33 @@ const LoadingProgress = (() => {
     progressElement.appendChild(fillElement);
     
     const styleElement = document.createElement('style');
-    styleElement.innerHTML = loaderStyles;
+    styleElement.innerHTML = `
+      .gh-progress {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 2.5px;
+        z-index: 9999;
+        background-color: #e1e4e8;
+        transition: opacity 0.5s linear;
+        opacity: 0;
+        pointer-events: none;
+      }
+      
+      .gh-progress.visible {
+        opacity: 1;
+        transition: opacity 0.3s ease-in;
+      }
+      
+      .gh-progress-fill {
+        display: block;
+        height: 100%;
+        width: 0;
+        background-color: #0366d6;
+        transition: width 0.5s ease-in-out;
+      }
+    `;
     document.head.appendChild(styleElement);
     
     progressElement.style.height = config.height;
@@ -566,10 +572,7 @@ const LoadingProgress = (() => {
     hide,
     isVisible  
   };
-
 })();
-
-
 
 window.navigateToRoot = navigateToRoot;
 window.navigateToPath = navigateToPath;
