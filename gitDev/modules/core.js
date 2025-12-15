@@ -211,38 +211,22 @@ function downloadCurrentFile() {
   }
 }
 
-function editFile() {
-  if (!currentState.currentFile) return;
-  
-  fetchData('Loading editor...', () => {
-    const filePath = (currentState.path ? currentState.path + '/' : '') + currentState.currentFile.name;
-    const fileData = LocalStorageManager.getFile(currentState.repository, filePath);
-    if (fileData) {
-      const editingFileName = document.getElementById('editingFileName');
-      const commitTitle = document.getElementById('commitTitle');
-      const fileCategoryInput = document.getElementById('fileCategoryInput');
-      if (editingFileName) editingFileName.textContent = currentState.currentFile.name;
-      if (commitTitle) commitTitle.value = `Update ${currentState.currentFile.name}`;
-      if (codeEditor) {
-        codeEditor.setValue(fileData.content);
-        updateEditorMode(codeEditor, currentState.currentFile.name);
-      }
-      if (fileCategoryInput) fileCategoryInput.value = fileData.category || '';
-      currentState.selectedTags = fileData.tags || [];
-      updateSelectedTags();
-      showFileEditor();
-    } else {
-      throw new Error('File not found');
-    }
-  }).catch((error) => {
-    showErrorMessage('Failed to load file for editing: ' + error.message);
-  });
-}
 
 function saveFile() {
+  console.warn('saveFile may be deprecated - coder should handle saving');
+  
   if (!currentState.currentFile) return;
+  
+  // Try to use coder's save if available
+  if (window.coderViewEdit && typeof window.coderViewEdit.saveChanges === 'function') {
+    window.coderViewEdit.saveChanges();
+    return;
+  }
+  
+  // Fallback to old method
   const commitTitle = document.getElementById('commitTitle');
   const commitDescription = document.getElementById('commitDescription');
+  
   if (!commitTitle || !commitTitle.value.trim()) {
     showErrorMessage('Please enter a commit message');
     return;
@@ -495,33 +479,88 @@ function openRecentFile(repoName, filePath, fileName) {
   });
 }
 
+/**
+ * core.js
+ */
 function viewFile(filename) {
   if (!currentState.repository) {
     showErrorMessage('No repository selected');
     return;
   }
+  
   const file = currentState.files.find(f => f.name === filename);
   if (!file) {
     showErrorMessage(`File "${filename}" not found in current view`);
     return;
   }
+  
   currentState.currentFile = file;
   
   fetchData(`Loading ${filename}...`, () => {
     const filePath = file.path || ((currentState.path ? currentState.path + '/' : '') + filename);
     const fileData = LocalStorageManager.getFile(currentState.repository, filePath);
+    
     if (!fileData) {
       throw new Error(`File data not found for ${filePath}`);
     }
+    
     addToRecentFiles(filename, currentState.repository, filePath);
+    
+    // Use the displayFileContent function which now handles coder
     displayFileContent(filename, fileData);
-    showFileViewer();
-    updateStats();
+    
+    // Stats will be updated by displayFileContent or coder
     return fileData;
+    
   }).catch((error) => {
     showErrorMessage('Failed to load file: ' + error.message);
   });
 }
+
+function editFile() {
+  if (!currentState.currentFile) return;
+  
+  fetchData('Loading editor...', () => {
+    const filePath = (currentState.path ? currentState.path + '/' : '') + currentState.currentFile.name;
+    const fileData = LocalStorageManager.getFile(currentState.repository, filePath);
+    
+    if (fileData) {
+      // Use coderViewEdit for editing
+      if (window.coderViewEdit && typeof window.coderViewEdit.displayFile === 'function') {
+        // Make sure coder is initialized
+        if (typeof window.coderViewEdit.init === 'function') {
+          const coder = document.getElementById('coder');
+          if (coder && !coder.querySelector('.code-viewer-header')) {
+            window.coderViewEdit.init();
+          }
+        }
+        
+        // Display file in coder
+        window.coderViewEdit.displayFile(currentState.currentFile.name, fileData);
+        
+        // Switch to edit mode
+        setTimeout(() => {
+          if (window.coderViewEdit.enterEditMode && typeof window.coderViewEdit.enterEditMode === 'function') {
+            window.coderViewEdit.enterEditMode();
+          } else {
+            // Fallback: just show the file
+            showFileViewer();
+          }
+        }, 100);
+        
+      } else {
+        throw new Error('Advanced editor not available');
+      }
+      
+    } else {
+      throw new Error('File not found');
+    }
+    
+  }).catch((error) => {
+    showErrorMessage('Failed to load file for editing: ' + error.message);
+  });
+}
+
 
 function openRepository(repoName) {
   currentState.repository = repoName;
