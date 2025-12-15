@@ -100,7 +100,7 @@ class coderViewEdit {
             <div id="coderWrapper" class="bg-github-canvas-overlay border-x border-b border-github-border-default rounded-b-lg overflow-hidden relative">
                 <div id="loadingOverlay" class="absolute inset-0 bg-github-canvas-overlay/90 backdrop-blur-sm z-10 flex items-center justify-center transition-opacity duration-300 opacity-0 pointer-events-none">
                     <div class="text-center">
-                        <div class="w-8 h-8 border-2 border-github-border-default border-t-github-accent-fg rounded-full animate-spin mx-auto mb-2"></div>
+                        <div class="w-8 h-full border-2 border-github-border-default border-t-github-accent-fg rounded-full animate-spin mx-auto mb-2"></div>
                         <p class="text-github-fg-muted text-sm" id="loadingText">Loading...</p>
                     </div>
                 </div>
