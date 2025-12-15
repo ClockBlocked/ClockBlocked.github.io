@@ -16,266 +16,101 @@ class coderViewEdit {
     }
 
     init() {
-        this.setupStyles();
         this.createContainer();
         this.bindEvents();
-    }
-
-    setupStyles() {
-        const style = document.createElement('style');
-        style.textContent = `
-            #coder {
-                display: flex;
-                flex-direction: column;
-                background: #1c2128;
-                border: 1px solid #444c56;
-                border-radius: 6px;
-                overflow: hidden;
-                height: 100%;
-                transition: all 0.3s ease;
-            }
-            
-            #coder[data-state="edit"] {
-                border-color: #347d39;
-                box-shadow: 0 0 0 1px rgba(52, 125, 57, 0.3);
-            }
-            
-            .code-viewer-header {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 8px 16px;
-                background: linear-gradient(180deg, #2d333b 0%, #282e36 100%);
-                border-bottom: 1px solid #444c56;
-                min-height: 44px;
-                gap: 16px;
-            }
-            
-            .header-left {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                flex-shrink: 0;
-            }
-            
-            .file-name-input {
-                background: transparent;
-                border: 2px solid transparent;
-                border-radius: 4px;
-                color: #adbac7;
-                font-size: 14px;
-                font-weight: 600;
-                padding: 2px 6px;
-                margin: -2px;
-                min-width: 150px;
-                transition: all 0.2s ease;
-            }
-            
-            .file-name-input:focus {
-                border-color: #539bf5;
-                background: rgba(65, 132, 228, 0.1);
-                outline: none;
-            }
-            
-            .file-name-input:hover:not(:focus) {
-                background: rgba(99, 110, 123, 0.1);
-            }
-            
-            .header-actions {
-                display: flex;
-                align-items: center;
-                gap: 4px;
-            }
-            
-            .action-btn {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 6px;
-                padding: 6px 8px;
-                background: transparent;
-                border: 1px solid transparent;
-                border-radius: 6px;
-                color: #768390;
-                cursor: pointer;
-                transition: all 0.15s ease;
-            }
-            
-            .edit-btn {
-                background: linear-gradient(180deg, #347d39 0%, #2b6a30 100%);
-                border-color: rgba(0, 0, 0, 0.2);
-                color: #ffffff;
-                font-size: 12px;
-                font-weight: 500;
-                padding: 6px 12px;
-            }
-            
-            #coder[data-state="edit"] .edit-btn {
-                background: linear-gradient(180deg, #e5534b 0%, #c93c37 100%);
-            }
-            
-            #coder[data-state="edit"] .edit-btn span {
-                content: "Cancel";
-            }
-            
-            .code-viewer-body {
-                position: relative;
-                flex: 1;
-                overflow: hidden;
-                min-height: 300px;
-            }
-            
-            .loading-transition {
-                transition: opacity 0.3s ease;
-            }
-            
-            .loading-overlay {
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: rgba(28, 33, 40, 0.9);
-                backdrop-filter: blur(4px);
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                gap: 16px;
-                z-index: 100;
-                opacity: 0;
-                pointer-events: none;
-                transition: opacity 0.3s ease;
-            }
-            
-            .loading-overlay.active {
-                opacity: 1;
-                pointer-events: all;
-            }
-            
-            .loading-spinner {
-                width: 40px;
-                height: 40px;
-                border: 3px solid #373e47;
-                border-top-color: #539bf5;
-                border-radius: 50%;
-                animation: spin 0.8s linear infinite;
-            }
-            
-            @keyframes spin {
-                to { transform: rotate(360deg); }
-            }
-            
-            .code-container {
-                height: 100%;
-                overflow: auto;
-            }
-            
-            .CodeMirror {
-                height: 100%;
-                background: transparent !important;
-                color: #adbac7;
-                font-family: 'JetBrains Mono', 'Fira Code', monospace;
-                font-size: 12px;
-                line-height: 1.5;
-            }
-            
-            .CodeMirror-gutters {
-                background: #1c2128 !important;
-                border-right: 1px solid #444c56 !important;
-            }
-            
-            .CodeMirror-linenumber {
-                color: #545d68 !important;
-            }
-            
-            .CodeMirror-cursor {
-                border-left: 2px solid #539bf5 !important;
-            }
-            
-            .CodeMirror-readonly .CodeMirror-cursor {
-                display: none !important;
-            }
-            
-            .commit-panel {
-                max-height: 0;
-                overflow: hidden;
-                opacity: 0;
-                transition: all 0.3s ease;
-                background: #22272e;
-                border-top: 1px solid #373e47;
-            }
-            
-            #coder[data-state="edit"] .commit-panel {
-                max-height: 200px;
-                opacity: 1;
-                padding: 16px;
-            }
-            
-            .commit-input, .commit-textarea {
-                width: 100%;
-                padding: 8px 12px;
-                background: #1c2128;
-                border: 1px solid #444c56;
-                border-radius: 6px;
-                color: #adbac7;
-                font-size: 14px;
-                transition: all 0.2s ease;
-            }
-            
-            .commit-input:focus, .commit-textarea:focus {
-                border-color: #539bf5;
-                outline: none;
-                box-shadow: 0 0 0 3px rgba(65, 132, 228, 0.15);
-            }
-            
-            .commit-actions {
-                display: flex;
-                justify-content: flex-end;
-                gap: 8px;
-                margin-top: 12px;
-            }
-            
-            .commit-btn {
-                padding: 8px 16px;
-                background: linear-gradient(180deg, #347d39 0%, #2b6a30 100%);
-                border: none;
-                border-radius: 6px;
-                color: white;
-                font-weight: 500;
-                cursor: pointer;
-            }
-            
-            .cancel-btn {
-                padding: 8px 16px;
-                background: transparent;
-                border: 1px solid #444c56;
-                border-radius: 6px;
-                color: #adbac7;
-                font-weight: 500;
-                cursor: pointer;
-            }
-        `;
-        document.head.appendChild(style);
+        this.setupCodeMirror();
     }
 
     createContainer() {
-        // Remove existing fileViewer and fileEditor
-        const fileViewer = document.getElementById('fileViewer');
-        const fileEditor = document.getElementById('fileEditor');
-        if (fileViewer) fileViewer.remove();
-        if (fileEditor) fileEditor.remove();
+        const coder = document.getElementById('coder');
+        if (!coder) return;
         
-        // Create the unified coder container
-        const coderHTML = `
-            <div id="coder" class="hidden" data-state="view">
-                <!-- Header, Toolbar, Code Area, Commit Panel as shown above -->
+        coder.innerHTML = `
+            <div class="flex items-center justify-between mb-4">
+                <nav class="flex items-center space-x-1 text-sm">
+                    <button onclick="showExplorer()" class="text-github-accent-fg hover:underline font-semibold">${currentState.repository || 'Repository'}</button>
+                    <span class="text-github-fg-muted">/</span>
+                    <input type="text" id="fileNameInput" class="bg-transparent border-none text-github-fg-default font-semibold focus:outline-none focus:bg-github-canvas-subtle px-1 rounded" value="" readonly>
+                </nav>
+
+                <div class="flex items-center space-x-2">
+                    <button id="editToggleBtn" class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
+                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"/>
+                        </svg>
+                        <span>Edit</span>
+                    </button>
+                    <button id="copyBtn" class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
+                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"/>
+                            <path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"/>
+                        </svg>
+                        Copy
+                    </button>
+                    <button id="downloadBtn" class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
+                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M2.75 14A1.75 1.75 0 0 1 1 12.25v-2.5a.75.75 0 0 1 1.5 0v2.5c0 .138.112.25.25.25h10.5a.25.25 0 0 0 .25-.25v-2.5a.75.75 0 0 1 1.5 0v2.5A1.75 1.75 0 0 1 13.25 14Z"/>
+                            <path d="M7.25 7.689V2a.75.75 0 0 1 1.5 0v5.689l1.97-1.969a.749.749 0 1 1 1.06 1.06l-3.25 3.25a.749.749 0 0 1-1.06 0L4.22 6.78a.749.749 0 1 1 1.06-1.06l1.97 1.969Z"/>
+                        </svg>
+                        Download
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-github-canvas-overlay border border-github-border-default rounded-t-lg px-4 py-2 flex items-center justify-between text-sm">
+                <div class="flex items-center space-x-4 text-github-fg-muted" id="fileStats">
+                    <span id="fileLinesCount">0 lines</span>
+                    <span>•</span>
+                    <span id="fileSize">0 KB</span>
+                    <span>•</span>
+                    <span id="fileLanguageDisplay">Text</span>
+                </div>
+                <div class="flex items-center space-x-1">
+                    <button id="wrapLinesBtn" class="p-2 rounded hover:bg-github-canvas-subtle text-github-fg-muted hover:text-github-fg-default transition-colors" data-tooltip="Wrap lines">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M2 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm3.75-1.5a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5Zm0 5a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5Zm0 5a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5ZM3 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm-1 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-github-canvas-overlay border-x border-b border-github-border-default rounded-b-lg overflow-hidden relative">
+                <div id="loadingOverlay" class="hidden absolute inset-0 bg-github-canvas-overlay/90 backdrop-blur-sm z-10 flex items-center justify-center">
+                    <div class="text-center">
+                        <div class="w-8 h-8 border-2 border-github-border-default border-t-github-accent-fg rounded-full animate-spin mx-auto mb-2"></div>
+                        <p class="text-github-fg-muted text-sm" id="loadingText">Loading...</p>
+                    </div>
+                </div>
+                
+                <div class="flex">
+                    <div id="codeViewerLineNumbers" class="bg-github-canvas-inset border-r border-github-border-muted p-4 text-right text-github-fg-muted font-mono text-sm leading-5 select-none min-w-[3rem]">
+                    </div>
+                    <div class="flex-1 overflow-auto">
+                        <div id="codeMirrorContainer" class="h-[500px]"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="commitPanel" class="hidden mt-6 bg-github-canvas-overlay border border-github-border-default rounded-lg p-6">
+                <h3 class="text-lg font-semibold text-github-fg-default mb-4">Commit changes</h3>
+                <div class="space-y-4">
+                    <div>
+                        <input type="text" id="commitTitleInput" placeholder="Update filename.ext" class="w-full px-3 py-2 bg-github-canvas-inset border border-github-border-default rounded-md text-github-fg-default placeholder-github-fg-muted focus:outline-none focus:ring-2 focus:ring-github-accent-emphasis focus:border-transparent">
+                    </div>
+                    <div>
+                        <textarea id="commitDescriptionInput" rows="4" placeholder="Add an optional extended description..." class="w-full px-3 py-2 bg-github-canvas-inset border border-github-border-default rounded-md text-github-fg-default placeholder-github-fg-muted focus:outline-none focus:ring-2 focus:ring-github-accent-emphasis focus:border-transparent resize-none"></textarea>
+                    </div>
+                    <div class="flex justify-end space-x-2">
+                        <button id="cancelEditBtn" class="px-4 py-2 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
+                            Cancel
+                        </button>
+                        <button id="saveChangesBtn" class="px-4 py-2 bg-github-btn-primary-bg hover:bg-github-btn-primary-hover text-white rounded-md text-sm font-medium transition-colors">
+                            Commit changes
+                        </button>
+                    </div>
+                </div>
             </div>
         `;
-        
-        // Insert where fileViewer was
-        const mainContainer = document.querySelector('main') || document.body;
-        mainContainer.insertAdjacentHTML('beforeend', coderHTML);
         
         this.cacheElements();
     }
@@ -287,8 +122,14 @@ class coderViewEdit {
             editToggleBtn: document.getElementById('editToggleBtn'),
             copyBtn: document.getElementById('copyBtn'),
             downloadBtn: document.getElementById('downloadBtn'),
+            fileStats: document.getElementById('fileStats'),
+            fileLinesCount: document.getElementById('fileLinesCount'),
+            fileSize: document.getElementById('fileSize'),
+            fileLanguageDisplay: document.getElementById('fileLanguageDisplay'),
+            wrapLinesBtn: document.getElementById('wrapLinesBtn'),
             codeMirrorContainer: document.getElementById('codeMirrorContainer'),
             loadingOverlay: document.getElementById('loadingOverlay'),
+            loadingText: document.getElementById('loadingText'),
             commitPanel: document.getElementById('commitPanel'),
             commitTitleInput: document.getElementById('commitTitleInput'),
             commitDescriptionInput: document.getElementById('commitDescriptionInput'),
@@ -298,7 +139,6 @@ class coderViewEdit {
     }
 
     bindEvents() {
-        // Edit toggle
         if (this.elements.editToggleBtn) {
             this.elements.editToggleBtn.addEventListener('click', () => {
                 if (this.isEditing) {
@@ -309,35 +149,36 @@ class coderViewEdit {
             });
         }
 
-        // Save changes
         if (this.elements.saveChangesBtn) {
             this.elements.saveChangesBtn.addEventListener('click', () => {
                 this.saveChanges();
             });
         }
 
-        // Cancel edit
         if (this.elements.cancelEditBtn) {
             this.elements.cancelEditBtn.addEventListener('click', () => {
                 this.cancelEdit();
             });
         }
 
-        // Copy button
         if (this.elements.copyBtn) {
             this.elements.copyBtn.addEventListener('click', () => {
                 this.copyCode();
             });
         }
 
-        // Download button
         if (this.elements.downloadBtn) {
             this.elements.downloadBtn.addEventListener('click', () => {
                 this.downloadFile();
             });
         }
 
-        // File name editing
+        if (this.elements.wrapLinesBtn) {
+            this.elements.wrapLinesBtn.addEventListener('click', () => {
+                this.toggleWrapLines();
+            });
+        }
+
         if (this.elements.fileNameInput) {
             this.elements.fileNameInput.addEventListener('dblclick', () => {
                 if (this.isEditing) {
@@ -360,7 +201,6 @@ class coderViewEdit {
             });
         }
 
-        // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
             if ((e.ctrlKey || e.metaKey) && e.key === 's' && this.isEditing) {
                 e.preventDefault();
@@ -372,55 +212,20 @@ class coderViewEdit {
         });
     }
 
-    show() {
-        if (this.elements.coder) {
-            this.elements.coder.classList.remove('hidden');
+    setupCodeMirror() {
+        if (typeof CodeMirror === 'undefined') {
+            setTimeout(() => this.setupCodeMirror(), 100);
+            return;
         }
-    }
 
-    hide() {
-        if (this.elements.coder) {
-            this.elements.coder.classList.add('hidden');
-            this.exitEditMode();
-        }
-    }
-
-    displayFile(filename, fileData) {
-        this.currentFile = filename;
-        this.fileData = fileData;
-        this.originalContent = fileData.content || '';
-        
-        // Update UI
-        if (this.elements.fileNameInput) {
-            this.elements.fileNameInput.value = filename;
-        }
-        
-        // Initialize CodeMirror if it doesn't exist
-        if (!this.codeMirror && typeof CodeMirror !== 'undefined') {
-            this.initializeCodeMirror();
-        }
-        
-        // Set content
-        if (this.codeMirror) {
-            this.codeMirror.setValue(this.originalContent);
-            this.setCodeMirrorMode(filename);
-            this.setReadOnly(true);
-        }
-        
-        // Show the coder
-        this.show();
-        this.exitEditMode();
-    }
-
-    initializeCodeMirror() {
-        if (!this.elements.codeMirrorContainer || typeof CodeMirror === 'undefined') return;
+        if (!this.elements.codeMirrorContainer || this.codeMirror) return;
         
         this.codeMirror = CodeMirror(this.elements.codeMirrorContainer, {
             value: '',
             mode: 'javascript',
             theme: 'material-darker',
-            lineNumbers: true,
-            lineWrapping: this.state.wrapLines,
+            lineNumbers: false,
+            lineWrapping: true,
             readOnly: true,
             tabSize: 2,
             indentUnit: 2,
@@ -439,12 +244,77 @@ class coderViewEdit {
             }
         });
         
-        // Add readonly class when in view mode
-        this.codeMirror.on('change', () => {
-            if (this.isEditing) {
-                this.updateCommitMessage();
-            }
-        });
+        this.updateLineNumbers();
+    }
+
+    updateLineNumbers() {
+        if (!this.codeMirror || !this.elements.codeViewerLineNumbers) return;
+        
+        const content = this.codeMirror.getValue();
+        const lines = content.split('\n');
+        this.elements.codeViewerLineNumbers.innerHTML = '';
+        
+        for (let i = 1; i <= lines.length; i++) {
+            const lineDiv = document.createElement('div');
+            lineDiv.className = 'line-number';
+            lineDiv.textContent = i;
+            this.elements.codeViewerLineNumbers.appendChild(lineDiv);
+        }
+    }
+
+    show() {
+        if (this.elements.coder) {
+            this.elements.coder.classList.remove('hidden');
+        }
+    }
+
+    hide() {
+        if (this.elements.coder) {
+            this.elements.coder.classList.add('hidden');
+        }
+    }
+
+    displayFile(filename, fileData) {
+        this.currentFile = filename;
+        this.fileData = fileData;
+        this.originalContent = fileData.content || '';
+        
+        if (this.elements.fileNameInput) {
+            this.elements.fileNameInput.value = filename;
+        }
+        
+        const ext = filename.split('.').pop().toLowerCase();
+        const language = getLanguageName(ext);
+        const size = formatFileSize(new Blob([this.originalContent]).size);
+        const lines = this.originalContent.split('\n').length;
+        
+        if (this.elements.fileLanguageDisplay) {
+            this.elements.fileLanguageDisplay.textContent = language;
+        }
+        if (this.elements.fileLinesCount) {
+            this.elements.fileLinesCount.textContent = `${lines} ${lines === 1 ? 'line' : 'lines'}`;
+        }
+        if (this.elements.fileSize) {
+            this.elements.fileSize.textContent = size;
+        }
+        
+        if (!this.codeMirror) {
+            this.setupCodeMirror();
+            setTimeout(() => {
+                if (this.codeMirror) {
+                    this.codeMirror.setValue(this.originalContent);
+                    this.setCodeMirrorMode(filename);
+                    this.updateLineNumbers();
+                }
+            }, 100);
+        } else {
+            this.codeMirror.setValue(this.originalContent);
+            this.setCodeMirrorMode(filename);
+            this.updateLineNumbers();
+        }
+        
+        this.show();
+        this.exitEditMode();
     }
 
     setCodeMirrorMode(filename) {
@@ -470,49 +340,54 @@ class coderViewEdit {
         
         this.codeMirror.setOption('readOnly', readOnly);
         
-        // Toggle readonly class for CSS styling
         const cmElement = this.codeMirror.getWrapperElement();
         if (readOnly) {
-            cmElement.classList.add('CodeMirror-readonly');
             cmElement.style.pointerEvents = 'none';
+            cmElement.style.cursor = 'default';
         } else {
-            cmElement.classList.remove('CodeMirror-readonly');
             cmElement.style.pointerEvents = 'all';
+            cmElement.style.cursor = 'text';
         }
     }
 
     showLoading(message = 'Loading...') {
-        if (!this.elements.loadingOverlay) return;
+        if (!this.elements.loadingOverlay || !this.elements.loadingText) return;
         
         this.isLoading = true;
-        const textEl = this.elements.loadingOverlay.querySelector('.loading-text');
-        if (textEl) textEl.textContent = message;
-        
-        this.elements.loadingOverlay.classList.add('active');
+        this.elements.loadingText.textContent = message;
+        this.elements.loadingOverlay.classList.remove('hidden');
     }
 
     hideLoading() {
         if (!this.elements.loadingOverlay) return;
         
         this.isLoading = false;
-        this.elements.loadingOverlay.classList.remove('active');
+        this.elements.loadingOverlay.classList.add('hidden');
     }
 
-    async enterEditMode() {
+    enterEditMode() {
         if (!this.currentFile || this.isLoading) return;
         
         this.showLoading('Switching to edit mode...');
         
-        // Simulate loading delay (like GitHub)
         setTimeout(() => {
             try {
                 this.isEditing = true;
-                this.elements.coder.setAttribute('data-state', 'edit');
                 
-                // Switch to edit mode
+                if (this.elements.editToggleBtn) {
+                    this.elements.editToggleBtn.innerHTML = `
+                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z"/>
+                        </svg>
+                        <span>Cancel</span>
+                    `;
+                    this.elements.editToggleBtn.classList.remove('bg-github-btn-secondary-bg');
+                    this.elements.editToggleBtn.classList.add('bg-github-danger-emphasis', 'text-white');
+                }
+                
                 this.setReadOnly(false);
+                this.elements.commitPanel.classList.remove('hidden');
                 
-                // Focus the editor
                 setTimeout(() => {
                     if (this.codeMirror) {
                         this.codeMirror.focus();
@@ -520,38 +395,42 @@ class coderViewEdit {
                     }
                 }, 100);
                 
-                // Pre-fill commit message
                 this.updateCommitMessage();
-                
                 this.hideLoading();
                 
             } catch (error) {
-                console.error('Failed to enter edit mode:', error);
                 this.hideLoading();
-                showErrorMessage('Failed to load editor');
+                showErrorMessage('Failed to enter edit mode');
             }
-        }, 800); // GitHub-like delay
+        }, 800);
     }
 
     exitEditMode() {
         this.isEditing = false;
-        this.elements.coder.setAttribute('data-state', 'view');
+        
+        if (this.elements.editToggleBtn) {
+            this.elements.editToggleBtn.innerHTML = `
+                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"/>
+                </svg>
+                <span>Edit</span>
+            `;
+            this.elements.editToggleBtn.classList.remove('bg-github-danger-emphasis', 'text-white');
+            this.elements.editToggleBtn.classList.add('bg-github-btn-secondary-bg');
+        }
         
         if (this.codeMirror) {
             this.setReadOnly(true);
         }
         
-        // Reset commit inputs
+        this.elements.commitPanel.classList.add('hidden');
+        
         if (this.elements.commitTitleInput) {
             this.elements.commitTitleInput.value = '';
         }
         if (this.elements.commitDescriptionInput) {
             this.elements.commitDescriptionInput.value = '';
         }
-        
-        // Update edit button text
-        const editBtnSpan = this.elements.editToggleBtn.querySelector('span');
-        if (editBtnSpan) editBtnSpan.textContent = 'Edit';
     }
 
     cancelEdit() {
@@ -560,7 +439,6 @@ class coderViewEdit {
         this.showLoading('Reverting changes...');
         
         setTimeout(() => {
-            // Restore original content
             if (this.codeMirror) {
                 this.codeMirror.setValue(this.originalContent);
             }
@@ -578,7 +456,7 @@ class coderViewEdit {
         }
     }
 
-    async saveChanges() {
+    saveChanges() {
         if (!this.currentFile || !this.fileData) return;
         
         const commitTitle = this.elements.commitTitleInput ? 
@@ -594,35 +472,27 @@ class coderViewEdit {
         
         this.showLoading('Saving changes...');
         
-        setTimeout(async () => {
+        setTimeout(() => {
             try {
-                // Get new content
                 const newContent = this.codeMirror ? this.codeMirror.getValue() : '';
                 
-                // Update file data
                 this.fileData.content = newContent;
                 this.fileData.lastModified = Date.now();
                 this.fileData.lastCommit = commitTitle;
                 this.fileData.size = new Blob([newContent]).size;
                 
-                // Save to storage
                 const filePath = (currentState.path ? currentState.path + '/' : '') + this.currentFile;
                 LocalStorageManager.saveFile(currentState.repository, filePath, this.fileData);
                 
-                // Update original content
                 this.originalContent = newContent;
                 
-                // Show success
                 showSuccessMessage(`Saved ${this.currentFile}`);
                 
-                // Exit edit mode
                 this.exitEditMode();
                 
-                // Clear commit inputs
                 if (this.elements.commitTitleInput) this.elements.commitTitleInput.value = '';
                 if (this.elements.commitDescriptionInput) this.elements.commitDescriptionInput.value = '';
                 
-                // Update file list if needed
                 if (window.renderFileList) {
                     window.renderFileList();
                 }
@@ -664,12 +534,35 @@ class coderViewEdit {
         showSuccessMessage(`Downloaded ${this.currentFile}`);
     }
 
+    toggleWrapLines() {
+        if (!this.codeMirror) return;
+        
+        const current = this.codeMirror.getOption('lineWrapping');
+        this.codeMirror.setOption('lineWrapping', !current);
+        
+        if (this.elements.wrapLinesBtn) {
+            if (!current) {
+                this.elements.wrapLinesBtn.classList.add('text-github-accent-fg');
+            } else {
+                this.elements.wrapLinesBtn.classList.remove('text-github-accent-fg');
+            }
+        }
+    }
+
     renameFile(newName) {
-        // Your existing rename logic here
-        console.log('Renaming to:', newName);
+        // Rename logic here
     }
 }
 
-// Initialize and expose
-// const coderviewedit = new coderViewEdit();
-window.coderViewEdit = coderViewEdit;
+window.coderViewEdit = new coderViewEdit();
+/**
+ * 
+ *  C R E A T E D  B Y
+ * 
+ *  William Hanson 
+ * 
+ *  Chevrolay@Outlook.com
+ * 
+ *  m.me/Chevrolay
+ * 
+ */
