@@ -212,54 +212,7 @@ function downloadCurrentFile() {
 }
 
 
-function saveFile() {
-  console.warn('saveFile may be deprecated - coder should handle saving');
-  
-  if (!currentState.currentFile) return;
-  
-  // Try to use coder's save if available
-  if (window.coderViewEdit && typeof window.coderViewEdit.saveChanges === 'function') {
-    window.coderViewEdit.saveChanges();
-    return;
-  }
-  
-  // Fallback to old method
-  const commitTitle = document.getElementById('commitTitle');
-  const commitDescription = document.getElementById('commitDescription');
-  
-  if (!commitTitle || !commitTitle.value.trim()) {
-    showErrorMessage('Please enter a commit message');
-    return;
-  }
-  
-  fetchData('Saving changes...', () => {
-    const filePath = (currentState.path ? currentState.path + '/' : '') + currentState.currentFile.name;
-    const content = codeEditor ? codeEditor.getValue() : '';
-    const fileCategoryInput = document.getElementById('fileCategoryInput');
-    const fileData = {
-      content: content,
-      category: fileCategoryInput ? fileCategoryInput.value.trim() || 'General' : 'General',
-      tags: currentState.selectedTags,
-      lastModified: Date.now(),
-      created: LocalStorageManager.getFile(currentState.repository, filePath)?.created || Date.now(),
-      lastCommit: commitTitle.value.trim(),
-      size: new Blob([content]).size
-    };
-    LocalStorageManager.saveFile(currentState.repository, filePath, fileData);
-    const fileIndex = currentState.files.findIndex(f => f.name === currentState.currentFile.name);
-    if (fileIndex !== -1) {
-      currentState.files[fileIndex].lastModified = fileData.lastModified;
-      currentState.files[fileIndex].lastCommit = fileData.lastCommit;
-    }
-    if (commitDescription) commitDescription.value = '';
-    showSuccessMessage(`File "${currentState.currentFile.name}" saved successfully!`);
-    return currentState.currentFile.name;
-  }).then((fileName) => {
-    setTimeout(() => viewFile(fileName), 500);
-  }).catch((error) => {
-    showErrorMessage('Failed to save file: ' + error.message);
-  });
-}
+
 
 function previewFile() {
   if (!codeEditor || !currentState.currentFile) return;
@@ -506,10 +459,14 @@ function viewFile(filename) {
     
     addToRecentFiles(filename, currentState.repository, filePath);
     
-    // Use the displayFileContent function which now handles coder
-    displayFileContent(filename, fileData);
+    if (window.coderViewEdit && typeof window.coderViewEdit.displayFile === 'function') {
+      window.coderViewEdit.displayFile(filename, fileData);
+    } else {
+      displayFileContent(filename, fileData);
+    }
     
-    // Stats will be updated by displayFileContent or coder
+    showFileViewer();
+    updateStats();
     return fileData;
     
   }).catch((error) => {
@@ -525,32 +482,33 @@ function editFile() {
     const fileData = LocalStorageManager.getFile(currentState.repository, filePath);
     
     if (fileData) {
-      // Use coderViewEdit for editing
+      const editingFileName = document.getElementById('editingFileName');
+      const commitTitle = document.getElementById('commitTitle');
+      const fileCategoryInput = document.getElementById('fileCategoryInput');
+      
+      if (editingFileName) editingFileName.textContent = currentState.currentFile.name;
+      if (commitTitle) commitTitle.value = `Update ${currentState.currentFile.name}`;
+      
       if (window.coderViewEdit && typeof window.coderViewEdit.displayFile === 'function') {
-        // Make sure coder is initialized
-        if (typeof window.coderViewEdit.init === 'function') {
-          const coder = document.getElementById('coder');
-          if (coder && !coder.querySelector('.code-viewer-header')) {
-            window.coderViewEdit.init();
-          }
-        }
-        
-        // Display file in coder
         window.coderViewEdit.displayFile(currentState.currentFile.name, fileData);
         
-        // Switch to edit mode
         setTimeout(() => {
           if (window.coderViewEdit.enterEditMode && typeof window.coderViewEdit.enterEditMode === 'function') {
             window.coderViewEdit.enterEditMode();
           } else {
-            // Fallback: just show the file
             showFileViewer();
           }
         }, 100);
         
-      } else {
-        throw new Error('Advanced editor not available');
+      } else if (codeEditor) {
+        codeEditor.setValue(fileData.content);
+        updateEditorMode(codeEditor, currentState.currentFile.name);
+        showFileEditor();
       }
+      
+      if (fileCategoryInput) fileCategoryInput.value = fileData.category || '';
+      currentState.selectedTags = fileData.tags || [];
+      updateSelectedTags();
       
     } else {
       throw new Error('File not found');
@@ -561,6 +519,54 @@ function editFile() {
   });
 }
 
+function saveFile() {
+  if (!currentState.currentFile) return;
+  
+  if (window.coderViewEdit && typeof window.coderViewEdit.saveChanges === 'function') {
+    window.coderViewEdit.saveChanges();
+    return;
+  }
+  
+  const commitTitle = document.getElementById('commitTitle');
+  const commitDescription = document.getElementById('commitDescription');
+  
+  if (!commitTitle || !commitTitle.value.trim()) {
+    showErrorMessage('Please enter a commit message');
+    return;
+  }
+  
+  fetchData('Saving changes...', () => {
+    const filePath = (currentState.path ? currentState.path + '/' : '') + currentState.currentFile.name;
+    const content = codeEditor ? codeEditor.getValue() : '';
+    const fileCategoryInput = document.getElementById('fileCategoryInput');
+    const fileData = {
+      content: content,
+      category: fileCategoryInput ? fileCategoryInput.value.trim() || 'General' : 'General',
+      tags: currentState.selectedTags,
+      lastModified: Date.now(),
+      created: LocalStorageManager.getFile(currentState.repository, filePath)?.created || Date.now(),
+      lastCommit: commitTitle.value.trim(),
+      size: new Blob([content]).size
+    };
+    
+    LocalStorageManager.saveFile(currentState.repository, filePath, fileData);
+    const fileIndex = currentState.files.findIndex(f => f.name === currentState.currentFile.name);
+    
+    if (fileIndex !== -1) {
+      currentState.files[fileIndex].lastModified = fileData.lastModified;
+      currentState.files[fileIndex].lastCommit = fileData.lastCommit;
+    }
+    
+    if (commitDescription) commitDescription.value = '';
+    showSuccessMessage(`File "${currentState.currentFile.name}" saved successfully!`);
+    return currentState.currentFile.name;
+    
+  }).then((fileName) => {
+    setTimeout(() => viewFile(fileName), 500);
+  }).catch((error) => {
+    showErrorMessage('Failed to save file: ' + error.message);
+  });
+}
 
 function openRepository(repoName) {
   currentState.repository = repoName;
@@ -691,3 +697,7 @@ window.openRecentFile = openRecentFile;
  *  m.me/Chevrolay
  * 
  */
+ 
+ 
+ 
+ 
