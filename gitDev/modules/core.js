@@ -254,7 +254,7 @@ function setupCodeEditors() {
     const editorConfig = {
       lineNumbers: true,
       lineWrapping: false,
-      theme: 'material-darker',
+      theme: 'one-dark',
       mode: 'javascript',
       indentUnit: 2,
       tabSize: 2,
