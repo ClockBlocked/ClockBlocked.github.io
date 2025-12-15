@@ -81,51 +81,7 @@ function renderRepositoryList() {
     repoList.appendChild(repoCard);
   });
 }
-/**
-function renderFileList() {
-  const tbody = document.getElementById('fileListBody');
-  if (!tbody) return;
-  tbody.innerHTML = '';
-  if (currentState.files.length === 0) {
-    tbody.innerHTML = `
-    <tr>
-  <td colspan="3" class="px-4 py-8 text-center text-github-fg-muted">
-    <svg class="w-8 h-8 mx-auto mb-2" fill="currentColor" viewBox="0 0 16 16">
-      <path
-        d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z"
-      />
-    </svg>
-    <p>No files in this directory</p>
-    <button onclick="showCreateFileModal()" class="mt-2 text-github-accent-fg hover:underline text-sm">
-      Create your first file
-    </button>
-  </td>
-</tr>
-    `;
-    return;
-  }
-  currentState.files.forEach(file => {
-    const row = document.createElement('tr');
-    row.className = 'hover:bg-github-canvas-subtle transition-colors cursor-pointer';
-    const fileIcon = getFileIcon(file.name, file.type);
-    row.innerHTML = `
-    <td class="px-4 py-3">
-  <div class="flex items-center space-x-3">
-    ${fileIcon}<span class="text-github-accent-fg hover:underline font-medium">${file.name}</span>
-  </div>
-</td>
-<td class="px-4 py-3 text-github-fg-muted text-sm max-w-md truncate">${file.lastCommit || 'Initial commit'}</td>
-<td class="px-4 py-3 text-github-fg-muted text-sm text-right">${formatDate(file.lastModified)}</td>
-    `;
-    row.addEventListener('click', () => window.viewFile(file.name));
-    row.addEventListener('contextmenu', (e) => {
-      e.preventDefault();
-      window.showContextMenu(e.clientX, e.clientY, file.name, file.type);
-    });
-    tbody.appendChild(row);
-  });
-}
-**/
+
 function renderFileList() {
   const tbody = document.getElementById('fileListBody');
   if (!tbody) return;
@@ -197,73 +153,73 @@ function escapeHTML(str) {
   return div.innerHTML;
 }
 
-
-
-
-/**
- * pageUpdates.js
- */
 function displayFileContent(filename, fileData) {
-    // ALWAYS use the new coder system
-    console.log('displayFileContent called for:', filename);
+    if (window.coderViewEdit && typeof coderViewEdit.displayFile === 'function') {
+        coderViewEdit.displayFile(filename, fileData);
+        showFileViewer();
+        return;
+    }
     
-    // Make sure coderViewEdit exists
-    if (window.coderViewEdit && typeof window.coderViewEdit.displayFile === 'function') {
-        try {
-            // Initialize coder if needed
-            if (typeof window.coderViewEdit.init === 'function') {
-                const coder = document.getElementById('coder');
-                if (coder && !coder.querySelector('.code-viewer-header')) {
-                    window.coderViewEdit.init();
-                }
-            }
-            
-            // Display the file
-            window.coderViewEdit.displayFile(filename, fileData);
-            
-            // Show the coder view
-            showFileViewer();
-            return;
-            
-        } catch (error) {
-            console.error('Error using coderViewEdit:', error);
-            // Fall through to error message
+    const currentFileName = document.getElementById('currentFileName');
+    const fileLinesCount = document.getElementById('fileLinesCount');
+    const fileSize = document.getElementById('fileSize');
+    const fileLanguageDisplay = document.getElementById('fileLanguageDisplay');
+    const fileCategory = document.getElementById('fileCategory');
+    const fileTags = document.getElementById('fileTags');
+    
+    if (currentFileName) currentFileName.textContent = filename;
+    const content = fileData.content || '';
+    const lines = content.split('\n');
+    const lineCount = lines.length;
+    
+    if (fileLinesCount) fileLinesCount.textContent = `${lineCount} ${lineCount === 1 ? 'line' : 'lines'}`;
+    if (fileSize) fileSize.textContent = formatFileSize(content.length);
+    
+    const ext = filename.split('.').pop().toLowerCase();
+    const language = getLanguageName(ext);
+    const prismLang = getPrismLanguage(ext);
+    
+    if (fileLanguageDisplay) fileLanguageDisplay.textContent = language;
+    
+    const codeBlock = document.getElementById('codeBlock');
+    const lineNumbers = document.getElementById('lineNumbers');
+    
+    if (codeBlock) {
+        codeBlock.textContent = content;
+        codeBlock.className = 'code-block';
+        codeBlock.classList.add(`language-${prismLang}`);
+    }
+    
+    if (lineNumbers) {
+        lineNumbers.innerHTML = '';
+        for (let i = 1; i <= lineCount; i++) {
+            const lineDiv = document.createElement('div');
+            lineDiv.className = 'line-number';
+            lineDiv.textContent = i;
+            lineNumbers.appendChild(lineDiv);
         }
     }
     
-    // If we get here, coderViewEdit failed or doesn't exist
-    console.error('coderViewEdit not available or failed');
+    setTimeout(() => {
+        if (window.Prism && codeBlock) {
+            try {
+                Prism.highlightElement(codeBlock);
+            } catch (error) {}
+        }
+    }, 50);
     
-    // Create a simple fallback display in the coder container
-    const coder = document.getElementById('coder');
-    if (coder) {
-        coder.innerHTML = `
-            <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                <div class="mb-4">
-                    <h1 class="text-2xl font-bold text-github-fg-default">${filename}</h1>
-                    <p class="text-github-fg-muted">File size: ${formatFileSize(fileData.content.length)}</p>
-                </div>
-                <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg overflow-hidden">
-                    <pre class="p-4 overflow-auto max-h-[600px] text-sm font-mono">${fileData.content}</pre>
-                </div>
-                <div class="mt-4">
-                    <button onclick="editFile()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                        Edit (Fallback)
-                    </button>
-                </div>
-            </div>
-        `;
-        coder.classList.remove('hidden');
-        showFileViewer();
-    } else {
-        showErrorMessage('Cannot display file: coder container not found');
+    if (fileCategory) fileCategory.textContent = fileData.category || 'General';
+    
+    if (fileTags) {
+        if (fileData.tags && fileData.tags.length > 0) {
+            fileTags.innerHTML = fileData.tags.map(tag => 
+                `<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-github-accent-emphasis/20 border border-github-accent-emphasis/30 text-github-accent-fg">${tag}</span>`
+            ).join('');
+        } else {
+            fileTags.innerHTML = '<span class="text-github-fg-muted text-sm">No tags</span>';
+        }
     }
 }
-
-// Keep all your other existing functions (updateSelectedTags, updateBreadcrumb, etc.)
-// ... rest of your pageUpdates.js code ...
-
-
 
 function updateRecentFilesUI() {
   const recentFilesList = document.getElementById('recentFilesList');
