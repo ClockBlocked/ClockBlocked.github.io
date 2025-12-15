@@ -1,31 +1,31 @@
 class coderViewEdit {
-    constructor() {
-        this.currentFile = null;
-        this.fileData = null;
-        this.codeMirror = null;
-        this.isEditing = false;
-        this.isLoading = false;
-        this.originalContent = '';
-        this.isInitialized = false;
-        
-        this.elements = {};
-        this.state = {
-            fontSize: 12,
-            wrapLines: true,
-            showMinimap: false
-        };
-    }
+  //////////  Setup  ////
+  constructor() {
+    this.currentFile = null;
+    this.fileData = null;
+    this.codeMirror = null;
+    this.isEditing = false;
+    this.isLoading = false;
+    this.originalContent = "";
+    this.isInitialized = false;
 
-    init() {
-        if (this.isInitialized) return;
-        
-        const coder = document.getElementById('coder');
-        if (!coder) return;
-        
-        coder.innerHTML = `
+    this.elements = {};
+    this.state = {
+      fontSize: 12,
+      wrapLines: true,
+      showMinimap: false,
+    };
+  }
+  init() {
+    if (this.isInitialized) return;
+
+    const coder = document.getElementById("coder");
+    if (!coder) return;
+
+    coder.innerHTML = `
             <div class="flex items-center justify-between mb-4">
                 <nav class="flex items-center space-x-1 text-sm">
-                    <button onclick="showExplorer()" class="text-github-accent-fg hover:underline font-semibold">${window.currentState?.repository || 'Repository'}</button>
+                    <button onclick="showExplorer()" class="text-github-accent-fg hover:underline font-semibold">${window.currentState?.repository || "Repository"}</button>
                     <span class="text-github-fg-muted">/</span>
                     <input type="text" id="fileNameInput" class="bg-transparent border-none text-github-fg-default font-semibold focus:outline-none focus:bg-github-canvas-subtle px-1 rounded" value="" readonly>
                 </nav>
@@ -152,694 +152,684 @@ class coderViewEdit {
                 </div>
             </div>
         `;
-        
-        this.cacheElements();
-        this.bindEvents();
-        
-        if (typeof CodeMirror !== 'undefined') {
-            this.setupCodeMirror();
-        } else {
-            setTimeout(() => this.setupCodeMirror(), 100);
-        }
-        
-        this.isInitialized = true;
+
+    this.cacheElements();
+    this.bindEvents();
+
+    if (typeof CodeMirror !== "undefined") {
+      this.setupCodeMirror();
+    } else {
+      setTimeout(() => this.setupCodeMirror(), 100);
     }
 
-    cacheElements() {
-        this.elements = {
-            coder: document.getElementById('coder'),
-            fileNameInput: document.getElementById('fileNameInput'),
-            editToggleBtn: document.getElementById('editToggleBtn'),
-            copyBtn: document.getElementById('copyBtn'),
-            downloadBtn: document.getElementById('downloadBtn'),
-            fileStats: document.getElementById('fileStats'),
-            fileLinesCount: document.getElementById('fileLinesCount'),
-            fileSize: document.getElementById('fileSize'),
-            fileLanguageDisplay: document.getElementById('fileLanguageDisplay'),
-            wrapLinesBtn: document.getElementById('wrapLinesBtn'),
-            codeMirrorContainer: document.getElementById('codeMirrorContainer'),
-            loadingOverlay: document.getElementById('loadingOverlay'),
-            loadingText: document.getElementById('loadingText'),
-            commitPanel: document.getElementById('commitPanel'),
-            commitTitleInput: document.getElementById('commitTitleInput'),
-            commitDescriptionInput: document.getElementById('commitDescriptionInput'),
-            cancelEditBtn: document.getElementById('cancelEditBtn'),
-            saveChangesBtn: document.getElementById('saveChangesBtn'),
-            codeViewerLineNumbers: document.getElementById('codeViewerLineNumbers'),
-        themeToggleBtn: document.getElementById('themeToggleBtn'),
-        themeIcon: document.getElementById('themeIcon'),
-        decreaseFontBtn: document.getElementById('decreaseFontBtn'),
-        increaseFontBtn: document.getElementById('increaseFontBtn'),
-        fontSizeDisplay: document.getElementById('fontSizeDisplay'),
-        searchBtn: document.getElementById('searchBtn'),
-        fullscreenBtn: document.getElementById('fullscreenBtn'),
-        formatCodeBtn: document.getElementById('formatCodeBtn')
-            
-        };
-    }
-    
-
-    bindEvents() {
+    this.isInitialized = true;
+  }
+  cacheElements() {
+    this.elements = {
+      coder: document.getElementById("coder"),
+      fileNameInput: document.getElementById("fileNameInput"),
+      editToggleBtn: document.getElementById("editToggleBtn"),
+      copyBtn: document.getElementById("copyBtn"),
+      downloadBtn: document.getElementById("downloadBtn"),
+      fileStats: document.getElementById("fileStats"),
+      fileLinesCount: document.getElementById("fileLinesCount"),
+      fileSize: document.getElementById("fileSize"),
+      fileLanguageDisplay: document.getElementById("fileLanguageDisplay"),
+      wrapLinesBtn: document.getElementById("wrapLinesBtn"),
+      codeMirrorContainer: document.getElementById("codeMirrorContainer"),
+      loadingOverlay: document.getElementById("loadingOverlay"),
+      loadingText: document.getElementById("loadingText"),
+      commitPanel: document.getElementById("commitPanel"),
+      commitTitleInput: document.getElementById("commitTitleInput"),
+      commitDescriptionInput: document.getElementById("commitDescriptionInput"),
+      cancelEditBtn: document.getElementById("cancelEditBtn"),
+      saveChangesBtn: document.getElementById("saveChangesBtn"),
+      codeViewerLineNumbers: document.getElementById("codeViewerLineNumbers"),
+      themeToggleBtn: document.getElementById("themeToggleBtn"),
+      themeIcon: document.getElementById("themeIcon"),
+      decreaseFontBtn: document.getElementById("decreaseFontBtn"),
+      increaseFontBtn: document.getElementById("increaseFontBtn"),
+      fontSizeDisplay: document.getElementById("fontSizeDisplay"),
+      searchBtn: document.getElementById("searchBtn"),
+      fullscreenBtn: document.getElementById("fullscreenBtn"),
+      formatCodeBtn: document.getElementById("formatCodeBtn"),
+    };
+  }
+  bindEvents() {
     if (this.elements.editToggleBtn) {
-            this.elements.editToggleBtn.addEventListener('click', () => {
-                if (this.isEditing) {
-                    this.cancelEdit();
-                } else {
-                    this.enterEditMode();
-                }
-            });
+      this.elements.editToggleBtn.addEventListener("click", () => {
+        if (this.isEditing) {
+          this.cancelEdit();
+        } else {
+          this.enterEditMode();
         }
+      });
+    }
 
     if (this.elements.decreaseFontBtn) {
-        this.elements.decreaseFontBtn.addEventListener('click', () => {
-            this.adjustFontSize(-1);
-        });
+      this.elements.decreaseFontBtn.addEventListener("click", () => {
+        this.adjustFontSize(-1);
+      });
     }
-    
+
     if (this.elements.increaseFontBtn) {
-        this.elements.increaseFontBtn.addEventListener('click', () => {
-            this.adjustFontSize(1);
-        });
+      this.elements.increaseFontBtn.addEventListener("click", () => {
+        this.adjustFontSize(1);
+      });
     }
-    
+
     // Theme toggle
     if (this.elements.themeToggleBtn) {
-        this.elements.themeToggleBtn.addEventListener('click', () => {
-            this.toggleTheme();
-        });
+      this.elements.themeToggleBtn.addEventListener("click", () => {
+        this.toggleTheme();
+      });
     }
-    
+
     // Search
     if (this.elements.searchBtn) {
-        this.elements.searchBtn.addEventListener('click', () => {
-            this.openSearch();
-        });
+      this.elements.searchBtn.addEventListener("click", () => {
+        this.openSearch();
+      });
     }
-    
+
     // Fullscreen
     if (this.elements.fullscreenBtn) {
-        this.elements.fullscreenBtn.addEventListener('click', () => {
-            this.toggleFullscreen();
-        });
+      this.elements.fullscreenBtn.addEventListener("click", () => {
+        this.toggleFullscreen();
+      });
     }
-    
+
     // Format code
     if (this.elements.formatCodeBtn) {
-        this.elements.formatCodeBtn.addEventListener('click', () => {
-            this.formatCode();
-        });
-    }        
-
-        if (this.elements.saveChangesBtn) {
-            this.elements.saveChangesBtn.addEventListener('click', () => {
-                this.saveChanges();
-            });
-        }
-
-        if (this.elements.cancelEditBtn) {
-            this.elements.cancelEditBtn.addEventListener('click', () => {
-                this.cancelEdit();
-            });
-        }
-
-        if (this.elements.copyBtn) {
-            this.elements.copyBtn.addEventListener('click', () => {
-                this.copyCode();
-            });
-        }
-
-        if (this.elements.downloadBtn) {
-            this.elements.downloadBtn.addEventListener('click', () => {
-                this.downloadFile();
-            });
-        }
-
-        if (this.elements.wrapLinesBtn) {
-            this.elements.wrapLinesBtn.addEventListener('click', () => {
-                this.toggleWrapLines();
-            });
-        }
-
-        if (this.elements.fileNameInput) {
-            this.elements.fileNameInput.addEventListener('dblclick', () => {
-                if (this.isEditing) {
-                    this.elements.fileNameInput.readOnly = false;
-                    this.elements.fileNameInput.select();
-                }
-            });
-
-            this.elements.fileNameInput.addEventListener('blur', () => {
-                this.elements.fileNameInput.readOnly = true;
-                this.renameFile(this.elements.fileNameInput.value);
-            });
-
-            this.elements.fileNameInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') this.elements.fileNameInput.blur();
-                if (e.key === 'Escape') {
-                    this.elements.fileNameInput.value = this.currentFile;
-                    this.elements.fileNameInput.blur();
-                }
-            });
-        }
-
-        document.addEventListener('keydown', (e) => {
-            if ((e.ctrlKey || e.metaKey) && e.key === 's' && this.isEditing) {
-                e.preventDefault();
-                this.saveChanges();
-            }
-            if (e.key === 'Escape' && this.isEditing) {
-                this.cancelEdit();
-            }
-        if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
-            e.preventDefault();
-            this.openSearch();
-        }
-        
-        // Ctrl+Plus/Minus for font size
-        if ((e.ctrlKey || e.metaKey) && (e.key === '+' || e.key === '=')) {
-            e.preventDefault();
-            this.adjustFontSize(1);
-        }
-        
-        if ((e.ctrlKey || e.metaKey) && e.key === '-') {
-            e.preventDefault();
-            this.adjustFontSize(-1);
-        }
-        
-        // Ctrl+0 for reset font size
-        if ((e.ctrlKey || e.metaKey) && e.key === '0') {
-            e.preventDefault();
-            this.resetFontSize();
-        }
-        
-        // F11 for fullscreen
-        if (e.key === 'F11') {
-            e.preventDefault();
-            this.toggleFullscreen();
-        }
-        
-        // Ctrl+Shift+F for format (when in edit mode)
-        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'F' && this.isEditing) {
-            e.preventDefault();
-            this.formatCode();
-        }
-            
-        });
+      this.elements.formatCodeBtn.addEventListener("click", () => {
+        this.formatCode();
+      });
     }
 
+    if (this.elements.saveChangesBtn) {
+      this.elements.saveChangesBtn.addEventListener("click", () => {
+        this.saveChanges();
+      });
+    }
 
-    updateLineNumbers() {
-        if (!this.codeMirror || !this.elements.codeViewerLineNumbers) return;
-        
-        const content = this.codeMirror.getValue();
-        const lines = content.split('\n');
-        this.elements.codeViewerLineNumbers.innerHTML = '';
-        
-        for (let i = 1; i <= lines.length; i++) {
-            const lineDiv = document.createElement('div');
-            lineDiv.className = 'line-number';
-            lineDiv.textContent = i;
-            this.elements.codeViewerLineNumbers.appendChild(lineDiv);
+    if (this.elements.cancelEditBtn) {
+      this.elements.cancelEditBtn.addEventListener("click", () => {
+        this.cancelEdit();
+      });
+    }
+
+    if (this.elements.copyBtn) {
+      this.elements.copyBtn.addEventListener("click", () => {
+        this.copyCode();
+      });
+    }
+
+    if (this.elements.downloadBtn) {
+      this.elements.downloadBtn.addEventListener("click", () => {
+        this.downloadFile();
+      });
+    }
+
+    if (this.elements.wrapLinesBtn) {
+      this.elements.wrapLinesBtn.addEventListener("click", () => {
+        this.toggleWrapLines();
+      });
+    }
+
+    if (this.elements.fileNameInput) {
+      this.elements.fileNameInput.addEventListener("dblclick", () => {
+        if (this.isEditing) {
+          this.elements.fileNameInput.readOnly = false;
+          this.elements.fileNameInput.select();
         }
-    }
+      });
 
-    displayFile(filename, fileData) {
-        if (!this.isInitialized) {
-            this.init();
+      this.elements.fileNameInput.addEventListener("blur", () => {
+        this.elements.fileNameInput.readOnly = true;
+        this.renameFile(this.elements.fileNameInput.value);
+      });
+
+      this.elements.fileNameInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") this.elements.fileNameInput.blur();
+        if (e.key === "Escape") {
+          this.elements.fileNameInput.value = this.currentFile;
+          this.elements.fileNameInput.blur();
         }
-        
-        this.currentFile = filename;
-        this.fileData = fileData;
-        this.originalContent = fileData.content || '';
-        
-        if (this.elements.fileNameInput) {
-            this.elements.fileNameInput.value = filename;
-        }
-        
-        const ext = filename.split('.').pop().toLowerCase();
-        const language = getLanguageName(ext);
-        const size = formatFileSize(new Blob([this.originalContent]).size);
-        const lines = this.originalContent.split('\n').length;
-        
-        if (this.elements.fileLanguageDisplay) {
-            this.elements.fileLanguageDisplay.textContent = language;
-        }
-        if (this.elements.fileLinesCount) {
-            this.elements.fileLinesCount.textContent = `${lines} ${lines === 1 ? 'line' : 'lines'}`;
-        }
-        if (this.elements.fileSize) {
-            this.elements.fileSize.textContent = size;
-        }
-        
-        if (!this.codeMirror) {
-            this.setupCodeMirror();
-            setTimeout(() => {
-                if (this.codeMirror) {
-                    this.codeMirror.setValue(this.originalContent);
-                    this.setCodeMirrorMode(filename);
-                    this.updateLineNumbers();
-                }
-            }, 100);
-        } else {
-            this.codeMirror.setValue(this.originalContent);
-            this.setCodeMirrorMode(filename);
-            this.updateLineNumbers();
-        }
-        
-        this.exitEditMode();
-        this.show();
+      });
     }
 
-    setCodeMirrorMode(filename) {
-        if (!this.codeMirror) return;
-        
-        const ext = filename.split('.').pop().toLowerCase();
-        const modeMap = {
-            'js': 'javascript', 'javascript': 'javascript',
-            'ts': 'javascript', 'typescript': 'javascript',
-            'html': 'htmlmixed', 'htm': 'htmlmixed',
-            'css': 'css', 'scss': 'css', 'less': 'css',
-            'json': 'javascript', 'md': 'markdown',
-            'py': 'python', 'php': 'php', 'java': 'text/x-java',
-            'cpp': 'text/x-c++src', 'c': 'text/x-csrc',
-            'xml': 'xml', 'sql': 'sql', 'yml': 'yaml'
-        };
-        
-        this.codeMirror.setOption('mode', modeMap[ext] || 'text');
-    }
+    document.addEventListener("keydown", (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "s" && this.isEditing) {
+        e.preventDefault();
+        this.saveChanges();
+      }
+      if (e.key === "Escape" && this.isEditing) {
+        this.cancelEdit();
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key === "f") {
+        e.preventDefault();
+        this.openSearch();
+      }
 
-    setReadOnly(readOnly) {
-        if (!this.codeMirror) return;
-        
-        this.codeMirror.setOption('readOnly', readOnly);
-        
-        const cmElement = this.codeMirror.getWrapperElement();
-        if (readOnly) {
-            cmElement.style.pointerEvents = 'none';
-            cmElement.style.cursor = 'default';
-        } else {
-            cmElement.style.pointerEvents = 'all';
-            cmElement.style.cursor = 'text';
-        }
-    }
+      // Ctrl+Plus/Minus for font size
+      if ((e.ctrlKey || e.metaKey) && (e.key === "+" || e.key === "=")) {
+        e.preventDefault();
+        this.adjustFontSize(1);
+      }
 
-    showLoading(message = 'Loading...') {
-        if (!this.elements.loadingOverlay || !this.elements.loadingText) return;
-        
-        this.isLoading = true;
-        this.elements.loadingText.textContent = message;
-        this.elements.loadingOverlay.style.opacity = '1';
-        this.elements.loadingOverlay.style.pointerEvents = 'all';
-    }
+      if ((e.ctrlKey || e.metaKey) && e.key === "-") {
+        e.preventDefault();
+        this.adjustFontSize(-1);
+      }
 
-    hideLoading() {
-        if (!this.elements.loadingOverlay) return;
-        
-        this.isLoading = false;
-        this.elements.loadingOverlay.style.opacity = '0';
-        this.elements.loadingOverlay.style.pointerEvents = 'none';
-    }
+      // Ctrl+0 for reset font size
+      if ((e.ctrlKey || e.metaKey) && e.key === "0") {
+        e.preventDefault();
+        this.resetFontSize();
+      }
 
-    cancelEdit() {
-        if (!confirm('Discard changes?')) return;
-        
-        this.showLoading('Reverting changes...');
-        
-        setTimeout(() => {
-            if (this.codeMirror) {
-                this.codeMirror.setValue(this.originalContent);
-                this.updateLineNumbers();
-            }
-            
-            setTimeout(() => {
-                this.exitEditMode();
-                this.hideLoading();
-            }, 300);
-            
-        }, 300);
-    }
+      // F11 for fullscreen
+      if (e.key === "F11") {
+        e.preventDefault();
+        this.toggleFullscreen();
+      }
 
-    updateCommitMessage() {
-        if (!this.currentFile || !this.elements.commitTitleInput) return;
-        
-        if (!this.elements.commitTitleInput.value.trim()) {
-            this.elements.commitTitleInput.value = `Update ${this.currentFile}`;
-        }
-    }
-
-    saveChanges() {
-        if (!this.currentFile || !this.fileData) return;
-        
-        const commitTitle = this.elements.commitTitleInput ? 
-            this.elements.commitTitleInput.value.trim() : '';
-        
-        if (!commitTitle) {
-            showErrorMessage('Please enter a commit message');
-            return;
-        }
-        
-        const commitDescription = this.elements.commitDescriptionInput ? 
-            this.elements.commitDescriptionInput.value.trim() : '';
-        
-        this.showLoading('Saving changes...');
-        
-        setTimeout(() => {
-            try {
-                const newContent = this.codeMirror ? this.codeMirror.getValue() : '';
-                
-                this.fileData.content = newContent;
-                this.fileData.lastModified = Date.now();
-                this.fileData.lastCommit = commitTitle;
-                this.fileData.size = new Blob([newContent]).size;
-                
-                const filePath = (window.currentState?.path ? window.currentState.path + '/' : '') + this.currentFile;
-                LocalStorageManager.saveFile(window.currentState?.repository, filePath, this.fileData);
-                
-                this.originalContent = newContent;
-                
-                showSuccessMessage(`Saved ${this.currentFile}`);
-                
-                setTimeout(() => {
-                    this.exitEditMode();
-                    this.hideLoading();
-                    
-                    if (this.elements.commitTitleInput) this.elements.commitTitleInput.value = '';
-                    if (this.elements.commitDescriptionInput) this.elements.commitDescriptionInput.value = '';
-                    
-                    if (window.renderFileList) {
-                        window.renderFileList();
-                    }
-                }, 500);
-                
-            } catch (error) {
-                this.hideLoading();
-                showErrorMessage(`Save failed: ${error.message}`);
-            }
-        }, 500);
-    }
-
-    copyCode() {
-        if (!this.codeMirror) return;
-        
-        const content = this.codeMirror.getValue();
-        navigator.clipboard.writeText(content).then(() => {
-            showSuccessMessage('Copied to clipboard');
-        }).catch(err => {
-            showErrorMessage('Failed to copy');
-        });
-    }
-
-    downloadFile() {
-        if (!this.currentFile || !this.fileData) return;
-        
-        const content = this.fileData.content || '';
-        const blob = new Blob([content], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = this.currentFile;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        
-        showSuccessMessage(`Downloaded ${this.currentFile}`);
-    }
-
-    toggleWrapLines() {
-        if (!this.codeMirror) return;
-        
-        const current = this.codeMirror.getOption('lineWrapping');
-        this.codeMirror.setOption('lineWrapping', !current);
-        
-        if (this.elements.wrapLinesBtn) {
-            if (!current) {
-                this.elements.wrapLinesBtn.classList.add('text-github-accent-fg');
-            } else {
-                this.elements.wrapLinesBtn.classList.remove('text-github-accent-fg');
-            }
-        }
-    }
-
-    renameFile(newName) {
-        // Rename logic here
-    }
-
-    show() {
-        if (this.elements.coder) {
-            this.elements.coder.classList.remove('hidden');
-        }
-    }
-
-    hide() {
-        if (this.elements.coder) {
-            this.elements.coder.classList.add('hidden');
-        }
-    }
-    
-    
-    
-    
-adjustFontSize(change) {
-    if (!this.codeMirror) return;
-    
-    const currentSize = this.codeMirror.getOption('fontSize') || 12;
-    let newSize = currentSize + change;
-    
-    // Limit font size between 8 and 24
-    newSize = Math.max(8, Math.min(24, newSize));
-    
-    if (newSize !== currentSize) {
-        this.codeMirror.setOption('fontSize', newSize);
-        
-        if (this.elements.fontSizeDisplay) {
-            this.elements.fontSizeDisplay.textContent = `${newSize}px`;
-        }
-        
-        // Save preference
-        localStorage.setItem('gitcodr_fontsize', newSize);
-    }
-}
-
-resetFontSize() {
-    if (!this.codeMirror) return;
-    
-    const defaultSize = 12;
-    this.codeMirror.setOption('fontSize', defaultSize);
-    
-    if (this.elements.fontSizeDisplay) {
-        this.elements.fontSizeDisplay.textContent = `${defaultSize}px`;
-    }
-    
-    localStorage.setItem('gitcodr_fontsize', defaultSize);
-}
-
-toggleTheme() {
-    const html = document.documentElement;
-    const currentTheme = html.getAttribute('data-theme');
-    const isDark = currentTheme === 'dark';
-    const newTheme = isDark ? 'light' : 'dark';
-    
-    html.setAttribute('data-theme', newTheme);
-    localStorage.setItem('gitcodr_theme', newTheme);
-    
-    // Update icon
-    if (this.elements.themeIcon) {
-        this.elements.themeIcon.innerHTML = isDark ? 
-            '<path d="M8 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z"/>' : // Sun icon
-            '<path d="M9.598 1.591a.75.75 0 0 1 .785-.175 7 7 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Z"/>'; // Moon icon
-    }
-    
-    // Update CodeMirror theme
-    if (this.codeMirror) {
-        this.codeMirror.setOption('theme', isDark ? 'default' : 'one-dark');
-    }
-}
-
-openSearch() {
-    if (!this.codeMirror) return;
-    
-    // CodeMirror has built-in search
-    this.codeMirror.execCommand('find');
-    
-    // Focus search input if we have one
-    const searchInput = document.querySelector('.CodeMirror-search-field');
-    if (searchInput) {
-        searchInput.focus();
-        searchInput.select();
-    }
-}
-
-toggleFullscreen() {
-    const coder = this.elements.coder;
-    if (!coder) return;
-    
-    if (!document.fullscreenElement) {
-        if (coder.requestFullscreen) {
-            coder.requestFullscreen();
-        } else if (coder.webkitRequestFullscreen) {
-            coder.webkitRequestFullscreen();
-        } else if (coder.msRequestFullscreen) {
-            coder.msRequestFullscreen();
-        }
-        
-        if (this.elements.fullscreenBtn) {
-            this.elements.fullscreenBtn.innerHTML = `
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M3.75 2A1.75 1.75 0 0 0 2 3.75v1.5a.75.75 0 0 0 1.5 0v-1.5a.25.25 0 0 1 .25-.25h1.5a.75.75 0 0 0 0-1.5h-1.5ZM10.75 2a.75.75 0 0 0 0 1.5h1.5a.25.25 0 0 1 .25.25v1.5a.75.75 0 0 0 1.5 0v-1.5A1.75 1.75 0 0 0 12.25 2ZM3.75 14a.75.75 0 0 0 0-1.5h-1.5a.25.25 0 0 1-.25-.25v-1.5a.75.75 0 0 0-1.5 0v1.5A1.75 1.75 0 0 0 3.75 16h1.5a.75.75 0 0 0 0-1.5ZM14 10.75a.75.75 0 0 0-1.5 0v1.5a.25.25 0 0 1-.25.25h-1.5a.75.75 0 0 0 0 1.5h1.5A1.75 1.75 0 0 0 16 12.25Z"/>
-                </svg>
-            `;
-        }
-    } else {
-        if (document.exitFullscreen) {
-            document.exitFullscreen();
-        } else if (document.webkitExitFullscreen) {
-            document.webkitExitFullscreen();
-        } else if (document.msExitFullscreen) {
-            document.msExitFullscreen();
-        }
-        
-        if (this.elements.fullscreenBtn) {
-            this.elements.fullscreenBtn.innerHTML = `
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M3.75 2A1.75 1.75 0 0 0 2 3.75v1.5a.75.75 0 0 0 1.5 0v-1.5a.25.25 0 0 1 .25-.25h1.5a.75.75 0 0 0 0-1.5h-1.5ZM10.75 2a.75.75 0 0 0 0 1.5h1.5a.25.25 0 0 1 .25.25v1.5a.75.75 0 0 0 1.5 0v-1.5A1.75 1.75 0 0 0 12.25 2ZM3.75 14a.75.75 0 0 0 0-1.5h-1.5a.25.25 0 0 1-.25-.25v-1.5a.75.75 0 0 0-1.5 0v1.5A1.75 1.75 0 0 0 3.75 16h1.5a.75.75 0 0 0 0-1.5ZM14 10.75a.75.75 0 0 0-1.5 0v1.5a.25.25 0 0 1-.25.25h-1.5a.75.75 0 0 0 0 1.5h1.5A1.75 1.75 0 0 0 16 12.25Z"/>
-                </svg>
-            `;
-        }
-    }
-}
-
-formatCode() {
-    if (!this.codeMirror || !this.isEditing) return;
-    
-    const content = this.codeMirror.getValue();
-    const language = this.codeMirror.getOption('mode');
-    
-    // Simple formatting based on language
-    let formatted = content;
-    
-    if (language === 'javascript' || language === 'json') {
-        try {
-            formatted = JSON.stringify(JSON.parse(content), null, 2);
-        } catch (e) {
-            // Try basic JS formatting
-            formatted = content
-                .replace(/{/g, ' {\n')
-                .replace(/}/g, '\n}')
-                .replace(/;/g, ';\n')
-                .replace(/,/g, ',\n');
-        }
-    } else if (language === 'htmlmixed') {
-        // Basic HTML formatting
-        formatted = content
-            .replace(/>\s+</g, '>\n<')
-            .replace(/</g, '\n<')
-            .trim();
-    }
-    
-    if (formatted !== content) {
-        this.codeMirror.setValue(formatted);
-        showSuccessMessage('Code formatted');
-    } else {
-        showInfoMessage('No formatting needed');
-    }
-}
-
-// Update enterEditMode to show format button
-enterEditMode() {
-    if (!this.currentFile || this.isLoading) return;
-    
-    this.showLoading('Switching to edit mode...');
-    
-    setTimeout(() => {
-        try {
-            this.isEditing = true;
-            
-            // Show format button in edit mode
-            if (this.elements.formatCodeBtn) {
-                this.elements.formatCodeBtn.classList.remove('hidden');
-            }
-            
-            // ... rest of existing enterEditMode code ...
-        } catch (error) {
-            this.hideLoading();
-            showErrorMessage('Failed to enter edit mode');
-        }
-    }, 100);
-}
-
-// Update exitEditMode to hide format button
-exitEditMode() {
-    this.isEditing = false;
-    
-    // Hide format button in view mode
-    if (this.elements.formatCodeBtn) {
-        this.elements.formatCodeBtn.classList.add('hidden');
-    }
-    
-    // ... rest of existing exitEditMode code ...
-}
-
-// Add to setupCodeMirror to load saved preferences
-setupCodeMirror() {
-    if (typeof CodeMirror === 'undefined') {
-        setTimeout(() => this.setupCodeMirror(), 100);
-        return;
+      // Ctrl+Shift+F for format (when in edit mode)
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === "F" && this.isEditing) {
+        e.preventDefault();
+        this.formatCode();
+      }
+    });
+  }
+  setupCodeMirror() {
+    if (typeof CodeMirror === "undefined") {
+      setTimeout(() => this.setupCodeMirror(), 100);
+      return;
     }
 
     if (!this.elements.codeMirrorContainer || this.codeMirror) return;
-    
+
     // Load saved font size
-    const savedFontSize = localStorage.getItem('gitcodr_fontsize');
+    const savedFontSize = localStorage.getItem("gitcodr_fontsize");
     const fontSize = savedFontSize ? parseInt(savedFontSize) : 10;
-    
+
     // Load saved theme
-    const savedTheme = localStorage.getItem('gitcodr_theme');
-    const isDarkTheme = savedTheme === 'dark' || (!savedTheme && document.documentElement.getAttribute('data-theme') === 'dark');
-    const cmTheme = isDarkTheme ? 'one-dark' : 'default';
-    
+    const savedTheme = localStorage.getItem("gitcodr_theme");
+    const isDarkTheme =
+      savedTheme === "dark" || (!savedTheme && document.documentElement.getAttribute("data-theme") === "dark");
+    const cmTheme = isDarkTheme ? "one-dark" : "default";
+
     this.codeMirror = CodeMirror(this.elements.codeMirrorContainer, {
-        value: '',
-        mode: 'javascript',
-        theme: cmTheme,
-        fontSize: fontSize,
-        lineNumbers: false,
-        lineWrapping: true,
-        readOnly: true,
-        tabSize: 2,
-        indentUnit: 2,
-        smartIndent: true,
-        matchBrackets: true,
-        autoCloseBrackets: true,
-        scrollbarStyle: 'native',
-        viewportMargin: Infinity,
-        cursorBlinkRate: 530,
-        extraKeys: {
-            "Ctrl-S": () => this.saveChanges(),
-            "Cmd-S": () => this.saveChanges(),
-            "Ctrl-F": "findPersistent",
-            "Ctrl-D": (cm) => cm.execCommand("duplicateLine"),
-            "Ctrl-/": "toggleComment",
-            "Ctrl-Shift-F": () => this.formatCode()
-        }
+      value: "",
+      mode: "javascript",
+      theme: cmTheme,
+      fontSize: fontSize,
+      lineNumbers: false,
+      lineWrapping: true,
+      readOnly: true,
+      tabSize: 2,
+      indentUnit: 2,
+      smartIndent: true,
+      matchBrackets: true,
+      autoCloseBrackets: true,
+      scrollbarStyle: "native",
+      viewportMargin: Infinity,
+      cursorBlinkRate: 530,
+      extraKeys: {
+        "Ctrl-S": () => this.saveChanges(),
+        "Cmd-S": () => this.saveChanges(),
+        "Ctrl-F": "findPersistent",
+        "Ctrl-D": (cm) => cm.execCommand("duplicateLine"),
+        "Ctrl-/": "toggleComment",
+        "Ctrl-Shift-F": () => this.formatCode(),
+      },
     });
-    
+
     // Update font size display
     if (this.elements.fontSizeDisplay) {
-        this.elements.fontSizeDisplay.textContent = `${fontSize}px`;
+      this.elements.fontSizeDisplay.textContent = `${fontSize}px`;
     }
-    
+
     // Update theme icon
     if (this.elements.themeIcon && isDarkTheme) {
-        this.elements.themeIcon.innerHTML = '<path d="M9.598 1.591a.75.75 0 0 1 .785-.175 7 7 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Z"/>';
+      this.elements.themeIcon.innerHTML =
+        '<path d="M9.598 1.591a.75.75 0 0 1 .785-.175 7 7 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Z"/>';
     }
-    
+
     this.updateLineNumbers();
-    
-    this.codeMirror.on('change', () => {
-        this.updateLineNumbers();
+
+    this.codeMirror.on("change", () => {
+      this.updateLineNumbers();
     });
-}    
+  }
+  setCodeMirrorMode(filename) {
+    if (!this.codeMirror) return;
+
+    const ext = filename.split(".").pop().toLowerCase();
+    const modeMap = {
+      js: "javascript",
+      javascript: "javascript",
+      ts: "javascript",
+      typescript: "javascript",
+      html: "htmlmixed",
+      htm: "htmlmixed",
+      css: "css",
+      scss: "css",
+      less: "css",
+      json: "javascript",
+      md: "markdown",
+      py: "python",
+      php: "php",
+      java: "text/x-java",
+      cpp: "text/x-c++src",
+      c: "text/x-csrc",
+      xml: "xml",
+      sql: "sql",
+      yml: "yaml",
+    };
+
+    this.codeMirror.setOption("mode", modeMap[ext] || "text");
+  }
+
+  showLoading(message = "Loading...") {
+    if (!this.elements.loadingOverlay || !this.elements.loadingText) return;
+
+    this.isLoading = true;
+    this.elements.loadingText.textContent = message;
+    this.elements.loadingOverlay.style.opacity = "1";
+    this.elements.loadingOverlay.style.pointerEvents = "all";
+  }
+  hideLoading() {
+    if (!this.elements.loadingOverlay) return;
+
+    this.isLoading = false;
+    this.elements.loadingOverlay.style.opacity = "0";
+    this.elements.loadingOverlay.style.pointerEvents = "none";
+  }
+
+  show() {
+    if (this.elements.coder) {
+      this.elements.coder.classList.remove("hidden");
+    }
+  }
+  hide() {
+    if (this.elements.coder) {
+      this.elements.coder.classList.add("hidden");
+    }
+  }
+
+  enterEditMode() {
+    if (!this.currentFile || this.isLoading) return;
+
+    this.showLoading("Switching to edit mode...");
+
+    setTimeout(() => {
+      try {
+        this.isEditing = true;
+
+        // Show format button in edit mode
+        if (this.elements.formatCodeBtn) {
+          this.elements.formatCodeBtn.classList.remove("hidden");
+        }
+
+        // ... rest of existing enterEditMode code ...
+      } catch (error) {
+        this.hideLoading();
+        showErrorMessage("Failed to enter edit mode");
+      }
+    }, 100);
+  }
+  exitEditMode() {
+    this.isEditing = false;
+
+    // Hide format button in view mode
+    if (this.elements.formatCodeBtn) {
+      this.elements.formatCodeBtn.classList.add("hidden");
+    }
+
+    // ... rest of existing exitEditMode code ...
+  }
+  cancelEdit() {
+    if (!confirm("Discard changes?")) return;
+
+    this.showLoading("Reverting changes...");
+
+    setTimeout(() => {
+      if (this.codeMirror) {
+        this.codeMirror.setValue(this.originalContent);
+        this.updateLineNumbers();
+      }
+
+      setTimeout(() => {
+        this.exitEditMode();
+        this.hideLoading();
+      }, 300);
+    }, 300);
+  }
+
+  displayFile(filename, fileData) {
+    if (!this.isInitialized) {
+      this.init();
+    }
+
+    this.currentFile = filename;
+    this.fileData = fileData;
+    this.originalContent = fileData.content || "";
+
+    if (this.elements.fileNameInput) {
+      this.elements.fileNameInput.value = filename;
+    }
+
+    const ext = filename.split(".").pop().toLowerCase();
+    const language = getLanguageName(ext);
+    const size = formatFileSize(new Blob([this.originalContent]).size);
+    const lines = this.originalContent.split("\n").length;
+
+    if (this.elements.fileLanguageDisplay) {
+      this.elements.fileLanguageDisplay.textContent = language;
+    }
+    if (this.elements.fileLinesCount) {
+      this.elements.fileLinesCount.textContent = `${lines} ${lines === 1 ? "line" : "lines"}`;
+    }
+    if (this.elements.fileSize) {
+      this.elements.fileSize.textContent = size;
+    }
+
+    if (!this.codeMirror) {
+      this.setupCodeMirror();
+      setTimeout(() => {
+        if (this.codeMirror) {
+          this.codeMirror.setValue(this.originalContent);
+          this.setCodeMirrorMode(filename);
+          this.updateLineNumbers();
+        }
+      }, 100);
+    } else {
+      this.codeMirror.setValue(this.originalContent);
+      this.setCodeMirrorMode(filename);
+      this.updateLineNumbers();
+    }
+
+    this.exitEditMode();
+    this.show();
+  }
+  updateCommitMessage() {
+    if (!this.currentFile || !this.elements.commitTitleInput) return;
+
+    if (!this.elements.commitTitleInput.value.trim()) {
+      this.elements.commitTitleInput.value = `Update ${this.currentFile}`;
+    }
+  }
+  updateLineNumbers() {
+    if (!this.codeMirror || !this.elements.codeViewerLineNumbers) return;
+
+    const content = this.codeMirror.getValue();
+    const lines = content.split("\n");
+    this.elements.codeViewerLineNumbers.innerHTML = "";
+
+    for (let i = 1; i <= lines.length; i++) {
+      const lineDiv = document.createElement("div");
+      lineDiv.className = "line-number";
+      lineDiv.textContent = i;
+      this.elements.codeViewerLineNumbers.appendChild(lineDiv);
+    }
+  }
+
+
+
+  /////////  Actions  ////
+  setReadOnly(readOnly) {
+    if (!this.codeMirror) return;
+
+    this.codeMirror.setOption("readOnly", readOnly);
+
+    const cmElement = this.codeMirror.getWrapperElement();
+    if (readOnly) {
+      cmElement.style.pointerEvents = "none";
+      cmElement.style.cursor = "default";
+    } else {
+      cmElement.style.pointerEvents = "all";
+      cmElement.style.cursor = "text";
+    }
+  }
+  saveChanges() {
+    if (!this.currentFile || !this.fileData) return;
+
+    const commitTitle = this.elements.commitTitleInput ? this.elements.commitTitleInput.value.trim() : "";
+
+    if (!commitTitle) {
+      showErrorMessage("Please enter a commit message");
+      return;
+    }
+
+    const commitDescription = this.elements.commitDescriptionInput
+      ? this.elements.commitDescriptionInput.value.trim()
+      : "";
+
+    this.showLoading("Saving changes...");
+
+    setTimeout(() => {
+      try {
+        const newContent = this.codeMirror ? this.codeMirror.getValue() : "";
+
+        this.fileData.content = newContent;
+        this.fileData.lastModified = Date.now();
+        this.fileData.lastCommit = commitTitle;
+        this.fileData.size = new Blob([newContent]).size;
+
+        const filePath = (window.currentState?.path ? window.currentState.path + "/" : "") + this.currentFile;
+        LocalStorageManager.saveFile(window.currentState?.repository, filePath, this.fileData);
+
+        this.originalContent = newContent;
+
+        showSuccessMessage(`Saved ${this.currentFile}`);
+
+        setTimeout(() => {
+          this.exitEditMode();
+          this.hideLoading();
+
+          if (this.elements.commitTitleInput) this.elements.commitTitleInput.value = "";
+          if (this.elements.commitDescriptionInput) this.elements.commitDescriptionInput.value = "";
+
+          if (window.renderFileList) {
+            window.renderFileList();
+          }
+        }, 500);
+      } catch (error) {
+        this.hideLoading();
+        showErrorMessage(`Save failed: ${error.message}`);
+      }
+    }, 500);
+  }
+  copyCode() {
+    if (!this.codeMirror) return;
+
+    const content = this.codeMirror.getValue();
+    navigator.clipboard
+      .writeText(content)
+      .then(() => {
+        showSuccessMessage("Copied to clipboard");
+      })
+      .catch((err) => {
+        showErrorMessage("Failed to copy");
+      });
+  }
+  downloadFile() {
+    if (!this.currentFile || !this.fileData) return;
+
+    const content = this.fileData.content || "";
+    const blob = new Blob([content], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = this.currentFile;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    showSuccessMessage(`Downloaded ${this.currentFile}`);
+  }
+  toggleWrapLines() {
+    if (!this.codeMirror) return;
+
+    const current = this.codeMirror.getOption("lineWrapping");
+    this.codeMirror.setOption("lineWrapping", !current);
+
+    if (this.elements.wrapLinesBtn) {
+      if (!current) {
+        this.elements.wrapLinesBtn.classList.add("text-github-accent-fg");
+      } else {
+        this.elements.wrapLinesBtn.classList.remove("text-github-accent-fg");
+      }
+    }
+  }
+  renameFile(newName) {
+    // Rename logic here
+  }
+  adjustFontSize(change) {
+    if (!this.codeMirror) return;
+
+    const currentSize = this.codeMirror.getOption("fontSize") || 12;
+    let newSize = currentSize + change;
+
+    // Limit font size between 8 and 24
+    newSize = Math.max(8, Math.min(24, newSize));
+
+    if (newSize !== currentSize) {
+      this.codeMirror.setOption("fontSize", newSize);
+
+      if (this.elements.fontSizeDisplay) {
+        this.elements.fontSizeDisplay.textContent = `${newSize}px`;
+      }
+
+      // Save preference
+      localStorage.setItem("gitcodr_fontsize", newSize);
+    }
+  }
+  resetFontSize() {
+    if (!this.codeMirror) return;
+
+    const defaultSize = 12;
+    this.codeMirror.setOption("fontSize", defaultSize);
+
+    if (this.elements.fontSizeDisplay) {
+      this.elements.fontSizeDisplay.textContent = `${defaultSize}px`;
+    }
+
+    localStorage.setItem("gitcodr_fontsize", defaultSize);
+  }
+  toggleTheme() {
+    const html = document.documentElement;
+    const currentTheme = html.getAttribute("data-theme");
+    const isDark = currentTheme === "dark";
+    const newTheme = isDark ? "light" : "dark";
+
+    html.setAttribute("data-theme", newTheme);
+    localStorage.setItem("gitcodr_theme", newTheme);
+
+    // Update icon
+    if (this.elements.themeIcon) {
+      this.elements.themeIcon.innerHTML = isDark
+        ? '<path d="M8 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z"/>' // Sun icon
+        : '<path d="M9.598 1.591a.75.75 0 0 1 .785-.175 7 7 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Z"/>'; // Moon icon
+    }
+
+    // Update CodeMirror theme
+    if (this.codeMirror) {
+      this.codeMirror.setOption("theme", isDark ? "default" : "one-dark");
+    }
+  }
+  openSearch() {
+    if (!this.codeMirror) return;
+
+    // CodeMirror has built-in search
+    this.codeMirror.execCommand("find");
+
+    // Focus search input if we have one
+    const searchInput = document.querySelector(".CodeMirror-search-field");
+    if (searchInput) {
+      searchInput.focus();
+      searchInput.select();
+    }
+  }
+  toggleFullscreen() {
+    const coder = this.elements.coder;
+    if (!coder) return;
+
+    if (!document.fullscreenElement) {
+      if (coder.requestFullscreen) {
+        coder.requestFullscreen();
+      } else if (coder.webkitRequestFullscreen) {
+        coder.webkitRequestFullscreen();
+      } else if (coder.msRequestFullscreen) {
+        coder.msRequestFullscreen();
+      }
+
+      if (this.elements.fullscreenBtn) {
+        this.elements.fullscreenBtn.innerHTML = `
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M3.75 2A1.75 1.75 0 0 0 2 3.75v1.5a.75.75 0 0 0 1.5 0v-1.5a.25.25 0 0 1 .25-.25h1.5a.75.75 0 0 0 0-1.5h-1.5ZM10.75 2a.75.75 0 0 0 0 1.5h1.5a.25.25 0 0 1 .25.25v1.5a.75.75 0 0 0 1.5 0v-1.5A1.75 1.75 0 0 0 12.25 2ZM3.75 14a.75.75 0 0 0 0-1.5h-1.5a.25.25 0 0 1-.25-.25v-1.5a.75.75 0 0 0-1.5 0v1.5A1.75 1.75 0 0 0 3.75 16h1.5a.75.75 0 0 0 0-1.5ZM14 10.75a.75.75 0 0 0-1.5 0v1.5a.25.25 0 0 1-.25.25h-1.5a.75.75 0 0 0 0 1.5h1.5A1.75 1.75 0 0 0 16 12.25Z"/>
+                </svg>
+            `;
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      }
+
+      if (this.elements.fullscreenBtn) {
+        this.elements.fullscreenBtn.innerHTML = `
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M3.75 2A1.75 1.75 0 0 0 2 3.75v1.5a.75.75 0 0 0 1.5 0v-1.5a.25.25 0 0 1 .25-.25h1.5a.75.75 0 0 0 0-1.5h-1.5ZM10.75 2a.75.75 0 0 0 0 1.5h1.5a.25.25 0 0 1 .25.25v1.5a.75.75 0 0 0 1.5 0v-1.5A1.75 1.75 0 0 0 12.25 2ZM3.75 14a.75.75 0 0 0 0-1.5h-1.5a.25.25 0 0 1-.25-.25v-1.5a.75.75 0 0 0-1.5 0v1.5A1.75 1.75 0 0 0 3.75 16h1.5a.75.75 0 0 0 0-1.5ZM14 10.75a.75.75 0 0 0-1.5 0v1.5a.25.25 0 0 1-.25.25h-1.5a.75.75 0 0 0 0 1.5h1.5A1.75 1.75 0 0 0 16 12.25Z"/>
+                </svg>
+            `;
+      }
+    }
+  }
+  formatCode() {
+    if (!this.codeMirror || !this.isEditing) return;
+
+    const content = this.codeMirror.getValue();
+    const language = this.codeMirror.getOption("mode");
+
+    // Simple formatting based on language
+    let formatted = content;
+
+    if (language === "javascript" || language === "json") {
+      try {
+        formatted = JSON.stringify(JSON.parse(content), null, 2);
+      } catch (e) {
+        // Try basic JS formatting
+        formatted = content.replace(/{/g, " {\n").replace(/}/g, "\n}").replace(/;/g, ";\n").replace(/,/g, ",\n");
+      }
+    } else if (language === "htmlmixed") {
+      // Basic HTML formatting
+      formatted = content.replace(/>\s+</g, ">\n<").replace(/</g, "\n<").trim();
+    }
+
+    if (formatted !== content) {
+      this.codeMirror.setValue(formatted);
+      showSuccessMessage("Code formatted");
+    } else {
+      showInfoMessage("No formatting needed");
+    }
+  }
 }
 
 window.coderViewEdit = new coderViewEdit();
+/**
+ *
+ *  C R E A T E D  B Y
+ *
+ *  William Hanson
+ *
+ *  Chevrolay@Outlook.com
+ *
+ *  m.me/Chevrolay
+ *
+ */
