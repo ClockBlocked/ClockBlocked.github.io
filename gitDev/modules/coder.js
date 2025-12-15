@@ -220,29 +220,50 @@ class coderViewEdit {
 
         if (!this.elements.codeMirrorContainer || this.codeMirror) return;
         
-        this.codeMirror = CodeMirror(this.elements.codeMirrorContainer, {
-            value: '',
-            mode: 'javascript',
-            theme: 'material-darker',
-            lineNumbers: false,
-            lineWrapping: true,
-            readOnly: true,
-            tabSize: 2,
-            indentUnit: 2,
-            smartIndent: true,
-            matchBrackets: true,
-            autoCloseBrackets: true,
-            scrollbarStyle: 'native',
-            viewportMargin: Infinity,
-            cursorBlinkRate: 530,
-            extraKeys: {
-                "Ctrl-S": () => this.saveChanges(),
-                "Cmd-S": () => this.saveChanges(),
-                "Ctrl-F": "findPersistent",
-                "Ctrl-D": (cm) => cm.execCommand("duplicateLine"),
-                "Ctrl-/": "toggleComment"
-            }
-        });
+this.codeMirror = CodeMirror(this.elements.codeMirrorContainer, {
+  value: '',
+  mode: 'javascript',
+  theme: 'github-dark',
+
+  lineNumbers: true,
+  lineWrapping: false,
+
+  readOnly: "nocursor",
+
+  tabSize: 2,
+  indentUnit: 2,
+  smartIndent: false,
+
+  styleActiveLine: { nonEmpty: true },
+  matchBrackets: true,
+  autoCloseBrackets: true,
+
+  highlightSelectionMatches: {
+    showToken: true,
+    annotateScrollbar: true
+  },
+
+  gutters: [
+    "CodeMirror-linenumbers",
+    "CodeMirror-foldgutter"
+  ],
+  foldGutter: true,
+
+  scrollbarStyle: "native",
+  viewportMargin: 50,
+
+  cursorBlinkRate: 0,
+  cursorHeight: 0.9,
+
+  dragDrop: false,
+  disableInput: true,
+
+  extraKeys: {
+    "Ctrl-F": "findPersistent",
+    "Ctrl-D": "duplicateLine",
+    "Ctrl-/": "toggleComment"
+  }
+});
         
         this.updateLineNumbers();
     }
