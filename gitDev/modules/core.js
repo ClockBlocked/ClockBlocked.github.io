@@ -30,6 +30,15 @@ function fetchData(operationName, callback) {
   });
 }
 
+function loadRepositories() {
+  return fetchData('Loading repositories...', () => {
+    currentState.repositories = LocalStorageManager.getRepositories();
+    renderRepositoryList();
+    return currentState.repositories;
+  }).catch((error) => {
+    showErrorMessage('Failed to load repositories: ' + error.message);
+  });
+}
 function createRepository() {
   const repoName = document.getElementById('newRepoName').value.trim();
   const description = document.getElementById('repoDescriptionInput').value.trim();
@@ -83,7 +92,6 @@ function createRepository() {
     showErrorMessage('Failed to create repository: ' + error.message);
   });
 }
-
 function deleteRepository(repoName) {
   if (!confirm(`Are you sure you want to delete the repository "${repoName}"? This action cannot be undone.`)) return;
   
@@ -146,21 +154,12 @@ function createFile() {
   });
 }
 
-function loadRepositories() {
-  return fetchData('Loading repositories...', () => {
-    currentState.repositories = LocalStorageManager.getRepositories();
-    renderRepositoryList();
-    return currentState.repositories;
-  }).catch((error) => {
-    showErrorMessage('Failed to load repositories: ' + error.message);
-  });
-}
+
 
 function confirmDeleteFile() {
   deleteCurrentFile();
   hideDeleteFileModal();
 }
-
 function deleteCurrentFile() {
   if (!currentState.currentFile) return;
   
@@ -176,7 +175,6 @@ function deleteCurrentFile() {
     showErrorMessage('Failed to delete file: ' + error.message);
   });
 }
-
 function downloadCurrentFile() {
   if (!currentState.currentFile) return;
   try {
@@ -226,7 +224,6 @@ function addTag() {
     input.value = '';
   }
 }
-
 function removeTag(tag) {
   currentState.selectedTags = currentState.selectedTags.filter(t => t !== tag);
   updateSelectedTags();
@@ -236,19 +233,16 @@ function viewFileFromContext(fileName) {
   hideContextMenu();
   viewFile(fileName);
 }
-
 function editFileFromContext(fileName) {
   hideContextMenu();
   currentState.currentFile = currentState.files.find(f => f.name === fileName);
   editFile();
 }
-
 function downloadFileFromContext(fileName) {
   hideContextMenu();
   currentState.currentFile = currentState.files.find(f => f.name === fileName);
   downloadCurrentFile();
 }
-
 function deleteFileFromContext(fileName) {
   hideContextMenu();
   currentState.currentFile = currentState.files.find(f => f.name === fileName);
@@ -341,7 +335,6 @@ function setupCodeEditors() {
     }, 100);
   }
 }
-
 function setupButtonEventListeners() {
   setTimeout(() => {
     const createRepoBtn = document.querySelector('button[onclick*="showCreateRepoModal"]');
@@ -350,7 +343,6 @@ function setupButtonEventListeners() {
     if (createFileBtn) createFileBtn.onclick = showCreateFileModal;
   }, 100);
 }
-
 function setupKeyboardShortcuts() {
   document.addEventListener('keydown', function(e) {
     if ((e.ctrlKey || e.metaKey) && e.key === 'n') { e.preventDefault(); showCreateFileModal(); }
