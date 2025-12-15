@@ -347,10 +347,10 @@ function showFileEditor() {
 
 function showRepoSelector() {
   const explorerView = document.getElementById('explorerView');
-  const coder = document.getElementById('coder');
+  const coderElement = document.getElementById('coder');
   
   if (explorerView) explorerView.classList.add('hidden');
-  if (coder) coder.classList.add('hidden');
+  if (coderElement) coderElement.classList.add('hidden');
   
   const repoSelector = document.getElementById('repoSelectorView');
   if (repoSelector) {
@@ -370,12 +370,12 @@ function showFileViewer() {
   if (repoSelector) repoSelector.classList.add('hidden');
   if (explorerView) explorerView.classList.add('hidden');
   
-  const coder = document.getElementById('coder');
-  if (coder) {
-    coder.classList.remove('hidden');
+  const coderElement = document.getElementById('coder');
+  if (coderElement) {
+    coderElement.classList.remove('hidden');
     
     if (window.coderViewEdit && typeof window.coderViewEdit.init === 'function') {
-      const hasHeader = coder.querySelector('.code-viewer-header');
+      const hasHeader = coderElement.querySelector('.code-viewer-header');
       if (!hasHeader) {
         window.coderViewEdit.init();
       }
@@ -389,10 +389,10 @@ function showFileViewer() {
 function showExplorer() {
   if (currentState.repository) {
     const repoSelector = document.getElementById('repoSelectorView');
-    const coder = document.getElementById('coder');
+    const coderElement = document.getElementById('coder');
     
     if (repoSelector) repoSelector.classList.add('hidden');
-    if (coder) coder.classList.add('hidden');
+    if (coderElement) coderElement.classList.add('hidden');
     
     const explorerView = document.getElementById('explorerView');
     if (explorerView) {
