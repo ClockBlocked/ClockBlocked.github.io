@@ -10,8 +10,8 @@ class coderViewEdit {
         
         this.elements = {};
         this.state = {
-            fontSize: 12,
-            wrapLines: true,
+            fontSize: 10,
+            wrapLines: false,
             showMinimap: false
         };
     }
