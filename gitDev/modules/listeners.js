@@ -1,42 +1,3 @@
-
-
-
-/**
-import {
-    showCreateRepoModal,
-    hideCreateRepoModal,
-    showCreateFileModal,
-    hideCreateFileModal,
-    showDeleteFileModal,
-    hideDeleteFileModal
-} from 'https://gitdev.wuaze.com/modules/overlays.js';
-
-import {
-    createRepository,
-    createFile,
-    confirmDeleteFile,
-    openRepository,
-    viewFile,
-    editFile,
-    saveFile,
-    downloadCurrentFile,
-    previewFile,
-    showRepoSelector,
-    showExplorer,
-    showFileViewer,
-    navigateToRoot,
-    addTag,
-    openRecentFile,
-    currentState,
-    addToRecentFiles
-} from 'https://gitdev.wuaze.com/modules/core.js';
-
-import { LocalStorageManager } from 'https://gitdev.wuaze.com/modules/storage.js';
-import { showSuccessMessage, showErrorMessage } from 'https://gitdev.wuaze.com/modules/overlays.js';
-**/
-
-
-
 class EventListenersManager {
     constructor() {
         this.sidebarManager = null;
@@ -133,11 +94,19 @@ class EventListenersManager {
         }
     }
 
+
+
+
     handleEditFile() {
         if (window.editFile && typeof window.editFile === 'function') {
             window.editFile();
+        } else {
+            this.handleShowFileViewer();
         }
     }
+
+
+
 
     handleDownloadFile() {
         if (window.downloadCurrentFile && typeof window.downloadCurrentFile === 'function') {
@@ -175,11 +144,25 @@ class EventListenersManager {
         }
     }
 
+
+
+
     handleShowFileViewer() {
         if (window.showFileViewer && typeof window.showFileViewer === 'function') {
             window.showFileViewer();
+        } else {
+            const coder = document.getElementById('coder');
+            const repoSelector = document.getElementById('repoSelectorView');
+            const explorerView = document.getElementById('explorerView');
+            
+            if (coder) coder.classList.remove('hidden');
+            if (repoSelector) repoSelector.classList.add('hidden');
+            if (explorerView) explorerView.classList.add('hidden');
         }
     }
+
+
+
 
     handleStarRepo() {
         if (this.currentState.repository) {
@@ -376,6 +359,8 @@ class EventListenersManager {
         }
     }
 
+
+
     setupGlobalEventDelegation() {
         document.addEventListener('click', (e) => {
             const repoCard = e.target.closest('.bg-github-canvas-overlay.border');
@@ -386,7 +371,7 @@ class EventListenersManager {
                     window.openRepository(repoName);
                 }
             }
-            
+            // Repository List Items
             const repoItem = e.target.closest('.repo-item');
             if (repoItem) {
                 const repoName = repoItem.querySelector('span:not(.text-github-fg-muted)')?.textContent;
@@ -395,7 +380,7 @@ class EventListenersManager {
                     window.openRepository(repoName);
                 }
             }
-            
+            // Recent File List Toolbar Options
             const recentFileItem = e.target.closest('.recent-file-item');
             if (recentFileItem) {
                 const fileName = recentFileItem.querySelector('.text-github-fg-default')?.textContent;
@@ -405,7 +390,7 @@ class EventListenersManager {
                     window.openRecentFile(repoName, '', fileName);
                 }
             }
-            
+            // File Toolbar Optiona
             const fileRow = e.target.closest('tbody tr');
             if (fileRow && fileRow.parentElement.id === 'fileListBody') {
                 const fileName = fileRow.querySelector('td:first-child span')?.textContent;
@@ -414,7 +399,7 @@ class EventListenersManager {
                     window.viewFile(fileName);
                 }
             }
-            
+            // Breadcrumbs
             const breadcrumbLink = e.target.closest('#pathBreadcrumb a');
             if (breadcrumbLink) {
                 e.preventDefault();
@@ -425,8 +410,29 @@ class EventListenersManager {
                     window.navigateToRoot();
                 }
             }
+            // Edit
+            const editBtn = e.target.closest('#editToggleBtn, .edit-btn');
+            if (editBtn && window.coderViewEdit && typeof window.coderViewEdit.enterEditMode === 'function') {
+                e.preventDefault();
+                window.coderViewEdit.enterEditMode();
+            }
+            // Save
+            const saveBtn = e.target.closest('#saveChangesBtn, .commit-btn');
+            if (saveBtn && window.coderViewEdit && typeof window.coderViewEdit.saveChanges === 'function') {
+                e.preventDefault();
+                window.coderViewEdit.saveChanges();
+            }
+            // Cancel            
+            const cancelBtn = e.target.closest('#cancelEditBtn, .cancel-btn');
+            if (cancelBtn && window.coderViewEdit && typeof window.coderViewEdit.cancelEdit === 'function') {
+                e.preventDefault();
+                window.coderViewEdit.cancelEdit();
+            }            
         });
     }
+
+
+
 
     showNotification(message) {
         const notification = document.createElement('div');
