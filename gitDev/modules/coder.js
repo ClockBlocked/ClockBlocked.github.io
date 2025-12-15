@@ -6,6 +6,7 @@ class coderViewEdit {
         this.isEditing = false;
         this.isLoading = false;
         this.originalContent = '';
+        this.isInitialized = false;
         
         this.elements = {};
         this.state = {
@@ -16,19 +17,15 @@ class coderViewEdit {
     }
 
     init() {
-        this.createContainer();
-        this.bindEvents();
-        this.setupCodeMirror();
-    }
-
-    createContainer() {
+        if (this.isInitialized) return;
+        
         const coder = document.getElementById('coder');
         if (!coder) return;
         
         coder.innerHTML = `
             <div class="flex items-center justify-between mb-4">
                 <nav class="flex items-center space-x-1 text-sm">
-                    <button onclick="showExplorer()" class="text-github-accent-fg hover:underline font-semibold">${currentState.repository || 'Repository'}</button>
+                    <button onclick="showExplorer()" class="text-github-accent-fg hover:underline font-semibold">${window.currentState?.repository || 'Repository'}</button>
                     <span class="text-github-fg-muted">/</span>
                     <input type="text" id="fileNameInput" class="bg-transparent border-none text-github-fg-default font-semibold focus:outline-none focus:bg-github-canvas-subtle px-1 rounded" value="" readonly>
                 </nav>
@@ -113,6 +110,8 @@ class coderViewEdit {
         `;
         
         this.cacheElements();
+        this.bindEvents();
+        this.isInitialized = true;
     }
 
     cacheElements() {
@@ -134,7 +133,8 @@ class coderViewEdit {
             commitTitleInput: document.getElementById('commitTitleInput'),
             commitDescriptionInput: document.getElementById('commitDescriptionInput'),
             cancelEditBtn: document.getElementById('cancelEditBtn'),
-            saveChangesBtn: document.getElementById('saveChangesBtn')
+            saveChangesBtn: document.getElementById('saveChangesBtn'),
+            codeViewerLineNumbers: document.getElementById('codeViewerLineNumbers')
         };
     }
 
@@ -262,19 +262,11 @@ class coderViewEdit {
         }
     }
 
-    show() {
-        if (this.elements.coder) {
-            this.elements.coder.classList.remove('hidden');
-        }
-    }
-
-    hide() {
-        if (this.elements.coder) {
-            this.elements.coder.classList.add('hidden');
-        }
-    }
-
     displayFile(filename, fileData) {
+        if (!this.isInitialized) {
+            this.init();
+        }
+        
         this.currentFile = filename;
         this.fileData = fileData;
         this.originalContent = fileData.content || '';
@@ -423,7 +415,9 @@ class coderViewEdit {
             this.setReadOnly(true);
         }
         
-        this.elements.commitPanel.classList.add('hidden');
+        if (this.elements.commitPanel) {
+            this.elements.commitPanel.classList.add('hidden');
+        }
         
         if (this.elements.commitTitleInput) {
             this.elements.commitTitleInput.value = '';
@@ -481,8 +475,8 @@ class coderViewEdit {
                 this.fileData.lastCommit = commitTitle;
                 this.fileData.size = new Blob([newContent]).size;
                 
-                const filePath = (currentState.path ? currentState.path + '/' : '') + this.currentFile;
-                LocalStorageManager.saveFile(currentState.repository, filePath, this.fileData);
+                const filePath = (window.currentState?.path ? window.currentState.path + '/' : '') + this.currentFile;
+                LocalStorageManager.saveFile(window.currentState?.repository, filePath, this.fileData);
                 
                 this.originalContent = newContent;
                 
@@ -552,17 +546,18 @@ class coderViewEdit {
     renameFile(newName) {
         // Rename logic here
     }
+
+    show() {
+        if (this.elements.coder) {
+            this.elements.coder.classList.remove('hidden');
+        }
+    }
+
+    hide() {
+        if (this.elements.coder) {
+            this.elements.coder.classList.add('hidden');
+        }
+    }
 }
 
 window.coderViewEdit = new coderViewEdit();
-/**
- * 
- *  C R E A T E D  B Y
- * 
- *  William Hanson 
- * 
- *  Chevrolay@Outlook.com
- * 
- *  m.me/Chevrolay
- * 
- */
