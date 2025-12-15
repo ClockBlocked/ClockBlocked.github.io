@@ -116,7 +116,7 @@ class coderViewEdit {
     </div>
 </div>
 
-            <div class="bg-github-canvas-overlay border-x border-b border-github-border-default rounded-b-lg overflow-hidden relative min-h-[500px]">
+            <div id="coderWrapper" class="bg-github-canvas-overlay border-x border-b border-github-border-default rounded-b-lg overflow-hidden relative">
                 <div id="loadingOverlay" class="absolute inset-0 bg-github-canvas-overlay/90 backdrop-blur-sm z-10 flex items-center justify-center transition-opacity duration-300 opacity-0 pointer-events-none">
                     <div class="text-center">
                         <div class="w-8 h-8 border-2 border-github-border-default border-t-github-accent-fg rounded-full animate-spin mx-auto mb-2"></div>
@@ -125,10 +125,9 @@ class coderViewEdit {
                 </div>
                 
                 <div class="flex h-full">
-                    <div id="codeViewerLineNumbers" class="bg-github-canvas-inset border-r border-github-border-muted p-4 text-right text-github-fg-muted font-mono text-sm leading-5 select-none min-w-[3rem] overflow-y-auto">
-                    </div>
+
                     <div class="flex-1 overflow-auto">
-                        <div id="codeMirrorContainer" class="h-full"></div>
+                        <div id="codeMirrorContainer"></div>
                     </div>
                 </div>
             </div>
