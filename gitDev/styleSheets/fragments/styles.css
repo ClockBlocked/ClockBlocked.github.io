@@ -33,7 +33,7 @@ body {
   color: var(--github-fg-default);
 
 }
-
+/**
 .CodeMirror {
   background: var(--github-canvas-overlay);
   color: var(--github-fg-default);
@@ -253,7 +253,7 @@ code[class*="language-"] {
 .token.entity {
   cursor: help;
 }
-
+**/
 .file-type-html { color: #e34c26; }
 .file-type-css { color: #1572b6; }
 .file-type-js,
