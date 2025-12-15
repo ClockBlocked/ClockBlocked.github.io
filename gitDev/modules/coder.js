@@ -10,8 +10,8 @@ class coderViewEdit {
         
         this.elements = {};
         this.state = {
-            fontSize: 10,
-            wrapLines: false,
+            fontSize: 12,
+            wrapLines: true,
             showMinimap: false
         };
     }
@@ -54,41 +54,86 @@ class coderViewEdit {
                 </div>
             </div>
 
-            <div class="bg-github-canvas-overlay border border-github-border-default rounded-t-lg px-4 py-2 flex items-center justify-between text-sm">
-                <div class="flex items-center space-x-4 text-github-fg-muted" id="fileStats">
-                    <span id="fileLinesCount">0 lines</span>
-                    <span>•</span>
-                    <span id="fileSize">0 KB</span>
-                    <span>•</span>
-                    <span id="fileLanguageDisplay">Text</span>
-                </div>
-                <div class="flex items-center space-x-1">
-                    <button id="wrapLinesBtn" class="p-2 rounded hover:bg-github-canvas-subtle text-github-fg-muted hover:text-github-fg-default transition-colors" data-tooltip="Wrap lines">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
-                            <path d="M2 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm3.75-1.5a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5Zm0 5a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5Zm0 5a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5ZM3 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm-1 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/>
-                        </svg>
-                    </button>
-                </div>
-            </div>
+<div class="bg-github-canvas-overlay border border-github-border-default rounded-t-lg px-4 py-2 flex items-center justify-between text-sm">
+    <div class="flex items-center space-x-4 text-github-fg-muted" id="fileStats">
+        <span id="fileLinesCount">0 lines</span>
+        <span>•</span>
+        <span id="fileSize">0 KB</span>
+        <span>•</span>
+        <span id="fileLanguageDisplay">Text</span>
+    </div>
+    
+    <div class="flex items-center space-x-2">
+        <!-- Theme Toggle -->
+        <button id="themeToggleBtn" class="p-2 rounded hover:bg-github-canvas-subtle text-github-fg-muted hover:text-github-fg-default transition-colors" data-tooltip="Toggle theme">
+            <svg id="themeIcon" class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M8 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z"/>
+            </svg>
+        </button>
+        
+        <!-- Font Size Controls -->
+        <div class="flex items-center border border-github-border-default rounded-md overflow-hidden">
+            <button id="decreaseFontBtn" class="p-1.5 hover:bg-github-canvas-subtle text-github-fg-muted hover:text-github-fg-default transition-colors" data-tooltip="Decrease font size">
+                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M3.75 7.25a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5Z"/>
+                </svg>
+            </button>
+            <span id="fontSizeDisplay" class="px-2 text-xs text-github-fg-default border-x border-github-border-default min-w-[40px] text-center">12px</span>
+            <button id="increaseFontBtn" class="p-1.5 hover:bg-github-canvas-subtle text-github-fg-muted hover:text-github-fg-default transition-colors" data-tooltip="Increase font size">
+                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M7.25 3.75a.75.75 0 0 1 1.5 0V7.25h3.5a.75.75 0 0 1 0 1.5h-3.5v3.5a.75.75 0 0 1-1.5 0v-3.5h-3.5a.75.75 0 0 1 0-1.5h3.5Z"/>
+                </svg>
+            </button>
+        </div>
+        
+        <!-- Wrap Lines -->
+        <button id="wrapLinesBtn" class="p-2 rounded hover:bg-github-canvas-subtle text-github-fg-muted hover:text-github-fg-default transition-colors" data-tooltip="Wrap lines">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M2 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm3.75-1.5a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5Zm0 5a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5Zm0 5a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5ZM3 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm-1 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/>
+            </svg>
+        </button>
+        
+        <!-- Search -->
+        <button id="searchBtn" class="p-2 rounded hover:bg-github-canvas-subtle text-github-fg-muted hover:text-github-fg-default transition-colors" data-tooltip="Search in file (Ctrl+F)">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"/>
+            </svg>
+        </button>
+        
+        <!-- Fullscreen -->
+        <button id="fullscreenBtn" class="p-2 rounded hover:bg-github-canvas-subtle text-github-fg-muted hover:text-github-fg-default transition-colors" data-tooltip="Toggle fullscreen">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M3.75 2A1.75 1.75 0 0 0 2 3.75v1.5a.75.75 0 0 0 1.5 0v-1.5a.25.25 0 0 1 .25-.25h1.5a.75.75 0 0 0 0-1.5h-1.5ZM10.75 2a.75.75 0 0 0 0 1.5h1.5a.25.25 0 0 1 .25.25v1.5a.75.75 0 0 0 1.5 0v-1.5A1.75 1.75 0 0 0 12.25 2ZM3.75 14a.75.75 0 0 0 0-1.5h-1.5a.25.25 0 0 1-.25-.25v-1.5a.75.75 0 0 0-1.5 0v1.5A1.75 1.75 0 0 0 3.75 16h1.5a.75.75 0 0 0 0-1.5ZM14 10.75a.75.75 0 0 0-1.5 0v1.5a.25.25 0 0 1-.25.25h-1.5a.75.75 0 0 0 0 1.5h1.5A1.75 1.75 0 0 0 16 12.25Z"/>
+            </svg>
+        </button>
+        
+        <!-- Format Code (only in edit mode) -->
+        <button id="formatCodeBtn" class="p-2 rounded hover:bg-github-canvas-subtle text-github-fg-muted hover:text-github-fg-default transition-colors hidden" data-tooltip="Format code">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M4.72 3.22a.75.75 0 0 1 1.06 1.06L2.06 8l3.72 3.72a.75.75 0 1 1-1.06 1.06L.47 8.53a.75.75 0 0 1 0-1.06l4.25-4.25Zm6.56 0a.75.75 0 1 0-1.06 1.06L13.94 8l-3.72 3.72a.75.75 0 1 0 1.06 1.06l4.25-4.25a.75.75 0 0 0 0-1.06l-4.25-4.25Z"/>
+            </svg>
+        </button>
+    </div>
+</div>
 
-            <div class="bg-github-canvas-overlay border-x border-b border-github-border-default rounded-b-lg overflow-hidden relative">
-                <div id="loadingOverlay" class="hidden absolute inset-0 bg-github-canvas-overlay/90 backdrop-blur-sm z-10 flex items-center justify-center">
+            <div class="bg-github-canvas-overlay border-x border-b border-github-border-default rounded-b-lg overflow-hidden relative min-h-[500px]">
+                <div id="loadingOverlay" class="absolute inset-0 bg-github-canvas-overlay/90 backdrop-blur-sm z-10 flex items-center justify-center transition-opacity duration-300 opacity-0 pointer-events-none">
                     <div class="text-center">
                         <div class="w-8 h-8 border-2 border-github-border-default border-t-github-accent-fg rounded-full animate-spin mx-auto mb-2"></div>
                         <p class="text-github-fg-muted text-sm" id="loadingText">Loading...</p>
                     </div>
                 </div>
                 
-                <div class="flex">
-                    <div id="codeViewerLineNumbers" class="bg-github-canvas-inset border-r border-github-border-muted p-4 text-right text-github-fg-muted font-mono text-sm leading-5 select-none min-w-[3rem]">
+                <div class="flex h-full">
+                    <div id="codeViewerLineNumbers" class="bg-github-canvas-inset border-r border-github-border-muted p-4 text-right text-github-fg-muted font-mono text-sm leading-5 select-none min-w-[3rem] overflow-y-auto">
                     </div>
                     <div class="flex-1 overflow-auto">
-                        <div id="codeMirrorContainer" class="h-[500px]"></div>
+                        <div id="codeMirrorContainer" class="h-full"></div>
                     </div>
                 </div>
             </div>
 
-            <div id="commitPanel" class="hidden mt-6 bg-github-canvas-overlay border border-github-border-default rounded-lg p-6">
+            <div id="commitPanel" class="mt-6 bg-github-canvas-overlay border border-github-border-default rounded-lg p-6 hidden">
                 <h3 class="text-lg font-semibold text-github-fg-default mb-4">Commit changes</h3>
                 <div class="space-y-4">
                     <div>
@@ -111,6 +156,13 @@ class coderViewEdit {
         
         this.cacheElements();
         this.bindEvents();
+        
+        if (typeof CodeMirror !== 'undefined') {
+            this.setupCodeMirror();
+        } else {
+            setTimeout(() => this.setupCodeMirror(), 100);
+        }
+        
         this.isInitialized = true;
     }
 
@@ -134,12 +186,22 @@ class coderViewEdit {
             commitDescriptionInput: document.getElementById('commitDescriptionInput'),
             cancelEditBtn: document.getElementById('cancelEditBtn'),
             saveChangesBtn: document.getElementById('saveChangesBtn'),
-            codeViewerLineNumbers: document.getElementById('codeViewerLineNumbers')
+            codeViewerLineNumbers: document.getElementById('codeViewerLineNumbers'),
+        themeToggleBtn: document.getElementById('themeToggleBtn'),
+        themeIcon: document.getElementById('themeIcon'),
+        decreaseFontBtn: document.getElementById('decreaseFontBtn'),
+        increaseFontBtn: document.getElementById('increaseFontBtn'),
+        fontSizeDisplay: document.getElementById('fontSizeDisplay'),
+        searchBtn: document.getElementById('searchBtn'),
+        fullscreenBtn: document.getElementById('fullscreenBtn'),
+        formatCodeBtn: document.getElementById('formatCodeBtn')
+            
         };
     }
+    
 
     bindEvents() {
-        if (this.elements.editToggleBtn) {
+    if (this.elements.editToggleBtn) {
             this.elements.editToggleBtn.addEventListener('click', () => {
                 if (this.isEditing) {
                     this.cancelEdit();
@@ -148,6 +210,46 @@ class coderViewEdit {
                 }
             });
         }
+
+    if (this.elements.decreaseFontBtn) {
+        this.elements.decreaseFontBtn.addEventListener('click', () => {
+            this.adjustFontSize(-1);
+        });
+    }
+    
+    if (this.elements.increaseFontBtn) {
+        this.elements.increaseFontBtn.addEventListener('click', () => {
+            this.adjustFontSize(1);
+        });
+    }
+    
+    // Theme toggle
+    if (this.elements.themeToggleBtn) {
+        this.elements.themeToggleBtn.addEventListener('click', () => {
+            this.toggleTheme();
+        });
+    }
+    
+    // Search
+    if (this.elements.searchBtn) {
+        this.elements.searchBtn.addEventListener('click', () => {
+            this.openSearch();
+        });
+    }
+    
+    // Fullscreen
+    if (this.elements.fullscreenBtn) {
+        this.elements.fullscreenBtn.addEventListener('click', () => {
+            this.toggleFullscreen();
+        });
+    }
+    
+    // Format code
+    if (this.elements.formatCodeBtn) {
+        this.elements.formatCodeBtn.addEventListener('click', () => {
+            this.formatCode();
+        });
+    }        
 
         if (this.elements.saveChangesBtn) {
             this.elements.saveChangesBtn.addEventListener('click', () => {
@@ -209,6 +311,40 @@ class coderViewEdit {
             if (e.key === 'Escape' && this.isEditing) {
                 this.cancelEdit();
             }
+        if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+            e.preventDefault();
+            this.openSearch();
+        }
+        
+        // Ctrl+Plus/Minus for font size
+        if ((e.ctrlKey || e.metaKey) && (e.key === '+' || e.key === '=')) {
+            e.preventDefault();
+            this.adjustFontSize(1);
+        }
+        
+        if ((e.ctrlKey || e.metaKey) && e.key === '-') {
+            e.preventDefault();
+            this.adjustFontSize(-1);
+        }
+        
+        // Ctrl+0 for reset font size
+        if ((e.ctrlKey || e.metaKey) && e.key === '0') {
+            e.preventDefault();
+            this.resetFontSize();
+        }
+        
+        // F11 for fullscreen
+        if (e.key === 'F11') {
+            e.preventDefault();
+            this.toggleFullscreen();
+        }
+        
+        // Ctrl+Shift+F for format (when in edit mode)
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'F' && this.isEditing) {
+            e.preventDefault();
+            this.formatCode();
+        }
+            
         });
     }
 
@@ -220,52 +356,35 @@ class coderViewEdit {
 
         if (!this.elements.codeMirrorContainer || this.codeMirror) return;
         
-this.codeMirror = CodeMirror(this.elements.codeMirrorContainer, {
-  value: '',
-  mode: 'javascript',
-  theme: 'one-dark',
-
-  lineNumbers: true,
-  lineWrapping: false,
-
-  readOnly: "nocursor",
-
-  tabSize: 2,
-  indentUnit: 2,
-  smartIndent: false,
-
-  styleActiveLine: { nonEmpty: true },
-  matchBrackets: true,
-  autoCloseBrackets: true,
-
-  highlightSelectionMatches: {
-    showToken: true,
-    annotateScrollbar: true
-  },
-
-  gutters: [
-    "CodeMirror-linenumbers",
-    "CodeMirror-foldgutter"
-  ],
-  foldGutter: true,
-
-  scrollbarStyle: "native",
-  viewportMargin: 50,
-
-  cursorBlinkRate: 0,
-  cursorHeight: 0.9,
-
-  dragDrop: false,
-  disableInput: true,
-
-  extraKeys: {
-    "Ctrl-F": "findPersistent",
-    "Ctrl-D": "duplicateLine",
-    "Ctrl-/": "toggleComment"
-  }
-});
+        this.codeMirror = CodeMirror(this.elements.codeMirrorContainer, {
+            value: '',
+            mode: 'javascript',
+            theme: 'material-darker',
+            lineNumbers: false,
+            lineWrapping: true,
+            readOnly: true,
+            tabSize: 2,
+            indentUnit: 2,
+            smartIndent: true,
+            matchBrackets: true,
+            autoCloseBrackets: true,
+            scrollbarStyle: 'native',
+            viewportMargin: Infinity,
+            cursorBlinkRate: 530,
+            extraKeys: {
+                "Ctrl-S": () => this.saveChanges(),
+                "Cmd-S": () => this.saveChanges(),
+                "Ctrl-F": "findPersistent",
+                "Ctrl-D": (cm) => cm.execCommand("duplicateLine"),
+                "Ctrl-/": "toggleComment"
+            }
+        });
         
         this.updateLineNumbers();
+        
+        this.codeMirror.on('change', () => {
+            this.updateLineNumbers();
+        });
     }
 
     updateLineNumbers() {
@@ -326,8 +445,8 @@ this.codeMirror = CodeMirror(this.elements.codeMirrorContainer, {
             this.updateLineNumbers();
         }
         
-        this.show();
         this.exitEditMode();
+        this.show();
     }
 
     setCodeMirrorMode(filename) {
@@ -368,14 +487,16 @@ this.codeMirror = CodeMirror(this.elements.codeMirrorContainer, {
         
         this.isLoading = true;
         this.elements.loadingText.textContent = message;
-        this.elements.loadingOverlay.classList.remove('hidden');
+        this.elements.loadingOverlay.style.opacity = '1';
+        this.elements.loadingOverlay.style.pointerEvents = 'all';
     }
 
     hideLoading() {
         if (!this.elements.loadingOverlay) return;
         
         this.isLoading = false;
-        this.elements.loadingOverlay.classList.add('hidden');
+        this.elements.loadingOverlay.style.opacity = '0';
+        this.elements.loadingOverlay.style.pointerEvents = 'none';
     }
 
     enterEditMode() {
@@ -409,13 +530,16 @@ this.codeMirror = CodeMirror(this.elements.codeMirrorContainer, {
                 }, 100);
                 
                 this.updateCommitMessage();
-                this.hideLoading();
+                
+                setTimeout(() => {
+                    this.hideLoading();
+                }, 800);
                 
             } catch (error) {
                 this.hideLoading();
                 showErrorMessage('Failed to enter edit mode');
             }
-        }, 800);
+        }, 100);
     }
 
     exitEditMode() {
@@ -456,10 +580,14 @@ this.codeMirror = CodeMirror(this.elements.codeMirrorContainer, {
         setTimeout(() => {
             if (this.codeMirror) {
                 this.codeMirror.setValue(this.originalContent);
+                this.updateLineNumbers();
             }
             
-            this.exitEditMode();
-            this.hideLoading();
+            setTimeout(() => {
+                this.exitEditMode();
+                this.hideLoading();
+            }, 300);
+            
         }, 300);
     }
 
@@ -503,16 +631,17 @@ this.codeMirror = CodeMirror(this.elements.codeMirrorContainer, {
                 
                 showSuccessMessage(`Saved ${this.currentFile}`);
                 
-                this.exitEditMode();
-                
-                if (this.elements.commitTitleInput) this.elements.commitTitleInput.value = '';
-                if (this.elements.commitDescriptionInput) this.elements.commitDescriptionInput.value = '';
-                
-                if (window.renderFileList) {
-                    window.renderFileList();
-                }
-                
-                this.hideLoading();
+                setTimeout(() => {
+                    this.exitEditMode();
+                    this.hideLoading();
+                    
+                    if (this.elements.commitTitleInput) this.elements.commitTitleInput.value = '';
+                    if (this.elements.commitDescriptionInput) this.elements.commitDescriptionInput.value = '';
+                    
+                    if (window.renderFileList) {
+                        window.renderFileList();
+                    }
+                }, 500);
                 
             } catch (error) {
                 this.hideLoading();
