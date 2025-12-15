@@ -104,7 +104,7 @@ class coderViewEdit {
                         <p class="text-github-fg-muted text-sm" id="loadingText">Loading...</p>
                     </div>
                 </div>
-                <div class="flex h-full">
+                <div class="flex h-auto">
                     <div class="flex-1 overflow-auto">
                         <div id="codeMirrorContainer"></div>
                     </div>
