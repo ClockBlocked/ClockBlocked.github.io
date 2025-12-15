@@ -229,6 +229,47 @@ function removeTag(tag) {
   updateSelectedTags();
 }
 
+
+
+/**
+ * All of these are functions that "run" in the background,
+ * whenever an option is picked from the Context Menu on a File List,
+ * ( when a File List item is right clicked )
+ */
+ /**
+so i would rather something like:
+
+const files = {
+  contextMenu = {
+    view: function(fileName) {
+      
+    },
+    edit: function(fileName) {
+      
+    },
+    download: function(fileName) {
+      
+    },
+    delete: function(fileName) {
+      
+    }
+  },
+  
+  
+}
+
+
+
+
+**/
+
+
+
+
+
+
+
+// FROM THE FILE "core.js"
 function viewFileFromContext(fileName) {
   hideContextMenu();
   viewFile(fileName);
@@ -249,12 +290,134 @@ function deleteFileFromContext(fileName) {
   showDeleteFileModal();
 }
 
+function viewFile(filename) {
+// Logic that is not relevant to my issue
+}
+function editFile() {
+// Logic that is not relevant to my issue
+}
+function showDeleteFileModal() {
+// Logic that is not relevant to my issue
+}
+function downloadCurrentFile() {
+// Logic that is not relevant to my issue
+}
+
+
+
+
+// FROM THE FILE "overlays.js"
+function showContextMenu(x, y, fileName, fileType) {
+  hideContextMenu();
+  const menu = document.createElement('div');
+  menu.id = 'contextMenu';
+  menu.className = 'fixed bg-github-canvas-overlay border border-github-border-default rounded-lg shadow-2xl py-2 z-50 min-w-[160px]';
+  menu.style.left = `${x}px`;
+  menu.style.top = `${y}px`;
+  let html = `<button onclick="viewFileFromContext('${fileName}')" class="w-full text-left px-4 py-2 text-sm text-github-fg-default hover:bg-github-canvas-subtle flex items-center space-x-2"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16"><path d="M8 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z"/></svg><span>View</span></button>`;
+  if (fileType === 'file') {
+    html += `<button onclick="editFileFromContext('${fileName}')" class="w-full text-left px-4 py-2 text-sm text-github-fg-default hover:bg-github-canvas-subtle flex items-center space-x-2"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16"><path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Z"/></svg><span>Edit</span></button><button onclick="downloadFileFromContext('${fileName}')" class="w-full text-left px-4 py-2 text-sm text-github-fg-default hover:bg-github-canvas-subtle flex items-center space-x-2"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16"><path d="M2.75 14A1.75 1.75 0 0 1 1 12.25v-2.5a.75.75 0 0 1 1.5 0v2.5c0 .138.112.25.25.25h10.5a.25.25 0 0 0 .25-.25v-2.5a.75.75 0 0 1 1.5 0v2.5A1.75 1.75 0 0 1 13.25 14Z"/><path d="M7.25 7.689V2a.75.75 0 0 1 1.5 0v5.689l1.97-1.969a.749.749 0 1 1 1.06 1.06l-3.25 3.25a.749.749 0 0 1-1.06 0L4.22 6.78a.749.749 0 1 1 1.06-1.06l1.97 1.969Z"/></svg><span>Download</span></button>`;
+  }
+  html += `<div class="border-t border-github-border-muted my-1"></div><button onclick="deleteFileFromContext('${fileName}')" class="w-full text-left px-4 py-2 text-sm text-github-danger-fg hover:bg-github-canvas-subtle flex items-center space-x-2"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16"><path d="M11 1.75V3h2.25a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5H5V1.75C5 .784 5.784 0 6.75 0h2.5C10.216 0 11 .784 11 1.75ZM4.496 6.675l.66 6.6a.25.25 0 0 0 .249.225h5.19a.25.25 0 0 0 .249-.225l.66-6.6a.75.75 0 0 1 1.492.149l-.66 6.6A1.748 1.748 0 0 1 10.595 15h-5.19a1.748 1.748 0 0 1-1.741-1.575l-.66-6.6a.75.75 0 1 1 1.492-.15ZM6.5 1.75V3h3V1.75a.25.25 0 0 0-.25-.25h-2.5a.25.25 0 0 0-.25.25Z"/></svg><span>Delete</span></button>`;
+  menu.innerHTML = html;
+  document.body.appendChild(menu);
+  const rect = menu.getBoundingClientRect();
+  if (rect.right > window.innerWidth) menu.style.left = `${x - rect.width}px`;
+  if (rect.bottom > window.innerHeight) menu.style.top = `${y - rect.height}px`;
+}
+function hideContextMenu() {
+  const menu = document.getElementById('contextMenu');
+  if (menu) menu.remove();
+}
+
+
+
+
+
+
+
+
+// core.js
+
+// Assume currentState and other functions (viewFile, editFile, downloadCurrentFile, showDeleteFileModal) 
+// are defined elsewhere or remain in this file.
+
+const files = {
+  /**
+   * Functions that run when an option is picked from the File List Context Menu
+   */
+  contextMenu: {
+    // Helper to perform necessary cleanup before action
+    _preAction: function() {
+      // Assuming hideContextMenu is globally accessible or imported/defined here
+      if (typeof hideContextMenu === 'function') {
+        hideContextMenu();
+      } else {
+        console.warn("hideContextMenu not found. Context menu may persist.");
+      }
+    },
+
+    view: function(fileName) {
+      this._preAction();
+      viewFile(fileName);
+    },
+
+    edit: function(fileName) {
+      this._preAction();
+      // Logic to find and set current file is moved here
+      currentState.currentFile = currentState.files.find(f => f.name === fileName);
+      editFile();
+    },
+
+    download: function(fileName) {
+      this._preAction();
+      // Logic to find and set current file is moved here
+      currentState.currentFile = currentState.files.find(f => f.name === fileName);
+      downloadCurrentFile();
+    },
+
+    delete: function(fileName) {
+      this._preAction();
+      // Logic to find and set current file is moved here
+      currentState.currentFile = currentState.files.find(f => f.name === fileName);
+      showDeleteFileModal();
+    }
+  }
+};
+
+
+// The original context wrapper functions are removed:
+// REMOVE: function viewFileFromContext(fileName) { ... }
+// REMOVE: function editFileFromContext(fileName) { ... }
+// REMOVE: function downloadFileFromContext(fileName) { ... }
+// REMOVE: function deleteFileFromContext(fileName) { ... }
+
+
+// The other functions that perform the action remain:
+// function viewFile(filename) { /* ... */ }
+// function editFile() { /* ... */ }
+// function downloadCurrentFile() { /* ... */ }
+// function showDeleteFileModal() { /* ... */ }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 function setupCodeEditors() {
   if (typeof CodeMirror !== 'undefined') {
     const editorConfig = {
       lineNumbers: true,
       lineWrapping: false,
-      theme: 'one-dark',
+      theme: 'material-darker',
       mode: 'javascript',
       indentUnit: 2,
       tabSize: 2,
@@ -450,7 +613,6 @@ function viewFile(filename) {
     showErrorMessage('Failed to load file: ' + error.message);
   });
 }
-
 function editFile() {
   if (!currentState.currentFile) return;
   
@@ -495,7 +657,6 @@ function editFile() {
     showErrorMessage('Failed to load file for editing: ' + error.message);
   });
 }
-
 function saveFile() {
   if (!currentState.currentFile) return;
   
@@ -571,6 +732,9 @@ function openRepository(repoName) {
     showErrorMessage('Failed to open repository: ' + error.message);
   });
 }
+
+
+
 
 function initializeApp() {
   setupEventListeners();
