@@ -223,7 +223,7 @@ class coderViewEdit {
 this.codeMirror = CodeMirror(this.elements.codeMirrorContainer, {
   value: '',
   mode: 'javascript',
-  theme: 'github-dark',
+  theme: 'one-dark',
 
   lineNumbers: true,
   lineWrapping: false,
