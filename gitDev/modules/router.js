@@ -703,12 +703,10 @@ const LoadingSpinner = (() => {
         border: 4px solid rgba(255, 255, 255, 0.1);
         border-top-color: ${config.spinnerColor};
         border-radius: 50%;
-        animation: spinner-rotate 1s linear infinite;
       }
       
       .spinner-text {
         color: white;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         font-size: 1rem;
         margin: 0;
         text-align: center;
