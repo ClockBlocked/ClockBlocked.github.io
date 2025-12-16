@@ -573,6 +573,236 @@ const LoadingProgress = (() => {
     isVisible  
   };
 })();
+const LoadingSpinner = (() => {
+  let spinnerElement = null;
+  let hideTimeout = null;
+  let isActive = false;
+
+  let config = {
+    message: 'Loading...',
+    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+    spinnerColor: '#1c7eec',
+    fadeDuration: 300,
+    zIndex: 10000
+  };
+
+  function init() {
+    if (spinnerElement) return;
+    
+    // Create spinner element
+    spinnerElement = document.createElement('div');
+    spinnerElement.id = 'loadingSpinner';
+    spinnerElement.setAttribute('data-active', 'false');
+    spinnerElement.className = 'loading-spinner';
+    
+    // Create overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'spinner-overlay';
+    
+    // Create spinner content container
+    const content = document.createElement('div');
+    content.className = 'spinner-content';
+    
+    // Create actual spinner
+    const spinner = document.createElement('div');
+    spinner.className = 'spinner';
+    
+    // Create loading text
+    const text = document.createElement('p');
+    text.className = 'spinner-text';
+    text.textContent = config.message;
+    
+    // Build structure
+    content.appendChild(spinner);
+    content.appendChild(text);
+    overlay.appendChild(content);
+    spinnerElement.appendChild(overlay);
+    
+    // Create and inject styles
+    const styleElement = document.createElement('style');
+    styleElement.innerHTML = `
+      .loading-spinner {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: ${config.zIndex};
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity ${config.fadeDuration}ms ease-in-out, visibility ${config.fadeDuration}ms ease-in-out;
+        pointer-events: none;
+      }
+      
+      .loading-spinner[data-active="true"] {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: all;
+      }
+      
+      .spinner-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: ${config.backgroundColor};
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .spinner-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        animation: spinner-enter 0.4s ease-out;
+      }
+      
+      .spinner {
+        width: 50px;
+        height: 50px;
+        border: 4px solid rgba(255, 255, 255, 0.1);
+        border-top-color: ${config.spinnerColor};
+        border-radius: 50%;
+        animation: spinner-rotate 1s linear infinite;
+      }
+      
+      .spinner-text {
+        color: white;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        font-size: 1rem;
+        margin: 0;
+        text-align: center;
+        animation: text-fade 0.5s ease-out;
+      }
+      
+      @keyframes spinner-rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+      
+      @keyframes spinner-enter {
+        from {
+          opacity: 0;
+          transform: scale(0.9) translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+      
+      @keyframes text-fade {
+        from {
+          opacity: 0;
+          transform: translateY(5px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    `;
+    
+    document.head.appendChild(styleElement);
+    document.body.appendChild(spinnerElement);
+  }
+
+  function show() {
+    if (!spinnerElement) init();
+    
+    clearTimeout(hideTimeout);
+    isActive = true;
+    
+    // Force reflow to ensure transition triggers
+    spinnerElement.style.display = 'block';
+    void spinnerElement.offsetWidth;
+    
+    spinnerElement.setAttribute('data-active', 'true');
+  }
+
+  function hide() {
+    if (!spinnerElement || !isActive) return;
+    
+    isActive = false;
+    spinnerElement.setAttribute('data-active', 'false');
+    
+    // Clean up element after fade out
+    hideTimeout = setTimeout(() => {
+      if (!isActive) {
+        spinnerElement.style.display = 'none';
+      }
+    }, config.fadeDuration);
+  }
+
+  function toggle() {
+    if (isActive) {
+      hide();
+    } else {
+      show();
+    }
+  }
+
+  function updateMessage(newMessage) {
+    if (!spinnerElement) return;
+    
+    config.message = newMessage;
+    const textElement = spinnerElement.querySelector('.spinner-text');
+    if (textElement) {
+      textElement.textContent = newMessage;
+    }
+  }
+
+  function configOptions(options = {}) {
+    config = { ...config, ...options };
+    
+    if (spinnerElement) {
+      // Update spinner color
+      const spinner = spinnerElement.querySelector('.spinner');
+      if (spinner) {
+        spinner.style.borderTopColor = config.spinnerColor;
+      }
+      
+      // Update overlay background
+      const overlay = spinnerElement.querySelector('.spinner-overlay');
+      if (overlay) {
+        overlay.style.backgroundColor = config.backgroundColor;
+      }
+      
+      // Update z-index
+      spinnerElement.style.zIndex = config.zIndex;
+      
+      // Update transition duration
+      spinnerElement.style.transition = `opacity ${config.fadeDuration}ms ease-in-out, visibility ${config.fadeDuration}ms ease-in-out`;
+    }
+  }
+
+  function isVisible() {
+    return isActive;
+  }
+
+  function destroy() {
+    if (spinnerElement && spinnerElement.parentNode) {
+      spinnerElement.parentNode.removeChild(spinnerElement);
+      spinnerElement = null;
+    }
+    clearTimeout(hideTimeout);
+    isActive = false;
+  }
+
+  return {
+    config: configOptions,
+    show,
+    hide,
+    toggle,
+    updateMessage,
+    isVisible,
+    destroy
+  };
+})();
 
 window.navigateToRoot = navigateToRoot;
 window.navigateToPath = navigateToPath;
@@ -580,6 +810,9 @@ window.showFileEditor = showFileEditor;
 window.showRepoSelector = showRepoSelector;
 window.showFileViewer = showFileViewer;
 window.showExplorer = showExplorer;
+
+window.LoadingProgress = LoadingProgress;
+window.LoadingSpinner = LoadingSpinner;
 /**
  * 
  *  C R E A T E D  B Y
