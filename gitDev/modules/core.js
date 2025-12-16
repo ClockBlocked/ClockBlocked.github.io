@@ -290,12 +290,15 @@ function deleteFileFromContext(fileName) {
   showDeleteFileModal();
 }
 
+
+/**
 function viewFile(filename) {
 // Logic that is not relevant to my issue
 }
 function editFile() {
 // Logic that is not relevant to my issue
 }
+**/
 function showDeleteFileModal() {
 // Logic that is not relevant to my issue
 }
@@ -364,7 +367,6 @@ const files = {
 
     edit: function(fileName) {
       this._preAction();
-      // Logic to find and set current file is moved here
       currentState.currentFile = currentState.files.find(f => f.name === fileName);
       editFile();
     },
@@ -615,7 +617,14 @@ function viewFile(filename) {
   });
 }
 function editFile() {
-  if (!currentState.currentFile) return;
+  LoadingProgress.show();
+  LoadingSpinner.show();
+  
+  if (!currentState.currentFile) {
+    LoadingProgress.hide();
+    LoadingSpinner.hide();
+    return;
+  }
   
   fetchData('Loading editor...', () => {
     const filePath = (currentState.path ? currentState.path + '/' : '') + currentState.currentFile.name;
@@ -638,12 +647,18 @@ function editFile() {
           } else {
             showFileViewer();
           }
+          // Hide loaders AFTER everything is ready
+          LoadingSpinner.hide();
+          LoadingProgress.hide();
         }, 100);
         
       } else if (codeEditor) {
         codeEditor.setValue(fileData.content);
         updateEditorMode(codeEditor, currentState.currentFile.name);
         showFileEditor();
+        // Hide loaders after editor is ready
+        LoadingSpinner.hide();
+        LoadingProgress.hide();
       }
       
       if (fileCategoryInput) fileCategoryInput.value = fileData.category || '';
@@ -656,9 +671,14 @@ function editFile() {
     
   }).catch((error) => {
     showErrorMessage('Failed to load file for editing: ' + error.message);
+    LoadingSpinner.hide();
+    LoadingProgress.hide();
   });
 }
 function saveFile() {
+    LoadingProgress.show();
+  LoadingSpinner.show();
+
   if (!currentState.currentFile) return;
   
   if (window.coderViewEdit && typeof window.coderViewEdit.saveChanges === 'function') {
@@ -705,9 +725,18 @@ function saveFile() {
   }).catch((error) => {
     showErrorMessage('Failed to save file: ' + error.message);
   });
+  
+  
+  setTimeout(() => (
+    LoadingSpinner.hide();
+    LoadingProgress.hide();
+  ), 200);
 }
 
 function openRepository(repoName) {
+    LoadingProgress.show();
+  LoadingSpinner.show();
+
   currentState.repository = repoName;
   currentState.path = '';
   
@@ -732,6 +761,12 @@ function openRepository(repoName) {
   }).catch((error) => {
     showErrorMessage('Failed to open repository: ' + error.message);
   });
+  
+    
+  setTimeout(() => (
+    LoadingSpinner.hide();
+    LoadingProgress.hide();
+  ), 200);
 }
 
 
