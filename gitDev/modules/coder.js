@@ -19,116 +19,387 @@ class coderViewEdit {
     const coder = document.getElementById("coder");
     if (!coder) return;
     coder.innerHTML = `
-            <div class="flex items-center justify-between mb-4">
-                <nav class="flex items-center space-x-1 text-sm">
-                    <button onclick="showExplorer()" class="text-github-accent-fg hover:underline font-semibold">${window.currentState?.repository || "Repository"}</button>
-                    <span class="text-github-fg-muted">/</span>
-                    <input type="text" id="fileNameInput" class="bg-transparent border-none text-github-fg-default font-semibold focus:outline-none focus:bg-github-canvas-subtle px-1 rounded" value="" readonly>
-                </nav>
-                <div class="flex items-center space-x-2">
-                    <button id="editToggleBtn" class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
-                            <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"/>
-                        </svg>
-                        <span>Edit</span>
-                    </button>
-                    <button id="copyBtn" class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
-                            <path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"/>
-                            <path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"/>
-                        </svg>
-                        Copy
-                    </button>
-                    <button id="downloadBtn" class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
-                            <path d="M2.75 14A1.75 1.75 0 0 1 1 12.25v-2.5a.75.75 0 0 1 1.5 0v2.5c0 .138.112.25.25.25h10.5a.25.25 0 0 0 .25-.25v-2.5a.75.75 0 0 1 1.5 0v2.5A1.75 1.75 0 0 1 13.25 14Z"/>
-                            <path d="M7.25 7.689V2a.75.75 0 0 1 1.5 0v5.689l1.97-1.969a.749.749 0 1 1 1.06 1.06l-3.25 3.25a.749.749 0 0 1-1.06 0L4.22 6.78a.749.749 0 1 1 1.06-1.06l1.97 1.969Z"/>
-                        </svg>
-                        Download
-                    </button>
-                </div>
-            </div>
-<div class="bg-github-canvas-overlay border border-github-border-default rounded-t-lg px-4 py-2 flex items-center justify-between text-sm">
-    <div class="flex items-center space-x-4 text-github-fg-muted" id="fileStats">
-        <span id="fileLinesCount">0 lines</span>
-        <span>•</span>
-        <span id="fileSize">0 KB</span>
-        <span>•</span>
-        <span id="fileLanguageDisplay">Text</span>
-    </div>
-    <div class="flex items-center space-x-2">
-        <button id="themeToggleBtn" class="p-2 rounded hover:bg-github-canvas-subtle text-github-fg-muted hover:text-github-fg-default transition-colors">
-            <svg id="themeIcon" class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M8 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z"/>
-            </svg>
-        </button>
-        <div class="flex items-center border border-github-border-default rounded-md overflow-hidden">
-            <button id="decreaseFontBtn" class="p-1.5 hover:bg-github-canvas-subtle text-github-fg-muted hover:text-github-fg-default transition-colors">
-                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M3.75 7.25a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5Z"/>
-                </svg>
-            </button>
-            <span id="fontSizeDisplay" class="px-2 text-xs text-github-fg-default border-x border-github-border-default min-w-[40px] text-center">12px</span>
-            <button id="increaseFontBtn" class="p-1.5 hover:bg-github-canvas-subtle text-github-fg-muted hover:text-github-fg-default transition-colors">
-                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M7.25 3.75a.75.75 0 0 1 1.5 0V7.25h3.5a.75.75 0 0 1 0 1.5h-3.5v3.5a.75.75 0 0 1-1.5 0v-3.5h-3.5a.75.75 0 0 1 0-1.5h3.5Z"/>
-                </svg>
-            </button>
-        </div>
-        <button id="wrapLinesBtn" class="p-2 rounded hover:bg-github-canvas-subtle text-github-fg-muted hover:text-github-fg-default transition-colors">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M2 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm3.75-1.5a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5Zm0 5a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5Zm0 5a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5ZM3 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm-1 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/>
-            </svg>
-        </button>
-        <button id="searchBtn" class="p-2 rounded hover:bg-github-canvas-subtle text-github-fg-muted hover:text-github-fg-default transition-colors">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"/>
-            </svg>
-        </button>
-        <button id="fullscreenBtn" class="p-2 rounded hover:bg-github-canvas-subtle text-github-fg-muted hover:text-github-fg-default transition-colors">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M3.75 2A1.75 1.75 0 0 0 2 3.75v1.5a.75.75 0 0 0 1.5 0v-1.5a.25.25 0 0 1 .25-.25h1.5a.75.75 0 0 0 0-1.5h-1.5ZM10.75 2a.75.75 0 0 0 0 1.5h1.5a.25.25 0 0 1 .25.25v1.5a.75.75 0 0 0 1.5 0v-1.5A1.75 1.75 0 0 0 12.25 2ZM3.75 14a.75.75 0 0 0 0-1.5h-1.5a.25.25 0 0 1-.25-.25v-1.5a.75.75 0 0 0-1.5 0v1.5A1.75 1.75 0 0 0 3.75 16h1.5a.75.75 0 0 0 0-1.5ZM14 10.75a.75.75 0 0 0-1.5 0v1.5a.25.25 0 0 1-.25.25h-1.5a.75.75 0 0 0 0 1.5h1.5A1.75 1.75 0 0 0 16 12.25Z"/>
-            </svg>
-        </button>
-        <button id="formatCodeBtn" class="p-2 rounded hover:bg-github-canvas-subtle text-github-fg-muted hover:text-github-fg-default transition-colors hidden">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M4.72 3.22a.75.75 0 0 1 1.06 1.06L2.06 8l3.72 3.72a.75.75 0 1 1-1.06 1.06L.47 8.53a.75.75 0 0 1 0-1.06l4.25-4.25Zm6.56 0a.75.75 0 1 0-1.06 1.06L13.94 8l-3.72 3.72a.75.75 0 1 0 1.06 1.06l4.25-4.25a.75.75 0 0 0 0-1.06l-4.25-4.25Z"/>
-            </svg>
-        </button>
-    </div>
+<div class="container">
+  <nav class="navigation">
+    <button onclick="showExplorer()" class="navButton">
+      ${window.currentState?.repository || "Repository"}
+    </button>
+    <span class="separator">/</span>
+    <input type="text" id="fileNameInput" class="fileNameInput" value="" readonly />
+  </nav>
+  <div class="buttonGroup">
+    <button id="editToggleBtn" class="actionButton">
+      <svg class="icon" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z" />
+      </svg>
+      <span>Edit</span>
+    </button>
+    <button id="copyBtn" class="actionButton">
+      <svg class="icon" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z" />
+        <path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z" />
+      </svg>
+      Copy
+    </button>
+    <button id="downloadBtn" class="actionButton">
+      <svg class="icon" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M2.75 14A1.75 1.75 0 0 1 1 12.25v-2.5a.75.75 0 0 1 1.5 0v2.5c0 .138.112.25.25.25h10.5a.25.25 0 0 0 .25-.25v-2.5a.75.75 0 0 1 1.5 0v2.5A1.75 1.75 0 0 1 13.25 14Z" />
+        <path d="M7.25 7.689V2a.75.75 0 0 1 1.5 0v5.689l1.97-1.969a.749.749 0 1 1 1.06 1.06l-3.25 3.25a.749.749 0 0 1-1.06 0L4.22 6.78a.749.749 0 1 1 1.06-1.06l1.97 1.969Z" />
+      </svg>
+      Download
+    </button>
+  </div>
 </div>
-            <div id="coderWrapper" class="bg-github-canvas-overlay border-x border-b border-github-border-default rounded-b-lg overflow-hidden relative">
-                <div id="loadingOverlay" class="absolute inset-0 bg-github-canvas-overlay/90 backdrop-blur-sm z-10 flex items-center justify-center transition-opacity duration-300 opacity-0 pointer-events-none">
-                    <div class="text-center">
-                        <div class="w-8 h-full border-2 border-github-border-default border-t-github-accent-fg rounded-full animate-spin mx-auto mb-2"></div>
-                        <p class="text-github-fg-muted text-sm" id="loadingText">Loading...</p>
-                    </div>
-                </div>
-                <div class="flex h-auto">
-                    <div class="flex-1 overflow-auto">
-                        <div id="codeMirrorContainer"></div>
-                    </div>
-                </div>
-            </div>
-            <div id="commitPanel" class="mt-6 bg-github-canvas-overlay border border-github-border-default rounded-lg p-6 hidden">
-                <h3 class="text-lg font-semibold text-github-fg-default mb-4">Commit changes</h3>
-                <div class="space-y-4">
-                    <div>
-                        <input type="text" id="commitTitleInput" placeholder="Update filename.ext" class="w-full px-3 py-2 bg-github-canvas-inset border border-github-border-default rounded-md text-github-fg-default placeholder-github-fg-muted focus:outline-none focus:ring-2 focus:ring-github-accent-emphasis focus:border-transparent">
-                    </div>
-                    <div>
-                        <textarea id="commitDescriptionInput" rows="4" placeholder="Add an optional extended description..." class="w-full px-3 py-2 bg-github-canvas-inset border border-github-border-default rounded-md text-github-fg-default placeholder-github-fg-muted focus:outline-none focus:ring-2 focus:ring-github-accent-emphasis focus:border-transparent resize-none"></textarea>
-                    </div>
-                    <div class="flex justify-end space-x-2">
-                        <button id="cancelEditBtn" class="px-4 py-2 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
-                            Cancel
-                        </button>
-                        <button id="saveChangesBtn" class="px-4 py-2 bg-github-btn-primary-bg hover:bg-github-btn-primary-hover text-white rounded-md text-sm font-medium transition-colors">
-                            Commit changes
-                        </button>
-                    </div>
-                </div>
-            </div>
+<div class="fileHeader">
+  <div class="fileStats" id="fileStats">
+    <span id="fileLinesCount">0 lines</span>
+    <span>•</span>
+    <span id="fileSize">0 KB</span>
+    <span>•</span>
+    <span id="fileLanguageDisplay">Text</span>
+  </div>
+  <div class="toolbarGroup">
+    <button id="themeToggleBtn" class="toolbarButton">
+      <svg id="themeIcon" class="smallIcon" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M8 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z" />
+      </svg>
+    </button>
+    <div data-toolbar="fontSize" class="fontSizeControl">
+      <button id="decreaseFontBtn" class="fontButton">
+        <svg class="tinyIcon" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M3.75 7.25a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5Z" />
+        </svg>
+      </button>
+      <span id="fontSizeDisplay" class="fontSizeDisplay">12px</span>
+      <button id="increaseFontBtn" class="fontButton">
+        <svg class="tinyIcon" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M7.25 3.75a.75.75 0 0 1 1.5 0V7.25h3.5a.75.75 0 0 1 0 1.5h-3.5v3.5a.75.75 0 0 1-1.5 0v-3.5h-3.5a.75.75 0 0 1 0-1.5h3.5Z" />
+        </svg>
+      </button>
+    </div>
+    <button id="wrapLinesBtn" class="toolbarButton">
+      <svg class="smallIcon" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M2 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm3.75-1.5a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5Zm0 5a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5Zm0 5a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5ZM3 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm-1 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" />
+      </svg>
+    </button>
+    <button id="searchBtn" class="toolbarButton">
+      <svg class="smallIcon" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z" />
+      </svg>
+    </button>
+    <button id="fullscreenBtn" class="toolbarButton">
+      <svg class="smallIcon" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M3.75 2A1.75 1.75 0 0 0 2 3.75v1.5a.75.75 0 0 0 1.5 0v-1.5a.25.25 0 0 1 .25-.25h1.5a.75.75 0 0 0 0-1.5h-1.5ZM10.75 2a.75.75 0 0 0 0 1.5h1.5a.25.25 0 0 1 .25.25v1.5a.75.75 0 0 0 1.5 0v-1.5A1.75 1.75 0 0 0 12.25 2ZM3.75 14a.75.75 0 0 0 0-1.5h-1.5a.25.25 0 0 1-.25-.25v-1.5a.75.75 0 0 0-1.5 0v1.5A1.75 1.75 0 0 0 3.75 16h1.5a.75.75 0 0 0 0-1.5ZM14 10.75a.75.75 0 0 0-1.5 0v1.5a.25.25 0 0 1-.25.25h-1.5a.75.75 0 0 0 0 1.5h1.5A1.75 1.75 0 0 0 16 12.25Z" />
+      </svg>
+    </button>
+    <button id="formatCodeBtn" class="toolbarButton hidden">
+      <svg class="smallIcon" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M4.72 3.22a.75.75 0 0 1 1.06 1.06L2.06 8l3.72 3.72a.75.75 0 1 1-1.06 1.06L.47 8.53a.75.75 0 0 1 0-1.06l4.25-4.25Zm6.56 0a.75.75 0 1 0-1.06 1.06L13.94 8l-3.72 3.72a.75.75 0 1 0 1.06 1.06l4.25-4.25a.75.75 0 0 0 0-1.06l-4.25-4.25Z" />
+      </svg>
+    </button>
+  </div>
+</div>
+<div id="coderWrapper" class="codeWrapper">
+  <div id="loadingOverlay" class="loadingOverlay">
+    <div class="loadingContent">
+      <div class="spinner"></div>
+      <p class="loadingText" id="loadingText">Loading...</p>
+    </div>
+  </div>
+  <div class="codeContainer">
+    <div class="codeEditor">
+      <div id="codeMirrorContainer"></div>
+    </div>
+  </div>
+</div>
+<div id="commitPanel" class="commitPanel">
+  <h3 class="panelTitle">Commit changes</h3>
+  <div class="panelContent">
+    <div>
+      <input type="text" id="commitTitleInput" class="commitInput" placeholder="Update filename.ext" />
+    </div>
+    <div>
+      <textarea id="commitDescriptionInput" rows="4" class="commitTextarea" placeholder="Add an optional extended description..."></textarea>
+    </div>
+    <div class="panelButtons">
+      <button id="cancelEditBtn" class="secondaryButton">Cancel</button>
+      <button id="saveChangesBtn" class="primaryButton">Commit changes</button>
+    </div>
+  </div>
+</div>
+
+<style>
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+.navigation {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+}
+.navButton {
+  color: #1f6feb;
+  text-decoration: underline;
+  font-weight: 600;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+.navButton:hover {
+  text-decoration: underline;
+}
+.separator {
+  color: #8b949e;
+}
+.fileNameInput {
+  background: transparent;
+  border: none;
+  color: #f0f6fc;
+  font-weight: 600;
+  outline: none;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  width: auto;
+}
+.fileNameInput:focus {
+  background: #161b22;
+}
+.buttonGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.actionButton {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.375rem 0.75rem;
+  border: 1px solid #30363d;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #f0f6fc;
+  background-color: #21262d;
+  transition: background-color 0.2s;
+  cursor: pointer;
+}
+.actionButton:hover {
+  background-color: #30363d;
+}
+.icon {
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.5rem;
+}
+.fileHeader {
+  background-color: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 0.5rem 0.5rem 0 0;
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.875rem;
+}
+.fileStats {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: #8b949e;
+}
+.toolbarGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.toolbarButton {
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  color: #8b949e;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.toolbarButton:hover {
+  background-color: #161b22;
+  color: #f0f6fc;
+}
+.smallIcon {
+  width: 1rem;
+  height: 1rem;
+}
+.fontSizeControl {
+  display: flex;
+  align-items: center;
+  border: 1px solid #30363d;
+  border-radius: 0.375rem;
+  overflow: hidden;
+}
+.fontButton {
+  padding: 0.375rem;
+  color: #8b949e;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.fontButton:hover {
+  background-color: #161b22;
+  color: #f0f6fc;
+}
+.tinyIcon {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+.fontSizeDisplay {
+  padding: 0 0.5rem;
+  font-size: 0.75rem;
+  color: #f0f6fc;
+  border-left: 1px solid #30363d;
+  border-right: 1px solid #30363d;
+  min-width: 40px;
+  text-align: center;
+}
+.codeWrapper {
+  background-color: #0d1117;
+  border-left: 1px solid #30363d;
+  border-right: 1px solid #30363d;
+  border-bottom: 1px solid #30363d;
+  border-radius: 0 0 0.5rem 0.5rem;
+  overflow: hidden;
+  position: relative;
+}
+.loadingOverlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(13, 17, 23, 0.9);
+  backdrop-filter: blur(4px);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s;
+  opacity: 0;
+  pointer-events: none;
+}
+.loadingContent {
+  text-align: center;
+}
+.spinner {
+  width: 2rem;
+  height: 100%;
+  border: 2px solid #30363d;
+  border-top-color: #1f6feb;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 0.5rem;
+}
+.loadingText {
+  color: #8b949e;
+  font-size: 0.875rem;
+}
+.codeContainer {
+  display: flex;
+  height: auto;
+}
+.codeEditor {
+  flex: 1;
+  overflow: auto;
+}
+.commitPanel {
+  margin-top: 1.5rem;
+  background-color: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  display: none;
+}
+.panelTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #f0f6fc;
+  margin-bottom: 1rem;
+}
+.panelContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.commitInput {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  background-color: #010409;
+  border: 1px solid #30363d;
+  border-radius: 0.375rem;
+  color: #f0f6fc;
+  outline: none;
+}
+.commitInput:focus {
+  outline: 2px solid #1f6feb;
+  outline-offset: -1px;
+  border-color: transparent;
+}
+.commitTextarea {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  background-color: #010409;
+  border: 1px solid #30363d;
+  border-radius: 0.375rem;
+  color: #f0f6fc;
+  outline: none;
+  resize: none;
+}
+.commitTextarea:focus {
+  outline: 2px solid #1f6feb;
+  outline-offset: -1px;
+  border-color: transparent;
+}
+.panelButtons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+.secondaryButton {
+  padding: 0.5rem 1rem;
+  border: 1px solid #30363d;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #f0f6fc;
+  background-color: #21262d;
+  transition: background-color 0.2s;
+  cursor: pointer;
+}
+.secondaryButton:hover {
+  background-color: #30363d;
+}
+.primaryButton {
+  padding: 0.5rem 1rem;
+  background-color: #238636;
+  color: white;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.primaryButton:hover {
+  background-color: #2ea043;
+}
+.hidden {
+  display: none;
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+</style>
         `;
     this.cacheElements();
     this.bindEvents();
