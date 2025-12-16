@@ -727,10 +727,10 @@ function saveFile() {
   });
   
   
-  setTimeout(() => (
+  setTimeout(() => {
     LoadingSpinner.hide();
     LoadingProgress.hide();
-  ), 200);
+ }, 200);
 }
 
 function openRepository(repoName) {
@@ -763,10 +763,10 @@ function openRepository(repoName) {
   });
   
     
-  setTimeout(() => (
+  setTimeout(() => {
     LoadingSpinner.hide();
     LoadingProgress.hide();
-  ), 200);
+}, 200);
 }
 
 
