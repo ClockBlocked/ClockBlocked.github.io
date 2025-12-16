@@ -617,7 +617,6 @@ input, textarea {
   white-space: nowrap;
   flex-shrink: 0;
 }
-
 .navButton:hover {
   text-decoration: underline;
 }
@@ -774,7 +773,7 @@ input, textarea {
   inset: 0;
   background-color: rgba(13, 17, 23, 0.9);
   backdrop-filter: blur(4px);
-  z-index: 10;
+  z-index: 99999999;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -955,16 +954,6 @@ input, textarea {
     </div>
   </div>
 
-  <!-- Loading Overlay -->
-  <div id="loadingOverlay" class="fixed inset-0 bg-github-canvas-default/90 backdrop-blur-sm z-50 hidden items-center justify-center">
-    <div class="flex flex-col items-center space-y-4">
-      <div class="relative">
-        <div class="w-8 h-8 border-2 border-github-accent-fg border-t-transparent rounded-full animate-spin"></div>
-        <div class="absolute inset-0 w-8 h-8 border-2 border-github-accent-fg/30 rounded-full animate-pulse-soft"></div>
-      </div>
-      <p class="text-github-fg-muted text-sm font-medium" id="loadingText">Loading...</p>
-    </div>
-  </div>
 
   <!-- Top Navigation Bar -->
   <nav class="navbar-container">
