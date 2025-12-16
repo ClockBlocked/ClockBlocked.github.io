@@ -407,6 +407,9 @@ function showExplorer() {
   }
 }
 
+
+
+
 const LoadingProgress = (() => {
   let progressElement = null;
   let fillElement = null;
@@ -597,6 +600,7 @@ const LoadingProgress = (() => {
     getRemainingMinTime
   };
 })();
+
 const LoadingSpinner = (() => {
   let spinnerElement = null;
   let hideTimeout = null;
@@ -709,11 +713,6 @@ const LoadingSpinner = (() => {
         margin: 0;
         text-align: center;
         animation: text-fade 0.5s ease-out;
-      }
-      
-      @keyframes spinner-rotate {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
       }
       
       @keyframes spinner-enter {
