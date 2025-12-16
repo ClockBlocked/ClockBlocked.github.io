@@ -409,8 +409,9 @@ class coderViewEdit {
   }
   
   enterEditMode() {
+      this.showLoading("Switching to edit mode...");
     if (!this.currentFile || this.isLoading) return;
-    this.showLoading("Switching to edit mode...");
+  
     setTimeout(() => {
       try {
         this.isEditing = true;
