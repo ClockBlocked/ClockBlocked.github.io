@@ -609,28 +609,29 @@ const LoadingSpinner = (() => {
     spinnerColor: '#1c7eec',
     fadeDuration: 300,
     zIndex: 10000,
-    minDisplayTime: 600
+    minDisplayTime: 600,
+    targetContainer: '#coderWrapper' // Add this config option
   };
 
   function init() {
     if (spinnerElement) return;
     
-    spinnerElement = document.createElement('div');
-    spinnerElement.id = 'loadingSpinner';
-    spinnerElement.setAttribute('data-active', 'false');
-    spinnerElement.className = 'loading-spinner';
+    spinnerElement = document.createElement("div");
+    spinnerElement.id = "loadingSpinner";
+    spinnerElement.setAttribute("data-active", "false");
+    spinnerElement.className = "loading-spinner";
     
-    const overlay = document.createElement('div');
-    overlay.className = 'spinner-overlay';
+    const overlay = document.createElement("div");
+    overlay.className = "spinner-overlay";
     
-    const content = document.createElement('div');
-    content.className = 'spinner-content';
+    const content = document.createElement("div");
+    content.className = "spinner-content";
     
-    const spinner = document.createElement('div');
-    spinner.className = 'spinner';
+    const spinner = document.createElement("div");
+    spinner.className = "spinner";
     
-    const text = document.createElement('p');
-    text.className = 'spinner-text';
+    const text = document.createElement("p");
+    text.className = "spinner-text";
     text.textContent = config.message;
     
     content.appendChild(spinner);
@@ -638,10 +639,10 @@ const LoadingSpinner = (() => {
     overlay.appendChild(content);
     spinnerElement.appendChild(overlay);
     
-    const styleElement = document.createElement('style');
+    const styleElement = document.createElement("style");
     styleElement.innerHTML = `
       .loading-spinner {
-        position: fixed;
+        position: absolute;
         top: 0;
         left: 0;
         width: 100%;
@@ -727,7 +728,20 @@ const LoadingSpinner = (() => {
     `;
     
     document.head.appendChild(styleElement);
-    document.body.appendChild(spinnerElement);
+    
+    // Find the target container
+    let targetContainer = document.querySelector(config.targetContainer);
+    if (!targetContainer) {
+      // Fallback to body if target not found
+      targetContainer = document.body;
+    }
+    
+    // Make sure the target container has position relative
+    if (targetContainer !== document.body) {
+      targetContainer.style.position = "relative";
+    }
+    
+    targetContainer.appendChild(spinnerElement);
   }
 
   function show() {
@@ -737,10 +751,10 @@ const LoadingSpinner = (() => {
     isActive = true;
     showTime = Date.now();
     
-    spinnerElement.style.display = 'block';
+    spinnerElement.style.display = "block";
     void spinnerElement.offsetWidth;
     
-    spinnerElement.setAttribute('data-active', 'true');
+    spinnerElement.setAttribute("data-active", "true");
   }
 
   function hide() {
@@ -760,11 +774,11 @@ const LoadingSpinner = (() => {
 
   function actuallyHide() {
     isActive = false;
-    spinnerElement.setAttribute('data-active', 'false');
+    spinnerElement.setAttribute("data-active", "false");
     
     hideTimeout = setTimeout(() => {
       if (!isActive) {
-        spinnerElement.style.display = 'none';
+        spinnerElement.style.display = "none";
       }
     }, config.fadeDuration);
   }
@@ -781,7 +795,7 @@ const LoadingSpinner = (() => {
     if (!spinnerElement) return;
     
     config.message = newMessage;
-    const textElement = spinnerElement.querySelector('.spinner-text');
+    const textElement = spinnerElement.querySelector(".spinner-text");
     if (textElement) {
       textElement.textContent = newMessage;
     }
@@ -791,12 +805,12 @@ const LoadingSpinner = (() => {
     config = { ...config, ...options };
     
     if (spinnerElement) {
-      const spinner = spinnerElement.querySelector('.spinner');
+      const spinner = spinnerElement.querySelector(".spinner");
       if (spinner) {
         spinner.style.borderTopColor = config.spinnerColor;
       }
       
-      const overlay = spinnerElement.querySelector('.spinner-overlay');
+      const overlay = spinnerElement.querySelector(".spinner-overlay");
       if (overlay) {
         overlay.style.backgroundColor = config.backgroundColor;
       }
