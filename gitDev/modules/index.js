@@ -1,7 +1,7 @@
 window.addEventListener("DOMContentLoaded", () => {
 
-    const coderTemplateScript = document.createElement('script');
-    coderTemplateScript.src = 'https://clockblocked.github.io/gitDev/modules/coder-template.js';
+    const coderElements = document.createElement('script');
+    coderElements.src = 'https://clockblocked.github.io/gitDev/modules/templates/codeViewerEditor.js';
 
     const dependenciesScript = document.createElement('script');
     dependenciesScript.src = 'https://clockblocked.github.io/gitDev/modules/dependencies.js';
@@ -55,7 +55,7 @@ window.addEventListener("DOMContentLoaded", () => {
         fileUploadScript,
         importExportScript,
         fileMenuScript,
-        coderTemplateScript,
+        coderElements,
         coder,
     ];
 
