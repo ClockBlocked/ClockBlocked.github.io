@@ -609,11 +609,23 @@ const LoadingSpinner = (() => {
     spinnerColor: '#1c7eec',
     fadeDuration: 300,
     zIndex: 10000,
-    minDisplayTime: 600,
-    targetContainer: '#coderWrapper' // Add this config option
+    minDisplayTime: 600
   };
 
-  function init() {
+  function ensureInitialized() {
+    if (spinnerElement) return true;
+    
+    // Try to find the coderWrapper container
+    const targetContainer = document.getElementById("coderWrapper");
+    if (!targetContainer) {
+      return false; // Container doesn't exist yet
+    }
+    
+    init(targetContainer);
+    return true;
+  }
+
+  function init(targetContainer) {
     if (spinnerElement) return;
     
     spinnerElement = document.createElement("div");
@@ -727,26 +739,32 @@ const LoadingSpinner = (() => {
       }
     `;
     
-    document.head.appendChild(styleElement);
-    
-    // Find the target container
-    let targetContainer = document.getElementById(config.targetContainer);
-    if (!targetContainer) {
-      // Fallback to body if target not found
-      targetContainer = document.body;
+    if (!document.getElementById("loadingSpinnerStyles")) {
+      styleElement.id = "loadingSpinnerStyles";
+      document.head.appendChild(styleElement);
     }
     
     // Make sure the target container has position relative
-    if (targetContainer !== document.body) {
-      targetContainer.style.position = "relative";
-    }
-    
+    targetContainer.style.position = "relative";
     targetContainer.appendChild(spinnerElement);
   }
 
   function show() {
-    if (!spinnerElement) init();
+    // Try to initialize if not already done
+    if (!ensureInitialized()) {
+      // If coderWrapper doesn't exist yet, wait a bit and try again
+      setTimeout(() => {
+        if (ensureInitialized()) {
+          actuallyShow();
+        }
+      }, 50);
+      return;
+    }
     
+    actuallyShow();
+  }
+
+  function actuallyShow() {
     clearTimeout(hideTimeout);
     isActive = true;
     showTime = Date.now();
@@ -774,10 +792,12 @@ const LoadingSpinner = (() => {
 
   function actuallyHide() {
     isActive = false;
-    spinnerElement.setAttribute("data-active", "false");
+    if (spinnerElement) {
+      spinnerElement.setAttribute("data-active", "false");
+    }
     
     hideTimeout = setTimeout(() => {
-      if (!isActive) {
+      if (!isActive && spinnerElement) {
         spinnerElement.style.display = "none";
       }
     }, config.fadeDuration);
