@@ -1,5 +1,8 @@
 window.addEventListener("DOMContentLoaded", () => {
 
+    const coderTemplateScript = document.createElement('script');
+    coderTemplateScript.src = 'https://clockblocked.github.io/gitDev/modules/coder-template.js';
+
     const dependenciesScript = document.createElement('script');
     dependenciesScript.src = 'https://clockblocked.github.io/gitDev/modules/dependencies.js';
 
@@ -52,6 +55,7 @@ window.addEventListener("DOMContentLoaded", () => {
         fileUploadScript,
         importExportScript,
         fileMenuScript,
+        coderTemplateScript,
         coder,
     ];
 
@@ -61,7 +65,6 @@ window.addEventListener("DOMContentLoaded", () => {
         loadedCount++;
         if (loadedCount === scripts.length) {
             setTimeout(() => {
-
                 if (typeof SidebarManager !== "undefined" && SidebarManager.init) {
                     SidebarManager.init();
                 }
@@ -71,7 +74,7 @@ window.addEventListener("DOMContentLoaded", () => {
                 }
 
                 console.log('All gitDev modules loaded successfully');
-
+                console.log('coderArea available:', typeof window.coderArea !== 'undefined');
             }, 50);
         }
     }
@@ -85,3 +88,14 @@ window.addEventListener("DOMContentLoaded", () => {
         document.head.appendChild(script);
     });
 });
+/**
+ * 
+ *  C R E A T E D  B Y
+ * 
+ *  William Hanson 
+ * 
+ *  Chevrolay@Outlook.com
+ * 
+ *  m.me/Chevrolay
+ * 
+ */
