@@ -132,18 +132,17 @@ function setupKeyboardShortcuts() {
   document.addEventListener('click', hideContextMenu);
 }
 
-
 function fetchData(operationName, callback) {
   return new Promise((resolve, reject) => {
-    showLoading(operationName);
+    LoadingProgress.show();
     
     setTimeout(() => {
       try {
         const result = callback();
-        hideLoading();
+        LoadingProgress.hide();
         resolve(result);
       } catch (error) {
-        hideLoading();
+        LoadingProgress.hide();
         reject(error);
       }
     }, 100);
@@ -177,56 +176,66 @@ function createRepository() {
     return;
   }
   
-  fetchData('Creating repository...', () => {
-    const repo = {
-      name: repoName,
-      description: description,
-      created: Date.now(),
-      lastModified: Date.now(),
-      defaultBranch: 'main',
-      branches: ['main'],
-      visibility: document.getElementById('visibilityPublic').checked ? 'public' : 'private'
-    };
-    LocalStorageManager.saveRepository(repo);
-    if (initReadme) {
-      const readmeContent = `# ${repoName}\n\n${description ? description + '\n\n' : ''}## Getting Started\n\nThis repository was created with GitHub Clone.\n`;
-      const readmeData = {
-        content: readmeContent,
-        category: 'Documentation',
-        tags: ['readme'],
+  LoadingProgress.show();
+  setTimeout(() => {
+    try {
+      const repo = {
+        name: repoName,
+        description: description,
         created: Date.now(),
         lastModified: Date.now(),
-        lastCommit: 'Initial commit',
-        size: new Blob([readmeContent]).size
+        defaultBranch: 'main',
+        branches: ['main'],
+        visibility: document.getElementById('visibilityPublic').checked ? 'public' : 'private'
       };
-      LocalStorageManager.saveFile(repoName, 'README.md', readmeData);
+      LocalStorageManager.saveRepository(repo);
+      if (initReadme) {
+        const readmeContent = `# ${repoName}\n\n${description ? description + '\n\n' : ''}## Getting Started\n\nThis repository was created with GitHub Clone.\n`;
+        const readmeData = {
+          content: readmeContent,
+          category: 'Documentation',
+          tags: ['readme'],
+          created: Date.now(),
+          lastModified: Date.now(),
+          lastCommit: 'Initial commit',
+          size: new Blob([readmeContent]).size
+        };
+        LocalStorageManager.saveFile(repoName, 'README.md', readmeData);
+      }
+      currentState.repositories.push(repo);
+      renderRepositoryList();
+      hideCreateRepoModal();
+      showSuccessMessage(`Repository "${repoName}" created successfully!`);
+      setTimeout(() => {
+        LoadingProgress.hide();
+        openRepository(repoName);
+      }, 500);
+    } catch (error) {
+      LoadingProgress.hide();
+      showErrorMessage('Failed to create repository: ' + error.message);
     }
-    currentState.repositories.push(repo);
-    renderRepositoryList();
-    hideCreateRepoModal();
-    showSuccessMessage(`Repository "${repoName}" created successfully!`);
-    return repoName;
-  }).then((createdRepoName) => {
-    setTimeout(() => openRepository(createdRepoName), 500);
-  }).catch((error) => {
-    showErrorMessage('Failed to create repository: ' + error.message);
-  });
+  }, 1500);
 }
 function deleteRepository(repoName) {
   if (!confirm(`Are you sure you want to delete the repository "${repoName}"? This action cannot be undone.`)) return;
   
-  fetchData(`Deleting repository ${repoName}...`, () => {
-    LocalStorageManager.deleteRepository(repoName);
-    currentState.repositories = currentState.repositories.filter(r => r.name !== repoName);
-    if (currentState.repository === repoName) {
-      currentState.repository = null;
-      showRepoSelector();
+  LoadingProgress.show();
+  setTimeout(() => {
+    try {
+      LocalStorageManager.deleteRepository(repoName);
+      currentState.repositories = currentState.repositories.filter(r => r.name !== repoName);
+      if (currentState.repository === repoName) {
+        currentState.repository = null;
+        showRepoSelector();
+      }
+      renderRepositoryList();
+      showSuccessMessage(`Repository "${repoName}" deleted successfully!`);
+      LoadingProgress.hide();
+    } catch (error) {
+      LoadingProgress.hide();
+      showErrorMessage('Failed to delete repository: ' + error.message);
     }
-    renderRepositoryList();
-    showSuccessMessage(`Repository "${repoName}" deleted successfully!`);
-  }).catch((error) => {
-    showErrorMessage('Failed to delete repository: ' + error.message);
-  });
+  }, 1500);
 }
 
 function createFile() {
@@ -242,39 +251,42 @@ function createFile() {
     return;
   }
   
-  fetchData('Creating file...', () => {
-    const filePath = (currentState.path ? currentState.path + '/' : '') + fileName;
-    const existingFile = LocalStorageManager.getFile(currentState.repository, filePath);
-    if (existingFile) {
-      throw new Error('File already exists');
+  LoadingProgress.show();
+  setTimeout(() => {
+    try {
+      const filePath = (currentState.path ? currentState.path + '/' : '') + fileName;
+      const existingFile = LocalStorageManager.getFile(currentState.repository, filePath);
+      if (existingFile) {
+        throw new Error('File already exists');
+      }
+      const fileContent = content || `// ${fileName}\n// Created on ${new Date().toLocaleDateString()}\n\n`;
+      const fileData = {
+        content: fileContent,
+        category: category,
+        tags: currentState.selectedTags,
+        created: Date.now(),
+        lastModified: Date.now(),
+        lastCommit: 'Initial commit',
+        size: new Blob([fileContent]).size
+      };
+      LocalStorageManager.saveFile(currentState.repository, filePath, fileData);
+      currentState.files.push({
+        name: fileName,
+        type: 'file',
+        path: filePath,
+        lastModified: fileData.lastModified,
+        lastCommit: fileData.lastCommit
+      });
+      renderFileList();
+      hideCreateFileModal();
+      showSuccessMessage(`File "${fileName}" created successfully!`);
+      LoadingProgress.hide();
+    } catch (error) {
+      LoadingProgress.hide();
+      showErrorMessage('Failed to create file: ' + error.message);
     }
-    const fileContent = content || `// ${fileName}\n// Created on ${new Date().toLocaleDateString()}\n\n`;
-    const fileData = {
-      content: fileContent,
-      category: category,
-      tags: currentState.selectedTags,
-      created: Date.now(),
-      lastModified: Date.now(),
-      lastCommit: 'Initial commit',
-      size: new Blob([fileContent]).size
-    };
-    LocalStorageManager.saveFile(currentState.repository, filePath, fileData);
-    currentState.files.push({
-      name: fileName,
-      type: 'file',
-      path: filePath,
-      lastModified: fileData.lastModified,
-      lastCommit: fileData.lastCommit
-    });
-    renderFileList();
-    hideCreateFileModal();
-    showSuccessMessage(`File "${fileName}" created successfully!`);
-  }).catch((error) => {
-    showErrorMessage('Failed to create file: ' + error.message);
-  });
+  }, 1500);
 }
-
-
 
 function confirmDeleteFile() {
   deleteCurrentFile();
@@ -283,17 +295,22 @@ function confirmDeleteFile() {
 function deleteCurrentFile() {
   if (!currentState.currentFile) return;
   
-  fetchData(`Deleting file ${currentState.currentFile.name}...`, () => {
-    const filePath = (currentState.path ? currentState.path + '/' : '') + currentState.currentFile.name;
-    LocalStorageManager.deleteFile(currentState.repository, filePath);
-    currentState.files = currentState.files.filter(f => f.name !== currentState.currentFile.name);
-    renderFileList();
-    hideDeleteFileModal();
-    showSuccessMessage(`File "${currentState.currentFile.name}" deleted successfully!`);
-    setTimeout(() => showExplorer(), 500);
-  }).catch((error) => {
-    showErrorMessage('Failed to delete file: ' + error.message);
-  });
+  LoadingProgress.show();
+  setTimeout(() => {
+    try {
+      const filePath = (currentState.path ? currentState.path + '/' : '') + currentState.currentFile.name;
+      LocalStorageManager.deleteFile(currentState.repository, filePath);
+      currentState.files = currentState.files.filter(f => f.name !== currentState.currentFile.name);
+      renderFileList();
+      hideDeleteFileModal();
+      showSuccessMessage(`File "${currentState.currentFile.name}" deleted successfully!`);
+      LoadingProgress.hide();
+      setTimeout(() => showExplorer(), 500);
+    } catch (error) {
+      LoadingProgress.hide();
+      showErrorMessage('Failed to delete file: ' + error.message);
+    }
+  }, 1500);
 }
 function downloadCurrentFile() {
   if (!currentState.currentFile) return;
@@ -316,9 +333,6 @@ function downloadCurrentFile() {
     showErrorMessage('Failed to download file: ' + error.message);
   }
 }
-
-
-
 
 function previewFile() {
   if (!codeEditor || !currentState.currentFile) return;
@@ -349,16 +363,6 @@ function removeTag(tag) {
   updateSelectedTags();
 }
 
-
-
-
-
-
-
-
-
-
-// FROM THE FILE "core.js"
 function viewFileFromContext(fileName) {
   hideContextMenu();
   viewFile(fileName);
@@ -379,101 +383,10 @@ function deleteFileFromContext(fileName) {
   showDeleteFileModal();
 }
 
-
-/**
-function viewFile(filename) {
-// Logic that is not relevant to my issue
-}
-function editFile() {
-// Logic that is not relevant to my issue
-}
-**/
 function showDeleteFileModal() {
-// Logic that is not relevant to my issue
 }
 function downloadCurrentFile() {
-// Logic that is not relevant to my issue
 }
-
-
-
-
-
-// core.js
-
-// Assume currentState and other functions (viewFile, editFile, downloadCurrentFile, showDeleteFileModal) 
-// are defined elsewhere or remain in this file.
-
-const files = {
-  /**
-   * Functions that run when an option is picked from the File List Context Menu
-   */
-  contextMenu: {
-    // Helper to perform necessary cleanup before action
-    _preAction: function() {
-      // Assuming hideContextMenu is globally accessible or imported/defined here
-      if (typeof hideContextMenu === 'function') {
-        hideContextMenu();
-      } else {
-        console.warn("hideContextMenu not found. Context menu may persist.");
-      }
-    },
-
-    view: function(fileName) {
-      this._preAction();
-      viewFile(fileName);
-    },
-
-    edit: function(fileName) {
-      this._preAction();
-      currentState.currentFile = currentState.files.find(f => f.name === fileName);
-      editFile();
-    },
-
-    download: function(fileName) {
-      this._preAction();
-      // Logic to find and set current file is moved here
-      currentState.currentFile = currentState.files.find(f => f.name === fileName);
-      downloadCurrentFile();
-    },
-
-    delete: function(fileName) {
-      this._preAction();
-      // Logic to find and set current file is moved here
-      currentState.currentFile = currentState.files.find(f => f.name === fileName);
-      showDeleteFileModal();
-    }
-  }
-};
-
-
-// The original context wrapper functions are removed:
-// REMOVE: function viewFileFromContext(fileName) { ... }
-// REMOVE: function editFileFromContext(fileName) { ... }
-// REMOVE: function downloadFileFromContext(fileName) { ... }
-// REMOVE: function deleteFileFromContext(fileName) { ... }
-
-
-// The other functions that perform the action remain:
-// function viewFile(filename) { /* ... */ }
-// function editFile() { /* ... */ }
-// function downloadCurrentFile() { /* ... */ }
-// function showDeleteFileModal() { /* ... */ }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 function addToRecentFiles(fileName, repoName, filePath) {
   const existingIndex = recentFiles.findIndex(f => 
@@ -504,20 +417,25 @@ function openRecentFile(repoName, filePath, fileName) {
     currentState.path = '';
   }
   
-  fetchData('Opening recent file...', () => {
-    currentState.files = LocalStorageManager.listFiles(repoName, currentState.path ? currentState.path + '/' : '');
-    renderFileList();
-    updateBreadcrumb();
-    const currentRepoName = document.getElementById('currentRepoName');
-    const repoNameInViewer = document.getElementById('repoNameInViewer');
-    const repoNameInEditor = document.getElementById('repoNameInEditor');
-    if (currentRepoName) currentRepoName.textContent = repoName;
-    if (repoNameInViewer) repoNameInViewer.textContent = repoName;
-    if (repoNameInEditor) repoNameInEditor.textContent = repoName;
-    viewFile(fileName);
-  }).catch((error) => {
-    showErrorMessage('Failed to open recent file: ' + error.message);
-  });
+  LoadingProgress.show();
+  setTimeout(() => {
+    try {
+      currentState.files = LocalStorageManager.listFiles(repoName, currentState.path ? currentState.path + '/' : '');
+      renderFileList();
+      updateBreadcrumb();
+      const currentRepoName = document.getElementById('currentRepoName');
+      const repoNameInViewer = document.getElementById('repoNameInViewer');
+      const repoNameInEditor = document.getElementById('repoNameInEditor');
+      if (currentRepoName) currentRepoName.textContent = repoName;
+      if (repoNameInViewer) repoNameInViewer.textContent = repoName;
+      if (repoNameInEditor) repoNameInEditor.textContent = repoName;
+      viewFile(fileName);
+      LoadingProgress.hide();
+    } catch (error) {
+      LoadingProgress.hide();
+      showErrorMessage('Failed to open recent file: ' + error.message);
+    }
+  }, 1500);
 }
 
 function viewFile(filename) {
@@ -534,93 +452,84 @@ function viewFile(filename) {
   
   currentState.currentFile = file;
   
-  fetchData(`Loading ${filename}...`, () => {
-    const filePath = file.path || ((currentState.path ? currentState.path + '/' : '') + filename);
-    const fileData = LocalStorageManager.getFile(currentState.repository, filePath);
-    
-    if (!fileData) {
-      throw new Error(`File data not found for ${filePath}`);
-    }
-    
-    addToRecentFiles(filename, currentState.repository, filePath);
-    
-    if (window.coderViewEdit && typeof window.coderViewEdit.displayFile === 'function') {
-      window.coderViewEdit.displayFile(filename, fileData);
-    } else {
-      displayFileContent(filename, fileData);
-    }
-    
-    showFileViewer();
-    updateStats();
-    return fileData;
-    
-  }).catch((error) => {
-    showErrorMessage('Failed to load file: ' + error.message);
-  });
-}
-function editFile() {
   LoadingProgress.show();
   LoadingSpinner.show();
-  
-  if (!currentState.currentFile) {
-    LoadingProgress.hide();
-    LoadingSpinner.hide();
-    return;
-  }
-  
-  fetchData('Loading editor...', () => {
-    const filePath = (currentState.path ? currentState.path + '/' : '') + currentState.currentFile.name;
-    const fileData = LocalStorageManager.getFile(currentState.repository, filePath);
-    
-    if (fileData) {
-      const editingFileName = document.getElementById('editingFileName');
-      const commitTitle = document.getElementById('commitTitle');
-      const fileCategoryInput = document.getElementById('fileCategoryInput');
+  setTimeout(() => {
+    try {
+      const filePath = file.path || ((currentState.path ? currentState.path + '/' : '') + filename);
+      const fileData = LocalStorageManager.getFile(currentState.repository, filePath);
       
-      if (editingFileName) editingFileName.textContent = currentState.currentFile.name;
-      if (commitTitle) commitTitle.value = `Update ${currentState.currentFile.name}`;
-      
-      if (window.coderViewEdit && typeof window.coderViewEdit.displayFile === 'function') {
-        window.coderViewEdit.displayFile(currentState.currentFile.name, fileData);
-        
-        setTimeout(() => {
-          if (window.coderViewEdit.enterEditMode && typeof window.coderViewEdit.enterEditMode === 'function') {
-            window.coderViewEdit.enterEditMode();
-          } else {
-            showFileViewer();
-          }
-          // Hide loaders AFTER everything is ready
-          LoadingSpinner.hide();
-          LoadingProgress.hide();
-        }, 100);
-        
-      } else if (codeEditor) {
-        codeEditor.setValue(fileData.content);
-        updateEditorMode(codeEditor, currentState.currentFile.name);
-        showFileEditor();
-        // Hide loaders after editor is ready
-        LoadingSpinner.hide();
-        LoadingProgress.hide();
+      if (!fileData) {
+        throw new Error(`File data not found for ${filePath}`);
       }
       
-      if (fileCategoryInput) fileCategoryInput.value = fileData.category || '';
-      currentState.selectedTags = fileData.tags || [];
-      updateSelectedTags();
+      addToRecentFiles(filename, currentState.repository, filePath);
       
-    } else {
-      throw new Error('File not found');
+      if (window.coderViewEdit && typeof window.coderViewEdit.displayFile === 'function') {
+        window.coderViewEdit.displayFile(filename, fileData);
+      } else {
+        displayFileContent(filename, fileData);
+      }
+      
+      showFileViewer();
+      updateStats();
+      LoadingProgress.hide();
+      LoadingSpinner.hide();
+    } catch (error) {
+      LoadingProgress.hide();
+      LoadingSpinner.hide();
+      showErrorMessage('Failed to load file: ' + error.message);
     }
-    
-  }).catch((error) => {
-    showErrorMessage('Failed to load file for editing: ' + error.message);
-    LoadingSpinner.hide();
-    LoadingProgress.hide();
-  });
+  }, 1500);
+}
+function editFile() {
+  if (!currentState.currentFile) return;
+  
+  LoadingSpinner.show();
+  setTimeout(() => {
+    try {
+      const filePath = (currentState.path ? currentState.path + '/' : '') + currentState.currentFile.name;
+      const fileData = LocalStorageManager.getFile(currentState.repository, filePath);
+      
+      if (fileData) {
+        const editingFileName = document.getElementById('editingFileName');
+        const commitTitle = document.getElementById('commitTitle');
+        const fileCategoryInput = document.getElementById('fileCategoryInput');
+        
+        if (editingFileName) editingFileName.textContent = currentState.currentFile.name;
+        if (commitTitle) commitTitle.value = `Update ${currentState.currentFile.name}`;
+        
+        if (window.coderViewEdit && typeof window.coderViewEdit.displayFile === 'function') {
+          window.coderViewEdit.displayFile(currentState.currentFile.name, fileData);
+          
+          setTimeout(() => {
+            if (window.coderViewEdit.enterEditMode && typeof window.coderViewEdit.enterEditMode === 'function') {
+              window.coderViewEdit.enterEditMode();
+            } else {
+              showFileViewer();
+            }
+            LoadingSpinner.hide();
+          }, 100);
+        } else if (codeEditor) {
+          codeEditor.setValue(fileData.content);
+          updateEditorMode(codeEditor, currentState.currentFile.name);
+          showFileEditor();
+          LoadingSpinner.hide();
+        }
+        
+        if (fileCategoryInput) fileCategoryInput.value = fileData.category || '';
+        currentState.selectedTags = fileData.tags || [];
+        updateSelectedTags();
+      } else {
+        throw new Error('File not found');
+      }
+    } catch (error) {
+      LoadingSpinner.hide();
+      showErrorMessage('Failed to load file for editing: ' + error.message);
+    }
+  }, 1500);
 }
 function saveFile() {
-    LoadingProgress.show();
-  LoadingSpinner.show();
-
   if (!currentState.currentFile) return;
   
   if (window.coderViewEdit && typeof window.coderViewEdit.saveChanges === 'function') {
@@ -636,83 +545,73 @@ function saveFile() {
     return;
   }
   
-  fetchData('Saving changes...', () => {
-    const filePath = (currentState.path ? currentState.path + '/' : '') + currentState.currentFile.name;
-    const content = codeEditor ? codeEditor.getValue() : '';
-    const fileCategoryInput = document.getElementById('fileCategoryInput');
-    const fileData = {
-      content: content,
-      category: fileCategoryInput ? fileCategoryInput.value.trim() || 'General' : 'General',
-      tags: currentState.selectedTags,
-      lastModified: Date.now(),
-      created: LocalStorageManager.getFile(currentState.repository, filePath)?.created || Date.now(),
-      lastCommit: commitTitle.value.trim(),
-      size: new Blob([content]).size
-    };
-    
-    LocalStorageManager.saveFile(currentState.repository, filePath, fileData);
-    const fileIndex = currentState.files.findIndex(f => f.name === currentState.currentFile.name);
-    
-    if (fileIndex !== -1) {
-      currentState.files[fileIndex].lastModified = fileData.lastModified;
-      currentState.files[fileIndex].lastCommit = fileData.lastCommit;
-    }
-    
-    if (commitDescription) commitDescription.value = '';
-    showSuccessMessage(`File "${currentState.currentFile.name}" saved successfully!`);
-    return currentState.currentFile.name;
-    
-  }).then((fileName) => {
-    setTimeout(() => viewFile(fileName), 500);
-  }).catch((error) => {
-    showErrorMessage('Failed to save file: ' + error.message);
-  });
-  
-  
+  LoadingProgress.show();
   setTimeout(() => {
-    LoadingSpinner.hide();
-    LoadingProgress.hide();
- }, 200);
+    try {
+      const filePath = (currentState.path ? currentState.path + '/' : '') + currentState.currentFile.name;
+      const content = codeEditor ? codeEditor.getValue() : '';
+      const fileCategoryInput = document.getElementById('fileCategoryInput');
+      const fileData = {
+        content: content,
+        category: fileCategoryInput ? fileCategoryInput.value.trim() || 'General' : 'General',
+        tags: currentState.selectedTags,
+        lastModified: Date.now(),
+        created: LocalStorageManager.getFile(currentState.repository, filePath)?.created || Date.now(),
+        lastCommit: commitTitle.value.trim(),
+        size: new Blob([content]).size
+      };
+      
+      LocalStorageManager.saveFile(currentState.repository, filePath, fileData);
+      const fileIndex = currentState.files.findIndex(f => f.name === currentState.currentFile.name);
+      
+      if (fileIndex !== -1) {
+        currentState.files[fileIndex].lastModified = fileData.lastModified;
+        currentState.files[fileIndex].lastCommit = fileData.lastCommit;
+      }
+      
+      if (commitDescription) commitDescription.value = '';
+      showSuccessMessage(`File "${currentState.currentFile.name}" saved successfully!`);
+      setTimeout(() => {
+        LoadingProgress.hide();
+        viewFile(currentState.currentFile.name);
+      }, 500);
+    } catch (error) {
+      LoadingProgress.hide();
+      showErrorMessage('Failed to save file: ' + error.message);
+    }
+  }, 1500);
 }
 
 function openRepository(repoName) {
-    LoadingProgress.show();
-  LoadingSpinner.show();
-
   currentState.repository = repoName;
   currentState.path = '';
   
-  fetchData(`Opening ${repoName}...`, () => {
-    currentState.files = LocalStorageManager.listFiles(repoName, '');
-    renderFileList();
-    updateBreadcrumb();
-    const currentRepoName = document.getElementById('currentRepoName');
-    const repoNameInViewer = document.getElementById('repoNameInViewer');
-    const repoNameInEditor = document.getElementById('repoNameInEditor');
-    if (currentRepoName) currentRepoName.textContent = repoName;
-    if (repoNameInViewer) repoNameInViewer.textContent = repoName;
-    if (repoNameInEditor) repoNameInEditor.textContent = repoName;
-    const repo = LocalStorageManager.getRepository(repoName);
-    if (repo) {
-      const repoDescription = document.getElementById('repoDescription');
-      if (repoDescription) repoDescription.textContent = repo.description || 'No description provided.';
-    }
-    showExplorer();
-    updateStats();
-    return repoName;
-  }).catch((error) => {
-    showErrorMessage('Failed to open repository: ' + error.message);
-  });
-  
-    
+  LoadingProgress.show();
   setTimeout(() => {
-    LoadingSpinner.hide();
-    LoadingProgress.hide();
-}, 200);
+    try {
+      currentState.files = LocalStorageManager.listFiles(repoName, '');
+      renderFileList();
+      updateBreadcrumb();
+      const currentRepoName = document.getElementById('currentRepoName');
+      const repoNameInViewer = document.getElementById('repoNameInViewer');
+      const repoNameInEditor = document.getElementById('repoNameInEditor');
+      if (currentRepoName) currentRepoName.textContent = repoName;
+      if (repoNameInViewer) repoNameInViewer.textContent = repoName;
+      if (repoNameInEditor) repoNameInEditor.textContent = repoName;
+      const repo = LocalStorageManager.getRepository(repoName);
+      if (repo) {
+        const repoDescription = document.getElementById('repoDescription');
+        if (repoDescription) repoDescription.textContent = repo.description || 'No description provided.';
+      }
+      showExplorer();
+      updateStats();
+      LoadingProgress.hide();
+    } catch (error) {
+      LoadingProgress.hide();
+      showErrorMessage('Failed to open repository: ' + error.message);
+    }
+  }, 1500);
 }
-
-
-
 
 function initializeApp() {
   setupEventListeners();
@@ -721,25 +620,18 @@ function initializeApp() {
   setupCodeEditors();
   updateRecentFilesUI();
   
-  fetchData('Initializing app...', () => {
-    eventListeners.init(SidebarManager || null);
-    return loadRepositories();
-  }).then(() => {
-    showSuccessMessage('Welcome back');
-  }).catch((error) => {
-    console.error('Initialization error:', error);
-  });
+  LoadingProgress.show();
+  setTimeout(() => {
+    try {
+      eventListeners.init(SidebarManager || null);
+      loadRepositories();
+      showSuccessMessage('Welcome back');
+      LoadingProgress.hide();
+    } catch (error) {
+      LoadingProgress.hide();
+      console.error('Initialization error:', error);
+    }
+  }, 1500);
 }
 
 document.addEventListener('DOMContentLoaded', initializeApp);
-/**
- * 
- *  C R E A T E D  B Y
- * 
- *  William Hanson 
- * 
- *  Chevrolay@Outlook.com
- * 
- *  m.me/Chevrolay
- * 
- */
