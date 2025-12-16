@@ -413,20 +413,22 @@ const LoadingProgress = (() => {
   let hideTimeout = null;
   let progressInterval = null;
   let currentProgress = 0;
+  let showTime = null;
 
   let config = {
     color: '#1c7eec',
-    height: '2.5px', 
+    height: '2.5px',
     minimum: 0.08,
     maximum: 0.994,
-    incrementPace: 'realistic'
+    incrementPace: 'realistic',
+    minDisplayTime: 600
   };
 
   function init() {
     progressElement = document.createElement('div');
     progressElement.className = 'gh-progress';
     
-    fillElement = document.createElement('div'); 
+    fillElement = document.createElement('div');
     fillElement.className = 'gh-progress-fill';
     
     progressElement.appendChild(fillElement);
@@ -472,7 +474,8 @@ const LoadingProgress = (() => {
     
     cleanup();
     currentProgress = 0;
-    progressElement.classList.remove('hidden');  
+    showTime = Date.now();
+    progressElement.classList.remove('hidden');
     progressElement.classList.add('visible');
     
     if (config.incrementPace === 'realistic') {
@@ -480,19 +483,32 @@ const LoadingProgress = (() => {
     } else if (config.incrementPace === 'linear') {
       simulateLinearLoad();
     } else {
-      fillElement.style.width = `${config.minimum * 100}%`; 
+      fillElement.style.width = `${config.minimum * 100}%`;
     }
   }
 
   function hide() {
     if (!progressElement) return;
     
+    const elapsed = Date.now() - showTime;
+    const remaining = Math.max(0, config.minDisplayTime - elapsed);
+    
+    if (remaining > 0) {
+      setTimeout(() => {
+        actuallyHide();
+      }, remaining);
+    } else {
+      actuallyHide();
+    }
+  }
+
+  function actuallyHide() {
     currentProgress = 100;
     fillElement.style.width = '100%';
     
     hideTimeout = setTimeout(() => {
       progressElement.classList.remove('visible');
-      setTimeout(cleanup, 300);  
+      setTimeout(cleanup, 300);
     }, 150);
   }
 
@@ -508,6 +524,7 @@ const LoadingProgress = (() => {
     
     fillElement.style.width = '0%';
     currentProgress = 0;
+    showTime = null;
   }
 
   function simulateRealisticLoad() {
@@ -526,7 +543,7 @@ const LoadingProgress = (() => {
         increment = Math.random() * 2 + 1;
         delay = Math.random() * 250 + 150;
       } else {
-        increment = Math.random() * 0.5 + 0.3;  
+        increment = Math.random() * 0.5 + 0.3;
         delay = Math.random() * 500 + 500;
       }
 
@@ -566,59 +583,61 @@ const LoadingProgress = (() => {
     return progressElement && !progressElement.classList.contains('hidden');
   }
 
+  function getRemainingMinTime() {
+    if (!showTime) return 0;
+    const elapsed = Date.now() - showTime;
+    return Math.max(0, config.minDisplayTime - elapsed);
+  }
+
   return {
     config: configOptions,
     show,
     hide,
-    isVisible  
+    isVisible,
+    getRemainingMinTime
   };
 })();
 const LoadingSpinner = (() => {
   let spinnerElement = null;
   let hideTimeout = null;
   let isActive = false;
+  let showTime = null;
 
   let config = {
     message: 'Loading...',
     backgroundColor: 'rgba(0, 0, 0, 0.75)',
     spinnerColor: '#1c7eec',
     fadeDuration: 300,
-    zIndex: 10000
+    zIndex: 10000,
+    minDisplayTime: 600
   };
 
   function init() {
     if (spinnerElement) return;
     
-    // Create spinner element
     spinnerElement = document.createElement('div');
     spinnerElement.id = 'loadingSpinner';
     spinnerElement.setAttribute('data-active', 'false');
     spinnerElement.className = 'loading-spinner';
     
-    // Create overlay
     const overlay = document.createElement('div');
     overlay.className = 'spinner-overlay';
     
-    // Create spinner content container
     const content = document.createElement('div');
     content.className = 'spinner-content';
     
-    // Create actual spinner
     const spinner = document.createElement('div');
     spinner.className = 'spinner';
     
-    // Create loading text
     const text = document.createElement('p');
     text.className = 'spinner-text';
     text.textContent = config.message;
     
-    // Build structure
     content.appendChild(spinner);
     content.appendChild(text);
     overlay.appendChild(content);
     spinnerElement.appendChild(overlay);
     
-    // Create and inject styles
     const styleElement = document.createElement('style');
     styleElement.innerHTML = `
       .loading-spinner {
@@ -716,8 +735,8 @@ const LoadingSpinner = (() => {
     
     clearTimeout(hideTimeout);
     isActive = true;
+    showTime = Date.now();
     
-    // Force reflow to ensure transition triggers
     spinnerElement.style.display = 'block';
     void spinnerElement.offsetWidth;
     
@@ -727,10 +746,22 @@ const LoadingSpinner = (() => {
   function hide() {
     if (!spinnerElement || !isActive) return;
     
+    const elapsed = Date.now() - showTime;
+    const remaining = Math.max(0, config.minDisplayTime - elapsed);
+    
+    if (remaining > 0) {
+      setTimeout(() => {
+        actuallyHide();
+      }, remaining);
+    } else {
+      actuallyHide();
+    }
+  }
+
+  function actuallyHide() {
     isActive = false;
     spinnerElement.setAttribute('data-active', 'false');
     
-    // Clean up element after fade out
     hideTimeout = setTimeout(() => {
       if (!isActive) {
         spinnerElement.style.display = 'none';
@@ -760,22 +791,18 @@ const LoadingSpinner = (() => {
     config = { ...config, ...options };
     
     if (spinnerElement) {
-      // Update spinner color
       const spinner = spinnerElement.querySelector('.spinner');
       if (spinner) {
         spinner.style.borderTopColor = config.spinnerColor;
       }
       
-      // Update overlay background
       const overlay = spinnerElement.querySelector('.spinner-overlay');
       if (overlay) {
         overlay.style.backgroundColor = config.backgroundColor;
       }
       
-      // Update z-index
       spinnerElement.style.zIndex = config.zIndex;
       
-      // Update transition duration
       spinnerElement.style.transition = `opacity ${config.fadeDuration}ms ease-in-out, visibility ${config.fadeDuration}ms ease-in-out`;
     }
   }
@@ -791,6 +818,13 @@ const LoadingSpinner = (() => {
     }
     clearTimeout(hideTimeout);
     isActive = false;
+    showTime = null;
+  }
+
+  function getRemainingMinTime() {
+    if (!showTime) return 0;
+    const elapsed = Date.now() - showTime;
+    return Math.max(0, config.minDisplayTime - elapsed);
   }
 
   return {
@@ -800,9 +834,13 @@ const LoadingSpinner = (() => {
     toggle,
     updateMessage,
     isVisible,
-    destroy
+    destroy,
+    getRemainingMinTime
   };
 })();
+
+window.LoadingProgress = LoadingProgress;
+window.LoadingSpinner = LoadingSpinner;
 
 window.navigateToRoot = navigateToRoot;
 window.navigateToPath = navigateToPath;
@@ -810,9 +848,6 @@ window.showFileEditor = showFileEditor;
 window.showRepoSelector = showRepoSelector;
 window.showFileViewer = showFileViewer;
 window.showExplorer = showExplorer;
-
-window.LoadingProgress = LoadingProgress;
-window.LoadingSpinner = LoadingSpinner;
 /**
  * 
  *  C R E A T E D  B Y
