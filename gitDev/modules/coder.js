@@ -1,7 +1,4 @@
 class coderViewEdit {
-  
-  
-////////// Setup
   constructor() {
     this.currentFile = null;
     this.fileData = null;
@@ -98,12 +95,6 @@ class coderViewEdit {
   </div>
 </div>
 <div id="coderWrapper" class="codeWrapper">
-  <div id="loadingOverlay" class="loadingOverlay">
-    <div class="loadingContent">
-      <div class="spinner"></div>
-      <p class="loadingText" id="loadingText">Loading...</p>
-    </div>
-  </div>
   <div class="codeContainer">
     <div class="codeEditor">
       <div id="codeMirrorContainer"></div>
@@ -158,8 +149,6 @@ class coderViewEdit {
       fileLanguageDisplay: document.getElementById("fileLanguageDisplay"),
       wrapLinesBtn: document.getElementById("wrapLinesBtn"),
       codeMirrorContainer: document.getElementById("codeMirrorContainer"),
-      loadingOverlay: document.getElementById("loadingOverlay"),
-      loadingText: document.getElementById("loadingText"),
       commitPanel: document.getElementById("commitPanel"),
       commitTitleInput: document.getElementById("commitTitleInput"),
       commitDescriptionInput: document.getElementById("commitDescriptionInput"),
@@ -381,22 +370,6 @@ class coderViewEdit {
     this.codeMirror.setOption("mode", modeMap[ext] || "text");
   }
   
-  showLoading(message = "Loading...") {
-    if (!this.elements.loadingOverlay || !this.elements.loadingText) return;
-    this.isLoading = true;
-    this.elements.loadingText.textContent = message;
-    setTimeout(() => {
-      this.elements.loadingOverlay.style.opacity = "1";
-      this.elements.loadingOverlay.style.pointerEvents = "all";
-    }, 10);
-  }
-  hideLoading() {
-    if (!this.elements.loadingOverlay) return;
-    this.isLoading = false;
-    this.elements.loadingOverlay.style.opacity = "0";
-    this.elements.loadingOverlay.style.pointerEvents = "none";
-  }
-  
   show() {
     if (this.elements.coder) {
       this.elements.coder.classList.remove("hidden");
@@ -409,35 +382,29 @@ class coderViewEdit {
   }
   
   enterEditMode() {
-      this.showLoading("Switching to edit mode...");
-    if (!this.currentFile || this.isLoading) return;
-  
-    setTimeout(() => {
-      try {
-        this.isEditing = true;
-        this.elements.editToggleBtn.innerHTML = `
+    if (!this.currentFile) return;
+    LoadingSpinner.show();
+    this.isEditing = true;
+    this.elements.editToggleBtn.innerHTML = `
                     <svg class="icon" fill="currentColor" viewBox="0 0 16 16">
                         <path d="M8 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z"/>
                     </svg>
                     <span>Cancel</span>
                 `;
-        if (this.elements.formatCodeBtn) {
-          this.elements.formatCodeBtn.classList.remove("hidden");
-        }
-        if (this.elements.commitPanel) {
-          this.elements.commitPanel.style.display = "block";
-        }
-        if (this.codeMirror) {
-          this.codeMirror.setOption("readOnly", false);
-          this.codeMirror.getWrapperElement().style.cursor = "text";
-          this.codeMirror.focus();
-        }
-        this.updateCommitMessage();
-        this.hideLoading();
-      } catch (error) {
-        this.hideLoading();
-        showErrorMessage("Failed to enter edit mode");
-      }
+    if (this.elements.formatCodeBtn) {
+      this.elements.formatCodeBtn.classList.remove("hidden");
+    }
+    if (this.elements.commitPanel) {
+      this.elements.commitPanel.style.display = "block";
+    }
+    if (this.codeMirror) {
+      this.codeMirror.setOption("readOnly", false);
+      this.codeMirror.getWrapperElement().style.cursor = "text";
+      this.codeMirror.focus();
+    }
+    this.updateCommitMessage();
+    setTimeout(() => {
+      LoadingSpinner.hide();
     }, 1500);
   }
   exitEditMode() {
@@ -461,16 +428,14 @@ class coderViewEdit {
   }
   cancelEdit() {
     if (!confirm("Discard changes?")) return;
-    this.showLoading("Reverting changes...");
+    LoadingSpinner.show();
+    if (this.codeMirror) {
+      this.codeMirror.setValue(this.originalContent);
+      this.updateLineNumbers();
+    }
     setTimeout(() => {
-      if (this.codeMirror) {
-        this.codeMirror.setValue(this.originalContent);
-        this.updateLineNumbers();
-      }
-      setTimeout(() => {
-        this.exitEditMode();
-        this.hideLoading();
-      }, 300);
+      this.exitEditMode();
+      LoadingSpinner.hide();
     }, 1500);
   }
   
@@ -530,7 +495,6 @@ class coderViewEdit {
   }
 
 
-///////// Actions  
   setReadOnly(readOnly) {
     if (!this.codeMirror) return;
     this.codeMirror.setOption("readOnly", readOnly);
@@ -551,7 +515,7 @@ class coderViewEdit {
     const commitDescription = this.elements.commitDescriptionInput
       ? this.elements.commitDescriptionInput.value.trim()
       : "";
-    this.showLoading("Saving changes...");
+    LoadingProgress.show();
     setTimeout(() => {
       try {
         const newContent = this.codeMirror ? this.codeMirror.getValue() : "";
@@ -565,7 +529,7 @@ class coderViewEdit {
         showSuccessMessage(`Saved ${this.currentFile}`);
         setTimeout(() => {
           this.exitEditMode();
-          this.hideLoading();
+          LoadingProgress.hide();
           if (this.elements.commitTitleInput) this.elements.commitTitleInput.value = "";
           if (this.elements.commitDescriptionInput) this.elements.commitDescriptionInput.value = "";
           if (window.renderFileList) {
@@ -573,7 +537,7 @@ class coderViewEdit {
           }
         }, 1500);
       } catch (error) {
-        this.hideLoading();
+        LoadingProgress.hide();
         showErrorMessage(`Save failed: ${error.message}`);
       }
     }, 1500);
@@ -691,14 +655,3 @@ class coderViewEdit {
   }
 }
 window.coderViewEdit = new coderViewEdit();
-/**
- * 
- *  C R E A T E D  B Y
- * 
- *  William Hanson 
- * 
- *  Chevrolay@Outlook.com
- * 
- *  m.me/Chevrolay
- * 
- */
