@@ -161,7 +161,6 @@ class coderViewEdit {
       commitDescriptionInput: document.getElementById("commitDescriptionInput"),
       cancelEditBtn: document.getElementById("cancelEditBtn"),
       saveChangesBtn: document.getElementById("saveChangesBtn"),
-      codeViewerLineNumbers: document.getElementById("codeViewerLineNumbers"),
       themeToggleBtn: document.getElementById("themeToggleBtn"),
       themeIcon: document.getElementById("themeIcon"),
       decreaseFontBtn: document.getElementById("decreaseFontBtn"),
@@ -306,8 +305,10 @@ class coderViewEdit {
       value: "",
       mode: "javascript",
       theme: cmTheme,
-      lineNumbers: false,
+      lineNumbers: true,
       lineWrapping: true,
+      foldGutter: true,
+      gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
       readOnly: true,
       tabSize: 2,
       indentUnit: 2,
@@ -378,8 +379,10 @@ class coderViewEdit {
     if (!this.elements.loadingOverlay || !this.elements.loadingText) return;
     this.isLoading = true;
     this.elements.loadingText.textContent = message;
-    this.elements.loadingOverlay.style.opacity = "1";
-    this.elements.loadingOverlay.style.pointerEvents = "all";
+    setTimeout(() => {
+      this.elements.loadingOverlay.style.opacity = "1";
+      this.elements.loadingOverlay.style.pointerEvents = "all";
+    }, 10);
   }
   hideLoading() {
     if (!this.elements.loadingOverlay) return;
@@ -404,7 +407,7 @@ class coderViewEdit {
       try {
         this.isEditing = true;
         this.elements.editToggleBtn.innerHTML = `
-                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
+                    <svg class="icon" fill="currentColor" viewBox="0 0 16 16">
                         <path d="M8 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z"/>
                     </svg>
                     <span>Cancel</span>
@@ -413,11 +416,10 @@ class coderViewEdit {
           this.elements.formatCodeBtn.classList.remove("hidden");
         }
         if (this.elements.commitPanel) {
-          this.elements.commitPanel.classList.remove("hidden");
+          this.elements.commitPanel.style.display = "block";
         }
         if (this.codeMirror) {
           this.codeMirror.setOption("readOnly", false);
-          this.codeMirror.getWrapperElement().style.pointerEvents = "all";
           this.codeMirror.getWrapperElement().style.cursor = "text";
           this.codeMirror.focus();
         }
@@ -427,12 +429,12 @@ class coderViewEdit {
         this.hideLoading();
         showErrorMessage("Failed to enter edit mode");
       }
-    }, 100);
+    }, 1500);
   }
   exitEditMode() {
     this.isEditing = false;
     this.elements.editToggleBtn.innerHTML = `
-            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
+            <svg class="icon" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"/>
             </svg>
             <span>Edit</span>
@@ -441,11 +443,10 @@ class coderViewEdit {
       this.elements.formatCodeBtn.classList.add("hidden");
     }
     if (this.elements.commitPanel) {
-      this.elements.commitPanel.classList.add("hidden");
+      this.elements.commitPanel.style.display = "none";
     }
     if (this.codeMirror) {
       this.codeMirror.setOption("readOnly", true);
-      this.codeMirror.getWrapperElement().style.pointerEvents = "none";
       this.codeMirror.getWrapperElement().style.cursor = "default";
     }
   }
@@ -461,7 +462,7 @@ class coderViewEdit {
         this.exitEditMode();
         this.hideLoading();
       }, 300);
-    }, 300);
+    }, 1500);
   }
   displayFile(filename, fileData) {
     if (!this.isInitialized) {
@@ -510,15 +511,11 @@ class coderViewEdit {
     }
   }
   updateLineNumbers() {
-    if (!this.codeMirror || !this.elements.codeViewerLineNumbers) return;
+    if (!this.codeMirror) return;
     const content = this.codeMirror.getValue();
-    const lines = content.split("\n");
-    this.elements.codeViewerLineNumbers.innerHTML = "";
-    for (let i = 1; i <= lines.length; i++) {
-      const lineDiv = document.createElement("div");
-      lineDiv.className = "line-number";
-      lineDiv.textContent = i;
-      this.elements.codeViewerLineNumbers.appendChild(lineDiv);
+    const lines = content.split("\n").length;
+    if (this.elements.fileLinesCount) {
+      this.elements.fileLinesCount.textContent = `${lines} ${lines === 1 ? "line" : "lines"}`;
     }
   }
   setReadOnly(readOnly) {
@@ -526,10 +523,8 @@ class coderViewEdit {
     this.codeMirror.setOption("readOnly", readOnly);
     const cmElement = this.codeMirror.getWrapperElement();
     if (readOnly) {
-      cmElement.style.pointerEvents = "none";
       cmElement.style.cursor = "default";
     } else {
-      cmElement.style.pointerEvents = "all";
       cmElement.style.cursor = "text";
     }
   }
@@ -563,12 +558,12 @@ class coderViewEdit {
           if (window.renderFileList) {
             window.renderFileList();
           }
-        }, 500);
+        }, 1500);
       } catch (error) {
         this.hideLoading();
         showErrorMessage(`Save failed: ${error.message}`);
       }
-    }, 500);
+    }, 1500);
   }
   copyCode() {
     if (!this.codeMirror) return;
@@ -600,13 +595,6 @@ class coderViewEdit {
     if (!this.codeMirror) return;
     const current = this.codeMirror.getOption("lineWrapping");
     this.codeMirror.setOption("lineWrapping", !current);
-    if (this.elements.wrapLinesBtn) {
-      if (!current) {
-        this.elements.wrapLinesBtn.classList.add("text-github-accent-fg");
-      } else {
-        this.elements.wrapLinesBtn.classList.remove("text-github-accent-fg");
-      }
-    }
   }
   renameFile(newName) {}
   adjustFontSize(change) {
