@@ -975,6 +975,101 @@ background: linear-gradient(90deg, #dc2626, #ef4444, #f87171);
   display: none;
 }
 
+
+
+
+
+
+
+.show {
+  opacity: 1;
+  transition: opacity 0.45s ease-in;
+}
+.hide {
+  opacity: 0;
+  transition: opacity 0.25s ease-out;
+}
+
+
+
+
+      .loading-spinner {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: ${config.zIndex};
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity ${config.fadeDuration}ms ease-in-out, visibility ${config.fadeDuration}ms ease-in-out;
+        pointer-events: none;
+      }
+      
+      .loading-spinner[data-active="true"] {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: all;
+      }
+      
+      .spinner-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: ${config.backgroundColor};
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .spinner-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        animation: spinner-enter 0.4s ease-out;
+      }
+      
+      .spinner {
+        width: 50px;
+        height: 50px;
+        border: 4px solid rgba(255, 255, 255, 0.1);
+        border-top-color: ${config.spinnerColor};
+        border-radius: 50%;
+      }
+      
+      .spinner-text {
+        color: white;
+        font-size: 1rem;
+        margin: 0;
+        text-align: center;
+        animation: text-fade 0.5s ease-out;
+      }
+      
+      @keyframes spinner-enter {
+        from {
+          opacity: 0;
+          transform: scale(0.9) translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+      
+      @keyframes text-fade {
+        from {
+          opacity: 0;
+          transform: translateY(5px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
 </style>
 </head>
 
