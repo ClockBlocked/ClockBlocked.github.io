@@ -392,15 +392,16 @@ class coderViewEdit {
                     <span>Cancel</span>
                 `;
     if (this.elements.formatCodeBtn) {
-      this.elements.formatCodeBtn.classList.remove("hidden");
+      this.elements.formatCodeBtn.classList.remove(".hide");
     }
     if (this.elements.commitPanel) {
-      this.elements.commitPanel.style.display = "block";
+//      this.elements.commitPanel.style.display = "block";
+        this.elements.commitPanel.classList.add('.show');
     }
     if (this.codeMirror) {
       this.codeMirror.setOption("readOnly", false);
       this.codeMirror.getWrapperElement().style.cursor = "text";
-      this.codeMirror.focus();
+//    this.codeMirror.focus();
     }
     this.updateCommitMessage();
     setTimeout(() => {
