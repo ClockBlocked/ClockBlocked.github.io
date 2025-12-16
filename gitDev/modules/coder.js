@@ -1,4 +1,7 @@
 class coderViewEdit {
+  
+  
+////////// Setup
   constructor() {
     this.currentFile = null;
     this.fileData = null;
@@ -14,6 +17,7 @@ class coderViewEdit {
       showMinimap: false,
     };
   }
+  
   init() {
     if (this.isInitialized) return;
     const coder = document.getElementById("coder");
@@ -289,6 +293,7 @@ class coderViewEdit {
       }
     });
   }
+  
   setupCodeMirror() {
     if (typeof CodeMirror === "undefined") {
       setTimeout(() => this.setupCodeMirror(), 100);
@@ -375,6 +380,7 @@ class coderViewEdit {
     };
     this.codeMirror.setOption("mode", modeMap[ext] || "text");
   }
+  
   showLoading(message = "Loading...") {
     if (!this.elements.loadingOverlay || !this.elements.loadingText) return;
     this.isLoading = true;
@@ -390,6 +396,7 @@ class coderViewEdit {
     this.elements.loadingOverlay.style.opacity = "0";
     this.elements.loadingOverlay.style.pointerEvents = "none";
   }
+  
   show() {
     if (this.elements.coder) {
       this.elements.coder.classList.remove("hidden");
@@ -400,6 +407,7 @@ class coderViewEdit {
       this.elements.coder.classList.add("hidden");
     }
   }
+  
   enterEditMode() {
     if (!this.currentFile || this.isLoading) return;
     this.showLoading("Switching to edit mode...");
@@ -464,6 +472,7 @@ class coderViewEdit {
       }, 300);
     }, 1500);
   }
+  
   displayFile(filename, fileData) {
     if (!this.isInitialized) {
       this.init();
@@ -518,6 +527,9 @@ class coderViewEdit {
       this.elements.fileLinesCount.textContent = `${lines} ${lines === 1 ? "line" : "lines"}`;
     }
   }
+
+
+///////// Actions  
   setReadOnly(readOnly) {
     if (!this.codeMirror) return;
     this.codeMirror.setOption("readOnly", readOnly);
@@ -597,6 +609,7 @@ class coderViewEdit {
     this.codeMirror.setOption("lineWrapping", !current);
   }
   renameFile(newName) {}
+  
   adjustFontSize(change) {
     const newSize = this.state.fontSize + change;
     const clampedSize = Math.max(8, Math.min(24, newSize));
@@ -607,6 +620,7 @@ class coderViewEdit {
   resetFontSize() {
     this.setCodeMirrorFontSize(12);
   }
+  
   toggleTheme() {
     const html = document.documentElement;
     const currentTheme = html.getAttribute("data-theme");
