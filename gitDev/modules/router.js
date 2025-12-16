@@ -730,7 +730,7 @@ const LoadingSpinner = (() => {
     document.head.appendChild(styleElement);
     
     // Find the target container
-    let targetContainer = document.querySelector(config.targetContainer);
+    let targetContainer = document.getElementById(config.targetContainer);
     if (!targetContainer) {
       // Fallback to body if target not found
       targetContainer = document.body;
