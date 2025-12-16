@@ -417,7 +417,7 @@ function setupCodeEditors() {
     const editorConfig = {
       lineNumbers: true,
       lineWrapping: false,
-      theme: 'material-darker',
+      theme: 'one-dark',
       mode: 'javascript',
       indentUnit: 2,
       tabSize: 2,
@@ -487,8 +487,9 @@ function setupCodeEditors() {
       if (initialContentContainer) {
         initialContentEditor = CodeMirror(initialContentContainer, {
           ...editorConfig,
-          lineNumbers: false,
-          height: '192px'
+          lineNumbers: true,
+          height: '100%',
+          width: '100%'
         });
         initialContentEditor.on('change', function() {
           const fileName = document.getElementById('newFileName');
