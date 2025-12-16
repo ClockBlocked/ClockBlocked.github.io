@@ -112,20 +112,23 @@ window.coderArea = {
   `,
   
   styles: `
+
 .container {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 1rem;
 }
+
 .navigation {
   display: flex;
   align-items: center;
   gap: 0.25rem;
   font-size: 0.875rem;
 }
+
 .navButton {
-  color: #1f6feb;
+  color: var(--github-accent-fg);
   text-decoration: underline;
   font-weight: 600;
   background: none;
@@ -133,54 +136,63 @@ window.coderArea = {
   cursor: pointer;
   padding: 0;
 }
+
 .navButton:hover {
   text-decoration: underline;
 }
+
 .separator {
-  color: #8b949e;
+  color: var(--github-fg-muted);
 }
+
 .fileNameInput {
   background: transparent;
   border: none;
-  color: #f0f6fc;
+  color: var(--github-fg-default);
   font-weight: 600;
   outline: none;
   padding: 0.25rem;
   border-radius: 0.25rem;
   width: auto;
 }
+
 .fileNameInput:focus {
-  background: #161b22;
+  background: var(--github-canvas-inset);
 }
+
 .buttonGroup {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
+
 .actionButton {
   display: inline-flex;
   align-items: center;
   padding: 0.375rem 0.75rem;
-  border: 1px solid #30363d;
+  border: 1px solid var(--github-border-default);
   border-radius: 0.375rem;
   font-size: 0.875rem;
   font-weight: 500;
-  color: #f0f6fc;
-  background-color: #21262d;
+  color: var(--github-fg-default);
+  background-color: var(--github-canvas-default);
   transition: background-color 0.2s;
   cursor: pointer;
 }
+
 .actionButton:hover {
-  background-color: #30363d;
+  background-color: var(--github-border-default);
 }
+
 .icon {
   width: 1rem;
   height: 1rem;
   margin-right: 0.5rem;
 }
+
 .fileHeader {
-  background-color: #0d1117;
-  border: 1px solid #30363d;
+  background-color: var(--github-canvas-inset);
+  border: 1px solid var(--github-border-default);
   border-radius: 0.5rem 0.5rem 0 0;
   padding: 0.5rem 1rem;
   display: flex;
@@ -188,75 +200,87 @@ window.coderArea = {
   justify-content: space-between;
   font-size: 0.875rem;
 }
+
 .fileStats {
   display: flex;
   align-items: center;
   gap: 1rem;
-  color: #8b949e;
+  color: var(--github-fg-muted);
 }
+
 .toolbarGroup {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
+
 .toolbarButton {
   padding: 0.5rem;
   border-radius: 0.25rem;
-  color: #8b949e;
+  color: var(--github-fg-muted);
   background: none;
   border: none;
   cursor: pointer;
   transition: all 0.2s;
 }
+
 .toolbarButton:hover {
-  background-color: #161b22;
-  color: #f0f6fc;
+  background-color: var(--github-canvas-inset);
+  color: var(--github-fg-default);
 }
+
 .smallIcon {
   width: 1rem;
   height: 1rem;
 }
+
 .fontSizeControl {
   display: flex;
   align-items: center;
-  border: 1px solid #30363d;
+  border: 1px solid var(--github-border-default);
   border-radius: 0.375rem;
   overflow: hidden;
 }
+
 .fontButton {
   padding: 0.375rem;
-  color: #8b949e;
+  color: var(--github-fg-muted);
   background: none;
   border: none;
   cursor: pointer;
   transition: all 0.2s;
 }
+
 .fontButton:hover {
-  background-color: #161b22;
-  color: #f0f6fc;
+  background-color: var(--github-canvas-inset);
+  color: var(--github-fg-default);
 }
+
 .tinyIcon {
   width: 0.875rem;
   height: 0.875rem;
 }
+
 .fontSizeDisplay {
   padding: 0 0.5rem;
   font-size: 0.75rem;
-  color: #f0f6fc;
-  border-left: 1px solid #30363d;
-  border-right: 1px solid #30363d;
+  color: var(--github-fg-default);
+  border-left: 1px solid var(--github-border-default);
+  border-right: 1px solid var(--github-border-default);
   min-width: 40px;
   text-align: center;
 }
+
 .codeWrapper {
-  background-color: #0d1117;
-  border-left: 1px solid #30363d;
-  border-right: 1px solid #30363d;
-  border-bottom: 1px solid #30363d;
+  background-color: var(--github-canvas-inset);
+  border-left: 1px solid var(--github-border-default);
+  border-right: 1px solid var(--github-border-default);
+  border-bottom: 1px solid var(--github-border-default);
   border-radius: 0 0 0.5rem 0.5rem;
   overflow: hidden;
   position: relative;
 }
+
 .loadingOverlay {
   position: absolute;
   inset: 0;
@@ -270,100 +294,116 @@ window.coderArea = {
   opacity: 0;
   pointer-events: none;
 }
+
 .loadingContent {
   text-align: center;
 }
+
 .spinner {
   width: 2rem;
   height: 100%;
-  border: 2px solid #30363d;
-  border-top-color: #1f6feb;
+  border: 2px solid var(--github-border-default);
+  border-top-color: var(--github-accent-fg);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 0 auto 0.5rem;
 }
+
 .loadingText {
-  color: #8b949e;
+  color: var(--github-fg-muted);
   font-size: 0.875rem;
 }
+
 .codeContainer {
   display: flex;
   height: auto;
 }
+
 .codeEditor {
   flex: 1;
   overflow: auto;
 }
+
 .commitPanel {
   margin-top: 1.5rem;
-  background-color: #0d1117;
-  border: 1px solid #30363d;
+  background-color: var(--github-canvas-inset);
+  border: 1px solid var(--github-border-default);
   border-radius: 0.5rem;
   padding: 1.5rem;
   display: none;
 }
+
 .panelTitle {
   font-size: 1.125rem;
   font-weight: 600;
-  color: #f0f6fc;
+  color: var(--github-fg-default);
   margin-bottom: 1rem;
 }
+
 .panelContent {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
+
 .commitInput {
   width: 100%;
   padding: 0.5rem 0.75rem;
-  background-color: #010409;
-  border: 1px solid #30363d;
+  background-color: var(--github-canvas-default);
+  border: 1px solid var(--github-border-default);
   border-radius: 0.375rem;
-  color: #f0f6fc;
+  color: var(--github-fg-default);
   outline: none;
 }
+
 .commitInput:focus {
-  outline: 2px solid #1f6feb;
+  outline: 2px solid var(--github-accent-fg);
   outline-offset: -1px;
   border-color: transparent;
 }
+
 .commitTextarea {
   width: 100%;
   padding: 0.5rem 0.75rem;
-  background-color: #010409;
-  border: 1px solid #30363d;
+  background-color: var(--github-canvas-default);
+  border: 1px solid var(--github-border-default);
   border-radius: 0.375rem;
-  color: #f0f6fc;
+  color: var(--github-fg-default);
   outline: none;
   resize: none;
 }
+
 .commitTextarea:focus {
-  outline: 2px solid #1f6feb;
+  outline: 2px solid var(--github-accent-fg);
   outline-offset: -1px;
   border-color: transparent;
 }
+
 .panelButtons {
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;
 }
+
 .secondaryButton {
   padding: 0.5rem 1rem;
-  border: 1px solid #30363d;
+  border: 1px solid var(--github-border-default);
   border-radius: 0.375rem;
   font-size: 0.875rem;
   font-weight: 500;
-  color: #f0f6fc;
-  background-color: #21262d;
+  color: var(--github-fg-default);
+  background-color: var(--github-canvas-default);
   transition: background-color 0.2s;
   cursor: pointer;
 }
+
 .secondaryButton:hover {
-  background-color: #30363d;
+  background-color: var(--github-border-default);
 }
+
 .primaryButton {
   padding: 0.5rem 1rem;
-  background-color: #238636;
+  background-color: var(--github-btn-primary-bg);
   color: white;
   border-radius: 0.375rem;
   font-size: 0.875rem;
@@ -372,12 +412,15 @@ window.coderArea = {
   cursor: pointer;
   transition: background-color 0.2s;
 }
+
 .primaryButton:hover {
-  background-color: #2ea043;
+  background-color: var(--github-btn-primary-hover);
 }
+
 .hidden {
   display: none;
 }
+
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
