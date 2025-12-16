@@ -396,6 +396,7 @@ class coderViewEdit {
     }
     if (this.elements.commitPanel) {
 //      this.elements.commitPanel.style.display = "block";
+        this.elements.commitPanel.classList.remove('.hide');
         this.elements.commitPanel.classList.add('.show');
     }
     if (this.codeMirror) {
@@ -420,7 +421,9 @@ class coderViewEdit {
       this.elements.formatCodeBtn.classList.add("hidden");
     }
     if (this.elements.commitPanel) {
-      this.elements.commitPanel.style.display = "none";
+//      this.elements.commitPanel.style.display = "none";
+      this.elements.commitPanel.classList.remove('show');
+      this.elements.commitPanel.classList.add('hide');
     }
     if (this.codeMirror) {
       this.codeMirror.setOption("readOnly", true);
