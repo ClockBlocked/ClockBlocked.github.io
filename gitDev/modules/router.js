@@ -608,82 +608,26 @@ const LoadingSpinner = (() => {
   let showTime = null;
 
   let config = {
-    message: 'Loading...',
-    backgroundColor: 'rgba(0, 0, 0, 0.75)',
-    spinnerColor: '#1c7eec',
     fadeDuration: 300,
-    zIndex: 10000,
     minDisplayTime: 600
   };
 
-  function ensureInitialized() {
+  function init(selector = "#loadingSpinner") {
     if (spinnerElement) return true;
     
-    // Try to find the coderWrapper container
-    const targetContainer = document.getElementById("coderWrapper");
-    if (!targetContainer) {
-      return false; // Container doesn't exist yet
-    }
-    
-    init(targetContainer);
-    return true;
-  }
-
-  function init(targetContainer) {
-    if (spinnerElement) return;
-    
-    spinnerElement = document.createElement("div");
-    spinnerElement.id = "loadingSpinner";
-    spinnerElement.setAttribute("data-active", "false");
-    spinnerElement.className = "loading-spinner";
-    
-    const overlay = document.createElement("div");
-    overlay.className = "spinner-overlay";
-    
-    const content = document.createElement("div");
-    content.className = "spinner-content";
-    
-    const spinner = document.createElement("div");
-    spinner.className = "spinner";
-    
-    const text = document.createElement("p");
-    text.className = "spinner-text";
-    text.textContent = config.message;
-    
-    content.appendChild(spinner);
-    content.appendChild(text);
-    overlay.appendChild(content);
-    spinnerElement.appendChild(overlay);
-
-    
-    // Make sure the target container has position relative
-    targetContainer.style.position = "relative";
-    targetContainer.appendChild(spinnerElement);
+    spinnerElement = document.querySelector(selector);
+    return !!spinnerElement;
   }
 
   function show() {
-    // Try to initialize if not already done
-    if (!ensureInitialized()) {
-      // If coderWrapper doesn't exist yet, wait a bit and try again
-      setTimeout(() => {
-        if (ensureInitialized()) {
-          actuallyShow();
-        }
-      }, 50);
-      return;
-    }
+    if (!spinnerElement && !init()) return;
     
-    actuallyShow();
-  }
-
-  function actuallyShow() {
     clearTimeout(hideTimeout);
     isActive = true;
     showTime = Date.now();
     
     spinnerElement.style.display = "block";
     void spinnerElement.offsetWidth;
-    
     spinnerElement.setAttribute("data-active", "true");
   }
 
@@ -694,9 +638,7 @@ const LoadingSpinner = (() => {
     const remaining = Math.max(0, config.minDisplayTime - elapsed);
     
     if (remaining > 0) {
-      setTimeout(() => {
-        actuallyHide();
-      }, remaining);
+      hideTimeout = setTimeout(actuallyHide, remaining);
     } else {
       actuallyHide();
     }
@@ -704,6 +646,7 @@ const LoadingSpinner = (() => {
 
   function actuallyHide() {
     isActive = false;
+    
     if (spinnerElement) {
       spinnerElement.setAttribute("data-active", "false");
     }
@@ -716,53 +659,26 @@ const LoadingSpinner = (() => {
   }
 
   function toggle() {
-    if (isActive) {
-      hide();
-    } else {
-      show();
-    }
-  }
-
-  function updateMessage(newMessage) {
-    if (!spinnerElement) return;
-    
-    config.message = newMessage;
-    const textElement = spinnerElement.querySelector(".spinner-text");
-    if (textElement) {
-      textElement.textContent = newMessage;
-    }
-  }
-
-  function configOptions(options = {}) {
-    config = { ...config, ...options };
-    
-    if (spinnerElement) {
-      const spinner = spinnerElement.querySelector(".spinner");
-      if (spinner) {
-        spinner.style.borderTopColor = config.spinnerColor;
-      }
-      
-      const overlay = spinnerElement.querySelector(".spinner-overlay");
-      if (overlay) {
-        overlay.style.backgroundColor = config.backgroundColor;
-      }
-      
-      spinnerElement.style.zIndex = config.zIndex;
-      
-      spinnerElement.style.transition = `opacity ${config.fadeDuration}ms ease-in-out, visibility ${config.fadeDuration}ms ease-in-out`;
-    }
+    isActive ? hide() : show();
   }
 
   function isVisible() {
     return isActive;
   }
 
+  function configure(options = {}) {
+    config = { ...config, ...options };
+  }
+
   function destroy() {
-    if (spinnerElement && spinnerElement.parentNode) {
-      spinnerElement.parentNode.removeChild(spinnerElement);
-      spinnerElement = null;
-    }
     clearTimeout(hideTimeout);
+    
+    if (spinnerElement) {
+      spinnerElement.setAttribute("data-active", "false");
+      spinnerElement.style.display = "none";
+    }
+    
+    spinnerElement = null;
     isActive = false;
     showTime = null;
   }
@@ -774,12 +690,12 @@ const LoadingSpinner = (() => {
   }
 
   return {
-    config: configOptions,
+    init,
     show,
     hide,
     toggle,
-    updateMessage,
     isVisible,
+    configure,
     destroy,
     getRemainingMinTime
   };
