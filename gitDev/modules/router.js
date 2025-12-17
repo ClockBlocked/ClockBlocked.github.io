@@ -460,7 +460,9 @@ const LoadingProgress = (() => {
         display: block;
         height: 100%;
         width: 0;
-        background-color: #0366d6;
+          background: linear-gradient(90deg, #dc2626, #ef4444, #f87171);
+  box-shadow: 0 0 10px rgba(220, 38, 38, 0.5), 0 0 20px rgba(220, 38, 38, 0.3);
+
         transition: width 0.5s ease-in-out;
       }
     `;
