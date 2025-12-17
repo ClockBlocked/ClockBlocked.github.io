@@ -347,7 +347,7 @@ function showFileEditor() {
 
 function showRepoSelector() {
   const explorerView = document.getElementById('explorerView');
-  const coderElement = document.getElementById('coder');
+  const coderElement = document.querySelector('.pages[data-page="file"]');
   
   if (explorerView) explorerView.classList.add('hidden');
   if (coderElement) coderElement.classList.add('hidden');
@@ -370,7 +370,7 @@ function showFileViewer() {
   if (repoSelector) repoSelector.classList.add('hidden');
   if (explorerView) explorerView.classList.add('hidden');
   
-  const coderElement = document.getElementById('coder');
+  const coderElement = document.querySelector('.pages[data-page="file"]');
   if (coderElement) {
     coderElement.classList.remove('hidden');
     
@@ -389,7 +389,7 @@ function showFileViewer() {
 function showExplorer() {
   if (currentState.repository) {
     const repoSelector = document.getElementById('repoSelectorView');
-    const coderElement = document.getElementById('coder');
+    const coderElement = document.querySelector('.pages[data-page="file"]');
     
     if (repoSelector) repoSelector.classList.add('hidden');
     if (coderElement) coderElement.classList.add('hidden');
