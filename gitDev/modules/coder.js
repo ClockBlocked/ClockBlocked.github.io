@@ -528,4 +528,13 @@ class coderViewEdit {
   }
 }
 
+
+
+
 window.coderViewEdit = new coderViewEdit();
+
+document.addEventListener("DOMContentLoaded", () => {
+  if (document.querySelector('.pages[data-page="file"]')) {
+    window.coderViewEdit.init();
+  }
+});
