@@ -626,7 +626,7 @@ const LoadingSpinner = (() => {
     isActive = true;
     showTime = Date.now();
     
-    spinnerElement.style.display = "block";
+//    spinnerElement.style.display = "block";
     void spinnerElement.offsetWidth;
     spinnerElement.setAttribute("data-active", "true");
   }
@@ -653,7 +653,7 @@ const LoadingSpinner = (() => {
     
     hideTimeout = setTimeout(() => {
       if (!isActive && spinnerElement) {
-        spinnerElement.style.display = "none";
+//        spinnerElement.style.display = "none";
       }
     }, config.fadeDuration);
   }
