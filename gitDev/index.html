@@ -78,13 +78,6 @@ input, textarea {
   gap: 16px;
 }
 
-#codeArea {
-  display: flex;
-  flex: 1;
-  min-height: 0;
-  overflow: hidden;
-  background-color: var(--github-canvas-default);
-}
 
 .gutter-container {
   display: flex;
@@ -93,23 +86,26 @@ input, textarea {
   border-right: 1px solid var(--github-border-default);
 }
 
-#codeMirrorContainer {
-  flex: 1;
-  min-width: 0;
-  height: 100%;
-  overflow: auto;
-  font-size: 12px;
-  margin: 0;
-  padding: 0;
-}
+
 
 #coderWrapper {
   display: flex;
   flex-direction: column;
   height: 450px;
-  background-color: var(--github-canvas-overlay);
-  overflow: hidden;
+  
+  background-color: var(--bgCode);
+  border: 1px solid var(--borderDefault);
+  
+  overflow: hidden; overflow-y: auto;
   position: relative;
+  
+  margin: 0 0.5rem 0 0.5rem;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+#codeMirrorContainer {
+  height: 100%; width: 100%;
+  
 }
 
 .commit-panel {
