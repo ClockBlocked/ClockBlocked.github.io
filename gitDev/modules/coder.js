@@ -17,11 +17,12 @@ class coderViewEdit {
   
   init() {
     if (this.isInitialized) return;
-    const coder = document.getElementById("coder");
-    if (!coder) return;
-    coder.innerHTML = `
+    const filePage = document.querySelector('.pages[data-page="file"]');
+    if (!filePage) return;
+    filePage.innerHTML = `
 
 <div class="container">
+
   <nav class="navigation">
     <button onclick="showExplorer()" class="navButton">
       ${window.currentState?.repository || "Repository"}
@@ -29,6 +30,8 @@ class coderViewEdit {
     <span class="separator">/</span>
     <input type="text" id="fileNameInput" class="fileNameInput" value="" readonly />
   </nav>
+  
+  
   <div class="buttonGroup">
     <button id="editToggleBtn" class="actionButton">
       <svg class="icon" fill="currentColor" viewBox="0 0 16 16">
@@ -52,7 +55,10 @@ class coderViewEdit {
     </button>
   </div>
 </div>
+
+
 <div class="fileHeader">
+
   <div class="toolbarGroup">
     <button id="themeToggleBtn" class="toolbarButton">
       <svg id="themeIcon" class="smallIcon" fill="currentColor" viewBox="0 0 16 16">
@@ -93,14 +99,15 @@ class coderViewEdit {
       </svg>
     </button>
   </div>
+  
 </div>
-<div id="coderWrapper" class="codeWrapper">
-  <div class="codeContainer">
-    <div class="codeEditor">
-      <div id="codeMirrorContainer"></div>
-    </div>
+
+<!-- CodeMirror Area -->
+<div id="coderWrapper">
+  <div id="codeMirrorContainer">
   </div>
 </div>
+
 <div class="fileFooter">
   <div class="footerStats">
     <span id="fileLinesCount">0 lines</span>
@@ -110,6 +117,9 @@ class coderViewEdit {
     <span id="fileLanguageDisplay">Text</span>
   </div>
 </div>
+
+
+
 <div id="commitPanel" class="commitPanel">
   <h3 class="panelTitle">Commit changes</h3>
   <div class="panelContent">
@@ -119,10 +129,12 @@ class coderViewEdit {
     <div>
       <textarea id="commitDescriptionInput" rows="4" class="commitTextarea" placeholder="Add an optional extended description..."></textarea>
     </div>
+    
     <div class="panelButtons">
       <button id="cancelEditBtn" class="secondaryButton">Cancel</button>
       <button id="saveChangesBtn" class="primaryButton">Commit changes</button>
     </div>
+    
   </div>
 </div>
 
@@ -138,7 +150,7 @@ class coderViewEdit {
   }
   cacheElements() {
     this.elements = {
-      coder: document.getElementById("coder"),
+      filePage: document.querySelector('.pages[data-page="file"]'),
       fileNameInput: document.getElementById("fileNameInput"),
       editToggleBtn: document.getElementById("editToggleBtn"),
       copyBtn: document.getElementById("copyBtn"),
@@ -371,13 +383,13 @@ class coderViewEdit {
   }
   
   show() {
-    if (this.elements.coder) {
-      this.elements.coder.classList.remove("hidden");
+    if (this.elements.filePage) {
+      this.elements.filePage.classList.remove("hidden");
     }
   }
   hide() {
-    if (this.elements.coder) {
-      this.elements.coder.classList.add("hidden");
+    if (this.elements.filePage) {
+      this.elements.filePage.classList.add("hidden");
     }
   }
   
@@ -616,15 +628,15 @@ class coderViewEdit {
     }
   }
   toggleFullscreen() {
-    const coder = this.elements.coder;
-    if (!coder) return;
+    const coderWrapper = this.elements.coderWrapper;
+    if (!coderWrapper) return;
     if (!document.fullscreenElement) {
-      if (coder.requestFullscreen) {
-        coder.requestFullscreen();
-      } else if (coder.webkitRequestFullscreen) {
-        coder.webkitRequestFullscreen();
-      } else if (coder.msRequestFullscreen) {
-        coder.msRequestFullscreen();
+      if (coderWrapper.requestFullscreen) {
+        coderWrapper.requestFullscreen();
+      } else if (coderWrapper.webkitRequestFullscreen) {
+        coderWrapper.webkitRequestFullscreen();
+      } else if (coderWrapper.msRequestFullscreen) {
+        coderWrapper.msRequestFullscreen();
       }
     } else {
       if (document.exitFullscreen) {
