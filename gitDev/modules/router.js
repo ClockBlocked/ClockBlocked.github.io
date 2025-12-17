@@ -675,7 +675,7 @@ const LoadingSpinner = (() => {
     
     if (spinnerElement) {
       spinnerElement.setAttribute("data-active", "false");
-      spinnerElement.style.display = "none";
+//      spinnerElement.style.display = "none";
     }
     
     spinnerElement = null;
