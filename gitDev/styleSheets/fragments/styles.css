@@ -281,20 +281,16 @@ code[class*="language-"] {
   width: 8px;
   height: 8px;
 }
-
 ::-webkit-scrollbar-track {
   background: var(--github-canvas-default);
 }
-
 ::-webkit-scrollbar-thumb {
   background: var(--github-border-default);
   border-radius: 4px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
   background: var(--github-neutral-muted);
 }
-
 ::-webkit-scrollbar-corner {
   background: var(--github-canvas-default);
 }
@@ -303,22 +299,27 @@ code[class*="language-"] {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
-
 @keyframes fadeOut {
   from { opacity: 1; }
   to { opacity: 0; }
 }
-
 @keyframes slideDown {
   from { opacity: 0; transform: translateY(-20px); }
   to { opacity: 1; transform: translateY(0); }
 }
-
 @keyframes scaleIn {
   from { opacity: 0; transform: scale(0.95); }
   to { opacity: 1; transform: scale(1); }
 }
+@keyframes skeleton-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
 
+
+button {
+  transition: all 0.15s ease;
+}
 button:focus,
 input:focus,
 textarea:focus,
@@ -331,18 +332,15 @@ table {
   border-collapse: separate;
   border-spacing: 0;
 }
-
 thead th {
   position: sticky;
   top: 0;
   background: var(--github-canvas-overlay);
   z-index: 10;
 }
-
 tbody tr {
   border-top: 1px solid var(--github-border-muted);
 }
-
 tbody tr:hover {
   background: rgba(173, 186, 199, 0.05);
 }
@@ -364,12 +362,10 @@ tbody tr:hover {
   box-shadow: 0 8px 24px rgba(1, 4, 9, 0.15), 0 0 0 1px rgba(1, 4, 9, 0.1);
   backdrop-filter: blur(12px);
 }
-
 #contextMenu button:first-child {
   border-top-left-radius: 7px;
   border-top-right-radius: 7px;
 }
-
 #contextMenu button:last-child {
   border-bottom-left-radius: 7px;
   border-bottom-right-radius: 7px;
@@ -384,7 +380,6 @@ tbody tr:hover {
   transition: all 0.2s ease;
   border: 1px solid var(--github-border-default);
 }
-
 .repo-card:hover {
   border-color: var(--github-accent-fg);
   box-shadow: 0 4px 12px rgba(83, 155, 245, 0.1);
@@ -398,7 +393,6 @@ tbody tr:hover {
   font-weight: 500;
   transition: all 0.2s ease;
 }
-
 .tag:hover {
   background: rgba(83, 155, 245, 0.15);
   border-color: rgba(83, 155, 245, 0.4);
@@ -407,7 +401,6 @@ tbody tr:hover {
 .file-list-item {
   transition: background-color 0.15s ease;
 }
-
 .file-list-item:hover {
   background: rgba(173, 186, 199, 0.05);
 }
@@ -415,45 +408,26 @@ tbody tr:hover {
 .file-name-link {
   transition: color 0.15s ease;
 }
-
 .file-name-link:hover {
   color: var(--github-accent-fg);
 }
 
-button {
-  transition: all 0.15s ease;
-}
 
 .btn-primary:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(52, 125, 57, 0.2);
 }
-
 .btn-secondary:hover {
   background: var(--github-btn-secondary-hover);
 }
 
-#loadingOverlay {
-  backdrop-filter: blur(8px);
-  background: rgba(34, 39, 46, 0.8);
-}
 
 .notification {
   backdrop-filter: blur(12px);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
-#loadingProgressBar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 0%;
-  height: 2px;
-  background: linear-gradient(90deg, #dc2626, #ef4444, #f87171);
-  box-shadow: 0 0 10px rgba(220, 38, 38, 0.5), 0 0 20px rgba(220, 38, 38, 0.3);
-  z-index: 9999;
-  transition: width 0.3s ease;
-}
+
 
 .skeleton-item {
   background: linear-gradient(90deg, #2d333b 25%, #373e47 50%, #2d333b 75%);
@@ -462,10 +436,6 @@ button {
   border-radius: 6px;
 }
 
-@keyframes skeleton-shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
 
 #floatingNavbar {
   position: fixed;
@@ -500,7 +470,6 @@ button {
   transition: opacity 0.35s, transform 0.35s;
   pointer-events: none;
 }
-
 #recentFilesPopover.show {
   opacity: 1;
   transform: translateY(0);
@@ -521,22 +490,18 @@ button {
   transition: opacity 0.35s, transform 0.35s;
   pointer-events: none;
 }
-
 #quickActionsMenu.show {
   opacity: 1;
   transform: translateY(0);
   pointer-events: all;
 }
-
+/**
 #codeBlock {
   font-size: 13px;
   line-height: 1.0;
   letter-spacing: -0.01em;
 }
-
 #codeContent {
-/*  min-height: 500px;
-  max-height: calc(100vh - 300px);*/
   width: 100%;
   height: 100%;
 }
@@ -544,31 +509,27 @@ button {
 .line-numbers {
   line-height: 1.0;
 }
-
 #lineNumbers div {
   font-size: 8px;
   line-height: 1.0;
   padding: 0;
   margin: 0;
 }
-
 .CodeMirror-lines {
   padding: 0;
 }
-
 .CodeMirror-line {
   padding: 0;
   line-height: 1.0;
 }
+
+
 
 #fileViewer #codeContent {
   background: #1c2128;
 }
 
 #fileViewer > .bg-github-canvas-overlay.border-x.border-b.border-github-border-default.rounded-b-lg.overflow-hidden {
-  /*min-height: 200px;
-  max-height: 400px;*/
-  
   min-height: 10rem !important;
   max-height: 10rem !important;
 }
@@ -744,6 +705,11 @@ button {
   animation: none;
   transition: width 0.3s ease;
 }
+
+**/
+
+
+
 
 #topMenuBar {
   top: 3px;
