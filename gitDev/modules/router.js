@@ -445,7 +445,7 @@ const LoadingProgress = (() => {
         width: 100%;
         height: 2.5px;
         z-index: 9999;
-        background-color: #e1e4e8;
+        background-color: transparent;
         transition: opacity 0.5s linear;
         opacity: 0;
         pointer-events: none;
