@@ -104,6 +104,16 @@ class coderViewEdit {
 
 <!-- CodeMirror Area -->
 <div id="coderWrapper">
+
+<div id="loadingSpinner" class="loading-spinner" data-active="false">
+  <div class="spinner-overlay">
+    <svg class="spinner-svg" viewBox="0 0 50 50">
+      <circle class="spinner-track" cx="25" cy="25" r="20"></circle>
+      <circle class="spinner-circle" cx="25" cy="25" r="20"></circle>
+    </svg>
+  </div>
+</div>
+
   <div id="codeMirrorContainer">
   </div>
 </div>
