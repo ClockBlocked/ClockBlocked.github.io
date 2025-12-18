@@ -282,36 +282,36 @@ function hideUploadModal() {
 // Create upload modal
 function createUploadModal() {
     const modalHTML = `
-        <div id="uploadModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-            <div class="bg-github-canvas-default rounded-lg shadow-2xl w-full max-w-2xl border border-github-border-default">
+        <div id="uploadModal" class="fixed inset0 bgBlack bg-opacity-50 hidden itemsCenter justifyCenter z50">
+            <div class="bgCanvasDefault roundedLg shadow2xl wFull maxW2xl borderDefault">
                 <!-- Header -->
-                <div class="flex items-center justify-between p-6 border-b border-github-border-default">
-                    <h2 class="text-xl font-semibold text-github-fg-default">
+                <div class="flex itemsCenter justifyBetween p6 borderB borderDefault">
+                    <h2 class="textXl fontSemibold textFgDefault">
                         <i class="fas fa-upload mr-2"></i>Upload Files
                     </h2>
-                    <button onclick="hideUploadModal()" class="text-github-fg-muted hover:text-github-fg-default">
-                        <i class="fas fa-times text-xl"></i>
+                    <button onclick="hideUploadModal()" class="textFgMuted hoverTextDefault">
+                        <i class="fas fa-times textXl"></i>
                     </button>
                 </div>
 
                 <!-- Body -->
-                <div class="p-6">
+                <div class="p6">
                     <!-- Drag & Drop Zone -->
                     <div 
                         id="uploadDropZone" 
                         data-drop-zone
-                        class="border-2 border-dashed border-github-border-default rounded-lg p-12 text-center hover:border-github-accent-emphasis transition-all cursor-pointer"
+                        class="border-2 border-dashed borderDefault roundedLg p-12 textCenter hover:border-github-accent-emphasis transitionAll cursorPointer"
                         onclick="document.getElementById('fileInput').click()"
                     >
-                        <i class="fas fa-cloud-upload-alt text-6xl text-github-fg-muted mb-4"></i>
-                        <p class="text-github-fg-default font-semibold mb-2">
+                        <i class="fas fa-cloud-upload-alt text-6xl textFgMuted mb4"></i>
+                        <p class="textFgDefault fontSemibold mb2">
                             Drag & drop files here
                         </p>
-                        <p class="text-github-fg-muted text-sm mb-4">or</p>
-                        <button class="bg-github-success-emphasis text-white px-6 py-2 rounded-lg hover:bg-github-success-fg transition-all">
+                        <p class="textFgMuted textSm mb4">or</p>
+                        <button class="bgSuccessEmph textWhite px6 py2 roundedLg hoverBgSuccess transitionAll">
                             <i class="fas fa-folder-open mr-2"></i>Browse Files
                         </button>
-                        <p class="text-github-fg-muted text-xs mt-4">
+                        <p class="textFgMuted textXs mt-4">
                             Supported: Text files, code files (max 10MB each)
                         </p>
                     </div>
@@ -327,11 +327,11 @@ function createUploadModal() {
                     />
 
                     <!-- Upload to path info -->
-                    <div class="mt-4 p-4 bg-github-canvas-inset rounded-lg">
-                        <p class="text-sm text-github-fg-muted">
+                    <div class="mt-4 p4 bgCanvasInset roundedLg">
+                        <p class="textSm textFgMuted">
                             <i class="fas fa-info-circle mr-2"></i>
                             Files will be uploaded to: 
-                            <span class="text-github-accent-fg font-mono" id="uploadPath"></span>
+                            <span class="textAccentFg fontMono" id="uploadPath"></span>
                         </p>
                     </div>
                 </div>

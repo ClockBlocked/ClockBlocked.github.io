@@ -9,6 +9,7 @@
   
   <link rel="manifest" href="https://clockblocked.github.io/gitDev/gitDev/webApp/manifest.json">  
 
+  <link rel="stylesheet" href="https://clockblocked.github.io/gitDev/styleSheets/custom.css" />
   <link rel="stylesheet" href="https://clockblocked.github.io/gitDev/styleSheets/components/styles.css" />
   <link rel="stylesheet" href="https://clockblocked.github.io/gitDev/styleSheets/global/fonts.css" />
   <link rel="stylesheet" href="https://clockblocked.github.io/gitDev/styleSheets/enhancements.css" />
@@ -138,19 +139,6 @@ input, textarea {
 
 
   </style>
-
-<!-- TailwindCSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-<!-- Preline UI -->
-  <link rel="stylesheet" href="https://preline.co/assets/css/main.min.css">
-  <script async defer src="https://preline.co/assets/js/hs-ui.bundle.js"></script>
-
-<!-- Flowbite -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css" rel="stylesheet" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
-
-
 
 <!-- Code Viewer / Editor -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
@@ -549,76 +537,6 @@ background: linear-gradient(90deg, #dc2626, #ef4444, #f87171);
   background: rgba(99,110,123,0.12);
 }
   </style>
-
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            github: {
-              'canvas-default': '#22272e',
-              'tableHeader': '#2d333b',
-              'canvas-overlay': '#2d333b',
-              'canvas-inset': '#1c2128',
-              'canvas-subtle': '#2d333b',
-              'border-default': '#444c56',
-              'border-muted': '#373e47',
-              'neutral-emphasis': '#768390',
-              'neutral-muted': '#636e7b',
-              'fg-default': '#adbac7',
-              'fg-muted': '#768390',
-              'fg-subtle': '#545d68',
-              'accent-fg': '#539bf5',
-              'accent-emphasis': '#4184e4',
-              'success-fg': '#57ab5a',
-              'danger-fg': '#e5534b',
-              'warning-fg': '#c69026',
-              'btn-primary-bg': '#347d39',
-              'btn-primary-hover': '#46954a',
-              'btn-secondary-bg': '#373e47',
-              'btn-secondary-hover': '#444c56'
-            }
-          },
-          animation: {
-            'fade-in': 'fadeIn 0.2s ease-out',
-            'fade-out': 'fadeOut 0.2s ease-in',
-            'slide-up': 'slideUp 0.3s ease-out',
-            'slide-down': 'slideDown 0.3s ease-out',
-            'scale-in': 'scaleIn 0.2s ease-out',
-            'spin-slow': 'spin 1.5s linear infinite',
-            'pulse-soft': 'pulseSoft 2s ease-in-out infinite',
-          },
-          keyframes: {
-            fadeIn: {
-              '0%': { opacity: '0' },
-              '100%': { opacity: '1' }
-            },
-            fadeOut: {
-              '0%': { opacity: '1' },
-              '100%': { opacity: '0' }
-            },
-            slideUp: {
-              '0%': { transform: 'translateY(20px)', opacity: '0' },
-              '100%': { transform: 'translateY(0)', opacity: '1' }
-            },
-            slideDown: {
-              '0%': { transform: 'translateY(-20px)', opacity: '0' },
-              '100%': { transform: 'translateY(0)', opacity: '1' }
-            },
-            scaleIn: {
-              '0%': { transform: 'scale(0.95)', opacity: '0' },
-              '100%': { transform: 'scale(1)', opacity: '1' }
-            },
-            pulseSoft: {
-              '0%, 100%': { opacity: '1' },
-              '50%': { opacity: '0.7' }
-            }
-          }
-        }
-      }
-    }
-  </script>
 
 <style>
 .container {
@@ -1081,7 +999,7 @@ background: linear-gradient(90deg, #dc2626, #ef4444, #f87171);
 </style>
 </head>
 
-<body class="bg-github-canvas-default text-github-fg-default font-sans">
+<body class="bgCanvasDefault textFgDefault font-sans">
   
   <!-- Progress Bar -->
   <div id="pageProgress" class="page-progress">
@@ -1099,21 +1017,21 @@ background: linear-gradient(90deg, #dc2626, #ef4444, #f87171);
         <button id="leftSidebarTrigger" class="menu-button">
           <i class="fas fa-bars"></i>
         </button>
-        <a href="#" class="flex items-center space-x-2">
-          <i class="fab fa-github text-2xl"></i>
-          <span class="text-sm font-semibold">GitDev</span>
+        <a href="#" class="flex itemsCenter spaceX2">
+          <i class="fab fa-github text2xl"></i>
+          <span class="textSm fontSemibold">GitDev</span>
         </a>
       </div>
 
       <!-- Center Search --
-      <div class="flex-1 max-w-xl mx-4">
+      <div class="flex1 maxWXl mx4">
         <div class="relative">
           <input 
             type="text" 
             placeholder="Search repositories, files..." 
-            class="w-full px-4 py-2 bg-github-canvas-inset border border-github-border-default rounded-md text-sm text-github-fg-default placeholder-github-fg-muted focus:outline-none focus:ring-2 focus:ring-github-accent-fg focus:border-transparent"
+            class="wFull px4 py2 bgCanvasInset borderDefault roundedMd textSm textFgDefault placeholder-github-fg-muted focusOutlineNone focusRing2"
           >
-          <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-github-fg-muted text-sm">
+          <div class="absolute right3 top-1/2 transform -translate-y-1/2 textFgMuted textSm">
             Ctrl+K
           </div>
         </div>
@@ -1122,12 +1040,12 @@ background: linear-gradient(90deg, #dc2626, #ef4444, #f87171);
 
 <button 
     onclick="showSearchModal()" 
-    class="flex items-center gap-2 px-4 py-2 bg-github-canvas-overlay hover:bg-github-canvas-subtle border border-github-border-default rounded-lg transition-all"
+    class="flex itemsCenter gap2 px4 py2 bgCanvasOverlay hoverBgSubtle borderDefault roundedLg transitionAll"
     data-tooltip="Search files (Ctrl+K)"
 >
     <i class="fas fa-search"></i>
-    <span class="hidden sm:inline">Search</span>
-    <kbd class="hidden lg:inline-block ml-2 text-xs">Ctrl+K</kbd>
+    <span class="hidden sm:inlineBlock">Search</span>
+    <kbd class="hidden lg:inlineBlock ml2 textXs">Ctrl+K</kbd>
 </button>
 
 
@@ -1135,7 +1053,7 @@ background: linear-gradient(90deg, #dc2626, #ef4444, #f87171);
       <div class="navbar-right">
         <button data-action="show-create-file" class="menu-button">
           <i class="fas fa-plus"></i>
-          <span class="ml-2 text-sm">New</span>
+          <span class="ml2 textSm">New</span>
         </button>
         <button data-action="toggle-theme" class="menu-button">
           <i id="themeIcon" class="fas fa-moon"></i>
@@ -1148,11 +1066,11 @@ background: linear-gradient(90deg, #dc2626, #ef4444, #f87171);
   </nav>
 
   <!-- Overlay for Mobile -->
-  <div id="overlay" class="fixed inset-0 bg-black"></div>
+  <div id="overlay" class="fixed inset0 bgBlack"></div>
 
   <!-- Left Sidebar -->
   <aside id="leftSidebar" class="sidebar left-sidebar">
-    <div class="p-4 h-full overflow-y-auto">
+    <div class="p4 hFull overflowYAuto">
       <!-- User Profile -->
       <div class="profile-section">
         <img src="https://dev.wuaze.com/banner.png" alt="Profile" class="profile-avatar" />
@@ -1160,16 +1078,16 @@ background: linear-gradient(90deg, #dc2626, #ef4444, #f87171);
           <h3 class="profile-name">GitDev</h3>
           <span class="profile-username">Local File Manager</span>
         </div>
-        <button data-action="show-create-repo" class="w-full mt-3 px-3 py-2 bg-github-btn-primary-bg hover:bg-github-btn-primary-hover text-white rounded-md text-sm font-medium transition-colors">
+        <button data-action="show-create-repo" class="wFull mt3 px3 py2 bgBtnPrimary hoverBgBtnPrimary textWhite roundedMd textSm fontMedium transitionColors">
           <i class="fas fa-plus mr-2"></i>
           New Repository
         </button>
       </div>
 
       <!-- Quick Actions -->
-      <div class="mb-6">
+      <div class="mb6">
         <span class="sidebar-title">Quick Actions</span>
-        <div class="space-y-1">
+        <div class="spaceY1">
           <button data-action="create-file" class="sidebar-link">
             <i class="fas fa-file mr-2"></i>
             New File
@@ -1186,12 +1104,12 @@ background: linear-gradient(90deg, #dc2626, #ef4444, #f87171);
       </div>
 
       <!-- Repository List -->
-      <div class="mb-6">
-        <div class="flex items-center justify-between mb-2">
+      <div class="mb6">
+        <div class="flex itemsCenter justifyBetween mb2">
           <span class="sidebar-title">Repositories</span>
-          <span id="repoCount" class="text-xs text-github-fg-muted">0</span>
+          <span id="repoCount" class="textXs textFgMuted">0</span>
         </div>
-        <div id="repoListSidebar" class="space-y-1">
+        <div id="repoListSidebar" class="spaceY1">
           <!-- Repositories will be populated here -->
         </div>
       </div>
@@ -1199,7 +1117,7 @@ background: linear-gradient(90deg, #dc2626, #ef4444, #f87171);
       <!-- Navigation Links -->
       <div>
         <span class="sidebar-title">Navigation</span>
-        <div class="space-y-1">
+        <div class="spaceY1">
           <a href="#" onclick="showRepoSelector()" class="sidebar-link">
             <i class="fas fa-code mr-2"></i>
             Code
@@ -1207,12 +1125,12 @@ background: linear-gradient(90deg, #dc2626, #ef4444, #f87171);
           <a href="#" class="sidebar-link">
             <i class="fas fa-exclamation-circle mr-2"></i>
             Issues
-            <span class="ml-auto bg-github-canvas-subtle text-github-fg-default text-xs px-1.5 py-0.5 rounded-full">0</span>
+            <span class="mlAuto bgCanvasSubtle textFgDefault textXs px-1.5 py-0.5 roundedFull">0</span>
           </a>
           <a href="#" class="sidebar-link">
             <i class="fas fa-code-branch mr-2"></i>
             Pull Requests
-            <span class="ml-auto bg-github-canvas-subtle text-github-fg-default text-xs px-1.5 py-0.5 rounded-full">0</span>
+            <span class="mlAuto bgCanvasSubtle textFgDefault textXs px-1.5 py-0.5 roundedFull">0</span>
           </a>
           <a href="#" class="sidebar-link">
             <i class="fas fa-chart-bar mr-2"></i>
@@ -1222,14 +1140,14 @@ background: linear-gradient(90deg, #dc2626, #ef4444, #f87171);
       </div>
 
       <!-- File Stats -->
-      <div class="mt-6 pt-4 border-t border-github-border-muted">
-        <div class="flex items-center justify-between text-sm">
-          <span class="text-github-fg-muted">Files:</span>
-          <span id="totalFilesCount" class="font-medium">0</span>
+      <div class="mt6 pt4 borderT borderMuted">
+        <div class="flex itemsCenter justifyBetween textSm">
+          <span class="textFgMuted">Files:</span>
+          <span id="totalFilesCount" class="fontMedium">0</span>
         </div>
-        <div class="flex items-center justify-between text-sm mt-1">
-          <span class="text-github-fg-muted">Storage:</span>
-          <span id="totalStorage" class="font-medium">0 KB</span>
+        <div class="flex itemsCenter justifyBetween textSm mt1">
+          <span class="textFgMuted">Storage:</span>
+          <span id="totalStorage" class="fontMedium">0 KB</span>
         </div>
       </div>
     </div>
@@ -1237,52 +1155,52 @@ background: linear-gradient(90deg, #dc2626, #ef4444, #f87171);
 
   <!-- Right Sidebar -->
   <aside id="rightSidebar" class="sidebar right-sidebar">
-    <div class="p-4 h-full overflow-y-auto">
+    <div class="p4 hFull overflowYAuto">
       <!-- Recent Files -->
-      <div class="mb-6">
-        <div class="flex items-center justify-between mb-2">
+      <div class="mb6">
+        <div class="flex itemsCenter justifyBetween mb2">
           <span class="sidebar-title">Recent Files</span>
-          <button onclick="refreshRecentFiles()" class="text-xs text-github-accent-fg hover:underline">
+          <button onclick="refreshRecentFiles()" class="textXs textAccentFg hoverUnderline">
             Refresh
           </button>
         </div>
-        <div id="recentFilesList" class="space-y-2">
+        <div id="recentFilesList" class="spaceY2">
           <!-- Recent files will be populated here -->
         </div>
       </div>
 
       <!-- Current Repository Info -->
-      <div id="currentRepoInfo" class="mb-6 hidden">
+      <div id="currentRepoInfo" class="mb6 hidden">
         <span class="sidebar-title">Current Repository</span>
-        <div class="p-3 bg-github-canvas-subtle rounded-md mt-2">
-          <h4 id="currentRepoNameSidebar" class="font-semibold text-github-fg-default mb-1"></h4>
-          <p id="currentRepoDesc" class="text-xs text-github-fg-muted mb-2"></p>
-          <div class="flex items-center justify-between text-xs">
-            <span class="text-github-fg-muted">Branch:</span>
-            <span id="currentRepoBranch" class="font-medium">main</span>
+        <div class="p3 bgCanvasSubtle roundedMd mt2">
+          <h4 id="currentRepoNameSidebar" class="fontSemibold textFgDefault mb1"></h4>
+          <p id="currentRepoDesc" class="textXs textFgMuted mb2"></p>
+          <div class="flex itemsCenter justifyBetween textXs">
+            <span class="textFgMuted">Branch:</span>
+            <span id="currentRepoBranch" class="fontMedium">main</span>
           </div>
         </div>
       </div>
 
       <!-- Quick Stats -->
-      <div class="mb-6">
+      <div class="mb6">
         <span class="sidebar-title">Quick Stats</span>
-        <div class="grid grid-cols-2 gap-2 mt-2">
-          <div class="p-3 bg-github-canvas-subtle rounded-md text-center">
-            <div class="text-lg font-semibold text-github-accent-fg" id="statsFiles">0</div>
-            <div class="text-xs text-github-fg-muted">Files</div>
+        <div class="grid gridCols2 gap2 mt2">
+          <div class="p3 bgCanvasSubtle roundedMd textCenter">
+            <div class="textLg fontSemibold textAccentFg" id="statsFiles">0</div>
+            <div class="textXs textFgMuted">Files</div>
           </div>
-          <div class="p-3 bg-github-canvas-subtle rounded-md text-center">
-            <div class="text-lg font-semibold text-github-success-fg" id="statsCommits">0</div>
-            <div class="text-xs text-github-fg-muted">Commits</div>
+          <div class="p3 bgCanvasSubtle roundedMd textCenter">
+            <div class="textLg fontSemibold textSuccessFg" id="statsCommits">0</div>
+            <div class="textXs textFgMuted">Commits</div>
           </div>
-          <div class="p-3 bg-github-canvas-subtle rounded-md text-center">
-            <div class="text-lg font-semibold text-github-warning-fg" id="statsBranches">1</div>
-            <div class="text-xs text-github-fg-muted">Branches</div>
+          <div class="p3 bgCanvasSubtle roundedMd textCenter">
+            <div class="textLg fontSemibold textWarningFg" id="statsBranches">1</div>
+            <div class="textXs textFgMuted">Branches</div>
           </div>
-          <div class="p-3 bg-github-canvas-subtle rounded-md text-center">
-            <div class="text-lg font-semibold text-github-danger-fg" id="statsIssues">0</div>
-            <div class="text-xs text-github-fg-muted">Issues</div>
+          <div class="p3 bgCanvasSubtle roundedMd textCenter">
+            <div class="textLg fontSemibold textDangerFg" id="statsIssues">0</div>
+            <div class="textXs textFgMuted">Issues</div>
           </div>
         </div>
       </div>
@@ -1290,19 +1208,19 @@ background: linear-gradient(90deg, #dc2626, #ef4444, #f87171);
       <!-- Language Distribution -->
       <div id="languageStatsSidebar" class="hidden">
         <span class="sidebar-title">Languages</span>
-        <div id="languageStatsList" class="space-y-2 mt-2">
+        <div id="languageStatsList" class="spaceY2 mt2">
           <!-- Language stats will be populated here -->
         </div>
       </div>
 
       <!-- Quick Actions Footer -->
-      <div class="mt-auto pt-4 border-t border-github-border-muted">
-        <div class="space-y-2">
-          <button onclick="toggleTheme()" class="sidebar-link w-full text-left">
+      <div class="mt-auto pt4 borderT borderMuted">
+        <div class="spaceY2">
+          <button onclick="toggleTheme()" class="sidebar-link wFull textLeft">
             <i id="sidebarThemeIcon" class="fas fa-moon mr-2"></i>
             Toggle Theme
           </button>
-          <button onclick="showHelp()" class="sidebar-link w-full text-left">
+          <button onclick="showHelp()" class="sidebar-link wFull textLeft">
             <i class="fas fa-question-circle mr-2"></i>
             Help & Documentation
           </button>
@@ -1314,32 +1232,32 @@ background: linear-gradient(90deg, #dc2626, #ef4444, #f87171);
   <!-- Main Content Wrapper -->
   <div class="main-content-wrapper pt-16">
     <!-- Repository Header -->
-    <header id="repoHeader" class="bg-github-canvas-overlay border-b border-github-border-default sticky top-0 z-40 backdrop-blur-md bg-github-canvas-overlay/95 hidden">
-      <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between py-4">
-          <div class="flex items-center space-x-3">
-            <div class="flex items-center space-x-2">
-              <svg class="w-5 h-5 text-github-fg-muted" fill="currentColor" viewBox="0 0 16 16">
+    <header id="repoHeader" class="bgCanvasOverlay borderB borderDefault sticky top0 z40 backdrop-blur-md bgOverlayFade hidden">
+      <div class="maxWScreen mxAuto px4 sm:px-6 lg:px-8">
+        <div class="flex itemsCenter justifyBetween py4">
+          <div class="flex itemsCenter spaceX3">
+            <div class="flex itemsCenter spaceX2">
+              <svg class="w5 h5 textFgMuted" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z" />
               </svg>
-              <a href="#" onclick="showRepoSelector()" class="text-github-accent-fg hover:underline text-xl font-semibold">
+              <a href="#" onclick="showRepoSelector()" class="textAccentFg hoverUnderline textXl fontSemibold">
                 GitDev
               </a>
             </div>
-            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-github-canvas-subtle border border-github-border-default text-github-fg-muted">
+            <span class="inlineFlex itemsCenter px2 py-0.5 roundedFull textXs fontMedium bgCanvasSubtle borderDefault textFgMuted">
               Local
             </span>
           </div>
 
-          <div class="flex items-center space-x-2">
-            <button data-action="star-repo" class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
-              <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
+          <div class="flex itemsCenter spaceX2">
+            <button data-action="star-repo" class="inlineFlex itemsCenter px3 py-1.5 borderDefault roundedMd textSm fontMedium textFgDefault bgBtnSecondary hoverBgBtnSecondary transitionColors">
+              <svg class="w4 h4 mr-2" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.751 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z" />
               </svg>
               Star
             </button>
-            <button data-action="fork-repo" class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
-              <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
+            <button data-action="fork-repo" class="inlineFlex itemsCenter px3 py-1.5 borderDefault roundedMd textSm fontMedium textFgDefault bgBtnSecondary hoverBgBtnSecondary transitionColors">
+              <svg class="w4 h4 mr-2" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M5 5.372v.878c0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75v-.878a2.25 2.25 0 1 1 1.5 0v.878a2.25 2.25 0 0 1-2.25 2.25h-1.5v2.128a2.251 2.251 0 1 1-1.5 0V8.5h-1.5A2.25 2.25 0 0 1 3.5 6.25v-.878a2.25 2.25 0 1 1 1.5 0ZM5 3.25a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Zm6.75.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm-3 8.75a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Z" />
               </svg>
               Fork
@@ -1347,64 +1265,64 @@ background: linear-gradient(90deg, #dc2626, #ef4444, #f87171);
           </div>
         </div>
 
-        <nav class="flex space-x-6 border-b border-github-border-muted -mb-px">
-          <a href="#" onclick="showExplorer()" class="flex items-center space-x-2 px-1 py-3 border-b-2 border-orange-400 text-sm font-semibold text-github-fg-default">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
+        <nav class="flex space-x-6 borderB borderMuted -mb-px">
+          <a href="#" onclick="showExplorer()" class="flex itemsCenter spaceX2 px1 py3 borderB2 borderOrange textSm fontSemibold textFgDefault">
+            <svg class="w4 h4" fill="currentColor" viewBox="0 0 16 16">
               <path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z" />
             </svg>
             <span>Code</span>
           </a>
-          <a href="#" class="flex items-center space-x-2 px-1 py-3 border-b-2 border-transparent text-sm font-medium text-github-fg-muted hover:text-github-fg-default hover:border-github-border-default transition-colors">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
+          <a href="#" class="flex itemsCenter spaceX2 px1 py3 borderB2 borderTransparent textSm fontMedium textFgMuted hoverTextDefault hoverBorderDefault transitionColors">
+            <svg class="w4 h4" fill="currentColor" viewBox="0 0 16 16">
               <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" />
               <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Z" />
             </svg>
             <span>Issues</span>
-            <span class="bg-github-canvas-subtle text-github-fg-default text-xs px-1.5 py-0.5 rounded-full">0</span>
+            <span class="bgCanvasSubtle textFgDefault textXs px-1.5 py-0.5 roundedFull">0</span>
           </a>
-          <a href="#" class="flex items-center space-x-2 px-1 py-3 border-b-2 border-transparent text-sm font-medium text-github-fg-muted hover:text-github-fg-default hover:border-github-border-default transition-colors">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
+          <a href="#" class="flex itemsCenter spaceX2 px1 py3 borderB2 borderTransparent textSm fontMedium textFgMuted hoverTextDefault hoverBorderDefault transitionColors">
+            <svg class="w4 h4" fill="currentColor" viewBox="0 0 16 16">
               <path d="M1.5 3.25a2.25 2.25 0 1 1 3 2.122v5.256a2.251 2.251 0 1 1-1.5 0V5.372A2.25 2.25 0 0 1 1.5 3.25Zm5.677-.177L9.573.677A.25.25 0 0 1 10 .854V2.5h1A2.5 2.5 0 0 1 13.5 5v5.628a2.251 2.251 0 1 1-1.5 0V5a1 1 0 0 0-1-1h-1v1.646a.25.25 0 0 1-.427.177L7.177 3.427a.25.25 0 0 1 0-.354ZM3.75 2.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm0 9.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm8.25.75a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Z" />
             </svg>
             <span>Pull requests</span>
-            <span class="bg-github-canvas-subtle text-github-fg-default text-xs px-1.5 py-0.5 rounded-full">0</span>
+            <span class="bgCanvasSubtle textFgDefault textXs px-1.5 py-0.5 roundedFull">0</span>
           </a>
         </nav>
       </div>
     </header>
 
     <!-- Main Content -->
-    <main class="flex-1">
+    <main class="flex1">
 
 
 
 
 
 <!-- File Viewer --
-      <div id="fileViewer" class="hidden max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div class="flex items-center justify-between mb-4">
-          <nav class="flex items-center space-x-1 text-sm">
-            <button data-action="show-explorer" class="text-github-accent-fg hover:underline font-semibold" id="repoNameInViewer">Repository</button>
-            <span class="text-github-fg-muted">/</span>
-            <span id="currentFileName" class="text-github-fg-default font-semibold"></span>
+      <div id="fileViewer" class="hidden maxWScreen mxAuto px4 sm:px-6 lg:px-8 py-6">
+        <div class="flex itemsCenter justifyBetween mb4">
+          <nav class="flex itemsCenter space-x-1 textSm">
+            <button data-action="show-explorer" class="textAccentFg hoverUnderline fontSemibold" id="repoNameInViewer">Repository</button>
+            <span class="textFgMuted">/</span>
+            <span id="currentFileName" class="textFgDefault fontSemibold"></span>
           </nav>
 
-          <div class="flex items-center space-x-2">
-            <button data-action="edit-file" class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
-              <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
+          <div class="flex itemsCenter spaceX2">
+            <button data-action="edit-file" class="inlineFlex itemsCenter px3 py-1.5 borderDefault roundedMd textSm fontMedium textFgDefault bgBtnSecondary hoverBgBtnSecondary transitionColors">
+              <svg class="w4 h4 mr-2" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z" />
               </svg>
               Edit
             </button>
-            <button data-action="download-file" class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
-              <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
+            <button data-action="download-file" class="inlineFlex itemsCenter px3 py-1.5 borderDefault roundedMd textSm fontMedium textFgDefault bgBtnSecondary hoverBgBtnSecondary transitionColors">
+              <svg class="w4 h4 mr-2" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M2.75 14A1.75 1.75 0 0 1 1 12.25v-2.5a.75.75 0 0 1 1.5 0v2.5c0 .138.112.25.25.25h10.5a.25.25 0 0 0 .25-.25v-2.5a.75.75 0 0 1 1.5 0v2.5A1.75 1.75 0 0 1 13.25 14Z" />
                 <path d="M7.25 7.689V2a.75.75 0 0 1 1.5 0v5.689l1.97-1.969a.749.749 0 1 1 1.06 1.06l-3.25 3.25a.749.749 0 0 1-1.06 0L4.22 6.78a.749.749 0 1 1 1.06-1.06l1.97 1.969Z" />
               </svg>
               Download
             </button>
-            <button data-action="delete-file" class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-danger-fg bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
-              <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
+            <button data-action="delete-file" class="inlineFlex itemsCenter px3 py-1.5 borderDefault roundedMd textSm fontMedium textDangerFg bgBtnSecondary hoverBgBtnSecondary transitionColors">
+              <svg class="w4 h4 mr-2" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M11 1.75V3h2.25a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5H5V1.75C5 .784 5.784 0 6.75 0h2.5C10.216 0 11 .784 11 1.75ZM4.496 6.675l.66 6.6a.25.25 0 0 0 .249.225h5.19a.25.25 0 0 0 .249-.225l.66-6.6a.75.75 0 0 1 1.492.149l-.66 6.6A1.748 1.748 0 0 1 10.595 15h-5.19a1.748 1.748 0 0 1-1.741-1.575l-.66-6.6a.75.75 0 1 1 1.492-.15ZM6.5 1.75V3h3V1.75a.25.25 0 0 0-.25-.25h-2.5a.25.25 0 0 0-.25.25Z" />
               </svg>
               Delete
@@ -1412,59 +1330,59 @@ background: linear-gradient(90deg, #dc2626, #ef4444, #f87171);
           </div>
         </div>
 
-        <div class="bg-github-canvas-overlay border border-github-border-default rounded-t-lg px-4 py-2 flex items-center justify-between text-sm">
-          <div class="flex items-center space-x-4 text-github-fg-muted">
+        <div class="bgCanvasOverlay borderDefault roundedT px4 py2 flex itemsCenter justifyBetween textSm">
+          <div class="flex itemsCenter space-x-4 textFgMuted">
             <span id="fileLinesCount">0 lines</span>
             <span>•</span>
             <span id="fileSize">0 KB</span>
             <span>•</span>
             <span id="fileLanguageDisplay">Text</span>
           </div>
-          <div class="flex items-center space-x-1">
-            <button class="p-2 rounded hover:bg-github-canvas-subtle text-github-fg-muted hover:text-github-fg-default transition-colors">
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
+          <div class="flex itemsCenter space-x-1">
+            <button class="p2 rounded hoverBgSubtle textFgMuted hoverTextDefault transitionColors">
+              <svg class="w4 h4" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M8 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z" />
               </svg>
             </button>
           </div>
         </div>
 
-        <div class="bg-github-canvas-overlay border-x border-b border-github-border-default rounded-b-lg overflow-hidden">
+        <div class="bgCanvasOverlay borderX borderB borderDefault roundedB overflowHidden">
           <div class="flex">
-            <div id="lineNumbers" class="bg-github-canvas-inset border-r border-github-border-muted p-4 text-right text-github-fg-muted font-mono text-sm leading-5 select-none min-w-[3rem]">
+            <div id="lineNumbers" class="bgCanvasInset borderR borderMuted p4 textRight textFgMuted fontMono textSm leading-5 select-none minW3">
             </div>
-            <div class="flex-1 overflow-auto">
-              <pre id="codeContent" class="p-4 text-sm font-mono leading-5 overflow-auto"><code id="codeBlock" class="language-javascript"></code></pre>
+            <div class="flex1 overflowAuto">
+              <pre id="codeContent" class="p4 textSm fontMono leading-5 overflowAuto"><code id="codeBlock" class="language-javascript"></code></pre>
             </div>
           </div>
         </div>
 
-        <div class="mt-6 bg-github-canvas-overlay border border-github-border-default rounded-lg p-6">
-          <h3 class="text-lg font-semibold text-github-fg-default mb-4">File Details</h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+        <div class="mt6 bgCanvasOverlay borderDefault roundedLg p6">
+          <h3 class="textLg fontSemibold textFgDefault mb4">File Details</h3>
+          <div class="grid gridCols1 md:grid-cols-2 gap4 textSm">
             <div class="space-y-3">
-              <div class="flex items-center justify-between">
-                <span class="text-github-fg-muted">Created:</span>
-                <span class="text-github-fg-default" id="fileCreated">now</span>
+              <div class="flex itemsCenter justifyBetween">
+                <span class="textFgMuted">Created:</span>
+                <span class="textFgDefault" id="fileCreated">now</span>
               </div>
-              <div class="flex items-center justify-between">
-                <span class="text-github-fg-muted">Modified:</span>
-                <span class="text-github-fg-default" id="fileModified">now</span>
+              <div class="flex itemsCenter justifyBetween">
+                <span class="textFgMuted">Modified:</span>
+                <span class="textFgDefault" id="fileModified">now</span>
               </div>
-              <div class="flex items-center justify-between">
-                <span class="text-github-fg-muted">Language:</span>
-                <span class="text-github-fg-default" id="fileLanguage">JavaScript</span>
+              <div class="flex itemsCenter justifyBetween">
+                <span class="textFgMuted">Language:</span>
+                <span class="textFgDefault" id="fileLanguage">JavaScript</span>
               </div>
             </div>
             <div class="space-y-3">
-              <div class="flex items-center justify-between">
-                <span class="text-github-fg-muted">Category:</span>
-                <span class="text-github-fg-default" id="fileCategory">General</span>
+              <div class="flex itemsCenter justifyBetween">
+                <span class="textFgMuted">Category:</span>
+                <span class="textFgDefault" id="fileCategory">General</span>
               </div>
               <div>
-                <span class="text-github-fg-muted block mb-2">Tags:</span>
-                <div class="flex flex-wrap gap-1" id="fileTags">
-                  <span class="text-github-fg-muted text-sm">No tags</span>
+                <span class="textFgMuted block mb2">Tags:</span>
+                <div class="flex flexWrap gap1" id="fileTags">
+                  <span class="textFgMuted textSm">No tags</span>
                 </div>
               </div>
             </div>
@@ -1473,54 +1391,54 @@ background: linear-gradient(90deg, #dc2626, #ef4444, #f87171);
       </div>
 
 
-      <div id="fileEditor" class="hidden max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div class="flex items-center justify-between mb-4">
-          <nav class="flex items-center space-x-1 text-sm">
-            <button data-action="show-file-viewer" class="text-github-accent-fg hover:underline font-semibold" id="repoNameInEditor">Repository</button>
-            <span class="text-github-fg-muted">/</span>
-            <span id="editingFileName" class="text-github-fg-default font-semibold"></span>
+      <div id="fileEditor" class="hidden maxWScreen mxAuto px4 sm:px-6 lg:px-8 py-6">
+        <div class="flex itemsCenter justifyBetween mb4">
+          <nav class="flex itemsCenter space-x-1 textSm">
+            <button data-action="show-file-viewer" class="textAccentFg hoverUnderline fontSemibold" id="repoNameInEditor">Repository</button>
+            <span class="textFgMuted">/</span>
+            <span id="editingFileName" class="textFgDefault fontSemibold"></span>
           </nav>
 
-          <div class="flex items-center space-x-2">
-            <button data-action="save-file" class="inline-flex items-center px-3 py-1.5 bg-github-btn-primary-bg hover:bg-github-btn-primary-hover text-white rounded-md text-sm font-medium transition-colors">
-              <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
+          <div class="flex itemsCenter spaceX2">
+            <button data-action="save-file" class="inlineFlex itemsCenter px3 py-1.5 bgBtnPrimary hoverBgBtnPrimary textWhite roundedMd textSm fontMedium transitionColors">
+              <svg class="w4 h4 mr-2" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z" />
               </svg>
               Save changes
             </button>
-            <button data-action="show-file-viewer" class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
+            <button data-action="show-file-viewer" class="inlineFlex itemsCenter px3 py-1.5 borderDefault roundedMd textSm fontMedium textFgDefault bgBtnSecondary hoverBgBtnSecondary transitionColors">
               Cancel
             </button>
           </div>
         </div>
 
-        <div class="flex border-b border-github-border-default mb-4">
-          <button class="px-4 py-2 border-b-2 border-orange-400 text-sm font-medium text-github-fg-default">
-            <svg class="w-4 h-4 inline mr-2" fill="currentColor" viewBox="0 0 16 16">
+        <div class="flex borderB borderDefault mb4">
+          <button class="px4 py2 borderB2 borderOrange textSm fontMedium textFgDefault">
+            <svg class="w4 h4 inline mr-2" fill="currentColor" viewBox="0 0 16 16">
               <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z" />
             </svg>
             Edit file
           </button>
-          <button data-action="preview-file" class="px-4 py-2 border-b-2 border-transparent text-sm font-medium text-github-fg-muted hover:text-github-fg-default">
-            <svg class="w-4 h-4 inline mr-2" fill="currentColor" viewBox="0 0 16 16">
+          <button data-action="preview-file" class="px4 py2 borderB2 borderTransparent textSm fontMedium textFgMuted hoverTextDefault">
+            <svg class="w4 h4 inline mr-2" fill="currentColor" viewBox="0 0 16 16">
               <path d="M8 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z" />
             </svg>
             Preview
           </button>
         </div>
 
-        <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg overflow-hidden">
-          <div id="codeEditorContainer" class="h-96"></div>
+        <div class="bgCanvasOverlay borderDefault roundedLg overflowHidden">
+          <div id="codeEditorContainer" class="h96"></div>
         </div>
 
-        <div class="mt-6 bg-github-canvas-overlay border border-github-border-default rounded-lg p-6">
-          <h3 class="text-lg font-semibold text-github-fg-default mb-4">Commit changes</h3>
+        <div class="mt6 bgCanvasOverlay borderDefault roundedLg p6">
+          <h3 class="textLg fontSemibold textFgDefault mb4">Commit changes</h3>
           <div class="space-y-4">
             <div>
-              <input type="text" id="commitTitle" placeholder="Update filename.ext" class="w-full px-3 py-2 bg-github-canvas-inset border border-github-border-default rounded-md text-github-fg-default placeholder-github-fg-muted focus:outline-none focus:ring-2 focus:ring-github-accent-emphasis focus:border-transparent">
+              <input type="text" id="commitTitle" placeholder="Update filename.ext" class="wFull px3 py2 bgCanvasInset borderDefault roundedMd textFgDefault placeholder-github-fg-muted focusOutlineNone focusRing2">
             </div>
             <div>
-              <textarea id="commitDescription" rows="4" placeholder="Add an optional extended description..." class="w-full px-3 py-2 bg-github-canvas-inset border border-github-border-default rounded-md text-github-fg-default placeholder-github-fg-muted focus:outline-none focus:ring-2 focus:ring-github-accent-emphasis focus:border-transparent resize-none"></textarea>
+              <textarea id="commitDescription" rows="4" placeholder="Add an optional extended description..." class="wFull px3 py2 bgCanvasInset borderDefault roundedMd textFgDefault placeholder-github-fg-muted focusOutlineNone focusRing2 resizeNone"></textarea>
             </div>
           </div>
         </div>
@@ -1531,61 +1449,61 @@ background: linear-gradient(90deg, #dc2626, #ef4444, #f87171);
 
 
 <!-- Repository Selector View -->
-<div id="repoSelectorView" class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-  <div class="flex items-center justify-between mb-6">
-    <h2 class="text-2xl font-bold text-github-fg-default">Your Repositories</h2>
-    <button data-action="create-repo" class="inline-flex items-center px-4 py-2 bg-github-btn-primary-bg hover:bg-github-btn-primary-hover text-white rounded-md text-sm font-medium transition-colors">
-      <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
+<div id="repoSelectorView" class="maxWScreen mxAuto px4 sm:px-6 lg:px-8 py-6">
+  <div class="flex itemsCenter justifyBetween mb6">
+    <h2 class="text2xl fontBold textFgDefault">Your Repositories</h2>
+    <button data-action="create-repo" class="inlineFlex itemsCenter px4 py2 bgBtnPrimary hoverBgBtnPrimary textWhite roundedMd textSm fontMedium transitionColors">
+      <svg class="w4 h4 mr-2" fill="currentColor" viewBox="0 0 16 16">
         <path d="M7.75 2a.75.75 0 0 1 .75.75V7h4.25a.75.75 0 0 1 0 1.5H8.5v4.25a.75.75 0 0 1-1.5 0V8.5H2.75a.75.75 0 0 1 0-1.5H7V2.75A.75.75 0 0 1 7.75 2Z" />
       </svg>
       New repository
     </button>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="repoList">
+  <div class="grid gridCols1 md:grid-cols-2 lg:grid-cols-3 gap4" id="repoList">
   </div>
 </div>
 
 <!-- File Explorer View -->
-<div id="explorerView" class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6 hidden">
-  <div class="flex items-center justify-between mb-4">
-    <div class="flex items-center space-x-3">
+<div id="explorerView" class="maxWScreen mxAuto px4 sm:px-6 lg:px-8 py-6 hidden">
+  <div class="flex itemsCenter justifyBetween mb4">
+    <div class="flex itemsCenter spaceX3">
       <div class="relative">
-        <button id="branchSelector" class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
-          <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
+        <button id="branchSelector" class="inlineFlex itemsCenter px3 py-1.5 borderDefault roundedMd textSm fontMedium textFgDefault bgBtnSecondary hoverBgBtnSecondary transitionColors">
+          <svg class="w4 h4 mr-2" fill="currentColor" viewBox="0 0 16 16">
             <path d="M9.5 3.25a2.25 2.25 0 1 1 3 2.122V6A2.5 2.5 0 0 1 10 8.5H6a1 1 0 0 0-1 1v1.128a2.251 2.251 0 1 1-1.5 0V5.372a2.25 2.25 0 1 1 1.5 0v1.836A2.493 2.493 0 0 1 6 7h4a1 1 0 0 0 1-1v-.628A2.25 2.25 0 0 1 9.5 3.25Zm-6 0a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Zm8.25-.75a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5ZM4.25 12a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Z" />
           </svg>
           <span id="currentBranch">main</span>
-          <svg class="w-4 h-4 ml-1 text-github-fg-muted" fill="currentColor" viewBox="0 0 16 16">
+          <svg class="w4 h4 ml-1 textFgMuted" fill="currentColor" viewBox="0 0 16 16">
             <path d="M12.78 5.22a.749.749 0 0 1 0 1.06l-4.25 4.25a.749.749 0 0 1-1.06 0L3.22 6.28a.749.749 0 1 1 1.06-1.06L8 8.939l3.72-3.719a.749.749 0 0 1 1.06 0Z" />
           </svg>
         </button>
-        <div id="branchDropdown" class="hidden absolute z-10 mt-1 w-56 bg-github-canvas-overlay border border-github-border-default rounded-md shadow-lg">
-          <div class="p-1">
-            <input type="text" placeholder="Find or create branch..." class="w-full px-2 py-1 mb-1 bg-github-canvas-inset border border-github-border-default rounded text-sm text-github-fg-default">
-            <div class="max-h-60 overflow-y-auto">
-              <div class="px-2 py-1 text-sm text-github-fg-default hover:bg-github-canvas-subtle cursor-pointer">main</div>
+        <div id="branchDropdown" class="hidden absolute z-10 mt1 w-56 bgCanvasOverlay borderDefault roundedMd shadowLg">
+          <div class="p1">
+            <input type="text" placeholder="Find or create branch..." class="wFull px2 py1 mb1 bgCanvasInset borderDefault rounded textSm textFgDefault">
+            <div class="maxH60 overflowYAuto">
+              <div class="px2 py1 textSm textFgDefault hoverBgSubtle cursorPointer">main</div>
             </div>
           </div>
         </div>
       </div>
 
-      <nav class="flex items-center space-x-1 text-sm" id="pathBreadcrumb">
-        <a href="#" onclick="showRepoSelector()" class="text-github-accent-fg hover:underline font-semibold">Repositories</a>
-        <span class="text-github-fg-muted">/</span>
-        <a href="#" class="text-github-accent-fg hover:underline font-semibold" id="currentRepoName">Repository</a>
+      <nav class="flex itemsCenter space-x-1 textSm" id="pathBreadcrumb">
+        <a href="#" onclick="showRepoSelector()" class="textAccentFg hoverUnderline fontSemibold">Repositories</a>
+        <span class="textFgMuted">/</span>
+        <a href="#" class="textAccentFg hoverUnderline fontSemibold" id="currentRepoName">Repository</a>
       </nav>
     </div>
 
-    <div class="flex items-center space-x-2">
-      <button data-action="create-file" class="inline-flex items-center px-3 py-1.5 bg-github-btn-primary-bg hover:bg-github-btn-primary-hover text-white rounded-md text-sm font-medium transition-colors">
-        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
+    <div class="flex itemsCenter spaceX2">
+      <button data-action="create-file" class="inlineFlex itemsCenter px3 py-1.5 bgBtnPrimary hoverBgBtnPrimary textWhite roundedMd textSm fontMedium transitionColors">
+        <svg class="w4 h4 mr-2" fill="currentColor" viewBox="0 0 16 16">
           <path d="M7.75 2a.75.75 0 0 1 .75.75V7h4.25a.75.75 0 0 1 0 1.5H8.5v4.25a.75.75 0 0 1-1.5 0V8.5H2.75a.75.75 0 0 1 0-1.5H7V2.75A.75.75 0 0 1 7.75 2Z" />
         </svg>
         New
       </button>
-      <button class="inline-flex items-center px-3 py-1.5 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
-        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 16 16">
+      <button class="inlineFlex itemsCenter px3 py-1.5 borderDefault roundedMd textSm fontMedium textFgDefault bgBtnSecondary hoverBgBtnSecondary transitionColors">
+        <svg class="w4 h4 mr-2" fill="currentColor" viewBox="0 0 16 16">
           <path d="M2.75 14A1.75 1.75 0 0 1 1 12.25v-2.5a.75.75 0 0 1 1.5 0v2.5c0 .138.112.25.25.25h10.5a.25.25 0 0 0 .25-.25v-2.5a.75.75 0 0 1 1.5 0v2.5A1.75 1.75 0 0 1 13.25 14Z" />
           <path d="M7.25 7.689V2a.75.75 0 0 1 1.5 0v5.689l1.97-1.969a.749.749 0 1 1 1.06 1.06l-3.25 3.25a.749.749 0 0 1-1.06 0L4.22 6.78a.749.749 0 1 1 1.06-1.06l1.97 1.969Z" />
         </svg>
@@ -1594,42 +1512,42 @@ background: linear-gradient(90deg, #dc2626, #ef4444, #f87171);
     </div>
   </div>
 
-  <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg overflow-hidden">
-    <div class="px-4 py-3 border-b border-github-border-muted bg-github-canvas-overlay">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center space-x-3">
-          <img src="https://github.com/github.png" alt="User" class="w-6 h-6 rounded-full">
-          <div class="flex items-center space-x-2">
-            <span class="text-github-fg-default font-medium">
+  <div class="bgCanvasOverlay borderDefault roundedLg overflowHidden">
+    <div class="px4 py3 borderB borderMuted bgCanvasOverlay">
+      <div class="flex itemsCenter justifyBetween">
+        <div class="flex itemsCenter spaceX3">
+          <img src="https://github.com/github.png" alt="User" class="w6 h6 roundedFull">
+          <div class="flex itemsCenter spaceX2">
+            <span class="textFgDefault fontMedium">
               <!-- FAR LEFT SIDE -->
             </span>
-            <span class="text-github-fg-default">
+            <span class="textFgDefault">
               <!-- LEFT SIDE -->
               
               <button
                   onclick="showImportModal()"
-                  class="flex items-center gap-2 px-4 py-2 bg-github-canvas-overlay hover:bg-github-canvas-subtle border border-github-border-default rounded-lg transition-all"
+                  class="flex itemsCenter gap2 px4 py2 bgCanvasOverlay hoverBgSubtle borderDefault roundedLg transitionAll"
                   data-tooltip="Import from URL">
                 <i class="fas fa-download"></i>
-                <span class="hidden sm:inline">Import</span>
+                <span class="hidden sm:inlineBlock">Import</span>
               </button>
               
             </span>
           </div>
         </div>
-        <div class="flex items-center space-x-4 text-sm text-github-fg-muted">
+        <div class="flex itemsCenter space-x-4 textSm textFgMuted">
           <span id="lastCommitTime">
             <!-- RIGHT SIDE -->
           </span>
-          <span class="font-mono" id="commitHash">
+          <span class="fontMono" id="commitHash">
             <!-- FAR RIGHT SIDE -->
             
             <button
                 onclick="showUploadModal()"
-                class="flex items-center gap-2 px-4 py-2 bg-github-success-emphasis hover:bg-github-success-fg text-white rounded-lg transition-all"
+                class="flex itemsCenter gap2 px4 py2 bgSuccessEmph hoverBgSuccess textWhite roundedLg transitionAll"
                 data-tooltip="Upload files (Ctrl+U)">
               <i class="fas fa-upload"></i>
-              <span class="hidden sm:inline">Upload</span>
+              <span class="hidden sm:inlineBlock">Upload</span>
             </button>
 
           </span>
@@ -1637,13 +1555,13 @@ background: linear-gradient(90deg, #dc2626, #ef4444, #f87171);
       </div>
     </div>
 
-    <div class="overflow-x-auto">
-      <table class="w-full">
-        <thead class="bg-github-tableHeader">
+    <div class="overflowXAuto">
+      <table class="wFull">
+        <thead class="bgTableHeader">
           <tr>
-            <th class="px-4 py-2 text-left text-sm font-medium text-github-fg-default">Name</th>
-            <th class="px-4 py-2 text-left text-sm font-medium text-github-fg-default">Last commit message</th>
-            <th class="px-4 py-2 text-right text-sm font-medium text-github-fg-default">Updated</th>
+            <th class="px4 py2 textLeft textSm fontMedium textFgDefault">Name</th>
+            <th class="px4 py2 textLeft textSm fontMedium textFgDefault">Last commit message</th>
+            <th class="px4 py2 textRight textSm fontMedium textFgDefault">Updated</th>
           </tr>
         </thead>
         <tbody id="fileListBody" class="divide-y divide-github-border-muted">
@@ -1652,18 +1570,18 @@ background: linear-gradient(90deg, #dc2626, #ef4444, #f87171);
     </div>
   </div>
 
-  <div class="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <div class="mt-8 grid gridCols1 lg:grid-cols-3 gap6">
     <div class="lg:col-span-2">
-      <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg p-6">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg font-semibold text-github-fg-default">README.md</h2>
-          <button class="text-github-fg-muted hover:text-github-fg-default">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16">
+      <div class="bgCanvasOverlay borderDefault roundedLg p6">
+        <div class="flex itemsCenter justifyBetween mb4">
+          <h2 class="textLg fontSemibold textFgDefault">README.md</h2>
+          <button class="textFgMuted hoverTextDefault">
+            <svg class="w5 h5" fill="currentColor" viewBox="0 0 16 16">
               <path d="M8 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z" />
             </svg>
           </button>
         </div>
-        <div class="prose prose-invert max-w-none" id="readmeContent">
+        <div class="prose prose-invert maxWNone" id="readmeContent">
           <h1>GitDev</h1>
           <p>A professional file explorer and editor interface that mimics GitHub's design and functionality with local storage.</p>
         </div>
@@ -1671,49 +1589,49 @@ background: linear-gradient(90deg, #dc2626, #ef4444, #f87171);
     </div>
 
     <div class="space-y-6">
-      <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg p-4">
-        <h3 class="font-semibold text-github-fg-default mb-3">About</h3>
-        <p class="text-sm text-github-fg-muted mb-4" id="repoDescription">GitDev with Local Storage</p>
-        <div class="space-y-2 text-sm">
-          <div class="flex items-center space-x-2">
-            <svg class="w-4 h-4 text-github-fg-muted" fill="currentColor" viewBox="0 0 16 16">
+      <div class="bgCanvasOverlay borderDefault roundedLg p4">
+        <h3 class="fontSemibold textFgDefault mb3">About</h3>
+        <p class="textSm textFgMuted mb4" id="repoDescription">GitDev with Local Storage</p>
+        <div class="spaceY2 textSm">
+          <div class="flex itemsCenter spaceX2">
+            <svg class="w4 h4 textFgMuted" fill="currentColor" viewBox="0 0 16 16">
               <path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z" />
             </svg>
-            <span class="text-github-fg-muted">Local file management system</span>
+            <span class="textFgMuted">Local file management system</span>
           </div>
         </div>
       </div>
 
-      <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg p-4">
-        <h3 class="font-semibold text-github-fg-default mb-3">Languages</h3>
-        <div class="space-y-2" id="languageStats">
-          <div class="flex items-center justify-between text-sm">
-            <div class="flex items-center space-x-2">
-              <div class="w-3 h-3 rounded-full bg-orange-500"></div>
-              <span class="text-github-fg-default">HTML</span>
+      <div class="bgCanvasOverlay borderDefault roundedLg p4">
+        <h3 class="fontSemibold textFgDefault mb3">Languages</h3>
+        <div class="spaceY2" id="languageStats">
+          <div class="flex itemsCenter justifyBetween textSm">
+            <div class="flex itemsCenter spaceX2">
+              <div class="w3 h3 roundedFull bgOrange500"></div>
+              <span class="textFgDefault">HTML</span>
             </div>
-            <span class="text-github-fg-muted">47.2%</span>
+            <span class="textFgMuted">47.2%</span>
           </div>
-          <div class="flex items-center justify-between text-sm">
-            <div class="flex items-center space-x-2">
-              <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
-              <span class="text-github-fg-default">JavaScript</span>
+          <div class="flex itemsCenter justifyBetween textSm">
+            <div class="flex itemsCenter spaceX2">
+              <div class="w3 h3 roundedFull bgYellow400"></div>
+              <span class="textFgDefault">JavaScript</span>
             </div>
-            <span class="text-github-fg-muted">43.8%</span>
+            <span class="textFgMuted">43.8%</span>
           </div>
-          <div class="flex items-center justify-between text-sm">
-            <div class="flex items-center space-x-2">
-              <div class="w-3 h-3 rounded-full bg-blue-500"></div>
-              <span class="text-github-fg-default">CSS</span>
+          <div class="flex itemsCenter justifyBetween textSm">
+            <div class="flex itemsCenter spaceX2">
+              <div class="w3 h3 roundedFull bgBlue500"></div>
+              <span class="textFgDefault">CSS</span>
             </div>
-            <span class="text-github-fg-muted">7.0%</span>
+            <span class="textFgMuted">7.0%</span>
           </div>
-          <div class="flex items-center justify-between text-sm">
-            <div class="flex items-center space-x-2">
-              <div class="w-3 h-3 rounded-full bg-purple-500"></div>
-              <span class="text-github-fg-default">Other</span>
+          <div class="flex itemsCenter justifyBetween textSm">
+            <div class="flex itemsCenter spaceX2">
+              <div class="w3 h3 roundedFull bgPurple500"></div>
+              <span class="textFgDefault">Other</span>
             </div>
-            <span class="text-github-fg-muted">2.0%</span>
+            <span class="textFgMuted">2.0%</span>
           </div>
         </div>
       </div>
@@ -1733,61 +1651,61 @@ background: linear-gradient(90deg, #dc2626, #ef4444, #f87171);
 
 <!-- Modals (Add these at the bottom of your body, after all other content) -->
   <!-- Create File Modal -->
-  <div id="createFileModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-    <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg shadow-2xl w-full max-w-2xl animate-scale-in">
-      <div class="px-6 py-4 border-b border-github-border-default">
-        <div class="flex items-center justify-between">
-          <h3 class="text-lg font-semibold text-github-fg-default">Create new file</h3>
-          <button data-action="hide-create-file-modal" class="text-github-fg-muted hover:text-github-fg-default transition-colors">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16">
+  <div id="createFileModal" class="fixed inset0 bgBlackFade backdropBlurSm z50 hidden itemsCenter justifyCenter p4">
+    <div class="bgCanvasOverlay borderDefault roundedLg shadow2xl wFull maxW2xl animateScaleIn">
+      <div class="px6 py4 borderB borderDefault">
+        <div class="flex itemsCenter justifyBetween">
+          <h3 class="textLg fontSemibold textFgDefault">Create new file</h3>
+          <button data-action="hide-create-file-modal" class="textFgMuted hoverTextDefault transitionColors">
+            <svg class="w5 h5" fill="currentColor" viewBox="0 0 16 16">
               <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z" />
             </svg>
           </button>
         </div>
       </div>
 
-      <div class="p-6 space-y-6">
+      <div class="p6 space-y-6">
         <div>
-          <label class="block text-sm font-medium text-github-fg-default mb-2">Name your file...</label>
-          <div class="flex items-center bg-github-canvas-inset border border-github-border-default rounded-md overflow-hidden focus-within:ring-2 focus-within:ring-github-accent-emphasis focus-within:border-transparent">
-            <span class="px-3 py-2 bg-github-canvas-subtle border-r border-github-border-default text-github-fg-muted text-sm font-mono" id="currentPathPrefix">Repository/</span>
-            <input type="text" id="newFileName" placeholder="filename.ext" class="flex-1 px-3 py-2 bg-transparent border-none text-github-fg-default placeholder-github-fg-muted focus:outline-none text-sm">
+          <label class="block textSm fontMedium textFgDefault mb2">Name your file...</label>
+          <div class="flex itemsCenter bgCanvasInset borderDefault roundedMd overflowHidden focus-within:ring-2 focus-within:ring-github-accent-emphasis focus-within:border-transparent">
+            <span class="px3 py2 bgCanvasSubtle borderR borderDefault textFgMuted textSm fontMono" id="currentPathPrefix">Repository/</span>
+            <input type="text" id="newFileName" placeholder="filename.ext" class="flex1 px3 py2 bgTransparent borderNone textFgDefault placeholder-github-fg-muted focusOutlineNone textSm">
           </div>
-          <p class="mt-1 text-xs text-github-fg-muted">The file extension will determine syntax highlighting</p>
+          <p class="mt1 textXs textFgMuted">The file extension will determine syntax highlighting</p>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-github-fg-default mb-2">Category (optional)</label>
-          <input type="text" id="fileCategoryInput" maxlength="15" placeholder="e.g., Component, Utility, Config" class="w-full px-3 py-2 bg-github-canvas-inset border border-github-border-default rounded-md text-github-fg-default placeholder-github-fg-muted focus:outline-none focus:ring-2 focus:ring-github-accent-emphasis focus:border-transparent">
-          <p class="mt-1 text-xs text-github-fg-muted">Maximum 15 characters</p>
+          <label class="block textSm fontMedium textFgDefault mb2">Category (optional)</label>
+          <input type="text" id="fileCategoryInput" maxlength="15" placeholder="e.g., Component, Utility, Config" class="wFull px3 py2 bgCanvasInset borderDefault roundedMd textFgDefault placeholder-github-fg-muted focusOutlineNone focusRing2">
+          <p class="mt1 textXs textFgMuted">Maximum 15 characters</p>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-github-fg-default mb-2">Tags (optional)</label>
-          <div class="space-y-2">
-            <div id="selectedTags" class="flex flex-wrap gap-2 min-h-[2rem]">
+          <label class="block textSm fontMedium textFgDefault mb2">Tags (optional)</label>
+          <div class="spaceY2">
+            <div id="selectedTags" class="flex flexWrap gap2 minH2">
             </div>
-            <div class="flex items-center space-x-2">
-              <input type="text" id="tagInput" placeholder="Add a tag..." class="flex-1 px-3 py-2 bg-github-canvas-inset border border-github-border-default rounded-md text-github-fg-default placeholder-github-fg-muted focus:outline-none focus:ring-2 focus:ring-github-accent-emphasis focus:border-transparent text-sm">
-              <button data-action="add-tag" class="px-3 py-2 bg-github-accent-emphasis hover:bg-github-accent-fg text-white rounded-md text-sm font-medium transition-colors">
+            <div class="flex itemsCenter spaceX2">
+              <input type="text" id="tagInput" placeholder="Add a tag..." class="flex1 px3 py2 bgCanvasInset borderDefault roundedMd textFgDefault placeholder-github-fg-muted focusOutlineNone focusRing2 textSm">
+              <button data-action="add-tag" class="px3 py2 bgAccentEmph hoverBgAccent textWhite roundedMd textSm fontMedium transitionColors">
                 Add
               </button>
             </div>
           </div>
-          <p class="mt-1 text-xs text-github-fg-muted">Press Enter or click Add to add tags</p>
+          <p class="mt1 textXs textFgMuted">Press Enter or click Add to add tags</p>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-github-fg-default mb-2">Initial content (optional)</label>
-          <div id="initialContentEditor" class="border border-github-border-default rounded-sm h-20"></div>
+          <label class="block textSm fontMedium textFgDefault mb2">Initial content (optional)</label>
+          <div id="initialContentEditor" class="borderDefault roundedSm h20"></div>
         </div>
       </div>
 
-      <div class="px-6 py-4 border-t border-github-border-default bg-github-canvas-subtle flex items-center justify-end space-x-3">
-        <button data-action="hide-create-file-modal" class="px-4 py-2 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
+      <div class="px6 py4 borderT borderDefault bgCanvasSubtle flex itemsCenter justifyEnd spaceX3">
+        <button data-action="hide-create-file-modal" class="px4 py2 borderDefault roundedMd textSm fontMedium textFgDefault bgBtnSecondary hoverBgBtnSecondary transitionColors">
           Cancel
         </button>
-        <button data-action="create-file" class="px-4 py-2 bg-github-btn-primary-bg hover:bg-github-btn-primary-hover text-white rounded-md text-sm font-medium transition-colors">
+        <button data-action="create-file" class="px4 py2 bgBtnPrimary hoverBgBtnPrimary textWhite roundedMd textSm fontMedium transitionColors">
           Create file
         </button>
       </div>
@@ -1795,64 +1713,64 @@ background: linear-gradient(90deg, #dc2626, #ef4444, #f87171);
   </div>
 
   <!-- Create Repository Modal -->
-  <div id="createRepoModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-    <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg shadow-2xl w-full max-w-2xl animate-scale-in">
-      <div class="px-6 py-4 border-b border-github-border-default">
-        <div class="flex items-center justify-between">
-          <h3 class="text-lg font-semibold text-github-fg-default">Create new repository</h3>
-          <button data-action="hide-create-repo-modal" class="text-github-fg-muted hover:text-github-fg-default transition-colors">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16">
+  <div id="createRepoModal" class="fixed inset0 bgBlackFade backdropBlurSm z50 hidden itemsCenter justifyCenter p4">
+    <div class="bgCanvasOverlay borderDefault roundedLg shadow2xl wFull maxW2xl animateScaleIn">
+      <div class="px6 py4 borderB borderDefault">
+        <div class="flex itemsCenter justifyBetween">
+          <h3 class="textLg fontSemibold textFgDefault">Create new repository</h3>
+          <button data-action="hide-create-repo-modal" class="textFgMuted hoverTextDefault transitionColors">
+            <svg class="w5 h5" fill="currentColor" viewBox="0 0 16 16">
               <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z" />
             </svg>
           </button>
         </div>
       </div>
 
-      <div class="p-6 space-y-6">
+      <div class="p6 space-y-6">
         <div>
-          <label class="block text-sm font-medium text-github-fg-default mb-2">Repository name</label>
-          <input type="text" id="newRepoName" placeholder="repository-name" class="w-full px-3 py-2 bg-github-canvas-inset border border-github-border-default rounded-md text-github-fg-default placeholder-github-fg-muted focus:outline-none focus:ring-2 focus:ring-github-accent-emphasis focus:border-transparent">
-          <p class="mt-1 text-xs text-github-fg-muted">Great repository names are short and memorable.</p>
+          <label class="block textSm fontMedium textFgDefault mb2">Repository name</label>
+          <input type="text" id="newRepoName" placeholder="repository-name" class="wFull px3 py2 bgCanvasInset borderDefault roundedMd textFgDefault placeholder-github-fg-muted focusOutlineNone focusRing2">
+          <p class="mt1 textXs textFgMuted">Great repository names are short and memorable.</p>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-github-fg-default mb-2">Description (optional)</label>
-          <textarea id="repoDescriptionInput" rows="3" placeholder="A short description of your repository" class="w-full px-3 py-2 bg-github-canvas-inset border border-github-border-default rounded-md text-github-fg-default placeholder-github-fg-muted focus:outline-none focus:ring-2 focus:ring-github-accent-emphasis focus:border-transparent resize-none"></textarea>
+          <label class="block textSm fontMedium textFgDefault mb2">Description (optional)</label>
+          <textarea id="repoDescriptionInput" rows="3" placeholder="A short description of your repository" class="wFull px3 py2 bgCanvasInset borderDefault roundedMd textFgDefault placeholder-github-fg-muted focusOutlineNone focusRing2 resizeNone"></textarea>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-github-fg-default mb-2">Visibility</label>
-          <div class="space-y-2">
-            <div class="flex items-center space-x-3 p-3 border border-github-border-default rounded-md">
-              <input type="radio" id="visibilityPublic" name="visibility" value="public" checked class="text-github-accent-fg focus:ring-github-accent-fg">
+          <label class="block textSm fontMedium textFgDefault mb2">Visibility</label>
+          <div class="spaceY2">
+            <div class="flex itemsCenter spaceX3 p3 borderDefault roundedMd">
+              <input type="radio" id="visibilityPublic" name="visibility" value="public" checked class="textAccentFg focusRing2">
               <div>
-                <label for="visibilityPublic" class="block text-sm font-medium text-github-fg-default">Public</label>
-                <p class="text-xs text-github-fg-muted">Anyone can see this repository locally.</p>
+                <label for="visibilityPublic" class="block textSm fontMedium textFgDefault">Public</label>
+                <p class="textXs textFgMuted">Anyone can see this repository locally.</p>
               </div>
             </div>
-            <div class="flex items-center space-x-3 p-3 border border-github-border-default rounded-md">
-              <input type="radio" id="visibilityPrivate" name="visibility" value="private" class="text-github-accent-fg focus:ring-github-accent-fg">
+            <div class="flex itemsCenter spaceX3 p3 borderDefault roundedMd">
+              <input type="radio" id="visibilityPrivate" name="visibility" value="private" class="textAccentFg focusRing2">
               <div>
-                <label for="visibilityPrivate" class="block text-sm font-medium text-github-fg-default">Private</label>
-                <p class="text-xs text-github-fg-muted">Only you can see this repository.</p>
+                <label for="visibilityPrivate" class="block textSm fontMedium textFgDefault">Private</label>
+                <p class="textXs textFgMuted">Only you can see this repository.</p>
               </div>
             </div>
           </div>
         </div>
 
         <div>
-          <div class="flex items-center space-x-3">
-            <input type="checkbox" id="initReadme" checked class="text-github-accent-fg focus:ring-github-accent-fg">
-            <label for="initReadme" class="text-sm font-medium text-github-fg-default">Initialize this repository with a README</label>
+          <div class="flex itemsCenter spaceX3">
+            <input type="checkbox" id="initReadme" checked class="textAccentFg focusRing2">
+            <label for="initReadme" class="textSm fontMedium textFgDefault">Initialize this repository with a README</label>
           </div>
         </div>
       </div>
 
-      <div class="px-6 py-4 border-t border-github-border-default bg-github-canvas-subtle flex items-center justify-end space-x-3">
-        <button data-action="hide-create-repo-modal" class="px-4 py-2 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
+      <div class="px6 py4 borderT borderDefault bgCanvasSubtle flex itemsCenter justifyEnd spaceX3">
+        <button data-action="hide-create-repo-modal" class="px4 py2 borderDefault roundedMd textSm fontMedium textFgDefault bgBtnSecondary hoverBgBtnSecondary transitionColors">
           Cancel
         </button>
-        <button data-action="create-repo" class="px-4 py-2 bg-github-btn-primary-bg hover:bg-github-btn-primary-hover text-white rounded-md text-sm font-medium transition-colors">
+        <button data-action="create-repo" class="px4 py2 bgBtnPrimary hoverBgBtnPrimary textWhite roundedMd textSm fontMedium transitionColors">
           Create repository
         </button>
       </div>
@@ -1860,26 +1778,26 @@ background: linear-gradient(90deg, #dc2626, #ef4444, #f87171);
   </div>
 
   <!-- Delete File Modal -->
-  <div id="deleteFileModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-    <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg shadow-2xl w-full max-w-md animate-scale-in">
-      <div class="px-6 py-4 border-b border-github-border-default">
-        <div class="flex items-center justify-between">
-          <h3 class="text-lg font-semibold text-github-fg-default">Delete file</h3>
-          <button data-action="hide-delete-file-modal" class="text-github-fg-muted hover:text-github-fg-default transition-colors">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16">
+  <div id="deleteFileModal" class="fixed inset0 bgBlackFade backdropBlurSm z50 hidden itemsCenter justifyCenter p4">
+    <div class="bgCanvasOverlay borderDefault roundedLg shadow2xl wFull maxWMd animateScaleIn">
+      <div class="px6 py4 borderB borderDefault">
+        <div class="flex itemsCenter justifyBetween">
+          <h3 class="textLg fontSemibold textFgDefault">Delete file</h3>
+          <button data-action="hide-delete-file-modal" class="textFgMuted hoverTextDefault transitionColors">
+            <svg class="w5 h5" fill="currentColor" viewBox="0 0 16 16">
               <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z" />
             </svg>
           </button>
         </div>
       </div>
 
-      <div class="p-6">
-        <p class="text-github-fg-default mb-4">Are you sure you want to delete <span id="fileToDeleteName" class="font-semibold">filename.ext</span>? This action cannot be undone.</p>
-        <div class="flex items-center justify-end space-x-3">
-          <button data-action="hide-delete-file-modal" class="px-4 py-2 border border-github-border-default rounded-md text-sm font-medium text-github-fg-default bg-github-btn-secondary-bg hover:bg-github-btn-secondary-hover transition-colors">
+      <div class="p6">
+        <p class="textFgDefault mb4">Are you sure you want to delete <span id="fileToDeleteName" class="fontSemibold">filename.ext</span>? This action cannot be undone.</p>
+        <div class="flex itemsCenter justifyEnd spaceX3">
+          <button data-action="hide-delete-file-modal" class="px4 py2 borderDefault roundedMd textSm fontMedium textFgDefault bgBtnSecondary hoverBgBtnSecondary transitionColors">
             Cancel
           </button>
-          <button data-action="confirm-delete-file" class="px-4 py-2 bg-github-danger-fg hover:bg-red-600 text-white rounded-md text-sm font-medium transition-colors">
+          <button data-action="confirm-delete-file" class="px4 py2 bgDangerFg hoverBgDanger textWhite roundedMd textSm fontMedium transitionColors">
             Delete
           </button>
         </div>
@@ -1902,6 +1820,7 @@ background: linear-gradient(90deg, #dc2626, #ef4444, #f87171);
   <script src="https://clockblocked.github.io/gitDev//modules/listeners.js" type="module"></script>
 --->
 
+<script type="module" src="https://clockblocked.github.io/gitDev/modules/utils.js"></script>
 
 <script type="module" src="https://clockblocked.github.io/gitDev/modules/index.js">
 /**
@@ -2144,8 +2063,8 @@ const SidebarManager = {
     
     if (this.state.recentFiles.length === 0) {
       recentFilesList.innerHTML = `
-        <div class="text-center py-4 text-github-fg-muted text-sm">
-          <i class="fas fa-file text-lg mb-2 block"></i>
+        <div class="textCenter py4 textFgMuted textSm">
+          <i class="fas fa-file textLg mb2 block"></i>
           No recent files
         </div>
       `;
@@ -2153,11 +2072,11 @@ const SidebarManager = {
       recentFilesList.innerHTML = this.state.recentFiles.slice(0, 5).map(file => `
         <div class="recent-file-item" onclick="SidebarManager.openRecentFile('${file.repoName}', '${file.filePath}', '${file.fileName}')">
           <i class="fas fa-file recent-file-icon"></i>
-          <div class="flex-1 min-w-0">
-            <div class="text-sm text-github-fg-default truncate">${file.fileName}</div>
-            <div class="text-xs text-github-fg-muted truncate">${file.repoName}</div>
+          <div class="flex1 minW0">
+            <div class="textSm textFgDefault truncate">${file.fileName}</div>
+            <div class="textXs textFgMuted truncate">${file.repoName}</div>
           </div>
-          <div class="text-xs text-github-fg-muted">
+          <div class="textXs textFgMuted">
             ${this.formatTimeAgo(file.timestamp)}
           </div>
         </div>
@@ -2176,7 +2095,7 @@ const SidebarManager = {
     
     if (this.state.repositories.length === 0) {
       repoListSidebar.innerHTML = `
-        <div class="text-center py-2 text-sm text-github-fg-muted">
+        <div class="textCenter py2 textSm textFgMuted">
           No repositories yet
         </div>
       `;
@@ -2184,9 +2103,9 @@ const SidebarManager = {
       repoListSidebar.innerHTML = this.state.repositories.map(repo => `
         <div class="repo-item ${this.state.currentRepository === repo.name ? 'active' : ''}" 
              onclick="SidebarManager.selectRepository('${repo.name}')">
-          <i class="fas fa-folder repo-icon ${repo.visibility === 'public' ? 'public' : ''}"></i>
-          <span class="flex-1 truncate">${repo.name}</span>
-          <span class="text-xs text-github-fg-muted">${this.formatDate(repo.created)}</span>
+          <i class="fas fa-folder repo-icon ${repo.visibility === 'public' ? : ''}"></i>
+          <span class="flex1 truncate">${repo.name}</span>
+          <span class="textXs textFgMuted">${this.formatDate(repo.created)}</span>
         </div>
       `).join('');
     }
@@ -2614,9 +2533,9 @@ const SidebarManager = {
     this.loadData();
     
     if (this.state.recentFiles.length === 0) {
-      recentFilesList.innerHTML = '<div class="text-center py-4 text-github-fg-muted text-sm"><i class="fas fa-file text-lg mb-2 block"></i>No recent files</div>';
+      recentFilesList.innerHTML = '<div class="textCenter py4 textFgMuted textSm"><i class="fas fa-file textLg mb2 block"></i>No recent files</div>';
     } else {
-      recentFilesList.innerHTML = this.state.recentFiles.slice(0, 5).map(file => `<div class="recent-file-item" onclick="SidebarManager.openRecentFile('${file.repoName}', '${file.filePath}', '${file.fileName}')"><i class="fas fa-file recent-file-icon"></i><div class="flex-1 min-w-0"><div class="text-sm text-github-fg-default truncate">${file.fileName}</div><div class="text-xs text-github-fg-muted truncate">${file.repoName}</div></div><div class="text-xs text-github-fg-muted">${this.formatTimeAgo(file.timestamp)}</div></div>`).join('');
+      recentFilesList.innerHTML = this.state.recentFiles.slice(0, 5).map(file => `<div class="recent-file-item" onclick="SidebarManager.openRecentFile('${file.repoName}', '${file.filePath}', '${file.fileName}')"><i class="fas fa-file recent-file-icon"></i><div class="flex1 minW0"><div class="textSm textFgDefault truncate">${file.fileName}</div><div class="textXs textFgMuted truncate">${file.repoName}</div></div><div class="textXs textFgMuted">${this.formatTimeAgo(file.timestamp)}</div></div>`).join('');
     }
   },
 
@@ -2629,9 +2548,9 @@ const SidebarManager = {
     this.loadData();
     
     if (this.state.repositories.length === 0) {
-      repoListSidebar.innerHTML = '<div class="text-center py-2 text-sm text-github-fg-muted">No repositories yet</div>';
+      repoListSidebar.innerHTML = '<div class="textCenter py2 textSm textFgMuted">No repositories yet</div>';
     } else {
-      repoListSidebar.innerHTML = this.state.repositories.map(repo => `<div class="repo-item ${this.state.currentRepository === repo.name ? 'active' : ''}" onclick="SidebarManager.selectRepository('${repo.name}')"><i class="fas fa-folder repo-icon ${repo.visibility === 'public' ? 'public' : ''}"></i><span class="flex-1 truncate">${repo.name}</span><span class="text-xs text-github-fg-muted">${this.formatDate(repo.created)}</span></div>`).join('');
+      repoListSidebar.innerHTML = this.state.repositories.map(repo => `<div class="repo-item ${this.state.currentRepository === repo.name ? 'active' : ''}" onclick="SidebarManager.selectRepository('${repo.name}')"><i class="fas fa-folder repo-icon ${repo.visibility === 'public' ? : ''}"></i><span class="flex1 truncate">${repo.name}</span><span class="textXs textFgMuted">${this.formatDate(repo.created)}</span></div>`).join('');
     }
     
     if (repoCount) {
