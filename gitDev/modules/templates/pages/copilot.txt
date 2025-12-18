@@ -10,4 +10,6 @@ to be even further organized by use of subfolders within this "templates" Folder
 though not an extreme degree where i end up with a complete mess of nested folders here. 
 
 such as:
-"pages" (where "file.js", "
+ (where various page fragments and pieces snd containers will go)
+
+"file.js", "
