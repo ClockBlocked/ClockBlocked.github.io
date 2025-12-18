@@ -1,0 +1,13 @@
+
+
+
+
+
+The purpose of this folder is to place ALL, or almost all of the JavaScript-
+Templates Logic, whether it he small, or large, or super freaking lengthy,
+i want it in this folder and to the best of our abilities i would like it all
+to be even further organized by use of subfolders within this "templates" Folder,
+though not an extreme degree where i end up with a complete mess of nested folders here. 
+
+such as:
+"pages" (where "file.js", "
