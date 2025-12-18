@@ -135,11 +135,11 @@ body {
   gap: 1.5rem;
 }
 
-.space2 > * + * {
+.spaceX2 > * + * {
   margin-left: 0.5rem;
 }
 
-.space3 > * + * {
+.spaceX3 > * + * {
   margin-left: 0.75rem;
 }
 
@@ -265,10 +265,6 @@ body {
 
 .textYellow400 {
   color: #facc15;
-}
-
-.textBlue500 {
-  color: #3b82f6;
 }
 
 .textPurple500 {

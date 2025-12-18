@@ -1,16 +1,23 @@
 const ValidationUtils = {
   isValidFilename(filename) {
     if (!filename || filename.length > 255) return false;
-    if (/[<>:"|?*\\\/]/.test(filename)) return false;
+    if (/[<>:"|?*\\/]/.test(filename)) return false;
     const reserved = ['CON', 'PRN', 'AUX', 'NUL', 'COM1', 'COM2', 'COM3', 'COM4', 'COM5', 'COM6', 'COM7', 'COM8', 'COM9', 'LPT1', 'LPT2', 'LPT3', 'LPT4', 'LPT5', 'LPT6', 'LPT7', 'LPT8', 'LPT9'];
-    const nameWithoutExt = filename.split('.')[0];
+    const nameWithoutExt = filename.replace(/\.[^.]*$/, '') || filename;
     return !reserved.includes(nameWithoutExt.toUpperCase());
   }
 };
 
+const TIME_CONSTANTS = {
+  MINUTE_MS: 60000,
+  HOUR_MS: 3600000,
+  DAY_MS: 86400000,
+  WEEK_MS: 604800000
+};
+
 const FormatUtils = {
   formatFileSize(bytes) {
-    if (typeof bytes !== 'number') return '0 KB';
+    if (typeof bytes !== 'number') return '0 Bytes';
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     if (bytes === 0) return '0 Bytes';
     const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
@@ -22,10 +29,10 @@ const FormatUtils = {
     const date = new Date(timestamp);
     const now = new Date();
     const diff = now - date;
-    if (diff < 60000) return 'now';
-    if (diff < 3600000) return Math.floor(diff / 60000) + ' minutes ago';
-    if (diff < 86400000) return Math.floor(diff / 3600000) + ' hours ago';
-    if (diff < 604800000) return Math.floor(diff / 86400000) + ' days ago';
+    if (diff < TIME_CONSTANTS.MINUTE_MS) return 'now';
+    if (diff < TIME_CONSTANTS.HOUR_MS) return Math.floor(diff / TIME_CONSTANTS.MINUTE_MS) + ' minutes ago';
+    if (diff < TIME_CONSTANTS.DAY_MS) return Math.floor(diff / TIME_CONSTANTS.HOUR_MS) + ' hours ago';
+    if (diff < TIME_CONSTANTS.WEEK_MS) return Math.floor(diff / TIME_CONSTANTS.DAY_MS) + ' days ago';
     return date.toLocaleDateString();
   },
 
@@ -34,11 +41,11 @@ const FormatUtils = {
     const now = new Date();
     const date = new Date(timestamp);
     const diff = now - date;
-    if (diff < 60000) return 'now';
-    if (diff < 3600000) return Math.floor(diff / 60000) + 'm';
-    if (diff < 86400000) return Math.floor(diff / 3600000) + 'h';
-    if (diff < 604800000) return Math.floor(diff / 86400000) + 'd';
-    return Math.floor(diff / 604800000) + 'w';
+    if (diff < TIME_CONSTANTS.MINUTE_MS) return 'now';
+    if (diff < TIME_CONSTANTS.HOUR_MS) return Math.floor(diff / TIME_CONSTANTS.MINUTE_MS) + 'm';
+    if (diff < TIME_CONSTANTS.DAY_MS) return Math.floor(diff / TIME_CONSTANTS.HOUR_MS) + 'h';
+    if (diff < TIME_CONSTANTS.WEEK_MS) return Math.floor(diff / TIME_CONSTANTS.DAY_MS) + 'd';
+    return Math.floor(diff / TIME_CONSTANTS.WEEK_MS) + 'w';
   }
 };
 
@@ -82,7 +89,11 @@ const LanguageUtils = {
     if (type === 'folder') {
       return `<svg class="w4 h4 textAccentFg" fill="currentColor" viewBox="0 0 16 16"><path d="M1.75 1A1.75 1.75 0 0 0 0 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0 0 16 13.25v-8.5A1.75 1.75 0 0 0 14.25 3H7.5a.25.25 0 0 1-.2-.1l-.9-1.2C6.07 1.26 5.55 1 5 1H1.75Z"/></svg>`;
     }
-    const ext = filename.split('.').pop().toLowerCase();
+    if (!filename || typeof filename !== 'string') {
+      return `<svg class="w4 h4" style="color: #7d8590" fill="currentColor" viewBox="0 0 16 16"><path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"/></svg>`;
+    }
+    const parts = filename.split('.');
+    const ext = parts.length > 1 ? parts.pop().toLowerCase() : '';
     const iconColor = this.getLanguageColor(ext);
     return `<svg class="w4 h4" style="color: ${iconColor}" fill="currentColor" viewBox="0 0 16 16"><path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"/></svg>`;
   }
@@ -98,12 +109,21 @@ const NotificationUtils = {
       ? '<path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16ZM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646Z"/>'
       : '<path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"/>';
     
-    notification.innerHTML = `
-      <div class="flex itemsCenter space2">
-        <svg class="w5 h5" fill="currentColor" viewBox="0 0 16 16">${icon}</svg>
-        <span>${message}</span>
-      </div>
-    `;
+    const container = document.createElement('div');
+    container.className = 'flex itemsCenter spaceX2';
+    
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('class', 'w5 h5');
+    svg.setAttribute('fill', 'currentColor');
+    svg.setAttribute('viewBox', '0 0 16 16');
+    svg.innerHTML = icon;
+    
+    const span = document.createElement('span');
+    span.textContent = message;
+    
+    container.appendChild(svg);
+    container.appendChild(span);
+    notification.appendChild(container);
     
     if (type === 'error') {
       notification.dataset.notify = 'error';
@@ -146,40 +166,45 @@ const LoadingUtils = {
     };
 
     function init() {
+      if (progressElement) return;
+      
+      if (!document.getElementById('ghProgressStyles')) {
+        const styleElement = document.createElement('style');
+        styleElement.id = 'ghProgressStyles';
+        styleElement.innerHTML = `
+          .ghProgress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2.5px;
+            z-index: 9999;
+            background-color: transparent;
+            transition: opacity 0.5s linear;
+            opacity: 0;
+            pointer-events: none;
+          }
+          .ghProgress.visible {
+            opacity: 1;
+            transition: opacity 0.3s ease-in;
+          }
+          .ghProgressFill {
+            display: block;
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #dc2626, #ef4444, #f87171);
+            box-shadow: 0 0 10px rgba(220, 38, 38, 0.5), 0 0 20px rgba(220, 38, 38, 0.3);
+            transition: width 0.5s ease-in-out;
+          }
+        `;
+        document.head.appendChild(styleElement);
+      }
+      
       progressElement = document.createElement('div');
       progressElement.className = 'ghProgress';
       fillElement = document.createElement('div');
       fillElement.className = 'ghProgressFill';
       progressElement.appendChild(fillElement);
-      
-      const styleElement = document.createElement('style');
-      styleElement.innerHTML = `
-        .ghProgress {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 2.5px;
-          z-index: 9999;
-          background-color: transparent;
-          transition: opacity 0.5s linear;
-          opacity: 0;
-          pointer-events: none;
-        }
-        .ghProgress.visible {
-          opacity: 1;
-          transition: opacity 0.3s ease-in;
-        }
-        .ghProgressFill {
-          display: block;
-          height: 100%;
-          width: 0;
-          background: linear-gradient(90deg, #dc2626, #ef4444, #f87171);
-          box-shadow: 0 0 10px rgba(220, 38, 38, 0.5), 0 0 20px rgba(220, 38, 38, 0.3);
-          transition: width 0.5s ease-in-out;
-        }
-      `;
-      document.head.appendChild(styleElement);
       document.body.appendChild(progressElement);
     }
 
@@ -215,7 +240,7 @@ const LoadingUtils = {
 
     function cleanup() {
       clearTimeout(hideTimeout);
-      clearInterval(progressInterval);
+      clearTimeout(progressInterval);
       if (progressElement) {
         progressElement.classList.add('hidden');
         progressElement.classList.remove('visible');
@@ -228,7 +253,7 @@ const LoadingUtils = {
     function simulateRealisticLoad() {
       const updateProgress = () => {
         if (currentProgress >= config.maximum * 100) {
-          clearInterval(progressInterval);
+          clearTimeout(progressInterval);
           return;
         }
         let increment, delay;
@@ -244,7 +269,7 @@ const LoadingUtils = {
         }
         currentProgress = Math.min(config.maximum * 100, currentProgress + increment);
         fillElement.style.width = `${currentProgress}%`;
-        clearInterval(progressInterval);
+        clearTimeout(progressInterval);
         progressInterval = setTimeout(updateProgress, delay);
       };
       updateProgress();
@@ -297,8 +322,10 @@ const LoadingUtils = {
   }
 };
 
-window.ValidationUtils = ValidationUtils;
-window.FormatUtils = FormatUtils;
-window.LanguageUtils = LanguageUtils;
-window.NotificationUtils = NotificationUtils;
-window.LoadingUtils = LoadingUtils;
+if (typeof window !== 'undefined') {
+  window.ValidationUtils = ValidationUtils;
+  window.FormatUtils = FormatUtils;
+  window.LanguageUtils = LanguageUtils;
+  window.NotificationUtils = NotificationUtils;
+  window.LoadingUtils = LoadingUtils;
+}
