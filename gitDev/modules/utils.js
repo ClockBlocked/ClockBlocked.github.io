@@ -1,4 +1,4 @@
-export const ValidationUtils = {
+const ValidationUtils = {
   isValidFilename(filename) {
     if (!filename || filename.length > 255) return false;
     if (/[<>:"|?*\\\/]/.test(filename)) return false;
@@ -8,7 +8,7 @@ export const ValidationUtils = {
   }
 };
 
-export const FormatUtils = {
+const FormatUtils = {
   formatFileSize(bytes) {
     if (typeof bytes !== 'number') return '0 KB';
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
@@ -42,7 +42,7 @@ export const FormatUtils = {
   }
 };
 
-export const LanguageUtils = {
+const LanguageUtils = {
   getLanguageColor(ext) {
     const colors = {
       'html': '#e34c26', 'htm': '#e34c26', 'css': '#1572b6', 'js': '#f1e05a', 'javascript': '#f1e05a',
@@ -88,7 +88,7 @@ export const LanguageUtils = {
   }
 };
 
-export const NotificationUtils = {
+const NotificationUtils = {
   show(message, type = 'success') {
     const notification = document.createElement('div');
     const bgClass = type === 'error' ? 'bgDangerFg' : 'bgSuccessFg';
@@ -127,7 +127,7 @@ export const NotificationUtils = {
   }
 };
 
-export const LoadingUtils = {
+const LoadingUtils = {
   createProgressBar() {
     let progressElement = null;
     let fillElement = null;

@@ -1,21 +1,20 @@
-function isValidFilename(filename) {
+const isValidFilename = ValidationUtils?.isValidFilename || function(filename) {
   if (!filename || filename.length > 255) return false;
   if (/[<>:"|?*\\\/]/.test(filename)) return false;
   const reserved = ['CON', 'PRN', 'AUX', 'NUL', 'COM1', 'COM2', 'COM3', 'COM4', 'COM5', 'COM6', 'COM7', 'COM8', 'COM9', 'LPT1', 'LPT2', 'LPT3', 'LPT4', 'LPT5', 'LPT6', 'LPT7', 'LPT8', 'LPT9'];
   const nameWithoutExt = filename.split('.')[0];
-  if (reserved.includes(nameWithoutExt.toUpperCase())) return false;
-  return true;
-}
+  return !reserved.includes(nameWithoutExt.toUpperCase());
+};
 
-function formatFileSize(bytes) {
+const formatFileSize = FormatUtils?.formatFileSize || function(bytes) {
   if (typeof bytes !== 'number') return '0 KB';
   const sizes = ['Bytes', 'KB', 'MB', 'GB'];
   if (bytes === 0) return '0 Bytes';
   const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
   return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
-}
+};
 
-function formatDate(timestamp) {
+const formatDate = FormatUtils?.formatDate || function(timestamp) {
   if (!timestamp) return 'Unknown';
   const date = new Date(timestamp);
   const now = new Date();
@@ -25,9 +24,9 @@ function formatDate(timestamp) {
   if (diff < 86400000) return Math.floor(diff / 3600000) + ' hours ago';
   if (diff < 604800000) return Math.floor(diff / 86400000) + ' days ago';
   return date.toLocaleDateString();
-}
+};
 
-function getLanguageColor(ext) {
+const getLanguageColor = LanguageUtils?.getLanguageColor || function(ext) {
   const colors = {
     'html': '#e34c26', 'htm': '#e34c26', 'css': '#1572b6', 'js': '#f1e05a', 'javascript': '#f1e05a',
     'ts': '#2b7489', 'typescript': '#2b7489', 'md': '#083fa1', 'markdown': '#083fa1', 'json': '#f1e05a',
@@ -37,9 +36,9 @@ function getLanguageColor(ext) {
     'sql': '#e38c00'
   };
   return colors[ext] || '#7d8590';
-}
+};
 
-function getLanguageName(ext) {
+const getLanguageName = LanguageUtils?.getLanguageName || function(ext) {
   const languages = {
     'html': 'HTML', 'htm': 'HTML', 'css': 'CSS', 'js': 'JavaScript', 'javascript': 'JavaScript',
     'ts': 'TypeScript', 'typescript': 'TypeScript', 'json': 'JSON', 'md': 'Markdown', 'markdown': 'Markdown',
@@ -48,18 +47,18 @@ function getLanguageName(ext) {
     'sql': 'SQL'
   };
   return languages[ext] || 'Text';
-}
+};
 
-function getFileIcon(filename, type) {
+const getFileIcon = LanguageUtils?.getFileIcon || function(filename, type) {
   if (type === 'folder') {
     return `<svg class="w4 h4 textAccentFg" fill="currentColor" viewBox="0 0 16 16"><path d="M1.75 1A1.75 1.75 0 0 0 0 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0 0 16 13.25v-8.5A1.75 1.75 0 0 0 14.25 3H7.5a.25.25 0 0 1-.2-.1l-.9-1.2C6.07 1.26 5.55 1 5 1H1.75Z"/></svg>`;
   }
   const ext = filename.split('.').pop().toLowerCase();
   const iconColor = getLanguageColor(ext);
   return `<svg class="w4 h4" style="color: ${iconColor}" fill="currentColor" viewBox="0 0 16 16"><path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"/></svg>`;
-}
+};
 
-function getPrismLanguage(ext) {
+const getPrismLanguage = LanguageUtils?.getPrismLanguage || function(ext) {
   const languageMap = {
     'js': 'javascript', 'javascript': 'javascript', 'ts': 'typescript', 'typescript': 'typescript',
     'html': 'html', 'htm': 'html', 'css': 'css', 'scss': 'scss', 'sass': 'sass', 'less': 'less',
@@ -69,7 +68,7 @@ function getPrismLanguage(ext) {
     'txt': 'text', 'text': 'text'
   };
   return languageMap[ext] || 'text';
-}
+};
 
 function adjustCodeBlockHeight() {
   const lineNumbers = document.getElementById('lineNumbers');
