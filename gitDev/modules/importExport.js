@@ -360,53 +360,53 @@ function hideImportModal() {
 // Create import modal
 function createImportModal() {
     const modalHTML = `
-        <div id="importModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-            <div class="bg-github-canvas-default rounded-lg shadow-2xl w-full max-w-2xl border border-github-border-default">
-                <div class="flex items-center justify-between p-6 border-b border-github-border-default">
-                    <h2 class="text-xl font-semibold text-github-fg-default">
+        <div id="importModal" class="fixed inset0 bgBlack bg-opacity-50 hidden itemsCenter justifyCenter z50">
+            <div class="bgCanvasDefault roundedLg shadow2xl wFull maxW2xl borderDefault">
+                <div class="flex itemsCenter justifyBetween p6 borderB borderDefault">
+                    <h2 class="textXl fontSemibold textFgDefault">
                         <i class="fas fa-download mr-2"></i>Import from URL
                     </h2>
-                    <button onclick="hideImportModal()" class="text-github-fg-muted hover:text-github-fg-default">
-                        <i class="fas fa-times text-xl"></i>
+                    <button onclick="hideImportModal()" class="textFgMuted hoverTextDefault">
+                        <i class="fas fa-times textXl"></i>
                     </button>
                 </div>
 
-                <div class="p-6">
-                    <div class="mb-4">
-                        <label class="block text-sm font-semibold text-github-fg-default mb-2">
+                <div class="p6">
+                    <div class="mb4">
+                        <label class="block textSm fontSemibold textFgDefault mb2">
                             GitHub/GitLab/Bitbucket URL
                         </label>
                         <input 
                             type="url" 
                             id="importUrlInput" 
                             placeholder="https://github.com/user/repo/blob/main/file.js"
-                            class="w-full bg-github-canvas-inset text-github-fg-default px-4 py-3 rounded-md border border-github-border-default focus:outline-none focus:border-github-accent-emphasis"
+                            class="wFull bgCanvasInset textFgDefault px4 py3 roundedMd borderDefault focusOutlineNone focus:border-github-accent-emphasis"
                         />
-                        <p class="text-xs text-github-fg-muted mt-2">
+                        <p class="textXs textFgMuted mt2">
                             <i class="fas fa-info-circle mr-1"></i>
                             Paste a direct link to a file from GitHub, GitLab, or Bitbucket
                         </p>
                     </div>
 
-                    <div class="bg-github-canvas-inset rounded-lg p-4 mb-4">
-                        <p class="text-sm font-semibold text-github-fg-default mb-2">Examples:</p>
-                        <ul class="text-xs text-github-fg-muted space-y-1 font-mono">
+                    <div class="bgCanvasInset roundedLg p4 mb4">
+                        <p class="textSm fontSemibold textFgDefault mb2">Examples:</p>
+                        <ul class="textXs textFgMuted spaceY1 fontMono">
                             <li>â€¢ https://github.com/user/repo/blob/main/src/index.js</li>
                             <li>â€¢ https://gitlab.com/user/repo/-/blob/main/config.json</li>
                             <li>â€¢ https://raw.githubusercontent.com/user/repo/main/file.md</li>
                         </ul>
                     </div>
 
-                    <div class="flex gap-3">
+                    <div class="flex gap3">
                         <button 
                             onclick="performImport()" 
-                            class="flex-1 bg-github-success-emphasis text-white px-6 py-3 rounded-lg hover:bg-github-success-fg transition-all font-semibold"
+                            class="flex1 bgSuccessEmph textWhite px6 py3 roundedLg hoverBgSuccess transitionAll fontSemibold"
                         >
                             <i class="fas fa-download mr-2"></i>Import File
                         </button>
                         <button 
                             onclick="hideImportModal()" 
-                            class="px-6 py-3 border border-github-border-default rounded-lg hover:bg-github-canvas-overlay transition-all text-github-fg-default"
+                            class="px6 py3 borderDefault roundedLg hover:bg-github-canvas-overlay transitionAll textFgDefault"
                         >
                             Cancel
                         </button>
@@ -469,45 +469,45 @@ function hideExportModal() {
 // Create export modal
 function createExportModal() {
     const modalHTML = `
-        <div id="exportModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-            <div class="bg-github-canvas-default rounded-lg shadow-2xl w-full max-w-md border border-github-border-default">
-                <div class="flex items-center justify-between p-6 border-b border-github-border-default">
-                    <h2 class="text-xl font-semibold text-github-fg-default">
+        <div id="exportModal" class="fixed inset0 bgBlack bg-opacity-50 hidden itemsCenter justifyCenter z50">
+            <div class="bgCanvasDefault roundedLg shadow2xl wFull maxWMd borderDefault">
+                <div class="flex itemsCenter justifyBetween p6 borderB borderDefault">
+                    <h2 class="textXl fontSemibold textFgDefault">
                         <i class="fas fa-file-export mr-2"></i>Export Repository
                     </h2>
-                    <button onclick="hideExportModal()" class="text-github-fg-muted hover:text-github-fg-default">
-                        <i class="fas fa-times text-xl"></i>
+                    <button onclick="hideExportModal()" class="textFgMuted hoverTextDefault">
+                        <i class="fas fa-times textXl"></i>
                     </button>
                 </div>
 
-                <div class="p-6">
-                    <p class="text-github-fg-muted mb-4">
-                        Export <span id="exportRepoName" class="font-semibold text-github-fg-default"></span>
+                <div class="p6">
+                    <p class="textFgMuted mb4">
+                        Export <span id="exportRepoName" class="fontSemibold textFgDefault"></span>
                     </p>
 
                     <div class="space-y-3">
                         <button 
                             onclick="exportRepositoryAsZip()" 
-                            class="w-full bg-github-canvas-overlay border border-github-border-default px-6 py-4 rounded-lg hover:border-github-accent-emphasis transition-all text-left"
+                            class="wFull bgCanvasOverlay borderDefault px6 py4 roundedLg hover:border-github-accent-emphasis transitionAll textLeft"
                         >
-                            <div class="flex items-center">
-                                <i class="fas fa-file-archive text-2xl text-github-accent-fg mr-4"></i>
+                            <div class="flex itemsCenter">
+                                <i class="fas fa-file-archive text2xl textAccentFg mr-4"></i>
                                 <div>
-                                    <div class="font-semibold text-github-fg-default">ZIP Archive</div>
-                                    <div class="text-sm text-github-fg-muted">Download as .zip file</div>
+                                    <div class="fontSemibold textFgDefault">ZIP Archive</div>
+                                    <div class="textSm textFgMuted">Download as .zip file</div>
                                 </div>
                             </div>
                         </button>
 
                         <button 
                             onclick="exportRepositoryAsJson()" 
-                            class="w-full bg-github-canvas-overlay border border-github-border-default px-6 py-4 rounded-lg hover:border-github-accent-emphasis transition-all text-left"
+                            class="wFull bgCanvasOverlay borderDefault px6 py4 roundedLg hover:border-github-accent-emphasis transitionAll textLeft"
                         >
-                            <div class="flex items-center">
-                                <i class="fas fa-code text-2xl text-github-accent-fg mr-4"></i>
+                            <div class="flex itemsCenter">
+                                <i class="fas fa-code text2xl textAccentFg mr-4"></i>
                                 <div>
-                                    <div class="font-semibold text-github-fg-default">JSON Export</div>
-                                    <div class="text-sm text-github-fg-muted">Export as .json file</div>
+                                    <div class="fontSemibold textFgDefault">JSON Export</div>
+                                    <div class="textSm textFgMuted">Export as .json file</div>
                                 </div>
                             </div>
                         </button>
@@ -515,7 +515,7 @@ function createExportModal() {
 
                     <button 
                         onclick="hideExportModal()" 
-                        class="w-full mt-4 px-6 py-3 border border-github-border-default rounded-lg hover:bg-github-canvas-overlay transition-all text-github-fg-default"
+                        class="wFull mt-4 px6 py3 borderDefault roundedLg hover:bg-github-canvas-overlay transitionAll textFgDefault"
                     >
                         Cancel
                     </button>

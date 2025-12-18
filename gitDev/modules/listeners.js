@@ -305,8 +305,8 @@ class EventListenersManager {
     }
     setupGlobalEventDelegation() {
         document.addEventListener('click', (e) => {
-            const repoCard = e.target.closest('.bg-github-canvas-overlay.border');
-            if (repoCard && repoCard.querySelector('h3.text-github-accent-fg')) {
+            const repoCard = e.target.closest('.bgCanvasOverlay.borderDefault');
+            if (repoCard && repoCard.querySelector('h3.textAccentFg')) {
                 const repoName = repoCard.querySelector('h3').textContent;
                 if (repoName && window.openRepository && typeof window.openRepository === 'function') {
                     e.preventDefault();
@@ -315,7 +315,7 @@ class EventListenersManager {
             }
             const repoItem = e.target.closest('.repo-item');
             if (repoItem) {
-                const repoName = repoItem.querySelector('span:not(.text-github-fg-muted)')?.textContent;
+                const repoName = repoItem.querySelector('span:not(.textFgMuted)')?.textContent;
                 if (repoName && window.openRepository && typeof window.openRepository === 'function') {
                     e.preventDefault();
                     window.openRepository(repoName);
@@ -323,8 +323,8 @@ class EventListenersManager {
             }
             const recentFileItem = e.target.closest('.recent-file-item');
             if (recentFileItem) {
-                const fileName = recentFileItem.querySelector('.text-github-fg-default')?.textContent;
-                const repoName = recentFileItem.querySelector('.text-github-fg-muted')?.textContent;
+                const fileName = recentFileItem.querySelector('.textFgDefault')?.textContent;
+                const repoName = recentFileItem.querySelector('.textFgMuted')?.textContent;
                 if (fileName && repoName && window.openRecentFile && typeof window.openRecentFile === 'function') {
                     e.preventDefault();
                     window.openRecentFile(repoName, '', fileName);
@@ -369,11 +369,11 @@ class EventListenersManager {
         const notification = document.createElement('div');
         notification.className = 'fixed top-4 right-4 bg-github-canvas-overlay border border-github-border-default rounded-lg p-4 shadow-lg z-50 animate-slide-down';
         notification.innerHTML = `
-            <div class="flex items-center space-x-3">
-                <svg class="w-5 h-5 text-github-success-fg" fill="currentColor" viewBox="0 0 16 16">
+            <div class="flex itemsCenter space3">
+                <svg class="w5 h5 textSuccessFg" fill="currentColor" viewBox="0 0 16 16">
                     <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"/>
                 </svg>
-                <span class="text-github-fg-default text-sm">${message}</span>
+                <span class="textFgDefault textSm">${message}</span>
             </div>
         `;
         document.body.appendChild(notification);

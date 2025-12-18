@@ -275,6 +275,22 @@ body {
   color: #a855f7;
 }
 
+.bgBlue500 {
+  background-color: #3b82f6;
+}
+
+.bgOrange500 {
+  background-color: #f97316;
+}
+
+.bgYellow400 {
+  background-color: #facc15;
+}
+
+.bgPurple500 {
+  background-color: #a855f7;
+}
+
 .textSm {
   font-size: 0.875rem;
   line-height: 1.25rem;
@@ -981,6 +997,10 @@ body {
   color: var(--github-fg-muted);
 }
 
+.placeholder-github-fg-muted::placeholder {
+  color: var(--github-fg-muted);
+}
+
 .textarea {
   width: 100%;
   padding: 0.5rem 0.75rem;
@@ -1132,4 +1152,16 @@ body {
   .lg\:inlineBlock {
     display: inline-block;
   }
+}
+
+.transform {
+  transform: translateY(-50%);
+}
+
+.top-1\/2 {
+  top: 50%;
+}
+
+.-translate-y-1\/2 {
+  transform: translateY(-50%);
 }

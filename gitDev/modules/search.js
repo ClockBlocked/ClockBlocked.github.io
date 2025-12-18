@@ -283,42 +283,42 @@ function hideSearchModal() {
 // Create search modal HTML
 function createSearchModal() {
     const modalHTML = `
-        <div id="searchModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-            <div class="bg-github-canvas-default rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden border border-github-border-default">
+        <div id="searchModal" class="fixed inset0 bgBlack bg-opacity-50 hidden itemsCenter justifyCenter z50">
+            <div class="bgCanvasDefault roundedLg shadow2xl wFull max-w-4xl max-h-[90vh] overflowHidden borderDefault">
                 <!-- Search Header -->
-                <div class="bg-github-canvas-overlay border-b border-github-border-default p-4">
-                    <div class="flex items-center gap-3">
-                        <i class="fas fa-search text-github-fg-muted"></i>
+                <div class="bgCanvasOverlay borderB borderDefault p4">
+                    <div class="flex itemsCenter gap3">
+                        <i class="fas fa-search textFgMuted"></i>
                         <input 
                             type="text" 
                             id="searchInput" 
                             placeholder="Search files, content, tags..." 
-                            class="flex-1 bg-github-canvas-inset text-github-fg-default px-4 py-2 rounded-md border border-github-border-default focus:outline-none focus:border-github-accent-emphasis"
+                            class="flex1 bgCanvasInset textFgDefault px4 py2 roundedMd borderDefault focusOutlineNone focus:border-github-accent-emphasis"
                         />
-                        <button onclick="hideSearchModal()" class="text-github-fg-muted hover:text-github-fg-default">
-                            <i class="fas fa-times text-xl"></i>
+                        <button onclick="hideSearchModal()" class="textFgMuted hoverTextDefault">
+                            <i class="fas fa-times textXl"></i>
                         </button>
                     </div>
 
                     <!-- Search Options -->
-                    <div class="mt-3 flex gap-3 flex-wrap">
-                        <label class="flex items-center gap-2 text-sm text-github-fg-default">
+                    <div class="mt3 flex gap3 flexWrap">
+                        <label class="flex itemsCenter gap2 textSm textFgDefault">
                             <input type="checkbox" id="searchCaseSensitive" class="rounded">
                             Case Sensitive
                         </label>
-                        <label class="flex items-center gap-2 text-sm text-github-fg-default">
+                        <label class="flex itemsCenter gap2 textSm textFgDefault">
                             <input type="checkbox" id="searchUseRegex" class="rounded">
                             Regex
                         </label>
-                        <label class="flex items-center gap-2 text-sm text-github-fg-default">
+                        <label class="flex itemsCenter gap2 textSm textFgDefault">
                             <input type="checkbox" id="searchInContent" checked class="rounded">
                             Content
                         </label>
-                        <label class="flex items-center gap-2 text-sm text-github-fg-default">
+                        <label class="flex itemsCenter gap2 textSm textFgDefault">
                             <input type="checkbox" id="searchInFilenames" checked class="rounded">
                             Filenames
                         </label>
-                        <select id="searchFilterLanguage" class="bg-github-canvas-inset text-github-fg-default px-3 py-1 rounded border border-github-border-default text-sm">
+                        <select id="searchFilterLanguage" class="bgCanvasInset textFgDefault px3 py1 rounded borderDefault textSm">
                             <option value="">All Languages</option>
                             <option value="JavaScript">JavaScript</option>
                             <option value="Python">Python</option>
@@ -331,7 +331,7 @@ function createSearchModal() {
                 </div>
 
                 <!-- Search Results -->
-                <div id="searchResults" class="overflow-y-auto max-h-[60vh] p-4"></div>
+                <div id="searchResults" class="overflowYAuto max-h-[60vh] p4"></div>
             </div>
         </div>
     `;
@@ -382,8 +382,8 @@ function performSearch() {
 
     if (results.length === 0) {
         resultsContainer.innerHTML = `
-            <div class="text-center py-12 text-github-fg-muted">
-                <i class="fas fa-search text-4xl mb-4"></i>
+            <div class="textCenter py-12 textFgMuted">
+                <i class="fas fa-search text-4xl mb4"></i>
                 <p>No results found for "${query}"</p>
             </div>
         `;
@@ -391,19 +391,19 @@ function performSearch() {
     }
 
     let html = `<div class="space-y-3">`;
-    html += `<div class="text-sm text-github-fg-muted mb-3">Found ${results.length} result${results.length !== 1 ? 's' : ''}</div>`;
+    html += `<div class="textSm textFgMuted mb3">Found ${results.length} result${results.length !== 1 ? 's' : ''}</div>`;
 
     results.forEach(result => {
         html += `
-            <div class="bg-github-canvas-overlay border border-github-border-default rounded-lg p-4 hover:border-github-accent-emphasis cursor-pointer transition-all" onclick="openSearchResult('${result.repository}', '${result.path}')">
-                <div class="flex items-start justify-between">
-                    <div class="flex-1">
-                        <div class="flex items-center gap-2 mb-2">
-                            <i class="fas fa-file-code text-github-accent-fg"></i>
-                            <span class="font-semibold text-github-fg-default">${result.fileName}</span>
-                            <span class="text-xs text-github-fg-muted">${result.repository}</span>
+            <div class="bgCanvasOverlay borderDefault roundedLg p4 hover:border-github-accent-emphasis cursorPointer transitionAll" onclick="openSearchResult('${result.repository}', '${result.path}')">
+                <div class="flex itemsStart justifyBetween">
+                    <div class="flex1">
+                        <div class="flex itemsCenter gap2 mb2">
+                            <i class="fas fa-file-code textAccentFg"></i>
+                            <span class="fontSemibold textFgDefault">${result.fileName}</span>
+                            <span class="textXs textFgMuted">${result.repository}</span>
                         </div>
-                        <div class="text-xs text-github-fg-muted mb-2">${result.path}</div>
+                        <div class="textXs textFgMuted mb2">${result.path}</div>
         `;
 
         // Show match details
@@ -411,16 +411,16 @@ function performSearch() {
             if (match.type === 'content' && match.contexts) {
                 match.contexts.forEach(ctx => {
                     html += `
-                        <div class="bg-github-canvas-inset p-2 rounded text-xs font-mono mt-2">
-                            <div class="text-github-fg-muted">Line ${ctx.lineNumber}:</div>
-                            <div class="text-github-fg-default">${escapeHtml(ctx.match)}</div>
+                        <div class="bgCanvasInset p2 rounded textXs fontMono mt2">
+                            <div class="textFgMuted">Line ${ctx.lineNumber}:</div>
+                            <div class="textFgDefault">${escapeHtml(ctx.match)}</div>
                         </div>
                     `;
                 });
             } else if (match.type === 'tags') {
-                html += `<div class="flex gap-1 mt-2">`;
+                html += `<div class="flex gap1 mt2">`;
                 match.matched.forEach(tag => {
-                    html += `<span class="px-2 py-1 bg-github-accent-emphasis text-white text-xs rounded">${tag}</span>`;
+                    html += `<span class="px2 py1 bgAccentEmph textWhite textXs rounded">${tag}</span>`;
                 });
                 html += `</div>`;
             }
@@ -428,7 +428,7 @@ function performSearch() {
 
         html += `
                     </div>
-                    <div class="text-xs text-github-fg-muted">${formatDate(result.lastModified)}</div>
+                    <div class="textXs textFgMuted">${formatDate(result.lastModified)}</div>
                 </div>
             </div>
         `;
@@ -445,8 +445,8 @@ function renderSearchHistory() {
 
     if (history.length === 0) {
         resultsContainer.innerHTML = `
-            <div class="text-center py-12 text-github-fg-muted">
-                <i class="fas fa-history text-4xl mb-4"></i>
+            <div class="textCenter py-12 textFgMuted">
+                <i class="fas fa-history text-4xl mb4"></i>
                 <p>No search history</p>
             </div>
         `;
@@ -454,18 +454,18 @@ function renderSearchHistory() {
     }
 
     let html = `
-        <div class="flex items-center justify-between mb-4">
-            <h3 class="text-sm font-semibold text-github-fg-default">Recent Searches</h3>
-            <button onclick="clearSearchHistory()" class="text-xs text-github-danger-fg hover:text-github-danger-emphasis">Clear History</button>
+        <div class="flex itemsCenter justifyBetween mb4">
+            <h3 class="textSm fontSemibold textFgDefault">Recent Searches</h3>
+            <button onclick="clearSearchHistory()" class="textXs textDangerFg hover:text-github-danger-emphasis">Clear History</button>
         </div>
-        <div class="space-y-2">
+        <div class="spaceY2">
     `;
 
     history.forEach(query => {
         html += `
-            <div class="bg-github-canvas-overlay border border-github-border-default rounded px-4 py-2 hover:border-github-accent-emphasis cursor-pointer transition-all" onclick="useHistorySearch('${escapeHtml(query)}')">
-                <i class="fas fa-history text-github-fg-muted mr-2"></i>
-                <span class="text-github-fg-default">${escapeHtml(query)}</span>
+            <div class="bgCanvasOverlay borderDefault rounded px4 py2 hover:border-github-accent-emphasis cursorPointer transitionAll" onclick="useHistorySearch('${escapeHtml(query)}')">
+                <i class="fas fa-history textFgMuted mr-2"></i>
+                <span class="textFgDefault">${escapeHtml(query)}</span>
             </div>
         `;
     });

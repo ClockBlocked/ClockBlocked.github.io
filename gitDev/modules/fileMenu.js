@@ -208,17 +208,17 @@ class FileMenuManager {
         }
 
         const modalHTML = `
-            <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div class="bg-github-canvas-default rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden border border-github-border-default">
-                    <div class="flex items-center justify-between p-4 border-b border-github-border-default">
-                        <h3 class="text-lg font-semibold text-github-fg-default">
+            <div id="previewModal" class="fixed inset0 bgBlack bg-opacity-50 flex itemsCenter justifyCenter z50">
+                <div class="bgCanvasDefault roundedLg shadow2xl wFull max-w-4xl max-h-[90vh] overflowHidden borderDefault">
+                    <div class="flex itemsCenter justifyBetween p4 borderB borderDefault">
+                        <h3 class="textLg fontSemibold textFgDefault">
                             <i class="fas fa-eye mr-2"></i>Preview: ${fileName}
                         </h3>
-                        <button onclick="closePreviewModal()" class="text-github-fg-muted hover:text-github-fg-default">
-                            <i class="fas fa-times text-xl"></i>
+                        <button onclick="closePreviewModal()" class="textFgMuted hoverTextDefault">
+                            <i class="fas fa-times textXl"></i>
                         </button>
                     </div>
-                    <div class="overflow-y-auto max-h-[calc(90vh-80px)] p-6">
+                    <div class="overflowYAuto max-h-[calc(90vh-80px)] p6">
                         ${previewContent}
                     </div>
                 </div>
@@ -377,21 +377,21 @@ class FileMenuManager {
         `;
 
         const modalHTML = `
-            <div id="propsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div class="bg-github-canvas-default rounded-lg shadow-2xl w-full max-w-md border border-github-border-default">
-                    <div class="flex items-center justify-between p-4 border-b border-github-border-default">
-                        <h3 class="text-lg font-semibold text-github-fg-default">
+            <div id="propsModal" class="fixed inset0 bgBlack bg-opacity-50 flex itemsCenter justifyCenter z50">
+                <div class="bgCanvasDefault roundedLg shadow2xl wFull maxWMd borderDefault">
+                    <div class="flex itemsCenter justifyBetween p4 borderB borderDefault">
+                        <h3 class="textLg fontSemibold textFgDefault">
                             <i class="fas fa-info-circle mr-2"></i>File Properties
                         </h3>
-                        <button onclick="closePropsModal()" class="text-github-fg-muted hover:text-github-fg-default">
-                            <i class="fas fa-times text-xl"></i>
+                        <button onclick="closePropsModal()" class="textFgMuted hoverTextDefault">
+                            <i class="fas fa-times textXl"></i>
                         </button>
                     </div>
-                    <div class="p-6 text-github-fg-default text-sm">
+                    <div class="p6 textFgDefault textSm">
                         ${props}
                     </div>
-                    <div class="p-4 border-t border-github-border-default">
-                        <button onclick="closePropsModal()" class="w-full bg-github-success-emphasis text-white px-4 py-2 rounded-lg hover:bg-github-success-fg">
+                    <div class="p4 borderT borderDefault">
+                        <button onclick="closePropsModal()" class="wFull bgSuccessEmph textWhite px4 py2 roundedLg hoverBgSuccess">
                             Close
                         </button>
                     </div>
