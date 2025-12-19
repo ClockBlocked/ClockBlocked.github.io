@@ -91,9 +91,9 @@ class EventListenersManager {
   }
   setupGlobalEventDelegation() {
     document.addEventListener("click", e => {
-      const repoCard = e.target.closest(". bg-github-canvas-overlay. border");
-      if (repoCard && repoCard.querySelector("h3. text-github-accent-fg")) {
-        const repoName = repoCard.querySelector("h3").textContent;
+      const repoCard = e.target.closest(".repo-card");
+      if (repoCard && repoCard.querySelector(".repo-title")) {
+        const repoName = repoCard.querySelector(".repo-title").textContent;
         if (repoName) { e.preventDefault(); window.openRepository(repoName); }
       }
       const repoItem = e.target. closest(".repo-item");
