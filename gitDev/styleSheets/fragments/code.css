@@ -1,3 +1,57 @@
+
+
+
+
+
+:root {
+  --github-canvas-default: #22272e;
+  --github-canvas-overlay: #2d333b;
+  --github-canvas-inset: #1c2128;
+  --github-canvas-subtle: #2d333b;
+  --github-border-default: #444c56;
+  --github-border-muted: #373e47;
+  --github-neutral-emphasis: #768390;
+  --github-neutral-muted: #636e7b;
+  --github-fg-default: #adbac7;
+  --github-fg-muted: #768390;
+  --github-fg-subtle: #545d68;
+  --github-accent-fg: #539bf5;
+  --github-accent-emphasis: #4184e4;
+  --github-success-fg: #57ab5a;
+  --github-danger-fg: #e5534b;
+  --github-warning-fg: #c69026;
+  --github-btn-primary-bg: #347d39;
+  --github-btn-primary-hover: #46954a;
+  --github-btn-secondary-bg: #373e47;
+  --github-btn-secondary-hover: #444c56;
+  
+  
+  
+
+  --bgMain: #22272e;
+  --bgCode: #1c2128;
+  --bgHeader: #1c2128;
+  --borderDefault: #444c56;
+
+  --btnDefault: #373e47;
+  --btnHover: #444c56;
+  --textMain: #adbac7;
+  --textMuted: #768390;
+  --accentBlue: #316dca;
+
+  --syntaxKeyword: #f47067;
+  --syntaxString: #96d0ff;
+  --syntaxVariable: #adbac7;
+  --syntaxFunction: #dcbdfb;
+  --syntaxNumber: #6cb6ff;
+  --syntaxComment: #768390;
+  --syntaxConstant: #6cb6ff;
+  --syntaxTag: #8ddb8c;
+  --syntaxMatch: #ae7c14;
+}
+  
+
+
 #coderWrapper {
   display: flex;
   flex-direction: column;
