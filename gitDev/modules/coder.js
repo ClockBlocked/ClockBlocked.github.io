@@ -25,7 +25,6 @@ class coderViewEdit {
     filePage.innerHTML = this.getTemplate();
     this.cacheElements();
     this.bindEvents();
-    this.injectStyles();
     if (typeof CodeMirror !== "undefined") this.setupCodeMirror();
     else setTimeout(() => this.setupCodeMirror(), 100);
     this.loadUserPreferences();
