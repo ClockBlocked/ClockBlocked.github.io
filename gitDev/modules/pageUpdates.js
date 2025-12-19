@@ -43,8 +43,37 @@ function renderRepositoryList() {
   }
   currentState.repositories.forEach(repo => {
     const repoCard = document.createElement("div");
-    repoCard.className = "bg-github-canvas-overlay border border-github-border-default rounded-lg p-4 hover:border-github-accent-fg transition-colors cursor-pointer";
-    repoCard.innerHTML = `<div class="flex items-start justify-between"><div class="flex-1"><h3 class="text-lg font-semibold text-github-accent-fg mb-1">${repo.name}</h3><p class="text-sm text-github-fg-muted mb-3">${repo.description || "No description"}</p><div class="flex items-center space-x-4 text-xs text-github-fg-muted"><span class="flex items-center"><svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 16 16"><path d="M8 . 25a. 75.75 0 0 1 . 673.418l1.882 3.815 4.21. 612a.75.75 0 0 1 .416 1.279l-3.046 2.97. 719 4.192a.751.751 0 0 1-1.088. 791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l. 72-4.194L. 818 6.374a.75.75 0 0 1 . 416-1.28l4.21-.611L7.327. 668A.75.75 0 0 1 8 .25Z"/></svg>${repo.visibility || "public"}</span><span>${new Date(repo.lastModified).toLocaleDateString()}</span></div></div><button onclick="event.stopPropagation(); deleteRepository('${repo.name}')" class="p-1 text-github-fg-muted hover:text-github-danger-fg"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16"><path d="M11 1. 75V3h2.25a. 75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5H5V1.75C5 . 784 5.784 0 6.75 0h2.5C10.216 0 11 .784 11 1.75ZM4.496 6.675l.66 6.6a. 25.25 0 0 0 .249.225h5.19a.25.25 0 0 0 .249-.225l.66-6.6a.75.75 0 0 1 1.492. 149l-. 66 6.6A1.748 1.748 0 0 1 10.595 15h-5.19a1.75 1.75 0 0 1-1.741-1.575l-.66-6.6a. 75.75 0 1 1 1.492-.15ZM6.5 1.75V3h3V1.75a. 25.25 0 0 0-.25-.25h-2.5a.25.25 0 0 0-.25.25Z"/></svg></button></div>`;
+    repoCard.className = "repo-card";
+    repoCard.innerHTML = `
+    <div class="repo-card-header">
+        <div class="repo-card-content">
+          <h3 class="repo-title">${this.escapeHTML(repo.name)}</h3>
+          <p class="repo-description">${this.escapeHTML(repo.description || 'No description')}</p>
+          <div class="repo-meta">
+            <span class="repo-visibility">
+              <svg class="repo-star-icon" viewBox="0 0 16 16">
+                <path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.751 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z"/>
+              </svg>
+              ${this.escapeHTML(visibility)}
+            </span>
+            <span class="repo-meta-item">
+              <svg class="repo-star-icon" viewBox="0 0 16 16" style="opacity: 0.6;">
+                <path d="M8 3.5a.75.75 0 0 0-.75.75v3.5h-3.5a.75.75 0 0 0 0 1.5h3.5v3.5a.75.75 0 0 0 1.5 0v-3.5h3.5a.75.75 0 0 0 0-1.5h-3.5v-3.5A.75.75 0 0 0 8 3.5Z"/>
+              </svg>
+              ${this.escapeHTML(lastModified)}
+            </span>
+          </div>
+        </div>
+        <button class="repo-delete-button" 
+                aria-label="Delete repository ${repo.name}"
+                data-action="delete-repo"
+                data-repo-name="${this.escapeAttribute(repo.name)}">
+          <svg class="repo-delete-icon" viewBox="0 0 16 16">
+            <path d="M11 1.75V3h2.25a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5H5V1.75C5 .784 5.784 0 6.75 0h2.5C10.216 0 11 .784 11 1.75ZM4.496 6.675l.66 6.6a.25.25 0 0 0 .249.225h5.19a.25.25 0 0 0 .249-.225l.66-6.6a.75.75 0 0 1 1.492.149l-.66 6.6A1.748 1.748 0 0 1 10.595 15h-5.19a1.75 1.75 0 0 1-1.741-1.575l-.66-6.6a.75.75 0 1 1 1.492-.15ZM6.5 1.75V3h3V1.75a.25.25 0 0 0-.25-.25h-2.5a.25.25 0 0 0-.25.25Z"/>
+          </svg>
+        </button>
+      </div>
+    `;
     repoCard.addEventListener("click", () => window.openRepository(repo. name));
     repoList.appendChild(repoCard);
   });
