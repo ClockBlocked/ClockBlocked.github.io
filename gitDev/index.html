@@ -13,6 +13,23 @@
   <link rel="stylesheet" href="https://clockblocked.github.io/gitDev/styleSheets/global/fonts.css" />
   <link rel="stylesheet" href="https://clockblocked.github.io/gitDev/styleSheets/enhancements.css" />
   
+  <link rel="stylesheet" href="https://clockblocked.github.io/gitDev/styleSheets/fragments/code.css" />
+  <link rel="stylesheet" href="https://clockblocked.github.io/gitDev/styleSheets/fragments/dropdowns.css" />
+  <link rel="stylesheet" href="https://clockblocked.github.io/gitDev/styleSheets/fragments/files.css" />
+  <link rel="stylesheet" href="https://clockblocked.github.io/gitDev/styleSheets/fragments/modals.css" />
+  <link rel="stylesheet" href="https://clockblocked.github.io/gitDev/styleSheets/fragments/navbar.css" />
+  <link rel="stylesheet" href="https://clockblocked.github.io/gitDev/styleSheets/fragments/popOvers.css" />
+  <link rel="stylesheet" href="https://clockblocked.github.io/gitDev/styleSheets/fragments/repositories.css" />
+  <link rel="stylesheet" href="https://clockblocked.github.io/gitDev/styleSheets/fragments/sidebars.css" />
+  
+  <link rel="stylesheet" href="https://clockblocked.github.io/gitDev/styleSheets/fragments/code.css" />
+  <link rel="stylesheet" href="https://clockblocked.github.io/gitDev/styleSheets/fragments/code.css" />
+  <link rel="stylesheet" href="https://clockblocked.github.io/gitDev/styleSheets/fragments/code.css" />
+  <link rel="stylesheet" href="https://clockblocked.github.io/gitDev/styleSheets/fragments/code.css" />
+  <link rel="stylesheet" href="https://clockblocked.github.io/gitDev/styleSheets/fragments/code.css" />
+  <link rel="stylesheet" href="https://clockblocked.github.io/gitDev/styleSheets/fragments/code.css" />
+  <link rel="stylesheet" href="https://clockblocked.github.io/gitDev/styleSheets/fragments/code.css" />
+  
   <style>
 * {
   -webkit-touch-callout: none;
@@ -1091,61 +1108,78 @@ background: linear-gradient(90deg, #dc2626, #ef4444, #f87171);
   </div>
 
 
-  <!-- Top Navigation Bar -->
-  <nav class="navbar-container">
-    <div class="navbar-content">
-      <!-- Left Section -->
-      <div class="navbar-left">
-        <button id="leftSidebarTrigger" class="menu-button">
-          <i class="fas fa-bars"></i>
-        </button>
-        <a href="#" class="flex items-center space-x-2">
-          <i class="fab fa-github text-2xl"></i>
-          <span class="text-sm font-semibold">GitDev</span>
-        </a>
-      </div>
-
-      <!-- Center Search --
-      <div class="flex-1 max-w-xl mx-4">
-        <div class="relative">
-          <input 
-            type="text" 
-            placeholder="Search repositories, files..." 
-            class="w-full px-4 py-2 bg-github-canvas-inset border border-github-border-default rounded-md text-sm text-github-fg-default placeholder-github-fg-muted focus:outline-none focus:ring-2 focus:ring-github-accent-fg focus:border-transparent"
-          >
-          <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-github-fg-muted text-sm">
-            Ctrl+K
-          </div>
-        </div>
-      </div>
----->
-
-<button 
-    onclick="showSearchModal()" 
-    class="flex items-center gap-2 px-4 py-2 bg-github-canvas-overlay hover:bg-github-canvas-subtle border border-github-border-default rounded-lg transition-all"
-    data-tooltip="Search files (Ctrl+K)"
->
-    <i class="fas fa-search"></i>
-    <span class="hidden sm:inline">Search</span>
-    <kbd class="hidden lg:inline-block ml-2 text-xs">Ctrl+K</kbd>
-</button>
-
-
-      <!-- Right Section -->
-      <div class="navbar-right">
-        <button data-action="show-create-file" class="menu-button">
-          <i class="fas fa-plus"></i>
-          <span class="ml-2 text-sm">New</span>
-        </button>
-        <button data-action="toggle-theme" class="menu-button">
-          <i id="themeIcon" class="fas fa-moon"></i>
-        </button>
-        <button id="rightSidebarTrigger" class="menu-button">
-          <i class="fas fa-ellipsis-v"></i>
-        </button>
-      </div>
+<!-- Top Navigation Bar -->
+<nav class="navbar" aria-label="Main navigation">
+  <div class="navbar-inner">
+    
+    <!-- Left Section -->
+    <div class="navbar-section navbar-left">
+      <button 
+        id="leftSidebarTrigger" 
+        class="navbar-button navbar-button-icon"
+        aria-label="Toggle left sidebar menu"
+        data-action="toggle-sidebar"
+        data-target="left"
+      >
+        <i class="fas fa-bars"></i>
+      </button>
+      
+      <a href="#" class="navbar-brand" aria-label="GitDev homepage">
+        <i class="fab fa-github navbar-brand-icon"></i>
+        <span class="navbar-brand-text">GitDev</span>
+      </a>
     </div>
-  </nav>
+
+    <!-- Center Section (Search Button) -->
+    <div class="navbar-section navbar-center">
+      <button 
+        onclick="showSearchModal()" 
+        class="navbar-button navbar-button-search"
+        aria-label="Search files"
+        data-action="open-search"
+        data-tooltip="Search files (Ctrl+K)"
+      >
+        <i class="fas fa-search navbar-button-icon"></i>
+        <span class="navbar-button-label">Search</span>
+        <kbd class="navbar-button-shortcut" aria-hidden="true">Ctrl+K</kbd>
+      </button>
+    </div>
+
+    <!-- Right Section -->
+    <div class="navbar-section navbar-right">
+      <button 
+        class="navbar-button navbar-button-with-text"
+        data-action="show-create-file"
+        aria-label="Create new file"
+      >
+        <i class="fas fa-plus"></i>
+        <span class="navbar-button-text">New</span>
+      </button>
+      
+      <button 
+        class="navbar-button navbar-button-icon"
+        data-action="toggle-theme"
+        aria-label="Toggle dark/light theme"
+        id="themeToggle"
+      >
+        <i id="themeIcon" class="fas fa-moon"></i>
+      </button>
+      
+      <button 
+        id="rightSidebarTrigger" 
+        class="navbar-button navbar-button-icon"
+        aria-label="Toggle right sidebar menu"
+        data-action="toggle-sidebar"
+        data-target="right"
+      >
+        <i class="fas fa-ellipsis-v"></i>
+      </button>
+    </div>
+    
+  </div>
+</nav>
+
+
 
   <!-- Overlay for Mobile -->
   <div id="overlay" class="fixed inset-0 bg-black"></div>
