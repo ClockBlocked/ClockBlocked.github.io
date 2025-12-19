@@ -1,0 +1,364 @@
+#coderWrapper {
+  display: flex;
+  flex-direction: column;
+  height: 65svh;
+  min-height: 300px;
+  max-height: calc(100vh - 200px);
+  background-color: var(--bgCode);
+  border: 1px solid var(--borderDefault);
+  overflow: hidden;
+  position: relative;
+  border-radius: 8px;
+  margin-top: 8px;
+}
+#coderWrapper.fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  max-height: 100vh;
+  margin: 0;
+  border-radius: 0;
+  z-index: 9999;
+  border: none;
+}
+#codeMirrorContainer {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+#codeMirrorContainer .CodeMirror {
+  height: 100% !important;
+  width: 100% !important;
+  flex: 1 1 auto;
+  background-color: var(--bgCode) !important;
+  font-family: "JetBrains Mono", "Fira Code", Consolas, monospace;
+  line-height: 1.4;
+  color: var(--textPrimary);
+}
+#codeMirrorContainer .CodeMirror-scroll {
+  overflow: auto !important;
+}
+#codeMirrorContainer .CodeMirror-gutters {
+  background-color: var(--bgCode) !important;
+  border-right: 1px solid var(--borderDefault);
+}
+#codeMirrorContainer .CodeMirror-gutter {
+  background-color: var(--bgCode) !important;
+}
+#codeMirrorContainer .CodeMirror-linenumber {
+  color: var(--textMuted);
+  padding: 0 8px 0 12px;
+  min-width: 40px;
+}
+#codeMirrorContainer .CodeMirror-foldgutter {
+  width: 16px;
+}
+#codeMirrorContainer .CodeMirror-foldgutter-open,
+#codeMirrorContainer .CodeMirror-foldgutter-folded {
+  cursor: pointer;
+  color: var(--textMuted);
+  font-size: 14px;
+  line-height: 1.6;
+  text-align: center;
+  transition: color 0.15s ease;
+}
+#codeMirrorContainer .CodeMirror-foldgutter-open::after {
+  content: "▾";
+  display: inline-block;
+}
+#codeMirrorContainer .CodeMirror-foldgutter-folded::after {
+  content: "▸";
+  display: inline-block;
+}
+#codeMirrorContainer .CodeMirror-foldgutter-open:hover,
+#codeMirrorContainer .CodeMirror-foldgutter-folded:hover {
+  color: var(--textPrimary);
+}
+#codeMirrorContainer .CodeMirror-foldmarker {
+  background-color: var(--bgSecondary);
+  color: var(--textSecondary);
+  border: 1px solid var(--borderDefault);
+  border-radius: 4px;
+  padding: 0 6px;
+  margin: 0 4px;
+  font-size: 12px;
+}
+#codeMirrorContainer .CodeMirror-activeline-background {
+  background-color: var(--bgHover) !important;
+}
+#codeMirrorContainer .CodeMirror-activeline-gutter {
+  background-color: var(--bgHover) !important;
+}
+#codeMirrorContainer .CodeMirror-selected {
+  background-color: var(--bgSelection) !important;
+}
+#codeMirrorContainer .CodeMirror-matchingbracket {
+  color: var(--accentPrimary) !important;
+  background-color: var(--bgHover);
+  border-bottom: 2px solid var(--accentPrimary);
+}
+#codeMirrorContainer .CodeMirror-cursor {
+  border-left: 2px solid var(--accentPrimary);
+}
+.fileFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 12px;
+  background-color: var(--bgSecondary);
+  border: 1px solid var(--borderDefault);
+  border-top: none;
+  margin: 0 0.5rem 0 0.5rem;
+  border-radius: 0 0 8px 8px;
+}
+.footerStats,
+.footerRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.footerDivider {
+  color: var(--textMuted);
+  opacity: 0.5;
+}
+.toolbarButton.active {
+  background-color: var(--bgHover);
+  color: var(--accentPrimary);
+}
+.loading-spinner {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 10;
+}
+.loading-spinner[data-active="true"] {
+  display: flex;
+}
+.spinner-overlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+.spinner-svg {
+  width: 64px;
+  height: 64px;
+}
+.spinner-track {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.15);
+  stroke-width: 6;
+}
+.spinner-head {
+  fill: none;
+  stroke: var(--accentPrimary);
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-dasharray: 80;
+  animation: spin 1.2s linear infinite;
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0.5rem 0.5rem 0.25rem 0.5rem;
+}
+.navigation {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--textMuted);
+}
+.navButton {
+  background: var(--bgSecondary);
+  border: 1px solid var(--borderDefault);
+  color: var(--textPrimary);
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.separator {
+  color: var(--textMuted);
+}
+.fileNameInput {
+  background: var(--bgSecondary);
+  border: 1px solid var(--borderDefault);
+  color: var(--textPrimary);
+  padding: 6px 10px;
+  border-radius: 6px;
+  min-width: 120px;
+  font-weight: 600;
+}
+.buttonGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.actionButton {
+  background: var(--bgSecondary);
+  border: 1px solid var(--borderDefault);
+  color: var(--textPrimary);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.actionButton:hover {
+  background: var(--bgHover);
+  color: var(--accentPrimary);
+}
+.icon {
+  width: 18px;
+  height: 18px;
+}
+.fileHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.25rem 0.5rem 0.5rem 0.5rem;
+}
+.toolbarGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.toolbarButton {
+  background: var(--bgSecondary);
+  border: 1px solid var(--borderDefault);
+  color: var(--textPrimary);
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.toolbarButton:hover {
+  background: var(--bgHover);
+  color: var(--accentPrimary);
+}
+.smallIcon {
+  width: 16px;
+  height: 16px;
+}
+.fontSizeControl {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bgSecondary);
+  border: 1px solid var(--borderDefault);
+  padding: 4px 8px;
+  border-radius: 8px;
+}
+.fontButton {
+  background: transparent;
+  border: none;
+  color: var(--textPrimary);
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.fontButton:hover {
+  color: var(--accentPrimary);
+}
+.fontSizeDisplay {
+  color: var(--textPrimary);
+  font-weight: 600;
+}
+.tinyIcon {
+  width: 14px;
+  height: 14px;
+}
+.commitPanel {
+  margin: 0.5rem;
+  border: 1px solid var(--borderDefault);
+  background: var(--bgSecondary);
+  border-radius: 8px;
+  padding: 12px;
+}
+.panelTitle {
+  margin: 0 0 8px 0;
+  color: var(--textPrimary);
+  font-size: 14px;
+  font-weight: 700;
+}
+.panelContent {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.commitInput,
+.commitTextarea {
+  width: 100%;
+  border: 1px solid var(--borderDefault);
+  background: var(--bgCode);
+  color: var(--textPrimary);
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 14px;
+}
+.commitTextarea {
+  resize: vertical;
+}
+.panelButtons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.primaryButton {
+  background: var(--accentPrimary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.secondaryButton {
+  background: var(--bgSecondary);
+  color: var(--textPrimary);
+  border: 1px solid var(--borderDefault);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.primaryButton:hover {
+  filter: brightness(1.05);
+}
+.secondaryButton:hover {
+  background: var(--bgHover);
+}
+.hidden {
+  display: none !important;
+}
