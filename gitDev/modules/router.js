@@ -1,414 +1,85 @@
-
-
-
-/**
-function navigateToRoot() {
-  currentState.path = '';
-  
-  showLoading('Loading repository root...');
-//  ProgressBar.show();
-  
-  setTimeout(() => {
-    try {
-      currentState.files = LocalStorageManager.listFiles(currentState.repository, '');
-      renderFileList();
-      updateBreadcrumb();
-    } catch (error) {
-      console.error('Failed to load repository root:', error);
-    }
-    
-    hideLoading();
-//    ProgressBar.hide();
-  }, 150);
-}
-
-function navigateToPath(path) {
-  currentState.path = path;
-  
-  showLoading(`Loading directory ${path}...`);
-//  ProgressBar.show();
-  
-  setTimeout(() => {
-    try {
-      const pathPrefix = path ? path + '/' : '';
-      currentState.files = LocalStorageManager.listFiles(currentState.repository, pathPrefix);
-      renderFileList();
-      updateBreadcrumb();
-    } catch (error) {
-      console.error(`Failed to load path ${path}:`, error);
-    }
-    
-    hideLoading();
-//    ProgressBar.hide();
-  }, 150);
-}
-
-
-
-function showFileEditor() {
-  document.getElementById('explorerView').classList.add('hidden');
-  document.getElementById('fileViewer').classList.add('hidden');
-  document.getElementById('repoSelectorView').classList.add('hidden');
-  document.getElementById('fileEditor').classList.remove('hidden');
-  
-//  ProgressBar.show();
-//  setTimeout(() => ProgressBar.hide(), 300);
-  setTimeout(() => LoadingProgress.hide(), 300);
-}
-
 function showRepoSelector() {
-    // Hide other views
-    const explorerView = document.getElementById('explorerView');
-    const coder = document.getElementById('coder');
-    
-    if (explorerView) explorerView.classList.add('hidden');
-    if (coder) coder.classList.add('hidden');
-    
-    // Show repo selector
-    const repoSelector = document.getElementById('repoSelectorView');
-    if (repoSelector) {
-        repoSelector.classList.remove('hidden');
-    }
-    
-    LoadingProgress.show();
-    setTimeout(() => {
-        LoadingProgress.hide();
-    }, 400);
-}
-
-
-
-
-
-// In router.js, update these functions:
-
-function showFileViewer() {
-    // Hide other views
-    const repoSelector = document.getElementById('repoSelectorView');
-    const explorerView = document.getElementById('explorerView');
-    
-    if (repoSelector) repoSelector.classList.add('hidden');
-    if (explorerView) explorerView.classList.add('hidden');
-    
-    // Show the unified coder
-    const coder = document.getElementById('coder');
-    if (coder) {
-        coder.classList.remove('hidden');
-    }
-    
-    LoadingProgress.show();
-    setTimeout(() => LoadingProgress.hide(), 300);
+  const explorerView = document.getElementById("explorerView");
+  const fileView = document.querySelector('. pages[data-page="file"]');
+  const repoSelector = document.getElementById("repoSelectorView");
+  if (explorerView) explorerView.classList. add("hidden");
+  if (fileView) fileView.classList. add("hidden");
+  if (repoSelector) repoSelector.classList.remove("hidden");
+  LoadingProgress.show();
+  setTimeout(() => LoadingProgress.hide(), 400);
 }
 
 function showExplorer() {
-    if (currentState.repository) {
-        // Hide other views
-        const repoSelector = document.getElementById('repoSelectorView');
-        const coder = document.getElementById('coder');
-        
-        if (repoSelector) repoSelector.classList.add('hidden');
-        if (coder) coder.classList.add('hidden');
-        
-        // Show explorer view
-        const explorerView = document.getElementById('explorerView');
-        if (explorerView) {
-            explorerView.classList.remove('hidden');
-        } else {
-            console.error('explorerView element not found');
-            return;
-        }
-        
-        updateStats();
-        LoadingProgress.show();
-        setTimeout(() => {
-            LoadingProgress.hide();
-        }, 300);
-    }
+  if (! window.currentState || ! window.currentState. repository) return;
+  const repoSelector = document.getElementById("repoSelectorView");
+  const fileView = document.querySelector('.pages[data-page="file"]');
+  const explorerView = document.getElementById("explorerView");
+  if (repoSelector) repoSelector.classList.add("hidden");
+  if (fileView) fileView.classList. add("hidden");
+  if (explorerView) explorerView.classList.remove("hidden");
+  if (typeof updateStats === "function") updateStats();
+  LoadingProgress.show();
+  setTimeout(() => LoadingProgress.hide(), 300);
 }
 
-
-
-
-
-
-const loaderStyles = `
-  .gh-progress {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 2.5px;
-    z-index: 9999;
-    background-color: #e1e4e8;
-    transition: opacity 0.5s linear;
-    opacity: 0;
-    pointer-events: none;
-  }
-  
-  .gh-progress.visible {
-    opacity: 1;
-    transition: opacity 0.3s ease-in;
-  }
-  
-  .gh-progress-fill {
-    display: block;
-    height: 100%;
-    width: 0;
-    background-color: #0366d6;
-    transition: width 0.5s ease-in-out;
-  }
-`;
-
-const LoadingProgress = (() => {
-
-  let progressElement = null;
-  let fillElement = null;
-  let hideTimeout = null;
-  let progressInterval = null;
-  let currentProgress = 0;
-
-  let config = {
-    color: '#1c7eec',
-    height: '2.5px', 
-    minimum: 0.08,
-    maximum: 0.994,
-    incrementPace: 'realistic'
-  };
-
-  function init() {
-    progressElement = document.createElement('div');
-    progressElement.className = 'gh-progress';
-    
-    fillElement = document.createElement('div'); 
-    fillElement.className = 'gh-progress-fill';
-    
-    progressElement.appendChild(fillElement);
-    
-    const styleElement = document.createElement('style');
-    styleElement.innerHTML = loaderStyles;
-    document.head.appendChild(styleElement);
-    
-    progressElement.style.height = config.height;
-    fillElement.style.backgroundColor = config.color;
-    
-    document.body.appendChild(progressElement);
-  }
-
-  function show() {
-    if (!progressElement) init();
-    
-    cleanup();
-    currentProgress = 0;
-    progressElement.classList.remove('hidden');  
-    progressElement.classList.add('visible');
-    
-    if (config.incrementPace === 'realistic') {
-      simulateRealisticLoad();
-    } else if (config.incrementPace === 'linear') {
-      simulateLinearLoad();
-    } else {
-      fillElement.style.width = `${config.minimum * 100}%`; 
+function showFileViewer() {
+  const repoSelector = document. getElementById("repoSelectorView");
+  const explorerView = document. getElementById("explorerView");
+  const fileView = document.querySelector('.pages[data-page="file"]');
+  if (repoSelector) repoSelector.classList.add("hidden");
+  if (explorerView) explorerView.classList.add("hidden");
+  if (fileView) {
+    fileView. classList.remove("hidden");
+    if (window.coderViewEdit && typeof window.coderViewEdit.init === "function" && ! window.coderViewEdit.isInitialized) {
+      window.coderViewEdit.init();
     }
   }
-
-  function hide() {
-    if (!progressElement) return;
-    
-    currentProgress = 100;
-    fillElement.style.width = '100%';
-    
-    hideTimeout = setTimeout(() => {
-      progressElement.classList.remove('visible');
-      setTimeout(cleanup, 300);  
-    }, 150);
-  }
-
-  function cleanup() {
-    clearTimeout(hideTimeout);
-    hideTimeout = null;
-    
-    clearInterval(progressInterval);
-    progressInterval = null;
-    
-    progressElement.classList.add('hidden');
-    progressElement.classList.remove('visible');
-    
-    fillElement.style.width = '0%';
-    currentProgress = 0;
-  }
-
-  function simulateRealisticLoad() {
-    const updateProgress = () => {
-      if (currentProgress >= config.maximum * 100) {
-        clearInterval(progressInterval);
-        return;
-      }
-      
-      let increment, delay;
-
-      if (currentProgress < 60) {
-        increment = Math.random() * 5 + 3;
-        delay = Math.random() * 60 + 20;
-      } else if (currentProgress < 90) {
-        increment = Math.random() * 2 + 1;
-        delay = Math.random() * 250 + 150;
-      } else {
-        increment = Math.random() * 0.5 + 0.3;  
-        delay = Math.random() * 500 + 500;
-      }
-
-      currentProgress = Math.min(config.maximum * 100, currentProgress + increment);
-      fillElement.style.width = `${currentProgress}%`;
-
-      clearInterval(progressInterval);
-      progressInterval = setTimeout(updateProgress, delay);
-    };
-
-    updateProgress();
-  }
-
-  function simulateLinearLoad() {
-    const updateProgress = () => {
-      currentProgress += 1;
-      fillElement.style.width = `${currentProgress}%`;
-
-      if (currentProgress < config.maximum * 100) {
-        setTimeout(updateProgress, 16);
-      }
-    };
-
-    updateProgress();
-  }
-
-  function configOptions(options = {}) {
-    config = { ...config, ...options };
-
-    if (progressElement) {
-      progressElement.style.height = config.height;
-      fillElement.style.backgroundColor = config.color;
-    }
-  }
-
-  function isVisible() {
-    return progressElement && !progressElement.classList.contains('hidden');
-  }
-
-  return {
-    config: configOptions,
-    show,
-    hide,
-    isVisible  
-  };
-
-})();
-**/
- 
- 
- 
- 
- 
- 
-function navigateToRoot() {
-  currentState.path = '';
-  
-  showLoading('Loading repository root...');
-  
-  setTimeout(() => {
-    try {
-      currentState.files = LocalStorageManager.listFiles(currentState.repository, '');
-      renderFileList();
-      updateBreadcrumb();
-    } catch (error) {}
-    
-    hideLoading();
-  }, 150);
-}
-
-function navigateToPath(path) {
-  currentState.path = path;
-  
-  showLoading(`Loading directory ${path}...`);
-  
-  setTimeout(() => {
-    try {
-      const pathPrefix = path ? path + '/' : '';
-      currentState.files = LocalStorageManager.listFiles(currentState.repository, pathPrefix);
-      renderFileList();
-      updateBreadcrumb();
-    } catch (error) {}
-    
-    hideLoading();
-  }, 150);
+  LoadingProgress. show();
+  setTimeout(() => LoadingProgress.hide(), 300);
 }
 
 function showFileEditor() {
   showFileViewer();
 }
 
-function showRepoSelector() {
-  const explorerView = document.getElementById('explorerView');
-  const coderElement = document.querySelector('.pages[data-page="file"]');
-  
-  if (explorerView) explorerView.classList.add('hidden');
-  if (coderElement) coderElement.classList.add('hidden');
-  
-  const repoSelector = document.getElementById('repoSelectorView');
-  if (repoSelector) {
-    repoSelector.classList.remove('hidden');
-  }
-  
-  LoadingProgress.show();
+function navigateToRoot() {
+  if (! window.currentState) return;
+  window.currentState.path = "";
+  if (typeof showLoading === "function") showLoading("Loading repository root...");
   setTimeout(() => {
-    LoadingProgress.hide();
-  }, 400);
-}
-
-function showFileViewer() {
-  const repoSelector = document.getElementById('repoSelectorView');
-  const explorerView = document.getElementById('explorerView');
-  
-  if (repoSelector) repoSelector.classList.add('hidden');
-  if (explorerView) explorerView.classList.add('hidden');
-  
-  const coderElement = document.querySelector('.pages[data-page="file"]');
-  if (coderElement) {
-    coderElement.classList.remove('hidden');
-    
-    if (window.coderViewEdit && typeof window.coderViewEdit.init === 'function') {
-      const hasHeader = coderElement.querySelector('.code-viewer-header');
-      if (!hasHeader) {
-        window.coderViewEdit.init();
+    try {
+      if (typeof LocalStorageManager !== "undefined") {
+        window.currentState.files = LocalStorageManager.listFiles(window.currentState. repository, "");
       }
-    }
-  }
-  
-  LoadingProgress.show();
-  setTimeout(() => LoadingProgress.hide(), 300);
+      if (typeof renderFileList === "function") renderFileList();
+      if (typeof updateBreadcrumb === "function") updateBreadcrumb();
+    } catch (error) {}
+    if (typeof hideLoading === "function") hideLoading();
+  }, 150);
 }
 
-function showExplorer() {
-  if (currentState.repository) {
-    const repoSelector = document.getElementById('repoSelectorView');
-    const coderElement = document.querySelector('.pages[data-page="file"]');
-    
-    if (repoSelector) repoSelector.classList.add('hidden');
-    if (coderElement) coderElement.classList.add('hidden');
-    
-    const explorerView = document.getElementById('explorerView');
-    if (explorerView) {
-      explorerView.classList.remove('hidden');
-    }
-    
-    updateStats();
-    LoadingProgress.show();
-    setTimeout(() => {
-      LoadingProgress.hide();
-    }, 300);
-  }
+function navigateToPath(path) {
+  if (!window. currentState) return;
+  window.currentState.path = path;
+  if (typeof showLoading === "function") showLoading("Loading directory...");
+  setTimeout(() => {
+    try {
+      const pathPrefix = path ?  path + "/" : "";
+      if (typeof LocalStorageManager !== "undefined") {
+        window.currentState. files = LocalStorageManager.listFiles(window.currentState. repository, pathPrefix);
+      }
+      if (typeof renderFileList === "function") renderFileList();
+      if (typeof updateBreadcrumb === "function") updateBreadcrumb();
+    } catch (error) {}
+    if (typeof hideLoading === "function") hideLoading();
+  }, 150);
 }
 
-
-
+function navigateToFolder(folderName) {
+  if (!window. currentState) return;
+  const newPath = window.currentState.path ?  window.currentState. path + "/" + folderName : folderName;
+  navigateToPath(newPath);
+}
 
 const LoadingProgress = (() => {
   let progressElement = null;
@@ -417,130 +88,87 @@ const LoadingProgress = (() => {
   let progressInterval = null;
   let currentProgress = 0;
   let showTime = null;
-
-  let config = {
-    color: '#1c7eec',
-    height: '2.5px',
+  let isShowing = false;
+  const config = {
     minimum: 0.08,
-    maximum: 0.994,
-    incrementPace: 'realistic',
+    maximum:  0.994,
     minDisplayTime: 600
   };
-
   function init() {
-    progressElement = document.createElement('div');
-    progressElement.className = 'gh-progress';
-    
-    fillElement = document.createElement('div');
-    fillElement.className = 'gh-progress-fill';
-    
-    progressElement.appendChild(fillElement);
-    
-    const styleElement = document.createElement('style');
-    styleElement.innerHTML = `
-      .gh-progress {
+    if (progressElement) return;
+    const style = document.createElement("style");
+    style.id = "loadingProgressStyles";
+    style.textContent = `
+      . gh-progress {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
-        height: 2.5px;
+        height: 2. 5px;
         z-index: 9999;
         background-color: transparent;
-        transition: opacity 0.5s linear;
-        opacity: 0;
         pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.3s ease;
       }
-      
-      .gh-progress.visible {
+      .gh-progress--visible {
         opacity: 1;
-        transition: opacity 0.3s ease-in;
       }
-      
       .gh-progress-fill {
         display: block;
         height: 100%;
         width: 0;
-          background: linear-gradient(90deg, #dc2626, #ef4444, #f87171);
-  box-shadow: 0 0 10px rgba(220, 38, 38, 0.5), 0 0 20px rgba(220, 38, 38, 0.3);
-
-        transition: width 0.5s ease-in-out;
+        background:  linear-gradient(90deg, #dc2626, #ef4444, #f87171);
+        box-shadow: 0 0 10px rgba(220, 38, 38, 0.5), 0 0 20px rgba(220, 38, 38, 0.3);
+        transition:  width 0.3s ease-out;
       }
     `;
-    document.head.appendChild(styleElement);
-    
-    progressElement.style.height = config.height;
-    fillElement.style.backgroundColor = config.color;
-    
+    document.head.appendChild(style);
+    progressElement = document.createElement("div");
+    progressElement.className = "gh-progress";
+    fillElement = document.createElement("div");
+    fillElement.className = "gh-progress-fill";
+    progressElement.appendChild(fillElement);
     document.body.appendChild(progressElement);
   }
-
   function show() {
-    if (!progressElement) init();
-    
-    cleanup();
-    currentProgress = 0;
-    showTime = Date.now();
-    progressElement.classList.remove('hidden');
-    progressElement.classList.add('visible');
-    
-    if (config.incrementPace === 'realistic') {
-      simulateRealisticLoad();
-    } else if (config.incrementPace === 'linear') {
-      simulateLinearLoad();
-    } else {
-      fillElement.style.width = `${config.minimum * 100}%`;
-    }
-  }
-
-  function hide() {
-    if (!progressElement) return;
-    
-    const elapsed = Date.now() - showTime;
-    const remaining = Math.max(0, config.minDisplayTime - elapsed);
-    
-    if (remaining > 0) {
-      setTimeout(() => {
-        actuallyHide();
-      }, remaining);
-    } else {
-      actuallyHide();
-    }
-  }
-
-  function actuallyHide() {
-    currentProgress = 100;
-    fillElement.style.width = '100%';
-    
-    hideTimeout = setTimeout(() => {
-      progressElement.classList.remove('visible');
-      setTimeout(cleanup, 300);
-    }, 150);
-  }
-
-  function cleanup() {
+    if (! progressElement) init();
+    if (isShowing) return;
+    isShowing = true;
     clearTimeout(hideTimeout);
-    hideTimeout = null;
-    
-    clearInterval(progressInterval);
-    progressInterval = null;
-    
-    progressElement.classList.add('hidden');
-    progressElement.classList.remove('visible');
-    
-    fillElement.style.width = '0%';
-    currentProgress = 0;
-    showTime = null;
+    clearTimeout(progressInterval);
+    currentProgress = config.minimum * 100;
+    showTime = Date.now();
+    fillElement.style.transition = "none";
+    fillElement.style.width = "0%";
+    void fillElement.offsetWidth;
+    fillElement.style.transition = "width 0.3s ease-out";
+    progressElement.classList.add("gh-progress--visible");
+    fillElement.style.width = currentProgress + "%";
+    simulateProgress();
   }
-
-  function simulateRealisticLoad() {
-    const updateProgress = () => {
-      if (currentProgress >= config.maximum * 100) {
-        clearInterval(progressInterval);
-        return;
-      }
-      
+  function hide() {
+    if (! progressElement || !isShowing) return;
+    clearTimeout(progressInterval);
+    const elapsed = Date.now() - (showTime || 0);
+    const remaining = Math.max(0, config.minDisplayTime - elapsed);
+    hideTimeout = setTimeout(() => {
+      fillElement.style.width = "100%";
+      setTimeout(() => {
+        progressElement.classList.remove("gh-progress--visible");
+        setTimeout(() => {
+          fillElement.style.width = "0%";
+          currentProgress = 0;
+          showTime = null;
+          isShowing = false;
+        }, 300);
+      }, 150);
+    }, remaining);
+  }
+  function simulateProgress() {
+    function update() {
+      if (currentProgress >= config.maximum * 100 || ! isShowing) return;
       let increment, delay;
-
       if (currentProgress < 60) {
         increment = Math.random() * 5 + 3;
         delay = Math.random() * 60 + 20;
@@ -551,56 +179,16 @@ const LoadingProgress = (() => {
         increment = Math.random() * 0.5 + 0.3;
         delay = Math.random() * 500 + 500;
       }
-
       currentProgress = Math.min(config.maximum * 100, currentProgress + increment);
-      fillElement.style.width = `${currentProgress}%`;
-
-      clearInterval(progressInterval);
-      progressInterval = setTimeout(updateProgress, delay);
-    };
-
-    updateProgress();
-  }
-
-  function simulateLinearLoad() {
-    const updateProgress = () => {
-      currentProgress += 1;
-      fillElement.style.width = `${currentProgress}%`;
-
-      if (currentProgress < config.maximum * 100) {
-        setTimeout(updateProgress, 16);
-      }
-    };
-
-    updateProgress();
-  }
-
-  function configOptions(options = {}) {
-    config = { ...config, ...options };
-
-    if (progressElement) {
-      progressElement.style.height = config.height;
-      fillElement.style.backgroundColor = config.color;
+      fillElement.style.width = currentProgress + "%";
+      progressInterval = setTimeout(update, delay);
     }
+    update();
   }
-
   function isVisible() {
-    return progressElement && !progressElement.classList.contains('hidden');
+    return isShowing;
   }
-
-  function getRemainingMinTime() {
-    if (!showTime) return 0;
-    const elapsed = Date.now() - showTime;
-    return Math.max(0, config.minDisplayTime - elapsed);
-  }
-
-  return {
-    config: configOptions,
-    show,
-    hide,
-    isVisible,
-    getRemainingMinTime
-  };
+  return { show, hide, isVisible };
 })();
 
 const LoadingSpinner = (() => {
@@ -608,118 +196,58 @@ const LoadingSpinner = (() => {
   let hideTimeout = null;
   let isActive = false;
   let showTime = null;
-
-  let config = {
+  const config = {
     fadeDuration: 300,
-    minDisplayTime: 600
+    minDisplayTime: 600,
+    selector: "#loadingSpinner"
   };
-
-  function init(selector = "#loadingSpinner") {
-    if (spinnerElement) return true;
-    
-    spinnerElement = document.querySelector(selector);
+  function init(selector) {
+    if (selector) config.selector = selector;
+    spinnerElement = document. querySelector(config.selector);
     return !!spinnerElement;
   }
-
   function show() {
     if (!spinnerElement && !init()) return;
-    
     clearTimeout(hideTimeout);
     isActive = true;
     showTime = Date.now();
-    
-//    spinnerElement.style.display = "block";
-    void spinnerElement.offsetWidth;
     spinnerElement.setAttribute("data-active", "true");
   }
-
   function hide() {
     if (!spinnerElement || !isActive) return;
-    
-    const elapsed = Date.now() - showTime;
+    const elapsed = Date.now() - (showTime || 0);
     const remaining = Math.max(0, config.minDisplayTime - elapsed);
-    
-    if (remaining > 0) {
-      hideTimeout = setTimeout(actuallyHide, remaining);
-    } else {
-      actuallyHide();
-    }
-  }
-
-  function actuallyHide() {
-    isActive = false;
-    
-    if (spinnerElement) {
-      spinnerElement.setAttribute("data-active", "false");
-    }
-    
     hideTimeout = setTimeout(() => {
-      if (!isActive && spinnerElement) {
-//        spinnerElement.style.display = "none";
-      }
-    }, config.fadeDuration);
+      isActive = false;
+      showTime = null;
+      if (spinnerElement) spinnerElement.setAttribute("data-active", "false");
+    }, remaining);
   }
-
   function toggle() {
-    isActive ? hide() : show();
+    isActive ?  hide() : show();
   }
-
   function isVisible() {
     return isActive;
   }
-
-  function configure(options = {}) {
-    config = { ...config, ...options };
+  function configure(options) {
+    Object.assign(config, options);
   }
-
   function destroy() {
     clearTimeout(hideTimeout);
-    
-    if (spinnerElement) {
-      spinnerElement.setAttribute("data-active", "false");
-//      spinnerElement.style.display = "none";
-    }
-    
+    if (spinnerElement) spinnerElement.setAttribute("data-active", "false");
     spinnerElement = null;
     isActive = false;
     showTime = null;
   }
-
-  function getRemainingMinTime() {
-    if (!showTime) return 0;
-    const elapsed = Date.now() - showTime;
-    return Math.max(0, config.minDisplayTime - elapsed);
-  }
-
-  return {
-    init,
-    show,
-    hide,
-    toggle,
-    isVisible,
-    configure,
-    destroy,
-    getRemainingMinTime
-  };
+  return { init, show, hide, toggle, isVisible, configure, destroy };
 })();
 
 window.LoadingProgress = LoadingProgress;
-window.LoadingSpinner = LoadingSpinner;
-
-window.navigateToRoot = navigateToRoot;
-window.navigateToPath = navigateToPath;
-window.showFileEditor = showFileEditor;
+window. LoadingSpinner = LoadingSpinner;
 window.showRepoSelector = showRepoSelector;
-window.showFileViewer = showFileViewer;
 window.showExplorer = showExplorer;
-/**
- * 
- *  C R E A T E D  B Y
- * 
- *  William Hanson 
- * 
- *  Chevrolay@Outlook.com
- * 
- *  m.me/Chevrolay
- * 
- */
+window.showFileViewer = showFileViewer;
+window.showFileEditor = showFileEditor;
+window. navigateToRoot = navigateToRoot;
+window.navigateToPath = navigateToPath;
+window.navigateToFolder = navigateToFolder;
