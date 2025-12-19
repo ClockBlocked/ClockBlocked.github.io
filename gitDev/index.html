@@ -16,7 +16,6 @@
   --font-head: "WF Visual Sans", sans-serif;
   --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
   
-  /* Font Sizes */
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
   --text-md: 1rem;
@@ -25,99 +24,81 @@
   --text-2xl: 1.5rem;
   --text-3xl: 1.875rem;
   
-  /* Heading Sizes */
   --h1: 2.5rem;
   --h2: 3rem;
   --h3: 1.75rem;
   --h4: 1.5rem;
   
-  /* Font Weights */
   --w-light: 300;
   --w-normal: 400;
   --w-med: 500;
   --w-semi: 600;
   --w-bold: 700;
   
-  /* Spacing */
-  --space-xs: 0.25rem;     /* 4px */
-  --space-sm: 0.5rem;      /* 8px */
-  --space-md: 1rem;        /* 16px */
-  --space-lg: 1.5rem;      /* 24px */
-  --space-xl: 2rem;        /* 32px */
-  --space-2xl: 3rem;       /* 48px */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
   
-  /* Border Radius */
-  --radius-sm: 0.25rem;    /* 4px */
-  --radius-md: 0.5rem;     /* 8px */
-  --radius-lg: 0.75rem;    /* 12px */
-  --radius-xl: 1rem;       /* 16px */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
   --radius-full: 9999px;
   
-  /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
   --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
   --shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
   
-  /* Transitions */
   --transition-fast: 150ms ease;
   --transition-base: 200ms ease;
   --transition-slow: 300ms ease;
   --transition-bounce: 200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ===========================================
-   DARK THEME (GitHub-inspired)
-=========================================== */
 [data-theme="dark"] {
-  /* Canvas Colors */
   --canvas-default: #22272e;
   --canvas-overlay: #2d333b;
   --canvas-inset: #1c2128;
   --canvas-subtle: #2d333b;
   
-  /* Border Colors */
   --border-default: #444c56;
   --border-muted: #373e47;
   --border-subtle: #636e7b;
   
-  /* Text Colors */
   --fg-default: #adbac7;
   --fg-muted: #768390;
   --fg-subtle: #545d68;
   --fg-on-emphasis: #ffffff;
   
-  /* Accent Colors */
   --accent-fg: #539bf5;
   --accent-emphasis: #4184e4;
   --accent-muted: rgba(65, 132, 228, 0.4);
   --accent-subtle: rgba(65, 132, 228, 0.15);
   
-  /* Success Colors */
   --success-fg: #57ab5a;
   --success-emphasis: #347d39;
   --success-muted: rgba(52, 125, 57, 0.4);
   --success-subtle: rgba(52, 125, 57, 0.15);
   
-  /* Danger Colors */
   --danger-fg: #e5534b;
   --danger-emphasis: #c93c37;
   --danger-muted: rgba(201, 60, 55, 0.4);
   --danger-subtle: rgba(201, 60, 55, 0.15);
   
-  /* Warning Colors */
   --warning-fg: #c69026;
   --warning-emphasis: #ae7c14;
   --warning-muted: rgba(174, 124, 20, 0.4);
   --warning-subtle: rgba(174, 124, 20, 0.15);
   
-  /* Neutral Colors */
   --neutral-default: #444c56;
   --neutral-muted: #768390;
   --neutral-subtle: #636e7b;
   
-  /* Button Colors */
   --btn-primary-bg: #347d39;
   --btn-primary-hover: #46954a;
   --btn-primary-active: #2a6b2f;
@@ -138,7 +119,6 @@
   --btn-danger-active: #b62a25;
   --btn-danger-text: #ffffff;
   
-  /* Input Colors */
   --input-bg: #1c2128;
   --input-border: #444c56;
   --input-border-hover: #768390;
@@ -146,7 +126,6 @@
   --input-text: #adbac7;
   --input-placeholder: #636e7b;
   
-  /* Code Colors */
   --code-bg: #2d333b;
   --code-text: #adbac7;
   --code-comment: #768390;
@@ -156,69 +135,55 @@
   --code-function: #dcbdfb;
   --code-variable: #f69d50;
   
-  /* Table Colors */
   --table-header-bg: #2d333b;
   --table-row-bg: #22272e;
   --table-row-hover: #2d333b;
   --table-border: #373e47;
   
-  /* Scrollbar Colors */
   --scrollbar-track: #1c2128;
   --scrollbar-thumb: #444c56;
   --scrollbar-thumb-hover: #768390;
 }
 
-/* ===========================================
-   LIGHT THEME (GitHub-inspired)
-=========================================== */
 [data-theme="light"] {
-  /* Canvas Colors */
   --canvas-default: #ffffff;
   --canvas-overlay: #f6f8fa;
   --canvas-inset: #f6f8fa;
   --canvas-subtle: #f6f8fa;
   
-  /* Border Colors */
   --border-default: #d0d7de;
   --border-muted: #d8dee4;
   --border-subtle: #afb8c1;
   
-  /* Text Colors */
   --fg-default: #1f2328;
   --fg-muted: #656d76;
   --fg-subtle: #6e7781;
   --fg-on-emphasis: #ffffff;
   
-  /* Accent Colors */
   --accent-fg: #0969da;
   --accent-emphasis: #0969da;
   --accent-muted: rgba(9, 105, 218, 0.4);
   --accent-subtle: rgba(9, 105, 218, 0.15);
   
-  /* Success Colors */
   --success-fg: #1a7f37;
   --success-emphasis: #1f883d;
   --success-muted: rgba(31, 136, 61, 0.4);
   --success-subtle: rgba(31, 136, 61, 0.15);
   
-  /* Danger Colors */
   --danger-fg: #d1242f;
   --danger-emphasis: #cf222e;
   --danger-muted: rgba(207, 34, 46, 0.4);
   --danger-subtle: rgba(207, 34, 46, 0.15);
   
-  /* Warning Colors */
   --warning-fg: #9a6700;
   --warning-emphasis: #9a6700;
   --warning-muted: rgba(154, 103, 0, 0.4);
   --warning-subtle: rgba(154, 103, 0, 0.15);
   
-  /* Neutral Colors */
   --neutral-default: #6e7781;
   --neutral-muted: #656d76;
   --neutral-subtle: #8c959f;
   
-  /* Button Colors */
   --btn-primary-bg: #1f883d;
   --btn-primary-hover: #2c974b;
   --btn-primary-active: #1a7f37;
@@ -239,7 +204,6 @@
   --btn-danger-active: #b62324;
   --btn-danger-text: #ffffff;
   
-  /* Input Colors */
   --input-bg: #ffffff;
   --input-border: #d0d7de;
   --input-border-hover: #8c959f;
@@ -247,7 +211,6 @@
   --input-text: #1f2328;
   --input-placeholder: #6e7781;
   
-  /* Code Colors */
   --code-bg: #f6f8fa;
   --code-text: #1f2328;
   --code-comment: #6e7781;
@@ -257,24 +220,18 @@
   --code-function: #6639ba;
   --code-variable: #953800;
   
-  /* Table Colors */
   --table-header-bg: #f6f8fa;
   --table-row-bg: #ffffff;
   --table-row-hover: #f6f8fa;
   --table-border: #d0d7de;
   
-  /* Scrollbar Colors */
   --scrollbar-track: #f6f8fa;
   --scrollbar-thumb: #d0d7de;
   --scrollbar-thumb-hover: #afb8c1;
 }
 
-/* ===========================================
-   SYSTEM PREFERENCES & FALLBACKS
-=========================================== */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
-    /* Inherit dark theme as default if system prefers dark */
     --canvas-default: #22272e;
     --canvas-overlay: #2d333b;
     --canvas-inset: #1c2128;
@@ -284,13 +241,10 @@
     --fg-default: #adbac7;
     --fg-muted: #768390;
     --accent-fg: #539bf5;
-    /* ... include other essential dark theme variables */
   }
 }
 
-/* Fallback defaults (dark theme) */
 :root {
-  /* Essential fallbacks */
   --canvas-default: #22272e;
   --canvas-overlay: #2d333b;
   --fg-default: #adbac7;
@@ -298,9 +252,6 @@
   --border-default: #444c56;
 }
 
-/* ===========================================
-   THEME UTILITY CLASSES
-=========================================== */
 .theme-dark {
   color-scheme: dark;
 }
@@ -309,19 +260,13 @@
   color-scheme: light;
 }
 
-/* Theme transition for smooth switching */
 * {
   transition: background-color var(--transition-base),
               border-color var(--transition-base),
               color var(--transition-base);
 }
 
-/* ===========================================
-   SHORTHAND VARIABLES (Your original naming)
-   These map to the new comprehensive variables
-=========================================== */
 :root {
-  /* Your original shorthand variables for backward compatibility */
   --canvas: var(--canvas-default);
   --overlay: var(--canvas-overlay);
   --inset: var(--canvas-inset);
@@ -347,7 +292,6 @@
   --btn-sec-hover: var(--btn-secondary-hover);
 }
 
-/* Update shorthands for light theme */
 [data-theme="light"] {
   --canvas: var(--canvas-default);
   --overlay: var(--canvas-overlay);
