@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let libraryData = [];
 
-  fetch('library.json')
+  fetch('./library.json')
     .then(res => res.json())
     .then(data => {
       libraryData = data;
