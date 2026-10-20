@@ -1,4 +1,32 @@
-window.MUX_PREVIEW_URL = ""; 
+const videoCatalog = [
+    { id: 'v1_landscape', url: 'media/vid1.mp4', poster: 'poster1.jpg', progress: 85, orientation: 'landscape' },
+    { id: 'v2_portrait', url: 'media/vid2.mp4', poster: 'poster2.jpg', progress: 0, orientation: 'portrait' },
+    { id: 'v3_landscape', url: 'media/vid3.mp4', poster: 'poster3.jpg', progress: 12, orientation: 'landscape' },
+    { id: 'v4_portrait', url: 'media/vid4.mp4', poster: 'poster4.jpg', progress: 100, orientation: 'portrait' },
+    { id: 'v5_landscape', url: 'media/vid5.mp4', poster: 'poster5.jpg', progress: 0, orientation: 'landscape' }
+];
+
+window.MUX_PREVIEW_URL = "";
+
+function generateVideoCards() {
+    return videoCatalog.map((video) => {
+        const progressHtml = video.progress > 0
+            ? '<div class="progress-bar-container"><div class="progress-bar" style="width: ' + video.progress + '%;"></div></div>'
+            : '';
+
+        return `
+        <div class="video-card ${video.orientation}" data-playback-id="${video.id}" data-video-url="${video.url}">
+            <div class="thumbnail-wrapper">
+                <img src="${video.poster}" class="thumbnail-img" loading="lazy" alt="Thumbnail">
+                ${progressHtml}
+            </div>
+            <div class="card-actions">
+                <button class="action-btn queue-btn" type="button" aria-label="Queue video"><i class="fa-solid fa-plus"></i></button>
+                <button class="action-btn menu-btn" type="button" aria-label="More options"><i class="fa-solid fa-ellipsis"></i></button>
+            </div>
+        </div>`;
+    }).join('');
+}
 
 class DynamicSPFRouter {
     constructor() {
@@ -6,18 +34,27 @@ class DynamicSPFRouter {
         this.isRouting = false;
         this.loader = document.getElementById('spf-loader');
         this.mainContainer = document.getElementById('main-content');
-        
+
+        if (!this.loader || !this.mainContainer) {
+            return;
+        }
+
         window.addEventListener('popstate', (e) => this.restoreState(e));
         this.attachLinkInterceptors();
     }
 
     attachLinkInterceptors() {
+        const links = document.querySelectorAll('a[data-spf]');
+        if (!links.length) {
+            return;
+        }
+
         document.body.addEventListener('click', (e) => {
             const link = e.target.closest('a[data-spf]');
             if (link) {
                 e.preventDefault();
                 const url = link.getAttribute('href');
-                if (window.location.pathname !== url) {
+                if (url && window.location.pathname !== url) {
                     this.executeNavigation(url);
                 }
             }
@@ -25,15 +62,15 @@ class DynamicSPFRouter {
     }
 
     async executeNavigation(url, isHistoryPop = false) {
-        if (this.isRouting) return;
+        if (this.isRouting || !this.loader || !this.mainContainer) return;
         this.isRouting = true;
-        
+
         this.loader.classList.add('active');
         this.mainContainer.classList.add('navigating');
 
         try {
             const payload = await this.fetchFragments(url);
-            
+
             if (!isHistoryPop) {
                 history.pushState({ url }, payload.title, url);
             }
@@ -41,9 +78,8 @@ class DynamicSPFRouter {
 
             await this.injectFragments(payload.fragments);
             window.dispatchEvent(new CustomEvent('app:dom-updated'));
-
         } catch (error) {
-            window.location.href = url; 
+            window.location.href = url;
         } finally {
             this.loader.classList.remove('active');
             this.mainContainer.classList.remove('navigating');
@@ -55,9 +91,11 @@ class DynamicSPFRouter {
         if (this.cache.has(url)) {
             return this.cache.get(url);
         }
+
         const response = await fetch(url, {
             headers: { 'X-SPF-Request': 'true' }
         });
+
         if (!response.ok) throw new Error('SPF Request Failed');
         const data = await response.json();
         this.cache.set(url, data);
@@ -85,6 +123,12 @@ class MediaInteractionEngine {
     constructor() {
         this.hoverDelegationTimers = new WeakMap();
         this.activeMuxIntervals = new WeakMap();
+        this.grid = document.getElementById('video-grid');
+
+        if (!this.grid) {
+            return;
+        }
+
         this.initDelegation();
         window.addEventListener('app:dom-updated', () => this.initDelegation());
     }
@@ -110,7 +154,7 @@ class MediaInteractionEngine {
         const timer = setTimeout(() => {
             this.executeMuxPreviewSequence(card);
         }, 1250);
-        
+
         this.hoverDelegationTimers.set(card, timer);
     }
 
@@ -131,7 +175,7 @@ class MediaInteractionEngine {
 
         const playbackId = card.dataset.playbackId;
         const imgNode = card.querySelector('.thumbnail-img');
-        
+
         if (!card.dataset.originalPoster) {
             card.dataset.originalPoster = imgNode.src;
         }
@@ -168,7 +212,7 @@ class MediaInteractionEngine {
             clearInterval(this.activeMuxIntervals.get(card));
             this.activeMuxIntervals.delete(card);
         }
-        
+
         const imgNode = card.querySelector('.thumbnail-img');
         if (imgNode && card.dataset.originalPoster) {
             imgNode.style.opacity = '0';
@@ -190,7 +234,11 @@ class OffCanvasPlayerContext {
             btnMini: document.getElementById('btn-mini'),
             dragHandle: document.querySelector('.player-drag-handle')
         };
-        
+
+        if (!this.ui.wrapper || !this.ui.video) {
+            return;
+        }
+
         this.attachGlobalListeners();
         this.attachControls();
     }
@@ -199,7 +247,7 @@ class OffCanvasPlayerContext {
         document.body.addEventListener('click', (e) => {
             const card = e.target.closest('.video-card');
             const actionBtn = e.target.closest('.action-btn');
-            
+
             if (card && !actionBtn) {
                 this.invokePlayer(card.dataset.videoUrl);
             }
@@ -207,10 +255,16 @@ class OffCanvasPlayerContext {
     }
 
     attachControls() {
-        this.ui.btnClose.addEventListener('click', () => this.dismissPlayer());
-        this.ui.btnPip.addEventListener('click', () => this.togglePictureInPicture());
-        this.ui.btnMini.addEventListener('click', () => this.toggleMiniWindow());
-        
+        if (this.ui.btnClose) {
+            this.ui.btnClose.addEventListener('click', () => this.dismissPlayer());
+        }
+        if (this.ui.btnPip) {
+            this.ui.btnPip.addEventListener('click', () => this.togglePictureInPicture());
+        }
+        if (this.ui.btnMini) {
+            this.ui.btnMini.addEventListener('click', () => this.toggleMiniWindow());
+        }
+
         this.ui.video.addEventListener('leavepictureinpicture', () => {
             if (this.ui.wrapper.classList.contains('closed')) {
                 this.ui.video.pause();
@@ -221,15 +275,17 @@ class OffCanvasPlayerContext {
     invokePlayer(streamUrl) {
         this.ui.video.src = streamUrl;
         this.ui.wrapper.classList.remove('closed');
+        this.ui.wrapper.classList.add('open');
         this.ui.wrapper.classList.remove('mini');
-        
-        this.ui.video.play().catch(e => console.error("Autoplay constrained:", e));
+
+        this.ui.video.play().catch((e) => console.error('Autoplay constrained:', e));
     }
 
     dismissPlayer() {
         this.ui.wrapper.classList.add('closed');
+        this.ui.wrapper.classList.remove('open');
         this.ui.wrapper.classList.remove('mini');
-        
+
         if (document.pictureInPictureElement) {
             document.exitPictureInPicture();
         } else {
@@ -247,7 +303,7 @@ class OffCanvasPlayerContext {
             try {
                 await this.ui.video.requestPictureInPicture();
             } catch (err) {
-                console.error("PiP Initialization Failed:", err);
+                console.error('PiP Initialization Failed:', err);
             }
         }
     }
@@ -261,9 +317,22 @@ class OffCanvasPlayerContext {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    window.StreamApp = {
-        Router: new DynamicSPFRouter(),
-        Interaction: new MediaInteractionEngine(),
-        Player: new OffCanvasPlayerContext()
-    };
+    const grid = document.getElementById('video-grid');
+    if (grid && !grid.dataset.initialized) {
+        grid.innerHTML = generateVideoCards();
+        grid.dataset.initialized = 'true';
+    }
+
+    if (document.getElementById('main-content') && document.getElementById('spf-loader')) {
+        window.StreamApp = {
+            Router: new DynamicSPFRouter(),
+            Interaction: new MediaInteractionEngine(),
+            Player: new OffCanvasPlayerContext()
+        };
+    } else {
+        window.StreamApp = {
+            Interaction: new MediaInteractionEngine(),
+            Player: new OffCanvasPlayerContext()
+        };
+    }
 });
