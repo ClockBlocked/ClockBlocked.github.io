@@ -1,30 +1,20 @@
 (() => {
   'use strict';
 
-  /* =========================================================
-     Config
-     ========================================================= */
-  // Thumbnail format served by Mux (both .jpg and .png are supported).
-  // .jpg is smaller so previews download faster while cycling.
   const THUMB_EXT = 'jpg';
 
-  // Dimensions requested from Mux per orientation (match card aspect ratios).
   const DIMS = {
     landscape: { w: 640, h: 360 },
     portrait:  { w: 480, h: 640 },
     square:    { w: 560, h: 560 }
   };
 
-  // Preview timing — matches your spec: start low, increment each 300ms, loop.
   const PREVIEW_HOVER_DELAY = 1000;   // ms before the slideshow starts
   const PREVIEW_INTERVAL    = 300;    // ms between frames
   const PREVIEW_START       = 3;      // first timestamp sampled
   const PREVIEW_STEP        = 4;      // seconds added each frame
   const PREVIEW_END_PAD     = 4;      // seconds trimmed from the end
 
-  /* =========================================================
-     Utilities
-     ========================================================= */
   const $  = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 
@@ -53,17 +43,11 @@
     return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); };
   }
 
-  /* =========================================================
-     Persistence
-     ========================================================= */
   const LS = {
     get(k, fb) { try { const r = localStorage.getItem(k); return r == null ? fb : JSON.parse(r); } catch { return fb; } },
     set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
   };
 
-  /* =========================================================
-     Mux URL builders
-     ========================================================= */
   function muxThumbUrl(playbackId, orientation = 'landscape', time = 3) {
     const { w, h } = DIMS[orientation] || DIMS.landscape;
     return `https://image.mux.com/${playbackId}/thumbnail.${THUMB_EXT}` +
@@ -74,9 +58,6 @@
     return `https://stream.mux.com/${playbackId}.m3u8`;
   }
 
-  /* =========================================================
-     Store
-     ========================================================= */
   const Store = {
     items: [],
     byId: new Map(),
@@ -97,9 +78,6 @@
     get(id) { return this.byId.get(id) || null; }
   };
 
-  /* =========================================================
-     Queue
-     ========================================================= */
   const Queue = {
     _s: new Set(LS.get('ls.queue', [])),
     has(id)    { return this._s.has(id); },
@@ -115,18 +93,12 @@
     _save() { LS.set('ls.queue', Array.from(this._s)); updateQueueBadge(); }
   };
 
-  /* =========================================================
-     Hidden
-     ========================================================= */
   const Hidden = {
     _s: new Set(LS.get('ls.hidden', [])),
     has(id) { return this._s.has(id); },
     add(id) { this._s.add(id); LS.set('ls.hidden', Array.from(this._s)); }
   };
 
-  /* =========================================================
-     Progress
-     ========================================================= */
   const Progress = {
     _m: LS.get('ls.progress', {}),
     get(id) { return this._m[id] || 0; },
@@ -143,9 +115,6 @@
     }
   };
 
-  /* =========================================================
-     Toast + queue badge
-     ========================================================= */
   function toast(msg, icon = 'fa-circle-check') {
     const wrap = $('#toasts');
     if (!wrap) return;
@@ -168,25 +137,23 @@
     b.hidden = n === 0;
   }
 
-  /* =========================================================
-     Preview engine
-     ---------------------------------------------------------
-     Cycles preview frames using Mux's thumbnail endpoint:
-       https://image.mux.com/<playbackId>/thumbnail.jpg
-         ?width=<w>&height=<h>&time=<seconds>
-     `time` starts low and increases every PREVIEW_INTERVAL ms,
-     wrapping back to the start when it passes the video's end.
-     Each frame is preloaded before being swapped in, so the
-     slideshow never flickers or shows a partially-decoded image.
-     ========================================================= */
-  const Preview = {
-    _hoverTimers: new WeakMap(),
-    _session: null,
 
-    init() {
-      if (!canHover()) return;
+const Preview = {
+  _hoverTimers:   new WeakMap(),  // desktop: card → timeout id
+  _session:       null,           // active slideshow
+  _suppressClick: new WeakMap(),  // mobile: card → timestamp
+  _mobileTimer:   null,
+  _mobileCard:    null,
+  _mobileX:       0,
+  _mobileY:       0,
 
+  init() {
+    const isTouchOnly = !canHover();
+
+    /* -------- Desktop hover (skipped on pure-touch) -------- */
+    if (!isTouchOnly) {
       document.addEventListener('pointerover', (e) => {
+        if (e.pointerType === 'touch') return;   // hybrid devices
         const card = e.target.closest?.('.card');
         if (!card) return;
         if (e.relatedTarget && card.contains(e.relatedTarget)) return;
@@ -194,94 +161,170 @@
       }, true);
 
       document.addEventListener('pointerout', (e) => {
+        if (e.pointerType === 'touch') return;
         const card = e.target.closest?.('.card');
         if (!card) return;
         if (e.relatedTarget && card.contains(e.relatedTarget)) return;
         this._leave(card);
       }, true);
-    },
-
-    _enter(card) {
-      if (reducedMotion() || this._hoverTimers.has(card)) return;
-      const t = setTimeout(() => {
-        this._hoverTimers.delete(card);
-        this._start(card);
-      }, PREVIEW_HOVER_DELAY);
-      this._hoverTimers.set(card, t);
-    },
-
-    _leave(card) {
-      const t = this._hoverTimers.get(card);
-      if (t) { clearTimeout(t); this._hoverTimers.delete(card); }
-      if (this._session && this._session.card === card) this._stop();
-    },
-
-    _start(card) {
-      if (this._session && this._session.card === card) return;
-      this._stop();
-
-      const item = Store.get(card.dataset.id);
-      if (!item) return;
-
-      const frameEl = card.querySelector('.thumb-frame');
-      if (!frameEl) return;
-
-      const orientation = item.orientation || 'landscape';
-      const duration = item.duration || 120;
-      const maxTime = Math.max(PREVIEW_START + PREVIEW_STEP, duration - PREVIEW_END_PAD);
-
-      const session = {
-        card, frameEl,
-        playbackId: item.playbackId,
-        orientation,
-        current: PREVIEW_START,
-        maxTime,
-        timer: null,
-        alive: true
-      };
-      this._session = session;
-
-      const tick = () => {
-        if (!session.alive) return;
-
-        const url = muxThumbUrl(session.playbackId, session.orientation, session.current);
-
-        const pre = new Image();
-        pre.onload = () => {
-          if (!session.alive) return;
-          frameEl.src = url;
-          card.classList.add('is-previewing');
-        };
-        pre.src = url;
-
-        // Advance: strictly increasing, then wrap to start when we hit the end.
-        session.current += PREVIEW_STEP;
-        if (session.current >= session.maxTime) session.current = PREVIEW_START;
-      };
-
-      tick();
-      session.timer = setInterval(tick, PREVIEW_INTERVAL);
-    },
-
-    _stop() {
-      const s = this._session;
-      if (!s) return;
-      s.alive = false;
-      clearInterval(s.timer);
-      s.card.classList.remove('is-previewing');
-      // Let the frame fade out, then release its src
-      setTimeout(() => {
-        if (!s.card.classList.contains('is-previewing')) {
-          s.frameEl.removeAttribute('src');
-        }
-      }, 450);
-      this._session = null;
     }
-  };
 
-  /* =========================================================
-     Card factory
-     ========================================================= */
+    /* -------- Mobile press-and-hold (works everywhere) -------- */
+    document.addEventListener('pointerdown', (e) => {
+      if (e.pointerType !== 'touch') return;
+      const card = e.target.closest?.('.card');
+      if (!card) return;
+      if (e.target.closest('[data-act]')) return;   // let buttons behave normally
+      this._startHold(card, e.clientX, e.clientY);
+    }, { passive: true, capture: true });
+
+    document.addEventListener('pointermove', (e) => {
+      if (e.pointerType !== 'touch' || !this._mobileTimer) return;
+      const dx = e.clientX - this._mobileX;
+      const dy = e.clientY - this._mobileY;
+      // > 12 px of movement before the hold fires = user is scrolling
+      if (Math.abs(dx) + Math.abs(dy) > 12) this._cancelHold();
+    }, { passive: true, capture: true });
+
+    document.addEventListener('pointerup', (e) => {
+      if (e.pointerType !== 'touch') return;
+      this._endHold();
+    }, { capture: true });
+
+    document.addEventListener('pointercancel', (e) => {
+      if (e.pointerType !== 'touch') return;
+      this._cancelHold();
+    }, { capture: true });
+
+    /* Kill OS long-press menus so the hold gesture gets a clean run */
+    document.addEventListener('contextmenu', (e) => {
+      if (e.target.closest?.('.card')) e.preventDefault();
+    });
+  },
+
+  /* ---------- Desktop path ---------- */
+  _enter(card) {
+    if (this._hoverTimers.has(card)) return;
+    const t = setTimeout(() => {
+      this._hoverTimers.delete(card);
+      this._start(card);
+    }, PREVIEW_HOVER_DELAY);
+    this._hoverTimers.set(card, t);
+  },
+
+  _leave(card) {
+    const t = this._hoverTimers.get(card);
+    if (t) { clearTimeout(t); this._hoverTimers.delete(card); }
+    if (this._session && this._session.card === card) this._stop();
+  },
+
+  /* ---------- Mobile path ---------- */
+  _startHold(card, x, y) {
+    this._cancelHold();
+    this._mobileCard = card;
+    this._mobileX = x;
+    this._mobileY = y;
+    this._mobileTimer = setTimeout(() => {
+      this._mobileTimer = null;
+      this._start(card);
+    }, 400);
+  },
+
+  _endHold() {
+    const card = this._mobileCard;
+    if (!card) return;
+    clearTimeout(this._mobileTimer);
+    this._mobileTimer = null;
+    this._mobileCard  = null;
+
+    // Preview was actually running → suppress the click that's about to fire
+    if (this._session && this._session.card === card) {
+      this._suppressClick.set(card, Date.now());
+      this._stop();
+    }
+  },
+
+  _cancelHold() {
+    clearTimeout(this._mobileTimer);
+    this._mobileTimer = null;
+    this._mobileCard  = null;
+    if (this._session) this._stop();
+  },
+
+  /* ---------- Called by the global click handler ---------- */
+  wasJustPreviewed(card) {
+    const ts = this._suppressClick.get(card);
+    if (!ts) return false;
+    this._suppressClick.delete(card);
+    return Date.now() - ts < 400;   // fresh enough to belong to this lift
+  },
+
+  /* ---------- Shared slideshow engine ---------- */
+  _start(card) {
+    if (reducedMotion()) return;
+    if (this._session && this._session.card === card) return;
+    this._stop();
+
+    const item = Store.get(card.dataset.id);
+    if (!item) return;
+
+    const frameEl = card.querySelector('.thumb-frame');
+    if (!frameEl) return;
+
+    const orientation = item.orientation || 'landscape';
+    const duration    = item.duration || 120;
+    const maxTime     = Math.max(PREVIEW_START + PREVIEW_STEP, duration - PREVIEW_END_PAD);
+
+    const session = {
+      card, frameEl,
+      playbackId:  item.playbackId,
+      orientation,
+      current:     PREVIEW_START,
+      maxTime,
+      timer:       null,
+      alive:       true
+    };
+    this._session = session;
+
+    const tick = () => {
+      if (!session.alive) return;
+      const url = muxThumbUrl(session.playbackId, session.orientation, session.current);
+
+      // Preload before swap — no flicker, no half-decoded frames
+      const pre = new Image();
+      pre.onload = () => {
+        if (!session.alive) return;
+        frameEl.src = url;
+        card.classList.add('is-previewing');
+      };
+      pre.src = url;
+
+      // Strictly increasing timestamp, loop on end
+      session.current += PREVIEW_STEP;
+      if (session.current >= session.maxTime) session.current = PREVIEW_START;
+    };
+
+    tick();
+    session.timer = setInterval(tick, PREVIEW_INTERVAL);
+  },
+
+  _stop() {
+    const s = this._session;
+    if (!s) return;
+    s.alive = false;
+    clearInterval(s.timer);
+    s.card.classList.remove('is-previewing');
+    setTimeout(() => {
+      if (!s.card.classList.contains('is-previewing')) {
+        s.frameEl.removeAttribute('src');
+      }
+    }, 450);
+    this._session = null;
+  }
+};
+
+
+
   function createCard(item) {
     const el = document.createElement('article');
     el.className = 'card';
@@ -375,9 +418,6 @@
     grid.appendChild(frag);
   }
 
-  /* =========================================================
-     Floating menu
-     ========================================================= */
   const Menu = {
     el: null,
     open(anchor, item) {
@@ -524,9 +564,6 @@
     });
   }
 
-  /* =========================================================
-     Player
-     ========================================================= */
   const Player = {
     root: null, video: null, titleEl: null, subEl: null, spinner: null,
     hls: null, currentId: null, _lastSaveAt: 0,
@@ -796,9 +833,6 @@
     });
   }
 
-  /* =========================================================
-     Views
-     ========================================================= */
   const Views = {
 
     async library(container) {
@@ -1046,9 +1080,6 @@
     }
   };
 
-  /* =========================================================
-     Router
-     ========================================================= */
   const Router = {
     currentPath: '/',
     _positions: new Map(),
@@ -1135,12 +1166,8 @@
     }
   };
 
-  /* =========================================================
-     Global click delegation
-     ========================================================= */
   function bindClicks() {
     document.addEventListener('click', (e) => {
-      /* Actions */
       const actBtn = e.target.closest('[data-act]');
       if (actBtn) {
         const act = actBtn.dataset.act;
@@ -1169,10 +1196,19 @@
         }
       }
 
-      /* Open player */
+
       const opener = e.target.closest('[data-open-id]');
       if (opener) {
         if (e.target.closest('[data-act="menu"]')) return;
+
+        // If the user just held this card to preview it, eat the click
+        // that the OS synthesized on lift-off.
+        if (Preview.wasJustPreviewed(opener)) {
+          e.preventDefault();
+          e.stopPropagation();
+          return;
+        }
+
         const item = Store.get(opener.dataset.openId);
         if (!item) return;
         e.preventDefault();
@@ -1190,9 +1226,7 @@
     });
   }
 
-  /* =========================================================
-     Boot
-     ========================================================= */
+
   function boot() {
     Player.init();
     Preview.init();
