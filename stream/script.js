@@ -2,101 +2,76 @@
   'use strict';
 
   /* =========================================================
+     Config
+     ========================================================= */
+  // Thumbnail format served by Mux (both .jpg and .png are supported).
+  // .jpg is smaller so previews download faster while cycling.
+  const THUMB_EXT = 'jpg';
+
+  // Dimensions requested from Mux per orientation (match card aspect ratios).
+  const DIMS = {
+    landscape: { w: 640, h: 360 },
+    portrait:  { w: 480, h: 640 },
+    square:    { w: 560, h: 560 }
+  };
+
+  // Preview timing — matches your spec: start low, increment each 300ms, loop.
+  const PREVIEW_HOVER_DELAY = 1000;   // ms before the slideshow starts
+  const PREVIEW_INTERVAL    = 300;    // ms between frames
+  const PREVIEW_START       = 3;      // first timestamp sampled
+  const PREVIEW_STEP        = 4;      // seconds added each frame
+  const PREVIEW_END_PAD     = 4;      // seconds trimmed from the end
+
+  /* =========================================================
      Utilities
      ========================================================= */
-  const $  = (sel, root = document) => root.querySelector(sel);
-  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+  const $  = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 
-  const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
-  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-  const nextFrame = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+  const nextFrame = () => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
-  const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const canHover      = () => window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const canHover      = () => matchMedia('(hover: hover) and (pointer: fine)').matches;
 
-  const ESCAPE_MAP = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
-  const escapeHtml = (s) => String(s).replace(/[&<>"']/g, (c) => ESCAPE_MAP[c]);
+  const ESC_MAP = { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' };
+  const esc = (s) => String(s).replace(/[&<>"']/g, c => ESC_MAP[c]);
 
-  function formatTime(sec) {
+  function fmtTime(sec) {
     sec = Math.max(0, Math.floor(Number(sec) || 0));
     const h = Math.floor(sec / 3600);
     const m = Math.floor((sec % 3600) / 60);
     const s = sec % 60;
-    if (h > 0) return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-    return `${m}:${String(s).padStart(2, '0')}`;
+    return h > 0
+      ? `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`
+      : `${m}:${String(s).padStart(2,'0')}`;
   }
 
   function debounce(fn, ms = 130) {
     let t;
-    return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
-  }
-
-  /* Deterministic RNG so hover previews are stable per-video */
-  function hashStr(str) {
-    let h = 2166136261;
-    for (let i = 0; i < str.length; i++) {
-      h ^= str.charCodeAt(i);
-      h = Math.imul(h, 16777619);
-    }
-    return h >>> 0;
-  }
-  function mulberry32(seed) {
-    return function () {
-      seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
-      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-    };
+    return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); };
   }
 
   /* =========================================================
-     Persistence layer
+     Persistence
      ========================================================= */
   const LS = {
-    get(key, fallback) {
-      try {
-        const raw = localStorage.getItem(key);
-        return raw == null ? fallback : JSON.parse(raw);
-      } catch { return fallback; }
-    },
-    set(key, value) {
-      try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* quota / private mode */ }
-    }
+    get(k, fb) { try { const r = localStorage.getItem(k); return r == null ? fb : JSON.parse(r); } catch { return fb; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
   };
 
   /* =========================================================
-     Mux helpers
+     Mux URL builders
      ========================================================= */
-  const MUX_ASPECT = {
-    landscape: [640, 360],
-    portrait:  [540, 720],
-    square:    [600, 600]
-  };
-
-  function muxThumb(playbackId, orientation = 'landscape', time = 3) {
-    const [w, h] = MUX_ASPECT[orientation] || MUX_ASPECT.landscape;
-    return `https://image.mux.com/${playbackId}/thumbnail.jpg` +
-      `?width=${w}&height=${h}&fit_mode=smartcrop&time=${Math.max(0, time)}`;
+  function muxThumbUrl(playbackId, orientation = 'landscape', time = 3) {
+    const { w, h } = DIMS[orientation] || DIMS.landscape;
+    return `https://image.mux.com/${playbackId}/thumbnail.${THUMB_EXT}` +
+           `?width=${w}&height=${h}&time=${Math.max(0, time)}`;
   }
 
-  /**
-   * Build 8 evenly-distributed-but-jittered frame timestamps.
-   * Deterministic per (playbackId + duration) so the preview is
-   * stable across hover sessions.
-   */
-  function buildPreviewFrames(item) {
-    const { playbackId, duration = 120, orientation = 'landscape' } = item;
-    const rng = mulberry32(hashStr(playbackId + ':' + duration));
-    const COUNT = 8;
-    const start = 3;
-    const end = Math.max(start + 8, duration - 4);
-    const seg = (end - start) / COUNT;
-    const frames = [];
-    for (let i = 0; i < COUNT; i++) {
-      const t = Math.floor(start + seg * i + rng() * seg * 0.85);
-      frames.push(muxThumb(playbackId, orientation, t));
-    }
-    return frames;
+  function muxStreamUrl(playbackId) {
+    return `https://stream.mux.com/${playbackId}.m3u8`;
   }
 
   /* =========================================================
@@ -105,101 +80,80 @@
   const Store = {
     items: [],
     byId: new Map(),
-    _promise: null,
-
+    _p: null,
     async load() {
       if (this.items.length) return this.items;
-      if (this._promise) return this._promise;
-
-      this._promise = fetch('library.json', { cache: 'no-cache' })
-        .then((res) => {
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          return res.json();
-        })
-        .then((data) => {
-          this.items = Array.isArray(data) ? data : [];
-          this.byId = new Map(this.items.map((v) => [v.id, v]));
+      if (this._p) return this._p;
+      this._p = fetch('library.json', { cache: 'no-cache' })
+        .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+        .then(d => {
+          this.items = Array.isArray(d) ? d : [];
+          this.byId = new Map(this.items.map(v => [v.id, v]));
           return this.items;
         })
-        .finally(() => { this._promise = null; });
-
-      return this._promise;
+        .finally(() => { this._p = null; });
+      return this._p;
     },
-
     get(id) { return this.byId.get(id) || null; }
   };
 
   /* =========================================================
-     Queue (persisted)
+     Queue
      ========================================================= */
   const Queue = {
-    _set: new Set(LS.get('ls.queue', [])),
-    has(id)   { return this._set.has(id); },
-    add(id)   { this._set.add(id); this._save(); },
-    remove(id){ this._set.delete(id); this._save(); },
+    _s: new Set(LS.get('ls.queue', [])),
+    has(id)    { return this._s.has(id); },
+    add(id)    { this._s.add(id); this._save(); },
+    remove(id) { this._s.delete(id); this._save(); },
     toggle(id) {
-      this._set.has(id) ? this._set.delete(id) : this._set.add(id);
+      this._s.has(id) ? this._s.delete(id) : this._s.add(id);
       this._save();
-      return this._set.has(id);
+      return this._s.has(id);
     },
-    all()  { return Array.from(this._set); },
-    size() { return this._set.size; },
-    _save() {
-      LS.set('ls.queue', Array.from(this._set));
-      updateQueueBadge();
-    }
+    all() { return Array.from(this._s); },
+    size() { return this._s.size; },
+    _save() { LS.set('ls.queue', Array.from(this._s)); updateQueueBadge(); }
   };
 
   /* =========================================================
-     Hidden (library-only visibility)
+     Hidden
      ========================================================= */
   const Hidden = {
-    _set: new Set(LS.get('ls.hidden', [])),
-    has(id) { return this._set.has(id); },
-    add(id) { this._set.add(id); LS.set('ls.hidden', Array.from(this._set)); },
-    remove(id) { this._set.delete(id); LS.set('ls.hidden', Array.from(this._set)); }
+    _s: new Set(LS.get('ls.hidden', [])),
+    has(id) { return this._s.has(id); },
+    add(id) { this._s.add(id); LS.set('ls.hidden', Array.from(this._s)); }
   };
 
   /* =========================================================
-     Watch progress (persisted)
+     Progress
      ========================================================= */
   const Progress = {
-    _map: LS.get('ls.progress', {}),
-
-    get(id) { return this._map[id] || 0; },
-
-    ratio(id, duration) {
+    _m: LS.get('ls.progress', {}),
+    get(id) { return this._m[id] || 0; },
+    ratio(id, dur) {
       const t = this.get(id);
-      if (!t || !duration) return 0;
-      return clamp(t / duration, 0, 1);
+      if (!t || !dur) return 0;
+      return clamp(t / dur, 0, 1);
     },
-
-    set(id, time, duration) {
-      if (!id || !duration || !isFinite(duration)) return;
+    set(id, time, dur) {
+      if (!id || !dur || !isFinite(dur)) return;
       if (!time || time < 1) return;
-      this._map[id] = (time >= duration - 2) ? duration : time;
-      LS.set('ls.progress', this._map);
-    },
-
-    clear(id) {
-      delete this._map[id];
-      LS.set('ls.progress', this._map);
+      this._m[id] = time >= dur - 2 ? dur : time;
+      LS.set('ls.progress', this._m);
     }
   };
 
   /* =========================================================
-     Toast
+     Toast + queue badge
      ========================================================= */
-  function toast(message, icon = 'fa-circle-check') {
-    const container = $('#toasts');
-    if (!container) return;
-
+  function toast(msg, icon = 'fa-circle-check') {
+    const wrap = $('#toasts');
+    if (!wrap) return;
     const el = document.createElement('div');
     el.className = 'toast';
     el.innerHTML = `<i class="fa-solid ${icon}"></i><span></span>`;
-    el.querySelector('span').textContent = message;
-    container.appendChild(el);
-
+    el.querySelector('span').textContent = msg;
+    wrap.appendChild(el);
     setTimeout(() => {
       el.classList.add('is-out');
       el.addEventListener('animationend', () => el.remove(), { once: true });
@@ -207,22 +161,27 @@
   }
 
   function updateQueueBadge() {
-    const badge = $('#queue-badge');
-    if (!badge) return;
+    const b = $('#queue-badge');
+    if (!b) return;
     const n = Queue.size();
-    badge.textContent = n > 99 ? '99+' : String(n);
-    badge.hidden = n === 0;
+    b.textContent = n > 99 ? '99+' : String(n);
+    b.hidden = n === 0;
   }
 
   /* =========================================================
-     Preview engine  (hover → slideshow of video frames)
+     Preview engine
+     ---------------------------------------------------------
+     Cycles preview frames using Mux's thumbnail endpoint:
+       https://image.mux.com/<playbackId>/thumbnail.jpg
+         ?width=<w>&height=<h>&time=<seconds>
+     `time` starts low and increases every PREVIEW_INTERVAL ms,
+     wrapping back to the start when it passes the video's end.
+     Each frame is preloaded before being swapped in, so the
+     slideshow never flickers or shows a partially-decoded image.
      ========================================================= */
   const Preview = {
-    _timers: new WeakMap(),     // card → setTimeout id
-    _session: null,             // { card, frameEl, frames, i, timer, alive }
-
-    HOVER_DELAY: 1250,
-    FRAME_INTERVAL: 700,
+    _hoverTimers: new WeakMap(),
+    _session: null,
 
     init() {
       if (!canHover()) return;
@@ -231,98 +190,91 @@
         const card = e.target.closest?.('.card');
         if (!card) return;
         if (e.relatedTarget && card.contains(e.relatedTarget)) return;
-        this._onEnter(card);
+        this._enter(card);
       }, true);
 
       document.addEventListener('pointerout', (e) => {
         const card = e.target.closest?.('.card');
         if (!card) return;
         if (e.relatedTarget && card.contains(e.relatedTarget)) return;
-        this._onLeave(card);
+        this._leave(card);
       }, true);
     },
 
-    _onEnter(card) {
-      if (reducedMotion()) return;
-      if (this._timers.has(card)) return;
-
-      const id = setTimeout(() => {
-        this._timers.delete(card);
+    _enter(card) {
+      if (reducedMotion() || this._hoverTimers.has(card)) return;
+      const t = setTimeout(() => {
+        this._hoverTimers.delete(card);
         this._start(card);
-      }, this.HOVER_DELAY);
-
-      this._timers.set(card, id);
+      }, PREVIEW_HOVER_DELAY);
+      this._hoverTimers.set(card, t);
     },
 
-    _onLeave(card) {
-      const t = this._timers.get(card);
-      if (t) { clearTimeout(t); this._timers.delete(card); }
-      this._stop(card);
+    _leave(card) {
+      const t = this._hoverTimers.get(card);
+      if (t) { clearTimeout(t); this._hoverTimers.delete(card); }
+      if (this._session && this._session.card === card) this._stop();
     },
 
     _start(card) {
       if (this._session && this._session.card === card) return;
-      this._stopAll();
+      this._stop();
 
-      const id = card.dataset.id;
-      const item = Store.get(id);
+      const item = Store.get(card.dataset.id);
       if (!item) return;
 
       const frameEl = card.querySelector('.thumb-frame');
       if (!frameEl) return;
 
-      const frames = buildPreviewFrames(item);
-      const session = { card, frameEl, frames, i: 0, timer: null, alive: true };
+      const orientation = item.orientation || 'landscape';
+      const duration = item.duration || 120;
+      const maxTime = Math.max(PREVIEW_START + PREVIEW_STEP, duration - PREVIEW_END_PAD);
+
+      const session = {
+        card, frameEl,
+        playbackId: item.playbackId,
+        orientation,
+        current: PREVIEW_START,
+        maxTime,
+        timer: null,
+        alive: true
+      };
       this._session = session;
 
-      /* Preload the first frame before fading in */
-      const preload = new Image();
-      preload.onload = () => {
+      const tick = () => {
         if (!session.alive) return;
-        frameEl.src = frames[0];
-        card.classList.add('is-previewing');
-        session.i = 1;
-        session.timer = setInterval(() => this._tick(session), this.FRAME_INTERVAL);
+
+        const url = muxThumbUrl(session.playbackId, session.orientation, session.current);
+
+        const pre = new Image();
+        pre.onload = () => {
+          if (!session.alive) return;
+          frameEl.src = url;
+          card.classList.add('is-previewing');
+        };
+        pre.src = url;
+
+        // Advance: strictly increasing, then wrap to start when we hit the end.
+        session.current += PREVIEW_STEP;
+        if (session.current >= session.maxTime) session.current = PREVIEW_START;
       };
-      preload.onerror = () => { session.alive = false; };
-      preload.src = frames[0];
+
+      tick();
+      session.timer = setInterval(tick, PREVIEW_INTERVAL);
     },
 
-    _tick(session) {
-      if (!session.alive) return;
-      const { frames, frameEl } = session;
-      const url = frames[session.i % frames.length];
-      session.i++;
-
-      const img = new Image();
-      img.onload = () => {
-        if (!session.alive) return;
-        frameEl.src = url;
-      };
-      img.src = url;
-    },
-
-    _stop(card) {
-      const session = this._session;
-      if (!session || session.card !== card) return;
-      this._stopAll();
-    },
-
-    _stopAll() {
-      const session = this._session;
-      if (!session) return;
-      session.alive = false;
-      clearInterval(session.timer);
-
-      const { card, frameEl } = session;
-      card.classList.remove('is-previewing');
-
+    _stop() {
+      const s = this._session;
+      if (!s) return;
+      s.alive = false;
+      clearInterval(s.timer);
+      s.card.classList.remove('is-previewing');
+      // Let the frame fade out, then release its src
       setTimeout(() => {
-        if (!card.classList.contains('is-previewing')) {
-          frameEl.removeAttribute('src');
+        if (!s.card.classList.contains('is-previewing')) {
+          s.frameEl.removeAttribute('src');
         }
       }, 450);
-
       this._session = null;
     }
   };
@@ -337,27 +289,38 @@
     el.dataset.openId = item.id;
     el.dataset.search = `${item.title} ${item.orientation || ''}`.toLowerCase();
 
+    const orientation = item.orientation || 'landscape';
     const ratio = Progress.ratio(item.id, item.duration);
     const inQueue = Queue.has(item.id);
-    const orientation = item.orientation || 'landscape';
+
     const orientationLabel =
       orientation === 'portrait' ? 'Portrait' :
       orientation === 'square'   ? 'Square'   : 'Landscape';
 
-    const status = ratio >= 1
-      ? 'Watched'
-      : ratio > 0
-        ? `${Math.round(ratio * 100)}% watched`
-        : 'Not started';
+    const statusLabel =
+      ratio >= 1 ? 'Watched' :
+      ratio > 0  ? `${Math.round(ratio * 100)}% watched` :
+      'Not started';
+
+    let statusPill = '';
+    if (ratio >= 1) {
+      statusPill = `<span class="card-status watched"><i class="fa-solid fa-check" style="font-size:9px"></i> Watched</span>`;
+    } else if (ratio > 0) {
+      statusPill = `<span class="card-status progress"><i class="fa-solid fa-play" style="font-size:8px"></i> Continue</span>`;
+    } else {
+      statusPill = `<span class="card-status new">New</span>`;
+    }
 
     el.innerHTML = `
       <div class="card-thumb" data-orientation="${orientation}">
-        <img class="thumb-base" src="${muxThumb(item.playbackId, orientation, 3)}"
+        <img class="thumb-base" src="${muxThumbUrl(item.playbackId, orientation, 3)}"
              alt="" loading="lazy" decoding="async">
         <img class="thumb-frame" alt="" aria-hidden="true">
         <div class="thumb-shade"></div>
 
         <div class="card-play" aria-hidden="true"><i class="fa-solid fa-play"></i></div>
+
+        ${statusPill}
 
         <div class="card-actions">
           <button class="icon-btn${inQueue ? ' is-active' : ''}" data-act="queue"
@@ -370,19 +333,18 @@
           </button>
         </div>
 
-        <span class="card-badge">${formatTime(item.duration)}</span>
-        ${ratio > 0 ? `<div class="card-progress"><span style="width:${(ratio * 100).toFixed(2)}%"></span></div>` : ''}
+        <span class="card-badge">${fmtTime(item.duration)}</span>
+        ${ratio > 0 ? `<div class="card-progress"><span style="width:${(ratio*100).toFixed(2)}%"></span></div>` : ''}
       </div>
       <div class="card-body">
-        <h3 class="card-title">${escapeHtml(item.title)}</h3>
-        <p class="card-sub">${orientationLabel} · ${status}</p>
+        <h3 class="card-title">${esc(item.title)}</h3>
+        <p class="card-sub">${orientationLabel} · ${statusLabel}</p>
       </div>
     `;
 
     return el;
   }
 
-  /* Entrance observer */
   const CardObserver = new IntersectionObserver((entries, obs) => {
     for (const entry of entries) {
       if (entry.isIntersecting) {
@@ -393,17 +355,13 @@
   }, { rootMargin: '120px 0px' });
 
   function observeCards(root) {
-    $$('.card', root).forEach((c) => CardObserver.observe(c));
+    $$('.card', root).forEach(c => CardObserver.observe(c));
   }
 
-  /* =========================================================
-     Skeletons
-     ========================================================= */
-  function renderSkeletons(grid, count = 8) {
-    const shapes = ['landscape', 'portrait', 'landscape', 'square',
-                    'landscape', 'portrait', 'square', 'landscape'];
+  function renderSkeletons(grid, n = 8) {
+    const shapes = ['landscape','portrait','landscape','square','landscape','portrait','square','landscape'];
     const frag = document.createDocumentFragment();
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < n; i++) {
       const el = document.createElement('div');
       el.className = 'sk-card';
       el.innerHTML = `
@@ -422,10 +380,8 @@
      ========================================================= */
   const Menu = {
     el: null,
-
     open(anchor, item) {
       this.close();
-
       const el = document.createElement('div');
       el.className = 'menu';
       el.setAttribute('role', 'menu');
@@ -451,7 +407,6 @@
       document.body.appendChild(el);
       this.el = el;
 
-      /* Position relative to the anchor, clamped to viewport */
       const a = anchor.getBoundingClientRect();
       const mw = el.offsetWidth;
       const mh = el.offsetHeight;
@@ -459,34 +414,31 @@
 
       let left = a.right - mw;
       let top  = a.bottom + 6;
-
       if (left < pad) left = pad;
-      if (left + mw > window.innerWidth - pad) left = window.innerWidth - mw - pad;
-      if (top + mh > window.innerHeight - pad) top = a.top - mh - 6;
+      if (left + mw > innerWidth - pad) left = innerWidth - mw - pad;
+      if (top + mh > innerHeight - pad) top = a.top - mh - 6;
       if (top < pad) top = pad;
 
       el.style.left = `${left}px`;
-      el.style.top = `${top}px`;
+      el.style.top  = `${top}px`;
 
       el.addEventListener('click', (e) => {
         const btn = e.target.closest('[data-m]');
-        if (!btn) return;
-        this._act(btn.dataset.m, item, el);
+        if (btn) this._act(btn.dataset.m, item);
       });
 
       setTimeout(() => {
         document.addEventListener('pointerdown', this._outside, true);
         document.addEventListener('keydown', this._key, true);
       }, 0);
-
-      window.addEventListener('scroll', this._scroll, true);
+      addEventListener('scroll', this._scroll, true);
     },
 
     _outside: null,
     _key: null,
     _scroll: null,
 
-    _act(action, item, menuEl) {
+    _act(action, item) {
       switch (action) {
         case 'queue': {
           const added = Queue.toggle(item.id);
@@ -498,13 +450,13 @@
         }
         case 'copy': {
           const url = `${location.origin}${location.pathname}#/watch/${item.id}`;
-          copyText(url).then(() => toast('Link copied to clipboard', 'fa-link'));
+          copyText(url).then(() => toast('Link copied', 'fa-link'));
           this.close();
           break;
         }
         case 'stream': {
-          const url = `https://stream.mux.com/${item.playbackId}.m3u8`;
-          copyText(url).then(() => toast('Stream URL copied', 'fa-code'));
+          copyText(muxStreamUrl(item.playbackId))
+            .then(() => toast('Stream URL copied', 'fa-code'));
           this.close();
           break;
         }
@@ -530,21 +482,19 @@
       this.el = null;
       document.removeEventListener('pointerdown', this._outside, true);
       document.removeEventListener('keydown', this._key, true);
-      window.removeEventListener('scroll', this._scroll, true);
+      removeEventListener('scroll', this._scroll, true);
     },
 
-    installHandlers() {
+    install() {
       this._outside = (e) => {
         if (this.el && !this.el.contains(e.target) &&
-            !e.target.closest('[data-act="menu"]')) {
-          this.close();
-        }
+            !e.target.closest('[data-act="menu"]')) this.close();
       };
       this._key = (e) => { if (e.key === 'Escape') this.close(); };
       this._scroll = () => this.close();
     }
   };
-  Menu.installHandlers();
+  Menu.install();
 
   function copyText(text) {
     if (navigator.clipboard?.writeText) {
@@ -552,26 +502,25 @@
     }
     return Promise.resolve(fallbackCopy(text));
   }
-
   function fallbackCopy(text) {
     const ta = document.createElement('textarea');
     ta.value = text;
     ta.style.cssText = 'position:fixed;opacity:0;pointer-events:none';
     document.body.appendChild(ta);
     ta.select();
-    try { document.execCommand('copy'); } catch { /* noop */ }
+    try { document.execCommand('copy'); } catch {}
     ta.remove();
   }
 
   function syncCardQueueState(id) {
-    $$(`.card[data-id="${CSS.escape(id)}"]`).forEach((card) => {
+    $$(`.card[data-id="${CSS.escape(id)}"]`).forEach(card => {
       const btn = card.querySelector('[data-act="queue"]');
       if (!btn) return;
-      const inQueue = Queue.has(id);
-      btn.classList.toggle('is-active', inQueue);
-      btn.setAttribute('aria-pressed', String(inQueue));
-      btn.setAttribute('aria-label', inQueue ? 'Remove from queue' : 'Add to queue');
-      btn.innerHTML = `<i class="fa-solid ${inQueue ? 'fa-check' : 'fa-plus'}"></i>`;
+      const inQ = Queue.has(id);
+      btn.classList.toggle('is-active', inQ);
+      btn.setAttribute('aria-pressed', String(inQ));
+      btn.setAttribute('aria-label', inQ ? 'Remove from queue' : 'Add to queue');
+      btn.innerHTML = `<i class="fa-solid ${inQ ? 'fa-check' : 'fa-plus'}"></i>`;
     });
   }
 
@@ -579,15 +528,8 @@
      Player
      ========================================================= */
   const Player = {
-    root: null,
-    video: null,
-    titleEl: null,
-    subEl: null,
-    spinner: null,
-    hls: null,
-    currentId: null,
-    currentItem: null,
-    lastSavedAt: 0,
+    root: null, video: null, titleEl: null, subEl: null, spinner: null,
+    hls: null, currentId: null, _lastSaveAt: 0,
 
     init() {
       this.root    = $('#player');
@@ -600,29 +542,25 @@
       $('#btn-mini').addEventListener('click',  () => this.toggleMini());
       $('#btn-pip').addEventListener('click',   () => this.togglePip());
 
-      this._bindMediaEvents();
+      this._bindMedia();
       this._bindDrag();
-      this._bindKeyboard();
+      this._bindKeys();
     },
 
-    /* ---------- Public API ---------- */
     async open(item) {
       if (!item) return;
-
-      this.currentItem = item;
       this.currentId = item.id;
 
       this.titleEl.textContent = item.title;
-      this.subEl.textContent = `${formatTime(item.duration)} · ${
+      this.subEl.textContent = `${fmtTime(item.duration)} · ${
         item.orientation === 'portrait' ? 'Portrait'
         : item.orientation === 'square' ? 'Square' : 'Landscape'
       }`;
 
       this._loadSource(item.playbackId);
 
-      /* Reset any mini inline positioning */
       this.root.style.left = '';
-      this.root.style.top = '';
+      this.root.style.top  = '';
       this.root.style.right = '';
       this.root.style.bottom = '';
 
@@ -633,18 +571,14 @@
 
     close() {
       if (!this.root.classList.contains('is-open')) return;
-
       this._saveProgress();
       this.video.pause();
-
-      if (document.pictureInPictureElement) {
-        document.exitPictureInPicture().catch(() => {});
-      }
+      if (document.pictureInPictureElement) document.exitPictureInPicture().catch(() => {});
 
       this.root.classList.remove('is-open', 'is-mini');
       this.root.setAttribute('aria-hidden', 'true');
       this.root.style.left = '';
-      this.root.style.top = '';
+      this.root.style.top  = '';
       this.root.style.right = '';
       this.root.style.bottom = '';
 
@@ -653,17 +587,13 @@
         if (this.root.classList.contains('is-open')) return;
         this._destroySource();
         this.currentId = null;
-        this.currentItem = null;
       }, 550);
 
-      /* Leaving a /watch/:id deep link returns to the library */
       if (location.hash.startsWith('#/watch/')) {
         history.replaceState(null, '', location.pathname + location.search + '#/');
         Router.currentPath = '/';
         Router.updateNav('/');
       }
-
-      /* Refresh card progress for the video we just watched */
       if (id) refreshCardProgress(id);
     },
 
@@ -671,7 +601,7 @@
       if (this.root.classList.contains('is-mini')) {
         this.root.classList.remove('is-mini');
         this.root.style.left = '';
-        this.root.style.top = '';
+        this.root.style.top  = '';
         this.root.style.right = '';
         this.root.style.bottom = '';
       } else {
@@ -693,11 +623,9 @@
       }
     },
 
-    /* ---------- Source management ---------- */
     _loadSource(playbackId) {
       this._destroySource();
-
-      const src = `https://stream.mux.com/${playbackId}.m3u8`;
+      const src = muxStreamUrl(playbackId);
       this.spinner.classList.add('is-on');
 
       if (window.Hls && window.Hls.isSupported()) {
@@ -710,27 +638,18 @@
         this.hls = hls;
         hls.loadSource(src);
         hls.attachMedia(this.video);
-
-        hls.on(window.Hls.Events.MANIFEST_PARSED, () => {
-          this._resumeAndPlay();
-        });
-
-        hls.on(window.Hls.Events.ERROR, (_evt, data) => {
-          if (!data.fatal) return;
-          if (data.type === window.Hls.ErrorTypes.NETWORK_ERROR) {
-            hls.startLoad();
-          } else if (data.type === window.Hls.ErrorTypes.MEDIA_ERROR) {
-            hls.recoverMediaError();
-          } else {
-            toast('Playback error', 'fa-triangle-exclamation');
-            this._destroySource();
-          }
+        hls.on(window.Hls.Events.MANIFEST_PARSED, () => this._resumeAndPlay());
+        hls.on(window.Hls.Events.ERROR, (_e, d) => {
+          if (!d.fatal) return;
+          if (d.type === window.Hls.ErrorTypes.NETWORK_ERROR) hls.startLoad();
+          else if (d.type === window.Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError();
+          else { toast('Playback error', 'fa-triangle-exclamation'); this._destroySource(); }
         });
       } else if (this.video.canPlayType('application/vnd.apple.mpegurl')) {
         this.video.src = src;
         this.video.addEventListener('loadedmetadata', () => this._resumeAndPlay(), { once: true });
       } else {
-        toast('HLS playback is not supported in this browser', 'fa-triangle-exclamation');
+        toast('HLS playback not supported', 'fa-triangle-exclamation');
         this.spinner.classList.remove('is-on');
       }
     },
@@ -738,21 +657,17 @@
     _resumeAndPlay() {
       const id = this.currentId;
       const d = this.video.duration;
-
       if (id && isFinite(d) && d > 0) {
         const saved = Progress.get(id);
         if (saved > 3 && saved < d - 5) {
-          try { this.video.currentTime = saved; } catch { /* noop */ }
+          try { this.video.currentTime = saved; } catch {}
         }
       }
-      this.video.play().catch(() => { /* autoplay may be blocked */ });
+      this.video.play().catch(() => {});
     },
 
     _destroySource() {
-      if (this.hls) {
-        try { this.hls.destroy(); } catch { /* noop */ }
-        this.hls = null;
-      }
+      if (this.hls) { try { this.hls.destroy(); } catch {} this.hls = null; }
       if (this.video.getAttribute('src')) {
         this.video.removeAttribute('src');
         this.video.load();
@@ -760,38 +675,29 @@
       this.spinner.classList.remove('is-on');
     },
 
-    /* ---------- Media events ---------- */
-    _bindMediaEvents() {
+    _bindMedia() {
       const v = this.video;
-
-      const showSpinner = () => this.spinner.classList.add('is-on');
-      const hideSpinner = () => this.spinner.classList.remove('is-on');
-
-      v.addEventListener('waiting', showSpinner);
-      v.addEventListener('seeking', showSpinner);
-      v.addEventListener('playing', hideSpinner);
-      v.addEventListener('canplay', hideSpinner);
-
+      v.addEventListener('waiting', () => this.spinner.classList.add('is-on'));
+      v.addEventListener('seeking', () => this.spinner.classList.add('is-on'));
+      v.addEventListener('playing', () => this.spinner.classList.remove('is-on'));
+      v.addEventListener('canplay', () => this.spinner.classList.remove('is-on'));
       v.addEventListener('timeupdate', () => {
         if (!this.currentId) return;
         const now = performance.now();
-        if (now - this.lastSavedAt < 2000) return;
-        this.lastSavedAt = now;
+        if (now - this._lastSaveAt < 2000) return;
+        this._lastSaveAt = now;
         this._saveProgress();
       });
-
-      v.addEventListener('pause', () => this._saveProgress());
-      v.addEventListener('ended', () => this._saveProgress());
-      v.addEventListener('loadedmetadata', () => { this.lastSavedAt = 0; });
+      v.addEventListener('pause',  () => this._saveProgress());
+      v.addEventListener('ended',  () => this._saveProgress());
+      v.addEventListener('loadedmetadata', () => { this._lastSaveAt = 0; });
     },
 
     _saveProgress() {
-      if (!this.currentId || !this.video) return;
-      if (this.video.readyState < 1) return;
+      if (!this.currentId || !this.video || this.video.readyState < 1) return;
       Progress.set(this.currentId, this.video.currentTime, this.video.duration);
     },
 
-    /* ---------- Drag (dismiss in full, move in mini) ---------- */
     _bindDrag() {
       const top = $('#player-top');
       const root = this.root;
@@ -804,14 +710,7 @@
 
         const rect = root.getBoundingClientRect();
         const mini = root.classList.contains('is-mini');
-
-        drag = {
-          mini,
-          startX: e.clientX,
-          startY: e.clientY,
-          rect,
-          moved: false
-        };
+        drag = { mini, x: e.clientX, y: e.clientY, rect, moved: false };
 
         if (mini) {
           root.style.right = 'auto';
@@ -819,26 +718,21 @@
           root.style.left = `${rect.left}px`;
           root.style.top  = `${rect.top}px`;
         }
-
         root.style.transition = 'none';
         top.setPointerCapture(e.pointerId);
       });
 
       top.addEventListener('pointermove', (e) => {
         if (!drag) return;
-        const dx = e.clientX - drag.startX;
-        const dy = e.clientY - drag.startY;
-
+        const dx = e.clientX - drag.x;
+        const dy = e.clientY - drag.y;
         if (!drag.moved && Math.abs(dx) + Math.abs(dy) > 4) drag.moved = true;
         if (!drag.moved) return;
 
         if (drag.mini) {
-          const w = drag.rect.width;
-          const h = drag.rect.height;
-          const left = clamp(drag.rect.left + dx, 8, window.innerWidth - w - 8);
-          const top  = clamp(drag.rect.top  + dy, 8, window.innerHeight - h - 8);
-          root.style.left = `${left}px`;
-          root.style.top  = `${top}px`;
+          const w = drag.rect.width, h = drag.rect.height;
+          root.style.left = `${clamp(drag.rect.left + dx, 8, innerWidth - w - 8)}px`;
+          root.style.top  = `${clamp(drag.rect.top  + dy, 8, innerHeight - h - 8)}px`;
         } else {
           const offset = Math.max(0, dy);
           root.style.transform = `translateY(${offset}px)`;
@@ -848,35 +742,24 @@
 
       const end = (e) => {
         if (!drag) return;
-        const { mini, moved, startY } = drag;
-        const dy = (e.clientY ?? startY) - startY;
+        const { mini, moved } = drag;
+        const dy = (e.clientY ?? drag.y) - drag.y;
         drag = null;
-
         root.style.transition = '';
         root.style.transform = '';
         root.style.opacity = '';
-
-        if (!mini && moved && dy > 110) {
-          this.close();
-        }
+        if (!mini && moved && dy > 110) this.close();
       };
-
       top.addEventListener('pointerup', end);
       top.addEventListener('pointercancel', end);
     },
 
-    /* ---------- Keyboard ---------- */
-    _bindKeyboard() {
+    _bindKeys() {
       document.addEventListener('keydown', (e) => {
-        if (e.key !== 'Escape') return;
-        if (Menu.el) return; // menu handles its own Escape
-
+        if (e.key !== 'Escape' || Menu.el) return;
         if (this.root.classList.contains('is-mini')) {
           this.root.classList.remove('is-mini');
-          this.root.style.left = '';
-          this.root.style.top = '';
-          this.root.style.right = '';
-          this.root.style.bottom = '';
+          this.root.style.left = this.root.style.top = this.root.style.right = this.root.style.bottom = '';
         } else if (this.root.classList.contains('is-open')) {
           this.close();
         }
@@ -884,16 +767,13 @@
     }
   };
 
-  /* Refresh a visible card's progress bar after watching */
   function refreshCardProgress(id) {
     const item = Store.get(id);
     if (!item) return;
-
-    $$(`.card[data-id="${CSS.escape(id)}"]`).forEach((card) => {
+    $$(`.card[data-id="${CSS.escape(id)}"]`).forEach(card => {
       const ratio = Progress.ratio(id, item.duration);
       const thumb = card.querySelector('.card-thumb');
       let bar = card.querySelector('.card-progress');
-
       if (ratio > 0) {
         if (!bar) {
           bar = document.createElement('div');
@@ -902,9 +782,7 @@
           thumb.appendChild(bar);
         }
         bar.firstElementChild.style.width = `${(ratio * 100).toFixed(2)}%`;
-      } else if (bar) {
-        bar.remove();
-      }
+      } else if (bar) bar.remove();
 
       const sub = card.querySelector('.card-sub');
       if (sub) {
@@ -923,25 +801,31 @@
      ========================================================= */
   const Views = {
 
-    /* ---------------- Library ---------------- */
     async library(container) {
       container.innerHTML = `
-        <header class="page-head">
+        <header class="flex items-end justify-between gap-6 flex-wrap mb-8">
           <div>
             <h1 class="page-title">Library</h1>
-            <p class="page-sub" id="lib-sub">Loading…</p>
+            <p class="page-sub mt-1.5" id="lib-sub">Loading…</p>
           </div>
-          <label class="search">
-            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-            <input id="lib-search" type="search" placeholder="Search your library…"
-                   autocomplete="off" spellcheck="false" aria-label="Search library">
-            <button type="button" class="search-clear" id="lib-clear" hidden aria-label="Clear search">
-              <i class="fa-solid fa-xmark"></i>
-            </button>
-          </label>
+          <div class="flex items-center gap-3 flex-wrap">
+            <label class="search">
+              <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+              <input id="lib-search" type="search" placeholder="Search your library…"
+                     autocomplete="off" spellcheck="false" aria-label="Search library">
+              <button type="button" class="search-clear" id="lib-clear" hidden aria-label="Clear search">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </label>
+          </div>
         </header>
 
-        <div class="masonry" id="grid"></div>
+        <div id="lib-continue" hidden>
+          <h2 class="section-title">Continue watching</h2>
+          <div class="row" id="lib-continue-row"></div>
+        </div>
+
+        <div class="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 2xl:columns-5 gap-4" id="grid"></div>
 
         <div class="empty" id="lib-empty" hidden>
           <i class="fa-solid fa-film"></i>
@@ -961,7 +845,7 @@
           <div class="empty">
             <i class="fa-solid fa-triangle-exclamation"></i>
             <h3>Couldn't load your library</h3>
-            <p>${escapeHtml(err.message || 'Unknown error')}</p>
+            <p>${esc(err.message || 'Unknown error')}</p>
             <button class="btn" onclick="location.reload()">
               <i class="fa-solid fa-rotate-right"></i> Retry
             </button>
@@ -970,16 +854,28 @@
         return;
       }
 
-      /* Filter out anything the user has hidden */
-      const visible = items.filter((v) => !Hidden.has(v.id));
-      const totalTime = visible.reduce((sum, v) => sum + (v.duration || 0), 0);
+      const visible = items.filter(v => !Hidden.has(v.id));
+      const totalTime = visible.reduce((s, v) => s + (v.duration || 0), 0);
 
       container.querySelector('#lib-sub').textContent =
-        `${visible.length} video${visible.length === 1 ? '' : 's'} · ${formatTime(totalTime)} total`;
+        `${visible.length} video${visible.length === 1 ? '' : 's'} · ${fmtTime(totalTime)} total`;
+
+      /* Continue watching */
+      const inProgress = visible.filter(v => {
+        const r = Progress.ratio(v.id, v.duration);
+        return r > 0 && r < 1;
+      });
+      if (inProgress.length) {
+        const wrap = container.querySelector('#lib-continue');
+        const row = container.querySelector('#lib-continue-row');
+        wrap.hidden = false;
+        inProgress.forEach(v => row.appendChild(createCard(v)));
+        observeCards(row);
+      }
 
       grid.innerHTML = '';
       const frag = document.createDocumentFragment();
-      visible.forEach((item) => frag.appendChild(createCard(item)));
+      visible.forEach(v => frag.appendChild(createCard(v)));
       grid.appendChild(frag);
       observeCards(grid);
 
@@ -990,34 +886,26 @@
       const emptyT = container.querySelector('#lib-empty-title');
       const emptyX = container.querySelector('#lib-empty-text');
 
-      const applyFilter = debounce(() => {
+      const apply = debounce(() => {
         const q = input.value.trim().toLowerCase();
         let matches = 0;
-
-        grid.querySelectorAll('.card').forEach((card) => {
+        grid.querySelectorAll('.card').forEach(card => {
           const hit = !q || card.dataset.search.includes(q);
           card.hidden = !hit;
           if (hit) matches++;
         });
-
         clear.hidden = !q;
         empty.hidden = matches !== 0;
-
         if (q && matches === 0) {
           emptyT.textContent = 'No matches';
           emptyX.textContent = `Nothing in your library matches “${input.value.trim()}”.`;
         }
       }, 120);
 
-      input.addEventListener('input', applyFilter);
-      clear.addEventListener('click', () => {
-        input.value = '';
-        applyFilter();
-        input.focus();
-      });
+      input.addEventListener('input', apply);
+      clear.addEventListener('click', () => { input.value = ''; apply(); input.focus(); });
     },
 
-    /* ---------------- Explore ---------------- */
     async explore(container) {
       const items = await Store.load();
       if (!items.length) {
@@ -1032,28 +920,27 @@
       }
 
       const featured = items[0];
-      const inProgress = items.filter((v) => {
+      const rest = items.slice(1);
+      const inProgress = items.filter(v => {
         const r = Progress.ratio(v.id, v.duration);
         return r > 0 && r < 1;
       });
-      const rest = items.slice(1);
 
       container.innerHTML = `
-        <header class="page-head">
-          <div>
-            <h1 class="page-title">Explore</h1>
-            <p class="page-sub">Discover what's in your library</p>
-          </div>
+        <header class="mb-8">
+          <h1 class="page-title">Explore</h1>
+          <p class="page-sub mt-1.5">Discover what's in your library</p>
         </header>
 
         <section class="hero" data-open-id="${featured.id}" role="button" tabindex="0"
-                 aria-label="Play ${escapeHtml(featured.title)}">
-          <img src="${muxThumb(featured.playbackId, 'landscape', 6)}" alt="" loading="eager" decoding="async">
+                 aria-label="Play ${esc(featured.title)}">
+          <img src="${muxThumbUrl(featured.playbackId, 'landscape', 6)}" alt=""
+               loading="eager" decoding="async">
           <div class="hero-shade"></div>
           <div class="hero-info">
-            <span class="hero-tag">Featured</span>
-            <h2 class="hero-title">${escapeHtml(featured.title)}</h2>
-            <p class="hero-sub">${formatTime(featured.duration)} · ${
+            <span class="hero-tag"><i class="fa-solid fa-star" style="font-size:10px"></i> Featured</span>
+            <h2 class="hero-title">${esc(featured.title)}</h2>
+            <p class="hero-sub">${fmtTime(featured.duration)} · ${
               featured.orientation === 'portrait' ? 'Portrait'
               : featured.orientation === 'square' ? 'Square' : 'Landscape'
             }</p>
@@ -1067,40 +954,39 @@
         ` : ''}
 
         <h2 class="section-title">All videos</h2>
-        <div class="masonry" id="explore-grid"></div>
+        <div class="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 2xl:columns-5 gap-4" id="explore-grid"></div>
       `;
 
       if (inProgress.length) {
         const row = container.querySelector('#explore-row');
-        inProgress.forEach((item) => row.appendChild(createCard(item)));
+        inProgress.forEach(v => row.appendChild(createCard(v)));
         observeCards(row);
       }
 
       const grid = container.querySelector('#explore-grid');
       const frag = document.createDocumentFragment();
-      rest.forEach((item) => frag.appendChild(createCard(item)));
+      rest.forEach(v => frag.appendChild(createCard(v)));
       grid.appendChild(frag);
       observeCards(grid);
     },
 
-    /* ---------------- Queue ---------------- */
     async queue(container) {
       const items = await Store.load();
-      const ids = Queue.all();
-      const queued = ids.map((id) => items.find((v) => v.id === id)).filter(Boolean);
+      const queued = Queue.all().map(id => items.find(v => v.id === id)).filter(Boolean);
+      const totalTime = queued.reduce((s, v) => s + (v.duration || 0), 0);
 
       container.innerHTML = `
-        <header class="page-head">
+        <header class="flex items-end justify-between gap-6 flex-wrap mb-8">
           <div>
             <h1 class="page-title">Queue</h1>
-            <p class="page-sub" id="queue-sub">${
+            <p class="page-sub mt-1.5">${
               queued.length
-                ? `${queued.length} video${queued.length === 1 ? '' : 's'} · ${formatTime(queued.reduce((s, v) => s + (v.duration || 0), 0))} total`
+                ? `${queued.length} video${queued.length === 1 ? '' : 's'} · ${fmtTime(totalTime)} total`
                 : 'Nothing queued'
             }</p>
           </div>
           ${queued.length ? `
-            <button class="btn" id="queue-clear" style="background:var(--surface-2);color:var(--text-strong)">
+            <button class="btn secondary" id="queue-clear">
               <i class="fa-solid fa-broom"></i> Clear queue
             </button>
           ` : ''}
@@ -1112,7 +998,8 @@
           <div class="empty">
             <i class="fa-solid fa-list-ul"></i>
             <h3>Your queue is empty</h3>
-            <p>Tap the <i class="fa-solid fa-plus" style="font-size:12px"></i> button on any video to save it for later.</p>
+            <p>Tap the <i class="fa-solid fa-plus" style="font-size:11px;color:#539bf5"></i>
+               button on any video to save it for later.</p>
             <a class="btn" href="#/"><i class="fa-solid fa-house"></i> Browse library</a>
           </div>
         ` : ''}
@@ -1126,21 +1013,20 @@
         row.dataset.openId = item.id;
         row.setAttribute('role', 'button');
         row.tabIndex = 0;
-
         row.innerHTML = `
           <span class="qindex">${i + 1}</span>
           <div class="qthumb">
-            <img src="${muxThumb(item.playbackId, item.orientation || 'landscape', 3)}"
+            <img src="${muxThumbUrl(item.playbackId, item.orientation || 'landscape', 3)}"
                  alt="" loading="lazy" decoding="async">
           </div>
           <div class="qinfo">
-            <h3>${escapeHtml(item.title)}</h3>
-            <p>${formatTime(item.duration)} · ${
+            <h3>${esc(item.title)}</h3>
+            <p>${fmtTime(item.duration)} · ${
               item.orientation === 'portrait' ? 'Portrait'
               : item.orientation === 'square' ? 'Square' : 'Landscape'
             }</p>
           </div>
-          <div class="qactions">
+          <div class="flex gap-1.5 shrink-0">
             <button class="icon-btn" data-act="queue-remove" aria-label="Remove from queue">
               <i class="fa-solid fa-xmark"></i>
             </button>
@@ -1152,7 +1038,7 @@
       const clearBtn = container.querySelector('#queue-clear');
       if (clearBtn) {
         clearBtn.addEventListener('click', () => {
-          Queue.all().forEach((id) => Queue.remove(id));
+          Queue.all().forEach(id => Queue.remove(id));
           toast('Queue cleared', 'fa-broom');
           Router.navigate('/queue', { force: true });
         });
@@ -1165,21 +1051,21 @@
      ========================================================= */
   const Router = {
     currentPath: '/',
-    _scrollPositions: new Map(),
+    _positions: new Map(),
     _busy: false,
 
     routes: [
-      { test: (p) => p === '/',              name: 'library' },
-      { test: (p) => p === '/explore',       name: 'explore' },
-      { test: (p) => p === '/queue',         name: 'queue'   },
-      { test: (p) => /^\/watch\/([\w-]+)$/.test(p),
+      { test: p => p === '/',        name: 'library' },
+      { test: p => p === '/explore', name: 'explore' },
+      { test: p => p === '/queue',   name: 'queue'   },
+      { test: p => /^\/watch\/([\w-]+)$/.test(p),
         name: 'watch',
-        params: (p) => ({ id: /^\/watch\/([\w-]+)$/.exec(p)[1] }) }
+        params: p => ({ id: /^\/watch\/([\w-]+)$/.exec(p)[1] }) }
     ],
 
     init() {
-      window.addEventListener('hashchange', () => this.handle());
-      window.addEventListener('load', () => {
+      addEventListener('hashchange', () => this.handle());
+      addEventListener('load', () => {
         if (!location.hash) {
           history.replaceState(null, '', location.pathname + location.search + '#/');
         }
@@ -1188,131 +1074,94 @@
     },
 
     resolve(path) {
-      for (const route of this.routes) {
-        if (route.test(path)) {
-          return {
-            name: route.name,
-            params: route.params ? route.params(path) : {}
-          };
-        }
+      for (const r of this.routes) {
+        if (r.test(path)) return { name: r.name, params: r.params ? r.params(path) : {} };
       }
       return { name: 'library', params: {} };
     },
 
-    async handle() {
-      const path = location.hash.slice(1) || '/';
-      await this.navigate(path);
-    },
+    async handle() { await this.navigate(location.hash.slice(1) || '/'); },
 
     async navigate(path, { force = false } = {}) {
       if (this._busy) return;
       if (!force && path === this.currentPath) return;
-
       this._busy = true;
 
-      const app  = $('#app');
-      const view = $('#view');
-      const loader = $('#route-loader');
-
-      /* Remember scroll position of the outgoing view */
-      if (this.currentPath) {
-        this._scrollPositions.set(this.currentPath, app.scrollTop);
-      }
+      const app = $('#app'), view = $('#view'), loader = $('#route-loader');
+      if (this.currentPath) this._positions.set(this.currentPath, app.scrollTop);
 
       this.currentPath = path;
       this.updateNav(path);
-
       loader.classList.add('is-loading');
       view.classList.add('is-loading');
 
-      await sleep(reducedMotion() ? 0 : 150);
+      await sleep(reducedMotion() ? 0 : 130);
 
       const route = this.resolve(path);
-
       try {
-        switch (route.name) {
-          case 'explore':
-            await Views.explore(view);
-            break;
-          case 'queue':
-            await Views.queue(view);
-            break;
-          case 'watch': {
-            await Views.library(view);
-            const item = Store.get(route.params.id);
-            if (item) Player.open(item);
-            break;
-          }
-          case 'library':
-          default:
-            await Views.library(view);
-        }
+        if (route.name === 'explore')      await Views.explore(view);
+        else if (route.name === 'queue')   await Views.queue(view);
+        else if (route.name === 'watch') {
+          await Views.library(view);
+          const item = Store.get(route.params.id);
+          if (item) Player.open(item);
+        } else await Views.library(view);
       } catch (err) {
         view.innerHTML = `
           <div class="empty">
             <i class="fa-solid fa-triangle-exclamation"></i>
             <h3>Something went wrong</h3>
-            <p>${escapeHtml(err.message || 'Unknown error')}</p>
+            <p>${esc(err.message || 'Unknown error')}</p>
           </div>
         `;
       }
 
-      /* Restore scroll */
-      const saved = this._scrollPositions.get(path) ?? 0;
-      app.scrollTop = saved;
-
+      app.scrollTop = this._positions.get(path) ?? 0;
       await nextFrame();
       view.classList.remove('is-loading');
       loader.classList.remove('is-loading');
+
+      /* Preline re-init for dynamically added components */
+      if (window.HSStaticMethods?.autoInit) {
+        try { window.HSStaticMethods.autoInit(); } catch {}
+      }
 
       this._busy = false;
     },
 
     updateNav(path) {
-      const normalized =
-        path === '/explore' ? '/explore'
-        : path === '/queue' ? '/queue'
-        : '/';
-
-      $$('.nav-item').forEach((a) => {
-        a.classList.toggle('is-active', a.dataset.nav === normalized);
-      });
+      const norm = path === '/explore' ? '/explore' : path === '/queue' ? '/queue' : '/';
+      $$('.nav-btn').forEach(a => a.classList.toggle('is-active', a.dataset.nav === norm));
     }
   };
 
   /* =========================================================
      Global click delegation
      ========================================================= */
-  function bindGlobalClicks() {
+  function bindClicks() {
     document.addEventListener('click', (e) => {
-      /* 1. Explicit action buttons */
+      /* Actions */
       const actBtn = e.target.closest('[data-act]');
       if (actBtn) {
         const act = actBtn.dataset.act;
-        const holder = actBtn.closest('[data-id]');
-        const id = holder?.dataset.id;
+        const id = actBtn.closest('[data-id]')?.dataset.id;
         const item = id ? Store.get(id) : null;
 
         if (act === 'queue' && item) {
-          e.preventDefault();
-          e.stopPropagation();
+          e.preventDefault(); e.stopPropagation();
           const added = Queue.toggle(item.id);
           toast(added ? 'Added to queue' : 'Removed from queue',
                 added ? 'fa-circle-check' : 'fa-circle-minus');
           syncCardQueueState(item.id);
           return;
         }
-
         if (act === 'menu' && item) {
-          e.preventDefault();
-          e.stopPropagation();
+          e.preventDefault(); e.stopPropagation();
           Menu.open(actBtn, item);
           return;
         }
-
         if (act === 'queue-remove' && item) {
-          e.preventDefault();
-          e.stopPropagation();
+          e.preventDefault(); e.stopPropagation();
           Queue.remove(item.id);
           toast('Removed from queue', 'fa-circle-minus');
           Router.navigate('/queue', { force: true });
@@ -1320,21 +1169,17 @@
         }
       }
 
-      /* 2. Anything with data-open-id opens the player */
+      /* Open player */
       const opener = e.target.closest('[data-open-id]');
       if (opener) {
-        /* Don't open if the user clicked the menu button */
         if (e.target.closest('[data-act="menu"]')) return;
-
         const item = Store.get(opener.dataset.openId);
         if (!item) return;
-
         e.preventDefault();
         Player.open(item);
       }
     });
 
-    /* Keyboard activation of role=button cards */
     document.addEventListener('keydown', (e) => {
       if (e.key !== 'Enter' && e.key !== ' ') return;
       const opener = e.target.closest('[data-open-id][role="button"]');
@@ -1351,12 +1196,10 @@
   function boot() {
     Player.init();
     Preview.init();
-    bindGlobalClicks();
+    bindClicks();
     updateQueueBadge();
     Router.init();
-
-    /* Warm the data cache so the first route resolves instantly */
-    Store.load().catch(() => { /* handled per-view */ });
+    Store.load().catch(() => {});
   }
 
   if (document.readyState === 'loading') {
