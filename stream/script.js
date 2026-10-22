@@ -10,7 +10,7 @@
   };
 
   const PREVIEW_HOVER_DELAY = 1000;   // ms before the slideshow starts
-  const PREVIEW_INTERVAL = canHover() ? 300 : 380;
+  const PREVIEW_INTERVAL    = 300;    // ms between frames
   const PREVIEW_START       = 3;      // first timestamp sampled
   const PREVIEW_STEP        = 4;      // seconds added each frame
   const PREVIEW_END_PAD     = 4;      // seconds trimmed from the end
