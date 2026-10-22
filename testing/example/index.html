@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Home — modern-spf</title>
+  <link rel="stylesheet" href="./ui.css">
+</head>
+<body>
+
+  <!-- FRAGMENT: header -->
+  <header id="header" data-spf-fragment>
+    <a href="index.html" data-spf-link class="logo">♪ modern-spf</a>
+    <nav>
+      <a href="index.html" data-spf-link>Home</a>
+      <a href="track.html" data-spf-link>Track</a>
+    </nav>
+  </header>
+
+  <div class="layout">
+    <!-- FRAGMENT: sidebar (queue) -->
+    <aside id="sidebar-queue" data-spf-fragment>
+      <h2>Queue</h2>
+      <ul class="queue">
+        <li>Ambient Drift</li>
+        <li>Neon Pines</li>
+        <li>Low Orbit</li>
+      </ul>
+    </aside>
+
+    <!-- FRAGMENT: main view (this is what changes) -->
+    <main id="main-view" data-spf-fragment>
+      <h1>Home</h1>
+      <p>Pick a track to play.</p>
+      <ul class="tracks">
+        <li><a href="track.html" data-spf-link>Ambient Drift</a></li>
+        <li><a href="track.html" data-spf-link>Neon Pines</a></li>
+        <li><a href="track.html" data-spf-link>Low Orbit</a></li>
+      </ul>
+    </main>
+  </div>
+
+  <!-- FRAGMENT: player -->
+  <footer id="main-player" data-spf-fragment>
+    <div class="player">Nothing playing</div>
+  </footer>
+
+  <script src="../script.js"></script>
+  <script>
+    SPF.init({ debug: true });
+    document.addEventListener('spf:done', e => console.log('navigated →', e.detail.url));
+  </script>
+</body>
+</html>
