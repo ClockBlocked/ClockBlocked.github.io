@@ -894,3 +894,27 @@ input[type="search"]::-webkit-search-cancel-button { display: none; }
     transition-duration: .01ms !important;
   }
 }
+
+
+
+
+
+/* =========================================================
+   Touch gesture hygiene for cards
+   ========================================================= */
+.card,
+.hero,
+.qrow {
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.card img,
+.hero img,
+.qthumb img {
+  -webkit-user-drag: none;
+  user-select: none;
+  pointer-events: none;   /* img never eats the pointer event */
+}
