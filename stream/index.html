@@ -1,135 +1,74 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Video Library Stream</title>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        ghBg: '#22272e',
-                        ghSurface: '#2d333b',
-                        ghBorder: '#444c56',
-                        ghText: '#adbac7',
-                        ghPrimary: '#539bf5',
-                        ghHover: '#373e47'
-                    },
-                    fontFamily: {
-                        sans: ['-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'Helvetica', 'Arial', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
-    
-    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.0/css/all.css">
-    <link rel="stylesheet" href="./ui.css">
-    
-    <script src="https://cdn.jsdelivr.net/npm/preline@1.9.0/dist/preline.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1c2128">
+  <meta name="description" content="Library Stream — stream and share your personal video library.">
+  <title>Library Stream</title>
+
+  <link rel="preconnect" href="https://image.mux.com" crossorigin>
+  <link rel="preconnect" href="https://stream.mux.com" crossorigin>
+  <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.0/css/all.css">
+  <link rel="stylesheet" href="./ui.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.13/dist/hls.min.js" defer></script>
+  <script src="./script.js" defer></script>
 </head>
-<body class="bg-ghBg text-ghText antialiased flex h-screen overflow-hidden">
+<body>
 
-    <div id="route-loader" class="fixed top-0 left-0 h-1 bg-ghPrimary w-full z-[10000] scale-x-0 origin-left transition-transform duration-300"></div>
+  <!-- Route progress bar -->
+  <div id="route-loader" aria-hidden="true"><span></span></div>
 
-    <aside class="w-20 border-r border-ghBorder bg-ghSurface flex flex-col items-center py-6 flex-shrink-0 z-50">
-        <div class="text-ghPrimary text-3xl mb-8">
-            <i class="fa-solid fa-play-circle"></i>
-        </div>
-        <a href="#/" class="nav-item flex items-center justify-center w-12 h-12 rounded-xl text-ghText hover:bg-ghHover hover:text-ghPrimary transition-all duration-200 mb-4 group">
-            <i class="fa-solid fa-house text-xl group-hover:scale-110 transition-transform"></i>
-        </a>
-        <a href="#/explore" class="nav-item flex items-center justify-center w-12 h-12 rounded-xl text-ghText hover:bg-ghHover hover:text-ghPrimary transition-all duration-200 mb-4 group">
-            <i class="fa-solid fa-compass text-xl group-hover:scale-110 transition-transform"></i>
-        </a>
-        <a href="#/queue" class="nav-item flex items-center justify-center w-12 h-12 rounded-xl text-ghText hover:bg-ghHover hover:text-ghPrimary transition-all duration-200 mt-auto group">
-            <i class="fa-solid fa-list-ul text-xl group-hover:scale-110 transition-transform"></i>
-        </a>
-    </aside>
-
-    <main class="flex-1 relative overflow-y-auto h-full scroll-smooth" id="scroll-container">
-        <div id="main-content" class="p-6 transition-opacity duration-300"></div>
-    </main>
-
-    <template id="library-view-template">
-        <header class="mb-8 flex items-center justify-between">
-            <div>
-                <h1 class="text-3xl font-bold text-white tracking-tight">Library Stream</h1>
-                <p class="text-ghText/70 mt-1">Your personal collection</p>
-            </div>
-            <div class="relative">
-                <input type="text" placeholder="Search..." class="bg-ghSurface border border-ghBorder rounded-full py-2 px-4 pl-10 text-sm focus:outline-none focus:border-ghPrimary focus:ring-1 focus:ring-ghPrimary w-64 transition-all placeholder-ghText/50 text-white">
-                <i class="fa-solid fa-search absolute left-4 top-2.5 text-ghText/50"></i>
-            </div>
-        </header>
-        <div class="masonry-grid" id="video-grid"></div>
-    </template>
-
-    <template id="video-card-template">
-        <div class="video-card group relative bg-ghSurface border border-ghBorder rounded-2xl overflow-hidden cursor-pointer transform transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/50 hover:border-ghBorder/80 hover:z-10 break-inside-avoid mb-4">
-            <div class="thumbnail-wrapper relative w-full bg-[#161a1f] overflow-hidden">
-                <img src="" alt="" class="thumbnail-img absolute inset-0 w-full h-full object-cover transition-opacity duration-300">
-                <div class="progress-container absolute bottom-0 left-0 w-full h-1 bg-black/60 z-20">
-                    <div class="progress-bar h-full bg-ghPrimary shadow-[0_0_10px_rgba(83,155,245,0.8)]"></div>
-                </div>
-            </div>
-            
-            <div class="p-4">
-                <h3 class="video-title text-sm font-semibold text-white truncate"></h3>
-            </div>
-
-            <div class="absolute top-3 right-3 flex flex-col gap-2 opacity-0 translate-x-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0 z-30">
-                <button class="action-btn w-9 h-9 rounded-full bg-ghSurface/90 border border-ghBorder text-ghText flex items-center justify-center backdrop-blur-md hover:bg-ghHover hover:text-white hover:scale-110 transition-all shadow-lg">
-                    <i class="fa-solid fa-plus"></i>
-                </button>
-                <div class="hs-dropdown relative inline-flex">
-                    <button id="hs-dropdown-custom-icon-trigger" type="button" class="action-btn w-9 h-9 rounded-full bg-ghSurface/90 border border-ghBorder text-ghText flex items-center justify-center backdrop-blur-md hover:bg-ghHover hover:text-white hover:scale-110 transition-all shadow-lg">
-                        <i class="fa-solid fa-ellipsis"></i>
-                    </button>
-                    <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-[150px] bg-ghSurface shadow-md rounded-xl p-2 border border-ghBorder mt-2 right-0" aria-labelledby="hs-dropdown-custom-icon-trigger">
-                        <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-ghText hover:bg-ghHover hover:text-white transition-colors" href="#">
-                            <i class="fa-solid fa-share-nodes w-4"></i> Share
-                        </a>
-                        <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-ghText hover:bg-ghHover hover:text-white transition-colors" href="#">
-                            <i class="fa-solid fa-download w-4"></i> Download
-                        </a>
-                        <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors border-t border-ghBorder mt-1 pt-2" href="#">
-                            <i class="fa-solid fa-trash w-4"></i> Remove
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="loading-overlay absolute inset-0 bg-ghSurface/50 backdrop-blur-sm z-40 opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center">
-                <i class="fa-solid fa-circle-notch fa-spin text-3xl text-ghPrimary"></i>
-            </div>
-        </div>
-    </template>
-
-    <div id="offcanvas-player" class="fixed bottom-0 left-20 right-0 h-screen bg-ghBg z-[9000] translate-y-full transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] flex flex-col rounded-tl-[32px] rounded-tr-[32px] shadow-[0_-20px_50px_rgba(0,0,0,0.5)] border-t border-l border-ghBorder">
-        <div class="player-header h-16 flex items-center justify-between px-6 bg-ghSurface/50 backdrop-blur-md border-b border-ghBorder rounded-t-[32px]">
-            <div class="player-drag-handle w-12 h-1.5 bg-ghBorder rounded-full cursor-grab active:cursor-grabbing hover:bg-ghText/50 transition-colors"></div>
-            <div class="flex gap-4">
-                <button id="btn-pip" class="w-10 h-10 rounded-full flex items-center justify-center text-ghText hover:bg-ghHover hover:text-white transition-all">
-                    <i class="fa-solid fa-picture-in-picture"></i>
-                </button>
-                <button id="btn-mini" class="w-10 h-10 rounded-full flex items-center justify-center text-ghText hover:bg-ghHover hover:text-white transition-all">
-                    <i class="fa-solid fa-window-restore"></i>
-                </button>
-                <button id="btn-close" class="w-10 h-10 rounded-full flex items-center justify-center text-ghText hover:bg-red-500/20 hover:text-red-400 transition-all">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
-            </div>
-        </div>
-        <div class="flex-1 bg-black relative rounded-b-[32px] overflow-hidden">
-            <video id="primary-video" class="w-full h-full object-contain outline-none" controls playsinline crossorigin="anonymous"></video>
-        </div>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <a href="#/" class="brand" aria-label="Library Stream home"><i class="fa-solid fa-play"></i></a>
+    <nav class="nav" aria-label="Primary">
+      <a href="#/" class="nav-item" data-nav="/" aria-label="Library"><i class="fa-solid fa-house"></i></a>
+      <a href="#/explore" class="nav-item" data-nav="/explore" aria-label="Explore"><i class="fa-solid fa-compass"></i></a>
+    </nav>
+    <div class="nav-bottom">
+      <a href="#/queue" class="nav-item" data-nav="/queue" aria-label="Queue">
+        <i class="fa-solid fa-list-ul"></i>
+        <span class="nav-badge" id="queue-badge" hidden>0</span>
+      </a>
     </div>
+  </aside>
 
-    <script src="./script.js"></script>
+  <!-- Scrollable app surface -->
+  <main id="app" tabindex="-1">
+    <div class="view" id="view"></div>
+  </main>
+
+  <!-- Toasts -->
+  <div id="toasts" class="toast-container" role="status" aria-live="polite"></div>
+
+  <!-- Player -->
+  <div id="player" class="player" aria-hidden="true" role="dialog" aria-label="Video player">
+    <div class="player-top" id="player-top">
+      <span class="player-pill" aria-hidden="true"></span>
+      <div class="player-info">
+        <h2 id="player-title">—</h2>
+        <p id="player-sub">—</p>
+      </div>
+      <div class="player-btns">
+        <button class="pbtn" id="btn-pip" title="Picture in picture" aria-label="Picture in picture">
+          <i class="fa-solid fa-clone"></i>
+        </button>
+        <button class="pbtn" id="btn-mini" title="Mini player" aria-label="Mini player">
+          <i class="fa-solid fa-compress"></i>
+        </button>
+        <button class="pbtn danger" id="btn-close" title="Close" aria-label="Close player">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+    </div>
+    <div class="player-stage">
+      <video id="video" playsinline crossorigin="anonymous" controls preload="metadata"></video>
+      <div class="player-spinner" id="player-spinner"><i class="fa-solid fa-circle-notch fa-spin"></i></div>
+    </div>
+  </div>
+
+  <noscript><div class="noscript">Library Stream requires JavaScript.</div></noscript>
 </body>
 </html>
