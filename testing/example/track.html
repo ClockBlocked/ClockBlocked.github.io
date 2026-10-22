@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Track — modern-spf</title>
+  <link rel="stylesheet" href="./ui.css">
+</head>
+<body>
+
+  <header id="header" data-spf-fragment>
+    <a href="index.html" data-spf-link class="logo">♪ modern-spf</a>
+    <nav>
+      <a href="index.html" data-spf-link>Home</a>
+      <a href="track.html" data-spf-link>Track</a>
+    </nav>
+  </header>
+
+  <div class="layout">
+    <aside id="sidebar-queue" data-spf-fragment>
+      <h2>Queue</h2>
+      <ul class="queue">
+        <li>Neon Pines</li>
+        <li>Low Orbit</li>
+      </ul>
+    </aside>
+
+    <main id="main-view" data-spf-fragment>
+      <h1>Ambient Drift</h1>
+      <p>Now playing…</p>
+      <a href="index.html" data-spf-link>← Back to Home</a>
+    </main>
+  </div>
+
+  <footer id="main-player" data-spf-fragment>
+    <div class="player">▶ Ambient Drift — 4:32</div>
+  </footer>
+
+  <script src="../script.js"></script>
+  <script>SPF.init({ debug: true });</script>
+</body>
+</html>
