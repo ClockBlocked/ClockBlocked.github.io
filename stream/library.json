@@ -1,0 +1,50 @@
+[
+    {
+        "id": "vid_1",
+        "title": "Main Project Feature",
+        "playbackId": "lXulWyReKCYg3ohalDeKGKuTZR4e6GcZCS00lKa00sNWU",
+        "duration": 180,
+        "progress": 45,
+        "orientation": "landscape"
+    },
+    {
+        "id": "vid_2",
+        "title": "Secondary Exploration",
+        "playbackId": "lXulWyReKCYg3ohalDeKGKuTZR4e6GcZCS00lKa00sNWU",
+        "duration": 180,
+        "progress": 0,
+        "orientation": "portrait"
+    },
+    {
+        "id": "vid_3",
+        "title": "Cinematic Overview",
+        "playbackId": "lXulWyReKCYg3ohalDeKGKuTZR4e6GcZCS00lKa00sNWU",
+        "duration": 180,
+        "progress": 12,
+        "orientation": "landscape"
+    },
+    {
+        "id": "vid_4",
+        "title": "Detailed Walkthrough",
+        "playbackId": "lXulWyReKCYg3ohalDeKGKuTZR4e6GcZCS00lKa00sNWU",
+        "duration": 180,
+        "progress": 100,
+        "orientation": "landscape"
+    },
+    {
+        "id": "vid_5",
+        "title": "Behind the Scenes",
+        "playbackId": "lXulWyReKCYg3ohalDeKGKuTZR4e6GcZCS00lKa00sNWU",
+        "duration": 180,
+        "progress": 88,
+        "orientation": "portrait"
+    },
+    {
+        "id": "vid_6",
+        "title": "Quick Update",
+        "playbackId": "lXulWyReKCYg3ohalDeKGKuTZR4e6GcZCS00lKa00sNWU",
+        "duration": 180,
+        "progress": 0,
+        "orientation": "landscape"
+    }
+]
