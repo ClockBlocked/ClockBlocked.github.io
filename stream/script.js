@@ -1,338 +1,282 @@
-const videoCatalog = [
-    { id: 'v1_landscape', url: 'media/vid1.mp4', poster: 'poster1.jpg', progress: 85, orientation: 'landscape' },
-    { id: 'v2_portrait', url: 'media/vid2.mp4', poster: 'poster2.jpg', progress: 0, orientation: 'portrait' },
-    { id: 'v3_landscape', url: 'media/vid3.mp4', poster: 'poster3.jpg', progress: 12, orientation: 'landscape' },
-    { id: 'v4_portrait', url: 'media/vid4.mp4', poster: 'poster4.jpg', progress: 100, orientation: 'portrait' },
-    { id: 'v5_landscape', url: 'media/vid5.mp4', poster: 'poster5.jpg', progress: 0, orientation: 'landscape' }
-];
-
-window.MUX_PREVIEW_URL = "";
-
-function generateVideoCards() {
-    return videoCatalog.map((video) => {
-        const progressHtml = video.progress > 0
-            ? '<div class="progress-bar-container"><div class="progress-bar" style="width: ' + video.progress + '%;"></div></div>'
-            : '';
-
-        return `
-        <div class="video-card ${video.orientation}" data-playback-id="${video.id}" data-video-url="${video.url}">
-            <div class="thumbnail-wrapper">
-                <img src="${video.poster}" class="thumbnail-img" loading="lazy" alt="Thumbnail">
-                ${progressHtml}
-            </div>
-            <div class="card-actions">
-                <button class="action-btn queue-btn" type="button" aria-label="Queue video"><i class="fa-solid fa-plus"></i></button>
-                <button class="action-btn menu-btn" type="button" aria-label="More options"><i class="fa-solid fa-ellipsis"></i></button>
-            </div>
-        </div>`;
-    }).join('');
-}
-
-class DynamicSPFRouter {
+class GithubPagesRouter {
     constructor() {
-        this.cache = new Map();
-        this.isRouting = false;
-        this.loader = document.getElementById('spf-loader');
-        this.mainContainer = document.getElementById('main-content');
-
-        if (!this.loader || !this.mainContainer) {
-            return;
-        }
-
-        window.addEventListener('popstate', (e) => this.restoreState(e));
-        this.attachLinkInterceptors();
-    }
-
-    attachLinkInterceptors() {
-        const links = document.querySelectorAll('a[data-spf]');
-        if (!links.length) {
-            return;
-        }
-
-        document.body.addEventListener('click', (e) => {
-            const link = e.target.closest('a[data-spf]');
-            if (link) {
-                e.preventDefault();
-                const url = link.getAttribute('href');
-                if (url && window.location.pathname !== url) {
-                    this.executeNavigation(url);
-                }
-            }
+        this.mainContent = document.getElementById('main-content');
+        this.loader = document.getElementById('route-loader');
+        this.routes = {
+            '/': this.renderLibrary.bind(this),
+            '/explore': this.renderExplore.bind(this),
+            '/queue': this.renderQueue.bind(this)
+        };
+        
+        window.addEventListener('hashchange', () => this.handleRoute());
+        window.addEventListener('load', () => {
+            if (!window.location.hash) window.location.hash = '#/';
+            this.handleRoute();
         });
     }
 
-    async executeNavigation(url, isHistoryPop = false) {
-        if (this.isRouting || !this.loader || !this.mainContainer) return;
-        this.isRouting = true;
+    async handleRoute() {
+        const path = window.location.hash.slice(1) || '/';
+        const handler = this.routes[path] || this.routes['/'];
+        
+        this.loader.classList.add('route-loading');
+        this.loader.style.transform = 'scaleX(1)';
+        this.mainContent.style.opacity = '0.4';
+        this.mainContent.style.transform = 'scale(0.98)';
+        
+        await new Promise(r => setTimeout(r, 150));
+        await handler();
+        
+        this.mainContent.style.opacity = '1';
+        this.mainContent.style.transform = 'scale(1)';
+        this.loader.classList.remove('route-loading');
+        this.loader.style.transform = 'scaleX(0)';
+        
+        window.HSStaticMethods.autoInit();
+    }
 
-        this.loader.classList.add('active');
-        this.mainContainer.classList.add('navigating');
-
+    async renderLibrary() {
+        const template = document.getElementById('library-view-template').content.cloneNode(true);
+        this.mainContent.innerHTML = '';
+        this.mainContent.appendChild(template);
+        
         try {
-            const payload = await this.fetchFragments(url);
-
-            if (!isHistoryPop) {
-                history.pushState({ url }, payload.title, url);
-            }
-            document.title = payload.title;
-
-            await this.injectFragments(payload.fragments);
-            window.dispatchEvent(new CustomEvent('app:dom-updated'));
-        } catch (error) {
-            window.location.href = url;
-        } finally {
-            this.loader.classList.remove('active');
-            this.mainContainer.classList.remove('navigating');
-            this.isRouting = false;
+            const response = await fetch('library.json');
+            const data = await response.json();
+            const grid = document.getElementById('video-grid');
+            const cardTemplate = document.getElementById('video-card-template');
+            
+            data.forEach((item, index) => {
+                const clone = cardTemplate.content.cloneNode(true);
+                const card = clone.querySelector('.video-card');
+                const wrapper = clone.querySelector('.thumbnail-wrapper');
+                const img = clone.querySelector('.thumbnail-img');
+                const title = clone.querySelector('.video-title');
+                const progress = clone.querySelector('.progress-bar');
+                const progressContainer = clone.querySelector('.progress-container');
+                
+                card.dataset.playbackId = item.playbackId;
+                card.dataset.duration = item.duration;
+                card.style.animationDelay = `${index * 50}ms`;
+                card.classList.add('fade-in');
+                
+                wrapper.dataset.orientation = item.orientation;
+                img.src = `https://image.mux.com/${item.playbackId}/thumbnail.png?width=640&height=${item.orientation === 'portrait' ? 960 : 360}&time=5`;
+                
+                title.textContent = item.title;
+                
+                if (item.progress > 0) {
+                    progress.style.width = `${item.progress}%`;
+                } else {
+                    progressContainer.style.display = 'none';
+                }
+                
+                grid.appendChild(clone);
+            });
+            
+            window.AppInteraction.attachDelegation(grid);
+        } catch (e) {
+            this.mainContent.innerHTML = `<div class="text-center text-ghText mt-20"><i class="fa-solid fa-triangle-exclamation text-4xl mb-4"></i><p>Failed to load library.</p></div>`;
         }
     }
 
-    async fetchFragments(url) {
-        if (this.cache.has(url)) {
-            return this.cache.get(url);
-        }
-
-        const response = await fetch(url, {
-            headers: { 'X-SPF-Request': 'true' }
-        });
-
-        if (!response.ok) throw new Error('SPF Request Failed');
-        const data = await response.json();
-        this.cache.set(url, data);
-        return data;
+    async renderExplore() {
+        this.mainContent.innerHTML = `<div class="text-center text-ghText mt-20 fade-in"><i class="fa-solid fa-compass text-4xl mb-4"></i><h2 class="text-2xl font-bold text-white">Explore</h2><p>Discover new content.</p></div>`;
     }
 
-    async injectFragments(fragments) {
-        const mutations = Object.entries(fragments).map(async ([id, htmlString]) => {
-            const targetElement = document.getElementById(id);
-            if (targetElement) {
-                targetElement.innerHTML = htmlString;
-            }
-        });
-        await Promise.all(mutations);
-    }
-
-    restoreState(e) {
-        if (e.state && e.state.url) {
-            this.executeNavigation(e.state.url, true);
-        }
+    async renderQueue() {
+        this.mainContent.innerHTML = `<div class="text-center text-ghText mt-20 fade-in"><i class="fa-solid fa-list-ul text-4xl mb-4"></i><h2 class="text-2xl font-bold text-white">Your Queue</h2><p>Items saved for later.</p></div>`;
     }
 }
 
-class MediaInteractionEngine {
+class MuxPreviewEngine {
     constructor() {
-        this.hoverDelegationTimers = new WeakMap();
-        this.activeMuxIntervals = new WeakMap();
-        this.grid = document.getElementById('video-grid');
-
-        if (!this.grid) {
-            return;
-        }
-
-        this.initDelegation();
-        window.addEventListener('app:dom-updated', () => this.initDelegation());
+        this.hoverTimers = new WeakMap();
+        this.intervalTimers = new WeakMap();
+        this.handleOver = this.handleOver.bind(this);
+        this.handleOut = this.handleOut.bind(this);
     }
 
-    initDelegation() {
-        const grid = document.getElementById('video-grid');
-        if (!grid) return;
-
-        grid.removeEventListener('mouseover', this.handleMouseOver);
-        grid.removeEventListener('mouseout', this.handleMouseOut);
-
-        this.handleMouseOver = this.handleMouseOver.bind(this);
-        this.handleMouseOut = this.handleMouseOut.bind(this);
-
-        grid.addEventListener('mouseover', this.handleMouseOver);
-        grid.addEventListener('mouseout', this.handleMouseOut);
+    attachDelegation(container) {
+        container.removeEventListener('mouseover', this.handleOver);
+        container.removeEventListener('mouseout', this.handleOut);
+        container.addEventListener('mouseover', this.handleOver);
+        container.addEventListener('mouseout', this.handleOut);
     }
 
-    handleMouseOver(e) {
+    handleOver(e) {
         const card = e.target.closest('.video-card');
-        if (!card || this.hoverDelegationTimers.has(card)) return;
+        const actionBtn = e.target.closest('.action-btn');
+        const dropdownMenu = e.target.closest('.hs-dropdown-menu');
+        if (!card || actionBtn || dropdownMenu || this.hoverTimers.has(card)) return;
 
-        const timer = setTimeout(() => {
-            this.executeMuxPreviewSequence(card);
-        }, 1250);
-
-        this.hoverDelegationTimers.set(card, timer);
+        const timer = setTimeout(() => this.beginPreview(card), 1250);
+        this.hoverTimers.set(card, timer);
     }
 
-    handleMouseOut(e) {
+    handleOut(e) {
         const card = e.target.closest('.video-card');
         if (!card) return;
+        if (card.contains(e.relatedTarget)) return;
 
-        const related = e.relatedTarget;
-        if (card.contains(related)) return;
-
-        clearTimeout(this.hoverDelegationTimers.get(card));
-        this.hoverDelegationTimers.delete(card);
-        this.terminateMuxPreviewSequence(card);
+        clearTimeout(this.hoverTimers.get(card));
+        this.hoverTimers.delete(card);
+        this.endPreview(card);
     }
 
-    executeMuxPreviewSequence(card) {
-        if (!window.MUX_PREVIEW_URL) return;
-
+    beginPreview(card) {
         const playbackId = card.dataset.playbackId;
-        const imgNode = card.querySelector('.thumbnail-img');
-
-        if (!card.dataset.originalPoster) {
-            card.dataset.originalPoster = imgNode.src;
+        const duration = parseInt(card.dataset.duration, 10) || 120;
+        const img = card.querySelector('.thumbnail-img');
+        const orientation = card.querySelector('.thumbnail-wrapper').dataset.orientation;
+        
+        if (!card.dataset.originalSrc) {
+            card.dataset.originalSrc = img.src;
         }
 
-        const timestamps = Array.from({ length: 8 }, () => Math.floor(Math.random() * 120));
-        let sequenceIndex = 0;
+        let currentTime = 10;
+        const increment = Math.max(5, Math.floor(duration / 20));
+        const width = 640;
+        const height = orientation === 'portrait' ? 960 : 360;
 
-        const cycleFrame = () => {
-            if (sequenceIndex >= timestamps.length) sequenceIndex = 0;
-            const targetTime = timestamps[sequenceIndex];
-            const dynamicUrl = window.MUX_PREVIEW_URL
-                .replace('{PLAYBACK_ID}', playbackId)
-                .replace('{TIME}', targetTime);
-
-            const bufferImg = new Image();
-            bufferImg.src = dynamicUrl;
-            bufferImg.onload = () => {
-                imgNode.style.opacity = '0.7';
+        const cycle = () => {
+            const nextUrl = `https://image.mux.com/${playbackId}/thumbnail.png?width=${width}&height=${height}&time=${currentTime}`;
+            
+            const preloader = new Image();
+            preloader.src = nextUrl;
+            preloader.onload = () => {
+                if (!this.intervalTimers.has(card)) return; 
+                img.style.opacity = '0.8';
                 setTimeout(() => {
-                    imgNode.src = dynamicUrl;
-                    imgNode.style.opacity = '1';
-                }, 100);
+                    img.src = nextUrl;
+                    img.style.opacity = '1';
+                }, 50);
             };
-            sequenceIndex++;
+
+            currentTime += increment;
+            if (currentTime >= duration - 5) currentTime = 10;
         };
 
-        cycleFrame();
-        const intervalId = setInterval(cycleFrame, 800);
-        this.activeMuxIntervals.set(card, intervalId);
+        cycle();
+        const intervalId = setInterval(cycle, 400);
+        this.intervalTimers.set(card, intervalId);
     }
 
-    terminateMuxPreviewSequence(card) {
-        if (this.activeMuxIntervals.has(card)) {
-            clearInterval(this.activeMuxIntervals.get(card));
-            this.activeMuxIntervals.delete(card);
+    endPreview(card) {
+        if (this.intervalTimers.has(card)) {
+            clearInterval(this.intervalTimers.get(card));
+            this.intervalTimers.delete(card);
         }
-
-        const imgNode = card.querySelector('.thumbnail-img');
-        if (imgNode && card.dataset.originalPoster) {
-            imgNode.style.opacity = '0';
+        const img = card.querySelector('.thumbnail-img');
+        if (img && card.dataset.originalSrc) {
+            img.style.opacity = '0';
             setTimeout(() => {
-                imgNode.src = card.dataset.originalPoster;
-                imgNode.style.opacity = '1';
+                img.src = card.dataset.originalSrc;
+                img.style.opacity = '1';
             }, 150);
         }
     }
 }
 
-class OffCanvasPlayerContext {
+class HlsPlayerEngine {
     constructor() {
-        this.ui = {
-            wrapper: document.getElementById('offcanvas-player'),
-            video: document.getElementById('primary-video'),
-            btnClose: document.getElementById('btn-close'),
-            btnPip: document.getElementById('btn-pip'),
-            btnMini: document.getElementById('btn-mini'),
-            dragHandle: document.querySelector('.player-drag-handle')
-        };
-
-        if (!this.ui.wrapper || !this.ui.video) {
-            return;
-        }
-
-        this.attachGlobalListeners();
-        this.attachControls();
-    }
-
-    attachGlobalListeners() {
+        this.wrapper = document.getElementById('offcanvas-player');
+        this.video = document.getElementById('primary-video');
+        this.hls = null;
+        
+        document.getElementById('btn-close').addEventListener('click', () => this.close());
+        document.getElementById('btn-pip').addEventListener('click', () => this.togglePip());
+        document.getElementById('btn-mini').addEventListener('click', () => this.toggleMini());
+        
         document.body.addEventListener('click', (e) => {
             const card = e.target.closest('.video-card');
             const actionBtn = e.target.closest('.action-btn');
+            const dropdownMenu = e.target.closest('.hs-dropdown-menu');
+            
+            if (card && !actionBtn && !dropdownMenu) {
+                const loader = card.querySelector('.loading-overlay');
+                loader.style.opacity = '1';
+                
+                setTimeout(() => {
+                    loader.style.opacity = '0';
+                    this.loadAndPlay(card.dataset.playbackId);
+                }, 400);
+            }
+        });
 
-            if (card && !actionBtn) {
-                this.invokePlayer(card.dataset.videoUrl);
+        this.video.addEventListener('leavepictureinpicture', () => {
+            if (this.wrapper.style.transform === 'translateY(100%)' || this.wrapper.classList.contains('closed')) {
+                this.video.pause();
             }
         });
     }
 
-    attachControls() {
-        if (this.ui.btnClose) {
-            this.ui.btnClose.addEventListener('click', () => this.dismissPlayer());
-        }
-        if (this.ui.btnPip) {
-            this.ui.btnPip.addEventListener('click', () => this.togglePictureInPicture());
-        }
-        if (this.ui.btnMini) {
-            this.ui.btnMini.addEventListener('click', () => this.toggleMiniWindow());
+    loadAndPlay(playbackId) {
+        const src = `https://stream.mux.com/${playbackId}.m3u8`;
+        
+        if (this.hls) {
+            this.hls.destroy();
+            this.hls = null;
         }
 
-        this.ui.video.addEventListener('leavepictureinpicture', () => {
-            if (this.ui.wrapper.classList.contains('closed')) {
-                this.ui.video.pause();
-            }
-        });
+        if (Hls.isSupported()) {
+            this.hls = new Hls({
+                maxBufferLength: 30,
+                maxMaxBufferLength: 600
+            });
+            this.hls.loadSource(src);
+            this.hls.attachMedia(this.video);
+            this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                this.video.play().catch(() => {});
+            });
+        } else if (this.video.canPlayType('application/vnd.apple.mpegurl')) {
+            this.video.src = src;
+            this.video.addEventListener('loadedmetadata', () => {
+                this.video.play().catch(() => {});
+            });
+        }
+
+        this.wrapper.style.transform = 'translateY(0)';
+        this.wrapper.classList.remove('mini');
     }
 
-    invokePlayer(streamUrl) {
-        this.ui.video.src = streamUrl;
-        this.ui.wrapper.classList.remove('closed');
-        this.ui.wrapper.classList.add('open');
-        this.ui.wrapper.classList.remove('mini');
-
-        this.ui.video.play().catch((e) => console.error('Autoplay constrained:', e));
-    }
-
-    dismissPlayer() {
-        this.ui.wrapper.classList.add('closed');
-        this.ui.wrapper.classList.remove('open');
-        this.ui.wrapper.classList.remove('mini');
-
+    close() {
+        this.wrapper.style.transform = 'translateY(100%)';
+        this.wrapper.classList.remove('mini');
+        
         if (document.pictureInPictureElement) {
             document.exitPictureInPicture();
         } else {
-            this.ui.video.pause();
+            this.video.pause();
             setTimeout(() => {
-                this.ui.video.src = '';
+                if (this.hls) {
+                    this.hls.destroy();
+                    this.hls = null;
+                }
+                this.video.removeAttribute('src');
+                this.video.load();
             }, 500);
         }
     }
 
-    async togglePictureInPicture() {
+    async togglePip() {
         if (document.pictureInPictureElement) {
             await document.exitPictureInPicture();
         } else if (document.pictureInPictureEnabled) {
-            try {
-                await this.ui.video.requestPictureInPicture();
-            } catch (err) {
-                console.error('PiP Initialization Failed:', err);
-            }
+            await this.video.requestPictureInPicture();
         }
     }
 
-    toggleMiniWindow() {
+    toggleMini() {
         if (document.pictureInPictureElement) {
             document.exitPictureInPicture();
         }
-        this.ui.wrapper.classList.toggle('mini');
+        this.wrapper.classList.toggle('mini');
     }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    const grid = document.getElementById('video-grid');
-    if (grid && !grid.dataset.initialized) {
-        grid.innerHTML = generateVideoCards();
-        grid.dataset.initialized = 'true';
-    }
-
-    if (document.getElementById('main-content') && document.getElementById('spf-loader')) {
-        window.StreamApp = {
-            Router: new DynamicSPFRouter(),
-            Interaction: new MediaInteractionEngine(),
-            Player: new OffCanvasPlayerContext()
-        };
-    } else {
-        window.StreamApp = {
-            Interaction: new MediaInteractionEngine(),
-            Player: new OffCanvasPlayerContext()
-        };
-    }
+    window.AppInteraction = new MuxPreviewEngine();
+    window.AppRouter = new GithubPagesRouter();
+    window.AppPlayer = new HlsPlayerEngine();
 });
